@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1000000000000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="nombreTipoTramite" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+tipos_de_tramite.nombre AS nombre_tramite, 
+se_archiva, se_inscribe, 
+asocia_inmuebles, 
+tipos_de_tramite.observaciones, 
+tipos_de_documento.nombre AS nombre_documento, 
+tipos_de_documento.vence, 
+tipos_de_documento.dias_vencimiento, 
+tipos_de_documento.quien_entrega
+FROM tipos_de_tramite
+INNER JOIN plantilla_tramites
+INNER JOIN tipos_de_documento
+WHERE tipos_de_tramite.id_tipo_tramite = plantilla_tramites.fk_id_tipo_tramite
+AND plantilla_tramites.fk_id_tipo_documento = tipos_de_documento.id_tipo_documento
+AND tipos_de_tramite.nombre = $P{nombreTipoTramite}]]>
+	</queryString>
+	<field name="nombre_tramite" class="java.lang.String"/>
+	<field name="se_archiva" class="java.lang.Boolean"/>
+	<field name="se_inscribe" class="java.lang.Boolean"/>
+	<field name="asocia_inmuebles" class="java.lang.Boolean"/>
+	<field name="observaciones" class="java.lang.String"/>
+	<field name="nombre_documento" class="java.lang.String"/>
+	<field name="vence" class="java.lang.Boolean"/>
+	<field name="dias_vencimiento" class="java.lang.Integer"/>
+	<field name="quien_entrega" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="53" splitType="Stretch">
+			<staticText>
+				<reportElement x="40" y="0" width="477" height="48"/>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Listado de Documentos por Trámite]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="119" splitType="Stretch">
+			<staticText>
+				<reportElement x="176" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de Tramite:
+                ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="276" y="1" width="279" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_tramite}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="185" y="21" width="194" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Detalle tipo de Trámite
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="53" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Se Archiva?:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="73" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Se inscribe?:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="93" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Asociado Inmuble?:
+                ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="53" width="157" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{se_archiva} ? "SI" : "NO" )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="73" width="157" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{se_inscribe} ? "SI" : "NO" )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="93" width="157" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{asocia_inmuebles} ? "SI" : "NO" )]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="279" y="55" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones:
+                ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="279" y="75" width="276" height="38"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{observaciones} != null ? $F{observaciones}: "n/a" )]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Tipo de Documento
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="7" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Vence?
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="7" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Días de Validez
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="7" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Entrega
+                ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="217" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{dias_vencimiento} != null ? $F{dias_vencimiento} : "N/A" )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quien_entrega}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="1" width="138" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{vence} ? "SI" : "NO" )]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="61" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="43" splitType="Stretch">
+			<textField>
+				<reportElement x="437" y="23" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="517" y="23" width="40" height="20"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="555" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

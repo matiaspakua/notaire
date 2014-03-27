@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="Table Dataset 1"/>
+	<parameter name="idPresupuestoParam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT presupuestos.id_presupuesto,presupuestos.fecha, presupuestos.total, presupuestos.saldo, tipos_de_tramite.nombre AS nombreTramite, inmuebles.nomenclatura_catastral, inmuebles.valuacion_fiscal, items.nombre AS nombreItem, items.valor, items.porcentaje
+FROM presupuestos
+INNER JOIN items ON items.fk_id_presupuesto = presupuestos.id_presupuesto
+INNER JOIN tramites ON tramites.id_tramite = presupuestos.fk_id_tramite
+INNER JOIN inmuebles ON inmuebles.id_inmueble = tramites.fk_id_inmueble
+INNER JOIN tipos_de_tramite ON tipos_de_tramite.id_tipo_tramite = tramites.fk_id_tipo_tramite
+WHERE presupuestos.id_presupuesto = $P{idPresupuestoParam}]]>
+	</queryString>
+	<field name="id_presupuesto" class="java.lang.Integer"/>
+	<field name="fecha" class="java.sql.Date"/>
+	<field name="total" class="java.lang.Float"/>
+	<field name="saldo" class="java.lang.Float"/>
+	<field name="nombreTramite" class="java.lang.String"/>
+	<field name="nomenclatura_catastral" class="java.lang.String"/>
+	<field name="valuacion_fiscal" class="java.lang.String"/>
+	<field name="nombreItem" class="java.lang.String"/>
+	<field name="valor" class="java.lang.Float"/>
+	<field name="porcentaje" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="68" y="0" width="487" height="42"/>
+				<textElement>
+					<font fontName="SansSerif" size="24" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reporte Presupuesto p/Inmueble]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="163" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="130" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Número Presupuesto:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="91" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Emisión:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="38" width="51" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Trámite:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="73" width="130" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Inmueble]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="99" width="143" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Nomenclatura Catastral:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="121" width="143" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Valuación Fiscal:
+                ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="0" width="120" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_presupuesto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="51" y="38" width="410" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreTramite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="99" width="188" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomenclatura_catastral}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="121" width="188" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valuacion_fiscal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="41" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="21" width="200" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="21" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="21" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Porcentaje
+                ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="200" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreItem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porcentaje}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="11" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="64" splitType="Stretch">
+			<staticText>
+				<reportElement x="388" y="1" width="46" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total:
+                ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="33" width="46" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Saldo:
+                ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="434" y="33" width="121" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="434" y="0" width="121" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
