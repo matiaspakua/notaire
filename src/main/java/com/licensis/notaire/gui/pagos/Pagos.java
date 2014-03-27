@@ -84,14 +84,14 @@ public class Pagos extends javax.swing.JInternalFrame
             }
         });
 
-        botonRegistrarPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/pagos/registrarPagos.png"))); // NOI18N
+        botonRegistrarPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/pagos/registrarPagos.png"))); // NOI18N
         botonRegistrarPago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRegistrarPagoActionPerformed(evt);
             }
         });
 
-        botonConsultarPagos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/pagos/consultarPagos.png"))); // NOI18N
+        botonConsultarPagos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/pagos/consultarPagos.png"))); // NOI18N
         botonConsultarPagos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonConsultarPagosActionPerformed(evt);

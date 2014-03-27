@@ -87,7 +87,7 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
             }
         });
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.setIconTextGap(8);
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
@@ -99,7 +99,7 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Ver Historial de Gestión");
 
-        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarGestion.setText("Buscar");
         botonBuscarGestion.setIconTextGap(10);
         botonBuscarGestion.addActionListener(new java.awt.event.ActionListener() {
@@ -124,7 +124,7 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         ));
         jScrollPane1.setViewportView(grillaGestionesCliente);
 
-        botonImprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/impresora.png"))); // NOI18N
+        botonImprimirReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/impresora.png"))); // NOI18N
         botonImprimirReporte.setText("Imprimir");
         botonImprimirReporte.setIconTextGap(8);
         botonImprimirReporte.addActionListener(new java.awt.event.ActionListener() {

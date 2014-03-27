@@ -154,7 +154,7 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
         labelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelTitulo.setText("Lista Personas");
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

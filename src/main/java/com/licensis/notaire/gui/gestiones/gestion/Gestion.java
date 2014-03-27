@@ -91,21 +91,21 @@ public class Gestion extends javax.swing.JInternalFrame
             }
         });
 
-        botonIniciarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/gestion/iniciarGestion.png"))); // NOI18N
+        botonIniciarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion/iniciarGestion.png"))); // NOI18N
         botonIniciarGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIniciarGestionActionPerformed(evt);
             }
         });
 
-        botonVerHistorialGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/gestion/verHistorial.png"))); // NOI18N
+        botonVerHistorialGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion/verHistorial.png"))); // NOI18N
         botonVerHistorialGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonVerHistorialGestionActionPerformed(evt);
             }
         });
 
-        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/gestion/buscarGestion.png"))); // NOI18N
+        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion/buscarGestion.png"))); // NOI18N
         botonBuscarGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarGestionActionPerformed(evt);
@@ -118,14 +118,14 @@ public class Gestion extends javax.swing.JInternalFrame
 
         jLabel4.setText("Buscar Gestión");
 
-        botonArchivarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/gestion/archivarGestion.png"))); // NOI18N
+        botonArchivarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion/archivarGestion.png"))); // NOI18N
         botonArchivarGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonArchivarGestionActionPerformed(evt);
             }
         });
 
-        botonModificarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/gestion/modificarGestion.png"))); // NOI18N
+        botonModificarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion/modificarGestion.png"))); // NOI18N
         botonModificarGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarGestionActionPerformed(evt);

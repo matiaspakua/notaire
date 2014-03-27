@@ -210,7 +210,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
         labelTituloEscrituras.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelTituloEscrituras.setText("Lista Escrituras");
 
-        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonCancelar.setText("Cerrar");
         botonCancelar.setIconTextGap(8);
         botonCancelar.addActionListener(new java.awt.event.ActionListener() {

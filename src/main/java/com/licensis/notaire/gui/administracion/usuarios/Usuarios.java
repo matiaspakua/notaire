@@ -88,7 +88,7 @@ public class Usuarios extends javax.swing.JInternalFrame
             }
         });
 
-        botonDarAltaUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/usuarios/altaUsuario.png"))); // NOI18N
+        botonDarAltaUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/usuarios/altaUsuario.png"))); // NOI18N
         botonDarAltaUsuario.setToolTipText("Dar Alta Usuario");
         botonDarAltaUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +96,7 @@ public class Usuarios extends javax.swing.JInternalFrame
             }
         });
 
-        botonModificarUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/usuarios/modificarUsuario.png"))); // NOI18N
+        botonModificarUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/usuarios/modificarUsuario.png"))); // NOI18N
         botonModificarUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarUsuarioActionPerformed(evt);
@@ -107,7 +107,7 @@ public class Usuarios extends javax.swing.JInternalFrame
 
         jLabel2.setText("Modificar Usuario");
 
-        botonActividadesUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/usuarios/actividadesUsuario.png"))); // NOI18N
+        botonActividadesUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/usuarios/actividadesUsuario.png"))); // NOI18N
         botonActividadesUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonActividadesUsuarioActionPerformed(evt);

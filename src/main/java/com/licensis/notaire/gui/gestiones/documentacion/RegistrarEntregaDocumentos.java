@@ -307,7 +307,7 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
 
         jLabel2.setText("Buscar Gestión");
 
-        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarGestion.setText("Buscar");
         botonBuscarGestion.setIconTextGap(10);
         botonBuscarGestion.addActionListener(new java.awt.event.ActionListener() {

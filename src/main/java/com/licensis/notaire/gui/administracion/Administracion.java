@@ -103,7 +103,7 @@ public class Administracion extends javax.swing.JInternalFrame
             }
         });
 
-        botonAdministrarUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/usuarios.png"))); // NOI18N
+        botonAdministrarUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/usuarios.png"))); // NOI18N
         botonAdministrarUsuarios.setIconTextGap(0);
         botonAdministrarUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -111,35 +111,35 @@ public class Administracion extends javax.swing.JInternalFrame
             }
         });
 
-        botonAdministrarEscribanos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/escribanos.png"))); // NOI18N
+        botonAdministrarEscribanos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/escribanos.png"))); // NOI18N
         botonAdministrarEscribanos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarEscribanosActionPerformed(evt);
             }
         });
 
-        botonAdministrarTramites.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/tramites.png"))); // NOI18N
+        botonAdministrarTramites.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/tramites.png"))); // NOI18N
         botonAdministrarTramites.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarTramitesActionPerformed(evt);
             }
         });
 
-        botonAdministrarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/documentos.png"))); // NOI18N
+        botonAdministrarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/documentos.png"))); // NOI18N
         botonAdministrarDocumentos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarDocumentosActionPerformed(evt);
             }
         });
 
-        botonAdministrarConceptos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/conceptos.png"))); // NOI18N
+        botonAdministrarConceptos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/conceptos.png"))); // NOI18N
         botonAdministrarConceptos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarConceptosActionPerformed(evt);
             }
         });
 
-        botonAdministrarEstadosGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/estadosGestion.png"))); // NOI18N
+        botonAdministrarEstadosGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/estadosGestion.png"))); // NOI18N
         botonAdministrarEstadosGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarEstadosGestionActionPerformed(evt);
@@ -158,7 +158,7 @@ public class Administracion extends javax.swing.JInternalFrame
 
         jLabel6.setText("Estados de Gestión");
 
-        botonAdministrarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/folios/tiposDeFolio.png"))); // NOI18N
+        botonAdministrarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/folios/tiposDeFolio.png"))); // NOI18N
         botonAdministrarFolios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarFoliosActionPerformed(evt);
@@ -167,7 +167,7 @@ public class Administracion extends javax.swing.JInternalFrame
 
         jLabel7.setText("Tipos de Folio");
 
-        botonPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/plantillaPresupuesto.png"))); // NOI18N
+        botonPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/plantillaPresupuesto.png"))); // NOI18N
         botonPlantillaPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonPlantillaPresupuestoActionPerformed(evt);

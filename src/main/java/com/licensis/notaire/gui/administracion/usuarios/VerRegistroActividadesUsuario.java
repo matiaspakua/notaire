@@ -150,7 +150,7 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
         labelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelTitulo.setText("Registro de Actividades de Usuario :");
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.setIconTextGap(10);
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
@@ -211,7 +211,7 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
 
         jLabel3.setText("Desde");
 
-        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscar.setText("Buscar");
         botonBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

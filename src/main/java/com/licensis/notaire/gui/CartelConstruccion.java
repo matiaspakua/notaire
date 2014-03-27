@@ -33,7 +33,7 @@ public class CartelConstruccion extends javax.swing.JInternalFrame
         setClosable(true);
         setTitle("En construccion...");
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/programador.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/programador.png"))); // NOI18N
         jButton1.setContentAreaFilled(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N

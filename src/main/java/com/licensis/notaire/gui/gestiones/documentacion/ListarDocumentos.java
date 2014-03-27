@@ -133,7 +133,7 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Listar Documentos");
 
-        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/impresora.png"))); // NOI18N
+        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/impresora.png"))); // NOI18N
         botonImprimir.setText("Imprimir");
         botonImprimir.setIconTextGap(10);
         botonImprimir.addActionListener(new java.awt.event.ActionListener() {
@@ -142,7 +142,7 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
             }
         });
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

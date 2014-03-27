@@ -289,7 +289,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Registrar deudas documentos de Cliente\u0000");
 
-        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/impresora.png"))); // NOI18N
+        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/impresora.png"))); // NOI18N
         botonImprimir.setText("Imprimir");
         botonImprimir.setEnabled(false);
         botonImprimir.setIconTextGap(10);
@@ -308,7 +308,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
         jLabel2.setText("Buscar Gestion");
 
-        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarGestion.setText("Buscar");
         botonBuscarGestion.setIconTextGap(10);
         botonBuscarGestion.addActionListener(new java.awt.event.ActionListener() {

@@ -799,7 +799,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
     public void botonModoVista() {
         this.botonCancelar.setText("Cerrar");
-        this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png")));
+        this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png")));
     }
 
     public void botonModoEdicion() {
@@ -926,7 +926,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
         labelBusqueda.setText("Cliente");
 
-        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarCliente.setText("Buscar");
         botonBuscarCliente.setIconTextGap(10);
         botonBuscarCliente.addActionListener(new java.awt.event.ActionListener() {

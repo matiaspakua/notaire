@@ -144,7 +144,7 @@ public class ModificarCliente extends javax.swing.JInternalFrame
 
         jLabel8.setText("Buscar Persona:");
 
-        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarCliente.setText("Buscar");
         botonBuscarCliente.setIconTextGap(10);
         botonBuscarCliente.addActionListener(new java.awt.event.ActionListener() {

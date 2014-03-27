@@ -85,21 +85,21 @@ public class Escrituras extends javax.swing.JInternalFrame
             }
         });
 
-        botonPrepararEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/escrituras/prepararEscritura.png"))); // NOI18N
+        botonPrepararEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/escrituras/prepararEscritura.png"))); // NOI18N
         botonPrepararEscritura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonPrepararEscrituraActionPerformed(evt);
             }
         });
 
-        botonBuscarEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/escrituras/buscarEscritura.png"))); // NOI18N
+        botonBuscarEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/escrituras/buscarEscritura.png"))); // NOI18N
         botonBuscarEscritura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarEscrituraActionPerformed(evt);
             }
         });
 
-        botonModificarEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/gestiones/escrituras/modificarEscritura.png"))); // NOI18N
+        botonModificarEscritura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/escrituras/modificarEscritura.png"))); // NOI18N
         botonModificarEscritura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarEscrituraActionPerformed(evt);

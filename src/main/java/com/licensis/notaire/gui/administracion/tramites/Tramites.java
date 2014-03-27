@@ -85,14 +85,14 @@ public class Tramites extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/tramites/ingresarTipoTramite.png"))); // NOI18N
+        botonIngresarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/tramites/ingresarTipoTramite.png"))); // NOI18N
         botonIngresarTramite.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarTramiteActionPerformed(evt);
             }
         });
 
-        botonModificarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/tramites/modificarTipoTramite.png"))); // NOI18N
+        botonModificarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/tramites/modificarTipoTramite.png"))); // NOI18N
         botonModificarTramite.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarTramiteActionPerformed(evt);
@@ -103,7 +103,7 @@ public class Tramites extends javax.swing.JInternalFrame
 
         jLabel2.setText("<HTML>Modificar <BR>Tipo de Tramite </HTML>");
 
-        botonEliminarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/tramites/eliminarTipoTramite.png"))); // NOI18N
+        botonEliminarTramite.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/tramites/eliminarTipoTramite.png"))); // NOI18N
         botonEliminarTramite.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarTramiteActionPerformed(evt);

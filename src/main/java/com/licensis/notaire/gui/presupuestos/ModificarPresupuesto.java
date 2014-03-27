@@ -244,7 +244,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
         jLabel2.setText("Buscar Presupuesto:");
 
-        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarPresupuesto.setText("Buscar");
         botonBuscarPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,7 +256,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
         campoNombreTramite.setEditable(false);
 
-        botonAgregarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/agregar.png"))); // NOI18N
+        botonAgregarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/agregar.png"))); // NOI18N
         botonAgregarItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAgregarItemActionPerformed(evt);
@@ -281,7 +281,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             }
         });
 
-        botonCalcular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/presupuestos/actualizar.png"))); // NOI18N
+        botonCalcular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/presupuestos/actualizar.png"))); // NOI18N
         botonCalcular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonCalcularActionPerformed(evt);
@@ -326,7 +326,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         campoObservaciones.setRows(5);
         jScrollPane2.setViewportView(campoObservaciones);
 
-        botonEliminarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/borrar.png"))); // NOI18N
+        botonEliminarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/borrar.png"))); // NOI18N
         botonEliminarItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarItemActionPerformed(evt);

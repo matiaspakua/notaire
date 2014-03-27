@@ -138,7 +138,7 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
         jLabel3.setFont(new java.awt.Font("DejaVu Sans", 1, 12)); // NOI18N
         jLabel3.setText("Período Licencia:");
 
-        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionarActionPerformed(evt);
@@ -179,7 +179,7 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
 
         labelMensajeSuplencia.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        botonDeseleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/borrar.png"))); // NOI18N
+        botonDeseleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/borrar.png"))); // NOI18N
         botonDeseleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDeseleccionarActionPerformed(evt);

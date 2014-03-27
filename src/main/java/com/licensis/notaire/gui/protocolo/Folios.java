@@ -83,14 +83,14 @@ public class Folios extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/protocolo/folios/ingresarFolios.png"))); // NOI18N
+        botonIngresarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/protocolo/folios/ingresarFolios.png"))); // NOI18N
         botonIngresarFolios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarFoliosActionPerformed(evt);
             }
         });
 
-        botonModificarFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/protocolo/folios/modificarFolio.png"))); // NOI18N
+        botonModificarFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/protocolo/folios/modificarFolio.png"))); // NOI18N
         botonModificarFolio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarFolioActionPerformed(evt);

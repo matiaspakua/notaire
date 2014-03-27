@@ -131,7 +131,7 @@ public class ModificarEstadoGestion extends javax.swing.JInternalFrame
         listaEstadosDisponibles.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(listaEstadosDisponibles);
 
-        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionarActionPerformed(evt);

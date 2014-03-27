@@ -85,14 +85,14 @@ public class Conceptos extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/conceptos/nuevoConcepto.png"))); // NOI18N
+        botonIngresarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/conceptos/nuevoConcepto.png"))); // NOI18N
         botonIngresarConcepto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarConceptoActionPerformed(evt);
             }
         });
 
-        botonModificarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/conceptos/modificarConcepto.png"))); // NOI18N
+        botonModificarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/conceptos/modificarConcepto.png"))); // NOI18N
         botonModificarConcepto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarConceptoActionPerformed(evt);
@@ -103,7 +103,7 @@ public class Conceptos extends javax.swing.JInternalFrame
 
         jLabel2.setText("Modificar Concepto");
 
-        botonEliminarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/conceptos/eliminarConcepto.png"))); // NOI18N
+        botonEliminarConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/conceptos/eliminarConcepto.png"))); // NOI18N
         botonEliminarConcepto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarConceptoActionPerformed(evt);

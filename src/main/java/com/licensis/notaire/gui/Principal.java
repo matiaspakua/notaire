@@ -186,7 +186,7 @@ public class Principal extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Notaire");
 
-        botonModuloClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraClientes.png"))); // NOI18N
+        botonModuloClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraClientes.png"))); // NOI18N
         botonModuloClientes.setText("Clientes");
         botonModuloClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloClientes.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -200,7 +200,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloPresupuestos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraPresup.png"))); // NOI18N
+        botonModuloPresupuestos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraPresup.png"))); // NOI18N
         botonModuloPresupuestos.setText("Presupuestos");
         botonModuloPresupuestos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloPresupuestos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -213,7 +213,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloGestiones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraGestion.png"))); // NOI18N
+        botonModuloGestiones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraGestion.png"))); // NOI18N
         botonModuloGestiones.setText("Gestiones");
         botonModuloGestiones.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloGestiones.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -226,7 +226,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloProtocolo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraProt.png"))); // NOI18N
+        botonModuloProtocolo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraProt.png"))); // NOI18N
         botonModuloProtocolo.setText("Protocolo");
         botonModuloProtocolo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloProtocolo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -239,7 +239,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraSalir.png"))); // NOI18N
+        botonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraSalir.png"))); // NOI18N
         botonSalir.setText("Salir");
         botonSalir.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonSalir.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -251,7 +251,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloAdministracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraAdmin.png"))); // NOI18N
+        botonModuloAdministracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraAdmin.png"))); // NOI18N
         botonModuloAdministracion.setText("Administración");
         botonModuloAdministracion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloAdministracion.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -264,7 +264,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloPagos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/barraPagos.png"))); // NOI18N
+        botonModuloPagos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/barraPagos.png"))); // NOI18N
         botonModuloPagos.setText("Pagos");
         botonModuloPagos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloPagos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -277,7 +277,7 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/barraLateral/logoPalabraRojoVertical.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/barraLateral/logoPalabraRojoVertical.png"))); // NOI18N
         jButton1.setContentAreaFilled(false);
 
         javax.swing.GroupLayout ModulosLayout = new javax.swing.GroupLayout(Modulos);

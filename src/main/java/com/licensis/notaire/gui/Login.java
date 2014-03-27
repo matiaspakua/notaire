@@ -97,7 +97,7 @@ public class Login extends javax.swing.JFrame
         });
 
         botonImagen.setBackground(new java.awt.Color(0, 51, 102));
-        botonImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/logoRojoPalabra.png"))); // NOI18N
+        botonImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/logoRojoPalabra.png"))); // NOI18N
         botonImagen.setBorder(null);
         botonImagen.setBorderPainted(false);
         botonImagen.setContentAreaFilled(false);

@@ -119,7 +119,7 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
             }
         });
 
-        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionarActionPerformed(evt);

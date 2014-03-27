@@ -85,14 +85,14 @@ public class Documentos extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/documentos/ingresarDocumento.png"))); // NOI18N
+        botonIngresarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/documentos/ingresarDocumento.png"))); // NOI18N
         botonIngresarDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarDocumentoActionPerformed(evt);
             }
         });
 
-        botonModificarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/documentos/modificarDocumento.png"))); // NOI18N
+        botonModificarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/documentos/modificarDocumento.png"))); // NOI18N
         botonModificarDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarDocumentoActionPerformed(evt);
@@ -103,7 +103,7 @@ public class Documentos extends javax.swing.JInternalFrame
 
         jLabel2.setText("<HTML>Modificar Tipo<BR>de Documento</HTML>");
 
-        botonEliminarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/administracion/documentos/eliminarDocumento.png"))); // NOI18N
+        botonEliminarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/documentos/eliminarDocumento.png"))); // NOI18N
         botonEliminarDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarDocumentoActionPerformed(evt);

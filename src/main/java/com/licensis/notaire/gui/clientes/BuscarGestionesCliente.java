@@ -291,7 +291,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
         grillaGestionesCliente.getColumnModel().getColumn(7).setMaxWidth(0);
         grillaGestionesCliente.getColumnModel().getColumn(7).setMinWidth(0);
 
-        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarCliente.setText("Buscar");
         botonBuscarCliente.setIconTextGap(10);
         botonBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -300,7 +300,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
             }
         });
 
-        botonAceptar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/cerrar.png"))); // NOI18N
+        botonAceptar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
         botonAceptar.setText("Cerrar");
         botonAceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

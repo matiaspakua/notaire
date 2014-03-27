@@ -177,14 +177,14 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         ));
         jScrollPane3.setViewportView(grillaClientesAsociados);
 
-        botonQuitarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/borrar.png"))); // NOI18N
+        botonQuitarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/borrar.png"))); // NOI18N
         botonQuitarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonQuitarClienteActionPerformed(evt);
             }
         });
 
-        botonAsociarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/agregar.png"))); // NOI18N
+        botonAsociarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/agregar.png"))); // NOI18N
         botonAsociarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAsociarClienteActionPerformed(evt);
@@ -236,7 +236,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
         jLabel2.setText("Buscar Presupuesto:");
 
-        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/licensis/notaire/gui/iconos/buscar.png"))); // NOI18N
+        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
         botonBuscarPresupuesto.setText("Buscar");
         botonBuscarPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
