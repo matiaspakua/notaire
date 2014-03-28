@@ -86,14 +86,14 @@ public class Inscripciones extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarParaInscribir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/inscripciones/ingresarInscribir.png"))); // NOI18N
+        botonIngresarParaInscribir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/inscripciones/ingresarInscribir.png"))); // NOI18N
         botonIngresarParaInscribir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarParaInscribirActionPerformed(evt);
             }
         });
 
-        botonRegistrarReingreso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/inscripciones/registrarReingresoInscripcion.png"))); // NOI18N
+        botonRegistrarReingreso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/inscripciones/registrarReingresoInscripcion.png"))); // NOI18N
         botonRegistrarReingreso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRegistrarReingresoActionPerformed(evt);
@@ -105,7 +105,7 @@ public class Inscripciones extends javax.swing.JInternalFrame
 
         jLabel2.setText("Registrar Reingreso");
 
-        botonRegistrarInscripcion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/inscripciones/registrarInscripcion.png"))); // NOI18N
+        botonRegistrarInscripcion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/inscripciones/registrarInscripcion.png"))); // NOI18N
         botonRegistrarInscripcion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRegistrarInscripcionActionPerformed(evt);

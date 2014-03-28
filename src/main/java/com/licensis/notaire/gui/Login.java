@@ -5,19 +5,18 @@
 package com.licensis.notaire.gui;
 
 import com.licensis.notaire.dto.DtoUsuario;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.AdministradorSesion;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import com.licensis.notaire.servicios.AdministradorJpa;
-import com.licensis.notaire.servicios.AdministradorSesion;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -37,7 +36,7 @@ public class Login extends javax.swing.JFrame
      */
     public Login() {
         initComponents();
-
+        BasicConfigurator.configure();
 //        barraProgreso = new BarraProgreso();
 //        barraProgreso.setEnabled(true);
 //        barraProgreso.repaint();
@@ -97,7 +96,7 @@ public class Login extends javax.swing.JFrame
         });
 
         botonImagen.setBackground(new java.awt.Color(0, 51, 102));
-        botonImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/logoRojoPalabra.png"))); // NOI18N
+        botonImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/logoRojoPalabra.png"))); // NOI18N
         botonImagen.setBorder(null);
         botonImagen.setBorderPainted(false);
         botonImagen.setContentAreaFilled(false);

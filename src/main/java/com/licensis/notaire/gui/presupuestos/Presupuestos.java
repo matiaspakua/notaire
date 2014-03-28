@@ -85,14 +85,14 @@ public class Presupuestos extends javax.swing.JInternalFrame
             }
         });
 
-        botonCrearPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/presupuestos/crearPresupuesto.png"))); // NOI18N
+        botonCrearPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/presupuestos/crearPresupuesto.png"))); // NOI18N
         botonCrearPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonCrearPresupuestoActionPerformed(evt);
             }
         });
 
-        botonModificarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/presupuestos/modificarPresupuesto.png"))); // NOI18N
+        botonModificarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/presupuestos/modificarPresupuesto.png"))); // NOI18N
         botonModificarPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarPresupuestoActionPerformed(evt);
@@ -103,7 +103,7 @@ public class Presupuestos extends javax.swing.JInternalFrame
 
         jLabel2.setText("Buscar Presupuesto");
 
-        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/presupuestos/buscarPresupuesto.png"))); // NOI18N
+        botonBuscarPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/presupuestos/buscarPresupuesto.png"))); // NOI18N
         botonBuscarPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarPresupuestoActionPerformed(evt);

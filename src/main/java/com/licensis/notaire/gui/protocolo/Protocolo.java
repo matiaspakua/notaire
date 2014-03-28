@@ -85,21 +85,21 @@ public class Protocolo extends javax.swing.JInternalFrame
             }
         });
 
-        botonAdministrarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/protocolo/folios.png"))); // NOI18N
+        botonAdministrarFolios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/protocolo/folios.png"))); // NOI18N
         botonAdministrarFolios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarFoliosActionPerformed(evt);
             }
         });
 
-        botonDDJJ.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/protocolo/generarDDJJ.png"))); // NOI18N
+        botonDDJJ.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/protocolo/generarDDJJ.png"))); // NOI18N
         botonDDJJ.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDDJJActionPerformed(evt);
             }
         });
 
-        botonIndices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/protocolo/generarIndices.png"))); // NOI18N
+        botonIndices.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/protocolo/generarIndices.png"))); // NOI18N
         botonIndices.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIndicesActionPerformed(evt);

@@ -89,7 +89,7 @@ public class Escribanos extends javax.swing.JInternalFrame
             }
         });
 
-        botonDarAltaEscribano.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/escribanos/altaEscribano.png"))); // NOI18N
+        botonDarAltaEscribano.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/escribanos/altaEscribano.png"))); // NOI18N
         botonDarAltaEscribano.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDarAltaEscribanoActionPerformed(evt);
@@ -98,7 +98,7 @@ public class Escribanos extends javax.swing.JInternalFrame
 
         jLabel1.setText("Dar Alta Escribano");
 
-        botonRegistrarSuplencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/escribanos/registrarSuplencia.png"))); // NOI18N
+        botonRegistrarSuplencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/escribanos/registrarSuplencia.png"))); // NOI18N
         botonRegistrarSuplencia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRegistrarSuplenciaActionPerformed(evt);
@@ -107,7 +107,7 @@ public class Escribanos extends javax.swing.JInternalFrame
 
         jLabel2.setText("Registrar Suplencia");
 
-        botonModificarEscribano.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/escribanos/modificarEscribano.png"))); // NOI18N
+        botonModificarEscribano.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/escribanos/modificarEscribano.png"))); // NOI18N
         botonModificarEscribano.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarEscribanoActionPerformed(evt);
@@ -116,7 +116,7 @@ public class Escribanos extends javax.swing.JInternalFrame
 
         jLabel3.setText("Modificar Escribano");
 
-        botonConsultarSuplencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/escribanos/consultarSuplencias.png"))); // NOI18N
+        botonConsultarSuplencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/escribanos/consultarSuplencias.png"))); // NOI18N
         botonConsultarSuplencias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonConsultarSuplenciasActionPerformed(evt);

@@ -83,14 +83,14 @@ public class EstadosDeGestion extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarEstado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/estadosGestion/ingresarEstado.png"))); // NOI18N
+        botonIngresarEstado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/estadosGestion/ingresarEstado.png"))); // NOI18N
         botonIngresarEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarEstadoActionPerformed(evt);
             }
         });
 
-        botonModificarEstado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/estadosGestion/modificarEstado.png"))); // NOI18N
+        botonModificarEstado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/estadosGestion/modificarEstado.png"))); // NOI18N
         botonModificarEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarEstadoActionPerformed(evt);

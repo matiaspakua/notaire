@@ -125,7 +125,7 @@ public class BuscarGestion extends javax.swing.JInternalFrame
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Buscar Gestión");
 
-        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
+        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/buscar.png"))); // NOI18N
         botonBuscar.setText("Buscar");
         botonBuscar.setIconTextGap(10);
         botonBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -134,7 +134,7 @@ public class BuscarGestion extends javax.swing.JInternalFrame
             }
         });
 
-        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
+        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png"))); // NOI18N
         botonCancelar.setText("Cerrar");
         botonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

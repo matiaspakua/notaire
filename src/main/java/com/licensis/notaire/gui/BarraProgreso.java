@@ -74,7 +74,7 @@ public class BarraProgreso extends javax.swing.JFrame
         labelEstado.setFont(new java.awt.Font("BPG Sans GPL&GNU", 1, 36)); // NOI18N
         labelEstado.setText("Cargando...");
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/logoLetraRojo.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/logoLetraRojo.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

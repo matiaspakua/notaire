@@ -35,7 +35,7 @@
       <property name="hibernate.connection.username" value="root"/>
       <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
       <property name="hibernate.connection.password" value="lapassword"/>
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/notaire"/>
+      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/notaire?zeroDateTimeBehavior=convertToNull"/>
     </properties>
   </persistence-unit>
 </persistence>

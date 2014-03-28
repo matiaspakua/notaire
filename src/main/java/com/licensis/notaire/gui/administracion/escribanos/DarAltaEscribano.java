@@ -138,7 +138,7 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
             }
         });
 
-        botonBuscarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
+        botonBuscarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/buscar.png"))); // NOI18N
         botonBuscarPersona.setText("Buscar");
         botonBuscarPersona.setIconTextGap(10);
         botonBuscarPersona.addActionListener(new java.awt.event.ActionListener() {

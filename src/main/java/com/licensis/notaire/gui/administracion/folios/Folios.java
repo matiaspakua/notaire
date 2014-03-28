@@ -86,7 +86,7 @@ public class Folios extends javax.swing.JInternalFrame
             }
         });
 
-        botonIngresarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/folios/ingresarTipoDeFolio.png"))); // NOI18N
+        botonIngresarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/folios/ingresarTipoDeFolio.png"))); // NOI18N
         botonIngresarTipoDeFolio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarTipoDeFolioActionPerformed(evt);
@@ -95,14 +95,14 @@ public class Folios extends javax.swing.JInternalFrame
 
         jLabel1.setText("Ingresar Tipo de Folio");
 
-        botonModificarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/folios/modificarTipoDeFolio.png"))); // NOI18N
+        botonModificarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/folios/modificarTipoDeFolio.png"))); // NOI18N
         botonModificarTipoDeFolio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarTipoDeFolioActionPerformed(evt);
             }
         });
 
-        botonEliminarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/folios/eliminarTipoDeFolio.png"))); // NOI18N
+        botonEliminarTipoDeFolio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/folios/eliminarTipoDeFolio.png"))); // NOI18N
         botonEliminarTipoDeFolio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarTipoDeFolioActionPerformed(evt);

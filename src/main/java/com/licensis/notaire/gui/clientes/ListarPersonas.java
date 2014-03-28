@@ -333,7 +333,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         grillaPersonas.getColumnModel().getColumn(6).setMaxWidth(0);
         grillaPersonas.getColumnModel().getColumn(6).setMinWidth(0);
 
-        botonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
+        botonSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png"))); // NOI18N
         botonSalir.setText("Cerrar");
         botonSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

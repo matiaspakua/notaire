@@ -96,28 +96,28 @@ public class Documentacion extends javax.swing.JInternalFrame
 
         jLabel6.setText("<HTML>Registrar Ingreso <BR>Documentacion<BR>Cliente</HTML>");
 
-        botonIngresarDocumentosEntidadesExternas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/ingresarDocumentos.png"))); // NOI18N
+        botonIngresarDocumentosEntidadesExternas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/ingresarDocumentos.png"))); // NOI18N
         botonIngresarDocumentosEntidadesExternas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarDocumentosEntidadesExternasActionPerformed(evt);
             }
         });
 
-        botonConsultarDeudas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/consultarDeudas.png"))); // NOI18N
+        botonConsultarDeudas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/consultarDeudas.png"))); // NOI18N
         botonConsultarDeudas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonConsultarDeudasActionPerformed(evt);
             }
         });
 
-        botonListarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/listarDocumentos.png"))); // NOI18N
+        botonListarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/listarDocumentos.png"))); // NOI18N
         botonListarDocumentos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonListarDocumentosActionPerformed(evt);
             }
         });
 
-        botonReingresarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/reingresarDocumentos.png"))); // NOI18N
+        botonReingresarDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/reingresarDocumentos.png"))); // NOI18N
         botonReingresarDocumentos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonReingresarDocumentosActionPerformed(evt);
@@ -130,7 +130,7 @@ public class Documentacion extends javax.swing.JInternalFrame
 
         jLabel1.setText("Listar Documentos");
 
-        botonConsultarVencimientos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/consultarVencimientos.png"))); // NOI18N
+        botonConsultarVencimientos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/consultarVencimientos.png"))); // NOI18N
         botonConsultarVencimientos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonConsultarVencimientosActionPerformed(evt);
@@ -139,7 +139,7 @@ public class Documentacion extends javax.swing.JInternalFrame
 
         jLabel5.setText("<HTML>Reingresar Documentos<BR>Entidades Externas</HTML>");
 
-        botonRegistrarEntregaDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion/entregaDocumentacion.png"))); // NOI18N
+        botonRegistrarEntregaDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion/entregaDocumentacion.png"))); // NOI18N
         botonRegistrarEntregaDocumentos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRegistrarEntregaDocumentosActionPerformed(evt);

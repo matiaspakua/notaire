@@ -86,21 +86,21 @@ public class Testimonios extends javax.swing.JInternalFrame
             }
         });
 
-        botonGenerarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/testimonios/generarTestimonio.png"))); // NOI18N
+        botonGenerarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/testimonios/generarTestimonio.png"))); // NOI18N
         botonGenerarTestimonio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonGenerarTestimonioActionPerformed(evt);
             }
         });
 
-        botonVerificarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/testimonios/verificarTestimonio.png"))); // NOI18N
+        botonVerificarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/testimonios/verificarTestimonio.png"))); // NOI18N
         botonVerificarTestimonio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonVerificarTestimonioActionPerformed(evt);
             }
         });
 
-        botonRetirarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/testimonios/retirarTestimonio.png"))); // NOI18N
+        botonRetirarTestimonio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/testimonios/retirarTestimonio.png"))); // NOI18N
         botonRetirarTestimonio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonRetirarTestimonioActionPerformed(evt);

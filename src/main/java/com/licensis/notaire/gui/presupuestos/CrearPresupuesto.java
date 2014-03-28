@@ -293,7 +293,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
         campoCorreo.setEditable(false);
 
-        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
+        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/buscar.png"))); // NOI18N
         botonBuscarCliente.setText("Buscar");
         botonBuscarCliente.setIconTextGap(10);
         botonBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -305,7 +305,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         listaTramites.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(listaTramites);
 
-        botonSeleccionar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionar2ActionPerformed(evt);

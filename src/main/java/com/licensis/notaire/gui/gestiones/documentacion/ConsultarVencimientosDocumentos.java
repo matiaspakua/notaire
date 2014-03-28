@@ -170,7 +170,7 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel1.setText("Consultar Vencimientos de Documentos");
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -203,7 +203,7 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
         });
         jScrollPane1.setViewportView(grillaDocumentosPorVencer);
 
-        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/impresora.png"))); // NOI18N
+        botonImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/impresora.png"))); // NOI18N
         botonImprimir.setText("Imprimir");
         botonImprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

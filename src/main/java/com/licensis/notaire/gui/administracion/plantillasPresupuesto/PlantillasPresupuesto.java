@@ -85,7 +85,7 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
             }
         });
 
-        botonCrearPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/presupuestos/crearPlantillaPresupuesto.png"))); // NOI18N
+        botonCrearPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/presupuestos/crearPlantillaPresupuesto.png"))); // NOI18N
         botonCrearPlantillaPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonCrearPlantillaPresupuestoActionPerformed(evt);
@@ -94,7 +94,7 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
 
         jLabel1.setText("<HTML>Crear Plantilla<BR>Presupuesto</HTML>");
 
-        botonModificarPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/presupuestos/modificarPlantillaPresupuesto.png"))); // NOI18N
+        botonModificarPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/presupuestos/modificarPlantillaPresupuesto.png"))); // NOI18N
         botonModificarPlantillaPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonModificarPlantillaPresupuestoActionPerformed(evt);
@@ -103,7 +103,7 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
 
         jLabel2.setText("<HTML>Modificar Plantilla<BR>Presupuesto</HTML>");
 
-        botonEliminarrPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/administracion/presupuestos/eliminarPlantillaPresupuesto.png"))); // NOI18N
+        botonEliminarrPlantillaPresupuesto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/administracion/presupuestos/eliminarPlantillaPresupuesto.png"))); // NOI18N
         botonEliminarrPlantillaPresupuesto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonEliminarrPlantillaPresupuestoActionPerformed(evt);

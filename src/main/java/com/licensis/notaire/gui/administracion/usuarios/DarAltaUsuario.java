@@ -274,7 +274,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
 
         labelBusqueda.setText("Buscar Persona:");
 
-        botonBuscarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
+        botonBuscarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/buscar.png"))); // NOI18N
         botonBuscarPersona.setText("Buscar");
         botonBuscarPersona.setIconTextGap(10);
         botonBuscarPersona.addActionListener(new java.awt.event.ActionListener() {
@@ -315,7 +315,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
 
         checkHabilitado.setText("Habilitado");
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/tarjeta usuario.png"))); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/tarjeta usuario.png"))); // NOI18N
 
         campoContrasenia.setText("jPasswordField1");
 

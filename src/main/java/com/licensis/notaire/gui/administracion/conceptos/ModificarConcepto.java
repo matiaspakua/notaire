@@ -110,7 +110,7 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
 
         jScrollPane3.setViewportView(listaConceptosDisponibles);
 
-        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionarActionPerformed(evt);

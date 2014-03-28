@@ -131,7 +131,7 @@ public class BuscarCliente extends javax.swing.JInternalFrame
 
         jLabel5.setText("Número Ident.:");
 
-        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
+        botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png"))); // NOI18N
         botonCancelar.setText("Cerrar");
         botonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

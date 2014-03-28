@@ -93,35 +93,35 @@ public class Gestiones extends javax.swing.JInternalFrame
             }
         });
 
-        botonAdministrarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/gestion.png"))); // NOI18N
+        botonAdministrarGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/gestion.png"))); // NOI18N
         botonAdministrarGestion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarGestionActionPerformed(evt);
             }
         });
 
-        botonAdministrarDocumentacion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/documentacion.png"))); // NOI18N
+        botonAdministrarDocumentacion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/documentacion.png"))); // NOI18N
         botonAdministrarDocumentacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarDocumentacionActionPerformed(evt);
             }
         });
 
-        botonAdministrarEscrituras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/escrituras.png"))); // NOI18N
+        botonAdministrarEscrituras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/escrituras.png"))); // NOI18N
         botonAdministrarEscrituras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarEscriturasActionPerformed(evt);
             }
         });
 
-        botonAdministrarTestimonios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/testimonios.png"))); // NOI18N
+        botonAdministrarTestimonios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/testimonios.png"))); // NOI18N
         botonAdministrarTestimonios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarTestimoniosActionPerformed(evt);
             }
         });
 
-        botonAdministrarInscripciones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/gestiones/inscripciones.png"))); // NOI18N
+        botonAdministrarInscripciones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestiones/inscripciones.png"))); // NOI18N
         botonAdministrarInscripciones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonAdministrarInscripcionesActionPerformed(evt);

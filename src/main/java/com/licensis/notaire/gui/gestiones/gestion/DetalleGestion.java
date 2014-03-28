@@ -240,7 +240,7 @@ public class DetalleGestion extends javax.swing.JInternalFrame
         labelNrogestion.setText("Nombre");
         labelNrogestion.setBorder(null);
 
-        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/cerrar.png"))); // NOI18N
+        botonCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png"))); // NOI18N
         botonCerrar.setText("Cerrar");
         botonCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

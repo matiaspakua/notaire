@@ -99,7 +99,7 @@ public class Clientes extends javax.swing.JInternalFrame
             }
         });
 
-        botonDarAltaPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/altaPersona.png"))); // NOI18N
+        botonDarAltaPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/altaPersona.png"))); // NOI18N
         botonDarAltaPersona.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDarAltaPersonaActionPerformed(evt);
@@ -108,7 +108,7 @@ public class Clientes extends javax.swing.JInternalFrame
 
         jLabel1.setText("Dar Alta Persona");
 
-        botonModificarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/modificarPersona.png"))); // NOI18N
+        botonModificarPersona.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/modificarPersona.png"))); // NOI18N
         botonModificarPersona.setToolTipText("Modificar Persona");
         botonModificarPersona.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -116,7 +116,7 @@ public class Clientes extends javax.swing.JInternalFrame
             }
         });
 
-        botonDarAltaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/altaCliente.png"))); // NOI18N
+        botonDarAltaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/altaCliente.png"))); // NOI18N
         botonDarAltaCliente.setToolTipText("Dar Alta Cliente");
         botonDarAltaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,7 +128,7 @@ public class Clientes extends javax.swing.JInternalFrame
 
         jLabel3.setText("Dar Alta Cliente");
 
-        botonModificarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/modificarCliente.png"))); // NOI18N
+        botonModificarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/modificarCliente.png"))); // NOI18N
         botonModificarCliente.setToolTipText("Modificar Cliente");
         botonModificarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,7 +138,7 @@ public class Clientes extends javax.swing.JInternalFrame
 
         jLabel4.setText("Modificar Cliente");
 
-        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/buscarCliente.png"))); // NOI18N
+        botonBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/buscarCliente.png"))); // NOI18N
         botonBuscarCliente.setToolTipText("Buscar Cliente");
         botonBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -148,7 +148,7 @@ public class Clientes extends javax.swing.JInternalFrame
 
         jLabel5.setText("Buscar Cliente");
 
-        botonBuscarGestionesCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/buscarGestionesCliente.png"))); // NOI18N
+        botonBuscarGestionesCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/buscarGestionesCliente.png"))); // NOI18N
         botonBuscarGestionesCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarGestionesClienteActionPerformed(evt);
@@ -157,7 +157,7 @@ public class Clientes extends javax.swing.JInternalFrame
 
         jLabel6.setText("Buscar Gestiones Cliente");
 
-        botonPersonasClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/clientes/buscarPersonasClientes.png"))); // NOI18N
+        botonPersonasClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/clientes/buscarPersonasClientes.png"))); // NOI18N
         botonPersonasClientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonPersonasClientesActionPerformed(evt);

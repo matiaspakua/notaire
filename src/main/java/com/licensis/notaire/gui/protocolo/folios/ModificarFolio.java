@@ -201,7 +201,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         });
 
         botonBuscar.setForeground(new java.awt.Color(26, 83, 143));
-        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/buscar.png"))); // NOI18N
+        botonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/buscar.png"))); // NOI18N
         botonBuscar.setText("Buscar");
         botonBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -213,7 +213,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame
 
         campoFoliosSeleccionado.setEditable(false);
 
-        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/src/main/resources/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/aceptar.png"))); // NOI18N
         botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSeleccionarActionPerformed(evt);
