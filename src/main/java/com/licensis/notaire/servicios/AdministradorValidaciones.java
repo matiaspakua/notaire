@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.servicios;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 import com.licensis.notaire.dto.DtoDocumentoPresentado;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.administracion.conceptos.IngresarConcepto;
@@ -15,16 +14,16 @@ import com.licensis.notaire.gui.administracion.usuarios.DarAltaUsuario;
 import com.licensis.notaire.gui.administracion.usuarios.ModificarUsuario;
 import com.licensis.notaire.gui.clientes.AdministrarCliente;
 import com.licensis.notaire.gui.clientes.DarAltaPersona;
+import com.licensis.notaire.jpa.UsuarioJpaController;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.negocio.Usuario;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.licensis.notaire.jpa.UsuarioJpaController;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.negocio.Usuario;
 
 /**
  * Clase que reune la mayoria de los metodos de validaciones requeridos en distintas etapas y capas
