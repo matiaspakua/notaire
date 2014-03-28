@@ -10,13 +10,14 @@ import com.licensis.notaire.servicios.AdministradorSesion;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  *
@@ -30,17 +31,17 @@ public class Login extends javax.swing.JFrame
     private Task task;
     private static final long serialVersionUID = 1L;
     private Principal formPrincipal = null;
-
+    
+    private final static Logger logger = Logger.getLogger("test");
     /**
      * Creates new form login
      */
     public Login() {
-        initComponents();
-        BasicConfigurator.configure();
-//        barraProgreso = new BarraProgreso();
-//        barraProgreso.setEnabled(true);
-//        barraProgreso.repaint();
-
+        initComponents();        
+        
+        // Configuración del logger.
+        PropertyConfigurator.configure("log4j.properties");        
+        
         AdministradorJpa.getInstancia();
         grupo.setBorder(BorderFactory.createTitledBorder("Login"));
 
