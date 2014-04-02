@@ -44,7 +44,7 @@ public interface ConstantesGui
     //  Tipos de folios
     public String INGRESAR_NUEVO_TIPO_FOLIO = "Ingresar nuevo tipo de folio";
     public String MODIFICAR_TIPO_FOLIO = "Modificar tipo de folio";
-    public String ELIMINAR_TIPO_FOLIO = "Eliminar tipo de folio";    
+    public String ELIMINAR_TIPO_FOLIO = "Eliminar tipo de folio";
     public String INGRESAR_NUEVOS_FOLIOS = "Ingresar nuevos folios";
     public String MODIFICAR_FOLIO = "Modificar Folio";
     public String FOLIO_PROTOCOLO_PRINCIPAL = "Principal";
@@ -54,7 +54,7 @@ public interface ConstantesGui
     public String INGRESAR_NUEVO_TIPO_DE_TRAMITE = "Ingresar nuevo tipo de tramite";
     public String INGRESAR_NUEVA_PLANTILLA_TRAMITE = "Ingresar Nueva Plantilla de tramite";
     public String MODIFICAR_TIPO_DE_TRAMITE = "Modifica tipo de tramite";
-    public String MODIFICAR_PLANTILLA_TRAMITE = "Modificar plantilla de tramite"; 
+    public String MODIFICAR_PLANTILLA_TRAMITE = "Modificar plantilla de tramite";
     public String ELIMINAR_TIPO_DE_TRAMITE = "Eliminar tipo de tramite";
     public String ELIMINAR_PLANTILLA_TRAMITE = "Eliminar plantilla de tramite";
     //  Constantes Gestion
@@ -107,20 +107,20 @@ public interface ConstantesGui
     public String ELIMINAR_PLANTILLA_DE_PRESUPUESTO = "Eliminar plantilla de presupuesto";
     // Usuario Administrador
     public String ADMINISTRADOR = "Administrador";
-    
+
     //Error de campo
     public String CAMPO_FECHA_INGRESO = "Fecha de ingreso";
-       public String CAMPO_FECHA_REINGRESO = "Fecha de reigreso";
+    public String CAMPO_FECHA_REINGRESO = "Fecha de reigreso";
     public String CAMPO_FECHA_SALIDA = "Fecha de salida";
     public String CAMPO_FECHA_PAGO = "Fecha de pago";
     public String CAMPO_FECHA_lIBERACION = "Fecha de liberacion";
-    public String CAMPO_PREPARADO= "Preparado";
+    public String CAMPO_PREPARADO = "Preparado";
     public String CAMPO_NRO_CARTON = "Nro Carton";
     public String CAMPO_OBERVADO = "Observado";
-    public String CAMPO_IMPORTE= "Importe";
+    public String CAMPO_IMPORTE = "Importe";
     public String CAMPO_OBSERVACIONES = "Observaciones";
     public String CAMPO_NOMBRE = "Nombre";
     public String CAMPO_LIBERADO = "Liberado";
-   public String CAMPO_FECHA_VENCIMIENTO = "Fecha Vencimiento";
-      public String CAMPO_DIAS_VENCIMIENTO = "Dias Vencimiento";
+    public String CAMPO_FECHA_VENCIMIENTO = "Fecha Vencimiento";
+    public String CAMPO_DIAS_VENCIMIENTO = "Dias Vencimiento";
 }

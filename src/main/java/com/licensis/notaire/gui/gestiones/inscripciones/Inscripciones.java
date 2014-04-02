@@ -23,11 +23,13 @@ public class Inscripciones extends javax.swing.JInternalFrame
     /**
      * Creates new form Inscripciones
      */
-    private Inscripciones() {
+    private Inscripciones()
+    {
         initComponents();
     }
 
-    public static Inscripciones getInstancia() {
+    public static Inscripciones getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Inscripciones();
@@ -38,15 +40,18 @@ public class Inscripciones extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Inscripciones.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuInscripciones() {
+    public static JMenuItem getSubmenuInscripciones()
+    {
         return submenuInscripciones;
     }
 

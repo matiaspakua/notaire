@@ -9,7 +9,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,13 +34,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tipos_de_documento")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TipoDeDocumento.findAll", query = "SELECT t FROM TipoDeDocumento t"),
-    @NamedQuery(name = "TipoDeDocumento.findByIdTipoDocumento", query = "SELECT t FROM TipoDeDocumento t WHERE t.idTipoDocumento = :idTipoDocumento"),
-    @NamedQuery(name = "TipoDeDocumento.findByVence", query = "SELECT t FROM TipoDeDocumento t WHERE t.vence = :vence"),
-    @NamedQuery(name = "TipoDeDocumento.findByDiasVencimiento", query = "SELECT t FROM TipoDeDocumento t WHERE t.diasVencimiento = :diasVencimiento"),
-    @NamedQuery(name = "TipoDeDocumento.findByNombre", query = "SELECT t FROM TipoDeDocumento t WHERE t.nombre = :nombre")
-})
+        {
+            @NamedQuery(name = "TipoDeDocumento.findAll", query = "SELECT t FROM TipoDeDocumento t"),
+            @NamedQuery(name = "TipoDeDocumento.findByIdTipoDocumento", query = "SELECT t FROM TipoDeDocumento t WHERE t.idTipoDocumento = :idTipoDocumento"),
+            @NamedQuery(name = "TipoDeDocumento.findByVence", query = "SELECT t FROM TipoDeDocumento t WHERE t.vence = :vence"),
+            @NamedQuery(name = "TipoDeDocumento.findByDiasVencimiento", query = "SELECT t FROM TipoDeDocumento t WHERE t.diasVencimiento = :diasVencimiento"),
+            @NamedQuery(name = "TipoDeDocumento.findByNombre", query = "SELECT t FROM TipoDeDocumento t WHERE t.nombre = :nombre")
+        })
 public class TipoDeDocumento implements Serializable
 {
 
@@ -62,70 +75,86 @@ public class TipoDeDocumento implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDeDocumento", fetch = FetchType.EAGER)
     private List<PlantillaTramite> plantillaTramiteList = new ArrayList<>();
 
-    public TipoDeDocumento() {
+    public TipoDeDocumento()
+    {
     }
 
-    public TipoDeDocumento(Integer idTipoDocumento) {
+    public TipoDeDocumento(Integer idTipoDocumento)
+    {
         this.idTipoDocumento = idTipoDocumento;
     }
 
-    public TipoDeDocumento(Integer idTipoDocumento, String nombre, boolean vence, String quienEntrega) {
+    public TipoDeDocumento(Integer idTipoDocumento, String nombre, boolean vence, String quienEntrega)
+    {
         this.idTipoDocumento = idTipoDocumento;
         this.nombre = nombre;
         this.vence = vence;
         this.quienEntrega = quienEntrega;
     }
 
-    public Integer getIdTipoDocumento() {
+    public Integer getIdTipoDocumento()
+    {
         return idTipoDocumento;
     }
 
-    public void setIdTipoDocumento(Integer idTipoDocumento) {
+    public void setIdTipoDocumento(Integer idTipoDocumento)
+    {
         this.idTipoDocumento = idTipoDocumento;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public boolean getVence() {
+    public boolean getVence()
+    {
         return vence;
     }
 
-    public void setVence(boolean vence) {
+    public void setVence(boolean vence)
+    {
         this.vence = vence;
     }
 
-    public Integer getDiasVencimiento() {
+    public Integer getDiasVencimiento()
+    {
         return diasVencimiento;
     }
 
-    public void setDiasVencimiento(Integer diasVencimiento) {
+    public void setDiasVencimiento(Integer diasVencimiento)
+    {
         this.diasVencimiento = diasVencimiento;
     }
 
-    public String getQuienEntrega() {
+    public String getQuienEntrega()
+    {
         return quienEntrega;
     }
 
-    public void setQuienEntrega(String quienEntrega) {
+    public void setQuienEntrega(String quienEntrega)
+    {
         this.quienEntrega = quienEntrega;
     }
 
     @XmlTransient
-    public List<PlantillaTramite> getPlantillaTramiteList() {
+    public List<PlantillaTramite> getPlantillaTramiteList()
+    {
         return plantillaTramiteList;
     }
 
-    public void setPlantillaTramiteList(List<PlantillaTramite> plantillaTramiteList) {
+    public void setPlantillaTramiteList(List<PlantillaTramite> plantillaTramiteList)
+    {
         this.plantillaTramiteList = plantillaTramiteList;
     }
 
-    public void setAtributos(DtoTipoDeDocumento miDto) {
+    public void setAtributos(DtoTipoDeDocumento miDto)
+    {
         if (miDto.getIdTipoDocumento() != null)
         {
             this.idTipoDocumento = miDto.getIdTipoDocumento();
@@ -137,8 +166,7 @@ public class TipoDeDocumento implements Serializable
         if (this.vence)
         {
             this.diasVencimiento = miDto.getDiasVencimiento();
-        }
-        else
+        } else
         {
             this.diasVencimiento = null;
         }
@@ -149,7 +177,8 @@ public class TipoDeDocumento implements Serializable
         habilitado = miDto.getHabilitado();
     }
 
-    public DtoTipoDeDocumento getDto() {
+    public DtoTipoDeDocumento getDto()
+    {
         DtoTipoDeDocumento miDto = new DtoTipoDeDocumento();
 
         miDto.setIdTipoDocumento(this.idTipoDocumento);
@@ -170,14 +199,16 @@ public class TipoDeDocumento implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idTipoDocumento != null ? idTipoDocumento.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TipoDeDocumento))
         {
@@ -192,33 +223,40 @@ public class TipoDeDocumento implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "TipoDeDocumento[ idTipoDocumento=" + idTipoDocumento + " ]"
-                 + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + nombre + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public boolean getHabilitado() {
+    public boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(boolean habilitado) {
+    public void setHabilitado(boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 
     @XmlTransient
-    public Collection<DocumentoPresentado> getDocumentoPresentadoCollection() {
+    public Collection<DocumentoPresentado> getDocumentoPresentadoCollection()
+    {
         return documentoPresentadoCollection;
     }
 
-    public void setDocumentoPresentadoCollection(Collection<DocumentoPresentado> documentoPresentadoCollection) {
+    public void setDocumentoPresentadoCollection(Collection<DocumentoPresentado> documentoPresentadoCollection)
+    {
         this.documentoPresentadoCollection = documentoPresentadoCollection;
     }
 }

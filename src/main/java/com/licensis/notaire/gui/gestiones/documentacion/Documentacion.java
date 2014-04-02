@@ -6,7 +6,6 @@ package com.licensis.notaire.gui.gestiones.documentacion;
 
 import com.licensis.notaire.gui.Principal;
 import javax.swing.JMenuItem;
-import com.licensis.notaire.gui.gestiones.documentacion.Documentacion;
 
 /**
  *
@@ -22,11 +21,13 @@ public class Documentacion extends javax.swing.JInternalFrame
     /**
      * Creates new form Documentacion
      */
-    private Documentacion() {
+    private Documentacion()
+    {
         initComponents();
     }
 
-    public static Documentacion getInstancia() {
+    public static Documentacion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Documentacion();
@@ -37,15 +38,18 @@ public class Documentacion extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Documentacion.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuDocumentacion() {
+    public static JMenuItem getSubmenuDocumentacion()
+    {
         return submenuDocumentacion;
     }
 
@@ -246,7 +250,7 @@ public class Documentacion extends javax.swing.JInternalFrame
 
         ConsultarDeudasDocumentos.getInstancia().limpiarForm();
         Principal.cargarFormulario(ConsultarDeudasDocumentos.getInstancia());
-        Principal.setVentanasActivas(ConsultarDeudasDocumentos.getVentanaConsultarDeudasDocumento());        
+        Principal.setVentanasActivas(ConsultarDeudasDocumentos.getVentanaConsultarDeudasDocumento());
     }//GEN-LAST:event_botonConsultarDeudasActionPerformed
 
     private void botonConsultarVencimientosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonConsultarVencimientosActionPerformed

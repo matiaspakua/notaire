@@ -15,44 +15,54 @@ public class DtoTipoIdentificacion implements DtoValido
     private String nombre;
     private Set identificacioneses = new HashSet(0);
 
-    public DtoTipoIdentificacion() {
+    public DtoTipoIdentificacion()
+    {
     }
 
-    public DtoTipoIdentificacion(String nombre) {
+    public DtoTipoIdentificacion(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public DtoTipoIdentificacion(String nombre, Set identificacioneses) {
+    public DtoTipoIdentificacion(String nombre, Set identificacioneses)
+    {
         this.nombre = nombre;
         this.identificacioneses = identificacioneses;
     }
 
-    public Integer getIdTipoIdentificacion() {
+    public Integer getIdTipoIdentificacion()
+    {
         return this.idTipoIdentificacion;
     }
 
-    public void setIdTipoIdentificacion(Integer idTipoIdentificacion) {
+    public void setIdTipoIdentificacion(Integer idTipoIdentificacion)
+    {
         this.idTipoIdentificacion = idTipoIdentificacion;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public Set getIdentificacioneses() {
+    public Set getIdentificacioneses()
+    {
         return this.identificacioneses;
     }
 
-    public void setIdentificacioneses(Set identificacioneses) {
+    public void setIdentificacioneses(Set identificacioneses)
+    {
         this.identificacioneses = identificacioneses;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

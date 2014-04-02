@@ -22,11 +22,13 @@ public class Conceptos extends javax.swing.JInternalFrame
     /**
      * Creates new form Conceptos
      */
-    private Conceptos() {
+    private Conceptos()
+    {
         initComponents();
     }
 
-    public static Conceptos getInstancia() {
+    public static Conceptos getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Conceptos();
@@ -37,15 +39,18 @@ public class Conceptos extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Conceptos.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuConceptos() {
+    public static JMenuItem getSubmenuConceptos()
+    {
         return submenuConceptos;
     }
 

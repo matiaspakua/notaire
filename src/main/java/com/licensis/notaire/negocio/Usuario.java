@@ -8,7 +8,22 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -20,11 +35,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "usuarios")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
-    @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
-    @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado")
-})
+        {
+            @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
+            @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
+            @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado")
+        })
 public class Usuario implements Serializable
 {
 
@@ -59,14 +74,17 @@ public class Usuario implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Persona fkIdPersona;
 
-    public Usuario() {
+    public Usuario()
+    {
     }
 
-    public Usuario(Integer idUsuario) {
+    public Usuario(Integer idUsuario)
+    {
         this.idUsuario = idUsuario;
     }
 
-    public Usuario(Integer idUsuario, String nombre, String contrasenia, boolean estado, String tipo) {
+    public Usuario(Integer idUsuario, String nombre, String contrasenia, boolean estado, String tipo)
+    {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.contrasenia = contrasenia;
@@ -74,72 +92,88 @@ public class Usuario implements Serializable
         this.tipo = tipo;
     }
 
-    public Integer getIdUsuario() {
+    public Integer getIdUsuario()
+    {
         return idUsuario;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
+    public void setIdUsuario(Integer idUsuario)
+    {
         this.idUsuario = idUsuario;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public String getContrasenia() {
+    public String getContrasenia()
+    {
         return contrasenia;
     }
 
-    public void setContrasenia(String contrasenia) {
+    public void setContrasenia(String contrasenia)
+    {
         this.contrasenia = contrasenia;
     }
 
-    public boolean getEstado() {
+    public boolean getEstado()
+    {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(boolean estado)
+    {
         this.estado = estado;
     }
 
-    public String getTipo() {
+    public String getTipo()
+    {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(String tipo)
+    {
         this.tipo = tipo;
     }
 
     @XmlTransient
-    public List<RegistroAuditoria> getRegistroAuditoriaList() {
+    public List<RegistroAuditoria> getRegistroAuditoriaList()
+    {
         return registroAuditoriaList;
     }
 
-    public void setRegistroAuditoriaList(List<RegistroAuditoria> registroAuditoriaList) {
+    public void setRegistroAuditoriaList(List<RegistroAuditoria> registroAuditoriaList)
+    {
         this.registroAuditoriaList = registroAuditoriaList;
     }
 
-    public Persona getFkIdPersona() {
+    public Persona getFkIdPersona()
+    {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona) {
+    public void setFkIdPersona(Persona fkIdPersona)
+    {
         this.fkIdPersona = fkIdPersona;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idUsuario != null ? idUsuario.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Usuario))
         {
@@ -154,7 +188,8 @@ public class Usuario implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Usuarios[ version=" + version + " ]"
                 + "[ idUsuario=" + idUsuario + " ]"
                 + "[ nombre=" + nombre + " ]"
@@ -162,7 +197,8 @@ public class Usuario implements Serializable
                 + "[ estado=" + estado + " ]";
     }
 
-    public void setAtributos(DtoUsuario dtoUsuario) {
+    public void setAtributos(DtoUsuario dtoUsuario)
+    {
 
         //Ref persona de Usuario
         Persona miPersona = new Persona();
@@ -184,7 +220,8 @@ public class Usuario implements Serializable
 
     }
 
-    public DtoUsuario getDto() {
+    public DtoUsuario getDto()
+    {
         DtoUsuario miDto = new DtoUsuario();
         try
         {
@@ -210,11 +247,13 @@ public class Usuario implements Serializable
         return miDto;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

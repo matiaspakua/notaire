@@ -5,28 +5,34 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.dto.DtoPersona;
-import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.TramitesPersonas;
-import com.licensis.notaire.negocio.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.negocio.Copia;
+import com.licensis.notaire.negocio.Folio;
+import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.negocio.Suplencia;
+import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.negocio.TramitesPersonas;
+import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.servicios.AdministradorJpa;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -39,16 +45,19 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
     private EntityManagerFactory emf = null;
     private static PersonaJpaController instancia = null;
 
-    private PersonaJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    private PersonaJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Persona persona) {
+    public int create(Persona persona)
+    {
         int oid = 0;
         if (persona.getTramitesPersonasList() == null)
         {
@@ -256,7 +265,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         return oid;
     }
 
-    public void edit(Persona persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Persona persona) throws IllegalOrphanException, NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -590,7 +600,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -701,15 +712,18 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Persona> findPersonaEntities() {
+    public List<Persona> findPersonaEntities()
+    {
         return findPersonaEntities(true, -1, -1);
     }
 
-    public List<Persona> findPersonaEntities(int maxResults, int firstResult) {
+    public List<Persona> findPersonaEntities(int maxResults, int firstResult)
+    {
         return findPersonaEntities(false, maxResults, firstResult);
     }
 
-    private List<Persona> findPersonaEntities(boolean all, int maxResults, int firstResult) {
+    private List<Persona> findPersonaEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -749,7 +763,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Persona findPersona(Integer id) {
+    public Persona findPersona(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -761,7 +776,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getPersonaCount() {
+    public int getPersonaCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -777,7 +793,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public static PersonaJpaController getInstancia() {
+    public static PersonaJpaController getInstancia()
+    {
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
@@ -789,7 +806,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public Boolean modificarPersona(Persona pPersona) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarPersona(Persona pPersona) throws ClassModifiedException, ClassEliminatedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = ConstantesPersistencia.VERSION_INICIAL; //Variable para Version en memoria del Objeto
@@ -807,8 +825,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
                 throw new ClassModifiedException("La persona indicada ya ha sido modificada");
-            }
-            else
+            } else
             {
                 try
                 {
@@ -824,7 +841,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     persistentPersona.setNumeroIdentificacion(pPersona.getNumeroIdentificacion());
 
                     /*
-                     * Tira error cuando el registro de escribano vale NULL if (pPersona.getRegistroEscribano() != 0) {
+                     * Tira error cuando el registro de escribano vale NULL if
+                     * (pPersona.getRegistroEscribano() != 0) {
                      * persistentPersona.setRegistroEscribano(pPersona.getRegistroEscribano()); }
                      *
                      */
@@ -837,15 +855,15 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     ex.printStackTrace();
                 }
             }
-        }
-        else //Si fue  eliminado se dispara una excepcion 
+        } else //Si fue  eliminado se dispara una excepcion 
         {
             throw new ClassEliminatedException("La persona indicada ha sido eliminada");
         }
         return flag;
     }
 
-    public Boolean registrarEscribano(Persona escribano) throws ClassModifiedException, NonexistentEntityException {
+    public Boolean registrarEscribano(Persona escribano) throws ClassModifiedException, NonexistentEntityException
+    {
 
         Boolean resultado = false; //Variable para saber el resultado de la transaccion
         int oldVersion = ConstantesPersistencia.VERSION_INICIAL; //Variable para Version en memoria del Objeto
@@ -867,8 +885,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 em.getTransaction().begin();
 
@@ -884,15 +901,15 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
             }
-        }
-        else //Si fue  eliminado se dispara una excepcion 
+        } else //Si fue  eliminado se dispara una excepcion 
         {
             throw new NonexistentEntityException("No existe la persona indicada");
         }
         return resultado;
     }
 
-    public Boolean modificarCliente(Persona pCliente) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarCliente(Persona pCliente) throws ClassModifiedException, ClassEliminatedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
@@ -911,15 +928,13 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new ClassModifiedException("El cliente indicado ya ha sido modificado");
 
-            }
-            else
+            } else
             {
                 try
                 {
                     em.getTransaction().begin();
 
                     //Atributos Persona
-
                     persistentPersona.setNombre(pCliente.getNombre());
                     persistentPersona.setApellido(pCliente.getApellido());
                     persistentPersona.setTelefono(pCliente.getTelefono());
@@ -928,9 +943,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     persistentPersona.setNumeroIdentificacion(pCliente.getNumeroIdentificacion());
 
                     //La version del objeto queda a cargo de Hivernate
-
                     //Atributos Cliente
-
                     persistentPersona.setNacionalidad(pCliente.getNacionalidad());
                     persistentPersona.setFechaNacimiento(pCliente.getFechaNacimiento());
                     persistentPersona.setCuit(pCliente.getCuit());
@@ -953,8 +966,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
                     System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
                 }
             }
-        }
-        else //Si fue  eliminado se dispara una excepcion 
+        } else //Si fue  eliminado se dispara una excepcion 
         {
             throw new ClassEliminatedException("El cliente indicado ha sido eliminado o no existe");
         }
@@ -969,7 +981,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
      * @param pTipoIdentificacion
      * @return Retorno una lista de personas
      */
-    public Persona findPersonaTipoNumeroIdentificacion(DtoPersona dtoPersona) { //No pueden repetirse un mismo numero y tipo de identificacion
+    public Persona findPersonaTipoNumeroIdentificacion(DtoPersona dtoPersona)
+    { //No pueden repetirse un mismo numero y tipo de identificacion
 
         EntityManager em = getEntityManager();
         List<Persona> listaPersona = null;
@@ -977,7 +990,6 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         //acocio el nombre de la identificacion con su id correspondiente, para la busqueda
         //TODO: VIOLACION DE CAPAS!
         dtoPersona.getDtoTipoIdentificacion().setIdTipoIdentificacion(ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(dtoPersona));
-
 
         String numeroIdentificacion = dtoPersona.getNumeroIdentificacion();
         int idTipoIdentificacion = dtoPersona.getDtoTipoIdentificacion().getIdTipoIdentificacion();
@@ -1008,7 +1020,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
      * @param dtoPersona
      * @return
      */
-    public List<Persona> findPersonaNombreApellido(DtoPersona dtoPersona) { //No pueden repetirse un mismo numero y tipo de identificacion
+    public List<Persona> findPersonaNombreApellido(DtoPersona dtoPersona)
+    { //No pueden repetirse un mismo numero y tipo de identificacion
 
         EntityManager em = getEntityManager();
 
@@ -1016,7 +1029,6 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         Persona persona = null;
         String nombre = "%" + dtoPersona.getNombre() + "%";
         String apellido = "%" + dtoPersona.getApellido() + "%";
-
 
         Query query = em.createNamedQuery("Persona.findByPersonaNombreApellido");
         query.setParameter("nombre", nombre);
@@ -1032,7 +1044,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
      *
      * @return
      */
-    public List<Persona> findPersonas() {
+    public List<Persona> findPersonas()
+    {
         EntityManager em = getEntityManager();
 
         List<Persona> listaPersona = null;
@@ -1050,7 +1063,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         return listaPersona;
     }
 
-    public Persona findPersonaEscribano(Persona miPersona) { //No pueden repetirse un mismo numero y tipo de identificacion
+    public Persona findPersonaEscribano(Persona miPersona)
+    { //No pueden repetirse un mismo numero y tipo de identificacion
 
         EntityManager em = getEntityManager();
 
@@ -1070,9 +1084,9 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
         return persona;
     }
 
-    public Persona findPersonaPorId(Integer idPersona) {
+    public Persona findPersonaPorId(Integer idPersona)
+    {
         EntityManager em = getEntityManager();
-
 
         Persona persona = new Persona();
 
@@ -1085,7 +1099,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

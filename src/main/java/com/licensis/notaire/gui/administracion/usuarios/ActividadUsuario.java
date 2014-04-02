@@ -7,6 +7,8 @@ package com.licensis.notaire.gui.administracion.usuarios;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,8 +16,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -32,14 +32,16 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarUsuario
      */
-    public ActividadUsuario() {
+    public ActividadUsuario()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         grillaActividadesUsuarios.setAutoCreateRowSorter(true);
     }
 
-    public static ActividadUsuario getInstancia() {
+    public static ActividadUsuario getInstancia()
+    {
 
         if (instancia == null)
         {
@@ -48,27 +50,33 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public DtoUsuario getDtoUsuarioModificado() {
+    public DtoUsuario getDtoUsuarioModificado()
+    {
         return dtoUsuarioActvidad;
     }
 
-    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado) {
+    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado)
+    {
         this.dtoUsuarioActvidad = dtoUsuarioModificado;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaActividadUsuario() {
+    public static JMenuItem getVentanaActividadUsuario()
+    {
         return ventanaActividadUsuario;
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         limpiarJtable();
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaActividadesUsuarios.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaActividadesUsuarios.getModel()).getRowCount() > 0)
@@ -79,7 +87,8 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
 
     }
 
-    public void cargarUsuariosDisponibles() throws NonexistentJpaException {
+    public void cargarUsuariosDisponibles() throws NonexistentJpaException
+    {
         ArrayList<DtoUsuario> miListaUsuarios = null;
         miListaUsuarios = ControllerNegocio.getInstancia().buscarUsuariosDisponibles();
 
@@ -105,8 +114,7 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
                 ((DefaultTableModel) grillaActividadesUsuarios.getModel()).addRow(datos);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Usuarios Registrados");
         }
@@ -273,7 +281,6 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
 
         int filas = miGrilla.getRowCount();
         int columnas = miGrilla.getColumnCount();
-
 
         DtoUsuario miUsuario = new DtoUsuario();
         DtoPersona miPersona = new DtoPersona();

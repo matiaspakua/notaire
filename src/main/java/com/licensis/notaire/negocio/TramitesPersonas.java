@@ -5,7 +5,18 @@
 package com.licensis.notaire.negocio;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -16,13 +27,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "tramites_personas")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TramitesPersonas.findAll", query = "SELECT t FROM TramitesPersonas t"),
-    @NamedQuery(name = "TramitesPersonas.findByFkIdTramite", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
-    @NamedQuery(name = "TramitesPersonas.findByFkIdPersonaCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente"),
-    @NamedQuery(name = "TramitesPersonas.findByTramiteCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
+        {
+            @NamedQuery(name = "TramitesPersonas.findAll", query = "SELECT t FROM TramitesPersonas t"),
+            @NamedQuery(name = "TramitesPersonas.findByFkIdTramite", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
+            @NamedQuery(name = "TramitesPersonas.findByFkIdPersonaCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente"),
+            @NamedQuery(name = "TramitesPersonas.findByTramiteCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
     //@NamedQuery(name = "TramitesPersonas.eliminarRegistro", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
-})
+        })
 public class TramitesPersonas implements Serializable
 {
 
@@ -44,63 +55,77 @@ public class TramitesPersonas implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Tramite tramite;
 
-    public TramitesPersonas() {
+    public TramitesPersonas()
+    {
     }
 
-    public TramitesPersonas(TramitesPersonasPK tramitesPersonasPK) {
+    public TramitesPersonas(TramitesPersonasPK tramitesPersonasPK)
+    {
         this.tramitesPersonasPK = tramitesPersonasPK;
     }
 
-    public TramitesPersonas(TramitesPersonasPK tramitesPersonasPK, String observaciones) {
+    public TramitesPersonas(TramitesPersonasPK tramitesPersonasPK, String observaciones)
+    {
         this.tramitesPersonasPK = tramitesPersonasPK;
         this.observaciones = observaciones;
     }
 
-    public TramitesPersonas(int fkIdTramite, int fkIdPersonaCliente) {
+    public TramitesPersonas(int fkIdTramite, int fkIdPersonaCliente)
+    {
         this.tramitesPersonasPK = new TramitesPersonasPK(fkIdTramite, fkIdPersonaCliente);
     }
 
-    public TramitesPersonasPK getTramitesPersonasPK() {
+    public TramitesPersonasPK getTramitesPersonasPK()
+    {
         return tramitesPersonasPK;
     }
 
-    public void setTramitesPersonasPK(TramitesPersonasPK tramitesPersonasPK) {
+    public void setTramitesPersonasPK(TramitesPersonasPK tramitesPersonasPK)
+    {
         this.tramitesPersonasPK = tramitesPersonasPK;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public Persona getPersona() {
+    public Persona getPersona()
+    {
         return persona;
     }
 
-    public void setPersona(Persona persona) {
+    public void setPersona(Persona persona)
+    {
         this.persona = persona;
     }
 
-    public Tramite getTramite() {
+    public Tramite getTramite()
+    {
         return tramite;
     }
 
-    public void setTramite(Tramite tramite) {
+    public void setTramite(Tramite tramite)
+    {
         this.tramite = tramite;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (tramitesPersonasPK != null ? tramitesPersonasPK.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TramitesPersonas))
         {
@@ -115,15 +140,18 @@ public class TramitesPersonas implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "TramitesPersonas[ tramitesPersonasPK=" + tramitesPersonasPK + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

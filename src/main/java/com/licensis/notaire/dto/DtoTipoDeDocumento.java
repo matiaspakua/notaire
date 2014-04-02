@@ -19,16 +19,19 @@ public class DtoTipoDeDocumento implements DtoValido
     private Boolean habilitado;
     private List<DtoPlantillaTramite> plantillaTramites = null;
 
-    public DtoTipoDeDocumento() {
+    public DtoTipoDeDocumento()
+    {
     }
 
-    public DtoTipoDeDocumento(String nombre, boolean vence, String quienEntrega) {
+    public DtoTipoDeDocumento(String nombre, boolean vence, String quienEntrega)
+    {
         this.nombre = nombre;
         this.vence = vence;
         this.quienEntrega = quienEntrega;
     }
 
-    public DtoTipoDeDocumento(String nombre, boolean vence, Integer diasVencimiento, String quienEntrega, List<DtoPlantillaTramite> plantillaTramites) {
+    public DtoTipoDeDocumento(String nombre, boolean vence, Integer diasVencimiento, String quienEntrega, List<DtoPlantillaTramite> plantillaTramites)
+    {
         this.nombre = nombre;
         this.vence = vence;
         this.diasVencimiento = diasVencimiento;
@@ -36,72 +39,89 @@ public class DtoTipoDeDocumento implements DtoValido
         this.plantillaTramites = plantillaTramites;
     }
 
-    public Boolean getHabilitado() {
+    public Boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(Boolean habilitado) {
+    public void setHabilitado(Boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public Integer getIdTipoDocumento() {
+    public Integer getIdTipoDocumento()
+    {
         return this.idTipoDocumento;
     }
 
-    public void setIdTipoDocumento(Integer idTipoDocumento) {
+    public void setIdTipoDocumento(Integer idTipoDocumento)
+    {
         this.idTipoDocumento = idTipoDocumento;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public boolean isVence() {
+    public boolean isVence()
+    {
         return this.vence;
     }
 
-    public void setVence(boolean vence) {
+    public void setVence(boolean vence)
+    {
         this.vence = vence;
     }
 
-    public Integer getDiasVencimiento() {
+    public Integer getDiasVencimiento()
+    {
         return this.diasVencimiento;
     }
 
-    public void setDiasVencimiento(Integer diasVencimiento) {
+    public void setDiasVencimiento(Integer diasVencimiento)
+    {
         this.diasVencimiento = diasVencimiento;
     }
 
-    public String getQuienEntrega() {
+    public String getQuienEntrega()
+    {
         return this.quienEntrega;
     }
 
-    public void setQuienEntrega(String quienEntrega) {
+    public void setQuienEntrega(String quienEntrega)
+    {
         this.quienEntrega = quienEntrega;
     }
 
-    public List<DtoPlantillaTramite> getPlantillaTramites() {
+    public List<DtoPlantillaTramite> getPlantillaTramites()
+    {
         return this.plantillaTramites;
     }
 
-    public void setPlantillaTramiteses(List<DtoPlantillaTramite> plantillaTramites) {
+    public void setPlantillaTramiteses(List<DtoPlantillaTramite> plantillaTramites)
+    {
         this.plantillaTramites = plantillaTramites;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

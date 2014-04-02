@@ -40,28 +40,33 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
     /**
      * Creates new form DetalleValoresTramites
      */
-    public DetalleValoresTramites() {
+    public DetalleValoresTramites()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDetalleValoresTramitePresupuesto() {
+    public static JMenuItem getVentanaDetalleValoresTramitePresupuesto()
+    {
         return ventanaDetalleValoresTramitePresupuesto;
     }
 
-    public void setTramite(DtoTipoDeTramite tramite) {
+    public void setTramite(DtoTipoDeTramite tramite)
+    {
         miTipoTramite = tramite;
 
         cargarFormulario();
     }
 
-    public void setInmueble(DtoInmueble dtoInmueble) {
+    public void setInmueble(DtoInmueble dtoInmueble)
+    {
         inmuebleEncontrado = dtoInmueble;
 
         campoNomenclaturaCatastral.setText(inmuebleEncontrado.getNomenclaturaCatastral());
@@ -72,7 +77,8 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
 
     }
 
-    private void cargarFormulario() {
+    private void cargarFormulario()
+    {
 
         campoNombreTramite.setText(miTipoTramite.getNombre());
 
@@ -84,8 +90,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
             campoDomicilio.setEditable(true);
             campoTipoInmueble.setEditable(true);
             campoObservaciones.setEditable(true);
-        }
-        else
+        } else
         {
             botonBuscarInmueble.setEnabled(false);
             campoNomenclaturaCatastral.setEnabled(false);
@@ -98,7 +103,8 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
         cargarGrillas();
     }
 
-    private void cargarGrillas() {
+    private void cargarGrillas()
+    {
         conceptos = miController.obtenerConceptosTramite(miTipoTramite);
 
         if (!conceptos.isEmpty())
@@ -119,8 +125,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                 if (miDtoConcepto.getValor() != null)
                 {
                     valor = miDtoConcepto.getValor();
-                }
-                else
+                } else
                 {
                     valor = 0f;
                 }
@@ -128,8 +133,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                 if (miDtoConcepto.getPorcentaje() != null)
                 {
                     porcentaje = miDtoConcepto.getPorcentaje();
-                }
-                else
+                } else
                 {
                     porcentaje = 0;
                 }
@@ -142,8 +146,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                         valor
                     };
                     ((DefaultTableModel) grillaValoresFijos.getModel()).addRow(datos);
-                }
-                else
+                } else
                 {
                     Object[] datos =
                     {
@@ -155,15 +158,15 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                 }
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen conceptos asociados al Tramite seleccionado.");
             salir();
         }
     }
 
-    public void cargarInmueble(DtoInmueble miDtoInmueble) {
+    public void cargarInmueble(DtoInmueble miDtoInmueble)
+    {
         campoNomenclaturaCatastral.setText(miDtoInmueble.getNomenclaturaCatastral());
         campoValuacionFiscal.setText(miDtoInmueble.getValuacionFiscal());
         campoDomicilio.setText(miDtoInmueble.getDomicilio());
@@ -172,14 +175,15 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
     }
     //TODO: limpiarFormulario detalle presupuesto!
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         campoNombreTramite.setText("");
         campoNomenclaturaCatastral.setText("");
         campoValuacionFiscal.setText("");
         campoDomicilio.setText("");
         campoTipoInmueble.setText("");
         campoObservaciones.setText("");
-        
+
         inmuebleEncontrado = null;
 
         int filas = grillaValoresVariables.getRowCount();
@@ -559,7 +563,6 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                     miDtoInmueble.setTipoInmueble(campoTipoInmueble.getText());
                     miDtoInmueble.setObservaciones(campoObservaciones.getText());
 
-
                     if (!validador.validarCampoVacio(campoValuacionFiscal.getText()))
                     {
 
@@ -567,28 +570,24 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                         {
 
                             miDtoInmueble.setValuacionFiscal(campoValuacionFiscal.getText());
-                          
+
                             cargarDatos();
 
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "Escriba correctamente la valuacion fiscal.", "ERROR", JOptionPane.ERROR_MESSAGE);
                         }
                     }
 
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "Debe completar los campos obligatorios de Inmueble.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
-            }
-            else
+            } else
             {
                 cargarDatos();
             }
-        }
-        else
+        } else
         {
             cargarDatos();
         }
@@ -601,7 +600,8 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void cargarDatos() {
+    private void cargarDatos()
+    {
 
         Boolean flag = true;
 
@@ -628,8 +628,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                 {
                     flag = false;
                     break;
-                }
-                else
+                } else
                 {
 
                     miItem.setValor(valor);
@@ -641,8 +640,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                     if (miGrilla.getValueAt(i, 3) != null)
                     {
                         miItem.setObservaciones((miGrilla.getValueAt(i, 3)).toString());
-                    }
-                    else
+                    } else
                     {
                         miItem.setObservaciones("");
                     }
@@ -653,8 +651,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                     total = total + Float.parseFloat((miGrilla.getValueAt(i, 1)).toString());
 
                 }
-            }
-            else
+            } else
             {
 
                 miItem.setValor(valor);
@@ -666,8 +663,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
                 if (miGrilla.getValueAt(i, 3) != null)
                 {
                     miItem.setObservaciones((miGrilla.getValueAt(i, 3)).toString());
-                }
-                else
+                } else
                 {
                     miItem.setObservaciones("");
                 }
@@ -680,7 +676,6 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
 
         //-------------------------------------------------------------------------
         //Grilla fijos:
-
         TableModel miGrillaFijos = grillaValoresFijos.getModel();
         int filasFijos = miGrillaFijos.getRowCount();
 
@@ -735,12 +730,10 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
         if (validador.validarLetrasGuiones(campoNomenclaturaCatastral.getText()) == false)
         {
             labelNomenclaturaValidacion.setText("Solo letras, numeros y guiones sin espacios.");
-        }
-        else if (validador.validarCampoEspacios(campoNomenclaturaCatastral.getText()) == true)
+        } else if (validador.validarCampoEspacios(campoNomenclaturaCatastral.getText()) == true)
         {
             labelNomenclaturaValidacion.setText("Solo letras, numeros y guiones sin espacios.");
-        }
-        else
+        } else
         {
             labelNomenclaturaValidacion.setText("");
         }
@@ -751,8 +744,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
         if (!validador.validarNumeroFloat(this.campoValuacionFiscal.getText()))
         {
             labelValuacionValidacion.setText("Escriba un numero valido, ej: 25.50");
-        }
-        else
+        } else
         {
             labelValuacionValidacion.setText("");
         }

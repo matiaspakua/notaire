@@ -17,72 +17,88 @@ public class DtoHistorial implements DtoValido
     private String observaciones;
     private Integer version;
 
-    public DtoHistorial() {
+    public DtoHistorial()
+    {
     }
 
-    public DtoHistorial(DtoGestionDeEscritura gestionesDeEscrituras, DtoEstadoDeGestion estadosDeGestion, Date fecha) {
+    public DtoHistorial(DtoGestionDeEscritura gestionesDeEscrituras, DtoEstadoDeGestion estadosDeGestion, Date fecha)
+    {
         this.gestionesDeEscrituras = gestionesDeEscrituras;
         this.estadosDeGestion = estadosDeGestion;
         this.fecha = fecha;
     }
 
-    public DtoHistorial(DtoGestionDeEscritura gestionesDeEscrituras, DtoEstadoDeGestion estadosDeGestion, Date fecha, String observaciones) {
+    public DtoHistorial(DtoGestionDeEscritura gestionesDeEscrituras, DtoEstadoDeGestion estadosDeGestion, Date fecha, String observaciones)
+    {
         this.gestionesDeEscrituras = gestionesDeEscrituras;
         this.estadosDeGestion = estadosDeGestion;
         this.fecha = fecha;
         this.observaciones = observaciones;
     }
 
-    public Integer getIdHistorial() {
+    public Integer getIdHistorial()
+    {
         return this.idHistorial;
     }
 
-    public void setIdHistorial(Integer idHistorial) {
+    public void setIdHistorial(Integer idHistorial)
+    {
         this.idHistorial = idHistorial;
     }
 
-    public DtoGestionDeEscritura getGestionesDeEscrituras() {
+    public DtoGestionDeEscritura getGestionesDeEscrituras()
+    {
         return this.gestionesDeEscrituras;
     }
 
-    public void setGestionesDeEscrituras(DtoGestionDeEscritura gestionesDeEscrituras) {
+    public void setGestionesDeEscrituras(DtoGestionDeEscritura gestionesDeEscrituras)
+    {
         this.gestionesDeEscrituras = gestionesDeEscrituras;
     }
 
-    public DtoEstadoDeGestion getEstadosDeGestion() {
+    public DtoEstadoDeGestion getEstadosDeGestion()
+    {
         return this.estadosDeGestion;
     }
 
-    public void setEstadosDeGestion(DtoEstadoDeGestion estadosDeGestion) {
+    public void setEstadosDeGestion(DtoEstadoDeGestion estadosDeGestion)
+    {
         this.estadosDeGestion = estadosDeGestion;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return this.fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         // TODO: implementar.
         return true;
     }

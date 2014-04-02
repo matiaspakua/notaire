@@ -4,6 +4,13 @@
  */
 package com.licensis.notaire.jpa;
 
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.Concepto;
+import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +19,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.transaction.UserTransaction;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Concepto;
-import com.licensis.notaire.negocio.PlantillaPresupuesto;
 
 /**
  *
@@ -31,16 +31,19 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public ConceptoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public ConceptoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Integer create(Concepto concepto) {
+    public Integer create(Concepto concepto)
+    {
         Integer oid = null;
 
         if (concepto.getPlantillaPresupuestoList() == null)
@@ -89,7 +92,8 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
         return oid;
     }
 
-    public Boolean edit(Concepto concepto) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException {
+    public Boolean edit(Concepto concepto) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    {
         Boolean resultado = Boolean.FALSE;
         Integer version = ConstantesPersistencia.VERSION_INICIAL;
         Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
@@ -114,8 +118,7 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
 
                 throw new ClassModifiedException();
 
-            }
-            else
+            } else
             {
                 List<PlantillaPresupuesto> plantillaPresupuestoListOld = persistentConcepto.getPlantillaPresupuestoList();
                 List<PlantillaPresupuesto> plantillaPresupuestoListNew = concepto.getPlantillaPresupuestoList();
@@ -167,8 +170,7 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -176,7 +178,8 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
         return resultado;
     }
 
-    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException {
+    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException
+    {
         Boolean resultado = Boolean.FALSE;
 
         EntityManager em = null;
@@ -211,8 +214,7 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
                 em.remove(concepto);
                 em.getTransaction().commit();
                 resultado = Boolean.TRUE;
-            }
-            else
+            } else
             {
                 throw new ClassEliminatedException();
             }
@@ -231,15 +233,18 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
         return resultado;
     }
 
-    public List<Concepto> findConceptoEntities() {
+    public List<Concepto> findConceptoEntities()
+    {
         return findConceptoEntities(true, -1, -1);
     }
 
-    public List<Concepto> findConceptoEntities(int maxResults, int firstResult) {
+    public List<Concepto> findConceptoEntities(int maxResults, int firstResult)
+    {
         return findConceptoEntities(false, maxResults, firstResult);
     }
 
-    private List<Concepto> findConceptoEntities(boolean all, int maxResults, int firstResult) {
+    private List<Concepto> findConceptoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -257,22 +262,23 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Concepto> findConceptoByNombre(String nombreConcepto) {
-        
+    public List<Concepto> findConceptoByNombre(String nombreConcepto)
+    {
+
         EntityManager em = getEntityManager();
         List<Concepto> listaConcepto = new ArrayList<>();
 
         Query query = em.createNamedQuery("Concepto.findByNombre");
         query.setParameter("nombre", nombreConcepto);
-        
+
         listaConcepto = query.getResultList();
 
         return listaConcepto;
     }
 
-    public Concepto findConcepto(Integer id) {
+    public Concepto findConcepto(Integer id)
+    {
         EntityManager em = getEntityManager();
-
 
         try
         {
@@ -284,7 +290,8 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getConceptoCount() {
+    public int getConceptoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -298,7 +305,8 @@ public class ConceptoJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

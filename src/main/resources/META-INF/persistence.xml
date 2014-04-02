@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
-  <persistence-unit name="notairePU" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>negocio.Suplencia</class>
-    <class>com.licensis.notaire.negocio.TipoDeDocumento</class>
-    <class>com.licensis.notaire.negocio.Copia</class>
-    <class>com.licensis.notaire.negocio.Item</class>
-    <class>com.licensis.notaire.negocio.Folio</class>
-    <class>com.licensis.notaire.negocio.MovimientoTestimonio</class>
-    <class>com.licensis.notaire.negocio.Escritura</class>
-    <class>com.licensis.notaire.negocio.Historial</class>
-    <class>com.licensis.notaire.negocio.PlantillaTramite</class>
-    <class>com.licensis.notaire.negocio.Presupuesto</class>
-    <class>com.licensis.notaire.negocio.GestionDeEscritura</class>
-    <class>com.licensis.notaire.negocio.Usuario</class>
-    <class>com.licensis.notaire.negocio.TipoDeFolio</class>
-    <class>com.licensis.notaire.negocio.TipoDeTramite</class>
-    <class>com.licensis.notaire.negocio.Testimonio</class>
-    <class>com.licensis.notaire.negocio.FoliosCopias</class>
-    <class>com.licensis.notaire.negocio.TipoIdentificacion</class>
-    <class>com.licensis.notaire.negocio.DocumentoPresentado</class>
-    <class>com.licensis.notaire.negocio.Pago</class>
-    <class>com.licensis.notaire.negocio.PlantillaPresupuesto</class>
-    <class>com.licensis.notaire.negocio.EstadoDeGestion</class>
-    <class>com.licensis.notaire.negocio.Persona</class>
-    <class>com.licensis.notaire.negocio.Identificacion</class>
-    <class>com.licensis.notaire.negocio.RegistroAuditoria</class>
-    <class>com.licensis.notaire.negocio.TramitesPersonas</class>
-    <class>com.licensis.notaire.negocio.Concepto</class>
-    <class>com.licensis.notaire.negocio.Tramite</class>
-    <class>com.licensis.notaire.negocio.Inmueble</class>
-    <properties>
-      <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
-      <property name="hibernate.connection.username" value="root"/>
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-      <property name="hibernate.connection.password" value="lapassword"/>
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/notaire?zeroDateTimeBehavior=convertToNull"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="notairePU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>negocio.Suplencia</class>
+        <class>com.licensis.notaire.negocio.TipoDeDocumento</class>
+        <class>com.licensis.notaire.negocio.Copia</class>
+        <class>com.licensis.notaire.negocio.Item</class>
+        <class>com.licensis.notaire.negocio.Folio</class>
+        <class>com.licensis.notaire.negocio.MovimientoTestimonio</class>
+        <class>com.licensis.notaire.negocio.Escritura</class>
+        <class>com.licensis.notaire.negocio.Historial</class>
+        <class>com.licensis.notaire.negocio.PlantillaTramite</class>
+        <class>com.licensis.notaire.negocio.Presupuesto</class>
+        <class>com.licensis.notaire.negocio.GestionDeEscritura</class>
+        <class>com.licensis.notaire.negocio.Usuario</class>
+        <class>com.licensis.notaire.negocio.TipoDeFolio</class>
+        <class>com.licensis.notaire.negocio.TipoDeTramite</class>
+        <class>com.licensis.notaire.negocio.Testimonio</class>
+        <class>com.licensis.notaire.negocio.FoliosCopias</class>
+        <class>com.licensis.notaire.negocio.TipoIdentificacion</class>
+        <class>com.licensis.notaire.negocio.DocumentoPresentado</class>
+        <class>com.licensis.notaire.negocio.Pago</class>
+        <class>com.licensis.notaire.negocio.PlantillaPresupuesto</class>
+        <class>com.licensis.notaire.negocio.EstadoDeGestion</class>
+        <class>com.licensis.notaire.negocio.Persona</class>
+        <class>com.licensis.notaire.negocio.Identificacion</class>
+        <class>com.licensis.notaire.negocio.RegistroAuditoria</class>
+        <class>com.licensis.notaire.negocio.TramitesPersonas</class>
+        <class>com.licensis.notaire.negocio.Concepto</class>
+        <class>com.licensis.notaire.negocio.Tramite</class>
+        <class>com.licensis.notaire.negocio.Inmueble</class>
+        <properties>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.connection.password" value="lapassword"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/notaire?zeroDateTimeBehavior=convertToNull"/>
+        </properties>
+    </persistence-unit>
 </persistence>

@@ -4,19 +4,19 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
 import com.licensis.notaire.negocio.Testimonio;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -25,18 +25,21 @@ import com.licensis.notaire.negocio.Testimonio;
 public class MovimientoTestimonioJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public MovimientoTestimonioJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public MovimientoTestimonioJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Boolean create(MovimientoTestimonio movimientoTestimonio) {
+    public Boolean create(MovimientoTestimonio movimientoTestimonio)
+    {
         EntityManager em = null;
         Boolean creado = false;
         try
@@ -69,7 +72,8 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         return creado;
     }
 
-    public Boolean edit(MovimientoTestimonio movimientoTestimonio) throws ClassEliminatedException, ClassModifiedException {
+    public Boolean edit(MovimientoTestimonio movimientoTestimonio) throws ClassEliminatedException, ClassModifiedException
+    {
         EntityManager em = null;
         Boolean modificado = false;
         int version = 0;
@@ -87,8 +91,7 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
             {
                 throw new ClassModifiedException();
 
-            }
-            else
+            } else
             {
                 Testimonio fkIdTestimonioOld = persistentMovimientoTestimonio.getTestimonio();
                 Testimonio fkIdTestimonioNew = movimientoTestimonio.getTestimonio();
@@ -115,22 +118,21 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
             {
                 em.close();
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
         return modificado;
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
             MovimientoTestimonio movimientoTestimonio;
-
 
             try
             {
@@ -159,15 +161,18 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         }
     }
 
-    public List<MovimientoTestimonio> findMovimientoTestimonioEntities() {
+    public List<MovimientoTestimonio> findMovimientoTestimonioEntities()
+    {
         return findMovimientoTestimonioEntities(true, -1, -1);
     }
 
-    public List<MovimientoTestimonio> findMovimientoTestimonioEntities(int maxResults, int firstResult) {
+    public List<MovimientoTestimonio> findMovimientoTestimonioEntities(int maxResults, int firstResult)
+    {
         return findMovimientoTestimonioEntities(false, maxResults, firstResult);
     }
 
-    private List<MovimientoTestimonio> findMovimientoTestimonioEntities(boolean all, int maxResults, int firstResult) {
+    private List<MovimientoTestimonio> findMovimientoTestimonioEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -185,9 +190,9 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         }
     }
 
-    public MovimientoTestimonio findMovimientoTestimonio(Integer id) {
+    public MovimientoTestimonio findMovimientoTestimonio(Integer id)
+    {
         EntityManager em = getEntityManager();
-
 
         try
         {
@@ -199,10 +204,10 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         }
     }
 
-    public List<MovimientoTestimonio> buscarMovimientosPorTestimonio(Integer idTestimonio) {
+    public List<MovimientoTestimonio> buscarMovimientosPorTestimonio(Integer idTestimonio)
+    {
         List<MovimientoTestimonio> movTestimonio = null;
         EntityManager em = getEntityManager();
-
 
         Query query = em.createNamedQuery("MovimientoTestimonio.findByTestimonio");
         query.setParameter("idTestimonio", idTestimonio);
@@ -212,7 +217,8 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         return movTestimonio;
     }
 
-    public MovimientoTestimonio findMovimientoById(Integer idMovimiento) {
+    public MovimientoTestimonio findMovimientoById(Integer idMovimiento)
+    {
 
         MovimientoTestimonio movTestimonio = null;
         EntityManager em = getEntityManager();
@@ -225,7 +231,8 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
         return movTestimonio;
     }
 
-    public int getMovimientoTestimonioCount() {
+    public int getMovimientoTestimonioCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -239,7 +246,8 @@ public class MovimientoTestimonioJpaController implements Serializable, IPersist
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

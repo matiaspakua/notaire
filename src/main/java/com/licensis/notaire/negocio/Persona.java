@@ -8,7 +8,6 @@ import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
-import com.licensis.notaire.gui.gestiones.gestion.ListaGestionesCliente;
 import java.io.Serializable;
 import java.util.*;
 import javax.persistence.*;
@@ -17,16 +16,28 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.LazyInitializationException;
 
 /**
- * Clase que representa a la entidad persona (general). <p> DISEÑO DEL SISTEMA <p> + Tanto los
+ * Clase que representa a la entidad persona (general).
+ * <p>
+ * DISEÑO DEL SISTEMA
+ * <p>
+ * + Tanto los
  * usuarios del sistema, como los escribanos y los clientes, son "personas". Esta clase representa,
- * mendiante el valor de derminados atributos, cada una de estas entidades. <p> REGLA DE NEGOCIO <p>
+ * mendiante el valor de derminados atributos, cada una de estas entidades.
+ * <p>
+ * REGLA DE NEGOCIO
+ * <p>
  * + Si una instancia de personas, solo tiene asignado los siguientes valores: nombre, apellido,
  * telefono, domicilio, tipo y numero de identificado e e-mail, la instancia representa a una
- * persona que tiene presupuestos asociados (No es un cliente). <p> + Si una instancia de persona,
+ * persona que tiene presupuestos asociados (No es un cliente).
+ * <p>
+ * + Si una instancia de persona,
  * tiene ademas de los atributos de personas, los demas atributos (a excepcion del numero de
  * registro) asignado, entonces se trata de un "cliente" y por lo tanto, debe tener gestiones
- * asociadas. <p> + Si una instancia de personas, tiene todos los atributos asignados, pero ademas
- * posee un numero de registro, entonces se trata de un "escribano". <p>
+ * asociadas.
+ * <p>
+ * + Si una instancia de personas, tiene todos los atributos asignados, pero ademas
+ * posee un numero de registro, entonces se trata de un "escribano".
+ * <p>
  *
  * @author juanca
  */
@@ -34,17 +45,17 @@ import org.hibernate.LazyInitializationException;
 @Table(name = "personas")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
-    @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
-    @NamedQuery(name = "Persona.findByNumeroIdentificacion", query = "SELECT p FROM Persona p WHERE p.numeroIdentificacion = :numeroIdentificacion"),
-    @NamedQuery(name = "Persona.findBySexo", query = "SELECT p FROM Persona p WHERE p.sexo = :sexo"),
-    @NamedQuery(name = "Persona.findByFechaNacimiento", query = "SELECT p FROM Persona p WHERE p.fechaNacimiento = :fechaNacimiento"),
-    @NamedQuery(name = "Persona.findByNumeroNupcias", query = "SELECT p FROM Persona p WHERE p.numeroNupcias = :numeroNupcias"),
-    @NamedQuery(name = "Persona.findByRegistroEscribano", query = "SELECT p FROM Persona p WHERE p.registroEscribano = :registroEscribano"),
-    @NamedQuery(name = "Persona.findByEsCliente", query = "SELECT p FROM Persona p WHERE p.esCliente = :esCliente"),
-    @NamedQuery(name = "Persona.findByPersonaNombreApellido", query = "SELECT p FROM Persona p WHERE p.nombre LIKE :nombre and p.apellido LIKE :apellido"),
-})
+        {
+            @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
+            @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
+            @NamedQuery(name = "Persona.findByNumeroIdentificacion", query = "SELECT p FROM Persona p WHERE p.numeroIdentificacion = :numeroIdentificacion"),
+            @NamedQuery(name = "Persona.findBySexo", query = "SELECT p FROM Persona p WHERE p.sexo = :sexo"),
+            @NamedQuery(name = "Persona.findByFechaNacimiento", query = "SELECT p FROM Persona p WHERE p.fechaNacimiento = :fechaNacimiento"),
+            @NamedQuery(name = "Persona.findByNumeroNupcias", query = "SELECT p FROM Persona p WHERE p.numeroNupcias = :numeroNupcias"),
+            @NamedQuery(name = "Persona.findByRegistroEscribano", query = "SELECT p FROM Persona p WHERE p.registroEscribano = :registroEscribano"),
+            @NamedQuery(name = "Persona.findByEsCliente", query = "SELECT p FROM Persona p WHERE p.esCliente = :esCliente"),
+            @NamedQuery(name = "Persona.findByPersonaNombreApellido", query = "SELECT p FROM Persona p WHERE p.nombre LIKE :nombre and p.apellido LIKE :apellido"),
+        })
 public class Persona implements Serializable
 {
 
@@ -124,14 +135,17 @@ public class Persona implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
     private List<Copia> copiaList;
 
-    public Persona() {
+    public Persona()
+    {
     }
 
-    public Persona(Integer idPersona) {
+    public Persona(Integer idPersona)
+    {
         this.idPersona = idPersona;
     }
 
-    public Persona(Integer idPersona, String nombre, String apellido, String numeroIdentificacion, boolean esCliente) {
+    public Persona(Integer idPersona, String nombre, String apellido, String numeroIdentificacion, boolean esCliente)
+    {
         this.idPersona = idPersona;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -139,223 +153,275 @@ public class Persona implements Serializable
         this.esCliente = esCliente;
     }
 
-    public Integer getIdPersona() {
+    public Integer getIdPersona()
+    {
         return idPersona;
     }
 
-    public void setIdPersona(Integer idPersona) {
+    public void setIdPersona(Integer idPersona)
+    {
         this.idPersona = idPersona;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public String getApellido() {
+    public String getApellido()
+    {
         return apellido;
     }
 
-    public void setApellido(String apellido) {
+    public void setApellido(String apellido)
+    {
         this.apellido = apellido;
     }
 
-    public String getNacionalidad() {
+    public String getNacionalidad()
+    {
         return nacionalidad;
     }
 
-    public void setNacionalidad(String nacionalidad) {
+    public void setNacionalidad(String nacionalidad)
+    {
         this.nacionalidad = nacionalidad;
     }
 
-    public String getNumeroIdentificacion() {
+    public String getNumeroIdentificacion()
+    {
         return numeroIdentificacion;
     }
 
-    public void setNumeroIdentificacion(String numeroIdentificacion) {
+    public void setNumeroIdentificacion(String numeroIdentificacion)
+    {
         this.numeroIdentificacion = numeroIdentificacion;
     }
 
-    public String getCuit() {
+    public String getCuit()
+    {
         return cuit;
     }
 
-    public void setCuit(String cuit) {
+    public void setCuit(String cuit)
+    {
         this.cuit = cuit;
     }
 
-    public String getSexo() {
+    public String getSexo()
+    {
         return sexo;
     }
 
-    public void setSexo(String sexo) {
+    public void setSexo(String sexo)
+    {
         this.sexo = sexo;
     }
 
-    public Date getFechaNacimiento() {
+    public Date getFechaNacimiento()
+    {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
+    public void setFechaNacimiento(Date fechaNacimiento)
+    {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getEstadoCivil() {
+    public String getEstadoCivil()
+    {
         return estadoCivil;
     }
 
-    public void setEstadoCivil(String estadoCivil) {
+    public void setEstadoCivil(String estadoCivil)
+    {
         this.estadoCivil = estadoCivil;
     }
 
-    public Integer getNumeroNupcias() {
+    public Integer getNumeroNupcias()
+    {
         return numeroNupcias;
     }
 
-    public void setNumeroNupcias(Integer numeroNupcias) {
+    public void setNumeroNupcias(Integer numeroNupcias)
+    {
         this.numeroNupcias = numeroNupcias;
     }
 
-    public String getOcupacion() {
+    public String getOcupacion()
+    {
         return ocupacion;
     }
 
-    public void setOcupacion(String ocupacion) {
+    public void setOcupacion(String ocupacion)
+    {
         this.ocupacion = ocupacion;
     }
 
-    public String getDomicilio() {
+    public String getDomicilio()
+    {
         return domicilio;
     }
 
-    public void setDomicilio(String domicilio) {
+    public void setDomicilio(String domicilio)
+    {
         this.domicilio = domicilio;
     }
 
-    public String getTelefono() {
+    public String getTelefono()
+    {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
+    public void setTelefono(String telefono)
+    {
         this.telefono = telefono;
     }
 
-    public String getEMail() {
+    public String getEMail()
+    {
         return eMail;
     }
 
-    public void setEMail(String eMail) {
+    public void setEMail(String eMail)
+    {
         this.eMail = eMail;
     }
 
-    public Integer getRegistroEscribano() {
+    public Integer getRegistroEscribano()
+    {
         return registroEscribano;
     }
 
-    public void setRegistroEscribano(Integer registroEscribano) {
+    public void setRegistroEscribano(Integer registroEscribano)
+    {
         this.registroEscribano = registroEscribano;
     }
 
-    public boolean getEsCliente() {
+    public boolean getEsCliente()
+    {
         return esCliente;
     }
 
-    public void setEsCliente(boolean esCliente) {
+    public void setEsCliente(boolean esCliente)
+    {
         this.esCliente = esCliente;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList() {
+    public List<Tramite> getTramiteList()
+    {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList) {
+    public void setTramiteList(List<Tramite> tramiteList)
+    {
         this.tramiteList = tramiteList;
     }
 
-    public TipoIdentificacion getFkIdTipoIdentificacion() {
+    public TipoIdentificacion getFkIdTipoIdentificacion()
+    {
         return fkIdTipoIdentificacion;
     }
 
-    public void setFkIdTipoIdentificacion(TipoIdentificacion fkIdTipoIdentificacion) {
+    public void setFkIdTipoIdentificacion(TipoIdentificacion fkIdTipoIdentificacion)
+    {
         this.fkIdTipoIdentificacion = fkIdTipoIdentificacion;
     }
 
     @XmlTransient
-    public List<Presupuesto> getPresupuestoList() {
+    public List<Presupuesto> getPresupuestoList()
+    {
         return presupuestoList;
     }
 
-    public void setPresupuestoList(List<Presupuesto> presupuestoList) {
+    public void setPresupuestoList(List<Presupuesto> presupuestoList)
+    {
         this.presupuestoList = presupuestoList;
     }
 
     @XmlTransient
-    public List<GestionDeEscritura> getGestionDeEscrituraList() {
+    public List<GestionDeEscritura> getGestionDeEscrituraList()
+    {
         return GestionDeEscrituraList;
     }
 
-    public void setGestionDeEscrituraList(List<GestionDeEscritura> GestionDeEscrituraList) {
+    public void setGestionDeEscrituraList(List<GestionDeEscritura> GestionDeEscrituraList)
+    {
         this.GestionDeEscrituraList = GestionDeEscrituraList;
     }
 
     @XmlTransient
-    public List<Folio> getFolioList() {
+    public List<Folio> getFolioList()
+    {
         return folioList;
     }
 
-    public void setFolioList(List<Folio> folioList) {
+    public void setFolioList(List<Folio> folioList)
+    {
         this.folioList = folioList;
     }
 
     @XmlTransient
-    public List<Suplencia> getSuplenciaList() {
+    public List<Suplencia> getSuplenciaList()
+    {
         return suplenciaList;
     }
 
-    public void setSuplenciaList(List<Suplencia> suplenciaList) {
+    public void setSuplenciaList(List<Suplencia> suplenciaList)
+    {
         this.suplenciaList = suplenciaList;
     }
 
     @XmlTransient
-    public List<Suplencia> getSuplenciaList1() {
+    public List<Suplencia> getSuplenciaList1()
+    {
         return suplenciaList1;
     }
 
-    public void setSuplenciaList1(List<Suplencia> suplenciaList1) {
+    public void setSuplenciaList1(List<Suplencia> suplenciaList1)
+    {
         this.suplenciaList1 = suplenciaList1;
     }
 
     @XmlTransient
-    public List<Usuario> getUsuariosList() {
+    public List<Usuario> getUsuariosList()
+    {
         return usuariosList;
     }
 
-    public void setUsuariosList(List<Usuario> usuariosList) {
+    public void setUsuariosList(List<Usuario> usuariosList)
+    {
         this.usuariosList = usuariosList;
     }
 
     @XmlTransient
-    public List<Copia> getCopiaList() {
+    public List<Copia> getCopiaList()
+    {
         return copiaList;
     }
 
-    public void setCopiaList(List<Copia> copiaList) {
+    public void setCopiaList(List<Copia> copiaList)
+    {
         this.copiaList = copiaList;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idPersona != null ? idPersona.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Persona))
         {
@@ -370,13 +436,15 @@ public class Persona implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Persona[ idPersona=" + idPersona + " ]"
                 + "[ nombre=" + nombre + " ]"
                 + "[ apellido=" + apellido + " ]";
     }
 
-    public DtoPersona getDto() {
+    public DtoPersona getDto()
+    {
 
         DtoPersona dtoPersona = new DtoPersona();
 
@@ -406,7 +474,6 @@ public class Persona implements Serializable
 
         //Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
         dtoTipoIdentificacion.setNombre(ControllerNegocio.getInstancia().asociarNombreTipoIdentificacion(dtoPersona));
-
 
         //Asocio la lista de gestiones que tiene la persona si es  Escribano
         if (this.getRegistroEscribano() != null)
@@ -452,7 +519,6 @@ public class Persona implements Serializable
 
                     //Elimino Gestiones duplicadas, a causa de los tramites
                     //Si retorna entero positivo esta, sino no.
-
                     if (!listaIdGestiones.contains(dtoGestionDeEscritura.getIdGestion()))
                     {
                         listaIdGestiones.add(dtoGestionDeEscritura.getIdGestion());
@@ -469,7 +535,8 @@ public class Persona implements Serializable
         return dtoPersona;
     }
 
-    public ArrayList<DtoGestionDeEscritura> elimimarDuplicados(ArrayList<DtoGestionDeEscritura> listaDtoEscritura) {
+    public ArrayList<DtoGestionDeEscritura> elimimarDuplicados(ArrayList<DtoGestionDeEscritura> listaDtoEscritura)
+    {
 
         //Creamos un objeto HashSet
         HashSet hs = new HashSet();
@@ -481,12 +548,12 @@ public class Persona implements Serializable
         listaDtoEscritura.clear();
         listaDtoEscritura.addAll(hs);
 
-
         return listaDtoEscritura;
 
     }
 
-    public void setAtributos(DtoPersona dtoPersona) {
+    public void setAtributos(DtoPersona dtoPersona)
+    {
 
         //Version del objeto
         this.setVersion(dtoPersona.getVersion());
@@ -520,19 +587,23 @@ public class Persona implements Serializable
     }
 
     @XmlTransient
-    public List<TramitesPersonas> getTramitesPersonasList() {
+    public List<TramitesPersonas> getTramitesPersonasList()
+    {
         return tramitesPersonasList;
     }
 
-    public void setTramitesPersonasList(List<TramitesPersonas> tramitesPersonasList) {
+    public void setTramitesPersonasList(List<TramitesPersonas> tramitesPersonasList)
+    {
         this.tramitesPersonasList = tramitesPersonasList;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

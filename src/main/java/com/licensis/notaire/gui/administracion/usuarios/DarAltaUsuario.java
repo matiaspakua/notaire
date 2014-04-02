@@ -7,7 +7,6 @@ package com.licensis.notaire.gui.administracion.usuarios;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.gui.administracion.Administracion;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,22 +33,26 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form DarAltaUsuario
      */
-    private DarAltaUsuario() {
+    private DarAltaUsuario()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
     }
 
-    public DtoPersona getDtoPersona() {
+    public DtoPersona getDtoPersona()
+    {
         return dtoPersona;
     }
 
-    public void setDtoPersona(DtoPersona dtoPersona) {
+    public void setDtoPersona(DtoPersona dtoPersona)
+    {
         this.dtoPersona = dtoPersona;
     }
 
-    public static DarAltaUsuario getInstancia() {
+    public static DarAltaUsuario getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new DarAltaUsuario();
@@ -57,15 +60,18 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDarAltaUsuario() {
+    public static JMenuItem getVentanaDarAltaUsuario()
+    {
         return ventanaDarAltaUsuario;
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         campoNombre.setText("");
         campoApellido.setText("");
         campoEmail.setText("");
@@ -78,7 +84,8 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         checkHabilitado.setSelected(true);
     }
 
-    public Boolean cargarFormulario(DtoPersona dtoPersona) throws NonexistentJpaException {
+    public Boolean cargarFormulario(DtoPersona dtoPersona) throws NonexistentJpaException
+    {
 
         Boolean flag = false;
 
@@ -92,8 +99,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "La persona tiene un Usuario asignado : " + miDtoUsuario.getNombre());
 
-        }
-        else
+        } else
         {
             //Habilito la vista pero no se puede modificar los datos de la persona.
             habilitarFormulario();
@@ -114,7 +120,8 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void habilitarFormulario() {
+    public void habilitarFormulario()
+    {
         campoNombre.setEnabled(true);
         campoNombre.setEditable(false);
 
@@ -147,7 +154,8 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         botonAceptar.setEnabled(true);
     }
 
-    public void desabilitarFormulario() {
+    public void desabilitarFormulario()
+    {
 
         campoNombre.setEnabled(false);
         campoApellido.setEnabled(false);
@@ -166,18 +174,19 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         botonAceptar.setEnabled(false);
     }
 
-    public static JMenuItem getVentanaDarAltaPersona() {
+    public static JMenuItem getVentanaDarAltaPersona()
+    {
         return ventanaDarAltaUsuario;
     }
 
-    private boolean isPasswordCorrect(char[] j1, char[] j2) {
+    private boolean isPasswordCorrect(char[] j1, char[] j2)
+    {
         boolean valor = true;
         int puntero = 0;
         if (j1.length != j2.length)
         {
             valor = false;
-        }
-        else
+        } else
         {
             while ((valor) && (puntero < j1.length))
             {
@@ -527,31 +536,27 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
                         JOptionPane.showMessageDialog(this, "Fue dado de alta: " + dtoUsuario.getNombre() + " " + dtoUsuario.getTipo(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
                         this.limpiarFormulario();
                         this.desabilitarFormulario();
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "Error - El nombre de usuario ya se encuentra registrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     }
 
-                }
-                else
+                } else
                 {
-                    JOptionPane.showMessageDialog(this, "Ya existe un Usuario asigando a " + dtoPersona.getNombre() + " " + dtoPersona.getApellido() + ": " + dtoUsuario.getNombre(), "Advertencia",JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Ya existe un Usuario asigando a " + dtoPersona.getNombre() + " " + dtoPersona.getApellido() + ": " + dtoUsuario.getNombre(), "Advertencia", JOptionPane.WARNING_MESSAGE);
                     this.limpiarFormulario();
                 }
             }
-            catch (NonexistentJpaException ex)            
+            catch (NonexistentJpaException ex)
             {
                 JOptionPane.showMessageDialog(this, "Error grave, accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(DarAltaUsuario.class.getName()).log(Level.SEVERE, null, ex);
                 this.salir();
-            }            
-        }
-        else
+            }
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
@@ -576,7 +581,6 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         formBuscarPersona.setTipoBusqueda(labelTitulo.getText());
         Principal.cargarFormulario(formBuscarPersona);
 
-
         Principal.setVentanasActivas(BuscarCliente.getVentanaBuscarCliente());
     }//GEN-LAST:event_botonBuscarPersonaActionPerformed
 
@@ -587,8 +591,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         {
             this.labelAdvertencia.setText("Maximo 10(diez) Caracteres");
             this.campoNombreUsuario.setText(campo.substring(0, 10));
-        }
-        else
+        } else
         {
             this.labelAdvertencia.setText("");
         }

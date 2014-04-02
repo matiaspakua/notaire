@@ -6,7 +6,20 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoItem;
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -18,13 +31,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "items")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
-    @NamedQuery(name = "Item.findByIdItem", query = "SELECT i FROM Item i WHERE i.idItem = :idItem"),
-    @NamedQuery(name = "Item.findByValor", query = "SELECT i FROM Item i WHERE i.valor = :valor"),
-    @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.porcentaje = :porcentaje"),
-    @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
-})
+        {
+            @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
+            @NamedQuery(name = "Item.findByIdItem", query = "SELECT i FROM Item i WHERE i.idItem = :idItem"),
+            @NamedQuery(name = "Item.findByValor", query = "SELECT i FROM Item i WHERE i.valor = :valor"),
+            @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.porcentaje = :porcentaje"),
+            @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
+        })
 public class Item implements Serializable
 {
 
@@ -61,61 +74,75 @@ public class Item implements Serializable
      * Constructor por defaul de Item. Inicializa el ID presupuesto segun el campo
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
-    public Item() {
+    public Item()
+    {
         this.idItem = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
     }
 
-    public Item(Integer idItem) {
+    public Item(Integer idItem)
+    {
         this.idItem = idItem;
     }
 
-    public Item(Integer idItem, String nombre, Float valor) {
+    public Item(Integer idItem, String nombre, Float valor)
+    {
         this.idItem = idItem;
         this.nombre = nombre;
         this.valor = valor;
     }
 
-    public Integer getIdItem() {
+    public Integer getIdItem()
+    {
         return idItem;
     }
 
-    public void setIdItem(Integer idItem) {
+    public void setIdItem(Integer idItem)
+    {
         this.idItem = idItem;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public Integer getPorcentaje() {
+    public Integer getPorcentaje()
+    {
         return porcentaje;
     }
 
-    public void setPorcentaje(Integer porcentaje) {
+    public void setPorcentaje(Integer porcentaje)
+    {
         this.porcentaje = porcentaje;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public Presupuesto getFkIdPresupuesto() {
+    public Presupuesto getFkIdPresupuesto()
+    {
         return fkIdPresupuesto;
     }
 
-    public void setFkIdPresupuesto(Presupuesto fkIdPresupuesto) {
+    public void setFkIdPresupuesto(Presupuesto fkIdPresupuesto)
+    {
         this.fkIdPresupuesto = fkIdPresupuesto;
     }
 
-    public void setAtributos(DtoItem miDto) {
+    public void setAtributos(DtoItem miDto)
+    {
         idItem = miDto.getIdItem();
         nombre = miDto.getNombre();
         valor = miDto.getValor();
@@ -135,7 +162,8 @@ public class Item implements Serializable
         version = miDto.getVersion();
     }
 
-    public DtoItem getDto() {
+    public DtoItem getDto()
+    {
         DtoItem miDtoItem = new DtoItem();
 
         miDtoItem.setIdItem(idItem);
@@ -150,14 +178,16 @@ public class Item implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idItem != null ? idItem.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Item))
         {
@@ -172,32 +202,39 @@ public class Item implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.Item[ idItem=" + idItem + " ]"
-                 + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + nombre + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public float getValor() {
+    public float getValor()
+    {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(float valor)
+    {
         this.valor = valor;
     }
 
-    public boolean isFijo() {
+    public boolean isFijo()
+    {
         return conceptoFijo;
     }
 
-    public void setConceptoFijo(boolean conceptoFijo) {
+    public void setConceptoFijo(boolean conceptoFijo)
+    {
         this.conceptoFijo = conceptoFijo;
     }
 }

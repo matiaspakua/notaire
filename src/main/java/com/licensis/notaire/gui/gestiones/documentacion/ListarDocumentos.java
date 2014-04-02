@@ -7,14 +7,14 @@ package com.licensis.notaire.gui.gestiones.documentacion;
 import com.licensis.notaire.dto.DtoPlantillaTramite;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -32,23 +32,27 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
     /**
      * Creates new form ListarDocumentacion
      */
-    public ListarDocumentos() {
+    public ListarDocumentos()
+    {
         initComponents();
         this.estadoFormulario = Boolean.TRUE;
         miController = ControllerNegocio.getInstancia();
-        this.setSize(900,600);
+        this.setSize(900, 600);
         this.cargarListaTramites();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaListarDocumentos() {
+    public static JMenuItem getVentanaListarDocumentos()
+    {
         return ventanaListarDocumentos;
     }
 
-    public void cargarListaTramites() {
+    public void cargarListaTramites()
+    {
         listaTiposDeTramites = miController.buscarTiposDeTramiteHabilitados();
 
         if (!listaTiposDeTramites.isEmpty())
@@ -58,15 +62,15 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
                 DtoTipoDeTramite dtoTipoDeTramite = it.next();
                 this.comboTipoTramites.addItem(dtoTipoDeTramite.getNombre());
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen tipo de tramites registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             this.salir();
         }
     }
 
-    public void cargarPlantillaTipoTramite(DtoTipoDeTramite tipoDeTramite) {
+    public void cargarPlantillaTipoTramite(DtoTipoDeTramite tipoDeTramite)
+    {
         List<DtoPlantillaTramite> listaPlantillaTramites = miController.obtenerPlantillasTramite(tipoDeTramite);
 
         if (!listaPlantillaTramites.isEmpty())
@@ -84,8 +88,7 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
 
                 ((DefaultTableModel) this.grillaDocumentosTramite.getModel()).addRow(datos);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "El tipo de tramite seleccionado no posee documentos asociados", "Error", JOptionPane.ERROR_MESSAGE);
             this.salir();
@@ -249,8 +252,7 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
 
             AdministradorReportes reportes = AdministradorReportes.getInstancia();
             reportes.generarReporteListaDocumentos(listaTramites);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No ha seleccionado ningun tipo de tramite.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
@@ -269,7 +271,8 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) this.grillaDocumentosTramite.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) this.grillaDocumentosTramite.getModel()).getRowCount() > 0)
@@ -301,8 +304,7 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
                 }
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ningun tipo de tramite", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

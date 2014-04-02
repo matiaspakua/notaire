@@ -4,23 +4,23 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import com.licensis.notaire.negocio.Folio;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.TipoDeFolio;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -29,18 +29,21 @@ import com.licensis.notaire.negocio.TipoDeFolio;
 public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TipoDeFolioJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TipoDeFolioJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public void create(TipoDeFolio tipoDeFolio) throws PreexistingEntityException {
+    public void create(TipoDeFolio tipoDeFolio) throws PreexistingEntityException
+    {
         if (tipoDeFolio.getFolioList() == null)
         {
             tipoDeFolio.setFolioList(new ArrayList<Folio>());
@@ -75,7 +78,6 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
                 throw new PreexistingEntityException("El tipo de folio indicado ya existe");
             }
 
-
             em.getTransaction().commit();
         }
         finally
@@ -87,7 +89,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public boolean edit(TipoDeFolio tipoDeFolio) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException {
+    public boolean edit(TipoDeFolio tipoDeFolio) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    {
 
         Integer version = ConstantesPersistencia.VERSION_INICIAL;
         Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
@@ -112,8 +115,7 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
                 }
 
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 em.getTransaction().begin();
 
@@ -164,8 +166,7 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
 
                 resultado = true;
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException("El tipo de folio con ID:" + tipoDeFolio.getIdTipoFolio() + ", ya no existe");
         }
@@ -173,7 +174,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
         return resultado;
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -215,7 +217,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public boolean verificarExistenciaTipoDeFolio(String nombre) {
+    public boolean verificarExistenciaTipoDeFolio(String nombre)
+    {
 
         List<TipoDeFolio> listaTipoDeFolios = this.findTipoDeFolioEntities();
 
@@ -232,15 +235,18 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public List<TipoDeFolio> findTipoDeFolioEntities() {
+    public List<TipoDeFolio> findTipoDeFolioEntities()
+    {
         return findTipoDeFolioEntities(true, -1, -1);
     }
 
-    public List<TipoDeFolio> findTipoDeFolioEntities(int maxResults, int firstResult) {
+    public List<TipoDeFolio> findTipoDeFolioEntities(int maxResults, int firstResult)
+    {
         return findTipoDeFolioEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoDeFolio> findTipoDeFolioEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoDeFolio> findTipoDeFolioEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -258,7 +264,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public TipoDeFolio findTipoDeFolio(Integer id) {
+    public TipoDeFolio findTipoDeFolio(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -270,7 +277,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getTipoDeFolioCount() {
+    public int getTipoDeFolioCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -284,7 +292,8 @@ public class TipoDeFolioJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

@@ -6,17 +6,36 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.jpa.ConstantesPersistencia;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import com.licensis.notaire.jpa.ConstantesPersistencia;
 
 /**
- * <p> REGLA DE NEGOCIO: <p>
+ * <p>
+ * REGLA DE NEGOCIO:
+ * <p>
  *
  * <lo> <li> Estados posibles de un Folio: -Nuevo -Utilizado -Errose </li> </lo>
  *
@@ -27,13 +46,13 @@ import com.licensis.notaire.jpa.ConstantesPersistencia;
 @Table(name = "folios")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Folio.findAll", query = "SELECT f FROM Folio f"),
-    @NamedQuery(name = "Folio.findByIdFolio", query = "SELECT f FROM Folio f WHERE f.idFolio = :idFolio"),
-    @NamedQuery(name = "Folio.findByNumero", query = "SELECT f FROM Folio f WHERE f.numero = :numero"),
-    @NamedQuery(name = "Folio.findByAnio", query = "SELECT f FROM Folio f WHERE f.anio = :anio"),
-    @NamedQuery(name = "Folio.findByAnioAndRegistro", query = "SELECT f FROM Folio f WHERE f.anio = :anio AND f.fkIdPersonaEscribano.registroEscribano =:registro")
-})
+        {
+            @NamedQuery(name = "Folio.findAll", query = "SELECT f FROM Folio f"),
+            @NamedQuery(name = "Folio.findByIdFolio", query = "SELECT f FROM Folio f WHERE f.idFolio = :idFolio"),
+            @NamedQuery(name = "Folio.findByNumero", query = "SELECT f FROM Folio f WHERE f.numero = :numero"),
+            @NamedQuery(name = "Folio.findByAnio", query = "SELECT f FROM Folio f WHERE f.anio = :anio"),
+            @NamedQuery(name = "Folio.findByAnioAndRegistro", query = "SELECT f FROM Folio f WHERE f.anio = :anio AND f.fkIdPersonaEscribano.registroEscribano =:registro")
+        })
 public class Folio implements Serializable
 {
 
@@ -81,105 +100,128 @@ public class Folio implements Serializable
     @ManyToOne(fetch = FetchType.LAZY)
     private Escritura fkIdEscritura;
 
-    public Folio() {
+    public Folio()
+    {
         this.copiaList = new ArrayList<>();
         this.foliosCopiasCollection = new ArrayList<>();
-        
+
     }
 
-    public Folio(Integer idFolio) {
+    public Folio(Integer idFolio)
+    {
         this.idFolio = idFolio;
     }
 
-    public Folio(Integer idFolio, int numero, int anio, String estado) {
+    public Folio(Integer idFolio, int numero, int anio, String estado)
+    {
         this.idFolio = idFolio;
         this.numero = numero;
         this.anio = anio;
         this.estado = estado;
     }
 
-    public Integer getIdFolio() {
+    public Integer getIdFolio()
+    {
         return idFolio;
     }
 
-    public void setIdFolio(Integer idFolio) {
+    public void setIdFolio(Integer idFolio)
+    {
         this.idFolio = idFolio;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public int getAnio() {
+    public int getAnio()
+    {
         return anio;
     }
 
-    public void setAnio(int anio) {
+    public void setAnio(int anio)
+    {
         this.anio = anio;
     }
 
-    public String getEstado() {
+    public String getEstado()
+    {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(String estado)
+    {
         this.estado = estado;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Copia> getCopiaList() {
+    public List<Copia> getCopiaList()
+    {
         return copiaList;
     }
 
-    public void setCopiaList(List<Copia> copiaList) {
+    public void setCopiaList(List<Copia> copiaList)
+    {
         this.copiaList = copiaList;
     }
 
-    public Persona getFkIdPersonaEscribano() {
+    public Persona getFkIdPersonaEscribano()
+    {
         return fkIdPersonaEscribano;
     }
 
-    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano) {
+    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano)
+    {
         this.fkIdPersonaEscribano = fkIdPersonaEscribano;
     }
 
-    public TipoDeFolio getFkIdTipoFolio() {
+    public TipoDeFolio getFkIdTipoFolio()
+    {
         return fkIdTipoFolio;
     }
 
-    public void setFkIdTipoFolio(TipoDeFolio fkIdTipoFolio) {
+    public void setFkIdTipoFolio(TipoDeFolio fkIdTipoFolio)
+    {
         this.fkIdTipoFolio = fkIdTipoFolio;
     }
 
-    public Escritura getFkIdEscritura() {
+    public Escritura getFkIdEscritura()
+    {
         return fkIdEscritura;
     }
 
-    public void setFkIdEscritura(Escritura fkIdEscritura) {
+    public void setFkIdEscritura(Escritura fkIdEscritura)
+    {
         this.fkIdEscritura = fkIdEscritura;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idFolio != null ? idFolio.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Folio))
         {
@@ -194,13 +236,15 @@ public class Folio implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Folio[ idFolio=" + idFolio + " ]"
-                 + "[ numero=" + numero + " ]"
-                 + "[ anio=" + anio + " ]";
+                + "[ numero=" + numero + " ]"
+                + "[ anio=" + anio + " ]";
     }
 
-    public void setAtributos(DtoFolio unDtoFolio) {
+    public void setAtributos(DtoFolio unDtoFolio)
+    {
         if (unDtoFolio.isValido())
         {
             this.setIdFolio(unDtoFolio.getIdFolio());
@@ -212,7 +256,8 @@ public class Folio implements Serializable
         }
     }
 
-    public DtoFolio getDto() {
+    public DtoFolio getDto()
+    {
         DtoFolio miDtoFolio = new DtoFolio();
 
         miDtoFolio.setIdFolio(this.idFolio);
@@ -233,24 +278,27 @@ public class Folio implements Serializable
 
         miDtoFolio.setTiposDeFolio(this.fkIdTipoFolio.getDto());
 
-
         return miDtoFolio;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
     @XmlTransient
-    public Collection<FoliosCopias> getFoliosCopiasCollection() {
+    public Collection<FoliosCopias> getFoliosCopiasCollection()
+    {
         return foliosCopiasCollection;
     }
 
-    public void setFoliosCopiasCollection(Collection<FoliosCopias> foliosCopiasCollection) {
+    public void setFoliosCopiasCollection(Collection<FoliosCopias> foliosCopiasCollection)
+    {
         this.foliosCopiasCollection = foliosCopiasCollection;
     }
 }

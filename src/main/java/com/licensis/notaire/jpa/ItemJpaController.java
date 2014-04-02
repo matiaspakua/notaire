@@ -4,14 +4,18 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.*;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Presupuesto;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -20,18 +24,21 @@ import com.licensis.notaire.negocio.Presupuesto;
 public class ItemJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public ItemJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public ItemJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Item item) {
+    public int create(Item item)
+    {
         int id = -1;
         EntityManager em = null;
         try
@@ -63,7 +70,8 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         return id;
     }
 
-    public Boolean edit(Item item) throws NonexistentEntityException, Exception {
+    public Boolean edit(Item item) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         Boolean modificado = Boolean.FALSE;
         try
@@ -116,7 +124,8 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public Boolean destroy(Integer id) throws NonexistentEntityException {
+    public Boolean destroy(Integer id) throws NonexistentEntityException
+    {
         Boolean eliminado = false;
         EntityManager em = null;
         try
@@ -153,15 +162,18 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         return eliminado;
     }
 
-    public List<Item> findItemEntities() {
+    public List<Item> findItemEntities()
+    {
         return findItemEntities(true, -1, -1);
     }
 
-    public List<Item> findItemEntities(int maxResults, int firstResult) {
+    public List<Item> findItemEntities(int maxResults, int firstResult)
+    {
         return findItemEntities(false, maxResults, firstResult);
     }
 
-    private List<Item> findItemEntities(boolean all, int maxResults, int firstResult) {
+    private List<Item> findItemEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -179,7 +191,8 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Item findItem(Integer id) {
+    public Item findItem(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -191,7 +204,8 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getItemCount() {
+    public int getItemCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -204,7 +218,8 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Item> findItemsPresupuesto(Integer pIdPresupuesto) {
+    public List<Item> findItemsPresupuesto(Integer pIdPresupuesto)
+    {
         EntityManager em = getEntityManager();
 
         List<Item> misItems = null;
@@ -229,11 +244,13 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 
-    public Boolean eliminarItem(Item miItem) {
+    public Boolean eliminarItem(Item miItem)
+    {
 
         Boolean eliminado = false;
         int deleted = 0;

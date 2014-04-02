@@ -7,12 +7,10 @@ package com.licensis.notaire.gui.administracion.usuarios;
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.gui.clientes.BuscarCliente;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -35,7 +33,8 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form VerRegistroActividadesUsuario
      */
-    public VerRegistroActividadesUsuario() {
+    public VerRegistroActividadesUsuario()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -43,7 +42,8 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
         grillaDetalleActividades.setAutoCreateRowSorter(true);
     }
 
-    public static VerRegistroActividadesUsuario getInstancia() {
+    public static VerRegistroActividadesUsuario getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new VerRegistroActividadesUsuario();
@@ -51,30 +51,36 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public DtoUsuario getDtoUsuario() {
+    public DtoUsuario getDtoUsuario()
+    {
         return dtoUsuario;
     }
 
-    public void setDtoUsuario(DtoUsuario dtoUsuario) {
+    public void setDtoUsuario(DtoUsuario dtoUsuario)
+    {
         this.dtoUsuario = dtoUsuario;
     }
 
-    public static JMenuItem getVentanaRegistroActividadesUsuario() {
+    public static JMenuItem getVentanaRegistroActividadesUsuario()
+    {
         return ventanaRegistroActividadesUsuario;
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
 
         this.limpiarJtable();
     }
 
     ;
 
-      public void limpiarJtable() {
+      public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaDetalleActividades.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaDetalleActividades.getModel()).getRowCount() > 0)
@@ -85,7 +91,8 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
 
     }
 
-    public void cargarRegistrosUsuario(DtoUsuario miDtoUsuario) throws NonexistentJpaException {
+    public void cargarRegistrosUsuario(DtoUsuario miDtoUsuario) throws NonexistentJpaException
+    {
 
         limpiarFormulario();
 
@@ -363,14 +370,12 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
             {
                 Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
                 Principal.setVentanasActivas(ventanaRegistroActividadesUsuario);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No exiten Actividades registradas por el Usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No exiten Actividades registradas por el Usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

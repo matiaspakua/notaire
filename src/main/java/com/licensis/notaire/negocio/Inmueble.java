@@ -8,7 +8,19 @@ import com.licensis.notaire.dto.DtoInmueble;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,11 +33,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "inmuebles")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Inmueble.findAll", query = "SELECT i FROM Inmueble i"),
-    @NamedQuery(name = "Inmueble.findByIdInmueble", query = "SELECT i FROM Inmueble i WHERE i.idInmueble = :idInmueble"),
-    @NamedQuery(name = "Inmueble.findByNomenclatura", query = "SELECT i FROM Inmueble i WHERE i.nomenclaturaCatastral = :nomenclatura")
-})
+        {
+            @NamedQuery(name = "Inmueble.findAll", query = "SELECT i FROM Inmueble i"),
+            @NamedQuery(name = "Inmueble.findByIdInmueble", query = "SELECT i FROM Inmueble i WHERE i.idInmueble = :idInmueble"),
+            @NamedQuery(name = "Inmueble.findByNomenclatura", query = "SELECT i FROM Inmueble i WHERE i.nomenclaturaCatastral = :nomenclatura")
+        })
 public class Inmueble implements Serializable
 {
 
@@ -64,80 +76,98 @@ public class Inmueble implements Serializable
      * Constructor por default de Inmueble. Inicializa el ID presupuesto segun el campo
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y las listas internas.
      */
-    public Inmueble() {
+    public Inmueble()
+    {
         this.idInmueble = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.tramiteList = new ArrayList<>();
     }
 
-    public Inmueble(Integer idInmueble) {
+    public Inmueble(Integer idInmueble)
+    {
         this.idInmueble = idInmueble;
     }
 
-    public Inmueble(Integer idInmueble, String nomenclaturaCatastral, String domicilio, String tipoInmueble) {
+    public Inmueble(Integer idInmueble, String nomenclaturaCatastral, String domicilio, String tipoInmueble)
+    {
         this.idInmueble = idInmueble;
         this.nomenclaturaCatastral = nomenclaturaCatastral;
         this.domicilio = domicilio;
         this.tipoInmueble = tipoInmueble;
     }
 
-    public Integer getIdInmueble() {
+    public Integer getIdInmueble()
+    {
         return idInmueble;
     }
 
-    public void setIdInmueble(Integer idInmueble) {
+    public void setIdInmueble(Integer idInmueble)
+    {
         this.idInmueble = idInmueble;
     }
 
-    public String getNomenclaturaCatastral() {
+    public String getNomenclaturaCatastral()
+    {
         return nomenclaturaCatastral;
     }
 
-    public void setNomenclaturaCatastral(String nomenclaturaCatastral) {
+    public void setNomenclaturaCatastral(String nomenclaturaCatastral)
+    {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
     }
 
-    public String getValuacionFiscal() {
+    public String getValuacionFiscal()
+    {
         return valuacionFiscal;
     }
 
-    public void setValuacionFiscal(String valuacionFiscal) {
+    public void setValuacionFiscal(String valuacionFiscal)
+    {
         this.valuacionFiscal = valuacionFiscal;
     }
 
-    public String getDomicilio() {
+    public String getDomicilio()
+    {
         return domicilio;
     }
 
-    public void setDomicilio(String domicilio) {
+    public void setDomicilio(String domicilio)
+    {
         this.domicilio = domicilio;
     }
 
-    public String getTipoInmueble() {
+    public String getTipoInmueble()
+    {
         return tipoInmueble;
     }
 
-    public void setTipoInmueble(String tipoInmueble) {
+    public void setTipoInmueble(String tipoInmueble)
+    {
         this.tipoInmueble = tipoInmueble;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList() {
+    public List<Tramite> getTramiteList()
+    {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList) {
+    public void setTramiteList(List<Tramite> tramiteList)
+    {
         this.tramiteList = tramiteList;
     }
 
-    public DtoInmueble getDto() {
+    public DtoInmueble getDto()
+    {
         DtoInmueble miDto = new DtoInmueble();
 
         miDto.setDomicilio(this.getDomicilio());
@@ -150,7 +180,8 @@ public class Inmueble implements Serializable
         return miDto;
     }
 
-    public void setAtributos(DtoInmueble miDtoInmueble) {
+    public void setAtributos(DtoInmueble miDtoInmueble)
+    {
         if (miDtoInmueble.isValido())
         {
             this.domicilio = miDtoInmueble.getDomicilio();
@@ -168,14 +199,16 @@ public class Inmueble implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idInmueble != null ? idInmueble.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Inmueble))
         {
@@ -190,16 +223,19 @@ public class Inmueble implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Inmueble[ idInmueble=" + idInmueble + " ]"
-                 + "[ nomenclatura=" + nomenclaturaCatastral + " ]";
+                + "[ nomenclatura=" + nomenclaturaCatastral + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

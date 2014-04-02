@@ -5,7 +5,6 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
-import com.licensis.notaire.dto.DtoUsuario;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -19,11 +18,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "registro_auditoria")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "RegistroAuditoria.findAll", query = "SELECT r FROM RegistroAuditoria r"),
-    @NamedQuery(name = "RegistroAuditoria.findByIdRegistroAuditoria", query = "SELECT r FROM RegistroAuditoria r WHERE r.idRegistroAuditoria = :idRegistroAuditoria"),
-    @NamedQuery(name = "RegistroAuditoria.findByFecha", query = "SELECT r FROM RegistroAuditoria r WHERE r.fecha = :fecha")
-})
+        {
+            @NamedQuery(name = "RegistroAuditoria.findAll", query = "SELECT r FROM RegistroAuditoria r"),
+            @NamedQuery(name = "RegistroAuditoria.findByIdRegistroAuditoria", query = "SELECT r FROM RegistroAuditoria r WHERE r.idRegistroAuditoria = :idRegistroAuditoria"),
+            @NamedQuery(name = "RegistroAuditoria.findByFecha", query = "SELECT r FROM RegistroAuditoria r WHERE r.fecha = :fecha")
+        })
 public class RegistroAuditoria implements Serializable
 {
 
@@ -52,52 +51,63 @@ public class RegistroAuditoria implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Usuario fkIdUsuario;
 
-    public RegistroAuditoria() {
+    public RegistroAuditoria()
+    {
     }
 
-    public RegistroAuditoria(Integer idRegistroAuditoria) {
+    public RegistroAuditoria(Integer idRegistroAuditoria)
+    {
         this.idRegistroAuditoria = idRegistroAuditoria;
     }
 
-    public RegistroAuditoria(Integer idRegistroAuditoria, String detalleOperacion, Date fecha) {
+    public RegistroAuditoria(Integer idRegistroAuditoria, String detalleOperacion, Date fecha)
+    {
         this.idRegistroAuditoria = idRegistroAuditoria;
         this.detalleOperacion = detalleOperacion;
         this.fecha = fecha;
     }
 
-    public Integer getIdRegistroAuditoria() {
+    public Integer getIdRegistroAuditoria()
+    {
         return idRegistroAuditoria;
     }
 
-    public void setIdRegistroAuditoria(Integer idRegistroAuditoria) {
+    public void setIdRegistroAuditoria(Integer idRegistroAuditoria)
+    {
         this.idRegistroAuditoria = idRegistroAuditoria;
     }
 
-    public String getDetalleOperacion() {
+    public String getDetalleOperacion()
+    {
         return detalleOperacion;
     }
 
-    public void setDetalleOperacion(String detalleOperacion) {
+    public void setDetalleOperacion(String detalleOperacion)
+    {
         this.detalleOperacion = detalleOperacion;
     }
 
-    public Usuario getFkIdUsuario() {
+    public Usuario getFkIdUsuario()
+    {
         return fkIdUsuario;
     }
 
-    public void setFkIdUsuario(Usuario fkIdUsuario) {
+    public void setFkIdUsuario(Usuario fkIdUsuario)
+    {
         this.fkIdUsuario = fkIdUsuario;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idRegistroAuditoria != null ? idRegistroAuditoria.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof RegistroAuditoria))
         {
@@ -112,11 +122,13 @@ public class RegistroAuditoria implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.RegistroAuditoria[ idRegistroAuditoria=" + idRegistroAuditoria + " ]";
     }
 
-    public DtoRegistroAuditoria getDto() {
+    public DtoRegistroAuditoria getDto()
+    {
 
         DtoRegistroAuditoria miDto = new DtoRegistroAuditoria();
 
@@ -129,23 +141,28 @@ public class RegistroAuditoria implements Serializable
         return miDto;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public String getModulo() {
+    public String getModulo()
+    {
         return modulo;
     }
 
-    public void setModulo(String modulo) {
+    public void setModulo(String modulo)
+    {
         this.modulo = modulo;
     }
 
-    public void setAtributos(DtoRegistroAuditoria miDto) {
+    public void setAtributos(DtoRegistroAuditoria miDto)
+    {
 
         this.setFkIdUsuario(fkIdUsuario);
         this.setFecha(fecha);
@@ -155,11 +172,13 @@ public class RegistroAuditoria implements Serializable
 
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 }

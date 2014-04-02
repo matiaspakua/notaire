@@ -20,16 +20,19 @@ public class DeclaracionJuradaRentas extends javax.swing.JInternalFrame
     /**
      * Creates new form DeclaracionJuradaRentas
      */
-    public DeclaracionJuradaRentas() {
+    public DeclaracionJuradaRentas()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDeclaracionJuradaRentas() {
+    public static JMenuItem getVentanaDeclaracionJuradaRentas()
+    {
         return ventanaDeclaracionJuradaRentas;
     }
 

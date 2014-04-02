@@ -8,114 +8,119 @@ package com.licensis.notaire.gui;
  *
  * @author juanca
  */
-
-
-import java.awt.*;
-import java.beans.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import javax.swing.JButton;
+import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
 
 public class ActivarBotonformulario implements PropertyChangeListener
 {
-	private static String PERMANENT_FOCUS_OWNER = "permanentFocusOwner";
 
-	//  Keep track of the default button for each root pane in the application
-	private HashMap<JRootPane, JButton> rootPanes = new HashMap<JRootPane, JButton>();
+    private static String PERMANENT_FOCUS_OWNER = "permanentFocusOwner";
 
-	//  Store the oldValue until the second PropertyChangeEvent is received
-	private Component oldValue;
+    //  Keep track of the default button for each root pane in the application
+    private HashMap<JRootPane, JButton> rootPanes = new HashMap<JRootPane, JButton>();
 
-	/*
-	 *	Multiple property change events will be generated
-	 *
-	 *  a) the first will contain the last component to have focus
-	 *  b) the second will contain the component that currently has focus
-	 *
-	 *  We need information from both events in order to proceed.
-	 */
-	public void propertyChange(PropertyChangeEvent e)
-	{
-	 	// Wait until we have both pieces of information
+    //  Store the oldValue until the second PropertyChangeEvent is received
+    private Component oldValue;
 
-		if (e.getOldValue() != null)
-			oldValue = (Component)e.getOldValue();
+    /*
+     * Multiple property change events will be generated
+     *
+     * a) the first will contain the last component to have focus
+     * b) the second will contain the component that currently has focus
+     *
+     * We need information from both events in order to proceed.
+     */
+    public void propertyChange(PropertyChangeEvent e)
+    {
+        // Wait until we have both pieces of information
 
-		if (e.getNewValue() == null) return;
+        if (e.getOldValue() != null)
+        {
+            oldValue = (Component) e.getOldValue();
+        }
+
+        if (e.getNewValue() == null)
+        {
+            return;
+        }
 
 		//  When focus remains on the same root pane and
-		//  when leaving a button and not going to a different button
-		//  we need to restore the original default button
+        //  when leaving a button and not going to a different button
+        //  we need to restore the original default button
+        Component newValue = (Component) e.getNewValue();
+        JRootPane oldRootPane = SwingUtilities.getRootPane(oldValue);
+        JRootPane newRootPane = SwingUtilities.getRootPane(newValue);
 
-		Component newValue = (Component)e.getNewValue();
-		JRootPane oldRootPane = SwingUtilities.getRootPane(oldValue);
-		JRootPane newRootPane = SwingUtilities.getRootPane(newValue);
-
-		if (newRootPane == oldRootPane)
-		{
-			if (   oldValue instanceof JButton
-			&&  ! (newValue instanceof JButton))
-			{
-				restoreDefaultButton(newRootPane);
-			}
-		}
+        if (newRootPane == oldRootPane)
+        {
+            if (oldValue instanceof JButton
+                    && !(newValue instanceof JButton))
+            {
+                restoreDefaultButton(newRootPane);
+            }
+        }
 
 		//	Make this button the new default button for the root pane
+        if (newValue instanceof JButton)
+        {
+            setDefaultButton(newRootPane, (JButton) newValue);
+        }
+    }
 
-		if (newValue instanceof JButton)
-		{
-			setDefaultButton(newRootPane, (JButton)newValue);
-		}
-	}
+    /*
+     * Restore the root pane to its original default button
+     */
+    private void restoreDefaultButton(JRootPane rootPane)
+    {
+        if (rootPanes.containsKey(rootPane))
+        {
+            JButton savedDefaultButton = rootPanes.get(rootPane);
+            rootPane.setDefaultButton(savedDefaultButton);
+        }
+    }
 
-	/*
-	 *  Restore the root pane to its original default button
-	 */
-	private void restoreDefaultButton(JRootPane rootPane)
-	{
-		if (rootPanes.containsKey(rootPane))
-		{
-			JButton savedDefaultButton = rootPanes.get(rootPane);
-			rootPane.setDefaultButton(savedDefaultButton);
-		}
-	}
+    /*
+     * Temporarily change the default button of a root pane
+     */
+    private void setDefaultButton(JRootPane rootPane, JButton button)
+    {
+        //	Save the original default button for the root pane
 
-	/*
-	 *  Temporarily change the default button of a root pane
-	 */
-	private void setDefaultButton(JRootPane rootPane, JButton button)
-	{
-		//	Save the original default button for the root pane
-
-		if (! rootPanes.containsKey(rootPane))
-		{
-			rootPanes.put(rootPane, rootPane.getDefaultButton());
-		}
+        if (!rootPanes.containsKey(rootPane))
+        {
+            rootPanes.put(rootPane, rootPane.getDefaultButton());
+        }
 
 		//  Set the current button to temporarily be the default button
+        rootPane.setDefaultButton(button);
+    }
 
-		rootPane.setDefaultButton( button );
-	}
+    /*
+     * Installing the listener will affect the entire application
+     */
+    static ActivarBotonformulario install()
+    {
+        ActivarBotonformulario listener = new ActivarBotonformulario();
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addPropertyChangeListener(PERMANENT_FOCUS_OWNER, listener);
 
-	/*
-	 *  Installing the listener will affect the entire application
-	 */
-	static ActivarBotonformulario install()
-	{
-		ActivarBotonformulario listener = new ActivarBotonformulario();
-		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-			.addPropertyChangeListener(PERMANENT_FOCUS_OWNER, listener);
+        return listener;
+    }
 
-		return listener;
-	}
+    /*
+     * Uninstalling the listener will affect the entire application
+     */
+    static void unInstall(ActivarBotonformulario listener)
+    {
+        listener.rootPanes.clear();
 
-	/*
-	 *  Uninstalling the listener will affect the entire application
-	 */
-	static void unInstall(ActivarBotonformulario listener)
-	{
-		listener.rootPanes.clear();
-
-		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-			.removePropertyChangeListener(PERMANENT_FOCUS_OWNER, listener);
-	}
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .removePropertyChangeListener(PERMANENT_FOCUS_OWNER, listener);
+    }
 }

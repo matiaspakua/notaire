@@ -30,18 +30,21 @@ import javax.transaction.UserTransaction;
 public class FolioJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public FolioJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public FolioJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public void create(Folio folio) {
+    public void create(Folio folio)
+    {
         if (folio.getCopiaList() == null)
         {
             folio.setCopiaList(new ArrayList<Copia>());
@@ -108,7 +111,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException {
+    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
         Integer version = ConstantesPersistencia.VERSION_INICIAL;
         Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
@@ -129,8 +133,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 Persona fkIdPersonaEscribanoOld = persistentFolio.getFkIdPersonaEscribano();
                 Persona fkIdPersonaEscribanoNew = folio.getFkIdPersonaEscribano();
@@ -217,14 +220,14 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
     }
 
-    public boolean modificarFoliosCompleto(Folio folioModificado) throws ClassModifiedException {
+    public boolean modificarFoliosCompleto(Folio folioModificado) throws ClassModifiedException
+    {
         boolean resultado = false;
 
         EntityManager em = null;
@@ -247,39 +250,37 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     em.close();
                 }
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 persistentFolio.setAnio(folioModificado.getAnio());
                 persistentFolio.setEstado(folioModificado.getEstado());
 //                persistentFolio.setFkIdPersonaEscribano(folioModificado.getFkIdPersonaEscribano());
 //                persistentFolio.setFkIdTipoFolio(folioModificado.getFkIdTipoFolio());
                 persistentFolio.setNumero(folioModificado.getNumero());
-                persistentFolio.setObservaciones(folioModificado.getObservaciones());                
-                
+                persistentFolio.setObservaciones(folioModificado.getObservaciones());
+
                 em.getTransaction().commit();
 
                 if (em != null)
                 {
                     em.close();
                 }
-                
+
                 resultado = true;
             }
         }
 
-
         return resultado;
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
             Folio folio;
-
 
             try
             {
@@ -326,11 +327,13 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Folio> findFolioEntities() {
+    public List<Folio> findFolioEntities()
+    {
         return findFolioEntities(true, -1, -1);
     }
 
-    public List<Folio> findFoliosRegistroAnio(Integer registro, Integer anio) {
+    public List<Folio> findFoliosRegistroAnio(Integer registro, Integer anio)
+    {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
         try
@@ -355,7 +358,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public List<Folio> findFoliosbyNumero(Integer numero) {
+    public List<Folio> findFoliosbyNumero(Integer numero)
+    {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
         try
@@ -380,11 +384,13 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public List<Folio> findFolioEntities(int maxResults, int firstResult) {
+    public List<Folio> findFolioEntities(int maxResults, int firstResult)
+    {
         return findFolioEntities(false, maxResults, firstResult);
     }
 
-    private List<Folio> findFolioEntities(boolean all, int maxResults, int firstResult) {
+    private List<Folio> findFolioEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -402,9 +408,9 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Folio findFolio(Integer id) {
+    public Folio findFolio(Integer id)
+    {
         EntityManager em = getEntityManager();
-
 
         try
         {
@@ -420,7 +426,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getFolioCount() {
+    public int getFolioCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -433,7 +440,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void modificarFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException {
+    public void modificarFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
 
         int version;
@@ -459,15 +467,15 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
             em.getTransaction().commit();
 
             em.close();
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

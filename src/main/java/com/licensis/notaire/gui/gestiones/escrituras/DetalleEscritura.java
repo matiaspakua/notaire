@@ -44,7 +44,8 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
     /**
      * Creates new form DetalleEscritura
      */
-    public DetalleEscritura() {
+    public DetalleEscritura()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         grillaListaTramitesGestion.setAutoCreateRowSorter(true);
@@ -55,11 +56,13 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         radioSinFirmar.setSelected(true);
     }
 
-    public void setFormularioInvocador(String formulario) {
+    public void setFormularioInvocador(String formulario)
+    {
         this.formularioInvocador = formulario;
     }
 
-    public Boolean cargarFormularioCrearEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura) {
+    public Boolean cargarFormularioCrearEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura)
+    {
         miGestionDeEscritura = miDtoGestionDeEscritura;
         Boolean flag = false;
         Boolean ok = true;
@@ -118,22 +121,19 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                         comboFolioHasta.addItem(dtoFolio.getNumero());
                     }
 
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No existen folios disponibles para utilizar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     ok = false;
                     salir();
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La gestion ya tiene todos sus tramites asociados a una escritura.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 ok = false;
                 salir();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen tramites asociados a la gestion actual.");
             ok = false;
@@ -143,7 +143,8 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         return ok;
     }
 
-    public Boolean cargarFormularioModificarEscritura(DtoEscritura miDtoEscritura) {
+    public Boolean cargarFormularioModificarEscritura(DtoEscritura miDtoEscritura)
+    {
         Boolean ok = true;
 
         miGestionDeEscritura = miDtoEscritura.getTramites().get(0).getGestion();
@@ -179,8 +180,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                     comboFolioHasta.setVisible(false);
                     labelInclusiveNuevo.setVisible(false);
                     labelFoliosDisp.setVisible(false);
-                }
-                else
+                } else
                 {
 
                     for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();)
@@ -191,8 +191,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                     labelValidacion.setText("");
                 }
             }
-        }
-        else
+        } else
         {
             comboFolioHasta.setEnabled(false);
             labelValidacion.setText("No existen folios disponibles para utilizar.");
@@ -267,13 +266,11 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
                 botonAceptar.setVisible(false);
                 botonCancelar.setVisible(false);
-            }
-            else
+            } else
             {
                 botonCerrar.setVisible(false);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen tramites asociados a la gestion actual.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
             ok = false;
@@ -282,11 +279,13 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         return ok;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDetalleEscritura() {
+    public static JMenuItem getVentanaDetalleEscritura()
+    {
         return ventanaDetalleEscritura;
     }
 
@@ -676,7 +675,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
                 for (int i = 0; i < filas; i++)
                 {
-                    if ((boolean)miGrilla.getValueAt(i, 1) == true)
+                    if ((boolean) miGrilla.getValueAt(i, 1) == true)
                     {
                         miTramiteGrilla = (DtoTramite) miGrilla.getValueAt(i, 2);
 
@@ -696,8 +695,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                 if (miDtoEscritura.getTramites().isEmpty())
                 {
                     JOptionPane.showMessageDialog(this, "Debe elegir por lo menos un Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-                }
-                else
+                } else
                 {
                     Integer numeroEscritura = Integer.parseInt(campoNumeroEscritura.getText());
                     Date fecha = selectorFecha.getDate();
@@ -709,18 +707,15 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                     {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_ANULADA);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_ANULADA);
-                    }
-                    else if (radioFirmada.isSelected())
+                    } else if (radioFirmada.isSelected())
                     {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_FIRMADA);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_FIRMADA);
-                    }
-                    else if (radioSinFirmar.isSelected())
+                    } else if (radioSinFirmar.isSelected())
                     {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_SIN_FIRMAR);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_SIN_FIRMAR);
-                    }
-                    else if (radioNoPaso.isSelected())
+                    } else if (radioNoPaso.isSelected())
                     {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_NO_PASO);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_NO_PASO);
@@ -776,13 +771,11 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                                             JOptionPane.showMessageDialog(this, "Ha sido registrada la escritura.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                                             salir();
                                         }
-                                    }
-                                    else
+                                    } else
                                     {
                                         JOptionPane.showMessageDialog(this, "El Folio Desde no puede ser mayor al Folio Hasta.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                                     }
-                                }
-                                else
+                                } else
                                 {
                                     JOptionPane.showMessageDialog(this, "Debe seleccionar los folios utilizados.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                                 }
@@ -864,8 +857,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                 }
                 labelValidacion.setText("");
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe completar todo el formulario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -876,8 +868,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         if (!AdministradorValidaciones.getInstancia().validarCampoSoloNumerosEnteros(campoNumeroEscritura.getText()))
         {
             labelValidacion.setText("Numero Escritura debe contener solo numeros enteros.");
-        }
-        else
+        } else
         {
             labelValidacion.setText("");
         }

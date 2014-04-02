@@ -35,7 +35,8 @@ public class Conexion implements Serializable
     /**
      * Constructor privado y sin argumentos para la clase conexion.
      */
-    private Conexion() {
+    private Conexion()
+    {
     }
 
     /**
@@ -43,7 +44,8 @@ public class Conexion implements Serializable
      *
      * @return Una instancia de Conexion.
      */
-    public static Conexion getInstancia() {
+    public static Conexion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Conexion();
@@ -57,7 +59,8 @@ public class Conexion implements Serializable
      *
      * @param nuevaConexion tipo String.
      */
-    public void setDatosConexion(String nuevaConexion) {
+    public void setDatosConexion(String nuevaConexion)
+    {
         datosConexion = nuevaConexion;
     }
 
@@ -67,7 +70,8 @@ public class Conexion implements Serializable
      * @return Un Objeto tipo Connection si se pudo establecer una conexion o nulo en caso
      * contrario.
      */
-    public Connection getConexion() {
+    public Connection getConexion()
+    {
         try
         {
             miConexion = DriverManager.getConnection("jdbc:mysql://localhost/notaire", "root", "");
@@ -84,7 +88,8 @@ public class Conexion implements Serializable
     /**
      * Desconecta la conexion (cierra).
      */
-    public void desconectar() {
+    public void desconectar()
+    {
         try
         {
             if (miConexion != null)

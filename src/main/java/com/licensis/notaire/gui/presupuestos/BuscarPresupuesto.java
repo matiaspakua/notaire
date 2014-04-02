@@ -12,6 +12,9 @@ import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.gestion.IniciarGestion;
 import com.licensis.notaire.gui.pagos.ConsultarPagos;
 import com.licensis.notaire.gui.pagos.RegistrarPago;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -40,7 +40,8 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form BuscarPresupuesto
      */
-    public BuscarPresupuesto() {
+    public BuscarPresupuesto()
+    {
         initComponents();
         this.estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
@@ -51,15 +52,18 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
         this.cargarCombo();
     }
 
-    public void setFormModificarPresupuesto(ModificarPresupuesto formulario) {
+    public void setFormModificarPresupuesto(ModificarPresupuesto formulario)
+    {
         this.modificarPresupuesto = formulario;
     }
 
-    public void setFormularioInvocador(String nombreFormulario) {
+    public void setFormularioInvocador(String nombreFormulario)
+    {
         this.formularioInvocador = nombreFormulario;
     }
 
-    public void cargarCombo() {
+    public void cargarCombo()
+    {
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
 
         for (int i = 0; i < listaDtoIdentificaciones.size(); i++)
@@ -69,11 +73,13 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
         }
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaBuscarPresupuesto() {
+    public static JMenuItem getVentanaBuscarPresupuesto()
+    {
         return ventanaBuscarPresupuesto;
     }
 
@@ -358,14 +364,12 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
                                     miForm.setPresupuestoSeleccionado(presupuestoEncontrado);
                                     miForm.cargarGrillaTramitesPresupuesto();
                                     salir();
-                                }
-                                else
+                                } else
                                 {
                                     JOptionPane.showMessageDialog(this, "El presupuesto seleccionado ya se encuentra registrado en una gestion", "Error", JOptionPane.ERROR_MESSAGE);
                                 }
-                
-                            }
-                            else
+
+                            } else
                             {
                                 JOptionPane.showMessageDialog(this, "La persona que solicito el presupuesto aun no ha sido registrado como cliente.", "Advertencia", JOptionPane.ERROR_MESSAGE);
                                 this.salir();
@@ -396,8 +400,7 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
                         }
 
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "El Presupuesto indicado no existe.", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
@@ -406,8 +409,7 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "El valor de presupuesto no es valido", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (radioNombreApellido.isSelected() && (!campoNombre.getText().isEmpty() || !campoApellido.getText().isEmpty()))
+        } else if (radioNombreApellido.isSelected() && (!campoNombre.getText().isEmpty() || !campoApellido.getText().isEmpty()))
         {
 
             ArrayList<DtoPersona> miListaDtoPersonasEncontradas = null;
@@ -427,14 +429,12 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
 
                 Principal.cargarFormulario(ListaPersonasPresupuesto.getInstancia());
                 Principal.setVentanasActivas(ListaPersonasPresupuesto.getVentanaListaPresupuesto());
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "<HTML>No se han encontrado personas con presupuesto,<BR> que coincidan con los datos indicados.</HTML>", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
 
             }
-        }
-        else if (radioIdentificacion.isSelected() && !campoNumeroIdentificacion.getText().isEmpty())
+        } else if (radioIdentificacion.isSelected() && !campoNumeroIdentificacion.getText().isEmpty())
         {
 
             //Set dato de busqueda 
@@ -500,8 +500,7 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
 
                             Principal.cargarFormulario(presupuestosForm);
                             Principal.setVentanasActivas(ListaPresupuestosClientesSinGestion.getVentanaListaPresupuestoClienteSinGestion());
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "La persona seleccionada aun no ha sido registrada como cliente", "Advertencia", JOptionPane.WARNING_MESSAGE);
                         }
@@ -510,13 +509,11 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
                     }
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La persona indicada no tiene presupuestos asociados.", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe completar los datos a buscar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

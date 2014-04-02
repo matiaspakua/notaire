@@ -16,57 +16,70 @@ public class DtoRegistroAuditoria implements DtoValido
     private Date fecha;
     private String modulo;
 
-    public String getModulo() {
+    public String getModulo()
+    {
         return modulo;
     }
 
-    public void setModulo(String modulo) {
+    public void setModulo(String modulo)
+    {
         this.modulo = modulo;
     }
 
-    public DtoRegistroAuditoria() {
+    public DtoRegistroAuditoria()
+    {
     }
 
-    public DtoRegistroAuditoria(DtoUsuario usuarios, String detalleOperacion, Date fecha) {
+    public DtoRegistroAuditoria(DtoUsuario usuarios, String detalleOperacion, Date fecha)
+    {
         this.usuarios = usuarios;
         this.detalleOperacion = detalleOperacion;
         this.fecha = fecha;
     }
 
-    public Integer getIdRegistroAuditoria() {
+    public Integer getIdRegistroAuditoria()
+    {
         return this.idRegistroAuditoria;
     }
 
-    public void setIdRegistroAuditoria(Integer idRegistroAuditoria) {
+    public void setIdRegistroAuditoria(Integer idRegistroAuditoria)
+    {
         this.idRegistroAuditoria = idRegistroAuditoria;
     }
 
-    public DtoUsuario getUsuarios() {
+    public DtoUsuario getUsuarios()
+    {
         return this.usuarios;
     }
 
-    public void setUsuarios(DtoUsuario usuarios) {
+    public void setUsuarios(DtoUsuario usuarios)
+    {
         this.usuarios = usuarios;
     }
 
-    public String getDetalleOperacion() {
+    public String getDetalleOperacion()
+    {
         return this.detalleOperacion;
     }
 
-    public void setDetalleOperacion(String detalleOperacion) {
+    public void setDetalleOperacion(String detalleOperacion)
+    {
         this.detalleOperacion = detalleOperacion;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return this.fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

@@ -8,12 +8,12 @@ import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoHistorial;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.util.Iterator;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -30,7 +30,8 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form VerHistorialGestion
      */
-    public VerHistorialGestion() {
+    public VerHistorialGestion()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioNormalVertical);
@@ -38,11 +39,13 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         grillaGestionesCliente.setAutoCreateRowSorter(true);
     }
 
-    public static JMenuItem getVentanaVerHistorialGestion() {
+    public static JMenuItem getVentanaVerHistorialGestion()
+    {
         return ventanaVerHistorialGestion;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
@@ -227,14 +230,14 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         {
             AdministradorReportes reportes = AdministradorReportes.getInstancia();
             reportes.generarReporteHistorialGestion(gestionSeleccionada);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna gestion.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_botonImprimirReporteActionPerformed
 
-    public void cargarGestion(DtoGestionDeEscritura gestion) {
+    public void cargarGestion(DtoGestionDeEscritura gestion)
+    {
         this.gestionSeleccionada = gestion;
 
         this.labelCliente.setText(gestion.getClienteReferencia().getNombre() + ", " + gestion.getClienteReferencia().getApellido());
@@ -255,7 +258,6 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
             };
             ((DefaultTableModel) grillaGestionesCliente.getModel()).addRow(datos);
         }
-
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

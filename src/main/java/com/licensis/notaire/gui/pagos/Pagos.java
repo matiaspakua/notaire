@@ -23,11 +23,13 @@ public class Pagos extends javax.swing.JInternalFrame
     /**
      * Creates new form Pagos
      */
-    private Pagos() {
+    private Pagos()
+    {
         initComponents();
     }
 
-    public static Pagos getInstancia() {
+    public static Pagos getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Pagos();
@@ -38,15 +40,18 @@ public class Pagos extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Pagos.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuPagos() {
+    public static JMenuItem getMenuPagos()
+    {
         return menuPagos;
     }
 

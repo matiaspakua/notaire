@@ -4,18 +4,18 @@
  */
 package com.licensis.notaire.jpa;
 
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Suplencia;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.transaction.UserTransaction;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Persona;
-import com.licensis.notaire.negocio.Suplencia;
 
 /**
  *
@@ -24,18 +24,21 @@ import com.licensis.notaire.negocio.Suplencia;
 public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public SuplenciaJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public SuplenciaJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public void create(Suplencia suplencia) {
+    public void create(Suplencia suplencia)
+    {
         EntityManager em = null;
         try
         {
@@ -75,7 +78,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void edit(Suplencia suplencia) throws NonexistentEntityException, Exception {
+    public void edit(Suplencia suplencia) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -141,7 +145,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -181,15 +186,18 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Suplencia> findSuplenciaEntities() {
+    public List<Suplencia> findSuplenciaEntities()
+    {
         return findSuplenciaEntities(true, -1, -1);
     }
 
-    public List<Suplencia> findSuplenciaEntities(int maxResults, int firstResult) {
+    public List<Suplencia> findSuplenciaEntities(int maxResults, int firstResult)
+    {
         return findSuplenciaEntities(false, maxResults, firstResult);
     }
 
-    private List<Suplencia> findSuplenciaEntities(boolean all, int maxResults, int firstResult) {
+    private List<Suplencia> findSuplenciaEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -207,7 +215,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Suplencia> findSuplenciasPorAnio(Suplencia unaSuplencia) {
+    public List<Suplencia> findSuplenciasPorAnio(Suplencia unaSuplencia)
+    {
         List<Suplencia> listaSuplencias = new ArrayList<>();
         EntityManager em = getEntityManager();
 
@@ -220,7 +229,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         return listaSuplencias;
     }
 
-    public Suplencia findSuplencia(Integer id) {
+    public Suplencia findSuplencia(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -232,7 +242,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getSuplenciaCount() {
+    public int getSuplenciaCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -246,7 +257,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

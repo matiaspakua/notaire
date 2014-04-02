@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 
@@ -33,26 +32,31 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarTipoFolio
      */
-    public ModificarEliminarFolio() {
+    public ModificarEliminarFolio()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
         cargarListaTiposDeFolios();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaAdministrarTiposDeFolios() {
+    public static JMenuItem getVentanaAdministrarTiposDeFolios()
+    {
         return ventanaAdministrarTiposDeFolios;
     }
 
-    public String getFormularioInvocador() {
+    public String getFormularioInvocador()
+    {
         return formularioInvocador;
     }
 
-    public void setFormularioInvocador(String formularioInvocador) {
+    public void setFormularioInvocador(String formularioInvocador)
+    {
         this.formularioInvocador = formularioInvocador;
     }
 
@@ -258,8 +262,7 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
                         this.limpiarFormulario();
                         this.cargarListaTiposDeFolios();
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "Algun dato indicado no es valido.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 }
@@ -275,8 +278,7 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
                         JOptionPane.showMessageDialog(this, "Se ha dado de baja el tipo de folio indicado.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                         this.limpiarFormulario();
                         this.cargarListaTiposDeFolios();
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "Error al dar de baja un tipo de folio", "Error", JOptionPane.ERROR_MESSAGE);
                         this.limpiarFormulario();
@@ -293,7 +295,6 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
             }
         }
 
-
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void campoNombreTipoDeFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_campoNombreTipoDeFolioActionPerformed
@@ -306,8 +307,7 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
         if (seleccionado == ConstantesGui.ERROR)
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un tipo de folio", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-        else
+        } else
         {
             String tipoDeFolio = listaTiposDeFolios.getSelectedValue().toString();
 
@@ -325,11 +325,11 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
 
     }//GEN-LAST:event_botonSeleccionarActionPerformed
 
-    public void cargarListaTiposDeFolios() {
+    public void cargarListaTiposDeFolios()
+    {
         //  limpiamos la grilla
 
         this.listaTiposDeFolios.removeAll();
-
 
         //  cargamosla grilla
         miListaDtoTipoDeFolios = miControllerNegocio.obtenerListaTiposDeFoliosDisponibles();
@@ -345,21 +345,22 @@ public class ModificarEliminarFolio extends javax.swing.JInternalFrame
             }
 
             this.listaTiposDeFolios.setModel(lista);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen tipos de folios registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    public void cargarTipoDeFolio(DtoTipoDeFolio dtoTipoDeFolio) {
+    public void cargarTipoDeFolio(DtoTipoDeFolio dtoTipoDeFolio)
+    {
         this.limpiarFormulario();
         dtoSeleccionado = dtoTipoDeFolio;
         this.campoNombreTipoDeFolio.setText(dtoTipoDeFolio.getNombre());
         this.campoObservaciones.setText(dtoTipoDeFolio.getObservaciones());
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         this.campoNombreTipoDeFolio.setText("");
         this.campoObservaciones.setText("");
     }

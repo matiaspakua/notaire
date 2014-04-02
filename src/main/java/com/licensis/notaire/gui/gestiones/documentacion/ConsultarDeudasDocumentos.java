@@ -13,6 +13,11 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,11 +29,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -172,7 +172,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
             if (!listaDocumentosPresentados.isEmpty())
             {
-               flag =  cargarGrilla(listaDocumentosPresentados, nombreTramite, dtoTramite);
+                flag = cargarGrilla(listaDocumentosPresentados, nombreTramite, dtoTramite);
                 this.setListaDocumentosPresentados(listaDocumentosPresentados);
             }
         }
@@ -224,7 +224,6 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
                 ((DefaultTableModel) grillaDetalleDocumentos.getModel()).addRow(datos);
             }
-
 
         }
         Principal.cargarFormulario(BuscarGestionesCliente.getInstancia());
@@ -531,13 +530,16 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
             try
             {
                 flag = this.modificarDocumentacionPresentada();
-            } catch (NonexistentEntityException ex)
+            }
+            catch (NonexistentEntityException ex)
             {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassModifiedException ex)
+            }
+            catch (ClassModifiedException ex)
             {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex)
+            }
+            catch (ParseException ex)
             {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -550,7 +552,8 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
             try
             {
                 this.cargarFormulario(this.getDtoGestion());
-            } catch (NonexistentJpaException ex)
+            }
+            catch (NonexistentJpaException ex)
             {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -609,9 +612,8 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
                 cont++;
             }
 
-
-
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             JOptionPane.showMessageDialog(this, "Algun campo es incorrecto: " + "Fila: " + fila + " -" + this.getError(), "Advertencia", JOptionPane.WARNING_MESSAGE);
             return dtoFlag;
@@ -625,7 +627,8 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (ClassModifiedException e)
+        }
+        catch (ClassModifiedException e)
         {
             String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
             JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);

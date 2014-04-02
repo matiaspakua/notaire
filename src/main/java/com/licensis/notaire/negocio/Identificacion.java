@@ -5,7 +5,15 @@
 package com.licensis.notaire.negocio;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -16,12 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "identificaciones")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Identificacion.findAll", query = "SELECT i FROM Identificacion i"),
-    @NamedQuery(name = "Identificacion.findByNumero", query = "SELECT i FROM Identificacion i WHERE i.numero = :numero"),
-    @NamedQuery(name = "Identificacion.findByFkIdPersona", query = "SELECT i FROM Identificacion i WHERE i.identificacionPK.fkIdPersona = :fkIdPersona"),
-    @NamedQuery(name = "Identificacion.findByFkIdTipoIdentificacion", query = "SELECT i FROM Identificacion i WHERE i.identificacionPK.fkIdTipoIdentificacion = :fkIdTipoIdentificacion")
-})
+        {
+            @NamedQuery(name = "Identificacion.findAll", query = "SELECT i FROM Identificacion i"),
+            @NamedQuery(name = "Identificacion.findByNumero", query = "SELECT i FROM Identificacion i WHERE i.numero = :numero"),
+            @NamedQuery(name = "Identificacion.findByFkIdPersona", query = "SELECT i FROM Identificacion i WHERE i.identificacionPK.fkIdPersona = :fkIdPersona"),
+            @NamedQuery(name = "Identificacion.findByFkIdTipoIdentificacion", query = "SELECT i FROM Identificacion i WHERE i.identificacionPK.fkIdTipoIdentificacion = :fkIdTipoIdentificacion")
+        })
 public class Identificacion implements Serializable
 {
 
@@ -38,63 +46,77 @@ public class Identificacion implements Serializable
     @ManyToOne(optional = false)
     private TipoIdentificacion tipoIdentificacion;
 
-    public Identificacion() {
+    public Identificacion()
+    {
     }
 
-    public Identificacion(IdentificacionPK identificacionPK) {
+    public Identificacion(IdentificacionPK identificacionPK)
+    {
         this.identificacionPK = identificacionPK;
     }
 
-    public Identificacion(IdentificacionPK identificacionPK, int numero) {
+    public Identificacion(IdentificacionPK identificacionPK, int numero)
+    {
         this.identificacionPK = identificacionPK;
         this.numero = numero;
     }
 
-    public Identificacion(int fkIdPersona, int fkIdTipoIdentificacion) {
+    public Identificacion(int fkIdPersona, int fkIdTipoIdentificacion)
+    {
         this.identificacionPK = new IdentificacionPK(fkIdPersona, fkIdTipoIdentificacion);
     }
 
-    public IdentificacionPK getIdentificacionPK() {
+    public IdentificacionPK getIdentificacionPK()
+    {
         return identificacionPK;
     }
 
-    public void setIdentificacionPK(IdentificacionPK identificacionPK) {
+    public void setIdentificacionPK(IdentificacionPK identificacionPK)
+    {
         this.identificacionPK = identificacionPK;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public Persona getPersona() {
+    public Persona getPersona()
+    {
         return persona;
     }
 
-    public void setPersona(Persona persona) {
+    public void setPersona(Persona persona)
+    {
         this.persona = persona;
     }
 
-    public TipoIdentificacion getTipoIdentificacion() {
+    public TipoIdentificacion getTipoIdentificacion()
+    {
         return tipoIdentificacion;
     }
 
-    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion)
+    {
         this.tipoIdentificacion = tipoIdentificacion;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (identificacionPK != null ? identificacionPK.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Identificacion))
         {
@@ -109,8 +131,9 @@ public class Identificacion implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Identificacion[ identificacionPK=" + identificacionPK + " ]"
-                 + "[ numero=" + numero + " ]";
+                + "[ numero=" + numero + " ]";
     }
 }

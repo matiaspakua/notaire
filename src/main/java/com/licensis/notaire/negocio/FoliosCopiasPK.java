@@ -24,32 +24,39 @@ public class FoliosCopiasPK implements Serializable
     @Column(name = "fk_id_copia")
     private int fkIdCopia;
 
-    public FoliosCopiasPK() {
+    public FoliosCopiasPK()
+    {
     }
 
-    public FoliosCopiasPK(int fkIdFolio, int fkIdCopia) {
+    public FoliosCopiasPK(int fkIdFolio, int fkIdCopia)
+    {
         this.fkIdFolio = fkIdFolio;
         this.fkIdCopia = fkIdCopia;
     }
 
-    public int getFkIdFolio() {
+    public int getFkIdFolio()
+    {
         return fkIdFolio;
     }
 
-    public void setFkIdFolio(int fkIdFolio) {
+    public void setFkIdFolio(int fkIdFolio)
+    {
         this.fkIdFolio = fkIdFolio;
     }
 
-    public int getFkIdCopia() {
+    public int getFkIdCopia()
+    {
         return fkIdCopia;
     }
 
-    public void setFkIdCopia(int fkIdCopia) {
+    public void setFkIdCopia(int fkIdCopia)
+    {
         this.fkIdCopia = fkIdCopia;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (int) fkIdFolio;
         hash += (int) fkIdCopia;
@@ -57,7 +64,8 @@ public class FoliosCopiasPK implements Serializable
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FoliosCopiasPK))
         {
@@ -76,7 +84,8 @@ public class FoliosCopiasPK implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.FoliosCopiasPK[ fkIdFolio=" + fkIdFolio + ", fkIdCopia=" + fkIdCopia + " ]";
     }
 }

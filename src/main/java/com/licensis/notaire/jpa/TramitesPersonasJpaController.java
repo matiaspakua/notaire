@@ -4,16 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
@@ -22,6 +12,16 @@ import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.negocio.TramitesPersonas;
 import com.licensis.notaire.negocio.TramitesPersonasPK;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -30,16 +30,19 @@ import com.licensis.notaire.negocio.TramitesPersonasPK;
 public class TramitesPersonasJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TramitesPersonasJpaController(EntityManagerFactory emf) {
+    public TramitesPersonasJpaController(EntityManagerFactory emf)
+    {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public void create(TramitesPersonas tramitesPersonas) throws PreexistingEntityException, CreateEntityException {
+    public void create(TramitesPersonas tramitesPersonas) throws PreexistingEntityException, CreateEntityException
+    {
         if (tramitesPersonas.getTramitesPersonasPK() == null)
         {
             tramitesPersonas.setTramitesPersonasPK(new TramitesPersonasPK());
@@ -102,7 +105,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
      * @throws PreexistingEntityException
      * @throws Exception
      */
-    public boolean createSimple(TramitesPersonas tramitesPersonas) throws PreexistingEntityException, Exception {
+    public boolean createSimple(TramitesPersonas tramitesPersonas) throws PreexistingEntityException, Exception
+    {
         boolean resultado = false;
 
         if (tramitesPersonas.getTramitesPersonasPK() == null)
@@ -148,7 +152,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         return resultado;
     }
 
-    public void edit(TramitesPersonas tramitesPersonas) throws NonexistentEntityException, Exception {
+    public void edit(TramitesPersonas tramitesPersonas) throws NonexistentEntityException, Exception
+    {
         tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getIdPersona());
         tramitesPersonas.getTramitesPersonasPK().setFkIdTramite(tramitesPersonas.getTramite().getIdTramite());
         EntityManager em = null;
@@ -216,7 +221,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         }
     }
 
-    public void destroy(TramitesPersonasPK id) throws NonexistentEntityException {
+    public void destroy(TramitesPersonasPK id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -283,7 +289,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
 //            }
 //        }
 //    }
-    public int eliminarRegistro(TramitesPersonas registro) {
+    public int eliminarRegistro(TramitesPersonas registro)
+    {
         EntityManager em = getEntityManager();
         int rowCount = 0;
         try
@@ -312,15 +319,18 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         return rowCount;
     }
 
-    public List<TramitesPersonas> findTramitesPersonasEntities() {
+    public List<TramitesPersonas> findTramitesPersonasEntities()
+    {
         return findTramitesPersonasEntities(true, -1, -1);
     }
 
-    public List<TramitesPersonas> findTramitesPersonasEntities(int maxResults, int firstResult) {
+    public List<TramitesPersonas> findTramitesPersonasEntities(int maxResults, int firstResult)
+    {
         return findTramitesPersonasEntities(false, maxResults, firstResult);
     }
 
-    private List<TramitesPersonas> findTramitesPersonasEntities(boolean all, int maxResults, int firstResult) {
+    private List<TramitesPersonas> findTramitesPersonasEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -340,7 +350,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         }
     }
 
-    public TramitesPersonas findTramitesPersonas(TramitesPersonasPK id) {
+    public TramitesPersonas findTramitesPersonas(TramitesPersonasPK id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -352,7 +363,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         }
     }
 
-    public int getTramitesPersonasCount() {
+    public int getTramitesPersonasCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -368,7 +380,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         }
     }
 
-    public List<Tramite> findTramitesPersona(Integer idPersona) {
+    public List<Tramite> findTramitesPersona(Integer idPersona)
+    {
         EntityManager em = getEntityManager();
         List<Tramite> tramites = null;
         Query query = em.createNamedQuery("TramitesPersonas.findByFkIdPersonaCliente");
@@ -386,7 +399,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
      * @param idTramite
      * @return
      */
-    public List<TramitesPersonas> findTramitesClientes(Integer idPersona, Integer idTramite) {
+    public List<TramitesPersonas> findTramitesClientes(Integer idPersona, Integer idTramite)
+    {
         EntityManager em = getEntityManager();
         List<TramitesPersonas> listaTramitesPersonas = null;
         Query query = em.createNamedQuery("TramitesPersonas.findByTramiteCliente");
@@ -399,7 +413,8 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

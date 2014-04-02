@@ -36,18 +36,21 @@ import javax.transaction.UserTransaction;
 public class TramiteJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TramiteJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TramiteJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Tramite tramite) throws IllegalOrphanException {
+    public int create(Tramite tramite) throws IllegalOrphanException
+    {
         int id = -1;
         if (tramite.getDocumentoPresentadoList() == null)
         {
@@ -195,7 +198,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return id;
     }
 
-    public boolean edit(Tramite tramite) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public boolean edit(Tramite tramite) throws IllegalOrphanException, NonexistentEntityException, Exception
+    {
         Boolean modificado = false;
         EntityManager em = null;
         try
@@ -434,7 +438,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public Boolean editTramite(Tramite tramiteModificado) {
+    public Boolean editTramite(Tramite tramiteModificado)
+    {
         Boolean modificado = Boolean.FALSE;
 
         try
@@ -459,7 +464,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public Boolean editTramite2(Tramite tramiteModificado) {
+    public Boolean editTramite2(Tramite tramiteModificado)
+    {
         Boolean modificado = Boolean.FALSE;
 
         try
@@ -472,8 +478,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
 
             tramiteViejo.setFkIdGestion(tramiteModificado.getFkIdGestion());
 
-
-
             em.getTransaction().commit();
             em.close();
             modificado = Boolean.TRUE;
@@ -485,7 +489,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -578,15 +583,18 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Tramite> findTramiteEntities() {
+    public List<Tramite> findTramiteEntities()
+    {
         return findTramiteEntities(true, -1, -1);
     }
 
-    public List<Tramite> findTramiteEntities(int maxResults, int firstResult) {
+    public List<Tramite> findTramiteEntities(int maxResults, int firstResult)
+    {
         return findTramiteEntities(false, maxResults, firstResult);
     }
 
-    private List<Tramite> findTramiteEntities(boolean all, int maxResults, int firstResult) {
+    private List<Tramite> findTramiteEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -614,7 +622,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Tramite findTramite(Integer id) {
+    public Tramite findTramite(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -626,7 +635,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Tramite encontrarTramite(Integer id) {
+    public Tramite encontrarTramite(Integer id)
+    {
         Tramite tramite = new Tramite();
         EntityManager em = getEntityManager();
         try
@@ -649,7 +659,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return tramite;
     }
 
-    public List<Tramite> encontrarTramitePresupuesto(Integer idPresupuesto) {
+    public List<Tramite> encontrarTramitePresupuesto(Integer idPresupuesto)
+    {
 
         EntityManager em = getEntityManager();
 
@@ -673,7 +684,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         return miTramite;
     }
 
-    public int getTramiteCount() {
+    public int getTramiteCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -689,7 +701,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Boolean asociarPresupuesto(Tramite miTramite) {
+    public Boolean asociarPresupuesto(Tramite miTramite)
+    {
         Boolean modificado = false;
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
@@ -717,7 +730,8 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

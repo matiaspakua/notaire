@@ -10,10 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 
@@ -30,16 +26,19 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarDocumento
      */
-    public IngresarDocumento() {
+    public IngresarDocumento()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarDocumento() {
+    public static JMenuItem getVentanaIngresarDocumento()
+    {
         return ventanaIngresarDocumento;
     }
 
@@ -260,8 +259,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                 {
                     miDtoDocumento.setVence(true);
                     miDtoDocumento.setDiasVencimiento((Integer) selectorDiasVencimiento.getValue());
-                }
-                else
+                } else
                 {
                     miDtoDocumento.setVence(false);
                 }
@@ -277,8 +275,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Se ha ingresado el nuevo documento.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
-                }
-                else
+                } else
                 {
 
                     JOptionPane.showMessageDialog(this, "<HTML>ERROR: No se ha ingresado el documento.<BR>El documento ya existe o se han insertado mal los campos.</HTML>", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -287,17 +284,17 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
             }
             catch (Exception ex)
             {
-                JOptionPane.showMessageDialog(this, "Alguno de los campos es incorrecto.", "ERROR", JOptionPane.ERROR_MESSAGE);                
-                Logger.getLogger(IngresarDocumento.class.getName()).log(Level.SEVERE, null, ex);                
-            }            
-        }
-        else
+                JOptionPane.showMessageDialog(this, "Alguno de los campos es incorrecto.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                Logger.getLogger(IngresarDocumento.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         this.campoNombreDocumento.setText("");
         this.checkVenceDocumento.setSelected(false);
         this.selectorDiasVencimiento.setValue(0);
@@ -330,8 +327,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
         if (checkVenceDocumento.isSelected())
         {
             this.selectorDiasVencimiento.setEnabled(true);
-        }
-        else
+        } else
         {
             this.selectorDiasVencimiento.setEnabled(false);
         }

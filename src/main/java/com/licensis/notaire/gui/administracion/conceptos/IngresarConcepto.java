@@ -6,10 +6,10 @@ package com.licensis.notaire.gui.administracion.conceptos;
 
 import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.gui.Principal;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,18 +24,21 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarConcepto
      */
-    public IngresarConcepto() {
+    public IngresarConcepto()
+    {
         initComponents();
         this.limpiarFormulario();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarConceptos() {
+    public static JMenuItem getVentanaIngresarConceptos()
+    {
         return ventanaIngresarConceptos;
     }
 
@@ -238,7 +241,6 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
     private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonAceptarActionPerformed
     {//GEN-HEADEREND:event_botonAceptarActionPerformed
 
-
         String msj = AdministradorValidaciones.getInstancia().validarIngresarConcepto(this);
 
         if (msj == "")
@@ -252,8 +254,7 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
                 if ("".equals(this.campoValorConcepto.getText()))
                 {
                     miDtoConcepto.setValor(new Float(0.0));
-                }
-                else
+                } else
                 {
                     miDtoConcepto.setValor(Float.valueOf(this.campoValorConcepto.getText()));
                 }
@@ -264,13 +265,11 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
                 {
                     miDtoConcepto.setFijo(true);
                     miDtoConcepto.setPorcentaje(0);
-                }
-                else
+                } else
                 {
                     miDtoConcepto.setFijo(false);
                     miDtoConcepto.setPorcentaje(Integer.valueOf(this.selectorPorcentaje.getValue().toString()));
                 }
-
 
                 if (miControllerNegocio.darAltaConcepto(miDtoConcepto) == Boolean.TRUE)
                 {
@@ -283,15 +282,15 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
                 JOptionPane.showMessageDialog(this, "Alguno de los campos contiene datos incorectos", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         this.campoNombreConcepto.setText("");
         this.campoValorConcepto.setText("");
         this.selectorPorcentaje.setValue(0);
@@ -313,8 +312,7 @@ public class IngresarConcepto extends javax.swing.JInternalFrame
             {
                 labelAdvertencia.setText("El valor no puede ser negativo.");
                 this.campoValorConcepto.setText("");
-            }
-            else
+            } else
             {
                 labelAdvertencia.setText("");
             }

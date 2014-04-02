@@ -14,43 +14,53 @@ public class DtoPlantillaPresupuesto implements DtoValido
     private String observaciones;
     private Integer version = 0;
 
-    public DtoPlantillaPresupuesto() {
+    public DtoPlantillaPresupuesto()
+    {
     }
 
-    public DtoConcepto getConceptos() {
+    public DtoConcepto getConceptos()
+    {
         return this.conceptos;
     }
 
-    public void setConceptos(DtoConcepto conceptos) {
+    public void setConceptos(DtoConcepto conceptos)
+    {
         this.conceptos = conceptos;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public DtoTipoDeTramite getTiposDeTramite() {
+    public DtoTipoDeTramite getTiposDeTramite()
+    {
         return this.tiposDeTramite;
     }
 
-    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite) {
+    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite)
+    {
         this.tiposDeTramite = tiposDeTramite;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

@@ -29,11 +29,13 @@ public class Administracion extends javax.swing.JInternalFrame
     /**
      * Creates new form Administracion
      */
-    private Administracion() {
+    private Administracion()
+    {
         initComponents();
     }
 
-    public static Administracion getInstancia() {
+    public static Administracion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Administracion();
@@ -44,15 +46,18 @@ public class Administracion extends javax.swing.JInternalFrame
 
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Administracion.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuAdministracion() {
+    public static JMenuItem getMenuAdministracion()
+    {
         return menuAdministracion;
     }
 
@@ -265,8 +270,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Usuarios.getInstancia());
             Principal.setVentanasActivas(Usuarios.getSubmenuUsuarios());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -285,8 +289,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Escribanos.getInstancia());
             Principal.setVentanasActivas(Escribanos.getSubmenuEscribanos());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -305,8 +308,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Tramites.getInstancia());
             Principal.setVentanasActivas(Tramites.getSubmenuTramites());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -325,8 +327,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Documentos.getInstancia());
             Principal.setVentanasActivas(Documentos.getSubmenuDocumentos());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -345,8 +346,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Conceptos.getInstancia());
             Principal.setVentanasActivas(Conceptos.getSubmenuConceptos());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -364,8 +364,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(EstadosDeGestion.getInstancia());
             Principal.setVentanasActivas(EstadosDeGestion.getSubmenuEstadosDeGestion());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -383,8 +382,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Folios.getInstancia());
             Principal.setVentanasActivas(Folios.getSubmenuFolios());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -402,8 +400,7 @@ public class Administracion extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(PlantillasPresupuesto.getInstancia());
             Principal.setVentanasActivas(PlantillasPresupuesto.getSubmenuPlantillaPresupuesto());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {

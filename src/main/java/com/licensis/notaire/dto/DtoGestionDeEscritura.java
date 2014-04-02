@@ -2,10 +2,10 @@ package com.licensis.notaire.dto;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
 import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  * DtoGestionDeEscritura
@@ -27,36 +27,43 @@ public class DtoGestionDeEscritura implements DtoValido
     private List<DtoHistorial> registroHistorial;
     private DtoEstadoDeGestion estado;
 
-    public DtoGestionDeEscritura() {
+    public DtoGestionDeEscritura()
+    {
         this.listaClientesInvolucrados = new ArrayList<>();
         this.listaTramitesAsociados = new ArrayList<>();
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
     private int version;
 
-    public DtoEstadoDeGestion getEstado() {
+    public DtoEstadoDeGestion getEstado()
+    {
         return estado;
     }
 
-    public void setEstado(DtoEstadoDeGestion estado) {
+    public void setEstado(DtoEstadoDeGestion estado)
+    {
         this.estado = estado;
     }
 
-    public DtoGestionDeEscritura(DtoPersona persona, int numero, Date fechaInicio, String encabezado) {
+    public DtoGestionDeEscritura(DtoPersona persona, int numero, Date fechaInicio, String encabezado)
+    {
         this.personaEscribano = persona;
         this.numero = numero;
         this.fechaInicio = fechaInicio;
         this.encabezado = encabezado;
     }
 
-    public DtoGestionDeEscritura(DtoPersona persona, int numero, Date fechaInicio, String encabezado, String observaciones, Integer numeroArchivo, Integer numeroBibliorato, List<DtoTramite> tramites, List<DtoHistorial> historial) {
+    public DtoGestionDeEscritura(DtoPersona persona, int numero, Date fechaInicio, String encabezado, String observaciones, Integer numeroArchivo, Integer numeroBibliorato, List<DtoTramite> tramites, List<DtoHistorial> historial)
+    {
         this.personaEscribano = persona;
         this.numero = numero;
         this.fechaInicio = fechaInicio;
@@ -68,104 +75,129 @@ public class DtoGestionDeEscritura implements DtoValido
         this.registroHistorial = historial;
     }
 
-    public DtoPersona getClienteReferencia() {
+    public DtoPersona getClienteReferencia()
+    {
         return clienteReferencia;
     }
 
-    public void setClienteReferencia(DtoPersona clienteReferencia) {
+    public void setClienteReferencia(DtoPersona clienteReferencia)
+    {
         this.clienteReferencia = clienteReferencia;
     }
 
-    public String getEncabezado() {
+    public String getEncabezado()
+    {
         return encabezado;
     }
 
-    public void setEncabezado(String encabezado) {
+    public void setEncabezado(String encabezado)
+    {
         this.encabezado = encabezado;
     }
 
-    public Date getFechaInicio() {
+    public Date getFechaInicio()
+    {
         return fechaInicio;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
+    public void setFechaInicio(Date fechaInicio)
+    {
         this.fechaInicio = fechaInicio;
     }
 
-    public Integer getIdGestion() {
+    public Integer getIdGestion()
+    {
         return idGestion;
     }
 
-    public void setIdGestion(Integer idGestion) {
+    public void setIdGestion(Integer idGestion)
+    {
         this.idGestion = idGestion;
     }
 
-    public List<DtoPersona> getListaClientesInvolucrados() {
+    public List<DtoPersona> getListaClientesInvolucrados()
+    {
         return listaClientesInvolucrados;
     }
 
-    public void setListaClientesInvolucrados(List<DtoPersona> listaClientesInvolucrados) {
+    public void setListaClientesInvolucrados(List<DtoPersona> listaClientesInvolucrados)
+    {
         this.listaClientesInvolucrados.addAll(listaClientesInvolucrados);
     }
 
-    public List<DtoTramite> getListaTramitesAsociados() {
+    public List<DtoTramite> getListaTramitesAsociados()
+    {
         return listaTramitesAsociados;
     }
 
-    public void setListaTramitesAsociados(List<DtoTramite> listaTramitesAsociados) {
+    public void setListaTramitesAsociados(List<DtoTramite> listaTramitesAsociados)
+    {
         this.listaTramitesAsociados.addAll(listaTramitesAsociados);
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public Integer getNumeroArchivo() {
+    public Integer getNumeroArchivo()
+    {
         return numeroArchivo;
     }
 
-    public void setNumeroArchivo(Integer numeroArchivo) {
+    public void setNumeroArchivo(Integer numeroArchivo)
+    {
         this.numeroArchivo = numeroArchivo;
     }
 
-    public Integer getNumeroBibliorato() {
+    public Integer getNumeroBibliorato()
+    {
         return numeroBibliorato;
     }
 
-    public void setNumeroBibliorato(Integer numeroBibliorato) {
+    public void setNumeroBibliorato(Integer numeroBibliorato)
+    {
         this.numeroBibliorato = numeroBibliorato;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public DtoPersona getPersonaEscribano() {
+    public DtoPersona getPersonaEscribano()
+    {
         return personaEscribano;
     }
 
-    public void setPersonaEscribano(DtoPersona personaEscribano) {
+    public void setPersonaEscribano(DtoPersona personaEscribano)
+    {
         this.personaEscribano = personaEscribano;
     }
 
-    public List<DtoHistorial> getRegistroHistorial() {
+    public List<DtoHistorial> getRegistroHistorial()
+    {
         return registroHistorial;
     }
 
-    public void setRegistroHistorial(List<DtoHistorial> registroHistorial) {
+    public void setRegistroHistorial(List<DtoHistorial> registroHistorial)
+    {
         this.registroHistorial = registroHistorial;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         Boolean resultado = Boolean.TRUE;
 
         AdministradorValidaciones validador = AdministradorValidaciones.getInstancia();

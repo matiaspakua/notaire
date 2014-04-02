@@ -153,7 +153,8 @@ public class ControllerNegocio
             miJpaDocumentoPresentado = (DocumentoPresentadoJpaController) AdministradorJpa.getInstancia().obtenerJpa(DocumentoPresentadoJpaController.class.getName());
             miJpaUsuario = (UsuarioJpaController) AdministradorJpa.getInstancia().obtenerJpa(UsuarioJpaController.class.getName());
             miJpaTipoIdentificacion = (TipoIdentificacionJpaController) AdministradorJpa.getInstancia().obtenerJpa(TipoIdentificacionJpaController.class.getName());
-        } catch (NonexistentJpaException ex)
+        }
+        catch (NonexistentJpaException ex)
         {
             ex.printStackTrace();
         }
@@ -200,9 +201,7 @@ public class ControllerNegocio
         int oid = -1;
 
         //Llamo jpa Persona
-
         oid = miJpaPersona.create(miPersona);
-
 
         if (oid == -1)
         {
@@ -223,7 +222,6 @@ public class ControllerNegocio
     public ArrayList<DtoTipoIdentificacion> listarTiposIdentificacion()
     {
         ArrayList<DtoTipoIdentificacion> listaDtoTipoIdentificaciones = new ArrayList<>();
-
 
         List<TipoIdentificacion> miListaTipotIdentificaciones = miJpaTipoIdentificacion.findTipoIdentificacionEntities();
 
@@ -369,7 +367,8 @@ public class ControllerNegocio
                     }
                 }
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -409,7 +408,7 @@ public class ControllerNegocio
                 for (int i = 0; i < listaDtoPersonas.size(); i++)
                 {
                     String apellido = listaDtoPersonas.get(i).getApellido();
-                            
+
                     if (!listaDtoPersonas.get(i).getListaDtoGestionDeEscriturasPersona().isEmpty()
                             && !apellido.equals(ConstantesGui.ADMINISTRADOR))
                     {
@@ -419,7 +418,8 @@ public class ControllerNegocio
                 }
             }
 
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -440,7 +440,6 @@ public class ControllerNegocio
         List<Persona> listaPersona = new ArrayList<Persona>();
 
         //Llamo jpa Persona
-
         listaPersona = miJpaPersona.findPersonas();
 
         // TODO: corregir el null y la iteracioinicin.
@@ -484,7 +483,6 @@ public class ControllerNegocio
             this.registrarAuditoria(miPersona, ConstantesGui.MODIFICAR_PERSONA);
         }
 
-
         return dtoPersona;
     }
 
@@ -510,7 +508,6 @@ public class ControllerNegocio
         {
             this.registrarAuditoria(miClientePersona, ConstantesGui.DAR_ALTA_CLIENTE);
         }
-
 
         return dtoCliente;
     }
@@ -538,7 +535,6 @@ public class ControllerNegocio
             this.registrarAuditoria(miClientePersona, ConstantesGui.MODIFICAR_CLIENTE);
         }
 
-
         return dtoCliente;
     }
 
@@ -559,7 +555,6 @@ public class ControllerNegocio
 
         //Busco los tipo de identificaciones disponibles
         listaIdentificaciones = TipoIdentificacionJpaController.getInstancia().findTipoIdentificacionEntities();
-
 
         for (int i = 0; i < listaIdentificaciones.size(); i++)
         {
@@ -587,11 +582,9 @@ public class ControllerNegocio
         List<TipoIdentificacion> listaIdentificaciones = new ArrayList<TipoIdentificacion>();
 
         //Busco los tipo de identificaciones disponibles
-
         listaIdentificaciones = TipoIdentificacionJpaController.getInstancia().findTipoIdentificacionEntities();
 
         String nombre_tipo_identificacion = null;
-
 
         for (int i = 0; i < listaIdentificaciones.size(); i++)
         {
@@ -643,7 +636,6 @@ public class ControllerNegocio
     public DtoInmueble buscarInmueble(DtoInmueble miDtoInmueble)
     {
         DtoInmueble dtoInmueble = null;
-
 
         Inmueble miInmueble = miJpaInmueble.findInmueble(miDtoInmueble);
 
@@ -791,7 +783,8 @@ public class ControllerNegocio
                     }
                 }
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 ex.printStackTrace();
             }
@@ -812,7 +805,6 @@ public class ControllerNegocio
     public int crearPresupuesto(DtoPersona dtoPersona, DtoPresupuesto dtoPresupuesto, DtoTramite dtoTramite, ArrayList<DtoItem> dtosItems)
     {
         int creado = -1;
-
 
         int idTramite = darAltaTramite(dtoTramite);
 
@@ -918,7 +910,8 @@ public class ControllerNegocio
 
             idTramite = miJpaTramite.create(miTramite);
 
-        } catch (IllegalOrphanException ex)
+        }
+        catch (IllegalOrphanException ex)
         {
             ex.printStackTrace();
         }
@@ -946,7 +939,8 @@ public class ControllerNegocio
 
             idTramite = miJpaTramite.create(miTramite);
 
-        } catch (IllegalOrphanException ex)
+        }
+        catch (IllegalOrphanException ex)
         {
             ex.printStackTrace();
         }
@@ -966,7 +960,6 @@ public class ControllerNegocio
         ArrayList<DtoPresupuesto> dtosPresupuestosEncontrados = new ArrayList<>();
 
 //        Persona miPersona = miJpaPersona.findPersona(dtoPersona.getIdPersona());
-
         ArrayList<Presupuesto> presupuestos = (ArrayList<Presupuesto>) miJpaPresupuesto.findPresupuestosPersona(dtoPersona.getIdPersona());
 
         if ((presupuestos != null) && (!presupuestos.isEmpty()))
@@ -1053,7 +1046,6 @@ public class ControllerNegocio
                 dtosItemsEncontrados.add(miDtoItem);
             }
         }
-
 
         return dtosItemsEncontrados;
     }
@@ -1155,7 +1147,6 @@ public class ControllerNegocio
                             {
                                 eliminadoItem = miJpaItem.eliminarItem(miItem);
 
-
                                 if (!eliminadoItem)
                                 {
                                     break;
@@ -1179,10 +1170,12 @@ public class ControllerNegocio
                             this.registrarAuditoria(item, ConstantesGui.MODIFICAR_PRESUPUESTO);
                         }
                     }
-                } catch (IllegalOrphanException ex)
+                }
+                catch (IllegalOrphanException ex)
                 {
                     modificado = false;
-                } catch (NonexistentEntityException ex)
+                }
+                catch (NonexistentEntityException ex)
                 {
                     modificado = false;
                 }
@@ -1284,7 +1277,6 @@ public class ControllerNegocio
 
                 //  gestion -> cliente referencia        
                 //  gestion -> lista clientes involucrados        
-
                 //  gestion <- tramites_personas (relacional)
                 List<TramitesPersonas> relaciones = new ArrayList<>();
 
@@ -1293,7 +1285,6 @@ public class ControllerNegocio
 
                 //  gestion -> lista tramites asociados
                 //  gestion <- tramite(s) (nueva)
-
                 List<Tramite> listaTramites = new ArrayList<Tramite>();
 
                 for (Iterator<DtoTramite> it = dtoNuevaGestion.getListaTramitesAsociados().iterator(); it.hasNext();)
@@ -1353,10 +1344,12 @@ public class ControllerNegocio
                 try
                 {
                     this.ingresarDocumentacion(dtoNuevaGestion);
-                } catch (NonexistentEntityException ex)
+                }
+                catch (NonexistentEntityException ex)
                 {
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassModifiedException ex)
+                }
+                catch (ClassModifiedException ex)
                 {
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1366,7 +1359,8 @@ public class ControllerNegocio
                 //  La gestion ya se encuentra registrada.
                 return dtoNuevaGestion;
             }
-        } catch (CreateEntityException | PreexistingEntityException | DtoInvalidoException ex)
+        }
+        catch (CreateEntityException | PreexistingEntityException | DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1472,7 +1466,6 @@ public class ControllerNegocio
             EstadoDeGestion nuevoEstadoModificada = this.obtenerEstadoDeGestion(ConstantesNegocio.ESTADO_DE_GESTION_MODIFICADA);
             nuevoEstadoModificada.setObservaciones("Gestion: " + gestionParaModificar.getIdGestion() + ", Modificada");
 
-
             if (miJpaGestionDeEscritura.modificarGestionDeEscritura(gestionParaModificar) == true)
             {
                 DtoEstadoDeGestion nuevoEstado = nuevoEstadoModificada.getDto();
@@ -1486,8 +1479,8 @@ public class ControllerNegocio
                 dtoGestionModificar.setIdGestion(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
             }
 
-
-        } catch (PreexistingEntityException | CreateEntityException | DtoInvalidoException ex)
+        }
+        catch (PreexistingEntityException | CreateEntityException | DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1512,7 +1505,8 @@ public class ControllerNegocio
                 {
                     estadoGestionEncontrado.setAtributo(dtoEstadoDeGestion);
                     return estadoGestionEncontrado;
-                } catch (DtoInvalidoException ex)
+                }
+                catch (DtoInvalidoException ex)
                 {
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1566,7 +1560,8 @@ public class ControllerNegocio
 
             miJpaGestionDeEscritura.modificarEstadoDeGestionDeEscritura(gestion);
 
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1695,9 +1690,9 @@ public class ControllerNegocio
         GestionDeEscritura gestionEncontrada = new GestionDeEscritura();
         DtoGestionDeEscritura dtoGestion = null;
 
-            gestionEncontrada = miJpaGestionDeEscritura.findGestionDeEscrituraPorId(gestionBuscar.getIdGestion());
+        gestionEncontrada = miJpaGestionDeEscritura.findGestionDeEscrituraPorId(gestionBuscar.getIdGestion());
 
-            dtoGestion = this.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(gestionEncontrada.getDto());
+        dtoGestion = this.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(gestionEncontrada.getDto());
 
         return dtoGestion;
     }
@@ -1772,7 +1767,8 @@ public class ControllerNegocio
 
             Integer idHistorial = miJpaHistorial.create(nuevoRegistroHistorial);
 
-        } catch (CreateEntityException | DtoInvalidoException ex)
+        }
+        catch (CreateEntityException | DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1822,7 +1818,6 @@ public class ControllerNegocio
         ArrayList<TipoDeDocumento> listaDocumentosNecesarios = new ArrayList<>();
         ArrayList<PlantillaTramite> listaPlantillaTramites = new ArrayList<>();
         TipoDeTramite tipoTramite = null;
-
 
         listaPlantillaTramites = (ArrayList<PlantillaTramite>) miJpaPlantillaTramite.findPlantillasTramites();
 
@@ -1879,14 +1874,13 @@ public class ControllerNegocio
      * @param listaDtoTramitesDeGestion
      * @return
      */
-    public ArrayList<DtoTramite> obtenerDocumentosPresentadosPorTramite(ArrayList<DtoTramite> listaDtoTramitesDeGestion) 
+    public ArrayList<DtoTramite> obtenerDocumentosPresentadosPorTramite(ArrayList<DtoTramite> listaDtoTramitesDeGestion)
     {
         ArrayList<DtoTramite> listaDtoTramitesConSusDocumentosEntregados = new ArrayList<>();
         List<DocumentoPresentado> listaDocumentoPresentados = null;
         boolean flag = false;
 
         //Obtengo todos  los documentos presentados, de los tramites
-
         listaDocumentoPresentados = miJpaDocumentoPresentado.findDocumentosPresentados();
 
         for (int i = 0; i < listaDtoTramitesDeGestion.size(); i++)
@@ -1926,7 +1920,6 @@ public class ControllerNegocio
     {
 
         boolean flag = false;
-
 
         //Comparo los documentos necesarios con los entregados , para una tramite de una gestion determinada
         for (int i = 0; i < listaDtoTramitesDeGestion.size(); i++)
@@ -2009,8 +2002,8 @@ public class ControllerNegocio
         }
         return flag;
     }
-    
-       public boolean documentacionCompletaExterna(DtoGestionDeEscritura dtoGestionDeEscritura)
+
+    public boolean documentacionCompletaExterna(DtoGestionDeEscritura dtoGestionDeEscritura)
     {
 
         boolean flag = true;
@@ -2047,7 +2040,7 @@ public class ControllerNegocio
      * @return Verdadero si lo documentos fueron entregados, de lo contrario
      * retorna falso
      */
-    public boolean iscompletaDocumentacion(DtoGestionDeEscritura dtoGestionDeEscritura) 
+    public boolean iscompletaDocumentacion(DtoGestionDeEscritura dtoGestionDeEscritura)
     {
         boolean flag = true;
 
@@ -2112,7 +2105,8 @@ public class ControllerNegocio
                 this.registrarMovimientoHistorial(dtoGestionDeEscritura);
 
                 this.registrarAuditoria(dtoGestion, ConstantesGui.DOCUMENTACION_INGRESO);
-            } catch (ClassModifiedException ex)
+            }
+            catch (ClassModifiedException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2132,7 +2126,7 @@ public class ControllerNegocio
      * @return Una lista de los odcumentos que no fueron entregados para una
      * gestion
      */
-    public DtoGestionDeEscritura obtenerDocNecesarioEntregadosNoEntregadosDeGestion(DtoGestionDeEscritura dtoGestion) 
+    public DtoGestionDeEscritura obtenerDocNecesarioEntregadosNoEntregadosDeGestion(DtoGestionDeEscritura dtoGestion)
     {
 
         ArrayList<DtoTramite> listaDtoTramitesDeGestion = new ArrayList<>();
@@ -2161,7 +2155,6 @@ public class ControllerNegocio
 
         //Busco los documentos no entregados de cada tramite, perteneciente a una gesion
         listaDtoTramitesConEstadoDeDocumentacion = this.obtenerDocumentosNoPresentadosPorTramite(listaDtoTramitesDeGestion);
-
 
         return dtoGestion;
 
@@ -2192,17 +2185,16 @@ public class ControllerNegocio
 
             listaDocumentoPresentados.add(documentoPresentado);
         }
-        
-            //Persisto los objetos
-            for (int i = 0; i < listaDocumentoPresentados.size(); i++)
-            {
-                DocumentoPresentado documentoPresentado = listaDocumentoPresentados.get(i);       
-     
 
-                flag.setFlag(miJpaDocumentoPresentado.create(documentoPresentado));
+        //Persisto los objetos
+        for (int i = 0; i < listaDocumentoPresentados.size(); i++)
+        {
+            DocumentoPresentado documentoPresentado = listaDocumentoPresentados.get(i);
 
-                this.registrarAuditoria(documentoPresentado, ConstantesGui.DOCUMENTACION_INGRESO);
-            }
+            flag.setFlag(miJpaDocumentoPresentado.create(documentoPresentado));
+
+            this.registrarAuditoria(documentoPresentado, ConstantesGui.DOCUMENTACION_INGRESO);
+        }
         return flag;
     }
 
@@ -2219,7 +2211,7 @@ public class ControllerNegocio
      * @throws NonexistentEntityException
      * @throws ClassModifiedException
      */
-    public DtoFlag modificarDocumentacion(ArrayList<DtoDocumentoPresentado> listaDtoDocumentoPresentados, DtoGestionDeEscritura dtoGestionDeEscritura) throws ClassModifiedException, NonexistentEntityException 
+    public DtoFlag modificarDocumentacion(ArrayList<DtoDocumentoPresentado> listaDtoDocumentoPresentados, DtoGestionDeEscritura dtoGestionDeEscritura) throws ClassModifiedException, NonexistentEntityException
     {
 
         ArrayList<DocumentoPresentado> listaDocumentoPresentados = new ArrayList<>();
@@ -2284,11 +2276,11 @@ public class ControllerNegocio
         //Persisto los objetos
         for (int i = 0; i < listaDocumentoPresentados.size(); i++)
         {
-                DocumentoPresentado documentoPresentado = listaDocumentoPresentados.get(i);
+            DocumentoPresentado documentoPresentado = listaDocumentoPresentados.get(i);
 
-                dtoResultado.setFlag(miJpaDocumentoPresentado.edit(documentoPresentado));
+            dtoResultado.setFlag(miJpaDocumentoPresentado.edit(documentoPresentado));
 
-                this.registrarAuditoria(documentoPresentado, ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA);
+            this.registrarAuditoria(documentoPresentado, ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA);
         }
 
         return dtoResultado;
@@ -2362,10 +2354,8 @@ public class ControllerNegocio
 
                 // la gestion
                 GestionDeEscritura gestion = miJpaGestionDeEscritura.findGestionDeEscrituraPorNumero(documentoPresentado.getFkIdTramite().getFkIdGestion().getNumero());
-              
-                
-                DtoGestionDeEscritura dtoGestion = gestion.getDto();
 
+                DtoGestionDeEscritura dtoGestion = gestion.getDto();
 
                 // el tramite de la gestion
                 Tramite tramite = miJpaTramite.findTramite(documentoPresentado.getFkIdTramite().getIdTramite());
@@ -2394,19 +2384,19 @@ public class ControllerNegocio
 
     /**
      * Metodo que permite ingresar tota la documentacion correspondiente a una determinada
-     * gestion, cuando esta es iniciada. 
+     * gestion, cuando esta es iniciada.
      * para luego se modificada
+     *
      * @param dtoGestionDeEscritura
      * @throws NonexistentEntityException
-     * @throws ClassModifiedException 
+     * @throws ClassModifiedException
      */
- public void ingresarDocumentacion(DtoGestionDeEscritura dtoGestionDeEscritura) throws NonexistentEntityException, ClassModifiedException
+    public void ingresarDocumentacion(DtoGestionDeEscritura dtoGestionDeEscritura) throws NonexistentEntityException, ClassModifiedException
     {
 
         ArrayList<DtoDocumentoPresentado> listaDocumentosExternos = new ArrayList<>();
 
         dtoGestionDeEscritura = this.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestionDeEscritura);
-     
 
         DtoDocumentoPresentado dtoDocumento = null;
         DtoDocumentoPresentado dtoDocumentoPresentado = null;
@@ -2430,11 +2420,10 @@ public class ControllerNegocio
                 dtoDocumento.setReingresado(false);
 
                 dtoDocumento.setEntregado(false);
-                
+
                 listaDocumentosExternos.add(dtoDocumento);
 
             }
-
 
         }
 
@@ -3069,7 +3058,6 @@ public class ControllerNegocio
             }
         }
 
-
         return listaDtoEscrituras;
     }
 
@@ -3097,7 +3085,6 @@ public class ControllerNegocio
                 }
             }
         }
-
 
         return seInscribe;
     }
@@ -3467,10 +3454,12 @@ public class ControllerNegocio
                     break;
                 }
             }
-        } catch (NonexistentJpaException e)
+        }
+        catch (NonexistentJpaException e)
         {
             e.printStackTrace();
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -3534,7 +3523,6 @@ public class ControllerNegocio
             Persona escribano = new Persona();
             escribano.setAtributos(miDtoPersonaEscribano);
 
-
             int j = hasta.getNumero();
 
             for (int i = desde.getNumero(); i <= j; i++)
@@ -3551,7 +3539,8 @@ public class ControllerNegocio
                 try
                 {
                     protocoloPrincipal.setAtributos(desde.getTiposDeFolio());
-                } catch (DtoInvalidoException ex)
+                }
+                catch (DtoInvalidoException ex)
                 {
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -3564,10 +3553,9 @@ public class ControllerNegocio
                 this.registrarAuditoria(nuevoFolio, ConstantesGui.INGRESAR_NUEVOS_FOLIOS);
             }
 
-
-
             resultado = Boolean.TRUE;
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -3598,7 +3586,8 @@ public class ControllerNegocio
                 miFolioJpaController = (FolioJpaController) this.getMiAdministradorJpa().obtenerJpa(FolioJpaController.class.getName());
 
                 listaFolios = miFolioJpaController.findFoliosRegistroAnio(dtoDatosRegistroAnio.getPersonaEscribano().getRegistroEscribano(), dtoDatosRegistroAnio.getAnio());
-            } catch (NonexistentJpaException e)
+            }
+            catch (NonexistentJpaException e)
             {
                 e.printStackTrace();
             }
@@ -3609,7 +3598,8 @@ public class ControllerNegocio
                 dtoListaFolios.add(folio.getDto());
             }
 
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -3632,7 +3622,6 @@ public class ControllerNegocio
         Boolean resultado = Boolean.FALSE;
 
         //Folio folioModificado = miJpaFolio.findFolio(folioModificado.getIdFolio());
-
         Folio folioModificado = new Folio();
 
         folioModificado.setAtributos(dtoFolioModificado);
@@ -3763,9 +3752,7 @@ public class ControllerNegocio
         String clave = usuario.getContrasenia();
         usuario.setContrasenia(this.encriptaEnMD5(clave));
 
-
         //Controlo que el nombre del usuario no se repita            
-
         listaUsuarios = (ArrayList<Usuario>) miJpaUsuario.buscarUsuarios();
 
         for (int i = 0; i < listaUsuarios.size(); i++)
@@ -3783,7 +3770,8 @@ public class ControllerNegocio
                 miJpaUsuario.create(usuario);
 
                 this.registrarAuditoria(usuario, ConstantesGui.DAR_ALTA_USUARIO);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 //  No se pudo crear el usuario.
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -3816,7 +3804,8 @@ public class ControllerNegocio
                     strbCadenaMD5.append(CONSTS_HEX[bajo]);
                 }
                 return strbCadenaMD5.toString();
-            } catch (NoSuchAlgorithmException e)
+            }
+            catch (NoSuchAlgorithmException e)
             {
                 return null;
             }
@@ -3838,15 +3827,12 @@ public class ControllerNegocio
         boolean flag = false;
 
         //Busco los usuario actuales
-
         listaUsuarios = miJpaUsuario.buscarUsuarios();
-
 
         if (!listaUsuarios.isEmpty())
         {
 
             //Busco coincidencia de id_persona con fk_id_usuario
-
             for (int i = 0; i < listaUsuarios.size(); i++)
             {
                 if (idPersona.intValue() == listaUsuarios.get(i).getFkIdPersona().getIdPersona().intValue())
@@ -3896,7 +3882,6 @@ public class ControllerNegocio
 
         //Busco los usuario disponibles
         // listaUsuarios = UsuarioJpaController.getInstancia().buscarUsuarios();
-
         listaUsuarios = miJpaUsuario.buscarUsuarios();
 
         if (!listaUsuarios.isEmpty())
@@ -3944,9 +3929,7 @@ public class ControllerNegocio
         String clave = miUsuario.getContrasenia();
         miUsuario.setContrasenia(this.encriptaEnMD5(clave));
 
-
         //Controlo que el nombre del usuario no se repita
-
         listaUsuarios = (ArrayList<Usuario>) miJpaUsuario.buscarUsuarios();
 
         if (listaUsuarios != null)
@@ -4115,11 +4098,11 @@ public class ControllerNegocio
                     this.registrarAuditoria(nuevoEscribano, ConstantesGui.MODIFICAR_ESCRIBANO);
                 }
             }
-        } catch (NonexistentEntityException ex)
+        }
+        catch (NonexistentEntityException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
         return resultado;
     }
@@ -4151,7 +4134,8 @@ public class ControllerNegocio
                 }
             }
 
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -4183,12 +4167,14 @@ public class ControllerNegocio
                 resultado = Boolean.TRUE;
 
                 this.registrarAuditoria(nuevaSuplencia, ConstantesGui.REGISTRAR_SUPLENCIA);
-            } catch (PersistenceException e)
+            }
+            catch (PersistenceException e)
             {
                 e.printStackTrace();
             }
 
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -4252,7 +4238,6 @@ public class ControllerNegocio
         {
 
             // Creo el tipo de tramite
-
             miTipoDeTramite.setAtributos(miDtoTipoDeTramite);
 
             try
@@ -4301,7 +4286,8 @@ public class ControllerNegocio
                         }
                     }
                 }
-            } catch (PersistenceException e)
+            }
+            catch (PersistenceException e)
             {
                 e.printStackTrace();
             }
@@ -4352,7 +4338,8 @@ public class ControllerNegocio
             {
                 resultado = true;
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -4388,7 +4375,8 @@ public class ControllerNegocio
                     }
                 }
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -4422,10 +4410,12 @@ public class ControllerNegocio
                     miListaDtoPlantillas.add(plantillaTramite.getDto());
                 }
             }
-        } catch (NonexistentJpaException ex)
+        }
+        catch (NonexistentJpaException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -4502,10 +4492,12 @@ public class ControllerNegocio
 
                                 this.registrarAuditoria(miPlantillaTramite, ConstantesGui.MODIFICAR_PLANTILLA_TRAMITE);
 
-                            } catch (PreexistingEntityException ex)
+                            }
+                            catch (PreexistingEntityException ex)
                             {
                                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -4514,10 +4506,12 @@ public class ControllerNegocio
                     }
 
                 }
-            } catch (IllegalOrphanException ex)
+            }
+            catch (IllegalOrphanException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NonexistentEntityException ex)
+            }
+            catch (NonexistentEntityException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -4557,11 +4551,12 @@ public class ControllerNegocio
 
                 this.registrarAuditoria(miTramite, ConstantesGui.ELIMINAR_TIPO_DE_TRAMITE);
 
-
-            } catch (IllegalOrphanException ex)
+            }
+            catch (IllegalOrphanException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NonexistentEntityException ex)
+            }
+            catch (NonexistentEntityException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -4631,7 +4626,6 @@ public class ControllerNegocio
 
         miTipoDeDocumento = miJpaTipoDocumento.findTipoDeDocumento(nombreDocumento);
 
-
         if (miTipoDeDocumento != null && !miTipoDeDocumento.isEmpty())
         {
             resultado = Boolean.TRUE;
@@ -4675,7 +4669,8 @@ public class ControllerNegocio
                 }
 
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -4788,14 +4783,14 @@ public class ControllerNegocio
 
                 this.registrarAuditoria(nuevoConcepto, ConstantesGui.INGRESAR_NUEVO_CONCEPTO);
 
-
-            } catch (PersistenceException e)
+            }
+            catch (PersistenceException e)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, e);
             }
 
-
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -4836,7 +4831,8 @@ public class ControllerNegocio
                 }
 
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -4876,7 +4872,6 @@ public class ControllerNegocio
                 {
                     this.registrarAuditoria(nuevoConcepto, ConstantesGui.MODIFICAR_CONCEPTO);
 
-
                 }
 //                }                
 //                else
@@ -4886,11 +4881,13 @@ public class ControllerNegocio
 
             }
 
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             //  TODO: Eliminar de la version Final
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             //  TODO: Eliminar de la version Final
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -4923,14 +4920,15 @@ public class ControllerNegocio
                 {
                     this.registrarAuditoria(miConcepto, ConstantesGui.ELIMINAR_CONCEPTO);
                 }
-            } catch (PersistenceException e)
+            }
+            catch (PersistenceException e)
             {
                 e.printStackTrace();
 
-
             }
 
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -4979,7 +4977,6 @@ public class ControllerNegocio
         {
             nuevoEstadoDeGestion.setAtributo(miDto);
 
-
             try
             {
                 miJpaEstadoDeGestion = (EstadoDeGestionJpaController) miAdministradorJpa.obtenerJpa(EstadoDeGestionJpaController.class.getName());
@@ -4988,16 +4985,18 @@ public class ControllerNegocio
                 resultado = Boolean.TRUE;
 
                 this.registrarAuditoria(nuevoEstadoDeGestion, ConstantesGui.INGRESAR_ESTADO_GESTION);
-            } catch (NonexistentJpaException ex)
+            }
+            catch (NonexistentJpaException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (PersistenceException e)
+            }
+            catch (PersistenceException e)
             {
                 e.printStackTrace();
 
-
             }
-        } catch (DtoInvalidoException ex)
+        }
+        catch (DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -5017,9 +5016,6 @@ public class ControllerNegocio
         List<DtoEstadoDeGestion> milistaDtoEstadoDeGestions = new ArrayList<>();
         List<EstadoDeGestion> listaEstadosDeGestion = new ArrayList<>();
 
-
-
-
         try
         {
             miJpaEstadoDeGestion = (EstadoDeGestionJpaController) miAdministradorJpa.obtenerJpa(EstadoDeGestionJpaController.class.getName());
@@ -5037,10 +5033,12 @@ public class ControllerNegocio
                     milistaDtoEstadoDeGestions.add(unDtoEstadoDeGestio);
                 }
             }
-        } catch (NonexistentJpaException ex)
+        }
+        catch (NonexistentJpaException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             e.printStackTrace();
         }
@@ -5074,12 +5072,13 @@ public class ControllerNegocio
                     {
                         miJpaEstadoDeGestion.edit(unEstadoDeGestion);
 
-
-                    } catch (IllegalOrphanException ex)
+                    }
+                    catch (IllegalOrphanException ex)
                     {
                         //  TODO: Eliminar de la version Final
                         Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (NonexistentEntityException ex)
+                    }
+                    catch (NonexistentEntityException ex)
                     {
                         //  TODO: Eliminar de la version Final
                         Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -5089,19 +5088,19 @@ public class ControllerNegocio
 
                     this.registrarAuditoria(unEstadoDeGestion, ConstantesGui.MODIFICAR_ESTADO_GESTION);
 
-
-                } catch (DtoInvalidoException ex)
+                }
+                catch (DtoInvalidoException ex)
                 {
                     //  TODO: Eliminar de la version Final
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        } catch (PersistenceException e)
+        }
+        catch (PersistenceException e)
         {
             //  TODO: Eliminar de la version Final
             e.printStackTrace();
         }
-
 
         return resultado;
     }
@@ -5131,7 +5130,8 @@ public class ControllerNegocio
                 resultado = Boolean.TRUE;
 
                 this.registrarAuditoria(nuevoTipoDeFolio, ConstantesGui.INGRESAR_NUEVO_TIPO_FOLIO);
-            } catch (PreexistingEntityException ex)
+            }
+            catch (PreexistingEntityException ex)
             {
                 try
                 {
@@ -5145,18 +5145,18 @@ public class ControllerNegocio
                     this.registrarAuditoria(nuevoTipoDeFolio, ConstantesGui.MODIFICAR_TIPO_FOLIO);
                     resultado = Boolean.TRUE;
 
-
-                } catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException ex1)
+                }
+                catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException ex1)
                 {
                     Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
 
-        } catch (DtoInvalidoException e)
+        }
+        catch (DtoInvalidoException e)
         {
             e.printStackTrace();
         }
-
 
         return resultado;
     }
@@ -5188,7 +5188,6 @@ public class ControllerNegocio
             }
         }
 
-
         return miListaDtoFolios;
     }
 
@@ -5216,8 +5215,8 @@ public class ControllerNegocio
 
             this.registrarAuditoria(miTipoDeFolio, ConstantesGui.MODIFICAR_TIPO_FOLIO);
 
-
-        } catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException | DtoInvalidoException ex)
+        }
+        catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException | DtoInvalidoException ex)
         {
             Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -5250,8 +5249,8 @@ public class ControllerNegocio
 
                 this.registrarAuditoria(miTipoDeFolio, ConstantesGui.ELIMINAR_TIPO_FOLIO);
 
-
-            } catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException ex)
+            }
+            catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -5443,10 +5442,12 @@ public class ControllerNegocio
                 {
                     throw new ClassEliminatedException();
                 }
-            } catch (IllegalOrphanException ex)
+            }
+            catch (IllegalOrphanException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NonexistentEntityException ex)
+            }
+            catch (NonexistentEntityException ex)
             {
                 Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }

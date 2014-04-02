@@ -22,11 +22,13 @@ public class Tramites extends javax.swing.JInternalFrame
     /**
      * Creates new form Tramites
      */
-    private Tramites() {
+    private Tramites()
+    {
         initComponents();
     }
 
-    public static Tramites getInstancia() {
+    public static Tramites getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Tramites();
@@ -37,15 +39,18 @@ public class Tramites extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Tramites.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuTramites() {
+    public static JMenuItem getSubmenuTramites()
+    {
         return submenuTramites;
     }
 

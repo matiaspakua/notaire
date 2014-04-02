@@ -13,35 +13,43 @@ public class DtoPlantillaTramite implements DtoValido
     private DtoTipoDeTramite tiposDeTramite;
     private String observaciones;
 
-    public DtoPlantillaTramite() {
+    public DtoPlantillaTramite()
+    {
     }
 
-    public DtoTipoDeDocumento getTiposDeDocumento() {
+    public DtoTipoDeDocumento getTiposDeDocumento()
+    {
         return this.tiposDeDocumento;
     }
 
-    public void setTiposDeDocumento(DtoTipoDeDocumento tiposDeDocumento) {
+    public void setTiposDeDocumento(DtoTipoDeDocumento tiposDeDocumento)
+    {
         this.tiposDeDocumento = tiposDeDocumento;
     }
 
-    public DtoTipoDeTramite getTiposDeTramite() {
+    public DtoTipoDeTramite getTiposDeTramite()
+    {
         return this.tiposDeTramite;
     }
 
-    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite) {
+    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite)
+    {
         this.tiposDeTramite = tiposDeTramite;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

@@ -24,32 +24,39 @@ public class IdentificacionPK implements Serializable
     @Column(name = "fk_id_tipo_identificacion")
     private int fkIdTipoIdentificacion;
 
-    public IdentificacionPK() {
+    public IdentificacionPK()
+    {
     }
 
-    public IdentificacionPK(int fkIdPersona, int fkIdTipoIdentificacion) {
+    public IdentificacionPK(int fkIdPersona, int fkIdTipoIdentificacion)
+    {
         this.fkIdPersona = fkIdPersona;
         this.fkIdTipoIdentificacion = fkIdTipoIdentificacion;
     }
 
-    public int getFkIdPersona() {
+    public int getFkIdPersona()
+    {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(int fkIdPersona) {
+    public void setFkIdPersona(int fkIdPersona)
+    {
         this.fkIdPersona = fkIdPersona;
     }
 
-    public int getFkIdTipoIdentificacion() {
+    public int getFkIdTipoIdentificacion()
+    {
         return fkIdTipoIdentificacion;
     }
 
-    public void setFkIdTipoIdentificacion(int fkIdTipoIdentificacion) {
+    public void setFkIdTipoIdentificacion(int fkIdTipoIdentificacion)
+    {
         this.fkIdTipoIdentificacion = fkIdTipoIdentificacion;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (int) fkIdPersona;
         hash += (int) fkIdTipoIdentificacion;
@@ -57,7 +64,8 @@ public class IdentificacionPK implements Serializable
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof IdentificacionPK))
         {
@@ -76,7 +84,8 @@ public class IdentificacionPK implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.IdentificacionPK[ fkIdPersona=" + fkIdPersona + ", fkIdTipoIdentificacion=" + fkIdTipoIdentificacion + " ]";
     }
 }

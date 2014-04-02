@@ -8,11 +8,11 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.awt.Dimension;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -27,17 +27,20 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
     /**
      * Creates new form DarAltaEscribano
      */
-    public DarAltaEscribano() {
+    public DarAltaEscribano()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         this.setMinimumSize(new Dimension(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical));
     }
 
-    public static JMenuItem getVentanaDarAltaEscribano() {
+    public static JMenuItem getVentanaDarAltaEscribano()
+    {
         return ventanaDarAltaEscribano;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
@@ -316,8 +319,7 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
                                 break;
                             }
                         }
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "Error al intentar dar de alta un nuevo escribano", "Error", JOptionPane.ERROR_MESSAGE);
                         this.salir();
@@ -329,8 +331,7 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
                     this.salir();
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Alguno de los datos en pantalla es incorrecto", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
@@ -346,20 +347,20 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
         this.salir();
     }//GEN-LAST:event_botonCancelarActionPerformed
 
-    public void cargarEscribano(DtoPersona dtoPersonaEscribano, String tituloLabel) {
+    public void cargarEscribano(DtoPersona dtoPersonaEscribano, String tituloLabel)
+    {
         this.labelTitulo.setText(tituloLabel);
 
         if (tituloLabel.contains(ConstantesGui.DAR_ALTA_ESCRIBANO))
         {
             this.labelBuscar.setVisible(true);
             this.botonBuscarPersona.setVisible(true);
-        }
-        else
+        } else
         {
             this.labelBuscar.setVisible(false);
             this.botonBuscarPersona.setVisible(false);
         }
-        
+
         if (dtoPersonaEscribano.isValido())
         {
 
@@ -376,8 +377,7 @@ public class DarAltaEscribano extends javax.swing.JInternalFrame
             }
 
             dtoNuevoEscribano = dtoPersonaEscribano;
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Los datos de la persona indicada no son validos", "Error", JOptionPane.ERROR_MESSAGE);
         }

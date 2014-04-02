@@ -6,6 +6,13 @@ package com.licensis.notaire.gui.administracion.conceptos;
 
 import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,13 +21,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -37,7 +37,8 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarConcepto
      */
-    public ModificarConcepto() {
+    public ModificarConcepto()
+    {
 
         initComponents();
         this.limpiarFormulario();
@@ -46,11 +47,13 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
         this.cargarListaConceptos();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarConceptos() {
+    public static JMenuItem getVentanaModificarConceptos()
+    {
         return ventanaModificarConceptos;
     }
 
@@ -271,13 +274,11 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
             //dtoConceptoSeleccionado.setNombre(this.campoNuevoNombre.getText());
             dtoConceptoSeleccionado.setValor(Float.valueOf(this.campoNuevoValor.getText()));
 
-
             if (checkBoxFijo.isSelected())
             {
                 dtoConceptoSeleccionado.setFijo(true);
                 dtoConceptoSeleccionado.setPorcentaje(0);
-            }
-            else
+            } else
             {
                 dtoConceptoSeleccionado.setFijo(false);
                 dtoConceptoSeleccionado.setPorcentaje(Integer.valueOf(this.selectorNuevoPorcentaje.getValue().toString()));
@@ -327,18 +328,15 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
                     limpiarFormulario();
                     cargarListaConceptos();
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Alguno de los valores ingresados nos es valido.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
@@ -362,8 +360,7 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Concepto", "Advertencia", JOptionPane.WARNING_MESSAGE);
             this.disableCamposConcepto();
-        }
-        else if (this.listaConceptosDisponibles.getModel().getSize() > 0)
+        } else if (this.listaConceptosDisponibles.getModel().getSize() > 0)
         {
             this.enableCamposConcepto();
             String nombreConcepto = this.listaConceptosDisponibles.getSelectedValue().toString();
@@ -382,8 +379,7 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
             {
                 labelAdvertencia.setText("El valor no puede ser negativo");
                 this.campoNuevoValor.setText("");
-            }
-            else
+            } else
             {
                 labelAdvertencia.setText("");
             }
@@ -399,19 +395,22 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
         }
     }//GEN-LAST:event_selectorNuevoPorcentajeStateChanged
 
-    public void enableCamposConcepto() {
+    public void enableCamposConcepto()
+    {
         campoNuevoNombre.setEnabled(true);
         campoNuevoValor.setEnabled(true);
         selectorNuevoPorcentaje.setEnabled(true);
     }
 
-    public void disableCamposConcepto() {
+    public void disableCamposConcepto()
+    {
         campoNuevoNombre.setEnabled(false);
         campoNuevoValor.setEnabled(false);
         selectorNuevoPorcentaje.setEnabled(false);
     }
 
-    private void cargarListaConceptos() {
+    private void cargarListaConceptos()
+    {
 
         miListaConceptos = new ArrayList<>();
         DefaultListModel lista = new DefaultListModel();
@@ -432,8 +431,7 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
             }
 
             this.listaConceptosDisponibles.setModel(lista);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Conceptos registrados.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();
@@ -441,14 +439,16 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         dtoConceptoSeleccionado = null;
         this.campoNuevoNombre.setText("");
         this.campoNuevoValor.setText("");
         this.selectorNuevoPorcentaje.setValue(0);
     }
 
-    private void cargarConcepto(String nombreConcepto) {
+    private void cargarConcepto(String nombreConcepto)
+    {
         if (!nombreConcepto.isEmpty())
         {
             for (Iterator<DtoConcepto> it = miListaConceptos.iterator(); it.hasNext();)
@@ -466,16 +466,14 @@ public class ModificarConcepto extends javax.swing.JInternalFrame
                     if (dtoConceptoSeleccionado.isFijo())
                     {
                         checkBoxFijo.setSelected(true);
-                    }
-                    else
+                    } else
                     {
                         checkBoxFijo.setSelected(false);
                     }
                     break;
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No ha seleccionado ningun concepto!", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

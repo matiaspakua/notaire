@@ -46,22 +46,26 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
     /**
      * Creates new form RetirarTestimonio
      */
-    public RetirarTestimonio() {
+    public RetirarTestimonio()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaTestimonios.setAutoCreateRowSorter(true);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRetirarTestimonio() {
+    public static JMenuItem getVentanaRetirarTestimonio()
+    {
         return ventanaRetirarTestimonio;
     }
 
-    public Boolean cargarFormulario(DtoEscritura miDtoEscritura) {
+    public Boolean cargarFormulario(DtoEscritura miDtoEscritura)
+    {
         miEscritura = miDtoEscritura;
 
         testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
@@ -71,8 +75,6 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
         {
             DtoTestimonio dtoTestimonio = testimoniosEscritura.get(testimoniosEscritura.size() - 1);
             copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
-
-
 
             for (Iterator<DtoCopia> it1 = copias.iterator(); it1.hasNext();)
             {
@@ -99,15 +101,13 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
                 cargarGrilla(testimoniosEscritura);
                 cargarCombo();
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "<HTML>Las copias del testimonio de la escritura seleccionada<BR> han sido todos retirados.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 cargado = false;
                 salir();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen testimonios generados para la Escritura seleccionada.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             cargado = false;
@@ -117,7 +117,8 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
     }
 
-    private void cargarCombo() {
+    private void cargarCombo()
+    {
         String nombre = "";
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones;
         listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
@@ -130,7 +131,8 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
     }
 
-    private void cargarGrilla(List<DtoTestimonio> testimonios) {
+    private void cargarGrilla(List<DtoTestimonio> testimonios)
+    {
 
         for (Iterator<DtoTestimonio> it = testimonios.iterator(); it.hasNext();)
         {
@@ -149,8 +151,7 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
                     if (dtoMovimientoTestimonio.isInscripta())
                     {
                         inscripto = true;
-                    }
-                    else
+                    } else
                     {
                         inscripto = false;
                     }
@@ -476,11 +477,9 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
          * posee una deuda sobre la Escritura de $"+ saldo + ". <BR> ¿Desea seguir registrando el
          * retiro de copias?</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE); }
          */
-
         if (retirados != true)
         {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
 
             if (!admin.validarCampoVacio(campoNombreApellido.getText())
                     && !admin.validarCampoVacio(campoNumeroIdentificacion.getText()))
@@ -490,7 +489,6 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
                 String tipoDoc = comboTipoIdentificacion.getSelectedItem().toString();
                 String numeroDoc = campoNumeroIdentificacion.getText();
                 String fechaActual = formatter.format(Calendar.getInstance().getTime()).toString();
-
 
                 DtoTestimonio miTestimonio = testimoniosEscritura.get(testimoniosEscritura.size() - 1);
                 copias = miController.obtenerCopiasTestimonio(miTestimonio);
@@ -537,18 +535,15 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
                     {
                         Logger.getLogger(RetirarTestimonio.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>El maximo de copias a retirar es de " + copias.size() + ".<BR>No puede retirar mas copias de <BR>las que existen sin retirar.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe completar todos los datos.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Todas las copias del testimonio, han sido retiradas.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();

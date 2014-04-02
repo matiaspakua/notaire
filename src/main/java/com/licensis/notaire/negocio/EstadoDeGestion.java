@@ -9,7 +9,20 @@ import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,10 +35,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "estados_de_gestion")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "EstadoDeGestion.findAll", query = "SELECT e FROM EstadoDeGestion e"),
-    @NamedQuery(name = "EstadoDeGestion.findByIdEstadoGestion", query = "SELECT e FROM EstadoDeGestion e WHERE e.idEstadoGestion = :idEstadoGestion")
-})
+        {
+            @NamedQuery(name = "EstadoDeGestion.findAll", query = "SELECT e FROM EstadoDeGestion e"),
+            @NamedQuery(name = "EstadoDeGestion.findByIdEstadoGestion", query = "SELECT e FROM EstadoDeGestion e WHERE e.idEstadoGestion = :idEstadoGestion")
+        })
 public class EstadoDeGestion implements Serializable
 {
 
@@ -55,61 +68,74 @@ public class EstadoDeGestion implements Serializable
      * Constructor por default para estado de gestion. Asigna al ID el valor de
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
-    public EstadoDeGestion() {
+    public EstadoDeGestion()
+    {
         this.idEstadoGestion = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
     }
 
-    public EstadoDeGestion(Integer idEstadoGestion) {
+    public EstadoDeGestion(Integer idEstadoGestion)
+    {
         this.idEstadoGestion = idEstadoGestion;
     }
 
-    public EstadoDeGestion(Integer idEstadoGestion, String nombre) {
+    public EstadoDeGestion(Integer idEstadoGestion, String nombre)
+    {
         this.idEstadoGestion = idEstadoGestion;
         this.nombre = nombre;
     }
 
-    public Integer getIdEstadoGestion() {
+    public Integer getIdEstadoGestion()
+    {
         return idEstadoGestion;
     }
 
-    public void setIdEstadoGestion(Integer idEstadoGestion) {
+    public void setIdEstadoGestion(Integer idEstadoGestion)
+    {
         this.idEstadoGestion = idEstadoGestion;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Historial> getHistorialList() {
+    public List<Historial> getHistorialList()
+    {
         return historialList;
     }
 
-    public void setHistorialList(List<Historial> historialList) {
+    public void setHistorialList(List<Historial> historialList)
+    {
         this.historialList = historialList;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idEstadoGestion != null ? idEstadoGestion.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EstadoDeGestion))
         {
@@ -124,26 +150,28 @@ public class EstadoDeGestion implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "EstadoDeGestion[ idEstadoGestion=" + idEstadoGestion + " ]"
-                 + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + nombre + " ]";
     }
 
-    public void setAtributo(DtoEstadoDeGestion miDto) throws DtoInvalidoException {
+    public void setAtributo(DtoEstadoDeGestion miDto) throws DtoInvalidoException
+    {
         if (miDto.isValido() == Boolean.TRUE)
         {
             this.setIdEstadoGestion(miDto.getIdEstadoGestion());
             this.setNombre(miDto.getNombre());
             this.setObservaciones(miDto.getObservaciones());
             this.version = miDto.getVersion();
-        }
-        else
+        } else
         {
             throw new DtoInvalidoException("Dto invalido");
         }
     }
 
-    public DtoEstadoDeGestion getDto() throws NullPointerException {
+    public DtoEstadoDeGestion getDto() throws NullPointerException
+    {
         DtoEstadoDeGestion miDto = new DtoEstadoDeGestion();
 
         miDto.setIdEstadoGestion(this.getIdEstadoGestion());
@@ -154,20 +182,24 @@ public class EstadoDeGestion implements Serializable
         return miDto;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
     @XmlTransient
-    public Collection<GestionDeEscritura> getGestionDeEscrituraCollection() {
+    public Collection<GestionDeEscritura> getGestionDeEscrituraCollection()
+    {
         return gestionDeEscrituraCollection;
     }
 
-    public void setGestionDeEscrituraCollection(Collection<GestionDeEscritura> gestionDeEscrituraCollection) {
+    public void setGestionDeEscrituraCollection(Collection<GestionDeEscritura> gestionDeEscrituraCollection)
+    {
         this.gestionDeEscrituraCollection = gestionDeEscrituraCollection;
     }
 }

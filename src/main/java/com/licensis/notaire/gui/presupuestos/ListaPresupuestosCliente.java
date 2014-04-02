@@ -10,15 +10,17 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.pagos.ConsultarPagos;
 import com.licensis.notaire.gui.pagos.RegistrarPago;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -40,18 +42,21 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form ListaPresupuestosCliente
      */
-    public ListaPresupuestosCliente() {
+    public ListaPresupuestosCliente()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaPresupuestosCliente.setAutoCreateRowSorter(true);
     }
 
-    public void setFormModificarPresupuesto(ModificarPresupuesto formulario) {
+    public void setFormModificarPresupuesto(ModificarPresupuesto formulario)
+    {
         modificarPresupuesto = formulario;
     }
 
-    private void extraerPresupuestoSeleccionado() throws NumberFormatException {
+    private void extraerPresupuestoSeleccionado() throws NumberFormatException
+    {
         TableModel miGrilla = grillaPresupuestosCliente.getModel();
         int filaSeleccionada = grillaPresupuestosCliente.getSelectedRow();
         filaSeleccionada = grillaPresupuestosCliente.convertRowIndexToModel(filaSeleccionada);
@@ -78,11 +83,13 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
         }
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaPresupuestosCliente.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaPresupuestosCliente.getModel()).getRowCount() > 0)
@@ -92,19 +99,23 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
         }
     }
 
-    public static JMenuItem getVentanaListaPresupuestosCliente() {
+    public static JMenuItem getVentanaListaPresupuestosCliente()
+    {
         return ventanaListaPresupuestosCliente;
     }
 
-    public void setFormulario(String formulario) {
+    public void setFormulario(String formulario)
+    {
         formularioInvocador = formulario;
     }
 
-    public void setPersona(DtoPersona dtoPersona) {
+    public void setPersona(DtoPersona dtoPersona)
+    {
         personaSeleccionada = dtoPersona;
     }
 
-    public void cargarGrillaPresupuestos() throws NonexistentJpaException {
+    public void cargarGrillaPresupuestos() throws NonexistentJpaException
+    {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         this.setListaPresupuestos(miController.buscarPresupuestosPersona(personaSeleccionada));
@@ -133,8 +144,7 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
                         false
                     };
                     ((DefaultTableModel) grillaPresupuestosCliente.getModel()).addRow(datos);
-                }
-                else
+                } else
                 {
                     Object[] datos =
                     {
@@ -151,8 +161,7 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
                     ((DefaultTableModel) grillaPresupuestosCliente.getModel()).addRow(datos);
                 }
             }
-        }
-        else
+        } else
         {
 
             JOptionPane.showMessageDialog(this, "No existen presupuestos asociados a la persona indicada.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -348,14 +357,16 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
     /**
      * @return the listaPresupuestos
      */
-    public ArrayList<DtoPresupuesto> getListaPresupuestos() {
+    public ArrayList<DtoPresupuesto> getListaPresupuestos()
+    {
         return listaPresupuestos;
     }
 
     /**
      * @param listaPresupuestos the listaPresupuestos to set
      */
-    public void setListaPresupuestos(ArrayList<DtoPresupuesto> listaPresupuestos) {
+    public void setListaPresupuestos(ArrayList<DtoPresupuesto> listaPresupuestos)
+    {
         this.listaPresupuestos = listaPresupuestos;
     }
 }

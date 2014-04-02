@@ -6,10 +6,7 @@ package com.licensis.notaire.gui.administracion.usuarios;
 
 import com.licensis.notaire.gui.Principal;
 import java.awt.Dimension;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 
 /**
  *
@@ -25,11 +22,13 @@ public class Usuarios extends javax.swing.JInternalFrame
     /**
      * Creates new form Usuarios
      */
-    private Usuarios() {
+    private Usuarios()
+    {
         initComponents();
     }
 
-    public static Usuarios getInstancia() {
+    public static Usuarios getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Usuarios();
@@ -40,15 +39,18 @@ public class Usuarios extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Usuarios.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuUsuarios() {
+    public static JMenuItem getSubmenuUsuarios()
+    {
         return submenuUsuarios;
     }
 

@@ -9,7 +9,17 @@ import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -20,11 +30,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "plantilla_presupuestos")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "PlantillaPresupuesto.findAll", query = "SELECT p FROM PlantillaPresupuesto p"),
-    @NamedQuery(name = "PlantillaPresupuesto.findByFkIdTipoTramite", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdTipoTramite = :fkIdTipoTramite"),
-    @NamedQuery(name = "PlantillaPresupuesto.findByFkIdConcepto", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdConcepto = :fkIdConcepto")
-})
+        {
+            @NamedQuery(name = "PlantillaPresupuesto.findAll", query = "SELECT p FROM PlantillaPresupuesto p"),
+            @NamedQuery(name = "PlantillaPresupuesto.findByFkIdTipoTramite", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdTipoTramite = :fkIdTipoTramite"),
+            @NamedQuery(name = "PlantillaPresupuesto.findByFkIdConcepto", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdConcepto = :fkIdConcepto")
+        })
 public class PlantillaPresupuesto implements Serializable
 {
 
@@ -45,50 +55,62 @@ public class PlantillaPresupuesto implements Serializable
     @ManyToOne(optional = false)
     private Concepto concepto;
 
-    public PlantillaPresupuesto() {
+    public PlantillaPresupuesto()
+    {
     }
 
-    public PlantillaPresupuesto(PlantillaPresupuestoPK plantillaPresupuestoPK) {
+    public PlantillaPresupuesto(PlantillaPresupuestoPK plantillaPresupuestoPK)
+    {
         this.plantillaPresupuestoPK = plantillaPresupuestoPK;
     }
 
-    public PlantillaPresupuesto(int fkIdTipoTramite, int fkIdConcepto) {
+    public PlantillaPresupuesto(int fkIdTipoTramite, int fkIdConcepto)
+    {
         this.plantillaPresupuestoPK = new PlantillaPresupuestoPK(fkIdTipoTramite, fkIdConcepto);
     }
 
-    public PlantillaPresupuestoPK getPlantillaPresupuestoPK() {
+    public PlantillaPresupuestoPK getPlantillaPresupuestoPK()
+    {
         return plantillaPresupuestoPK;
     }
 
-    public void setPlantillaPresupuestoPK(PlantillaPresupuestoPK plantillaPresupuestoPK) {
+    public void setPlantillaPresupuestoPK(PlantillaPresupuestoPK plantillaPresupuestoPK)
+    {
         this.plantillaPresupuestoPK = plantillaPresupuestoPK;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public TipoDeTramite getTipoDeTramite() {
+    public TipoDeTramite getTipoDeTramite()
+    {
         return tipoDeTramite;
     }
 
-    public void setTipoDeTramite(TipoDeTramite tipoDeTramite) {
+    public void setTipoDeTramite(TipoDeTramite tipoDeTramite)
+    {
         this.tipoDeTramite = tipoDeTramite;
     }
 
-    public Concepto getConcepto() {
+    public Concepto getConcepto()
+    {
         return concepto;
     }
 
-    public void setConcepto(Concepto concepto) {
+    public void setConcepto(Concepto concepto)
+    {
         this.concepto = concepto;
     }
 
-    public void setAtributos(DtoPlantillaPresupuesto miDto) {
+    public void setAtributos(DtoPlantillaPresupuesto miDto)
+    {
         try
         {
             if (tipoDeTramite == null)
@@ -115,7 +137,8 @@ public class PlantillaPresupuesto implements Serializable
 
     }
 
-    public DtoPlantillaPresupuesto getDto() {
+    public DtoPlantillaPresupuesto getDto()
+    {
         DtoPlantillaPresupuesto miDto = new DtoPlantillaPresupuesto();
 
         miDto.setConceptos(concepto.getDto());
@@ -126,23 +149,27 @@ public class PlantillaPresupuesto implements Serializable
         return miDto;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (plantillaPresupuestoPK != null ? plantillaPresupuestoPK.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PlantillaPresupuesto))
         {
@@ -157,7 +184,8 @@ public class PlantillaPresupuesto implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "PlantillaPresupuesto[ plantillaPresupuestoPK=" + plantillaPresupuestoPK + " ]";
     }
 }

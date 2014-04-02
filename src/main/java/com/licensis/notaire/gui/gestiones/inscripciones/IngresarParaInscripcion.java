@@ -10,7 +10,6 @@ import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,7 +17,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.table.TableModel;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.negocio.ControllerNegocio;
@@ -40,21 +38,25 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarInscripcion
      */
-    public IngresarParaInscripcion() {
+    public IngresarParaInscripcion()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarParaInscribir() {
+    public static JMenuItem getVentanaIngresarParaInscribir()
+    {
         return ventanaIngresarParaInscribir;
     }
 
-    public Boolean cargarFormulario(DtoEscritura dtoEscritura) {
+    public Boolean cargarFormulario(DtoEscritura dtoEscritura)
+    {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -74,14 +76,12 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra inscripta <BR>con fecha: " + movimientos.get(movimientos.size() - 1).getFechaInscripcion().toString() + " <BR>y matricula: " + escrituraSeleccionada.getMatriculaInscripcion() + "</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargada = false;
-                }
-                else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
+                } else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra ingresada para inscribir<BR> con fecha: " + movimientos.get(movimientos.size() - 1).getFechaIngreso() + "<BR> y numero de carton: " + movimientos.get(movimientos.size() - 1).getNumeroCarton() + "</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargada = false;
                 }
-            }
-            else
+            } else
             {
                 this.escrituraSeleccionada = dtoEscritura;
                 this.campoNumeroEscritura.setText(Integer.toString(dtoEscritura.getNumero()));
@@ -106,8 +106,7 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame
 
                 campoNumeroTestimonio.setText(new Integer(testimonios.get(testimonios.size() - 1).getNumero()).toString());
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios generados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             cargada = false;
@@ -402,8 +401,7 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame
             {
                 Logger.getLogger(IngresarParaInscripcion.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe completar al menos el Numero de Carton y Fecha de Ingreso.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

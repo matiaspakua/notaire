@@ -20,75 +20,93 @@ public class DtoTestimonio implements DtoValido
     private List<DtoCopia> copias = new ArrayList();
     private List<DtoMovimientoTestimonio> movimientosTestimonios = new ArrayList();
 
-    public DtoTestimonio() {
+    public DtoTestimonio()
+    {
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Integer getIdTestimonio() {
+    public Integer getIdTestimonio()
+    {
         return this.idTestimonio;
     }
 
-    public void setIdTestimonio(Integer idTestimonio) {
+    public void setIdTestimonio(Integer idTestimonio)
+    {
         this.idTestimonio = idTestimonio;
     }
 
-    public DtoEscritura getEscritura() {
+    public DtoEscritura getEscritura()
+    {
         return this.escritura;
     }
 
-    public void setEscritura(DtoEscritura escritura) {
+    public void setEscritura(DtoEscritura escritura)
+    {
         this.escritura = escritura;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return this.numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public boolean isObservado() {
+    public boolean isObservado()
+    {
         return this.observado;
     }
 
-    public void setObservado(boolean observado) {
+    public void setObservado(boolean observado)
+    {
         this.observado = observado;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoCopia> getCopias() {
+    public List<DtoCopia> getCopias()
+    {
         return this.copias;
     }
 
-    public void setCopias(List<DtoCopia> misCopias) {
+    public void setCopias(List<DtoCopia> misCopias)
+    {
         this.copias = misCopias;
     }
 
-    public List<DtoMovimientoTestimonio> getMovimientosTestimonios() {
+    public List<DtoMovimientoTestimonio> getMovimientosTestimonios()
+    {
         return this.movimientosTestimonios;
     }
 
-    public void setMovimientosTestimonios(List<DtoMovimientoTestimonio> movimientosTestimonios) {
+    public void setMovimientosTestimonios(List<DtoMovimientoTestimonio> movimientosTestimonios)
+    {
         this.movimientosTestimonios = movimientosTestimonios;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

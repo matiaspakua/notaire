@@ -13,12 +13,16 @@ import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
-import java.util.*;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -47,7 +51,8 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form CrearPresupuesto
      */
-    private CrearPresupuesto() {
+    private CrearPresupuesto()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
@@ -62,7 +67,8 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
     }
 
-    public static CrearPresupuesto getInstancia() {
+    public static CrearPresupuesto getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new CrearPresupuesto();
@@ -70,15 +76,18 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaCrearPresupuesto() {
+    public static JMenuItem getVentanaCrearPresupuesto()
+    {
         return ventanaCrearPresupuesto;
     }
 
-    public void cargarFormulario(DtoPersona miPersona) {
+    public void cargarFormulario(DtoPersona miPersona)
+    {
 
         campoNombre.setText(miPersona.getNombre());
         campoApellido.setText(miPersona.getApellido());
@@ -92,14 +101,15 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         cargarTramites();
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         miDtoSeleccionado = null;
         miDtoPersona = null;
         inmuebleAsociado = null;
         tramite = null;
         presupuestoCreado = null;
         itemsAsociados = null;
-        
+
         detalle = null;
         campoNombre.setText("");
         campoApellido.setText("");
@@ -112,11 +122,12 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
         DefaultListModel lista = new DefaultListModel();
         listaTramites.setModel(lista);
-        
+
         configurado = false;
     }
 
-    private void cargarTramites() {
+    private void cargarTramites()
+    {
 
         tramitesDisponibles = new ArrayList<>();
         tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
@@ -127,8 +138,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
             salir();
 
-        }
-        else
+        } else
         {
 
             listaTramites.setEnabled(true);
@@ -153,8 +163,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "No existen Tipos de Tramite con Plantilla de Presupuesto configurada.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 salir();
-            }
-            else
+            } else
             {
 
                 this.listaTramites.setModel(lista);
@@ -162,14 +171,14 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         }
     }
 
-    public void setConfigurado(Boolean valor, DtoInmueble miDtoInmueble, DtoTramite miDtoTramite, DtoPresupuesto miDtoPresupuesto, ArrayList<DtoItem> dtoItems) {
+    public void setConfigurado(Boolean valor, DtoInmueble miDtoInmueble, DtoTramite miDtoTramite, DtoPresupuesto miDtoPresupuesto, ArrayList<DtoItem> dtoItems)
+    {
         configurado = valor;
 
         if (miDtoInmueble != null)
         {
             inmuebleAsociado = miDtoInmueble;
-        }
-        else
+        } else
         {
             inmuebleAsociado = null;
         }
@@ -471,8 +480,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
             if (!campoObservacionesPresupuesto.getText().isEmpty())
             {
                 presupuestoCreado.setObservaciones(campoObservacionesPresupuesto.getText());
-            }
-            else
+            } else
             {
                 presupuestoCreado.setObservaciones("");
             }
@@ -482,8 +490,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
             if (inmuebleAsociado != null)
             {
                 creado = miController.crearPresupuesto(miDtoPersona, presupuestoCreado, tramite, inmuebleAsociado, itemsAsociados);
-            }
-            else
+            } else
             {
                 creado = miController.crearPresupuesto(miDtoPersona, presupuestoCreado, tramite, itemsAsociados);
             }
@@ -505,19 +512,17 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
                     {
 
                         AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                        reportes.generarReportePresupuesto(miPresupuestoEncontrado);                        
+                        reportes.generarReportePresupuesto(miPresupuestoEncontrado);
                     }
                 }
                 this.limpiarFormulario();
-                
+
                 this.salir();
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No se pudo crear el Presupuesto.", "Error de sistema", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe configurar el presupuesto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -535,7 +540,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         miForm.limpiarFormulario();
         this.limpiarFormulario();
         miForm.setTipoBusqueda(ConstantesGui.CREAR_PRESUPUESTO);
-        
+
         Principal.cargarFormulario(miForm);
         Principal.setVentanasActivas(BuscarCliente.getVentanaBuscarCliente());
     }//GEN-LAST:event_botonBuscarClienteActionPerformed
@@ -557,7 +562,6 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
                     DtoTipoDeTramite dtoTipoDeTramite = it.next();
 
                     // Completo los datos en los componentes
-
                     if (dtoTipoDeTramite.getNombre().equals(seleccionado))
                     {
 
@@ -571,19 +575,16 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
                 detalle.limpiarFormulario();
                 detalle.setTramite(miDtoSeleccionado);
 
-
                 listaTramites.setEnabled(false);
                 botonSeleccionar2.setEnabled(false);
                 botonConfirmar.setEnabled(true);
 
                 Principal.cargarFormulario(detalle);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (miDtoPersona == null)
+        } else if (miDtoPersona == null)
         {
             JOptionPane.showMessageDialog(this, "Debe buscar a una Persona.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

@@ -8,13 +8,29 @@ import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Clase que representa un tipo de folio en particular que puede ser para el protocolo: principal,
- * auxiliar, etc. <p>REGLA DE NEGOCIO<p> <li> Los tipos de folios no se pueden eliminar (debido a
+ * auxiliar, etc.
+ * <p>
+ * REGLA DE NEGOCIO<p>
+ * <li> Los tipos de folios no se pueden eliminar (debido a
  * que se tiene que mantener un historia de los mismos), por lo tanto, solo se le puede cambiar el
  * estado a "INHABILITADO". </li>
  */
@@ -22,10 +38,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tipos_de_folio")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TipoDeFolio.findAll", query = "SELECT t FROM TipoDeFolio t"),
-    @NamedQuery(name = "TipoDeFolio.findByIdTipoFolio", query = "SELECT t FROM TipoDeFolio t WHERE t.idTipoFolio = :idTipoFolio")
-})
+        {
+            @NamedQuery(name = "TipoDeFolio.findAll", query = "SELECT t FROM TipoDeFolio t"),
+            @NamedQuery(name = "TipoDeFolio.findByIdTipoFolio", query = "SELECT t FROM TipoDeFolio t WHERE t.idTipoFolio = :idTipoFolio")
+        })
 public class TipoDeFolio implements Serializable
 {
 
@@ -52,72 +68,88 @@ public class TipoDeFolio implements Serializable
     @Column(name = "habilitado")
     private boolean habilitado;
 
-    public TipoDeFolio() {
+    public TipoDeFolio()
+    {
     }
 
-    public TipoDeFolio(String nombreTipoDeFolio) {
+    public TipoDeFolio(String nombreTipoDeFolio)
+    {
         this.nombre = nombreTipoDeFolio;
     }
 
-    public TipoDeFolio(Integer idTipoFolio) {
+    public TipoDeFolio(Integer idTipoFolio)
+    {
         this.idTipoFolio = idTipoFolio;
     }
 
-    public TipoDeFolio(Integer idTipoFolio, String nombre) {
+    public TipoDeFolio(Integer idTipoFolio, String nombre)
+    {
         this.idTipoFolio = idTipoFolio;
         this.nombre = nombre;
     }
 
-    public Integer getIdTipoFolio() {
+    public Integer getIdTipoFolio()
+    {
         return idTipoFolio;
     }
 
-    public void setIdTipoFolio(Integer idTipoFolio) {
+    public void setIdTipoFolio(Integer idTipoFolio)
+    {
         this.idTipoFolio = idTipoFolio;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Folio> getFolioList() {
+    public List<Folio> getFolioList()
+    {
         return folioList;
     }
 
-    public void setFolioList(List<Folio> folioList) {
+    public void setFolioList(List<Folio> folioList)
+    {
         this.folioList = folioList;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idTipoFolio != null ? idTipoFolio.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TipoDeFolio))
         {
@@ -132,12 +164,14 @@ public class TipoDeFolio implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "TipoDeFolio[ idTipoFolio=" + idTipoFolio + " ]"
-                 + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + nombre + " ]";
     }
 
-    public DtoTipoDeFolio getDto() {
+    public DtoTipoDeFolio getDto()
+    {
         DtoTipoDeFolio miDtoTipoDeFolio = new DtoTipoDeFolio();
 
         miDtoTipoDeFolio.setIdTipoFolio(this.getIdTipoFolio());
@@ -150,7 +184,8 @@ public class TipoDeFolio implements Serializable
 
     }
 
-    public void setAtributos(DtoTipoDeFolio dtoTipoDeFolio) throws DtoInvalidoException {
+    public void setAtributos(DtoTipoDeFolio dtoTipoDeFolio) throws DtoInvalidoException
+    {
         if (dtoTipoDeFolio.isValido())
         {
             this.setIdTipoFolio(dtoTipoDeFolio.getIdTipoFolio());
@@ -158,19 +193,20 @@ public class TipoDeFolio implements Serializable
             this.setObservaciones(dtoTipoDeFolio.getObservaciones());
             this.setHabilitado(dtoTipoDeFolio.isHabilitado());
             this.setVersion(dtoTipoDeFolio.getVersion());
-        }
-        else
+        } else
         {
             throw new DtoInvalidoException("El dto indicado no es valido.");
         }
 
     }
 
-    public boolean getHabilitado() {
+    public boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(boolean habilitado) {
+    public void setHabilitado(boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 }

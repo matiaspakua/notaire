@@ -8,7 +8,6 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.administracion.Administracion;
 import com.licensis.notaire.gui.clientes.Clientes;
 import com.licensis.notaire.gui.gestiones.Gestiones;
-import com.licensis.notaire.gui.pagos.Pagos;
 import com.licensis.notaire.gui.presupuestos.Presupuestos;
 import com.licensis.notaire.gui.protocolo.Protocolo;
 import java.awt.Color;
@@ -42,7 +41,8 @@ public class Principal extends javax.swing.JFrame
     /**
      * Creates new form Principal
      */
-    private Principal() {
+    private Principal()
+    {
         initComponents();
         Principal.AreaTrabajo.setBackground(Color.LIGHT_GRAY);
 
@@ -57,7 +57,8 @@ public class Principal extends javax.swing.JFrame
         this.scrollAreaTrabajo.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
-    public static Principal getInstancia() {
+    public static Principal getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Principal();
@@ -65,7 +66,8 @@ public class Principal extends javax.swing.JFrame
         return instancia;
     }
 
-    public void cargarVentanaUsuario(DtoUsuario miDtoUsuario) {
+    public void cargarVentanaUsuario(DtoUsuario miDtoUsuario)
+    {
 
         switch (miDtoUsuario.getTipo())
         {
@@ -84,18 +86,21 @@ public class Principal extends javax.swing.JFrame
 
     }
 
-    private void cargarVentanaEmpleado() {
+    private void cargarVentanaEmpleado()
+    {
         botonModuloAdministracion.setVisible(false);
     }
 
-    private void cargarVentanaEscribano() {
+    private void cargarVentanaEscribano()
+    {
     }
 
     static class MenuActionListener implements ActionListener
     {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
             String nombreMenu = (((JMenuItem) e.getSource()).getText());
 
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
@@ -119,7 +124,8 @@ public class Principal extends javax.swing.JFrame
      * @param nombreFormulario El nombre de un formulario.
      * @return miFrame Un JInternalFrame correspondiente al formulario activo o nulo si no existe.
      */
-    public static JInternalFrame obtenerFormularioActivo(String nombreFormulario) {
+    public static JInternalFrame obtenerFormularioActivo(String nombreFormulario)
+    {
         for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
         {
             JInternalFrame miFrame = AreaTrabajo.getAllFrames()[i];
@@ -131,16 +137,19 @@ public class Principal extends javax.swing.JFrame
         return null;
     }
 
-    public static void setVentanasActivas(JMenuItem nuevaVentana) {
+    public static void setVentanasActivas(JMenuItem nuevaVentana)
+    {
         nuevaVentana.addActionListener(new MenuActionListener());
         ventanasActivas.add(nuevaVentana);
     }
 
-    public static void removeVentanaActivas(JMenuItem ventana) {
+    public static void removeVentanaActivas(JMenuItem ventana)
+    {
         ventanasActivas.remove(ventana);
     }
 
-    public static void cargarFormulario(JInternalFrame form) {
+    public static void cargarFormulario(JInternalFrame form)
+    {
         AreaTrabajo.remove(form);
         AreaTrabajo.add(form);
         form.show();
@@ -148,7 +157,8 @@ public class Principal extends javax.swing.JFrame
 
     }
 
-    public static void eliminarFormulario(JInternalFrame form) {
+    public static void eliminarFormulario(JInternalFrame form)
+    {
         AreaTrabajo.remove(form);
     }
 
@@ -399,8 +409,7 @@ public class Principal extends javax.swing.JFrame
             Principal.cargarFormulario(Administracion.getInstancia());
             Principal.setVentanasActivas(Administracion.getMenuAdministracion());
 
-        }
-        else
+        } else
         {
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
             {
@@ -424,8 +433,7 @@ public class Principal extends javax.swing.JFrame
         {
             Principal.cargarFormulario(Clientes.getInstancia());
             Principal.setVentanasActivas(Clientes.getMenuClientes());
-        }
-        else
+        } else
         {
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
             {
@@ -445,8 +453,7 @@ public class Principal extends javax.swing.JFrame
             Principal.cargarFormulario(Presupuestos.getInstancia());
             Principal.setVentanasActivas(Presupuestos.getMenuPresupuestos());
 
-        }
-        else
+        } else
         {
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
             {
@@ -465,8 +472,7 @@ public class Principal extends javax.swing.JFrame
         {
             Principal.cargarFormulario(Gestiones.getInstancia());
             Principal.setVentanasActivas(Gestiones.getMenuGestions());
-        }
-        else
+        } else
         {
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
             {
@@ -485,8 +491,7 @@ public class Principal extends javax.swing.JFrame
         {
             Principal.cargarFormulario(Protocolo.getInstancia());
             Principal.setVentanasActivas(Protocolo.getMenuProtocolos());
-        }
-        else
+        } else
         {
             for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
             {
@@ -517,7 +522,8 @@ public class Principal extends javax.swing.JFrame
         salir();
     }//GEN-LAST:event_menuSalirActionPerformed
 
-    private void salir() {
+    private void salir()
+    {
         int n = JOptionPane.showConfirmDialog(this, "¿Desea Salir del Sistema?", "Sesion", JOptionPane.YES_NO_OPTION);
 
         if (n == 0)
@@ -530,7 +536,8 @@ public class Principal extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         /*
          * Set the Nimbus look and feel
          */
@@ -576,7 +583,8 @@ public class Principal extends javax.swing.JFrame
         {
 
             @Override
-            public void run() {
+            public void run()
+            {
                 new Principal().setVisible(true);
             }
         });

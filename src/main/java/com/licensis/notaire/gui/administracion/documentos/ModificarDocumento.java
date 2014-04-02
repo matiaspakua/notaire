@@ -8,6 +8,10 @@ import com.licensis.notaire.dto.DtoFlag;
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -15,10 +19,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -35,21 +35,25 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarDocumento
      */
-    public ModificarDocumento() {
+    public ModificarDocumento()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         inicializarFormulario();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarDocumento() {
+    public static JMenuItem getVentanaModificarDocumento()
+    {
         return ventanaModificarDocumento;
     }
 
-    private void inicializarFormulario() {
+    private void inicializarFormulario()
+    {
 
         this.limpiarFormulario();
 
@@ -67,15 +71,15 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
             }
 
             this.listaDocumentosDisponibles.setModel(lista);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Tipos de Documento registrados.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();
         }
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         miDocumentoSeleccionado = null;
         campoNombreDocumento.setText("");
         checkVenceDocumento.setSelected(false);
@@ -291,8 +295,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
         if (!checkVenceDocumento.isSelected())
         {
             selectorDiasVencimiento.setEnabled(false);
-        }
-        else
+        } else
         {
             selectorDiasVencimiento.setEnabled(true);
         }
@@ -315,8 +318,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
             {
                 miDocumentoSeleccionado.setVence(true);
                 miDocumentoSeleccionado.setDiasVencimiento((Integer) selectorDiasVencimiento.getValue());
-            }
-            else
+            } else
             {
                 miDocumentoSeleccionado.setVence(false);
                 miDocumentoSeleccionado.setDiasVencimiento(null);
@@ -332,8 +334,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Se ha modificado el tipo de documento.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                     limpiarFormulario();
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>ERROR: No se ha modificado el tipo de documento.<BR>Se ha insertado mal alguno de los campos.</HTML>", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
@@ -362,8 +363,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
                 inicializarFormulario();
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
@@ -391,8 +391,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
         if (nroSeleccionado == ConstantesGui.ERROR)
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un tipo de documento", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-        else
+        } else
         {
 
             String seleccionado = listaDocumentosDisponibles.getSelectedValue().toString();
@@ -417,8 +416,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
                     if (miDto.getQuienEntrega().equals("Cliente"))
                     {
                         comboQuienEntrega.setSelectedItem("Cliente");
-                    }
-                    else
+                    } else
                     {
                         comboQuienEntrega.setSelectedItem("Entidad Externa");
                     }
@@ -430,10 +428,10 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
             }
         }
 
-
     }//GEN-LAST:event_botonSeleccionarActionPerformed
 
-    public void activarCampos(DtoTipoDeDocumento miDto) {
+    public void activarCampos(DtoTipoDeDocumento miDto)
+    {
 
         this.campoNombreDocumento.setEditable(true);
         this.comboQuienEntrega.setEnabled(true);
@@ -446,8 +444,7 @@ public class ModificarDocumento extends javax.swing.JInternalFrame
         if (checkVenceDocumento.isSelected())
         {
             this.selectorDiasVencimiento.setEnabled(true);
-        }
-        else
+        } else
         {
             this.selectorDiasVencimiento.setEnabled(false);
         }

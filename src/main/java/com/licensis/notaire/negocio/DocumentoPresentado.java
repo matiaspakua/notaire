@@ -9,7 +9,22 @@ import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.dto.DtoTramite;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -20,22 +35,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "documentos_presentados")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "DocumentoPresentado.findAll", query = "SELECT d FROM DocumentoPresentado d"),
-    @NamedQuery(name = "DocumentoPresentado.findByIdDocumentoPresentado", query = "SELECT d FROM DocumentoPresentado d WHERE d.idDocumentoPresentado = :idDocumentoPresentado"),
-    @NamedQuery(name = "DocumentoPresentado.findByNumeroCarton", query = "SELECT d FROM DocumentoPresentado d WHERE d.numeroCarton = :numeroCarton"),
-    @NamedQuery(name = "DocumentoPresentado.findByFechaIngreso", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaIngreso = :fechaIngreso"),
-    @NamedQuery(name = "DocumentoPresentado.findByFechaSalida", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaSalida = :fechaSalida"),
-    @NamedQuery(name = "DocumentoPresentado.findByPreparado", query = "SELECT d FROM DocumentoPresentado d WHERE d.preparado = :preparado"),
-    @NamedQuery(name = "DocumentoPresentado.findByVence", query = "SELECT d FROM DocumentoPresentado d WHERE d.vence = :vence"),
-    @NamedQuery(name = "DocumentoPresentado.findByFechaVencimiento", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaVencimiento >= :fechaVencimiento"),
-    @NamedQuery(name = "DocumentoPresentado.findByDiasVencimiento", query = "SELECT d FROM DocumentoPresentado d WHERE d.diasVencimiento = :diasVencimiento"),
-    @NamedQuery(name = "DocumentoPresentado.findByImporteAPagar", query = "SELECT d FROM DocumentoPresentado d WHERE d.importeAPagar = :importeAPagar"),
-    @NamedQuery(name = "DocumentoPresentado.findByFechaPago", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaPago = :fechaPago"),
-    @NamedQuery(name = "DocumentoPresentado.findByLiberado", query = "SELECT d FROM DocumentoPresentado d WHERE d.liberado = :liberado"),
-    @NamedQuery(name = "DocumentoPresentado.findByFechaLiberado", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaLiberado = :fechaLiberado"),
-    @NamedQuery(name = "DocumentoPresentado.findByObservado", query = "SELECT d FROM DocumentoPresentado d WHERE d.observado = :observado")
-})
+        {
+            @NamedQuery(name = "DocumentoPresentado.findAll", query = "SELECT d FROM DocumentoPresentado d"),
+            @NamedQuery(name = "DocumentoPresentado.findByIdDocumentoPresentado", query = "SELECT d FROM DocumentoPresentado d WHERE d.idDocumentoPresentado = :idDocumentoPresentado"),
+            @NamedQuery(name = "DocumentoPresentado.findByNumeroCarton", query = "SELECT d FROM DocumentoPresentado d WHERE d.numeroCarton = :numeroCarton"),
+            @NamedQuery(name = "DocumentoPresentado.findByFechaIngreso", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaIngreso = :fechaIngreso"),
+            @NamedQuery(name = "DocumentoPresentado.findByFechaSalida", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaSalida = :fechaSalida"),
+            @NamedQuery(name = "DocumentoPresentado.findByPreparado", query = "SELECT d FROM DocumentoPresentado d WHERE d.preparado = :preparado"),
+            @NamedQuery(name = "DocumentoPresentado.findByVence", query = "SELECT d FROM DocumentoPresentado d WHERE d.vence = :vence"),
+            @NamedQuery(name = "DocumentoPresentado.findByFechaVencimiento", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaVencimiento >= :fechaVencimiento"),
+            @NamedQuery(name = "DocumentoPresentado.findByDiasVencimiento", query = "SELECT d FROM DocumentoPresentado d WHERE d.diasVencimiento = :diasVencimiento"),
+            @NamedQuery(name = "DocumentoPresentado.findByImporteAPagar", query = "SELECT d FROM DocumentoPresentado d WHERE d.importeAPagar = :importeAPagar"),
+            @NamedQuery(name = "DocumentoPresentado.findByFechaPago", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaPago = :fechaPago"),
+            @NamedQuery(name = "DocumentoPresentado.findByLiberado", query = "SELECT d FROM DocumentoPresentado d WHERE d.liberado = :liberado"),
+            @NamedQuery(name = "DocumentoPresentado.findByFechaLiberado", query = "SELECT d FROM DocumentoPresentado d WHERE d.fechaLiberado = :fechaLiberado"),
+            @NamedQuery(name = "DocumentoPresentado.findByObservado", query = "SELECT d FROM DocumentoPresentado d WHERE d.observado = :observado")
+        })
 public class DocumentoPresentado implements Serializable
 {
 
@@ -335,7 +350,7 @@ public class DocumentoPresentado implements Serializable
         dtoDocumentoPresentado.setPreparado(preparado);
         dtoDocumentoPresentado.setVence(vence);
         dtoDocumentoPresentado.setQuienEntrega(quienEntrega);
-        
+
         if (entregado != null)
         {
             dtoDocumentoPresentado.setEntregado(entregado);
@@ -351,7 +366,6 @@ public class DocumentoPresentado implements Serializable
         dtoDocumentoPresentado.setFkTramite(dtoTramite);
 
         DtoTipoDeDocumento dtoTipoDeDocumento = new DtoTipoDeDocumento();
-
 
         return dtoDocumentoPresentado;
     }

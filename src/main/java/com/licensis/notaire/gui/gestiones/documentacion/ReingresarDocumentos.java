@@ -13,6 +13,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,10 +28,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -103,7 +103,6 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
         fechaInicio.setText(formatter.format(this.getDtoGestion().getFechaInicio()));
         labelEncabezado.setText(this.getDtoGestion().getEncabezado());
         escribanoAcargo.setText(this.getDtoGestion().getPersonaEscribano().getNombre());
@@ -170,7 +169,7 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
             Principal.cargarFormulario(ReingresarDocumentos.getInstancia());
         } else
         {
-              this.dispose();
+            this.dispose();
             JOptionPane.showMessageDialog(this, "No hay documentos presentados, para la gestion");
         }
 
@@ -185,46 +184,44 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
         boolean reingresado = false;
         boolean flag = false;
 
-           for (int i = 0; i < listaDocumentosPresentados.size(); i++)
+        for (int i = 0; i < listaDocumentosPresentados.size(); i++)
+        {
+
+            dtoDocumentoPresentado = listaDocumentosPresentados.get(i);
+
+            if (dtoDocumentoPresentado.getQuienEntrega().equals(ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA)
+                    && dtoDocumentoPresentado.isEntregado())
             {
 
-                dtoDocumentoPresentado = listaDocumentosPresentados.get(i);
+                flag = true;
 
-                if (dtoDocumentoPresentado.getQuienEntrega().equals(ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA)
-                        && dtoDocumentoPresentado.isEntregado())
+                if (dtoDocumentoPresentado.getFechaIngreso() != null)
                 {
-
-                    flag = true;
-
-                    if (dtoDocumentoPresentado.getFechaIngreso() != null)
-                    {
-                        fechaReingreso = formatter.format(dtoDocumentoPresentado.getFechaIngreso());
-                    } else
-                    {
-                        fechaReingreso = "";
-                    }
-
-                    reingresado = dtoDocumentoPresentado.isReingresado();
-
-
-                    Object[] datos =
-                    {
-                        tipoTramite,
-                        dtoDocumentoPresentado.getNombre(),
-                        reingresado,
-                        fechaReingreso,
-                        dtoDocumentoPresentado,
-                        dtoTramite,
-                    };
-
-                    ((DefaultTableModel) gillaDetalleDocumentos.getModel()).addRow(datos);
+                    fechaReingreso = formatter.format(dtoDocumentoPresentado.getFechaIngreso());
+                } else
+                {
+                    fechaReingreso = "";
                 }
 
-     
-                    Principal.cargarFormulario(BuscarGestionesCliente.getInstancia());
-                    this.toFront();
-                
+                reingresado = dtoDocumentoPresentado.isReingresado();
+
+                Object[] datos =
+                {
+                    tipoTramite,
+                    dtoDocumentoPresentado.getNombre(),
+                    reingresado,
+                    fechaReingreso,
+                    dtoDocumentoPresentado,
+                    dtoTramite,
+                };
+
+                ((DefaultTableModel) gillaDetalleDocumentos.getModel()).addRow(datos);
             }
+
+            Principal.cargarFormulario(BuscarGestionesCliente.getInstancia());
+            this.toFront();
+
+        }
 
         return flag;
     }
@@ -508,7 +505,6 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
         ArrayList<DtoDocumentoPresentado> lisDtoDocumentosPresentados = new ArrayList<>();
         DtoDocumentoPresentado dtoDocumentoPresentado = null;
 
-
         for (int i = 0; i < filas; i++)
         {
             try
@@ -541,7 +537,8 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
 
                 cont++;
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 JOptionPane.showMessageDialog(this, "Algun campo es incorrecto " + this.getError() + " fila nro: " + i, "Advertencia", JOptionPane.WARNING_MESSAGE);
                 return dtoFlag;
@@ -555,17 +552,20 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
                 try
                 {
                     dtoFlag = miController.modificarDocumentacionReingreso(lisDtoDocumentosPresentados, this.getDtoGestion());
-                } catch (NonexistentEntityException ex)
+                }
+                catch (NonexistentEntityException ex)
                 {
                     Logger.getLogger(ReingresarDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassModifiedException ex)
+                }
+                catch (ClassModifiedException ex)
                 {
                     String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
                     JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
                     this.salir();
                 }
                 this.cargarFormulario(this.getDtoGestion());
-            } catch (NonexistentJpaException ex)
+            }
+            catch (NonexistentJpaException ex)
             {
                 Logger.getLogger(ReingresarDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -613,7 +613,8 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
                     this.setDtoGestion(miController.buscarDtoGestion(this.getDtoGestion()));
                     this.cargarFormulario(this.getDtoGestion());
 
-                } catch (NonexistentJpaException ex)
+                }
+                catch (NonexistentJpaException ex)
                 {
                     Logger.getLogger(ReingresarDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -631,7 +632,7 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame
 
     private void gillaDetalleDocumentosMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_gillaDetalleDocumentosMouseClicked
     {//GEN-HEADEREND:event_gillaDetalleDocumentosMouseClicked
-             this.botonAceptar.setEnabled(true);
+        this.botonAceptar.setEnabled(true);
     }//GEN-LAST:event_gillaDetalleDocumentosMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

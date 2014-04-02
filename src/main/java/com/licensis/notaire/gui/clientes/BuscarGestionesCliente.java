@@ -17,6 +17,9 @@ import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
 import com.licensis.notaire.gui.gestiones.gestion.DetalleGestion;
 import com.licensis.notaire.gui.gestiones.gestion.ModificarGestion;
 import com.licensis.notaire.gui.gestiones.gestion.VerHistorialGestion;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,9 +31,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -47,7 +47,8 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form BuscarGestionesCliente
      */
-    private BuscarGestionesCliente() {
+    private BuscarGestionesCliente()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         grillaGestionesCliente.setAutoCreateRowSorter(true);
@@ -55,7 +56,8 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
 
     }
 
-    public static BuscarGestionesCliente getInstancia() {
+    public static BuscarGestionesCliente getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new BuscarGestionesCliente();
@@ -65,32 +67,38 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public void ocultarBotonBuscar() {
+    public void ocultarBotonBuscar()
+    {
         this.botonBuscarCliente.setVisible(false);
     }
 
-    public void mostrarBotonBuscar() {
+    public void mostrarBotonBuscar()
+    {
         this.botonBuscarCliente.setVisible(true);
     }
 
-    public void mostrarLabelBuscar() {
+    public void mostrarLabelBuscar()
+    {
         this.labelBuscar.setVisible(true);
     }
 
-   public void ocultarLabelBuscar() {
+    public void ocultarLabelBuscar()
+    {
         this.labelBuscar.setVisible(false);
     }
-   
-   
-    public static JMenuItem getVentanaBuscarGestionesCliente() {
+
+    public static JMenuItem getVentanaBuscarGestionesCliente()
+    {
         return ventanaBuscarGestionesCliente;
     }
 
-    public Boolean cargarGrillaGestionesCliente(DtoPersona miDtoPersona, String tipoBusqueda) {
+    public Boolean cargarGrillaGestionesCliente(DtoPersona miDtoPersona, String tipoBusqueda)
+    {
 
         Boolean flag = false;
         ArrayList<DtoGestionDeEscritura> listaDtoGestionDeEscrituras = new ArrayList<>();
@@ -100,7 +108,6 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
         this.labelTitulo.setText(tipoBusqueda);
         this.setTipoDeBusqueda(tipoBusqueda);
         //LLamo la instancia de BuscarGestiones
-
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         //Busco sus gestiones
@@ -155,7 +162,8 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public ArrayList<DtoGestionDeEscritura> elimimarDuplicados(ArrayList<DtoGestionDeEscritura> listaDtoGestiones) {
+    public ArrayList<DtoGestionDeEscritura> elimimarDuplicados(ArrayList<DtoGestionDeEscritura> listaDtoGestiones)
+    {
 
         //Creamos un objeto HashSet
         HashSet hs = new HashSet();
@@ -167,22 +175,24 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
         listaDtoGestiones.clear();
         listaDtoGestiones.addAll(hs);
 
-
         return listaDtoGestiones;
 
     }
 
-    public void activarGrilla() {
+    public void activarGrilla()
+    {
         this.grillaGestionesCliente.setEnabled(true);
 
     }
 
-    public void desactivarGrilla() {
+    public void desactivarGrilla()
+    {
         this.grillaGestionesCliente.setEnabled(false);
         this.limpiarJtable();
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaGestionesCliente.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaGestionesCliente.getModel()).getRowCount() > 0)
@@ -193,11 +203,13 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
 
     }
 
-    public String getTipoDeBusqueda() {
+    public String getTipoDeBusqueda()
+    {
         return tipoDeBusqueda;
     }
 
-    public void setTipoDeBusqueda(String tipoDeBusqueda) {
+    public void setTipoDeBusqueda(String tipoDeBusqueda)
+    {
         this.tipoDeBusqueda = tipoDeBusqueda;
     }
 
@@ -442,8 +454,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
                         if (dtoGestionEscritura.getEstado().getNombre().contains(ConstantesNegocio.GESTION_ARCHIVADA))
                         {
                             JOptionPane.showMessageDialog(this, "La gestion selecciona esta archivada, por lo tanto, no se puede modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                        }
-                        else
+                        } else
                         {
                             miDtoPersona = (DtoPersona) (miGrilla.getValueAt(i, 7));
 
@@ -462,7 +473,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
                         dtoGestionEscritura = (DtoGestionDeEscritura) (miGrilla.getValueAt(i, 6));
                         miDtoPersona = (DtoPersona) (miGrilla.getValueAt(i, 7));
 
-                         Boolean flag = RegistrarEntregaDocumentos.getInstancia().cargarFormulario(dtoGestionEscritura);
+                        Boolean flag = RegistrarEntregaDocumentos.getInstancia().cargarFormulario(dtoGestionEscritura);
 
                         break;
                     }
@@ -493,8 +504,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
                             PrepararEscritura prepararEscrituraForm = new PrepararEscritura();
                             prepararEscrituraForm.cargarFormulario(dtoGestionEscritura);
                             Principal.cargarFormulario(prepararEscrituraForm);
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "Aun no se ha entregado toda la documentacion necesaria.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                         }
@@ -555,7 +565,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
                         {
                             Logger.getLogger(BuscarGestionesCliente.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                     break;
+                        break;
 
                     }
 
@@ -564,7 +574,6 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame
 
             //Cargo el formPrincipal
             //Principal.getInstancia().cargarFormulario(formDetalleGestion);
-
         }
     }//GEN-LAST:event_grillaGestionesClienteMouseClicked
 

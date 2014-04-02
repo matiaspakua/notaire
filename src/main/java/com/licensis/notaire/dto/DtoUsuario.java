@@ -17,66 +17,82 @@ public class DtoUsuario
     private Integer version;
     private boolean valido;
 
-    public boolean isValido() {
+    public boolean isValido()
+    {
         return valido;
     }
 
-    public void setValido(boolean valido) {
+    public void setValido(boolean valido)
+    {
         this.valido = valido;
     }
 
-    public DtoUsuario() {
+    public DtoUsuario()
+    {
     }
 
-    public Integer getIdUsuario() {
+    public Integer getIdUsuario()
+    {
         return this.idUsuario;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
+    public void setIdUsuario(Integer idUsuario)
+    {
         this.idUsuario = idUsuario;
     }
 
-    public DtoPersona getPersonas() {
+    public DtoPersona getPersonas()
+    {
         return this.personas;
     }
 
-    public void setPersonas(DtoPersona personas) {
+    public void setPersonas(DtoPersona personas)
+    {
         this.personas = personas;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public String getContrasenia() {
+    public String getContrasenia()
+    {
         return this.contrasenia;
     }
 
-    public void setContrasenia(String contrasenia) {
+    public void setContrasenia(String contrasenia)
+    {
         this.contrasenia = contrasenia;
     }
 
-    public boolean isEstado() {
+    public boolean isEstado()
+    {
         return this.estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(boolean estado)
+    {
         this.estado = estado;
     }
 
-    public String getTipo() {
+    public String getTipo()
+    {
         return this.tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(String tipo)
+    {
         this.tipo = tipo;
     }
 
-    public String getRegistroAuditorias() {
+    public String getRegistroAuditorias()
+    {
         String registroAuditoria;
 
         registroAuditoria = this.getNombre() + " - " + this.getTipo();
@@ -85,11 +101,13 @@ public class DtoUsuario
     }
 
     //Controlo la version del objeto
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 }

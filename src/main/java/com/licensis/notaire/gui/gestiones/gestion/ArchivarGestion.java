@@ -6,11 +6,8 @@ package com.licensis.notaire.gui.gestiones.gestion;
 
 import com.licensis.notaire.dto.DtoFlag;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
-import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
-import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.gui.clientes.ListarPersonas;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +21,6 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
-import org.hibernate.StaleObjectStateException;
 
 /**
  *
@@ -41,14 +37,16 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form ArchivarGestion
      */
-    private ArchivarGestion() {
+    private ArchivarGestion()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
     }
 
-    public static ArchivarGestion getInstancia() {
+    public static ArchivarGestion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new ArchivarGestion();
@@ -56,15 +54,18 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaArchivarGestion() {
+    public static JMenuItem getVentanaArchivarGestion()
+    {
         return ventanaArchivarGestion;
     }
 
-    public Boolean cargarGrillaGestiones() {
+    public Boolean cargarGrillaGestiones()
+    {
         Boolean flag = false;
         List<DtoGestionDeEscritura> listaDtoGestionDeEscrituras = new ArrayList<>();
 
@@ -72,7 +73,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
         this.activarGrilla();
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
 
         try
         {
@@ -102,7 +102,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
 
                 }
 
-
             }
         }
         catch (NonexistentJpaException ex)
@@ -112,17 +111,20 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void activarGrilla() {
+    public void activarGrilla()
+    {
         this.grillaGestiones.setEnabled(true);
 
     }
 
-    public void desactivarGrilla() {
+    public void desactivarGrilla()
+    {
         this.grillaGestiones.setEnabled(false);
         this.limpiarJtable();
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaGestiones.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaGestiones.getModel()).getRowCount() > 0)
@@ -131,9 +133,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
             i--;
         }
         this.botonAceptar.setEnabled(false);
-
-
-
 
     }
 
@@ -300,14 +299,13 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
                         int nroBibliorato = listGestionesArchivadas.get(j).getNumeroBibliorato();
                         JOptionPane.showMessageDialog(this, "Numero de Archivo : " + nroArchivo + " Para la Gestion del Bibliorato Nro: " + nroBibliorato);
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No se ha ingreso el/los numero de biblioratos", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 }
 
             }
-            catch (NonexistentJpaException ex)                
+            catch (NonexistentJpaException ex)
             {
                 JOptionPane.showMessageDialog(this, "Error grave, accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(ArchivarGestion.class.getName()).log(Level.SEVERE, null, ex);
@@ -328,17 +326,15 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
                 this.salir();
             }
 
-        }
-        else
+        } else
         {
             this.toFront();
         }
 
-
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    public List<DtoGestionDeEscritura> archivarGestion() throws NonexistentJpaException, DtoInvalidoException, ClassModifiedException {
-
+    public List<DtoGestionDeEscritura> archivarGestion() throws NonexistentJpaException, DtoInvalidoException, ClassModifiedException
+    {
 
         Integer filaSeleccionada = this.grillaGestiones.getSelectedRow();
         TableModel miGrilla = this.grillaGestiones.getModel();
@@ -348,7 +344,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame
 
         DtoGestionDeEscritura dtoGestionEscritura = new DtoGestionDeEscritura();
         List<DtoGestionDeEscritura> listaDtoGestionesArchivadas = new ArrayList<>();
-
 
         //Recorro la grilla completa, buscando la gestion seleccionada, para archivar
         try

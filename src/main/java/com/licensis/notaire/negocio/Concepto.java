@@ -8,7 +8,6 @@ import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,13 +21,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "conceptos")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Concepto.findAll", query = "SELECT c FROM Concepto c"),
-    @NamedQuery(name = "Concepto.findByIdConcepto", query = "SELECT c FROM Concepto c WHERE c.idConcepto = :idConcepto"),
-    @NamedQuery(name = "Concepto.findByValor", query = "SELECT c FROM Concepto c WHERE c.valor = :valor"),
-    @NamedQuery(name = "Concepto.findByNombre", query = "SELECT c FROM Concepto c WHERE c.nombre = :nombre"),
-    @NamedQuery(name = "Concepto.findByPorcentaje", query = "SELECT c FROM Concepto c WHERE c.porcentaje = :porcentaje")
-})
+        {
+            @NamedQuery(name = "Concepto.findAll", query = "SELECT c FROM Concepto c"),
+            @NamedQuery(name = "Concepto.findByIdConcepto", query = "SELECT c FROM Concepto c WHERE c.idConcepto = :idConcepto"),
+            @NamedQuery(name = "Concepto.findByValor", query = "SELECT c FROM Concepto c WHERE c.valor = :valor"),
+            @NamedQuery(name = "Concepto.findByNombre", query = "SELECT c FROM Concepto c WHERE c.nombre = :nombre"),
+            @NamedQuery(name = "Concepto.findByPorcentaje", query = "SELECT c FROM Concepto c WHERE c.porcentaje = :porcentaje")
+        })
 public class Concepto implements Serializable
 {
 
@@ -61,42 +60,51 @@ public class Concepto implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "concepto", fetch = FetchType.EAGER)
     private List<PlantillaPresupuesto> plantillaPresupuestoList = new ArrayList<>();
 
-    public Concepto() {
+    public Concepto()
+    {
     }
 
-    public Concepto(Integer idConcepto) {
+    public Concepto(Integer idConcepto)
+    {
         this.idConcepto = idConcepto;
     }
 
-    public Concepto(Integer idConcepto, String nombre, Float valor, Integer porcentaje) {
+    public Concepto(Integer idConcepto, String nombre, Float valor, Integer porcentaje)
+    {
         this.idConcepto = idConcepto;
         this.nombre = nombre;
         this.valor = valor;
         this.porcentaje = porcentaje;
     }
 
-    public Integer getIdConcepto() {
+    public Integer getIdConcepto()
+    {
         return idConcepto;
     }
 
-    public void setIdConcepto(Integer idConcepto) {
+    public void setIdConcepto(Integer idConcepto)
+    {
         this.idConcepto = idConcepto;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
     @XmlTransient
-    public List<PlantillaPresupuesto> getPlantillaPresupuestoList() {
+    public List<PlantillaPresupuesto> getPlantillaPresupuestoList()
+    {
         return plantillaPresupuestoList;
     }
 
-    public void setPlantillaPresupuestoList(List<PlantillaPresupuesto> plantillaPresupuestoList) {
+    public void setPlantillaPresupuestoList(List<PlantillaPresupuesto> plantillaPresupuestoList)
+    {
         this.plantillaPresupuestoList = plantillaPresupuestoList;
     }
 
@@ -106,7 +114,8 @@ public class Concepto implements Serializable
      *
      * @return
      */
-    public DtoConcepto getDto() {
+    public DtoConcepto getDto()
+    {
         DtoConcepto miDto = new DtoConcepto();
 
         miDto.setIdConcepto(this.getIdConcepto());
@@ -117,11 +126,11 @@ public class Concepto implements Serializable
         miDto.setHabilitado(habilitado);
         miDto.setFijo(conceptoFijo);
 
-
         return miDto;
     }
 
-    public void setAtributos(DtoConcepto nuevoDto) throws DtoInvalidoException {
+    public void setAtributos(DtoConcepto nuevoDto) throws DtoInvalidoException
+    {
         this.setIdConcepto(nuevoDto.getIdConcepto());
 
         if (nuevoDto.getNombre() != null)
@@ -145,14 +154,16 @@ public class Concepto implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idConcepto != null ? idConcepto.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Concepto))
         {
@@ -167,49 +178,60 @@ public class Concepto implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Conceptos[ version=" + version + " ]"
                 + "[ idConcepto=" + idConcepto + " ]"
                 + "[ nombre=" + nombre + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public float getValor() {
+    public float getValor()
+    {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(float valor)
+    {
         this.valor = valor;
     }
 
-    public int getPorcentaje() {
+    public int getPorcentaje()
+    {
         return porcentaje;
     }
 
-    public void setPorcentaje(int porcentaje) {
+    public void setPorcentaje(int porcentaje)
+    {
         this.porcentaje = porcentaje;
     }
 
-    public boolean getHabilitado() {
+    public boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(boolean habilitado) {
+    public void setHabilitado(boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 
-    public boolean isConceptoFijo() {
+    public boolean isConceptoFijo()
+    {
         return conceptoFijo;
     }
 
-    public void setConceptoFijo(boolean conceptoFijo) {
+    public void setConceptoFijo(boolean conceptoFijo)
+    {
         this.conceptoFijo = conceptoFijo;
     }
 }

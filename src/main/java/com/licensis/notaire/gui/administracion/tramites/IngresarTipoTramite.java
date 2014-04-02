@@ -38,21 +38,25 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarTipoTramite
      */
-    public IngresarTipoTramite() {
+    public IngresarTipoTramite()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         inicializarFormulario();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarTipoTramite() {
+    public static JMenuItem getVentanaIngresarTipoTramite()
+    {
         return ventanaIngresarTipoTramite;
     }
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() > 0)
@@ -62,7 +66,8 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
         }
     }
 
-    private void inicializarFormulario() {
+    private void inicializarFormulario()
+    {
         limpiarGrilla();
         documentosDisponibles = miController.buscarTiposDeDocumentoDisponibles();
 
@@ -92,8 +97,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
             checkBoxSeArchiva.setSelected(false);
             checkRequiereInscripcion.setSelected(false);
             campoObservaciones.setText("");
-        }
-        else
+        } else
         {
             grillaDocumentosNecesarios.setEnabled(false);
             JOptionPane.showMessageDialog(this, "No existen Tipos de Documento para asociar al Tipo de  Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
@@ -101,16 +105,17 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
         }
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
 
         campoNombreTramite.setText("");
         checkBoxInmueble.setSelected(false);
         checkBoxSeArchiva.setSelected(false);
         checkRequiereInscripcion.setSelected(false);
         campoObservaciones.setText("");
-        
+
         inicializarFormulario();
-        
+
     }
 
     /**
@@ -355,8 +360,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
         if (vacio)
         {
             JOptionPane.showMessageDialog(this, "Complete el nombre del nuevo Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-        }
-        else
+        } else
         {
             DtoTipoDeTramite miDtoTipoDeTramite = new DtoTipoDeTramite();
 
@@ -365,8 +369,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
             if (checkRequiereInscripcion.isSelected())
             {
                 miDtoTipoDeTramite.setSeInscribe(true);
-            }
-            else
+            } else
             {
                 miDtoTipoDeTramite.setSeInscribe(false);
             }
@@ -374,8 +377,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
             if (checkBoxSeArchiva.isSelected())
             {
                 miDtoTipoDeTramite.setSeArchiva(true);
-            }
-            else
+            } else
             {
                 miDtoTipoDeTramite.setSeArchiva(false);
             }
@@ -383,8 +385,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
             if (checkBoxInmueble.isSelected())
             {
                 miDtoTipoDeTramite.setAsociaInmuebles(true);
-            }
-            else
+            } else
             {
                 miDtoTipoDeTramite.setAsociaInmuebles(false);
             }
@@ -419,7 +420,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
                 }
                 catch (PreexistingEntityException ex)
                 {
-                    JOptionPane.showMessageDialog(this, "El tipo de tramite ya se encuentra registrado", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);                    
+                    JOptionPane.showMessageDialog(this, "El tipo de tramite ya se encuentra registrado", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     this.inicializarFormulario();
                 }
                 catch (ClassModifiedException ex)
@@ -444,8 +445,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
                     Logger.getLogger(IngresarTipoTramite.class.getName()).log(Level.SEVERE, null, ex);
                     this.salir();
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un Documento a presentar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -456,7 +456,8 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
         salir();
     }//GEN-LAST:event_botonCerrarActionPerformed
 
-    private ArrayList<DtoTipoDeDocumento> obtenerDocumentosSeleccionados() {
+    private ArrayList<DtoTipoDeDocumento> obtenerDocumentosSeleccionados()
+    {
         TableModel miGrilla = grillaDocumentosNecesarios.getModel();
         int filas = miGrilla.getRowCount();
         int columnas = miGrilla.getColumnCount();
@@ -502,8 +503,7 @@ public class IngresarTipoTramite extends javax.swing.JInternalFrame
             if (!validoLetras)
             {
                 this.labelAdvertenciaNombre.setText("Solo letras y numeros.");
-            }
-            else
+            } else
             {
                 this.labelAdvertenciaNombre.setText("");
             }

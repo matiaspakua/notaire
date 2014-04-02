@@ -29,18 +29,21 @@ import javax.transaction.UserTransaction;
 public class EstadoDeGestionJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public EstadoDeGestionJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public EstadoDeGestionJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Integer create(EstadoDeGestion estadoDeGestion) throws PreexistingEntityException {
+    public Integer create(EstadoDeGestion estadoDeGestion) throws PreexistingEntityException
+    {
         Integer oid = null;
         if (estadoDeGestion.getHistorialList() == null)
         {
@@ -91,7 +94,8 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
         return oid;
     }
 
-    public Boolean edit(EstadoDeGestion estadoDeGestion) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException, ClassModifiedException {
+    public Boolean edit(EstadoDeGestion estadoDeGestion) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException, ClassModifiedException
+    {
         Integer version = ConstantesPersistencia.VERSION_INICIAL;
         Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
         Boolean resultado = Boolean.FALSE;
@@ -114,8 +118,7 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
                 }
 
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 List<Historial> historialListOld = persistentEstadoDeGestion.getHistorialList();
                 List<Historial> historialListNew = estadoDeGestion.getHistorialList();
@@ -166,8 +169,7 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
                     em.close();
                 }
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -175,14 +177,14 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
         return resultado;
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
             EstadoDeGestion estadoDeGestion;
-
 
             try
             {
@@ -227,7 +229,8 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
      * contrario.
      *
      */
-    public boolean verificarExistenciaEstadoDeGestion(String nombreEstado) {
+    public boolean verificarExistenciaEstadoDeGestion(String nombreEstado)
+    {
         boolean resultado = false;
 
         List<EstadoDeGestion> listaEstadosDeGestiones = this.findEstadoDeGestionEntities();
@@ -244,15 +247,18 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
         return resultado;
     }
 
-    public List<EstadoDeGestion> findEstadoDeGestionEntities() {
+    public List<EstadoDeGestion> findEstadoDeGestionEntities()
+    {
         return findEstadoDeGestionEntities(true, -1, -1);
     }
 
-    public List<EstadoDeGestion> findEstadoDeGestionEntities(int maxResults, int firstResult) {
+    public List<EstadoDeGestion> findEstadoDeGestionEntities(int maxResults, int firstResult)
+    {
         return findEstadoDeGestionEntities(false, maxResults, firstResult);
     }
 
-    private List<EstadoDeGestion> findEstadoDeGestionEntities(boolean all, int maxResults, int firstResult) {
+    private List<EstadoDeGestion> findEstadoDeGestionEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -270,9 +276,9 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
         }
     }
 
-    public EstadoDeGestion findEstadoDeGestion(Integer id) {
+    public EstadoDeGestion findEstadoDeGestion(Integer id)
+    {
         EntityManager em = getEntityManager();
-
 
         try
         {
@@ -284,7 +290,8 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
         }
     }
 
-    public int getEstadoDeGestionCount() {
+    public int getEstadoDeGestionCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -298,7 +305,8 @@ public class EstadoDeGestionJpaController implements Serializable, IPersistencia
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

@@ -14,7 +14,8 @@ public class CartelConstruccion extends javax.swing.JInternalFrame
     /**
      * Creates new form CartelConstruccion
      */
-    public CartelConstruccion() {
+    public CartelConstruccion()
+    {
         initComponents();
     }
 

@@ -10,10 +10,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.clientes.ListarPersonas;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -28,18 +28,21 @@ public class BuscarGestion extends javax.swing.JInternalFrame
     private String tipoBusqueda;
     private Boolean flag = false; //Sirve para saber cuando hay que cerrar el form de busqueda
 
-    public String getTipoBusqueda() {
+    public String getTipoBusqueda()
+    {
         return tipoBusqueda;
     }
 
-    public void setTipoBusqueda(String tipoBusqueda) {
+    public void setTipoBusqueda(String tipoBusqueda)
+    {
         this.tipoBusqueda = tipoBusqueda;
     }
 
     /**
      * Creates new form BuscarGestion
      */
-    public BuscarGestion() {
+    public BuscarGestion()
+    {
         initComponents();
         grupo_botones.add(buscarTipoIdentificacion);
         grupo_botones.add(buscarNombreApellido);
@@ -47,18 +50,20 @@ public class BuscarGestion extends javax.swing.JInternalFrame
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         this.cargarCombo();
 
-
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaBuscarGestion() {
+    public static JMenuItem getVentanaBuscarGestion()
+    {
         return ventanaBuscarGestion;
     }
 
-    public void cargarCombo() {
+    public void cargarCombo()
+    {
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
 
         for (int i = 0; i < listaDtoIdentificaciones.size(); i++)
@@ -68,11 +73,13 @@ public class BuscarGestion extends javax.swing.JInternalFrame
         }
     }
 
-    public String getFormularioInvocador() {
+    public String getFormularioInvocador()
+    {
         return formularioInvocador;
     }
 
-    public void setFormularioInvocador(String formularioInvocador) {
+    public void setFormularioInvocador(String formularioInvocador)
+    {
         this.formularioInvocador = formularioInvocador;
     }
 
@@ -368,14 +375,12 @@ public class BuscarGestion extends javax.swing.JInternalFrame
                         break;
                     }
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No hay gestion, asociada con la busqueda", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
 
             }
-        }
-        else if (buscarTipoIdentificacion.isSelected() && !campoNumeroIdentificacion.getText().isEmpty())
+        } else if (buscarTipoIdentificacion.isSelected() && !campoNumeroIdentificacion.getText().isEmpty())
         {
             //Set dato de busqueda 
             miDtoIdentificacion.setNombre(comboTipoIdentificacion.getSelectedItem().toString());
@@ -440,13 +445,11 @@ public class BuscarGestion extends javax.swing.JInternalFrame
                         break;
                     }
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La persona no esta Registrada o No posee Gestion alguna asociada", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Complete los datos de busqueda", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
@@ -460,7 +463,8 @@ public class BuscarGestion extends javax.swing.JInternalFrame
 
     }//GEN-LAST:event_botonBuscarActionPerformed
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
 
         campoNombre.setText("");
         campoApellido.setText("");
@@ -469,7 +473,7 @@ public class BuscarGestion extends javax.swing.JInternalFrame
     }
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCancelarActionPerformed
     {//GEN-HEADEREND:event_botonCancelarActionPerformed
-     
+
         this.dispose();
         Principal.removeVentanaActivas(ventanaBuscarGestion);
         Principal.eliminarFormulario(this);

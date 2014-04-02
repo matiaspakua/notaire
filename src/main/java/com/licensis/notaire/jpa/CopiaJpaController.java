@@ -4,22 +4,22 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import com.licensis.notaire.negocio.Persona;
-import com.licensis.notaire.negocio.Testimonio;
-import com.licensis.notaire.negocio.Folio;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Copia;
+import com.licensis.notaire.negocio.Folio;
+import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Testimonio;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -28,18 +28,21 @@ import com.licensis.notaire.negocio.Copia;
 public class CopiaJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public CopiaJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public CopiaJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Copia copia) {
+    public int create(Copia copia)
+    {
         int creada = -1;
         if (copia.getFolioList() == null)
         {
@@ -98,7 +101,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         return creada;
     }
 
-    public void edit(Copia copia) throws NonexistentEntityException, Exception {
+    public void edit(Copia copia) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -190,7 +194,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -236,15 +241,18 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Copia> findCopiaEntities() {
+    public List<Copia> findCopiaEntities()
+    {
         return findCopiaEntities(true, -1, -1);
     }
 
-    public List<Copia> findCopiaEntities(int maxResults, int firstResult) {
+    public List<Copia> findCopiaEntities(int maxResults, int firstResult)
+    {
         return findCopiaEntities(false, maxResults, firstResult);
     }
 
-    private List<Copia> findCopiaEntities(boolean all, int maxResults, int firstResult) {
+    private List<Copia> findCopiaEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -262,7 +270,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Copia findCopia(Integer id) {
+    public Copia findCopia(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -274,7 +283,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getCopiaCount() {
+    public int getCopiaCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -287,7 +297,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int crearCopia(Copia miCopia) {
+    public int crearCopia(Copia miCopia)
+    {
         int creada = -1;
 
         EntityManager em = null;
@@ -311,10 +322,10 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         return creada;
     }
 
-    public List<Copia> buscarCopiasTestimonio(Integer idTestimonio) {
+    public List<Copia> buscarCopiasTestimonio(Integer idTestimonio)
+    {
         List<Copia> copias = null;
         EntityManager em = getEntityManager();
-
 
         Query query = em.createNamedQuery("Copia.findByTestimonio");
         query.setParameter("idTestimonio", idTestimonio);
@@ -324,7 +335,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         return copias;
     }
 
-    public Boolean modificarCopia(Copia copia) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarCopia(Copia copia) throws ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
         Boolean modificada = false;
         int version = 0;
@@ -349,8 +361,7 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
 
             em.getTransaction().commit();
             modificada = true;
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -363,7 +374,8 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

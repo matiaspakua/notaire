@@ -4,23 +4,23 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import com.licensis.notaire.negocio.PlantillaPresupuesto;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import com.licensis.notaire.negocio.PlantillaTramite;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -29,18 +29,21 @@ import com.licensis.notaire.negocio.Tramite;
 public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TipoDeTramiteJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TipoDeTramiteJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(TipoDeTramite tipoDeTramite) {
+    public int create(TipoDeTramite tipoDeTramite)
+    {
         int oid = -1;
         if (tipoDeTramite.getPlantillaPresupuestoList() == null)
         {
@@ -127,14 +130,14 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         return oid;
     }
 
-    public Boolean edit(TipoDeTramite tipoDeTramite) throws ClassModifiedException, ClassEliminatedException, IllegalOrphanException, NonexistentEntityException {
+    public Boolean edit(TipoDeTramite tipoDeTramite) throws ClassModifiedException, ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    {
 
         Boolean modificado = false;
         Integer version = -1;
         Integer oldVersion = -1;
 
         EntityManager em = getEntityManager();
-
 
         em.getTransaction().begin();
 
@@ -154,8 +157,7 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
 
                 throw new ClassModifiedException();
 
-            }
-            else
+            } else
             {
 
                 tipoDeTramiteEncontrado.setHabilitado(tipoDeTramite.getHabilitado());
@@ -170,8 +172,7 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
                 modificado = true;
 
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -179,7 +180,8 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         return modificado;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException {
+    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         Boolean eliminado = false;
         try
@@ -229,8 +231,7 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
                 em.remove(tipoDeTramite);
                 em.getTransaction().commit();
                 eliminado = true;
-            }
-            else
+            } else
             {
                 throw new ClassEliminatedException();
             }
@@ -249,15 +250,18 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         return eliminado;
     }
 
-    public List<TipoDeTramite> findTipoDeTramiteEntities() {
+    public List<TipoDeTramite> findTipoDeTramiteEntities()
+    {
         return findTipoDeTramiteEntities(true, -1, -1);
     }
 
-    public List<TipoDeTramite> findTipoDeTramiteEntities(int maxResults, int firstResult) {
+    public List<TipoDeTramite> findTipoDeTramiteEntities(int maxResults, int firstResult)
+    {
         return findTipoDeTramiteEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoDeTramite> findTipoDeTramiteEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoDeTramite> findTipoDeTramiteEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -275,7 +279,8 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         }
     }
 
-    public List<TipoDeTramite> findTipoDeTramite(Integer id) {
+    public List<TipoDeTramite> findTipoDeTramite(Integer id)
+    {
         EntityManager em = getEntityManager();
 
         List<TipoDeTramite> misTiposDeTramite = null;
@@ -307,7 +312,8 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         }
     }
 
-    public List<TipoDeTramite> findTipoDeTramite(String nombre) {
+    public List<TipoDeTramite> findTipoDeTramite(String nombre)
+    {
         EntityManager em = getEntityManager();
 
         List<TipoDeTramite> misTiposDeTramite = null;
@@ -331,7 +337,8 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
         }
     }
 
-    public int getTipoDeTramiteCount() {
+    public int getTipoDeTramiteCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -345,7 +352,8 @@ public class TipoDeTramiteJpaController implements Serializable, IPersistenciaJp
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

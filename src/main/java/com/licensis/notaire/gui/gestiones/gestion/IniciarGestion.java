@@ -16,15 +16,19 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
 import com.licensis.notaire.gui.presupuestos.BuscarPresupuesto;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import com.licensis.notaire.servicios.AdministradorSesion;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -46,7 +50,8 @@ public class IniciarGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form IniciarGestion
      */
-    public IniciarGestion() {
+    public IniciarGestion()
+    {
         initComponents();
         IniciarGestion.setEstadoFormulario(Boolean.TRUE);
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
@@ -55,11 +60,13 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         this.cargarEstadoGestionInicial();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIniciarGestion() {
+    public static JMenuItem getVentanaIniciarGestion()
+    {
         return ventanaIniciarGestion;
     }
 
@@ -413,8 +420,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
             if (!this.getListaClientesAsociados().isEmpty())
             {
                 nuevaGestion.setListaClientesInvolucrados(this.getListaClientesAsociados());
-            }
-            else
+            } else
             {
                 nuevaGestion.setListaClientesInvolucrados(new ArrayList<DtoPersona>());
             }
@@ -442,21 +448,17 @@ public class IniciarGestion extends javax.swing.JInternalFrame
                 if (gestion.getIdGestion() == DtoValido.ID_DTO_INICIALIZADO)
                 {
                     JOptionPane.showMessageDialog(this, "Error, no se ha podido iniciar la gestion.", "Error al inicia gestion", JOptionPane.ERROR_MESSAGE);
-                }
-                else if (gestion.getIdGestion() == DtoValido.VERSION_INICIAL)
+                } else if (gestion.getIdGestion() == DtoValido.VERSION_INICIAL)
                 {
                     JOptionPane.showMessageDialog(this, "Error, el numero de gestion indicado ya existe..", "Error al inicia gestion", JOptionPane.ERROR_MESSAGE);
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "Se ha iniciado la gestion Nro.: " + gestion.getNumero());
 
                     //  Ahora imprimimos las listas de documentos necesarios para cada tramite de la gestion.
-
                     List<DtoTipoDeTramite> listaTiposTramites = new ArrayList<DtoTipoDeTramite>();
 
                     AdministradorReportes reportes = AdministradorReportes.getInstancia();
-
 
                     for (Iterator<DtoTramite> it = listaTramites.iterator(); it.hasNext();)
                     {
@@ -468,8 +470,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
                     salir();
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Algunos de los campos indicados no es valido!", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
@@ -498,23 +499,23 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         {
             this.getListaClientesAsociados().remove(i);
             grilla.removeRow(i);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ningun cliente", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_botonQuitarClienteActionPerformed
 
-    public void setPresupuestoSeleccionado(DtoPresupuesto presupuestoSeleccionado) {
+    public void setPresupuestoSeleccionado(DtoPresupuesto presupuestoSeleccionado)
+    {
         this.getListaDtoPresupuestosSeleccionados().add(presupuestoSeleccionado);
     }
 
-    public void cargarGrillaTramitesPresupuesto() {
+    public void cargarGrillaTramitesPresupuesto()
+    {
         if (this.getListaDtoPresupuestosSeleccionados().isEmpty())
         {
             JOptionPane.showMessageDialog(this, "No se han seleccionado presupuestos", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-        else
+        } else
         {
             this.setDtoCliente(this.getListaDtoPresupuestosSeleccionados().get(0).getPersona());
 
@@ -543,7 +544,8 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         }
     }
 
-    public void cargarRegistrosEscribanos() {
+    public void cargarRegistrosEscribanos()
+    {
 
         this.setListaDtoEscribanos(this.miController.obtenerListaEscribanosDisponibles());
 
@@ -568,8 +570,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
                         + dtoPersona.getApellido() + " "
                         + dtoPersona.getNombre());
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen escribanos registrados", "Error", JOptionPane.ERROR_MESSAGE);
             this.salir();
@@ -577,7 +578,8 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
     }
 
-    public void cargarUltimaGestionSugerida() {
+    public void cargarUltimaGestionSugerida()
+    {
 
         this.comboNumeroGestion.addItem(new String(""));
         DtoGestionDeEscritura dtoProximaGestion = miController.obtenerProximaGestionDeEscritura();
@@ -587,15 +589,15 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         if (proximoNumeroGestion == ConstantesGui.SIN_REGISTRO)
         {
             this.comboNumeroGestion.addItem(new Integer(1));
-        }
-        else
+        } else
         {
 
             this.comboNumeroGestion.addItem(++proximoNumeroGestion);
         }
     }
 
-    public void cargarEstadoGestionInicial() {
+    public void cargarEstadoGestionInicial()
+    {
         List<DtoEstadoDeGestion> listaEstados = miController.obtenerListaEstadosDeGestionDisponibles();
 
         for (Iterator<DtoEstadoDeGestion> it = listaEstados.iterator(); it.hasNext();)
@@ -618,7 +620,8 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         }
     }
 
-    public boolean agregarClienteGestion(DtoPersona nuevoCliente) {
+    public boolean agregarClienteGestion(DtoPersona nuevoCliente)
+    {
         boolean registrado = false;
         for (Iterator<DtoPersona> it = this.getListaClientesAsociados().iterator(); it.hasNext();)
         {
@@ -641,8 +644,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         if (registrado == true)
         {
             JOptionPane.showMessageDialog(this, "El cliente ya se encuentra en la lista de clientes", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-        else
+        } else
         {
             this.getListaClientesAsociados().add(nuevoCliente);
             Object[] datos =
@@ -655,15 +657,18 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         return registrado;
     }
 
-    public List<DtoPersona> getListaDtoEscribanos() {
+    public List<DtoPersona> getListaDtoEscribanos()
+    {
         return listaDtoEscribanos;
     }
 
-    public void setListaDtoEscribanos(List<DtoPersona> listaDtoEscribanos) {
+    public void setListaDtoEscribanos(List<DtoPersona> listaDtoEscribanos)
+    {
         this.listaDtoEscribanos.addAll(listaDtoEscribanos);
     }
 
-    public List<DtoPresupuesto> obtenerListaPresupuestosSeleccionados() {
+    public List<DtoPresupuesto> obtenerListaPresupuestosSeleccionados()
+    {
         List<DtoPresupuesto> listaPresupuestos = new ArrayList<>();
 
         DefaultTableModel miGrilla = (DefaultTableModel) this.grillaPresupuestos.getModel();
@@ -690,7 +695,8 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         return listaPresupuestos;
     }
 
-    public DtoPersona obtenerEscribanoSeleccionado() {
+    public DtoPersona obtenerEscribanoSeleccionado()
+    {
         DtoPersona escribanoSeleccionado = new DtoPersona();
 
         try
@@ -714,49 +720,59 @@ public class IniciarGestion extends javax.swing.JInternalFrame
         return escribanoSeleccionado;
     }
 
-    public DtoPersona getDtoCliente() {
+    public DtoPersona getDtoCliente()
+    {
         return dtoCliente;
     }
 
-    public void setDtoCliente(DtoPersona dtoCliente) {
+    public void setDtoCliente(DtoPersona dtoCliente)
+    {
         this.dtoCliente = dtoCliente;
     }
 
-    public List<DtoPresupuesto> getListaDtoPresupuestosSeleccionados() {
+    public List<DtoPresupuesto> getListaDtoPresupuestosSeleccionados()
+    {
         return listaDtoPresupuestosSeleccionados;
     }
 
-    public void setListaDtoPresupuestosSeleccionados(List<DtoPresupuesto> listaDtoPresupuestosSeleccionados) {
+    public void setListaDtoPresupuestosSeleccionados(List<DtoPresupuesto> listaDtoPresupuestosSeleccionados)
+    {
         this.listaDtoPresupuestosSeleccionados.addAll(listaDtoPresupuestosSeleccionados);
     }
 
-    public List<DtoPersona> getListaClientesAsociados() {
+    public List<DtoPersona> getListaClientesAsociados()
+    {
         return listaClientesAsociados;
     }
 
-    public void setListaClientesAsociados(List<DtoPersona> listaClientesAsociados) {
+    public void setListaClientesAsociados(List<DtoPersona> listaClientesAsociados)
+    {
         this.listaClientesAsociados.addAll(listaClientesAsociados);
     }
 
-    public ControllerNegocio getMiController() {
+    public ControllerNegocio getMiController()
+    {
         return miController;
     }
 
-    public void setMiController(ControllerNegocio miController) {
+    public void setMiController(ControllerNegocio miController)
+    {
         this.miController = miController;
     }
 
     /**
      * @return the estadoFormulario
      */
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
     /**
      * @param aEstadoFormulario the estadoFormulario to set
      */
-    public static void setEstadoFormulario(Boolean aEstadoFormulario) {
+    public static void setEstadoFormulario(Boolean aEstadoFormulario)
+    {
         estadoFormulario = aEstadoFormulario;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

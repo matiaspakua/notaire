@@ -9,13 +9,13 @@ import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -33,20 +33,24 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
     /**
      * Creates new form DetalleTestimonio
      */
-    public GenerarTestimonio() {
+    public GenerarTestimonio()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaGenerarTestimonio() {
+    public static JMenuItem getVentanaGenerarTestimonio()
+    {
         return ventanaGenerarTestimonio;
     }
 
-    public Boolean cargarFormulario(DtoEscritura miDtoEscritura) {
+    public Boolean cargarFormulario(DtoEscritura miDtoEscritura)
+    {
         miEscritura = miDtoEscritura;
         Boolean cargada = true;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -65,14 +69,12 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
                     Integer valor = numeroTestimonio + 1;
                     labelTestimonio.setText(valor.toString());
                     labelInformacion.setText("La escritura tiene generados testimonios: " + numeroTestimonio);
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>No se puede generar el testimonio <BR> ya que la Escritura ya tiene uno asociado <BR>y ha sido ingresado para inscribir.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargada = false;
                 }
-            }
-            else
+            } else
             {
                 labelTestimonio.setText(new Integer(1).toString());
             }
@@ -82,10 +84,9 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
             campoFechaEscritura.setText(formatter.format(miDtoEscritura.getFechaEscrituracion()).toString());
             campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
             campoFolioHasta.setText(new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero()).toString());
-        }
-        else
+        } else
         {
-             JOptionPane.showMessageDialog(this, "<HTML>No se puede generar el testimonio <BR>ya que la Escritura ha sido Inscripta.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "<HTML>No se puede generar el testimonio <BR>ya que la Escritura ha sido Inscripta.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             cargada = false;
         }
 
@@ -350,7 +351,8 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         miEscritura = null;
         labelInformacion.setText("");
         labelValidacion.setText("");
@@ -404,14 +406,12 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
                     salir();
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe completar la fecha de generacion.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe completar todos los campos.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

@@ -20,17 +20,20 @@ public class ConsultarPagos extends javax.swing.JInternalFrame
     /**
      * Creates new form ConsultarPagos
      */
-    public ConsultarPagos() {
+    public ConsultarPagos()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaConsultarPagos() {
+    public static JMenuItem getVentanaConsultarPagos()
+    {
         return ventanaConsultarPagos;
     }
 

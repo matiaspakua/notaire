@@ -8,7 +8,22 @@ import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,16 +34,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "movimientos_testimonio")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "MovimientoTestimonio.findAll", query = "SELECT m FROM MovimientoTestimonio m"),
-    @NamedQuery(name = "MovimientoTestimonio.findByIdMovimientoTestimonio", query = "SELECT m FROM MovimientoTestimonio m WHERE m.idMovimientoTestimonio = :idMovimientoTestimonio"),
-    @NamedQuery(name = "MovimientoTestimonio.findByFechaIngreso", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaIngreso = :fechaIngreso"),
-    @NamedQuery(name = "MovimientoTestimonio.findByFechaSalida", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaSalida = :fechaSalida"),
-    @NamedQuery(name = "MovimientoTestimonio.findByFechaInscripcion", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaInscripcion = :fechaInscripcion"),
-    @NamedQuery(name = "MovimientoTestimonio.findByInscripta", query = "SELECT m FROM MovimientoTestimonio m WHERE m.inscripta = :inscripta"),
-    @NamedQuery(name = "MovimientoTestimonio.findByTestimonio", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fkIdTestimonio.idTestimonio = :idTestimonio"),
-    @NamedQuery(name = "MovimientoTestimonio.findByNumeroCarton", query = "SELECT m FROM MovimientoTestimonio m WHERE m.numeroCarton = :numeroCarton")
-})
+        {
+            @NamedQuery(name = "MovimientoTestimonio.findAll", query = "SELECT m FROM MovimientoTestimonio m"),
+            @NamedQuery(name = "MovimientoTestimonio.findByIdMovimientoTestimonio", query = "SELECT m FROM MovimientoTestimonio m WHERE m.idMovimientoTestimonio = :idMovimientoTestimonio"),
+            @NamedQuery(name = "MovimientoTestimonio.findByFechaIngreso", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaIngreso = :fechaIngreso"),
+            @NamedQuery(name = "MovimientoTestimonio.findByFechaSalida", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaSalida = :fechaSalida"),
+            @NamedQuery(name = "MovimientoTestimonio.findByFechaInscripcion", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fechaInscripcion = :fechaInscripcion"),
+            @NamedQuery(name = "MovimientoTestimonio.findByInscripta", query = "SELECT m FROM MovimientoTestimonio m WHERE m.inscripta = :inscripta"),
+            @NamedQuery(name = "MovimientoTestimonio.findByTestimonio", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fkIdTestimonio.idTestimonio = :idTestimonio"),
+            @NamedQuery(name = "MovimientoTestimonio.findByNumeroCarton", query = "SELECT m FROM MovimientoTestimonio m WHERE m.numeroCarton = :numeroCarton")
+        })
 public class MovimientoTestimonio implements Serializable
 {
 
@@ -65,93 +80,114 @@ public class MovimientoTestimonio implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Testimonio fkIdTestimonio;
 
-    public MovimientoTestimonio() {
+    public MovimientoTestimonio()
+    {
     }
 
-    public MovimientoTestimonio(Integer idMovimientoTestimonio) {
+    public MovimientoTestimonio(Integer idMovimientoTestimonio)
+    {
         this.idMovimientoTestimonio = idMovimientoTestimonio;
     }
 
-    public MovimientoTestimonio(Integer idMovimientoTestimonio, Date fechaIngreso, boolean inscripta, int numeroCarton) {
+    public MovimientoTestimonio(Integer idMovimientoTestimonio, Date fechaIngreso, boolean inscripta, int numeroCarton)
+    {
         this.idMovimientoTestimonio = idMovimientoTestimonio;
         this.fechaIngreso = fechaIngreso;
         this.inscripta = inscripta;
         this.numeroCarton = numeroCarton;
     }
 
-    public Integer getIdMovimientoTestimonio() {
+    public Integer getIdMovimientoTestimonio()
+    {
         return idMovimientoTestimonio;
     }
 
-    public void setIdMovimientoTestimonio(Integer idMovimientoTestimonio) {
+    public void setIdMovimientoTestimonio(Integer idMovimientoTestimonio)
+    {
         this.idMovimientoTestimonio = idMovimientoTestimonio;
     }
 
-    public Date getFechaIngreso() {
+    public Date getFechaIngreso()
+    {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(Date fechaIngreso) {
+    public void setFechaIngreso(Date fechaIngreso)
+    {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public Date getFechaSalida() {
+    public Date getFechaSalida()
+    {
         return fechaSalida;
     }
 
-    public void setFechaSalida(Date fechaSalida) {
+    public void setFechaSalida(Date fechaSalida)
+    {
         this.fechaSalida = fechaSalida;
     }
 
-    public Date getFechaInscripcion() {
+    public Date getFechaInscripcion()
+    {
         return fechaInscripcion;
     }
 
-    public void setFechaInscripcion(Date fechaInscripcion) {
+    public void setFechaInscripcion(Date fechaInscripcion)
+    {
         this.fechaInscripcion = fechaInscripcion;
     }
 
-    public boolean getInscripta() {
+    public boolean getInscripta()
+    {
         return inscripta;
     }
 
-    public void setInscripta(boolean inscripta) {
+    public void setInscripta(boolean inscripta)
+    {
         this.inscripta = inscripta;
     }
 
-    public int getNumeroCarton() {
+    public int getNumeroCarton()
+    {
         return numeroCarton;
     }
 
-    public void setNumeroCarton(int numeroCarton) {
+    public void setNumeroCarton(int numeroCarton)
+    {
         this.numeroCarton = numeroCarton;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public Testimonio getTestimonio() {
+    public Testimonio getTestimonio()
+    {
         return fkIdTestimonio;
     }
 
-    public void setTestimonio(Testimonio fkIdTestimonio) {
+    public void setTestimonio(Testimonio fkIdTestimonio)
+    {
         this.fkIdTestimonio = fkIdTestimonio;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idMovimientoTestimonio != null ? idMovimientoTestimonio.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof MovimientoTestimonio))
         {
@@ -166,20 +202,24 @@ public class MovimientoTestimonio implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "MovimientoTestimonio[ idMovimientoTestimonio=" + idMovimientoTestimonio + " ]"
-                 + "[ idTestimonio=" + fkIdTestimonio.getIdTestimonio() + " ]";
+                + "[ idTestimonio=" + fkIdTestimonio.getIdTestimonio() + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public DtoMovimientoTestimonio getDto() {
+    public DtoMovimientoTestimonio getDto()
+    {
         DtoMovimientoTestimonio miDto = new DtoMovimientoTestimonio();
 
         miDto.setIdMovimientoTestimonio(idMovimientoTestimonio);
@@ -198,7 +238,8 @@ public class MovimientoTestimonio implements Serializable
         return miDto;
     }
 
-    public void setAtributos(DtoMovimientoTestimonio miDto) {
+    public void setAtributos(DtoMovimientoTestimonio miDto)
+    {
 
         if (miDto.getIdMovimientoTestimonio() != null)
         {

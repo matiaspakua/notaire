@@ -4,10 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.*;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
@@ -15,6 +11,14 @@ import com.licensis.notaire.negocio.PlantillaTramite;
 import com.licensis.notaire.negocio.PlantillaTramitePK;
 import com.licensis.notaire.negocio.TipoDeDocumento;
 import com.licensis.notaire.negocio.TipoDeTramite;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -23,18 +27,21 @@ import com.licensis.notaire.negocio.TipoDeTramite;
 public class PlantillaTramiteJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public PlantillaTramiteJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public PlantillaTramiteJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Boolean create(PlantillaTramite plantillaTramite) throws PreexistingEntityException {
+    public Boolean create(PlantillaTramite plantillaTramite) throws PreexistingEntityException
+    {
         Boolean creada = false;
         if (plantillaTramite.getPlantillaTramitePK() == null)
         {
@@ -91,7 +98,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
         return creada;
     }
 
-    public void edit(PlantillaTramite plantillaTramite) throws NonexistentEntityException, Exception {
+    public void edit(PlantillaTramite plantillaTramite) throws NonexistentEntityException, Exception
+    {
         plantillaTramite.getPlantillaTramitePK().setFkIdTipoTramite(plantillaTramite.getTipoDeTramite().getIdTipoTramite());
         plantillaTramite.getPlantillaTramitePK().setFkIdTipoDocumento(plantillaTramite.getTipoDeDocumento().getIdTipoDocumento());
         EntityManager em = null;
@@ -159,7 +167,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
         }
     }
 
-    public Boolean destroy(PlantillaTramitePK id) throws NonexistentEntityException {
+    public Boolean destroy(PlantillaTramitePK id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         Boolean eliminado = false;
         try
@@ -202,15 +211,18 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
         return eliminado;
     }
 
-    public List<PlantillaTramite> findPlantillaTramiteEntities() {
+    public List<PlantillaTramite> findPlantillaTramiteEntities()
+    {
         return findPlantillaTramiteEntities(true, -1, -1);
     }
 
-    public List<PlantillaTramite> findPlantillaTramiteEntities(int maxResults, int firstResult) {
+    public List<PlantillaTramite> findPlantillaTramiteEntities(int maxResults, int firstResult)
+    {
         return findPlantillaTramiteEntities(false, maxResults, firstResult);
     }
 
-    private List<PlantillaTramite> findPlantillaTramiteEntities(boolean all, int maxResults, int firstResult) {
+    private List<PlantillaTramite> findPlantillaTramiteEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -228,7 +240,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
         }
     }
 
-    public PlantillaTramite findPlantillaTramite(PlantillaTramitePK id) {
+    public PlantillaTramite findPlantillaTramite(PlantillaTramitePK id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -240,7 +253,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
         }
     }
 
-    public int getPlantillaTramiteCount() {
+    public int getPlantillaTramiteCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -260,7 +274,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
      * buscar.
      * @return Una lista de las Plantillas de Tramite encontradas.
      */
-    public List<PlantillaTramite> findPlantillasDeTramite(int idTipoTramite) {
+    public List<PlantillaTramite> findPlantillasDeTramite(int idTipoTramite)
+    {
         EntityManager em = getEntityManager();
 
         List<PlantillaTramite> misPlantillas = null;
@@ -290,7 +305,8 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
      * @param miPlantilla, la Plantilla de Tramite a eliminar.
      * @return True si se elimino, False de lo contrario.
      */
-    public Boolean eliminarPlantillaTramite(PlantillaTramite miPlantilla) {
+    public Boolean eliminarPlantillaTramite(PlantillaTramite miPlantilla)
+    {
 
         Boolean eliminada = false;
         int deleted = 0;
@@ -327,11 +343,13 @@ public class PlantillaTramiteJpaController implements Serializable, IPersistenci
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 
-    public List<PlantillaTramite> findPlantillasTramites() {
+    public List<PlantillaTramite> findPlantillasTramites()
+    {
 
         EntityManager em = getEntityManager();
 

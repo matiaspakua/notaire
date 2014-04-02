@@ -7,7 +7,6 @@ package com.licensis.notaire.gui.protocolo;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.CartelConstruccion;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,11 +22,13 @@ public class Protocolo extends javax.swing.JInternalFrame
     /**
      * Creates new form Protocolo
      */
-    private Protocolo() {
+    private Protocolo()
+    {
         initComponents();
     }
 
-    public static Protocolo getInstancia() {
+    public static Protocolo getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Protocolo();
@@ -37,15 +38,18 @@ public class Protocolo extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Protocolo.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuProtocolos() {
+    public static JMenuItem getMenuProtocolos()
+    {
         return menuProtocolos;
     }
 
@@ -164,8 +168,7 @@ public class Protocolo extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Folios.getInstancia());
             Principal.setVentanasActivas(Folios.getSubModuloAdministrarFolios());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {

@@ -11,10 +11,12 @@ package com.licensis.notaire.jpa.exceptions;
 public class ClassModifiedException extends Exception
 {
 
-    public ClassModifiedException() {
+    public ClassModifiedException()
+    {
     }
 
-    public ClassModifiedException(String message) {
+    public ClassModifiedException(String message)
+    {
         super(message);
     }
 }

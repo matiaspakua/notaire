@@ -22,11 +22,13 @@ public class EstadosDeGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form EstadosDeGestion
      */
-    private EstadosDeGestion() {
+    private EstadosDeGestion()
+    {
         initComponents();
     }
 
-    public static EstadosDeGestion getInstancia() {
+    public static EstadosDeGestion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new EstadosDeGestion();
@@ -37,15 +39,18 @@ public class EstadosDeGestion extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         EstadosDeGestion.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuEstadosDeGestion() {
+    public static JMenuItem getSubmenuEstadosDeGestion()
+    {
         return submenuEstadosDeGestion;
     }
 

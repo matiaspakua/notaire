@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte Documentos por Vencer" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0000000000000004"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<subDataset name="New Dataset 1"/>
-	<parameter name="idDocumentoPresentado" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<queryString>
+    <property name="ireport.zoom" value="1.0000000000000004"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <subDataset name="New Dataset 1"/>
+    <parameter name="idDocumentoPresentado" class="java.lang.Integer">
+        <defaultValueExpression><![CDATA[]]></defaultValueExpression>
+    </parameter>
+    <queryString>
 		<![CDATA[SELECT id_documento_presentado,
 gestiones_de_escrituras.id_gestion AS numero_gestion,
 gestiones_de_escrituras.encabezado,
@@ -34,275 +34,275 @@ AND documentos_presentados.fk_id_tramite = tramites.id_tramite
 AND tramites.fk_id_gestion = gestiones_de_escrituras.id_gestion
 AND tramites.fk_id_presupuesto = presupuestos.id_presupuesto
 AND presupuestos.fk_id_persona = personas.id_persona]]>
-	</queryString>
-	<field name="id_documento_presentado" class="java.lang.Integer"/>
-	<field name="numero_gestion" class="java.lang.Integer"/>
-	<field name="encabezado" class="java.lang.String"/>
-	<field name="nombre_cliente_referencia" class="java.lang.String"/>
-	<field name="apellido_cliente_referencia" class="java.lang.String"/>
-	<field name="nombre_documento" class="java.lang.String"/>
-	<field name="preparado" class="java.lang.Boolean"/>
-	<field name="fecha_ingreso" class="java.sql.Date"/>
-	<field name="fecha_salida" class="java.sql.Date"/>
-	<field name="numero_carton" class="java.lang.Integer"/>
-	<field name="observado" class="java.lang.Boolean"/>
-	<field name="importe_a_pagar" class="java.lang.Float"/>
-	<field name="fecha_pago" class="java.sql.Date"/>
-	<field name="fecha_liberado" class="java.sql.Date"/>
-	<field name="fecha_vencimiento" class="java.sql.Date"/>
-	<field name="observaciones" class="java.lang.String"/>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
-	<title>
-		<band height="55" splitType="Stretch">
-			<staticText>
-				<reportElement x="267" y="0" width="491" height="41"/>
-				<textElement>
-					<font fontName="SansSerif" size="24" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Lista Documentos por Vencer
+    </queryString>
+    <field name="id_documento_presentado" class="java.lang.Integer"/>
+    <field name="numero_gestion" class="java.lang.Integer"/>
+    <field name="encabezado" class="java.lang.String"/>
+    <field name="nombre_cliente_referencia" class="java.lang.String"/>
+    <field name="apellido_cliente_referencia" class="java.lang.String"/>
+    <field name="nombre_documento" class="java.lang.String"/>
+    <field name="preparado" class="java.lang.Boolean"/>
+    <field name="fecha_ingreso" class="java.sql.Date"/>
+    <field name="fecha_salida" class="java.sql.Date"/>
+    <field name="numero_carton" class="java.lang.Integer"/>
+    <field name="observado" class="java.lang.Boolean"/>
+    <field name="importe_a_pagar" class="java.lang.Float"/>
+    <field name="fecha_pago" class="java.sql.Date"/>
+    <field name="fecha_liberado" class="java.sql.Date"/>
+    <field name="fecha_vencimiento" class="java.sql.Date"/>
+    <field name="observaciones" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="55" splitType="Stretch">
+            <staticText>
+                <reportElement x="267" y="0" width="491" height="41"/>
+                <textElement>
+                    <font fontName="SansSerif" size="24" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Lista Documentos por Vencer
                 ]]></text>
-			</staticText>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
-	<columnHeader>
-		<band height="51" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="64" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Doc.]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="64" y="0" width="67" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Gestión]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="131" y="0" width="100" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Encabezado]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="231" y="0" width="122" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Nombre Cliente Ref]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="353" y="0" width="62" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Preparado?]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="415" y="0" width="55" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Fecha Ingreso]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="470" y="0" width="47" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Fecha Salida]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="517" y="0" width="48" height="39"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Cartón]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="565" y="0" width="74" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Observado]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="639" y="0" width="40" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Deuda]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="679" y="0" width="52" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Fecha Pago]]></text>
-			</staticText>
-			<line>
-				<reportElement x="0" y="38" width="960" height="1"/>
-			</line>
-			<staticText>
-				<reportElement x="731" y="0" width="58" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Fecha liberado]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="789" y="0" width="78" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Fecha Vencimiento]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="867" y="0" width="89" height="38"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Obs.]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
-	<detail>
-		<band height="106" splitType="Stretch">
-			<textField>
-				<reportElement x="64" y="0" width="67" height="20"/>
-				<textElement textAlignment="Justified">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{numero_gestion}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="131" y="0" width="100" height="99"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{encabezado}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="231" y="0" width="60" height="99"/>
-				<textElement textAlignment="Justified">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{nombre_cliente_referencia}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="291" y="0" width="62" height="99"/>
-				<textElement textAlignment="Justified">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{apellido_cliente_referencia}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="353" y="0" width="62" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{preparado} ? "SI" : "NO" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="415" y="0" width="55" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="470" y="0" width="47" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{fecha_salida} != null ? $F{fecha_salida}: "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="517" y="0" width="48" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{numero_carton} != null ? $F{numero_carton}: "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="565" y="1" width="74" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{observado} ? "SI" : "NO" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="639" y="1" width="40" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{importe_a_pagar} != null ? "$" + $F{importe_a_pagar} : "0" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="679" y="1" width="52" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{fecha_pago} != null ? $F{fecha_pago} : "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="731" y="2" width="58" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{fecha_liberado} != null ? $F{fecha_liberado} : "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="789" y="2" width="78" height="20"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true" isItalic="true" isUnderline="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{fecha_vencimiento} != null ? $F{fecha_vencimiento}: "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="867" y="2" width="89" height="99"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{observaciones} != null ? $F{observaciones}: "N/A" )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="0" width="64" height="99"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{nombre_documento}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch">
-			<textField>
-				<reportElement x="840" y="34" width="80" height="20"/>
-				<textElement textAlignment="Right">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="920" y="34" width="40" height="20"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="35" splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="51" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="64" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Doc.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="64" y="0" width="67" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Gestión]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="131" y="0" width="100" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Encabezado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="231" y="0" width="122" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Nombre Cliente Ref]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="353" y="0" width="62" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Preparado?]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="415" y="0" width="55" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Fecha Ingreso]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="470" y="0" width="47" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Fecha Salida]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="517" y="0" width="48" height="39"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Cartón]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="565" y="0" width="74" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Observado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="639" y="0" width="40" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Deuda]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="679" y="0" width="52" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Fecha Pago]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="38" width="960" height="1"/>
+            </line>
+            <staticText>
+                <reportElement x="731" y="0" width="58" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Fecha liberado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="789" y="0" width="78" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Fecha Vencimiento]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="867" y="0" width="89" height="38"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Obs.]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="106" splitType="Stretch">
+            <textField>
+                <reportElement x="64" y="0" width="67" height="20"/>
+                <textElement textAlignment="Justified">
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{numero_gestion}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="131" y="0" width="100" height="99"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{encabezado}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="231" y="0" width="60" height="99"/>
+                <textElement textAlignment="Justified">
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{nombre_cliente_referencia}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="291" y="0" width="62" height="99"/>
+                <textElement textAlignment="Justified">
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{apellido_cliente_referencia}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="353" y="0" width="62" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{preparado} ? "SI" : "NO" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="415" y="0" width="55" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="470" y="0" width="47" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{fecha_salida} != null ? $F{fecha_salida}: "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="517" y="0" width="48" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{numero_carton} != null ? $F{numero_carton}: "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="565" y="1" width="74" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{observado} ? "SI" : "NO" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="639" y="1" width="40" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{importe_a_pagar} != null ? "$" + $F{importe_a_pagar} : "0" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="679" y="1" width="52" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{fecha_pago} != null ? $F{fecha_pago} : "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="731" y="2" width="58" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{fecha_liberado} != null ? $F{fecha_liberado} : "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="789" y="2" width="78" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif" isBold="true" isItalic="true" isUnderline="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{fecha_vencimiento} != null ? $F{fecha_vencimiento}: "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="867" y="2" width="89" height="99"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[( $F{observaciones} != null ? $F{observaciones}: "N/A" )]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="0" width="64" height="99"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{nombre_documento}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="45" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch">
+            <textField>
+                <reportElement x="840" y="34" width="80" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="920" y="34" width="40" height="20"/>
+                <textElement>
+                    <font fontName="SansSerif"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
 </jasperReport>

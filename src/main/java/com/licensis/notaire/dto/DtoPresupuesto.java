@@ -24,10 +24,12 @@ public class DtoPresupuesto implements DtoValido
     private List<DtoItem> listaItems = new ArrayList<>();
     private List<DtoTramite> listaTramites = new ArrayList<>();
 
-    public DtoPresupuesto() {
+    public DtoPresupuesto()
+    {
     }
 
-    public DtoPresupuesto(DtoTramite tramites, DtoPersona personas, Date fecha, Float total, Float saldo) {
+    public DtoPresupuesto(DtoTramite tramites, DtoPersona personas, Date fecha, Float total, Float saldo)
+    {
         this.tramite = tramites;
         this.persona = personas;
         this.fecha = fecha;
@@ -35,7 +37,8 @@ public class DtoPresupuesto implements DtoValido
         this.saldo = saldo;
     }
 
-    public DtoPresupuesto(DtoTramite tramite, DtoPersona persona, Date fecha, Float total, Float saldo, String observaciones, ArrayList<DtoPago> pagos, ArrayList<DtoItem> items, ArrayList<DtoTramite> tramites) {
+    public DtoPresupuesto(DtoTramite tramite, DtoPersona persona, Date fecha, Float total, Float saldo, String observaciones, ArrayList<DtoPago> pagos, ArrayList<DtoItem> items, ArrayList<DtoTramite> tramites)
+    {
         this.tramite = tramite;
         this.persona = persona;
         this.fecha = fecha;
@@ -47,96 +50,119 @@ public class DtoPresupuesto implements DtoValido
         this.listaTramites = tramites;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public Integer getIdPresupuesto() {
+    public Integer getIdPresupuesto()
+    {
         return this.idPresupuesto;
     }
 
-    public void setIdPresupuesto(Integer idPresupuesto) {
+    public void setIdPresupuesto(Integer idPresupuesto)
+    {
         this.idPresupuesto = idPresupuesto;
     }
 
-    public DtoTramite getTramite() {
+    public DtoTramite getTramite()
+    {
         return this.tramite;
     }
 
-    public void setTramite(DtoTramite tramites) {
+    public void setTramite(DtoTramite tramites)
+    {
         this.tramite = tramites;
     }
 
-    public DtoPersona getPersona() {
+    public DtoPersona getPersona()
+    {
         return this.persona;
     }
 
-    public void setPersona(DtoPersona personas) {
+    public void setPersona(DtoPersona personas)
+    {
         this.persona = personas;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return this.fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 
-    public Float getTotal() {
+    public Float getTotal()
+    {
         return this.total;
     }
 
-    public void setTotal(Float total) {
+    public void setTotal(Float total)
+    {
         this.total = total;
     }
 
-    public Float getSaldo() {
+    public Float getSaldo()
+    {
         return this.saldo;
     }
 
-    public void setSaldo(Float saldo) {
+    public void setSaldo(Float saldo)
+    {
         this.saldo = saldo;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoPago> getPagos() {
+    public List<DtoPago> getPagos()
+    {
         return this.listaPagos;
     }
 
-    public void setPagos(List<DtoPago> pagos) {
+    public void setPagos(List<DtoPago> pagos)
+    {
         this.listaPagos = pagos;
     }
 
-    public List<DtoItem> getItems() {
+    public List<DtoItem> getItems()
+    {
         return this.listaItems;
     }
 
-    public void setItems(List<DtoItem> items) {
+    public void setItems(List<DtoItem> items)
+    {
         this.listaItems = items;
     }
 
-    public List<DtoTramite> getListaTramites() {
+    public List<DtoTramite> getListaTramites()
+    {
         return this.listaTramites;
     }
 
-    public void setListaTramites(List<DtoTramite> tramites) {
+    public void setListaTramites(List<DtoTramite> tramites)
+    {
         this.listaTramites = tramites;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

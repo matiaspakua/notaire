@@ -7,6 +7,9 @@ package com.licensis.notaire.gui.administracion.documentos;
 import com.licensis.notaire.dto.DtoFlag;
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -14,9 +17,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -33,21 +33,25 @@ public class EliminarDocumento extends javax.swing.JInternalFrame
     /**
      * Creates new form EliminarDocumento
      */
-    public EliminarDocumento() {
+    public EliminarDocumento()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         inicializarFormulario();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaEliminarDocumento() {
+    public static JMenuItem getVentanaEliminarDocumento()
+    {
         return ventanaEliminarTipoDocumento;
     }
 
-    private void inicializarFormulario() {
+    private void inicializarFormulario()
+    {
         misDocumentos = null;
         miDocumentoSeleccionado = null;
         misDocumentos = miController.buscarTiposDeDocumentoDisponibles();
@@ -75,8 +79,7 @@ public class EliminarDocumento extends javax.swing.JInternalFrame
             campoDiasVencimiento.setText("");
             campoEntrega.setText("");
             checkBoxVence.setSelected(false);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Tipos de Documento para eliminar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();
@@ -283,15 +286,13 @@ public class EliminarDocumento extends javax.swing.JInternalFrame
                         {
                             miDto.setHabilitado(false);
 
-
                             DtoFlag eliminado = miController.eliminarTipoDeDocumento(miDto);
 
                             if (eliminado.getFlag())
                             {
                                 JOptionPane.showMessageDialog(this, "Se ha eliminado el documento seleccionado.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                                 inicializarFormulario();
-                            }
-                            else
+                            } else
                             {
                                 JOptionPane.showMessageDialog(this, "No se ha eliminado el documento seleccionado.", "ERROR", JOptionPane.ERROR_MESSAGE);
                             }
@@ -325,8 +326,7 @@ public class EliminarDocumento extends javax.swing.JInternalFrame
                     }
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Documento");
         }
@@ -376,8 +376,7 @@ public class EliminarDocumento extends javax.swing.JInternalFrame
                     }
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un tipo de Documento", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

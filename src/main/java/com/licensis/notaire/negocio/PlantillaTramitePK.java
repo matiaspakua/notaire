@@ -24,32 +24,39 @@ public class PlantillaTramitePK implements Serializable
     @Column(name = "fk_id_tipo_documento")
     private int fkIdTipoDocumento;
 
-    public PlantillaTramitePK() {
+    public PlantillaTramitePK()
+    {
     }
 
-    public PlantillaTramitePK(int fkIdTipoTramite, int fkIdTipoDocumento) {
+    public PlantillaTramitePK(int fkIdTipoTramite, int fkIdTipoDocumento)
+    {
         this.fkIdTipoTramite = fkIdTipoTramite;
         this.fkIdTipoDocumento = fkIdTipoDocumento;
     }
 
-    public int getFkIdTipoTramite() {
+    public int getFkIdTipoTramite()
+    {
         return fkIdTipoTramite;
     }
 
-    public void setFkIdTipoTramite(int fkIdTipoTramite) {
+    public void setFkIdTipoTramite(int fkIdTipoTramite)
+    {
         this.fkIdTipoTramite = fkIdTipoTramite;
     }
 
-    public int getFkIdTipoDocumento() {
+    public int getFkIdTipoDocumento()
+    {
         return fkIdTipoDocumento;
     }
 
-    public void setFkIdTipoDocumento(int fkIdTipoDocumento) {
+    public void setFkIdTipoDocumento(int fkIdTipoDocumento)
+    {
         this.fkIdTipoDocumento = fkIdTipoDocumento;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (int) fkIdTipoTramite;
         hash += (int) fkIdTipoDocumento;
@@ -57,7 +64,8 @@ public class PlantillaTramitePK implements Serializable
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PlantillaTramitePK))
         {
@@ -76,7 +84,8 @@ public class PlantillaTramitePK implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.PlantillaTramitePK[ fkIdTipoTramite=" + fkIdTipoTramite + ", fkIdTipoDocumento=" + fkIdTipoDocumento + " ]";
     }
 }

@@ -4,17 +4,20 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.*;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.servicios.AdministradorJpa;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -25,18 +28,21 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
 
     private static TipoIdentificacionJpaController instancia = null;
 
-    public TipoIdentificacionJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TipoIdentificacionJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public void create(TipoIdentificacion tipoIdentificacion) {
+    public void create(TipoIdentificacion tipoIdentificacion)
+    {
         if (tipoIdentificacion.getPersonaList() == null)
         {
             tipoIdentificacion.setPersonaList(new ArrayList<Persona>());
@@ -76,7 +82,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public void edit(TipoIdentificacion tipoIdentificacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(TipoIdentificacion tipoIdentificacion) throws IllegalOrphanException, NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -148,7 +155,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -190,15 +198,18 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public List<TipoIdentificacion> findTipoIdentificacionEntities() {
+    public List<TipoIdentificacion> findTipoIdentificacionEntities()
+    {
         return findTipoIdentificacionEntities(true, -1, -1);
     }
 
-    public List<TipoIdentificacion> findTipoIdentificacionEntities(int maxResults, int firstResult) {
+    public List<TipoIdentificacion> findTipoIdentificacionEntities(int maxResults, int firstResult)
+    {
         return findTipoIdentificacionEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoIdentificacion> findTipoIdentificacionEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoIdentificacion> findTipoIdentificacionEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -216,7 +227,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public TipoIdentificacion findTipoIdentificacion(Integer id) {
+    public TipoIdentificacion findTipoIdentificacion(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -228,7 +240,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public int getTipoIdentificacionCount() {
+    public int getTipoIdentificacionCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -241,7 +254,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
         }
     }
 
-    public static TipoIdentificacionJpaController getInstancia() {
+    public static TipoIdentificacionJpaController getInstancia()
+    {
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
@@ -253,7 +267,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

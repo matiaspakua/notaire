@@ -32,22 +32,26 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
     /**
      * Creates new form VerificarTestimonio
      */
-    public VerificarTestimonio() {
+    public VerificarTestimonio()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaTestimonios.setAutoCreateRowSorter(true);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaVerificarTestimonio() {
+    public static JMenuItem getVentanaVerificarTestimonio()
+    {
         return ventanaVerificarTestimonio;
     }
 
-    public void cargarFormulario(DtoEscritura miDtoEscritura) {
+    public void cargarFormulario(DtoEscritura miDtoEscritura)
+    {
 
         List<DtoTestimonio> testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
 
@@ -58,15 +62,13 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
         campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
         campoFolioHasta.setText(new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero()).toString());
 
-
         DtoPersona escribano = miController.obtenerEscribanoEscritura(miDtoEscritura);
         campoRegistro.setText(escribano.getRegistroEscribano().toString());
 
         if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty())
         {
             cargarGrilla(testimoniosEscritura);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen testimonios generados para la Escritura seleccionada.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();
@@ -74,7 +76,8 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
 
     }
 
-    private void cargarGrilla(List<DtoTestimonio> testimonios) {
+    private void cargarGrilla(List<DtoTestimonio> testimonios)
+    {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         for (Iterator<DtoTestimonio> it = testimonios.iterator(); it.hasNext();)
@@ -106,8 +109,7 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                         fechaInscripcion = formatter.format(dtoMovimientoTestimonio.getFechaInscripcion()).toString();
                         matricula = miDtoEscritura.getMatriculaInscripcion();
                         inscripto = true;
-                    }
-                    else
+                    } else
                     {
                         inscripto = false;
                     }
@@ -151,8 +153,7 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                         ((DefaultTableModel) grillaTestimonios.getModel()).addRow(datos);
                     }
                 }
-            }
-            else
+            } else
             {
                 Integer numero = (Integer) dtoTestimonio.getNumero();
                 String fechaImpresion = null;

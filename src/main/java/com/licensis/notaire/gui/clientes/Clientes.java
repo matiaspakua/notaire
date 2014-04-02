@@ -7,7 +7,6 @@ package com.licensis.notaire.gui.clientes;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,11 +28,13 @@ public class Clientes extends javax.swing.JInternalFrame
     /**
      * Creates new form Clientes
      */
-    private Clientes() {
+    private Clientes()
+    {
         initComponents();
     }
 
-    public static Clientes getInstancia() {
+    public static Clientes getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Clientes();
@@ -43,15 +44,18 @@ public class Clientes extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Clientes.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuClientes() {
+    public static JMenuItem getMenuClientes()
+    {
         return menuClientes;
     }
 
@@ -247,7 +251,7 @@ public class Clientes extends javax.swing.JInternalFrame
         formBuscarGestionesCliente.desactivarGrilla();
         formBuscarGestionesCliente.mostrarBotonBuscar();
         formBuscarGestionesCliente.mostrarLabelBuscar();
-        
+
         Principal.cargarFormulario(formBuscarGestionesCliente);
         Principal.setVentanasActivas(BuscarGestionesCliente.getVentanaBuscarGestionesCliente());
     }//GEN-LAST:event_botonBuscarGestionesClienteActionPerformed
@@ -274,7 +278,7 @@ public class Clientes extends javax.swing.JInternalFrame
         formModificarPersona.limpiarFormulario();
         formModificarPersona.desactivarFormulario();
         formModificarPersona.cargarTipoFormulario(botonModificarPersona.getToolTipText());
-    
+
         Principal.cargarFormulario(formModificarPersona);
         Principal.setVentanasActivas(AdministrarCliente.getInstancia().getVentanaActiva());
     }//GEN-LAST:event_botonModificarPersonaActionPerformed
@@ -300,7 +304,7 @@ public class Clientes extends javax.swing.JInternalFrame
         formModificarCliente.desactivarFormulario();
         formModificarCliente.limpiarFormulario();
         formModificarCliente.botonModoEdicion();
-        
+
         Principal.cargarFormulario(formModificarCliente);
         Principal.setVentanasActivas(AdministrarCliente.getInstancia().getVentanaActiva());
     }//GEN-LAST:event_botonModificarClienteActionPerformed
@@ -316,7 +320,6 @@ public class Clientes extends javax.swing.JInternalFrame
         Principal.cargarFormulario(formAltaCliente);
         Principal.setVentanasActivas(AdministrarCliente.getInstancia().getVentanaActiva());
 
-
     }//GEN-LAST:event_botonBuscarClienteActionPerformed
 
     private void botonPersonasClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonPersonasClientesActionPerformed
@@ -327,7 +330,7 @@ public class Clientes extends javax.swing.JInternalFrame
             ListarPersonas.getInstancia().limpiarJtable();
             Boolean flag = ListarPersonas.getInstancia().cargarGrillaPersonasClientes(miLitaDtoPersonasClientes, ConstantesGui.BUSCAR_PERSONA_CLIENTE);
             ListarPersonas.getInstancia().labelTitulo.setText(ConstantesGui.BUSCAR_PERSONA_CLIENTE);
-            
+
             Principal.setVentanasActivas(ListarPersonas.getInstancia().getVentanaActiva());
 
         }

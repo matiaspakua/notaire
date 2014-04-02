@@ -24,11 +24,13 @@ public class Gestion extends javax.swing.JInternalFrame
     /**
      * Creates new form Gestion
      */
-    private Gestion() {
+    private Gestion()
+    {
         initComponents();
     }
 
-    public static Gestion getInstancia() {
+    public static Gestion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Gestion();
@@ -39,15 +41,18 @@ public class Gestion extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Gestion.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuGestion() {
+    public static JMenuItem getSubmenuGestion()
+    {
         return submenuGestion;
     }
 
@@ -196,11 +201,11 @@ public class Gestion extends javax.swing.JInternalFrame
     private void botonBuscarGestionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonBuscarGestionActionPerformed
     {//GEN-HEADEREND:event_botonBuscarGestionActionPerformed
         BuscarGestionesCliente formBuscarGestionesCliente = BuscarGestionesCliente.getInstancia();
-        
-        formBuscarGestionesCliente.labelTitulo.setText(ConstantesGui.VER_GESTIONES);        
+
+        formBuscarGestionesCliente.labelTitulo.setText(ConstantesGui.VER_GESTIONES);
         formBuscarGestionesCliente.desactivarGrilla();
         formBuscarGestionesCliente.mostrarBotonBuscar();
-        
+
         Principal.cargarFormulario(formBuscarGestionesCliente);
         Principal.setVentanasActivas(BuscarGestion.getVentanaBuscarGestion());
     }//GEN-LAST:event_botonBuscarGestionActionPerformed
@@ -215,7 +220,7 @@ public class Gestion extends javax.swing.JInternalFrame
     private void botonIniciarGestionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonIniciarGestionActionPerformed
     {//GEN-HEADEREND:event_botonIniciarGestionActionPerformed
         Principal.cargarFormulario(new IniciarGestion());
-        Principal.setVentanasActivas(IniciarGestion.getVentanaIniciarGestion());        
+        Principal.setVentanasActivas(IniciarGestion.getVentanaIniciarGestion());
     }//GEN-LAST:event_botonIniciarGestionActionPerformed
 
     private void botonVerHistorialGestionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonVerHistorialGestionActionPerformed
@@ -232,13 +237,11 @@ public class Gestion extends javax.swing.JInternalFrame
         if (!flag)
         {
             JOptionPane.showMessageDialog(this, "No hay gestion para ser archivadas");
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(formArchivarGestion);
             Principal.setVentanasActivas(ArchivarGestion.getVentanaArchivarGestion());
         }
-
 
     }//GEN-LAST:event_botonArchivarGestionActionPerformed
 

@@ -23,16 +23,19 @@ public class DtoTipoDeTramite implements DtoValido
     private List<DtoPlantillaTramite> listaPlantillaTramites = new ArrayList<>();
     private List<DtoTramite> listaTramites = new ArrayList<>();
 
-    public DtoTipoDeTramite() {
+    public DtoTipoDeTramite()
+    {
     }
 
-    public DtoTipoDeTramite(String nombre, Boolean seArchiva, Boolean seInscribe) {
+    public DtoTipoDeTramite(String nombre, Boolean seArchiva, Boolean seInscribe)
+    {
         this.nombre = nombre;
         this.seArchiva = seArchiva;
         this.seInscribe = seInscribe;
     }
 
-    public DtoTipoDeTramite(String nombre, Boolean seArchiva, Boolean seInscribe, String observaciones, ArrayList<DtoPlantillaPresupuesto> plantillaPresupuestos, ArrayList<DtoPlantillaTramite> plantillaTramites, ArrayList<DtoTramite> tramites) {
+    public DtoTipoDeTramite(String nombre, Boolean seArchiva, Boolean seInscribe, String observaciones, ArrayList<DtoPlantillaPresupuesto> plantillaPresupuestos, ArrayList<DtoPlantillaTramite> plantillaTramites, ArrayList<DtoTramite> tramites)
+    {
         this.nombre = nombre;
         this.seArchiva = seArchiva;
         this.seInscribe = seInscribe;
@@ -42,96 +45,119 @@ public class DtoTipoDeTramite implements DtoValido
         this.listaTramites = tramites;
     }
 
-    public Boolean getHabilitado() {
+    public Boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(Boolean habilitado) {
+    public void setHabilitado(Boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public Integer getIdTipoTramite() {
+    public Integer getIdTipoTramite()
+    {
         return this.idTipoTramite;
     }
 
-    public void setIdTipoTramite(Integer idTipoTramite) {
+    public void setIdTipoTramite(Integer idTipoTramite)
+    {
         this.idTipoTramite = idTipoTramite;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public Boolean isSeArchiva() {
+    public Boolean isSeArchiva()
+    {
         return this.seArchiva;
     }
 
-    public void setSeArchiva(Boolean seArchiva) {
+    public void setSeArchiva(Boolean seArchiva)
+    {
         this.seArchiva = seArchiva;
     }
 
-    public Boolean isSeInscribe() {
+    public Boolean isSeInscribe()
+    {
         return this.seInscribe;
     }
 
-    public void setSeInscribe(Boolean seInscribe) {
+    public void setSeInscribe(Boolean seInscribe)
+    {
         this.seInscribe = seInscribe;
     }
 
-    public Boolean getAsociaInmuebles() {
+    public Boolean getAsociaInmuebles()
+    {
         return asociaInmuebles;
     }
 
-    public void setAsociaInmuebles(Boolean asociaInmuebles) {
+    public void setAsociaInmuebles(Boolean asociaInmuebles)
+    {
         this.asociaInmuebles = asociaInmuebles;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoPlantillaPresupuesto> getPlantillaPresupuestos() {
+    public List<DtoPlantillaPresupuesto> getPlantillaPresupuestos()
+    {
         return this.listaPlantillaPresupuestos;
     }
 
-    public void setPlantillaPresupuestos(List<DtoPlantillaPresupuesto> plantillaPresupuestos) {
+    public void setPlantillaPresupuestos(List<DtoPlantillaPresupuesto> plantillaPresupuestos)
+    {
         this.listaPlantillaPresupuestos = plantillaPresupuestos;
     }
 
-    public List<DtoPlantillaTramite> getPlantillaTramites() {
+    public List<DtoPlantillaTramite> getPlantillaTramites()
+    {
         return this.listaPlantillaTramites;
     }
 
-    public void setPlantillaTramites(List<DtoPlantillaTramite> plantillaamiteses) {
+    public void setPlantillaTramites(List<DtoPlantillaTramite> plantillaamiteses)
+    {
         this.listaPlantillaTramites = plantillaamiteses;
     }
 
-    public List<DtoTramite> getTramites() {
+    public List<DtoTramite> getTramites()
+    {
         return this.listaTramites;
     }
 
-    public void setTramites(List<DtoTramite> tramites) {
+    public void setTramites(List<DtoTramite> tramites)
+    {
         this.listaTramites = tramites;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

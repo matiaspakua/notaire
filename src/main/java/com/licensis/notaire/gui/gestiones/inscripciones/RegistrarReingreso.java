@@ -9,6 +9,10 @@ import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +21,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -39,24 +39,28 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarReingreso
      */
-    public RegistrarReingreso() {
+    public RegistrarReingreso()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRegistrarReingreso() {
+    public static JMenuItem getVentanaRegistrarReingreso()
+    {
         return ventanaRegistrarReingreso;
     }
 
-    public Boolean cargarFormulario(DtoEscritura dtoEscritura) {
+    public Boolean cargarFormulario(DtoEscritura dtoEscritura)
+    {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        
+
         escrituraSeleccionada = miController.buscarEscritura(dtoEscritura);
         Boolean cargada = true;
         testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
@@ -73,8 +77,7 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra inscripta <BR>con fecha: " + movimientos.get(movimientos.size() - 1).getFechaInscripcion().toString() + " <BR>y matricula: " + escrituraSeleccionada.getMatriculaInscripcion() + "</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargada = false;
-                }
-                else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
+                } else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
                 {
                     cargada = true;
 
@@ -101,14 +104,12 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
 
                     campoNumeroTestimonio.setText(new Integer(testimonios.get(testimonios.size() - 1).getNumero()).toString());
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios ingresados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 cargada = false;
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios generados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             cargada = false;
@@ -402,7 +403,7 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
                 && selectorFechaIngreso.getDate() != null
                 && selectorFechaSalida.getDate() != null)
         {
-            
+
             DtoMovimientoTestimonio miDtoMovimientoTestimonioViejo = miController.buscarMovimientoTestimonio(movimientos.get(movimientos.size() - 1));
 
             miDtoMovimientoTestimonioViejo.setFechaSalida(selectorFechaSalida.getDate());
@@ -460,8 +461,7 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
                 JOptionPane.showMessageDialog(this, "El Testimonio ha sido recientemente modificado por otro usuario.", "ERROR", JOptionPane.ERROR_MESSAGE);
                 salir();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "<HTML>Debe completar al menos el Fecha de Salida,<BR>Numero de Carton y Fecha de Ingreso.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

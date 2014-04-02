@@ -8,12 +8,12 @@ import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -33,7 +33,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
     /**
      * Creates new form BuscarEscritura
      */
-    public BuscarEscritura() {
+    public BuscarEscritura()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
@@ -43,19 +44,23 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
         this.cargarFormulario();
     }
 
-    public void setFormularioInvocador(String formularioInvocador) {
+    public void setFormularioInvocador(String formularioInvocador)
+    {
         this.formularioInvocador = formularioInvocador;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaBuscarEscritura() {
+    public static JMenuItem getVentanaBuscarEscritura()
+    {
         return ventanaBuscarEscritura;
     }
 
-    public void cargarFormulario() {
+    public void cargarFormulario()
+    {
         this.limpiarFormulario();
 
         List<DtoPersona> escribanos = miController.obtenerListaEscribanosDisponibles();
@@ -71,7 +76,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
         }
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         this.comboNumeroRegistro.removeAllItems();
     }
 
@@ -314,7 +320,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
-    private void cargarOpcionEscrituras() {
+    private void cargarOpcionEscrituras()
+    {
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
@@ -327,13 +334,11 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (radioButtonPorNumeroEscritura.isSelected())
+        } else if (radioButtonPorNumeroEscritura.isSelected())
         {
             DtoEscritura miDtoEscritura = new DtoEscritura();
             miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
@@ -344,15 +349,15 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras con el numero indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
 
-    private void cargarOpcionEscriturasFirmadas() {
+    private void cargarOpcionEscriturasFirmadas()
+    {
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
@@ -365,13 +370,11 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras firmadas asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (radioButtonPorNumeroEscritura.isSelected())
+        } else if (radioButtonPorNumeroEscritura.isSelected())
         {
             DtoEscritura miDtoEscritura = new DtoEscritura();
             miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
@@ -382,8 +385,7 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras firmadas con el numero indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -392,7 +394,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
         listaEscriturasForm.labelTituloEscrituras.setText("Lista Escrituras Firmadas");
     }
 
-    private void cargarOpcionEscriturasFirmadasSeInscriben() {
+    private void cargarOpcionEscriturasFirmadasSeInscriben()
+    {
 
         List<DtoEscritura> escrituras = new ArrayList<>();
 
@@ -418,19 +421,16 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
                 {
                     listaEscriturasForm.limpiarGrilla();
                     cargada = listaEscriturasForm.cargarGrilla(escrituras);
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No hay testimonios disponibles para ingresar a inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
 
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras para inscribir asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (radioButtonPorNumeroEscritura.isSelected())
+        } else if (radioButtonPorNumeroEscritura.isSelected())
         {
             DtoEscritura miDtoEscritura = new DtoEscritura();
             miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
@@ -452,13 +452,11 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
                 {
                     listaEscriturasForm.limpiarGrilla();
                     cargada = listaEscriturasForm.cargarGrilla(escrituras);
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No hay testimonios disponibles para ingresar a inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras para inscribir con el numero indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -467,7 +465,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
         listaEscriturasForm.labelTituloEscrituras.setText("Lista Escrituras Firmadas Para Inscripcion");
     }
 
-    private void cargarOpcionEscriturasFirmadasInscriptas() {
+    private void cargarOpcionEscriturasFirmadasInscriptas()
+    {
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
@@ -480,13 +479,11 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras firmadas o inscriptas asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else if (radioButtonPorNumeroEscritura.isSelected())
+        } else if (radioButtonPorNumeroEscritura.isSelected())
         {
             DtoEscritura miDtoEscritura = new DtoEscritura();
             miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
@@ -497,8 +494,7 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             {
                 listaEscriturasForm.limpiarGrilla();
                 cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escrituras  firmadas o inscriptas con el numero indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }

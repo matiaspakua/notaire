@@ -11,8 +11,6 @@ import com.licensis.notaire.gui.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -38,29 +36,31 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
     /**
      * Creates new form EliminarTipoTramite
      */
-    public EliminarTipoTramite() {
+    public EliminarTipoTramite()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
         inicializarFormulario();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaEliminarTipoTramite() {
+    public static JMenuItem getVentanaEliminarTipoTramite()
+    {
         return ventanaEliminarTipoTramite;
     }
 
-    public static void setVentanaEliminarTipoTramite(JMenuItem ventanaEliminarTipoTramite) {
+    public static void setVentanaEliminarTipoTramite(JMenuItem ventanaEliminarTipoTramite)
+    {
         EliminarTipoTramite.ventanaEliminarTipoTramite = ventanaEliminarTipoTramite;
     }
 
-    
-    
-
-    private void inicializarFormulario() {
+    private void inicializarFormulario()
+    {
         tramitesDisponibles = null;
         tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
 
@@ -78,8 +78,7 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "No existen Tipos de Tramite para eliminar.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
             salir();
 
-        }
-        else
+        } else
         {
 
             listaTramitesDisponibles.setEnabled(true);
@@ -103,7 +102,8 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
         }
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         DefaultListModel newModel = new DefaultListModel();
         listaTramitesDisponibles.setModel(newModel);
         campoNombreTramite.setText("");
@@ -370,7 +370,8 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() > 0)
@@ -397,10 +398,8 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
                 DtoTipoDeTramite dtoTipoDeTramite = it.next();
 
                 // Completo los datos en los componentes
-
                 if (dtoTipoDeTramite.getNombre().equals(seleccionado))
                 {
-
 
                     miDtoSeleccionado = dtoTipoDeTramite;
 
@@ -452,8 +451,7 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
                                     Boolean.TRUE
                                 };
                                 ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).addRow(datos);
-                            }
-                            else
+                            } else
                             {
                                 Object[] datos =
                                 {
@@ -463,8 +461,7 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
                                 ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).addRow(datos);
                             }
                         }
-                    }
-                    else
+                    } else
                     {
                         grillaDocumentosNecesarios.setEnabled(false);
                     }
@@ -472,8 +469,7 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
                     break;
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -525,8 +521,7 @@ public class EliminarTipoTramite extends javax.swing.JInternalFrame
                     inicializarFormulario();
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccioanr un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

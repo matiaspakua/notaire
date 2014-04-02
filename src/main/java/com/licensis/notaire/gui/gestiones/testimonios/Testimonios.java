@@ -23,11 +23,13 @@ public class Testimonios extends javax.swing.JInternalFrame
     /**
      * Creates new form Testimonios
      */
-    private Testimonios() {
+    private Testimonios()
+    {
         initComponents();
     }
 
-    public static Testimonios getInstancia() {
+    public static Testimonios getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Testimonios();
@@ -38,15 +40,18 @@ public class Testimonios extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Testimonios.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuTestimonios() {
+    public static JMenuItem getSubmenuTestimonios()
+    {
         return submenuTestimonios;
     }
 
@@ -163,7 +168,7 @@ public class Testimonios extends javax.swing.JInternalFrame
         BuscarEscritura buscarEscrituraForm = new BuscarEscritura();
         buscarEscrituraForm.setFormularioInvocador(ConstantesGui.GENERAR_TESTIMONIO);
         buscarEscrituraForm.cargarFormulario();
-        
+
         Principal.cargarFormulario(buscarEscrituraForm);
         Principal.setVentanasActivas(BuscarEscritura.getVentanaBuscarEscritura());
     }//GEN-LAST:event_botonGenerarTestimonioActionPerformed

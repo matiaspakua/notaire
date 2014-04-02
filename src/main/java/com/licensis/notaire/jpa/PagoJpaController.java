@@ -4,17 +4,17 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -23,18 +23,21 @@ import com.licensis.notaire.negocio.Presupuesto;
 public class PagoJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public PagoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public PagoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Pago pago) {
+    public int create(Pago pago)
+    {
         EntityManager em = null;
         int id = -1;
         try
@@ -66,7 +69,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         return id;
     }
 
-    public void edit(Pago pago) throws NonexistentEntityException, Exception {
+    public void edit(Pago pago) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -115,7 +119,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -149,15 +154,18 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Pago> findPagoEntities() {
+    public List<Pago> findPagoEntities()
+    {
         return findPagoEntities(true, -1, -1);
     }
 
-    public List<Pago> findPagoEntities(int maxResults, int firstResult) {
+    public List<Pago> findPagoEntities(int maxResults, int firstResult)
+    {
         return findPagoEntities(false, maxResults, firstResult);
     }
 
-    private List<Pago> findPagoEntities(boolean all, int maxResults, int firstResult) {
+    private List<Pago> findPagoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -175,7 +183,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Pago findPago(Integer id) {
+    public Pago findPago(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -187,7 +196,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getPagoCount() {
+    public int getPagoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -200,7 +210,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Pago> findPagosPresupuesto(Integer pIdPresupuesto) {
+    public List<Pago> findPagosPresupuesto(Integer pIdPresupuesto)
+    {
         EntityManager em = getEntityManager();
 
         List<Pago> misPagos = null;
@@ -225,7 +236,8 @@ public class PagoJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

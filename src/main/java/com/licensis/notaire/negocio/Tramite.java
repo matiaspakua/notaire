@@ -41,15 +41,24 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * Clase que representa un tramite en curso (no es la definicion de un tramite, sino un tramite
  * concreto que se esta llevando a cabo). Posee las referencias hacia el tipo de tramite, el
- * cliente, el presupuesto del cual se origino y el numero de gestion. <p> REGLA DE NEGOCIO: <p> +
+ * cliente, el presupuesto del cual se origino y el numero de gestion.
+ * <p>
+ * REGLA DE NEGOCIO:
+ * <p>
+ * +
  * Cuando se crea un presupuesto, en la tabla tramites se crea un registo, el cual asocia al
- * presupuesto un determinado tramite junto con el tipo de tramite indicado. <p> + Cuando se inicia
+ * presupuesto un determinado tramite junto con el tipo de tramite indicado.
+ * <p>
+ * + Cuando se inicia
  * una gestion, se debe asociar la misma con los registros de tramites asociados a los presupuestos
  * seleccionado. La combinacion de "GestionDeEscritura" y "Tramite" representan el concepto
- * abstracto de una "gestion". <p> + Cuando se iniciar una gestion, pueden haber varios clientes
+ * abstracto de una "gestion".
+ * <p>
+ * + Cuando se iniciar una gestion, pueden haber varios clientes
  * involucrados en la misma. La tabla tramites_personas, expresa esta relacion. El atributo
  * personasList es utilizado por el framework de persistencia para escribir sobre la tabla
- * relacional indicada. <p>
+ * relacional indicada.
+ * <p>
  *
  * @author juanca
  */
@@ -57,11 +66,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tramites")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Tramite.findAll", query = "SELECT t FROM Tramite t"),
-    @NamedQuery(name = "Tramite.findByIdTramite", query = "SELECT t FROM Tramite t WHERE t.idTramite = :idTramite"),
-    @NamedQuery(name = "Tramite.findByIdPresupuesto", query = "SELECT t FROM Tramite t WHERE t.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
-})
+        {
+            @NamedQuery(name = "Tramite.findAll", query = "SELECT t FROM Tramite t"),
+            @NamedQuery(name = "Tramite.findByIdTramite", query = "SELECT t FROM Tramite t WHERE t.idTramite = :idTramite"),
+            @NamedQuery(name = "Tramite.findByIdPresupuesto", query = "SELECT t FROM Tramite t WHERE t.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
+        })
 public class Tramite implements Serializable
 {
 
@@ -113,102 +122,125 @@ public class Tramite implements Serializable
      * Constructor por default para Tramite. Inicializa el ID presupuesto segun el campo
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y todas las listas.
      */
-    public Tramite() {
+    public Tramite()
+    {
         this.idTramite = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.documentoPresentadoList = new ArrayList<>();
         this.personaList = new ArrayList<>();
         this.presupuestoList = new ArrayList<>();
     }
 
-    public Tramite(Integer idTramite) {
+    public Tramite(Integer idTramite)
+    {
         this.idTramite = idTramite;
     }
 
-    public Integer getIdTramite() {
+    public Integer getIdTramite()
+    {
         return idTramite;
     }
 
-    public void setIdTramite(Integer idTramite) {
+    public void setIdTramite(Integer idTramite)
+    {
         this.idTramite = idTramite;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Persona> getPersonaList() {
+    public List<Persona> getPersonaList()
+    {
         return personaList;
     }
 
-    public void setPersonaList(List<Persona> personaList) {
+    public void setPersonaList(List<Persona> personaList)
+    {
         this.personaList = personaList;
     }
 
     @XmlTransient
-    public List<DocumentoPresentado> getDocumentoPresentadoList() {
+    public List<DocumentoPresentado> getDocumentoPresentadoList()
+    {
         return documentoPresentadoList;
     }
 
-    public void setDocumentoPresentadoList(List<DocumentoPresentado> documentoPresentadoList) {
+    public void setDocumentoPresentadoList(List<DocumentoPresentado> documentoPresentadoList)
+    {
         this.documentoPresentadoList = documentoPresentadoList;
     }
 
     @XmlTransient
-    public List<Presupuesto> getPresupuestoList() {
+    public List<Presupuesto> getPresupuestoList()
+    {
         return presupuestoList;
     }
 
-    public void setPresupuestoList(List<Presupuesto> presupuestoList) {
+    public void setPresupuestoList(List<Presupuesto> presupuestoList)
+    {
         this.presupuestoList = presupuestoList;
     }
 
-    public Inmueble getFkIdInmueble() {
+    public Inmueble getFkIdInmueble()
+    {
         return fkIdInmueble;
     }
 
-    public void setFkIdInmueble(Inmueble fkIdInmueble) {
+    public void setFkIdInmueble(Inmueble fkIdInmueble)
+    {
         this.fkIdInmueble = fkIdInmueble;
     }
 
-    public Presupuesto getFkIdPresupuesto() {
+    public Presupuesto getFkIdPresupuesto()
+    {
         return fkIdPresupuesto;
     }
 
-    public void setFkIdPresupuesto(Presupuesto fkIdPresupuesto) {
+    public void setFkIdPresupuesto(Presupuesto fkIdPresupuesto)
+    {
         this.fkIdPresupuesto = fkIdPresupuesto;
     }
 
-    public Escritura getFkIdEscritura() {
+    public Escritura getFkIdEscritura()
+    {
         return fkIdEscritura;
     }
 
-    public void setFkIdEscritura(Escritura fkIdEscritura) {
+    public void setFkIdEscritura(Escritura fkIdEscritura)
+    {
         this.fkIdEscritura = fkIdEscritura;
     }
 
-    public GestionDeEscritura getFkIdGestion() {
+    public GestionDeEscritura getFkIdGestion()
+    {
         return fkIdGestion;
     }
 
-    public void setFkIdGestion(GestionDeEscritura fkIdGestion) {
+    public void setFkIdGestion(GestionDeEscritura fkIdGestion)
+    {
         this.fkIdGestion = fkIdGestion;
     }
 
-    public TipoDeTramite getFkIdTipoTramite() {
+    public TipoDeTramite getFkIdTipoTramite()
+    {
         return fkIdTipoTramite;
     }
 
-    public void setFkIdTipoTramite(TipoDeTramite fkIdTipoTramite) {
+    public void setFkIdTipoTramite(TipoDeTramite fkIdTipoTramite)
+    {
         this.fkIdTipoTramite = fkIdTipoTramite;
     }
 
-    public void setAtributos(DtoTramite dtoTramite) {
-       
+    public void setAtributos(DtoTramite dtoTramite)
+    {
+
         this.setIdTramite(dtoTramite.getIdTramite());
         this.setObservaciones(dtoTramite.getObservaciones());
 
@@ -271,7 +303,8 @@ public class Tramite implements Serializable
         }
     }
 
-    public DtoTramite getDto() {
+    public DtoTramite getDto()
+    {
         DtoTramite miDto = new DtoTramite();
 
         miDto.setIdTramite(getIdTramite());
@@ -307,8 +340,7 @@ public class Tramite implements Serializable
         if (fkIdInmueble != null)
         {
             miDto.setInmueble(fkIdInmueble.getDto());
-        }
-        else
+        } else
         {
             miDto.setInmueble(null);
         }
@@ -334,11 +366,11 @@ public class Tramite implements Serializable
 //                miDto.getListaDocumentosPresentados().add(documentoPresentado.getDto());
 //            }            
 //        }
-
         return miDto;
     }
 
-    public DtoDocumentoPresentado setDtoDocumento(DocumentoPresentado documento) {
+    public DtoDocumentoPresentado setDtoDocumento(DocumentoPresentado documento)
+    {
         DtoDocumentoPresentado dtoDocumentoPresentado = new DtoDocumentoPresentado();
 
         dtoDocumentoPresentado.setVersion(documento.getVersion());
@@ -363,7 +395,8 @@ public class Tramite implements Serializable
         return dtoDocumentoPresentado;
     }
 
-    public DtoPersona getDtoPersona(Persona miPersona) {
+    public DtoPersona getDtoPersona(Persona miPersona)
+    {
 
         DtoPersona dtoPersona = new DtoPersona();
 
@@ -398,14 +431,16 @@ public class Tramite implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (getIdTramite() != null ? getIdTramite().hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Tramite))
         {
@@ -420,24 +455,29 @@ public class Tramite implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Tramite[ idTramite=" + getIdTramite() + " ]";
     }
 
     @XmlTransient
-    public List<TramitesPersonas> getTramitesPersonasList() {
+    public List<TramitesPersonas> getTramitesPersonasList()
+    {
         return tramitesPersonasList;
     }
 
-    public void setTramitesPersonasList(List<TramitesPersonas> tramitesPersonasList) {
+    public void setTramitesPersonasList(List<TramitesPersonas> tramitesPersonasList)
+    {
         this.tramitesPersonasList = tramitesPersonasList;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

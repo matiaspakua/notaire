@@ -22,19 +22,21 @@ public class ModificarCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarCliente
      */
-    public ModificarCliente() {
+    public ModificarCliente()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
 
-
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public void cargarFormulario(String boton) {
+    public void cargarFormulario(String boton)
+    {
         switch (boton)
         {
             case ConstantesGui.MODIFICAR_PERSONA:
@@ -53,7 +55,8 @@ public class ModificarCliente extends javax.swing.JInternalFrame
         }
     }
 
-    public static JMenuItem getVentanaModificarCliente() {
+    public static JMenuItem getVentanaModificarCliente()
+    {
         return ventanaModificarCliente;
     }
 

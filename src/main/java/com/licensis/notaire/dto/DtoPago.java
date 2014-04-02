@@ -17,72 +17,88 @@ public class DtoPago implements DtoValido
     private String observaciones;
     private Integer version = 0;
 
-    public DtoPago() {
+    public DtoPago()
+    {
     }
 
-    public DtoPago(DtoPresupuesto presupuestos, Float monto, Date fecha) {
+    public DtoPago(DtoPresupuesto presupuestos, Float monto, Date fecha)
+    {
         this.presupuesto = presupuestos;
         this.monto = monto;
         this.fecha = fecha;
     }
 
-    public DtoPago(DtoPresupuesto presupuestos, Float monto, Date fecha, String observaciones) {
+    public DtoPago(DtoPresupuesto presupuestos, Float monto, Date fecha, String observaciones)
+    {
         this.presupuesto = presupuestos;
         this.monto = monto;
         this.fecha = fecha;
         this.observaciones = observaciones;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public Integer getIdPago() {
+    public Integer getIdPago()
+    {
         return this.idPago;
     }
 
-    public void setIdPago(Integer idPago) {
+    public void setIdPago(Integer idPago)
+    {
         this.idPago = idPago;
     }
 
-    public DtoPresupuesto getPresupuesto() {
+    public DtoPresupuesto getPresupuesto()
+    {
         return this.presupuesto;
     }
 
-    public void setPresupuesto(DtoPresupuesto presupuestos) {
+    public void setPresupuesto(DtoPresupuesto presupuestos)
+    {
         this.presupuesto = presupuestos;
     }
 
-    public Float getMonto() {
+    public Float getMonto()
+    {
         return this.monto;
     }
 
-    public void setMonto(Float monto) {
+    public void setMonto(Float monto)
+    {
         this.monto = monto;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return this.fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

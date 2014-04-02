@@ -32,199 +32,246 @@ public class DtoDocumentoPresentado implements DtoValido
     private String quienEntrega;
     private boolean entregado;
 
-    public String getQuienEntrega() {
+    public String getQuienEntrega()
+    {
         return quienEntrega;
     }
 
-    public void setQuienEntrega(String quienEntrega) {
+    public void setQuienEntrega(String quienEntrega)
+    {
         this.quienEntrega = quienEntrega;
     }
 
-    public boolean isReingresado() {
+    public boolean isReingresado()
+    {
         return reingresado;
     }
 
-    public void setReingresado(boolean reingresado) {
+    public void setReingresado(boolean reingresado)
+    {
         this.reingresado = reingresado;
     }
-    
-    public boolean isEntregado() {
+
+    public boolean isEntregado()
+    {
         return entregado;
     }
 
-    public void setEntregado(boolean entregado) {
+    public void setEntregado(boolean entregado)
+    {
         this.entregado = entregado;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public DtoDocumentoPresentado() {
+    public DtoDocumentoPresentado()
+    {
     }
-/*
-    public DtoDocumentoPresentado(DtoTramite tramites, String nombre, Date fechaIngreso, boolean preparado, boolean vence, boolean liberado, boolean observado) {
-        this.fkTramite = tramites;
-        this.nombre = nombre;
-        this.fechaIngreso = fechaIngreso;
-        this.preparado = preparado;
-        this.vence = vence;
-        this.liberado = liberado;
-        this.observado = observado;
-    }
+    /*
+     * public DtoDocumentoPresentado(DtoTramite tramites, String nombre, Date fechaIngreso, boolean
+     * preparado, boolean vence, boolean liberado, boolean observado) {
+     * this.fkTramite = tramites;
+     * this.nombre = nombre;
+     * this.fechaIngreso = fechaIngreso;
+     * this.preparado = preparado;
+     * this.vence = vence;
+     * this.liberado = liberado;
+     * this.observado = observado;
+     * }
+     *
+     * public DtoDocumentoPresentado(DtoTramite tramites, String nombre, Integer numeroCarton, Date
+     * fechaIngreso, Date fechaSalida, boolean preparado, boolean vence, Date fechaVencimiento,
+     * Integer diasVencimiento, Float importeAPagar, Date fechaPago, boolean liberado, Date
+     * fechaLiberado, boolean observado, String observaciones) {
+     * this.fkTramite = tramites;
+     * this.nombre = nombre;
+     * this.numeroCarton = numeroCarton;
+     * this.fechaIngreso = fechaIngreso;
+     * this.fechaSalida = fechaSalida;
+     * this.preparado = preparado;
+     * this.vence = vence;
+     * this.fechaVencimiento = fechaVencimiento;
+     * this.diasVencimiento = diasVencimiento;
+     * this.importeAPagar = importeAPagar;
+     * this.fechaPago = fechaPago;
+     * this.liberado = liberado;
+     * this.fechaLiberado = fechaLiberado;
+     * this.observado = observado;
+     * this.observaciones = observaciones;
+     * }
+     */
 
-    public DtoDocumentoPresentado(DtoTramite tramites, String nombre, Integer numeroCarton, Date fechaIngreso, Date fechaSalida, boolean preparado, boolean vence, Date fechaVencimiento, Integer diasVencimiento, Float importeAPagar, Date fechaPago, boolean liberado, Date fechaLiberado, boolean observado, String observaciones) {
-        this.fkTramite = tramites;
-        this.nombre = nombre;
-        this.numeroCarton = numeroCarton;
-        this.fechaIngreso = fechaIngreso;
-        this.fechaSalida = fechaSalida;
-        this.preparado = preparado;
-        this.vence = vence;
-        this.fechaVencimiento = fechaVencimiento;
-        this.diasVencimiento = diasVencimiento;
-        this.importeAPagar = importeAPagar;
-        this.fechaPago = fechaPago;
-        this.liberado = liberado;
-        this.fechaLiberado = fechaLiberado;
-        this.observado = observado;
-        this.observaciones = observaciones;
-    }*/
-
-    public Integer getIdDocumentoPresentado() {
+    public Integer getIdDocumentoPresentado()
+    {
         return this.idDocumentoPresentado;
     }
 
-    public void setIdDocumentoPresentado(Integer idDocumentoPresentado) {
+    public void setIdDocumentoPresentado(Integer idDocumentoPresentado)
+    {
         this.idDocumentoPresentado = idDocumentoPresentado;
     }
 
-    public DtoTramite getFkTramite() {
+    public DtoTramite getFkTramite()
+    {
         return this.fkTramite;
     }
 
-    public void setFkTramite(DtoTramite tramites) {
+    public void setFkTramite(DtoTramite tramites)
+    {
         this.fkTramite = tramites;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public Integer getNumeroCarton() {
+    public Integer getNumeroCarton()
+    {
         return this.numeroCarton;
     }
 
-    public void setNumeroCarton(Integer numeroCarton) {
+    public void setNumeroCarton(Integer numeroCarton)
+    {
         this.numeroCarton = numeroCarton;
     }
 
-    public Date getFechaIngreso() {
+    public Date getFechaIngreso()
+    {
         return this.fechaIngreso;
     }
 
-    public void setFechaIngreso(Date fechaIngreso) {
+    public void setFechaIngreso(Date fechaIngreso)
+    {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public Date getFechaSalida() {
+    public Date getFechaSalida()
+    {
         return this.fechaSalida;
     }
 
-    public void setFechaSalida(Date fechaSalida) {
+    public void setFechaSalida(Date fechaSalida)
+    {
         this.fechaSalida = fechaSalida;
     }
 
-    public boolean isPreparado() {
+    public boolean isPreparado()
+    {
         return this.preparado;
     }
 
-    public void setPreparado(boolean preparado) {
+    public void setPreparado(boolean preparado)
+    {
         this.preparado = preparado;
     }
 
-    public boolean isVence() {
+    public boolean isVence()
+    {
         return this.vence;
     }
 
-    public void setVence(boolean vence) {
+    public void setVence(boolean vence)
+    {
         this.vence = vence;
     }
 
-    public Date getFechaVencimiento() {
+    public Date getFechaVencimiento()
+    {
         return this.fechaVencimiento;
     }
 
-    public void setFechaVencimiento(Date fechaVencimiento) {
+    public void setFechaVencimiento(Date fechaVencimiento)
+    {
         this.fechaVencimiento = fechaVencimiento;
     }
 
-    public Integer getDiasVencimiento() {
+    public Integer getDiasVencimiento()
+    {
         return this.diasVencimiento;
     }
 
-    public void setDiasVencimiento(Integer diasVencimiento) {
+    public void setDiasVencimiento(Integer diasVencimiento)
+    {
         this.diasVencimiento = diasVencimiento;
     }
 
-    public Float getImporteAPagar() {
+    public Float getImporteAPagar()
+    {
         return this.importeAPagar;
     }
 
-    public void setImporteApagar(Float importeAPagar) {
+    public void setImporteApagar(Float importeAPagar)
+    {
         this.importeAPagar = importeAPagar;
     }
 
-    public Date getFechaPago() {
+    public Date getFechaPago()
+    {
         return this.fechaPago;
     }
 
-    public void setFechaPago(Date fechaPago) {
+    public void setFechaPago(Date fechaPago)
+    {
         this.fechaPago = fechaPago;
     }
 
-    public boolean isLiberado() {
+    public boolean isLiberado()
+    {
         return this.liberado;
     }
 
-    public void setLiberado(boolean liberado) {
+    public void setLiberado(boolean liberado)
+    {
         this.liberado = liberado;
     }
 
-    public Date getFechaLiberado() {
+    public Date getFechaLiberado()
+    {
         return this.fechaLiberado;
     }
 
-    public void setFechaLiberado(Date fechaLiberado) {
+    public void setFechaLiberado(Date fechaLiberado)
+    {
         this.fechaLiberado = fechaLiberado;
     }
 
-    public boolean isObservado() {
+    public boolean isObservado()
+    {
         return this.observado;
     }
 
-    public void setObservado(boolean observado) {
+    public void setObservado(boolean observado)
+    {
         this.observado = observado;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: Implementar
         return true;
     }

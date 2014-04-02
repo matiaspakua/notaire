@@ -36,7 +36,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form AdministrarCliente
      */
-    public AdministrarCliente() {
+    public AdministrarCliente()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         //this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -46,19 +47,23 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
     }
 
-    public static JMenuItem getVentanaAdministrarCliente() {
+    public static JMenuItem getVentanaAdministrarCliente()
+    {
         return ventanaAdministrarCliente;
     }
 
-    public static void setVentanaAdministrarCliente(JMenuItem ventanaAdministrarCliente) {
+    public static void setVentanaAdministrarCliente(JMenuItem ventanaAdministrarCliente)
+    {
         AdministrarCliente.ventanaAdministrarCliente = ventanaAdministrarCliente;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public void cargarTipoFormulario(String boton) {
+    public void cargarTipoFormulario(String boton)
+    {
         switch (boton)
         {
             case ConstantesGui.MODIFICAR_PERSONA:
@@ -110,19 +115,18 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
      * @param dtoPersonaCliente
      * @param tipoBusqueda
      */
-    public Boolean cargarFormulario(DtoPersona dtoPersonaCliente, String tipoBusqueda) {
+    public Boolean cargarFormulario(DtoPersona dtoPersonaCliente, String tipoBusqueda)
+    {
 
         //Guarda el Dto de origen para control de modificacion de datos. 
         //impido que el numero y tipo de identificacion se repitan en una modificacion
-
         Boolean flag = false; // Se utiliza para saber si debe activarse el formulario
 
         dtoPersonaOriginal = dtoPersonaCliente;
 
         this.toFront();
         this.updateUI();
-        
-        
+
         switch (tipoBusqueda)
         {
             case ConstantesGui.MODIFICAR_PERSONA:
@@ -145,11 +149,11 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             case ConstantesGui.DAR_ALTA_CLIENTE:
             {
                 flag = this.cargarPersonaCliente(dtoPersonaCliente);
-                this.activarCamposCliente();    
+                this.activarCamposCliente();
                 this.botonModoEdicion();
                 this.abilitarFormulario();
                 this.campoNumeroNupcias.setEnabled(iconable);
-                
+
                 break;
 
             }
@@ -179,8 +183,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                     this.desabilitarFormulario(); //No puede editar
                     this.botonModoVista();
 
-                }
-                else
+                } else
                 {
                     flag = this.cargarCliente(dtoPersonaCliente);
 
@@ -200,15 +203,18 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             }
 
         }
-        /*   if (flag == true)
-         { //Si se concreto una de las opciones el formualrio se activa.
-         this.ActivarFormulario(tipoBusqueda);
-         }*/
+        /*
+         * if (flag == true)
+         * { //Si se concreto una de las opciones el formualrio se activa.
+         * this.ActivarFormulario(tipoBusqueda);
+         * }
+         */
         this.toFront();
         return flag;
     }
 
-    public boolean cargarPersona(DtoPersona dtoPersona) {
+    public boolean cargarPersona(DtoPersona dtoPersona)
+    {
 
         boolean flag = false;
 
@@ -224,7 +230,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarPersonaCliente(DtoPersona dtoPersona) {
+    public boolean cargarPersonaCliente(DtoPersona dtoPersona)
+    {
 
         boolean flag = false;
 
@@ -242,8 +249,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             comboTipoIdentificacion.setSelectedItem(dtoPersona.getDtoTipoIdentificacion().getNombre());
 
             flag = true;
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La Persona Esta Registrada Como Cliente");
             this.limpiarFormulario();
@@ -252,7 +258,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean modificarCliente(DtoPersona dtoPersona) {
+    public boolean modificarCliente(DtoPersona dtoPersona)
+    {
         boolean flag = false;
 
         //Si es cliente, lo cargo
@@ -277,8 +284,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoDomicilio.setText(dtoPersona.getDomicilio());
 
             flag = true;
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La Persona No Esta Registrada Como Cliente");
             this.limpiarFormulario();
@@ -287,7 +293,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarCliente(DtoPersona dtoPersona) {
+    public boolean cargarCliente(DtoPersona dtoPersona)
+    {
 
         boolean flag = false;
 
@@ -314,8 +321,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoDomicilio.setText(dtoPersona.getDomicilio());
 
             flag = true;
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La Persona No Esta Registrada Como Cliente");
             this.limpiarFormulario();
@@ -324,8 +330,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void ActivarFormulario(String tipoBusqueda) {
-
+    public void ActivarFormulario(String tipoBusqueda)
+    {
 
         switch (this.labelTitulo.getText())
         {
@@ -346,7 +352,6 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
             }
 
-
         }
     }
 
@@ -354,7 +359,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
      * Activa los campos de la persona, estos pueden ser editados el contenido se puede apreciar
      * claramente.
      */
-    public void activarCamposPersona() {
+    public void activarCamposPersona()
+    {
 
         comboTipoIdentificacion.setEnabled(true);
         campoNombre.setEnabled(true);
@@ -373,7 +379,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
      * Activa los campos del cliente, estos pueden ser editados el contenido se puede apreciar
      * claramente.
      */
-    public void activarCamposCliente() {
+    public void activarCamposCliente()
+    {
 
         //Activo los campos de persona
         activarCamposPersona();
@@ -396,7 +403,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Desactiva los campos del cliente
      */
-    public void desactivarFormulario() {
+    public void desactivarFormulario()
+    {
 
         campoNombre.setEnabled(false);
         campoApellido.setEnabled(false);
@@ -422,7 +430,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Pone los campos del formulario en estado no editable
      */
-    public void desabilitarFormulario() {
+    public void desabilitarFormulario()
+    {
 
         campoNombre.setEditable(false);
         campoApellido.setEditable(false);
@@ -433,7 +442,6 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
         //Quito el combo
         //layerpanelPersona.remove(comboTipoIdentificacion);
-
         campoNacionalidad.setEditable(false);
         campoFechaNacimiento.setEnabled(false);
         campoCuit.setEditable(false);
@@ -450,10 +458,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         campoDomicilio.setEditable(false);
         botonAceptar.setEnabled(false);
 
-
     }
 
-        public void abilitarFormulario() {
+    public void abilitarFormulario()
+    {
 
         campoNombre.setEditable(true);
         campoApellido.setEditable(true);
@@ -464,7 +472,6 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
         //Quito el combo
         //layerpanelPersona.remove(comboTipoIdentificacion);
-
         campoNacionalidad.setEditable(true);
         campoFechaNacimiento.setEnabled(true);
         campoCuit.setEditable(true);
@@ -481,10 +488,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         campoDomicilio.setEditable(true);
         botonAceptar.setEnabled(true);
 
-
     }
-        
-    private void modificarPersona() throws NonexistentJpaException {
+
+    private void modificarPersona() throws NonexistentJpaException
+    {
 
         try
         {
@@ -521,7 +528,6 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 dtoPersonaModificada.setEmail(campoEmail.getText());
                 dtoPersonaModificada.getDtoTipoIdentificacion().setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoPersonaModificada));
 
-
                 //Cotrol de modificacion por tipo y numero de identificacion, no puede repertirse 
                 Boolean flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoPersonaModificada);
 
@@ -534,16 +540,13 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                     this.limpiarFormulario();
                     this.desactivarFormulario();
 
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     campoNumeroIdentificacion.setText("");
                 }
 
-
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -567,7 +570,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         }
     }
 
-    private void modificarCliente() throws NonexistentJpaException {
+    private void modificarCliente() throws NonexistentJpaException
+    {
 
         try
         {
@@ -621,15 +625,13 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                     limpiarFormulario();
                     desactivarFormulario();
 
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     campoNumeroIdentificacion.setText("");
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
@@ -654,7 +656,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         campoNombre.setText("");
         campoApellido.setText("");
         campoEmail.setText("");
@@ -674,7 +677,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         this.advertencia.setText("");
     }
 
-    public void cargarComboTipoIdentificacion() {
+    public void cargarComboTipoIdentificacion()
+    {
         String nombre = null;
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<DtoTipoIdentificacion>();
         listaDtoIdentificaciones = miController.listarTiposIdentificacion();
@@ -687,10 +691,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         //Set como primer opcion el DNI
         comboTipoIdentificacion.setSelectedItem("D.N.I.");
 
-
     }
 
-    public static AdministrarCliente getInstancia() {
+    public static AdministrarCliente getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new AdministrarCliente();
@@ -699,7 +703,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public void darAltaCliente() throws NonexistentJpaException {
+    public void darAltaCliente() throws NonexistentJpaException
+    {
 
         /*
          * Controlo que todos los campos que no contemplan null, esten completos
@@ -738,8 +743,6 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             dtoCliente.setIdPersona(dtoPersonaOriginal.getIdPersona());
             dtoCliente.setVersion(dtoPersonaOriginal.getVersion());
 
-
-
             //Controlo si la persona se modifico
             Boolean flag = true;
             flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoCliente);
@@ -765,8 +768,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                         Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                         this.salir();
                     }
-                }
-                else
+                } else
                 {
                     dtoCliente = miController.darAltaPersona(dtoCliente);
                 }
@@ -776,60 +778,63 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                     JOptionPane.showMessageDialog(this, "Fue dado de alta como Cliente: " + dtoCliente.getNombre() + " " + dtoCliente.getApellido(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
                     this.desactivarFormulario();
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "La persona No pudo darse de alta como Cliente", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La persona ya Esta Registrada como cliente", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 this.limpiarFormulario();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
 
-
     }
 
-    public void botonModoVista() {
+    public void botonModoVista()
+    {
         this.botonCancelar.setText("Cerrar");
         this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png")));
     }
 
-    public void botonModoEdicion() {
+    public void botonModoEdicion()
+    {
         this.botonCancelar.setText("Cancelar");
         this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
     }
 
     //Es publico porque dependiendo el tipo de utilizacion del formulario es como se carga
     //la ventana activa
-    public JMenuItem getVentanaActiva() {
+    public JMenuItem getVentanaActiva()
+    {
         this.ventanaAdministrarCliente.setText(labelTitulo.getText());
         this.setTitle(labelTitulo.getText());
         return ventanaAdministrarCliente;
     }
 
-    public void setTamanioModificarPersona() {
+    public void setTamanioModificarPersona()
+    {
         this.setSize(649, 366);
         this.panelDatosPersona.setSize(306, 184);
     }
 
-    public void setTamanioCliente() {
+    public void setTamanioCliente()
+    {
         this.setSize(649, 650);
         this.panelDatosPersona.setSize(306, 184);
     }
 
-    public DtoPersona getDtoControlModificacion() {
+    public DtoPersona getDtoControlModificacion()
+    {
         return dtoPersonaOriginal;
     }
 
-    public void setDtoControlModificacion(DtoPersona dtoControlModificacion) {
+    public void setDtoControlModificacion(DtoPersona dtoControlModificacion)
+    {
         this.dtoPersonaOriginal = dtoControlModificacion;
     }
 
@@ -1272,8 +1277,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         if (!flag)
         {
             this.advertencia.setText("Esta Ingresando Caracteres");
-        }
-        else
+        } else
         {
             this.advertencia.setText(" ");
         }
@@ -1290,8 +1294,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 || comboEstadoCivil.getSelectedItem().toString().equals("Viudo/a"))
         {
             campoNumeroNupcias.setEnabled(true);
-        }
-        else
+        } else
         {
             Integer num = new Integer(0);
             campoNumeroNupcias.setValue(num);

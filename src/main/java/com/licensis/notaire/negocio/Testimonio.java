@@ -10,7 +10,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,13 +37,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "testimonios")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Testimonio.findAll", query = "SELECT t FROM Testimonio t"),
-    @NamedQuery(name = "Testimonio.findByIdTestimonio", query = "SELECT t FROM Testimonio t WHERE t.idTestimonio = :idTestimonio"),
-    @NamedQuery(name = "Testimonio.findByNumero", query = "SELECT t FROM Testimonio t WHERE t.numero = :numero"),
-    @NamedQuery(name = "Testimonio.findByEscritura", query = "SELECT t FROM Testimonio t WHERE t.fkIdEscritura.idEscritura = :idEscritura"),
-    @NamedQuery(name = "Testimonio.findByObservado", query = "SELECT t FROM Testimonio t WHERE t.observado = :observado")
-})
+        {
+            @NamedQuery(name = "Testimonio.findAll", query = "SELECT t FROM Testimonio t"),
+            @NamedQuery(name = "Testimonio.findByIdTestimonio", query = "SELECT t FROM Testimonio t WHERE t.idTestimonio = :idTestimonio"),
+            @NamedQuery(name = "Testimonio.findByNumero", query = "SELECT t FROM Testimonio t WHERE t.numero = :numero"),
+            @NamedQuery(name = "Testimonio.findByEscritura", query = "SELECT t FROM Testimonio t WHERE t.fkIdEscritura.idEscritura = :idEscritura"),
+            @NamedQuery(name = "Testimonio.findByObservado", query = "SELECT t FROM Testimonio t WHERE t.observado = :observado")
+        })
 public class Testimonio implements Serializable
 {
 
@@ -59,78 +74,96 @@ public class Testimonio implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimonio", fetch = FetchType.LAZY)
     private List<Copia> copiaList = new ArrayList<>();
 
-    public Testimonio() {
+    public Testimonio()
+    {
     }
 
-    public Testimonio(Integer idTestimonio) {
+    public Testimonio(Integer idTestimonio)
+    {
         this.idTestimonio = idTestimonio;
     }
 
-    public Testimonio(Integer idTestimonio, int numero, boolean observado) {
+    public Testimonio(Integer idTestimonio, int numero, boolean observado)
+    {
         this.idTestimonio = idTestimonio;
         this.numero = numero;
         this.observado = observado;
     }
 
-    public Integer getIdTestimonio() {
+    public Integer getIdTestimonio()
+    {
         return idTestimonio;
     }
 
-    public void setIdTestimonio(Integer idTestimonio) {
+    public void setIdTestimonio(Integer idTestimonio)
+    {
         this.idTestimonio = idTestimonio;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public boolean getObservado() {
+    public boolean getObservado()
+    {
         return observado;
     }
 
-    public void setObservado(boolean observado) {
+    public void setObservado(boolean observado)
+    {
         this.observado = observado;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<MovimientoTestimonio> getMovimientoTestimonioList() {
+    public List<MovimientoTestimonio> getMovimientoTestimonioList()
+    {
         return movimientoTestimonioList;
     }
 
-    public void setMovimientoTestimonioList(List<MovimientoTestimonio> movimientoTestimonioList) {
+    public void setMovimientoTestimonioList(List<MovimientoTestimonio> movimientoTestimonioList)
+    {
         this.movimientoTestimonioList = movimientoTestimonioList;
     }
 
-    public Escritura getFkIdEscritura() {
+    public Escritura getFkIdEscritura()
+    {
         return fkIdEscritura;
     }
 
-    public void setFkIdEscritura(Escritura fkIdEscritura) {
+    public void setFkIdEscritura(Escritura fkIdEscritura)
+    {
         this.fkIdEscritura = fkIdEscritura;
     }
 
     @XmlTransient
-    public List<Copia> getCopiaList() {
+    public List<Copia> getCopiaList()
+    {
         return copiaList;
     }
 
-    public void setCopiaList(List<Copia> copiaList) {
+    public void setCopiaList(List<Copia> copiaList)
+    {
         this.copiaList = copiaList;
     }
 
-    public void setAtributos(DtoTestimonio miDto) {
+    public void setAtributos(DtoTestimonio miDto)
+    {
 
         if (miDto.getIdTestimonio() != null)
         {
@@ -164,7 +197,8 @@ public class Testimonio implements Serializable
         }
     }
 
-    public DtoTestimonio getDto() {
+    public DtoTestimonio getDto()
+    {
         DtoTestimonio miDto = new DtoTestimonio();
 
         miDto.setIdTestimonio(idTestimonio);
@@ -196,14 +230,16 @@ public class Testimonio implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idTestimonio != null ? idTestimonio.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Testimonio))
         {
@@ -218,17 +254,20 @@ public class Testimonio implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Testimonio[ idTestimonio=" + idTestimonio + " ]"
-                 + "[ numero=" + numero + " ]"
-                 + "[ idEscritura=" + fkIdEscritura.getIdEscritura() + " ]";
+                + "[ numero=" + numero + " ]"
+                + "[ idEscritura=" + fkIdEscritura.getIdEscritura() + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

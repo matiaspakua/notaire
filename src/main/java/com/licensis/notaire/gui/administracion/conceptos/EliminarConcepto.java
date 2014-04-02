@@ -18,7 +18,6 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
@@ -37,18 +36,21 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
     /**
      * Creates new form EliminarConcepto
      */
-    public EliminarConcepto() {
+    public EliminarConcepto()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
         this.cargarListaConceptos();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaEliminarConceptos() {
+    public static JMenuItem getVentanaEliminarConceptos()
+    {
         return ventanaEliminarConceptos;
     }
 
@@ -253,8 +255,7 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
                         {
                             JOptionPane.showMessageDialog(this, "Se ha eliminado un concepto correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                             this.cargarListaConceptos();
-                        }
-                        else
+                        } else
                         {
                         }
 
@@ -289,12 +290,10 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
                 }
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Concepto", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
@@ -344,8 +343,7 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
                         if (dtoConcepto.isFijo())
                         {
                             checkBoxFijo.setSelected(true);
-                        }
-                        else
+                        } else
                         {
                             checkBoxFijo.setSelected(false);
                         }
@@ -355,7 +353,8 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
         }
     }//GEN-LAST:event_botonSeleccionarActionPerformed
 
-    private void cargarListaConceptos() {
+    private void cargarListaConceptos()
+    {
         //  obtengo la lista de conceptos disponibles.
         miListaConceptos = null;
         dtoConceptoSeleccionado = null;
@@ -382,8 +381,7 @@ public class EliminarConcepto extends javax.swing.JInternalFrame
 
             this.listaConceptosDisponibles.setModel(lista);
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Conceptos para eliminar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             salir();

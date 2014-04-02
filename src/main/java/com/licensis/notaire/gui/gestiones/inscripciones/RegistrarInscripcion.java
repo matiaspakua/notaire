@@ -9,6 +9,11 @@ import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -17,11 +22,6 @@ import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -40,21 +40,25 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarInscripcion
      */
-    public RegistrarInscripcion() {
+    public RegistrarInscripcion()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRegistrarInscripcion() {
+    public static JMenuItem getVentanaRegistrarInscripcion()
+    {
         return ventanaRegistrarInscripcion;
     }
 
     @SuppressWarnings("unchecked")
-    public Boolean cargarFormulario(DtoEscritura dtoEscritura) {
+    public Boolean cargarFormulario(DtoEscritura dtoEscritura)
+    {
         Boolean cargardo = true;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -76,8 +80,7 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame
                     {
                         JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra inscripta <BR>con fecha: " + movimientos.get(movimientos.size() - 1).getFechaInscripcion().toString() + " <BR>y matricula: " + escrituraSeleccionada.getMatriculaInscripcion() + "</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                         cargardo = false;
-                    }
-                    else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
+                    } else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
                     {
                         cargardo = true;
 
@@ -106,20 +109,17 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame
                         campoNumeroCarton.setText(new Integer(movimientos.get(movimientos.size() - 1).getNumeroCarton()).toString());
                         campoFechaIngreso.setText(formatter.format(movimientos.get(movimientos.size() - 1).getFechaIngreso()).toString());
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios ingresados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargardo = false;
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios generados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 cargardo = false;
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada: La escritura no existe.", "Error", JOptionPane.ERROR_MESSAGE);
             this.salir();
@@ -458,13 +458,10 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame
                 JOptionPane.showMessageDialog(this, "El Testimonio ha sido recientemente modificado por otro usuario.", "ERROR", JOptionPane.ERROR_MESSAGE);
                 salir();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe completar todos los campos necesarios.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
-
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 

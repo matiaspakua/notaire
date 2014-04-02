@@ -18,16 +18,19 @@ public class DtoItem implements DtoValido
     private Integer version = 0;
     private Boolean conceptoFijo = false;
 
-    public DtoItem() {
+    public DtoItem()
+    {
     }
 
-    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor) {
+    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor)
+    {
         this.presupuestos = presupuestos;
         this.nombre = nombre;
         this.valor = valor;
     }
 
-    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor, Integer porcentaje, String observaciones) {
+    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor, Integer porcentaje, String observaciones)
+    {
         this.presupuestos = presupuestos;
         this.nombre = nombre;
         this.valor = valor;
@@ -35,72 +38,89 @@ public class DtoItem implements DtoValido
         this.observaciones = observaciones;
     }
 
-    public Boolean isFijo() {
+    public Boolean isFijo()
+    {
         return conceptoFijo;
     }
 
-    public void setConceptoFijo(Boolean conceptoFijo) {
+    public void setConceptoFijo(Boolean conceptoFijo)
+    {
         this.conceptoFijo = conceptoFijo;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
-    public Integer getIdItem() {
+    public Integer getIdItem()
+    {
         return this.idItem;
     }
 
-    public void setIdItem(Integer idItem) {
+    public void setIdItem(Integer idItem)
+    {
         this.idItem = idItem;
     }
 
-    public DtoPresupuesto getPresupuestos() {
+    public DtoPresupuesto getPresupuestos()
+    {
         return this.presupuestos;
     }
 
-    public void setPresupuestos(DtoPresupuesto presupuestos) {
+    public void setPresupuestos(DtoPresupuesto presupuestos)
+    {
         this.presupuestos = presupuestos;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return this.nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public Float getValor() {
+    public Float getValor()
+    {
         return this.valor;
     }
 
-    public void setValor(Float valor) {
+    public void setValor(Float valor)
+    {
         this.valor = valor;
     }
 
-    public Integer getPorcentaje() {
+    public Integer getPorcentaje()
+    {
         return this.porcentaje;
     }
 
-    public void setPorcentaje(Integer porcentaje) {
+    public void setPorcentaje(Integer porcentaje)
+    {
         this.porcentaje = porcentaje;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

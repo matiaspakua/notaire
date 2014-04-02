@@ -9,6 +9,8 @@ import com.licensis.notaire.dto.DtoPresupuesto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.gestion.IniciarGestion;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,8 +18,6 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -35,51 +35,62 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
     /**
      * Creates new form ListaPresupuestosClientesSinGestion
      */
-    public ListaPresupuestosClientesSinGestion() {
+    public ListaPresupuestosClientesSinGestion()
+    {
         initComponents();
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
     }
 
-    public static JMenuItem getVentanaListaPresupuestoClienteSinGestion() {
+    public static JMenuItem getVentanaListaPresupuestoClienteSinGestion()
+    {
         return ventanaListaPresupuestoClienteSinGestion;
     }
 
-    public static void setVentanaListaPresupuestoClienteSinGestion(JMenuItem ventanaListaPresupuestoClienteSinGestion) {
+    public static void setVentanaListaPresupuestoClienteSinGestion(JMenuItem ventanaListaPresupuestoClienteSinGestion)
+    {
         ListaPresupuestosClientesSinGestion.ventanaListaPresupuestoClienteSinGestion = ventanaListaPresupuestoClienteSinGestion;
     }
 
-    public String getFormularioInvocador() {
+    public String getFormularioInvocador()
+    {
         return formularioInvocador;
     }
 
-    public void setFormularioInvocador(String formularioInvocador) {
+    public void setFormularioInvocador(String formularioInvocador)
+    {
         this.formularioInvocador = formularioInvocador;
     }
 
-    public DtoPersona getClienteSeleccionado() {
+    public DtoPersona getClienteSeleccionado()
+    {
         return clienteSeleccionado;
     }
 
-    public void setClienteSeleccionado(DtoPersona clienteSeleccionado) {
+    public void setClienteSeleccionado(DtoPersona clienteSeleccionado)
+    {
         this.clienteSeleccionado = clienteSeleccionado;
         this.cargarPresupuestosCliente();
 
     }
 
-    public List<DtoPresupuesto> getListaPresupuestosCargados() {
+    public List<DtoPresupuesto> getListaPresupuestosCargados()
+    {
         return listaPresupuestosCargados;
     }
 
-    public void setListaPresupuestosCargados(List<DtoPresupuesto> listaPresupuestosSeleccionados) {
+    public void setListaPresupuestosCargados(List<DtoPresupuesto> listaPresupuestosSeleccionados)
+    {
         this.listaPresupuestosCargados = listaPresupuestosSeleccionados;
     }
 
-    public void salir() {
+    public void salir()
+    {
         this.dispose();
     }
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaPresupuesto.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaPresupuesto.getModel()).getRowCount() > 0)
@@ -89,7 +100,8 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
         }
     }
 
-    public void cargarPresupuestosCliente() {
+    public void cargarPresupuestosCliente()
+    {
 
         if (this.getClienteSeleccionado() != null)
         {
@@ -97,7 +109,6 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
             {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 this.setListaPresupuestosCargados(miController.buscarPresupuestosPersona(this.getClienteSeleccionado()));
-
 
                 if ((this.getListaPresupuestosCargados() != null) && (!this.getListaPresupuestosCargados().isEmpty()))
                 {
@@ -120,8 +131,7 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
                         ((DefaultTableModel) grillaPresupuesto.getModel()).addRow(datos);
 
                     }
-                }
-                else
+                } else
                 {
 
                     JOptionPane.showMessageDialog(this, "No existen presupuestos asociados a la persona indicada.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -135,7 +145,8 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
         }
     }
 
-    public List<DtoPresupuesto> obtenerListaPresupuestosSeleccionados() {
+    public List<DtoPresupuesto> obtenerListaPresupuestosSeleccionados()
+    {
         DefaultTableModel miGrilla = (DefaultTableModel) grillaPresupuesto.getModel();
         List<DtoPresupuesto> listaDtoPresupuestosSeleccionados = new ArrayList<>();
         int i = 0;
@@ -306,15 +317,13 @@ public class ListaPresupuestosClientesSinGestion extends javax.swing.JInternalFr
                 {
                     JOptionPane.showMessageDialog(this, "El presupuesto: " + dtoPresupuesto.getIdPresupuesto() + ", ya se encuentra asociado a una gestion.", "Error", JOptionPane.ERROR_MESSAGE);
                     break;
-                }
-                else
+                } else
                 {
                     miForm.setPresupuestoSeleccionado(dtoPresupuesto);
                 }
             }
             miForm.cargarGrillaTramitesPresupuesto();
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ningun presupuesto", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

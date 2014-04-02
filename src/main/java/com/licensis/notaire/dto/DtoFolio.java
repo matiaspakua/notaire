@@ -4,7 +4,6 @@ package com.licensis.notaire.dto;
 import com.licensis.notaire.dto.interfaces.DtoValido;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import com.licensis.notaire.jpa.ConstantesPersistencia;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 
@@ -25,11 +24,13 @@ public class DtoFolio implements DtoValido
     private List<DtoCopia> copias = new ArrayList<>();
     private Integer version;
 
-    public DtoFolio() {
+    public DtoFolio()
+    {
         this.version = ConstantesPersistencia.VERSION_INICIAL;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoPersona personas, int numero, int anio, String estado) {
+    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoPersona personas, int numero, int anio, String estado)
+    {
         this.tiposDeFolio = tiposDeFolio;
         this.personaEscribano = personas;
         this.numero = numero;
@@ -37,7 +38,8 @@ public class DtoFolio implements DtoValido
         this.estado = estado;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoEscritura escrituras, DtoPersona personas, int numero, int anio, String estado, String observaciones, List<DtoCopia> copias) {
+    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoEscritura escrituras, DtoPersona personas, int numero, int anio, String estado, String observaciones, List<DtoCopia> copias)
+    {
         this.tiposDeFolio = tiposDeFolio;
         this.escritura = escrituras;
         this.personaEscribano = personas;
@@ -48,88 +50,109 @@ public class DtoFolio implements DtoValido
         this.copias = copias;
     }
 
-    public Integer getIdFolio() {
+    public Integer getIdFolio()
+    {
         return this.idFolio;
     }
 
-    public void setIdFolio(Integer idFolio) {
+    public void setIdFolio(Integer idFolio)
+    {
         this.idFolio = idFolio;
     }
 
-    public DtoTipoDeFolio getTiposDeFolio() {
+    public DtoTipoDeFolio getTiposDeFolio()
+    {
         return this.tiposDeFolio;
     }
 
-    public void setTiposDeFolio(DtoTipoDeFolio tiposDeFolio) {
+    public void setTiposDeFolio(DtoTipoDeFolio tiposDeFolio)
+    {
         this.tiposDeFolio = tiposDeFolio;
     }
 
-    public DtoEscritura getEscritura() {
+    public DtoEscritura getEscritura()
+    {
         return this.escritura;
     }
 
-    public void setEscritura(DtoEscritura escrituras) {
+    public void setEscritura(DtoEscritura escrituras)
+    {
         this.escritura = escrituras;
     }
 
-    public DtoPersona getPersonaEscribano() {
+    public DtoPersona getPersonaEscribano()
+    {
         return this.personaEscribano;
     }
 
-    public void setPersonaEscribano(DtoPersona personaEscribano) {
+    public void setPersonaEscribano(DtoPersona personaEscribano)
+    {
         this.personaEscribano = personaEscribano;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return this.numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public int getAnio() {
+    public int getAnio()
+    {
         return this.anio;
     }
 
-    public void setAnio(int anio) {
+    public void setAnio(int anio)
+    {
         this.anio = anio;
     }
 
-    public String getEstado() {
+    public String getEstado()
+    {
         return this.estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(String estado)
+    {
         this.estado = estado;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoCopia> getCopias() {
+    public List<DtoCopia> getCopias()
+    {
         return this.copias;
     }
 
-    public void setCopias(List<DtoCopia> copias) {
+    public void setCopias(List<DtoCopia> copias)
+    {
         this.copias = copias;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Integer version)
+    {
         this.version = version;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         boolean resultado = true;
 
         if (!AdministradorValidaciones.getInstancia().validarNumero(this.getNumero()))

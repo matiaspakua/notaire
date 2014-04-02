@@ -30,41 +30,42 @@ public class Login extends javax.swing.JFrame
     private JPanel panel;
     private Task task;
     private static final long serialVersionUID = 1L;
-    private Principal formPrincipal = null;   
+    private Principal formPrincipal = null;
     protected static Log log = LogFactory.getLog(Login.class);
-    
+
     /**
      * Creates new form login
      */
-    public Login() {
-        
-        log.debug("Iniciando el sistema!");        
-        initComponents();        
-                       
+    public Login()
+    {
+
+        log.debug("Iniciando el sistema!");
+        initComponents();
+
         AdministradorJpa.getInstancia();
         grupo.setBorder(BorderFactory.createTitledBorder("Login"));
 
-           
         this.centrarFormulario();
-        
+
         this.setMinimumSize(new Dimension(400, 450));
         this.setMaximumSize(new Dimension(400, 450));
 
 //        barraProgreso.cerraBarraProgreso();
-
         //Permite activar los botones en los formularios, para ser 
         //navegados con tab
         ActivarBotonformulario listener = ActivarBotonformulario.install();
 
         this.getRootPane().setDefaultButton(botonAceptar);
-     
+
     }
 
-    private void centrarFormulario() {
+    private void centrarFormulario()
+    {
         this.setLocationRelativeTo(null);
     }
 
-    private void salir() {
+    private void salir()
+    {
         //this.dispose();
         log.debug("Cerrando la aplicación");
         System.exit(0);
@@ -230,20 +231,17 @@ public class Login extends javax.swing.JFrame
             {
                 formPrincipal = Principal.getInstancia();
                 formPrincipal.setVisible(true);
-                salir();
+                this.dispose();
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "El usuario indicado no es valido!", "Error de Login", JOptionPane.ERROR_MESSAGE);
 
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los datos ingresados no es valido", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
@@ -274,7 +272,8 @@ public class Login extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         /*
          * Set the Nimbus look and feel
          */
@@ -318,13 +317,15 @@ public class Login extends javax.swing.JFrame
          */
         java.awt.EventQueue.invokeLater(new Runnable()
         {
-            public void run() {
+            public void run()
+            {
                 new Login().setVisible(true);
             }
         });
     }
 
-    public DtoUsuario validarLoginGui(DtoUsuario dtoUsuario) {
+    public DtoUsuario validarLoginGui(DtoUsuario dtoUsuario)
+    {
 
         dtoUsuario.setNombre(campoUsuario.getText());
         dtoUsuario.setContrasenia(campoContrasenia.getText());
@@ -351,7 +352,8 @@ public class Login extends javax.swing.JFrame
          */
 
         @Override
-        public Void doInBackground() {
+        public Void doInBackground()
+        {
 
             int progress = 0;
             //Initialize progress property.
@@ -377,7 +379,8 @@ public class Login extends javax.swing.JFrame
          * Executed in event dispatching thread
          */
         @Override
-        public void done() {
+        public void done()
+        {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

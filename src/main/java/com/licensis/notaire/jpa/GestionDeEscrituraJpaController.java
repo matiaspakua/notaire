@@ -6,14 +6,12 @@ package com.licensis.notaire.jpa;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.transaction.UserTransaction;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -31,14 +29,16 @@ import org.hibernate.StaleObjectStateException;
 public class GestionDeEscrituraJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public GestionDeEscrituraJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public GestionDeEscrituraJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
@@ -49,7 +49,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
      * @return oidGestionEscritura El id de la nueva gestion de escritura, -1 si ocurrio algun
      * error.
      */
-    public Integer create(GestionDeEscritura unaGestionDeEscritura) {
+    public Integer create(GestionDeEscritura unaGestionDeEscritura)
+    {
         Integer oidGestionEscritura = new Integer(-1);
         if (unaGestionDeEscritura.getHistorialList() == null)
         {
@@ -136,7 +137,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
      * @throws NonexistentEntityException
      * @throws Exception
      */
-    public Boolean edit(GestionDeEscritura gestionParaModificar) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException {
+    public Boolean edit(GestionDeEscritura gestionParaModificar) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
+    {
         Boolean modificado = Boolean.FALSE;
 
         int version;
@@ -158,7 +160,6 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
                 {
                     throw new ClassModifiedException();
                 }
-
 
                 em.getTransaction().begin();
                 GestionDeEscritura persistentGestionDeEscritura = em.find(GestionDeEscritura.class, gestionParaModificar.getIdGestion());
@@ -273,7 +274,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      */
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -327,15 +329,18 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         }
     }
 
-    public List<GestionDeEscritura> findGestionDeEscrituraEntities() {
+    public List<GestionDeEscritura> findGestionDeEscrituraEntities()
+    {
         return findGestionDeEscrituraEntities(true, -1, -1);
     }
 
-    public List<GestionDeEscritura> findGestionDeEscrituraEntities(int maxResults, int firstResult) {
+    public List<GestionDeEscritura> findGestionDeEscrituraEntities(int maxResults, int firstResult)
+    {
         return findGestionDeEscrituraEntities(false, maxResults, firstResult);
     }
 
-    private List<GestionDeEscritura> findGestionDeEscrituraEntities(boolean all, int maxResults, int firstResult) {
+    private List<GestionDeEscritura> findGestionDeEscrituraEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -353,7 +358,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         }
     }
 
-    public GestionDeEscritura findGestionDeEscritura(Integer id) {
+    public GestionDeEscritura findGestionDeEscritura(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -371,8 +377,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
      * @param numeroGestionDeEscritura
      * @return
      */
-    public GestionDeEscritura findGestionDeEscrituraPorNumero(Integer numeroGestionDeEscritura) {
-
+    public GestionDeEscritura findGestionDeEscrituraPorNumero(Integer numeroGestionDeEscritura)
+    {
 
         EntityManager em = getEntityManager();
 
@@ -391,9 +397,9 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         gestionVacia.setNumero(ConstantesPersistencia.VERSION_INICIAL);
         return gestionVacia;
     }
-    
-        public GestionDeEscritura findGestionDeEscrituraPorId(Integer idGestion) {
 
+    public GestionDeEscritura findGestionDeEscrituraPorId(Integer idGestion)
+    {
 
         EntityManager em = getEntityManager();
 
@@ -413,7 +419,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         return gestionVacia;
     }
 
-    public int getGestionDeEscrituraCount() {
+    public int getGestionDeEscrituraCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -426,7 +433,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         }
     }
 
-    public int obtenerUltimoNumeroGestion() {
+    public int obtenerUltimoNumeroGestion()
+    {
         EntityManager em = getEntityManager();
         int resultado = 0;
         try
@@ -446,7 +454,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         }
     }
 
-    public List<GestionDeEscritura> findGestionesDeEscritura() {
+    public List<GestionDeEscritura> findGestionesDeEscritura()
+    {
         EntityManager em = getEntityManager();
 
         List<GestionDeEscritura> listaGestiones = null;
@@ -457,7 +466,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         return listaGestiones;
     }
 
-    public boolean archivarGestiones(GestionDeEscritura pGestioneDeEscrituras) throws ClassModifiedException {
+    public boolean archivarGestiones(GestionDeEscritura pGestioneDeEscrituras) throws ClassModifiedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
@@ -476,8 +486,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
             {
                 throw new ClassModifiedException("La gestion indicada ha sido modificada por otro usuario");
 
-            }
-            else
+            } else
             {
                 try
                 {
@@ -497,8 +506,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
                     System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
                 }
             }
-        }
-        else
+        } else
         {
             throw new StaleObjectStateException(null, version);
         }
@@ -507,11 +515,13 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
 
     /**
      * Permite modificar una gestion de escritura.
+     *
      * @param gestionParaModificar
      * @return
-     * @throws ClassModifiedException 
+     * @throws ClassModifiedException
      */
-    public boolean modificarGestionDeEscritura(GestionDeEscritura gestionParaModificar) throws ClassModifiedException {
+    public boolean modificarGestionDeEscritura(GestionDeEscritura gestionParaModificar) throws ClassModifiedException
+    {
         boolean resultado = false;
 
         int version;
@@ -541,7 +551,6 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
                 persistentGestion.setFkIdEstadoDeGestion(gestionParaModificar.getFkIdEstadoDeGestion());
                 //persistentGestion.setHistorialList(gestionParaModificar.getHistorialList());
 
-
                 em.getTransaction().commit();
                 resultado = true;
             }
@@ -559,11 +568,13 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
 
     /**
      * permite modifica el "estado" de una gestion de escritura.
+     *
      * @param gestionParaModificar
      * @return
-     * @throws ClassModifiedException 
+     * @throws ClassModifiedException
      */
-    public boolean modificarEstadoDeGestionDeEscritura(GestionDeEscritura gestionParaModificar) throws ClassModifiedException {
+    public boolean modificarEstadoDeGestionDeEscritura(GestionDeEscritura gestionParaModificar) throws ClassModifiedException
+    {
         boolean resultado = false;
 
         int version;
@@ -606,7 +617,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

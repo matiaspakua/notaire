@@ -7,6 +7,12 @@ package com.licensis.notaire.gui.administracion.usuarios;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,12 +20,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -37,7 +37,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarUsuario
      */
-    public ModificarUsuario() {
+    public ModificarUsuario()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -51,7 +52,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         grillaUsuarioDisponibles.getColumnModel().getColumn(6).setMinWidth(0);
     }
 
-    public static ModificarUsuario getInstancia() {
+    public static ModificarUsuario getInstancia()
+    {
 
         if (instancia == null)
         {
@@ -60,23 +62,28 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public DtoUsuario getDtoUsuarioModificado() {
+    public DtoUsuario getDtoUsuarioModificado()
+    {
         return dtoUsuarioModificado;
     }
 
-    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado) {
+    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado)
+    {
         this.dtoUsuarioModificado = dtoUsuarioModificado;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarUsuario() {
+    public static JMenuItem getVentanaModificarUsuario()
+    {
         return ventanaModificarUsuario;
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         limpiarJtable();
         campoNuevoNombreUsuario.setText("");
         campoNuevaContrasenia.setText("");
@@ -85,7 +92,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         comboTipoDeUsuario.setSelectedItem("Recepcionista");
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
 
         int i = ((DefaultTableModel) grillaUsuarioDisponibles.getModel()).getRowCount() - 1;
 
@@ -97,7 +105,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
 
     }
 
-    public void desabilitarFormulario() {
+    public void desabilitarFormulario()
+    {
 
         campoNuevoNombreUsuario.setEnabled(false);
         campoNuevaContrasenia.setEnabled(false);
@@ -108,7 +117,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         botonGuardar.setEnabled(false);
     }
 
-    public void habilitarFormulario() {
+    public void habilitarFormulario()
+    {
         campoNuevoNombreUsuario.setEnabled(true);
         campoNuevaContrasenia.setEnabled(true);
         campoRepetirNuevaContrasenia.setEnabled(true);
@@ -118,7 +128,8 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         botonGuardar.setEnabled(true);
     }
 
-    public void cargarUsuariosDisponibles() throws NonexistentJpaException {
+    public void cargarUsuariosDisponibles() throws NonexistentJpaException
+    {
         ArrayList<DtoUsuario> miListaUsuarios = null;
 
         miListaUsuarios = miController.buscarUsuariosDisponibles();
@@ -147,18 +158,19 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                 ((DefaultTableModel) grillaUsuarioDisponibles.getModel()).addRow(datos);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Usuarios Registrados");
         }
 
     }
 
-    public void ocultarColumnasJtable() {
+    public void ocultarColumnasJtable()
+    {
     }
 
-    public void cargarVistaUsuario(DtoUsuario dtoUsuario) {
+    public void cargarVistaUsuario(DtoUsuario dtoUsuario)
+    {
         campoNuevoNombreUsuario.setText(dtoUsuario.getNombre());
         campoNuevaContrasenia.setText(dtoUsuario.getContrasenia());
         campoRepetirNuevaContrasenia.setText(dtoUsuario.getContrasenia());
@@ -472,13 +484,11 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                                 this.salir();
                             }
 
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "Error! - El nombre de Usuario Existe", "Advertencia", JOptionPane.WARNING_MESSAGE);
 
                         }
-
 
                     }
                     catch (ClassEliminatedException ex)
@@ -495,7 +505,6 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
 
                     //Limpio formulario y recargo la grilla con datos consistentes
-
                     this.limpiarFormulario();
                     try
                     {
@@ -511,12 +520,10 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     return;
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj);
         }
-
 
     }//GEN-LAST:event_botonGuardarActionPerformed
 
@@ -556,8 +563,7 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     cargarVistaUsuario(dtoUsuarioModificado);
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Usuario");
         }
@@ -572,8 +578,7 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         {
             this.labelAdvertencia.setText("Maximo 10(diez) Caracteres");
             this.campoNuevoNombreUsuario.setText(campo.substring(0, 10));
-        }
-        else
+        } else
         {
             this.labelAdvertencia.setText("");
         }

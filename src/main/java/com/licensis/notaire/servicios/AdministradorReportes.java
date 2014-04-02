@@ -48,10 +48,12 @@ public class AdministradorReportes
     /**
      * Constructor privado para AdministradorReportes.
      */
-    private AdministradorReportes() {
+    private AdministradorReportes()
+    {
     }
 
-    public static AdministradorReportes getInstancia() {
+    public static AdministradorReportes getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new AdministradorReportes();
@@ -61,8 +63,7 @@ public class AdministradorReportes
             if (os.contains("Linux"))
             {
                 AdministradorReportes.setPATH(LINUX_PATH);
-            }
-            else
+            } else
             {
                 AdministradorReportes.setPATH(WINDOWS_PATH);
             }
@@ -70,59 +71,73 @@ public class AdministradorReportes
         return instancia;
     }
 
-    public static String getPATH() {
+    public static String getPATH()
+    {
         return PATH;
     }
 
-    public static void setPATH(String PATH) {
+    public static void setPATH(String PATH)
+    {
         AdministradorReportes.PATH = PATH;
     }
 
-    public String getRUTA_REPORTE_PRESUPUESTO() {
+    public String getRUTA_REPORTE_PRESUPUESTO()
+    {
         return PATH + RUTA_REPORTE_PRESUPUESTO;
     }
 
-    public void setRUTA_REPORTE_PRESUPUESTO(String RUTA_REPORTE_PRESUPUESTO) {
+    public void setRUTA_REPORTE_PRESUPUESTO(String RUTA_REPORTE_PRESUPUESTO)
+    {
         this.RUTA_REPORTE_PRESUPUESTO = RUTA_REPORTE_PRESUPUESTO;
     }
 
-    public String getRUTA_REPORTE_PRESUPUESTO_INMUEBLES() {
+    public String getRUTA_REPORTE_PRESUPUESTO_INMUEBLES()
+    {
         return PATH + RUTA_REPORTE_PRESUPUESTO_INMUEBLES;
     }
 
-    public void setRUTA_REPORTE_PRESUPUESTO_INMUEBLES(String RUTA_REPORTE_PRESUPUESTO_INMUEBLES) {
+    public void setRUTA_REPORTE_PRESUPUESTO_INMUEBLES(String RUTA_REPORTE_PRESUPUESTO_INMUEBLES)
+    {
         this.RUTA_REPORTE_PRESUPUESTO_INMUEBLES = RUTA_REPORTE_PRESUPUESTO_INMUEBLES;
     }
 
-    public String getRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE() {
+    public String getRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE()
+    {
         return PATH + RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE;
     }
 
-    public void setRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE(String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE) {
+    public void setRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE(String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE)
+    {
         this.RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE = RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE;
     }
 
-    public String getRUTA_REPORTE_HISTORIAL_GESTION() {
+    public String getRUTA_REPORTE_HISTORIAL_GESTION()
+    {
         return PATH + RUTA_REPORTE_HISTORIAL_GESTION;
     }
 
-    public void setRUTA_REPORTE_HISTORIAL_GESTION(String RUTA_REPORTE_HISTORIAL_GESTION) {
+    public void setRUTA_REPORTE_HISTORIAL_GESTION(String RUTA_REPORTE_HISTORIAL_GESTION)
+    {
         this.RUTA_REPORTE_HISTORIAL_GESTION = RUTA_REPORTE_HISTORIAL_GESTION;
     }
 
-    public String getRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS() {
+    public String getRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS()
+    {
         return PATH + RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS;
     }
 
-    public void setRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS(String RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS) {
+    public void setRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS(String RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS)
+    {
         this.RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS = RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS;
     }
 
-    public String getRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS() {
+    public String getRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS()
+    {
         return PATH + RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS;
     }
 
-    public void setRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS(String RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS) {
+    public void setRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS(String RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS)
+    {
         this.RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS = RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS;
     }
 
@@ -131,7 +146,8 @@ public class AdministradorReportes
      *
      * @param presupuesto Los datos del presupuesto para generar el reporte.
      */
-    public void generarReportePresupuesto(DtoPresupuesto presupuesto) {
+    public void generarReportePresupuesto(DtoPresupuesto presupuesto)
+    {
         try
         {
 
@@ -141,8 +157,7 @@ public class AdministradorReportes
                 print = JasperFillManager.fillReport(this.getRUTA_REPORTE_PRESUPUESTO_INMUEBLES(), parameters, Conexion.getInstancia().getConexion());
                 jasperViewer = new JasperViewer(print, false);
                 jasperViewer.setVisible(true);
-            }
-            else
+            } else
             {
                 //No tiene inmueble asociado
                 parameters.put("pIdPresupuesto", presupuesto.getIdPresupuesto());
@@ -166,7 +181,8 @@ public class AdministradorReportes
      * @param listaTiposTramites El o los tramites para los cuales se requiere la lista de
      * documentacion asociada.
      */
-    public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites) {
+    public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites)
+    {
         for (Iterator<DtoTipoDeTramite> it = listaTiposTramites.iterator(); it.hasNext();)
         {
             try
@@ -190,7 +206,8 @@ public class AdministradorReportes
      *
      * @param gestion El dto gestion con el ID de la gestion.
      */
-    public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion) {
+    public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion)
+    {
         try
         {
             parameters.put("idGestion", gestion.getIdGestion());
@@ -206,7 +223,8 @@ public class AdministradorReportes
 
     }
 
-    public void generarReporteDocumentosPorVencer(List<DtoDocumentoPresentado> listaDocumentosPorVencer) {
+    public void generarReporteDocumentosPorVencer(List<DtoDocumentoPresentado> listaDocumentosPorVencer)
+    {
         for (Iterator<DtoDocumentoPresentado> it = listaDocumentosPorVencer.iterator(); it.hasNext();)
         {
             try
@@ -225,7 +243,8 @@ public class AdministradorReportes
         }
     }
 
-    public void generarReporteConsultarDeudaDocumentos(Integer pNumeroGestion) {
+    public void generarReporteConsultarDeudaDocumentos(Integer pNumeroGestion)
+    {
         try
         {
             parameters.put("numeroGestion", pNumeroGestion);
@@ -244,28 +263,32 @@ public class AdministradorReportes
     /**
      * @return the jasperViewer
      */
-    public JasperViewer getJasperViewer() {
+    public JasperViewer getJasperViewer()
+    {
         return jasperViewer;
     }
 
     /**
      * @param jasperViewer the jasperViewer to set
      */
-    public void setJasperViewer(JasperViewer jasperViewer) {
+    public void setJasperViewer(JasperViewer jasperViewer)
+    {
         this.jasperViewer = jasperViewer;
     }
 
     /**
      * @return the print
      */
-    public JasperPrint getPrint() {
+    public JasperPrint getPrint()
+    {
         return print;
     }
 
     /**
      * @param print the print to set
      */
-    public void setPrint(JasperPrint print) {
+    public void setPrint(JasperPrint print)
+    {
         this.print = print;
     }
 }

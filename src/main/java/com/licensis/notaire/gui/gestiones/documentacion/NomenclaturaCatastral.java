@@ -7,9 +7,7 @@ package com.licensis.notaire.gui.gestiones.documentacion;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -18,18 +16,21 @@ import javax.swing.table.DefaultTableModel;
  */
 public class NomenclaturaCatastral extends javax.swing.JInternalFrame
 {
+
     private static JMenuItem ventanaNomenclaturas = new JMenuItem("Ventana Nomenclaturas Catastrales");
     private static NomenclaturaCatastral instancia = null;
 
     /**
      * Creates new form NomenclaturaCatastral
      */
-    public NomenclaturaCatastral() {
+    public NomenclaturaCatastral()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    public static NomenclaturaCatastral getInstancia() {
+    public static NomenclaturaCatastral getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new NomenclaturaCatastral();
@@ -38,17 +39,18 @@ public class NomenclaturaCatastral extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static JMenuItem getVentanaNomenclaturas() {
+    public static JMenuItem getVentanaNomenclaturas()
+    {
         return ventanaNomenclaturas;
     }
 
-    public static void setVentanaNomenclaturas(JMenuItem ventanaNomenclaturas) {
+    public static void setVentanaNomenclaturas(JMenuItem ventanaNomenclaturas)
+    {
         NomenclaturaCatastral.ventanaNomenclaturas = ventanaNomenclaturas;
     }
 
-    
-    
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillasNomenclaturas.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillasNomenclaturas.getModel()).getRowCount() > 0)
@@ -59,7 +61,8 @@ public class NomenclaturaCatastral extends javax.swing.JInternalFrame
 
     }
 
-    public void cargarGrilla(List<DtoTramite> dtoListaTramites) {
+    public void cargarGrilla(List<DtoTramite> dtoListaTramites)
+    {
 
         DtoTramite dtoTramite = null;
         this.limpiarJtable();

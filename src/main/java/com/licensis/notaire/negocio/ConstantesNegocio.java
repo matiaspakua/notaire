@@ -16,14 +16,16 @@ public interface ConstantesNegocio
      * Todos los objejos deben ser instanciados en un estado valido. Si un objeto es creado, se le
      * asigna al idxx este valor para indicar que es un objeto en un estado inconsistente, ya sea
      * por que aun no ha sido persistido o por que ha habido algun tipo de error peristiendo la
-     * entidad, buscandola, etc. <p> Para saber si un objeto esta en un estado consistente, se debe
+     * entidad, buscandola, etc.
+     * <p>
+     * Para saber si un objeto esta en un estado consistente, se debe
      * verificar que su ID sea distinto a {@link ID_OBJETO_NO_VALIDO}.
      */
     public int ID_OBJETO_NO_VALIDO = -1;
     //Estados Gestion
     /**
      * Estado inicial de un historial cuando se inicia una gestion: "Gestion iniciada"
-     */    
+     */
     public String ESTADO_DE_GESTION_INICIAL = "Iniciada";
     public String ESTADO_DE_GESTION_MODIFICADA = "Gestion Modificada";
     public String GESTION_EN_TRAMITE = "En Tramite";
@@ -40,7 +42,7 @@ public interface ConstantesNegocio
      */
     public boolean TIPO_DE_FOLIO_HABILITADO = true;
     public boolean TIPO_DE_FOLIO_DESHABILITADO = false;
-    
+
     /**
      * Determina que un tipo de folio ha sido eliminado o no se puede utilizar.
      */
@@ -48,8 +50,7 @@ public interface ConstantesNegocio
     public String ESTADO_FOLIO_NUEVOS = "Folio Nuevo";
     public String ESTADO_FOLIO_UTILIZADO = "Folio Utilizado";
     public String ESTADO_FOLIO_ERROSE = "Folio Errose";
-    
-    
+
     public String MODULO_MODIFICAR_PERSONA = "Modificar Persona";
     public String MODULO_MODIFICAR_CLIENTE = "Modificar Cliente";
     /**
@@ -65,10 +66,10 @@ public interface ConstantesNegocio
      */
     public String USUARIO_EMPLEADO = "Empleado";
     public String USUARIO_ESCRIBANO = "Escribano";
-    
+
     /**
      * Quienes entregan la documentacion
      */
-        public String DOCUMENTACION_ENTIDAD_EXTERNA = "Entidad Externa";
-        public String DOCUMENTACION_CLIENTE = "Cliente";
+    public String DOCUMENTACION_ENTIDAD_EXTERNA = "Entidad Externa";
+    public String DOCUMENTACION_CLIENTE = "Cliente";
 }

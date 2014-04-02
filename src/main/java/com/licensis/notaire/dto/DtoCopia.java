@@ -22,83 +22,103 @@ public class DtoCopia implements DtoValido
     private int version = 0;
     private List<DtoFolio> folios = new ArrayList();
 
-    public DtoCopia() {
+    public DtoCopia()
+    {
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Integer getIdCopia() {
+    public Integer getIdCopia()
+    {
         return this.idCopia;
     }
 
-    public void setIdCopia(Integer idCopia) {
+    public void setIdCopia(Integer idCopia)
+    {
         this.idCopia = idCopia;
     }
 
-    public DtoPersona getPersona() {
+    public DtoPersona getPersona()
+    {
         return this.persona;
     }
 
-    public void setPersona(DtoPersona personas) {
+    public void setPersona(DtoPersona personas)
+    {
         this.persona = personas;
     }
 
-    public DtoTestimonio getTestimonio() {
+    public DtoTestimonio getTestimonio()
+    {
         return this.testimonio;
     }
 
-    public void setTestimonio(DtoTestimonio testimonios) {
+    public void setTestimonio(DtoTestimonio testimonios)
+    {
         this.testimonio = testimonios;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return this.numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public Date getFechaImpresion() {
+    public Date getFechaImpresion()
+    {
         return this.fechaImpresion;
     }
 
-    public void setFechaImpresion(Date fechaImpresion) {
+    public void setFechaImpresion(Date fechaImpresion)
+    {
         this.fechaImpresion = fechaImpresion;
     }
 
-    public Date getFechaRetiro() {
+    public Date getFechaRetiro()
+    {
         return this.fechaRetiro;
     }
 
-    public void setFechaRetiro(Date fechaRetiro) {
+    public void setFechaRetiro(Date fechaRetiro)
+    {
         this.fechaRetiro = fechaRetiro;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoFolio> getFolios() {
+    public List<DtoFolio> getFolios()
+    {
         return this.folios;
     }
 
-    public void setFolios(List<DtoFolio> folios) {
+    public void setFolios(List<DtoFolio> folios)
+    {
         this.folios = folios;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

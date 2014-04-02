@@ -13,10 +13,12 @@ public class DtoInvalidoException extends Exception
 
     private static final long serialVersionUID = 1L;
 
-    public DtoInvalidoException(String message) {
+    public DtoInvalidoException(String message)
+    {
         super(message);
     }
 
-    public DtoInvalidoException() {
+    public DtoInvalidoException()
+    {
     }
 }

@@ -8,19 +8,17 @@ import com.licensis.notaire.dto.DtoPlantillaTramite;
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -39,22 +37,26 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarTipoTramite
      */
-    public ModificarTipoTramite() {
+    public ModificarTipoTramite()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
         inicializarFormulario();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarTipoTramite() {
+    public static JMenuItem getVentanaModificarTipoTramite()
+    {
         return ventanaModificarTipoTramite;
     }
 
-    private void inicializarFormulario() {
+    private void inicializarFormulario()
+    {
         tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
 
         if (tramitesDisponibles.isEmpty() || tramitesDisponibles == null)
@@ -71,8 +73,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
             salir();
 
-        }
-        else
+        } else
         {
 
             listaTramitesDisponibles.setEnabled(true);
@@ -96,7 +97,8 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
         }
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         //listaTramitesDisponibles.removeAll();
         campoNombreTramite.setText("");
         campoObservaciones.setText("");
@@ -375,8 +377,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
             if (checkRequiereInscripcion.isSelected())
             {
                 miDtoSeleccionado.setSeInscribe(true);
-            }
-            else
+            } else
             {
                 miDtoSeleccionado.setSeInscribe(false);
             }
@@ -384,8 +385,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
             if (checkBoxSeArchiva.isSelected())
             {
                 miDtoSeleccionado.setSeArchiva(true);
-            }
-            else
+            } else
             {
                 miDtoSeleccionado.setSeArchiva(false);
             }
@@ -393,8 +393,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
             if (checkBoxInmueble.isSelected())
             {
                 miDtoSeleccionado.setAsociaInmuebles(true);
-            }
-            else
+            } else
             {
                 miDtoSeleccionado.setAsociaInmuebles(false);
             }
@@ -439,14 +438,12 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
                     limpiarFormulario();
                     inicializarFormulario();
                 }
-            }
-            else
+            } else
             {
 
                 JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un Documento.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
 
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
@@ -465,7 +462,8 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
 
     private void checkRequiereInscripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkRequiereInscripcionActionPerformed
    }//GEN-LAST:event_checkRequiereInscripcionActionPerformed
-    private ArrayList<DtoTipoDeDocumento> obtenerDocumentosSeleccionados() {
+    private ArrayList<DtoTipoDeDocumento> obtenerDocumentosSeleccionados()
+    {
         TableModel miGrilla = grillaDocumentosNecesarios.getModel();
         int filas = miGrilla.getRowCount();
         int columnas = miGrilla.getColumnCount();
@@ -503,13 +501,11 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
 
             //listaTramitesDisponibles.setEnabled(false);
             // botonSeleccionar.setEnabled(false);
-
             for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();)
             {
                 DtoTipoDeTramite dtoTipoDeTramite = it.next();
 
                 // Completo los datos en los componentes
-
                 if (dtoTipoDeTramite.getNombre().equals(seleccionado))
                 {
 
@@ -564,8 +560,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
                                     Boolean.TRUE
                                 };
                                 ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).addRow(datos);
-                            }
-                            else
+                            } else
                             {
                                 Object[] datos =
                                 {
@@ -575,8 +570,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
                                 ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).addRow(datos);
                             }
                         }
-                    }
-                    else
+                    } else
                     {
                         grillaDocumentosNecesarios.setEnabled(false);
                         JOptionPane.showMessageDialog(this, "No existen Documentos en el sistema.", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -586,8 +580,7 @@ public class ModificarTipoTramite extends javax.swing.JInternalFrame
                     break;
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

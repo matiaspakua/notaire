@@ -11,18 +11,22 @@ package com.licensis.notaire.jpa.exceptions;
 public class NonexistentJpaException extends Exception
 {
 
-    public NonexistentJpaException(Throwable cause) {
+    public NonexistentJpaException(Throwable cause)
+    {
         super(cause);
     }
 
-    public NonexistentJpaException(String message, Throwable cause) {
+    public NonexistentJpaException(String message, Throwable cause)
+    {
         super(message, cause);
     }
 
-    public NonexistentJpaException(String message) {
+    public NonexistentJpaException(String message)
+    {
         super(message);
     }
 
-    public NonexistentJpaException() {
+    public NonexistentJpaException()
+    {
     }
 }

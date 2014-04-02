@@ -35,12 +35,14 @@ public class DetalleGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form NewJInternalFrame
      */
-    private DetalleGestion() {
+    private DetalleGestion()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
     }
 
-    public static DetalleGestion getInstancia() {
+    public static DetalleGestion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new DetalleGestion();
@@ -48,11 +50,13 @@ public class DetalleGestion extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static JMenuItem getVentanaDetalleGestion() {
+    public static JMenuItem getVentanaDetalleGestion()
+    {
         return ventanaDetalleGestion;
     }
 
-    public boolean cargarFormuarlioSoloVista(DtoGestionDeEscritura miDtoGestion) throws NonexistentJpaException {
+    public boolean cargarFormuarlioSoloVista(DtoGestionDeEscritura miDtoGestion) throws NonexistentJpaException
+    {
         miDtoGestionDeEscritura = miDtoGestion;
         boolean flag = false;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -86,11 +90,11 @@ public class DetalleGestion extends javax.swing.JInternalFrame
         cargarTramitesAsociados(miDtoGestion);
         cargarClientesInvolucrados(miDtoGestion);
 
-
         return flag;
     }
 
-    public void cargarClientesInvolucrados(DtoGestionDeEscritura miDtoGestionDeEscritura) {
+    public void cargarClientesInvolucrados(DtoGestionDeEscritura miDtoGestionDeEscritura)
+    {
         String nombrePersona = null;
         DefaultListModel lista = new DefaultListModel();
 
@@ -109,10 +113,10 @@ public class DetalleGestion extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "El tramite no tiene Clientes Asociados");
         }
 
-
     }
 
-    public void cargarTramitesAsociados(DtoGestionDeEscritura miDtoGestion) {
+    public void cargarTramitesAsociados(DtoGestionDeEscritura miDtoGestion)
+    {
         String nombreTramite = null;
         DefaultListModel lista = new DefaultListModel();
 
@@ -133,15 +137,18 @@ public class DetalleGestion extends javax.swing.JInternalFrame
 
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public DtoGestionDeEscritura getMiDtoGestionDeEscritura() {
+    public DtoGestionDeEscritura getMiDtoGestionDeEscritura()
+    {
         return miDtoGestionDeEscritura;
     }
 
-    public void setMiDtoGestionDeEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura) {
+    public void setMiDtoGestionDeEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura)
+    {
         this.miDtoGestionDeEscritura = miDtoGestionDeEscritura;
     }
 
@@ -460,8 +467,7 @@ public class DetalleGestion extends javax.swing.JInternalFrame
             listaEscriturasForm.cargarGrilla(escriturasGestion);
             Principal.cargarFormulario(listaEscriturasForm);
             Principal.setVentanasActivas(ListaEscrituras.getVentanaListaEscritura());
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La gestion no tiene escrituras generadas.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
         }

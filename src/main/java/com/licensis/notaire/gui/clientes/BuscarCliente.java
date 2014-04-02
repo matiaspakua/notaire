@@ -15,7 +15,6 @@ import com.licensis.notaire.gui.gestiones.gestion.IniciarGestion;
 import com.licensis.notaire.gui.presupuestos.CrearPresupuesto;
 import com.licensis.notaire.gui.presupuestos.ListaPersonasPresupuesto;
 import java.util.ArrayList;
-import java.util.Iterator;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import com.licensis.notaire.negocio.ControllerNegocio;
@@ -32,11 +31,13 @@ public class BuscarCliente extends javax.swing.JInternalFrame
     private static BuscarCliente instancia = null;
     private static String tipoBusqueda = null;
 
-    public Boolean getFlag() {
+    public Boolean getFlag()
+    {
         return flag;
     }
 
-    public void setFlag(Boolean flag) {
+    public void setFlag(Boolean flag)
+    {
         this.flag = flag;
     }
     private Boolean flag = false; //Sirve para saber cuando hay que cerrar el form de busqueda
@@ -44,7 +45,8 @@ public class BuscarCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form BuscarCliente
      */
-    public BuscarCliente() { //Esta publico para que no tire erro en todos los formulario es temporal
+    public BuscarCliente()
+    { //Esta publico para que no tire erro en todos los formulario es temporal
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
@@ -54,23 +56,28 @@ public class BuscarCliente extends javax.swing.JInternalFrame
 
     }
 
-    public static String getTipoBusqueda() {
+    public static String getTipoBusqueda()
+    {
         return tipoBusqueda;
     }
 
-    public static void setTipoBusqueda(String tipoBusqueda) {
+    public static void setTipoBusqueda(String tipoBusqueda)
+    {
         BuscarCliente.tipoBusqueda = tipoBusqueda;
     }
 
-    public void setTituloForm(String titulo) {
+    public void setTituloForm(String titulo)
+    {
         this.labelTitulo.setText(titulo);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaBuscarCliente() {
+    public static JMenuItem getVentanaBuscarCliente()
+    {
         return ventanaBuscar;
     }
 
@@ -271,7 +278,6 @@ public class BuscarCliente extends javax.swing.JInternalFrame
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonBuscarActionPerformed
     {//GEN-HEADEREND:event_botonBuscarActionPerformed
 
-
         //Creo dtoPersona
         DtoPersona miDtoPersonaParametros = new DtoPersona();
         DtoTipoIdentificacion dtoTipoIdentificacion = new com.licensis.notaire.dto.DtoTipoIdentificacion();
@@ -382,8 +388,7 @@ public class BuscarCliente extends javax.swing.JInternalFrame
                 }
                 this.limpiarFormulario();
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No se encontraron coincidencias");
                 this.limpiarFormulario();
@@ -466,14 +471,12 @@ public class BuscarCliente extends javax.swing.JInternalFrame
                     }
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "La persona no esta Registrada", "Advertencia", JOptionPane.WARNING_MESSAGE);
 
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Complete los datos de busqueda", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
@@ -489,7 +492,8 @@ public class BuscarCliente extends javax.swing.JInternalFrame
         //this.dispose();
     }//GEN-LAST:event_botonBuscarActionPerformed
 
-    public static BuscarCliente getInstancia() {
+    public static BuscarCliente getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new BuscarCliente();
@@ -497,7 +501,8 @@ public class BuscarCliente extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public void cargarCombo() {
+    public void cargarCombo()
+    {
         String nombre = null;
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<DtoTipoIdentificacion>();
         listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
@@ -511,7 +516,8 @@ public class BuscarCliente extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
 
         campoNombre.setText("");
         campoApellido.setText("");

@@ -17,7 +17,6 @@ import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Usuario;
-import org.hibernate.StaleObjectStateException;
 
 /**
  *
@@ -30,16 +29,19 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
     private static UsuarioJpaController instancia = null;
 
-    private UsuarioJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    private UsuarioJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public static UsuarioJpaController getInstancia() {
+    public static UsuarioJpaController getInstancia()
+    {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
 
@@ -51,7 +53,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public void create(Usuario usuarios) {
+    public void create(Usuario usuarios)
+    {
         if (usuarios.getRegistroAuditoriaList() == null)
         {
             usuarios.setRegistroAuditoriaList(new ArrayList<RegistroAuditoria>());
@@ -102,7 +105,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void edit(Usuario usuarios) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Usuario usuarios) throws IllegalOrphanException, NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -192,7 +196,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -240,15 +245,18 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Usuario> findUsuariosEntities() {
+    public List<Usuario> findUsuariosEntities()
+    {
         return findUsuariosEntities(true, -1, -1);
     }
 
-    public List<Usuario> findUsuariosEntities(int maxResults, int firstResult) {
+    public List<Usuario> findUsuariosEntities(int maxResults, int firstResult)
+    {
         return findUsuariosEntities(false, maxResults, firstResult);
     }
 
-    private List<Usuario> findUsuariosEntities(boolean all, int maxResults, int firstResult) {
+    private List<Usuario> findUsuariosEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -266,7 +274,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Usuario findUsuarios(Integer id) {
+    public Usuario findUsuarios(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -278,7 +287,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getUsuariosCount() {
+    public int getUsuariosCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -291,7 +301,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Usuario> buscarUsuarios() {
+    public List<Usuario> buscarUsuarios()
+    {
         List<Usuario> listaUsuarios = null;
 
         EntityManager em = getEntityManager();
@@ -300,18 +311,17 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
 
         listaUsuarios = query.getResultList();
 
-
         return listaUsuarios;
     }
 
-    public Boolean modificarUsuario(Usuario pUsuario) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarUsuario(Usuario pUsuario) throws ClassModifiedException, ClassEliminatedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
         int version = 0;    //Variable para Version en bd del Objeto       
 
         EntityManager em = getEntityManager();
-
 
         Usuario persistenUsuario = em.find(Usuario.class, pUsuario.getIdUsuario()); // Cargo persona de db
 
@@ -324,8 +334,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new ClassModifiedException("El usuario indicado ha sido modificado por otro usuario");
 
-            }
-            else
+            } else
             {
                 try
                 {
@@ -338,7 +347,6 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
                     persistenUsuario.setTipo(pUsuario.getTipo());
 
                     //El valor de la version del objeto queda a cardo de Hibernate
-
                     em.getTransaction().commit();
                     flag = true;
                     em.close();
@@ -349,8 +357,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
                     System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
                 }
             }
-        }
-        else//Si fue  eliminado se dispara una excepcion 
+        } else//Si fue  eliminado se dispara una excepcion 
         {
             throw new ClassEliminatedException("El cliente indicado ya ha sido eliminado con anterioridad");
         }
@@ -359,7 +366,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

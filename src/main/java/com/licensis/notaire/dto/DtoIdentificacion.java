@@ -13,35 +13,43 @@ public class DtoIdentificacion implements DtoValido
     private DtoPersona personas;
     private int numero;
 
-    public DtoIdentificacion() {
+    public DtoIdentificacion()
+    {
     }
 
-    public DtoTipoIdentificacion getTiposIdentificacion() {
+    public DtoTipoIdentificacion getTiposIdentificacion()
+    {
         return this.tiposIdentificacion;
     }
 
-    public void setTiposIdentificacion(DtoTipoIdentificacion tiposIdentificacion) {
+    public void setTiposIdentificacion(DtoTipoIdentificacion tiposIdentificacion)
+    {
         this.tiposIdentificacion = tiposIdentificacion;
     }
 
-    public DtoPersona getPersonas() {
+    public DtoPersona getPersonas()
+    {
         return this.personas;
     }
 
-    public void setPersonas(DtoPersona personas) {
+    public void setPersonas(DtoPersona personas)
+    {
         this.personas = personas;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return this.numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

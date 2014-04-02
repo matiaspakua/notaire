@@ -19,17 +19,20 @@ public class DtoInmueble implements DtoValido
     private String observaciones = "";
     private List<DtoTramite> tramites = new ArrayList<>();
 
-    public DtoInmueble() {
+    public DtoInmueble()
+    {
         this.idInmueble = DtoValido.ID_DTO_INICIALIZADO;
     }
 
-    public DtoInmueble(String nomenclaturaCatastral, String domicilio, String tipoInmueble) {
+    public DtoInmueble(String nomenclaturaCatastral, String domicilio, String tipoInmueble)
+    {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
         this.domicilio = domicilio;
         this.tipoInmueble = tipoInmueble;
     }
 
-    public DtoInmueble(String nomenclaturaCatastral, String valuacionFiscal, String domicilio, String tipoInmueble, String observaciones, ArrayList<DtoTramite> dtoTramites) {
+    public DtoInmueble(String nomenclaturaCatastral, String valuacionFiscal, String domicilio, String tipoInmueble, String observaciones, ArrayList<DtoTramite> dtoTramites)
+    {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
         this.valuacionFiscal = valuacionFiscal;
         this.domicilio = domicilio;
@@ -38,64 +41,79 @@ public class DtoInmueble implements DtoValido
         this.tramites = dtoTramites;
     }
 
-    public Integer getIdInmueble() {
+    public Integer getIdInmueble()
+    {
         return this.idInmueble;
     }
 
-    public void setIdInmueble(Integer idInmueble) {
+    public void setIdInmueble(Integer idInmueble)
+    {
         this.idInmueble = idInmueble;
     }
 
-    public String getNomenclaturaCatastral() {
+    public String getNomenclaturaCatastral()
+    {
         return this.nomenclaturaCatastral;
     }
 
-    public void setNomenclaturaCatastral(String nomenclaturaCatastral) {
+    public void setNomenclaturaCatastral(String nomenclaturaCatastral)
+    {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
     }
 
-    public String getValuacionFiscal() {
+    public String getValuacionFiscal()
+    {
         return this.valuacionFiscal;
     }
 
-    public void setValuacionFiscal(String valuacionFiscal) {
+    public void setValuacionFiscal(String valuacionFiscal)
+    {
         this.valuacionFiscal = valuacionFiscal;
     }
 
-    public String getDomicilio() {
+    public String getDomicilio()
+    {
         return this.domicilio;
     }
 
-    public void setDomicilio(String domicilio) {
+    public void setDomicilio(String domicilio)
+    {
         this.domicilio = domicilio;
     }
 
-    public String getTipoInmueble() {
+    public String getTipoInmueble()
+    {
         return this.tipoInmueble;
     }
 
-    public void setTipoInmueble(String tipoInmueble) {
+    public void setTipoInmueble(String tipoInmueble)
+    {
         this.tipoInmueble = tipoInmueble;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoTramite> getTramites() {
+    public List<DtoTramite> getTramites()
+    {
         return this.tramites;
     }
 
-    public void setTramites(List<DtoTramite> tramites) {
+    public void setTramites(List<DtoTramite> tramites)
+    {
         this.tramites = tramites;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

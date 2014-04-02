@@ -8,7 +8,6 @@ import com.licensis.notaire.dto.DtoUsuario;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.licensis.notaire.jpa.ConstantesPersistencia;
 import com.licensis.notaire.jpa.UsuarioJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
@@ -31,7 +30,8 @@ public class AdministradorSesion
     /**
      * Constructor sin argumentos para AdministradorSesion.
      */
-    private AdministradorSesion() {
+    private AdministradorSesion()
+    {
     }
 
     /**
@@ -39,7 +39,8 @@ public class AdministradorSesion
      *
      * @return
      */
-    public static AdministradorSesion getInstancia() {
+    public static AdministradorSesion getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new AdministradorSesion();
@@ -53,10 +54,10 @@ public class AdministradorSesion
      *
      * @param miDtoUsuario El nuevo usuario logueado.
      */
-    public void sesionIniciada(DtoUsuario miDtoUsuario) {
+    public void sesionIniciada(DtoUsuario miDtoUsuario)
+    {
 
         //DtoUsuario miUsuario = new DtoUsuario();
-
         this.setSesionUsuario(miDtoUsuario);
     }
 
@@ -72,7 +73,8 @@ public class AdministradorSesion
      * @return Un DTO usuario con el atributo esValido en verdadero si el usuario fue validado
      * correctamente, falso en caso contrario.
      */
-    public DtoUsuario validarUsuario(DtoUsuario miDtoUsuario) {
+    public DtoUsuario validarUsuario(DtoUsuario miDtoUsuario)
+    {
 
         ArrayList<Usuario> listaUsuarios = new ArrayList<>();
         Boolean flag = false; //se utiliza para saber si existe el usuario
@@ -97,7 +99,6 @@ public class AdministradorSesion
                         passWordUsuario = listaUsuarios.get(i).getContrasenia();
                         passWordIngresado = ControllerNegocio.getInstancia().encriptaEnMD5(miDtoUsuario.getContrasenia());
 
-
                         if (passWordUsuario.equals(passWordIngresado) && listaUsuarios.get(i).getEstado())
                         {
                             flag = true;
@@ -109,8 +110,7 @@ public class AdministradorSesion
 
                     }
                 }
-            }
-            else
+            } else
             {
                 throw new NullPointerException("La lista de usuarios es nula");
             }
@@ -130,17 +130,19 @@ public class AdministradorSesion
      *
      * @return miUsuario Un DTO usuario que representa el usuario loguado actualmente.
      */
-    public Usuario getSesionUsuario() {
+    public Usuario getSesionUsuario()
+    {
         Usuario miUsuario = new Usuario();
-        
+
         if (this.sesionUsuario != null)
-        {        
+        {
             miUsuario.setAtributos(sesionUsuario);
         }
         return miUsuario;
     }
 
-    public void setSesionUsuario(DtoUsuario sesionUsuario) {
+    public void setSesionUsuario(DtoUsuario sesionUsuario)
+    {
         this.sesionUsuario = sesionUsuario;
     }
 }

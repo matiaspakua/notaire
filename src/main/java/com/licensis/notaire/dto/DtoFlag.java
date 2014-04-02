@@ -15,19 +15,23 @@ public class DtoFlag implements DtoValido
 
     boolean flag = false;
 
-    public DtoFlag() {
+    public DtoFlag()
+    {
     }
 
-    public Boolean getFlag() {
+    public Boolean getFlag()
+    {
         return flag;
     }
 
-    public void setFlag(Boolean flag) {
+    public void setFlag(Boolean flag)
+    {
         this.flag = flag;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: Implementar.
         return true;
     }

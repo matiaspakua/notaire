@@ -24,11 +24,13 @@ public class Escribanos extends javax.swing.JInternalFrame
     /**
      * Creates new form Escribanos
      */
-    private Escribanos() {
+    private Escribanos()
+    {
         initComponents();
     }
 
-    public static Escribanos getInstancia() {
+    public static Escribanos getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Escribanos();
@@ -39,15 +41,18 @@ public class Escribanos extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Escribanos.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuEscribanos() {
+    public static JMenuItem getSubmenuEscribanos()
+    {
         return submenuEscribanos;
     }
 
@@ -206,7 +211,7 @@ public class Escribanos extends javax.swing.JInternalFrame
 
     private void botonConsultarSuplenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonConsultarSuplenciasActionPerformed
         Principal.cargarFormulario(new ConsultarSuplencias());
-        Principal.setVentanasActivas(ConsultarSuplencias.getVentaraConsultarSuplencias());        
+        Principal.setVentanasActivas(ConsultarSuplencias.getVentaraConsultarSuplencias());
     }//GEN-LAST:event_botonConsultarSuplenciasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

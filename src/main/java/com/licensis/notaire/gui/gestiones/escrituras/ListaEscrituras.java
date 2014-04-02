@@ -15,6 +15,7 @@ import com.licensis.notaire.gui.gestiones.inscripciones.RegistrarReingreso;
 import com.licensis.notaire.gui.gestiones.testimonios.GenerarTestimonio;
 import com.licensis.notaire.gui.gestiones.testimonios.RetirarTestimonio;
 import com.licensis.notaire.gui.gestiones.testimonios.VerificarTestimonio;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -39,25 +39,30 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
     /**
      * Creates new form ListaEscrituras
      */
-    public ListaEscrituras() {
+    public ListaEscrituras()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaListaEscrituras.setAutoCreateRowSorter(true);
     }
 
-    public void setFormularioInvocador(String formulario) {
+    public void setFormularioInvocador(String formulario)
+    {
         this.formularioInvocador = formulario;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaListaEscritura() {
+    public static JMenuItem getVentanaListaEscritura()
+    {
         return ventanaListaEscritura;
     }
 
-    public Boolean cargarGrilla(List<DtoEscritura> listaEscrituras) {
+    public Boolean cargarGrilla(List<DtoEscritura> listaEscrituras)
+    {
         miListaEscrituras = listaEscrituras;
         limpiarGrilla();
 
@@ -121,8 +126,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                     };
                     ((DefaultTableModel) grillaListaEscrituras.getModel()).addRow(datos);
                 }
-            }
-            else
+            } else
             {
                 flag = true;
 
@@ -160,7 +164,8 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaListaEscrituras.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaListaEscrituras.getModel()).getRowCount() > 0)
@@ -339,8 +344,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                 if (escrituraSeleccionada.getFechaInscripcion() != null)
                 {
                     JOptionPane.showMessageDialog(this, "<HTML>La Escritura seleccionada no se puede modificar<BR>porque ya ha sido inscripta.</HTML>", "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
-                else
+                } else
                 {
                     Boolean ok = detalleEscrituraForm.cargarFormularioModificarEscritura(escrituraSeleccionada);
 
@@ -358,13 +362,11 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                 GenerarTestimonio generarTestimonioForm = new GenerarTestimonio();
                 Boolean formGenerar = generarTestimonioForm.cargarFormulario(escrituraSeleccionada);
 
-                
                 if (formGenerar)
                 {
                     Principal.cargarFormulario(generarTestimonioForm);
                     Principal.setVentanasActivas(GenerarTestimonio.getVentanaGenerarTestimonio());
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No se pudo cargar el formulario de Generar Testimonio", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -375,7 +377,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
             {
                 VerificarTestimonio verificarTestimonioForm = new VerificarTestimonio();
                 verificarTestimonioForm.cargarFormulario(escrituraSeleccionada);
-                
+
                 Principal.cargarFormulario(verificarTestimonioForm);
                 Principal.setVentanasActivas(VerificarTestimonio.getVentanaVerificarTestimonio());
                 break;
@@ -395,12 +397,10 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                         Principal.setVentanasActivas(IngresarParaInscripcion.getVentanaIngresarParaInscribir());
                         salir();
                     }
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "El testimonio ya ha sido ingresado para inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
-
 
                 break;
             }
@@ -444,13 +444,11 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                     if (escrituraSeleccionada.getFechaInscripcion() == null)
                     {
                         JOptionPane.showMessageDialog(this, "<HTML>La Escritura se inscribe.<BR>No se puede retirar el testimonio asociado,<BR> hasta que se encuentre inscripto.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-                    }
-                    else
+                    } else
                     {
                         cargado = retirarTestimonioForm.cargarFormulario(escrituraSeleccionada);
                     }
-                }
-                else
+                } else
                 {
                     cargado = retirarTestimonioForm.cargarFormulario(escrituraSeleccionada);
                 }
@@ -466,7 +464,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                 DetalleEscritura detalleEscrituraForm = new DetalleEscritura();
                 detalleEscrituraForm.setFormularioInvocador(ConstantesGui.DETALLE_GESTION);
                 detalleEscrituraForm.cargarFormularioModificarEscritura(escrituraSeleccionada);
-                
+
                 Principal.cargarFormulario(detalleEscrituraForm);
                 Principal.setVentanasActivas(DetalleEscritura.getVentanaDetalleEscritura());
                 break;
@@ -476,7 +474,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                 DetalleEscritura detalleEscrituraForm = new DetalleEscritura();
                 detalleEscrituraForm.setFormularioInvocador(ConstantesGui.BUSCAR_ESCRITURA);
                 detalleEscrituraForm.cargarFormularioModificarEscritura(escrituraSeleccionada);
-                
+
                 Principal.cargarFormulario(detalleEscrituraForm);
                 Principal.setVentanasActivas(DetalleEscritura.getVentanaDetalleEscritura());
                 break;

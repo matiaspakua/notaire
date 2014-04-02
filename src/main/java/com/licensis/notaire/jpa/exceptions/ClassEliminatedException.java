@@ -13,10 +13,12 @@ public class ClassEliminatedException extends Exception
 
     private static final long serialVersionUID = 1L;
 
-    public ClassEliminatedException(String message) {
+    public ClassEliminatedException(String message)
+    {
         super(message);
     }
 
-    public ClassEliminatedException() {
+    public ClassEliminatedException()
+    {
     }
 }

@@ -6,14 +6,14 @@ package com.licensis.notaire.gui.gestiones.documentacion;
 
 import com.licensis.notaire.dto.DtoDocumentoPresentado;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorReportes;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorReportes;
 
 /**
  *
@@ -30,24 +30,28 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
     /**
      * Creates new form ConsultarVencimientosDocumentos
      */
-    public ConsultarVencimientosDocumentos() {
+    public ConsultarVencimientosDocumentos()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
-        this.setSize(1000,600);
+        this.setSize(1000, 600);
         miController = ControllerNegocio.getInstancia();
         grillaDocumentosPorVencer.setAutoCreateRowSorter(true);
 
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaConsultarVencimientosDocumento() {
+    public static JMenuItem getVentanaConsultarVencimientosDocumento()
+    {
         return ventanaConsultarVencimientosDocumento;
     }
 
-    public void cargarListaDocumentosConVencimiento() {
+    public void cargarListaDocumentosConVencimiento()
+    {
         this.listaDocumentos = miController.consultarDocumentosProximosVencer();
 
         if (!listaDocumentos.isEmpty())
@@ -58,50 +62,50 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
                 DtoDocumentoPresentado dtoDocumentoPresentado = it.next();
 
                 String numeroCarton = "";
-                if(dtoDocumentoPresentado.getNumeroCarton() != null)
+                if (dtoDocumentoPresentado.getNumeroCarton() != null)
                 {
                     numeroCarton = dtoDocumentoPresentado.getNumeroCarton().toString();
                 }
-                
+
                 String fechaSalida = "";
-                
-                if(dtoDocumentoPresentado.getFechaSalida() != null)
+
+                if (dtoDocumentoPresentado.getFechaSalida() != null)
                 {
                     fechaSalida = formatter.format(dtoDocumentoPresentado.getFechaSalida());
                 }
-                String fechaVencimiento = "";                
-                
-                if(dtoDocumentoPresentado.getFechaVencimiento() != null)
+                String fechaVencimiento = "";
+
+                if (dtoDocumentoPresentado.getFechaVencimiento() != null)
                 {
                     fechaVencimiento = formatter.format(dtoDocumentoPresentado.getFechaVencimiento());
                 }
-                    
+
                 String importePagar = "";
-                
-                if(dtoDocumentoPresentado.getImporteAPagar() != null)
+
+                if (dtoDocumentoPresentado.getImporteAPagar() != null)
                 {
                     importePagar = dtoDocumentoPresentado.getImporteAPagar().toString();
                 }
-                                    
+
                 String fechaPago = "";
-                
-                if(dtoDocumentoPresentado.getFechaPago() != null)
+
+                if (dtoDocumentoPresentado.getFechaPago() != null)
                 {
                     fechaPago = formatter.format(dtoDocumentoPresentado.getFechaPago());
                 }
                 String fechaLiberado = "";
-                if(dtoDocumentoPresentado.getFechaLiberado() != null)
+                if (dtoDocumentoPresentado.getFechaLiberado() != null)
                 {
                     fechaLiberado = formatter.format(dtoDocumentoPresentado.getFechaLiberado());
                 }
-                
-                String observaciones = "";                
-                
-                if(dtoDocumentoPresentado.getObservaciones() != null)
+
+                String observaciones = "";
+
+                if (dtoDocumentoPresentado.getObservaciones() != null)
                 {
                     observaciones = dtoDocumentoPresentado.getObservaciones();
                 }
-                
+
                 Object[] datos =
                 {
                     dtoDocumentoPresentado.getNombre(),
@@ -123,8 +127,7 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
                 ((DefaultTableModel) this.grillaDocumentosPorVencer.getModel()).addRow(datos);
 
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen documentos proximos a vencer.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
         }

@@ -11,12 +11,12 @@ import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.gestion.IniciarGestion;
 import com.licensis.notaire.gui.gestiones.gestion.ModificarGestion;
 import com.licensis.notaire.gui.presupuestos.CrearPresupuesto;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -34,7 +34,8 @@ public class ListarPersonas extends javax.swing.JInternalFrame
     /**
      * Creates new form ListarPersonas
      */
-    private ListarPersonas() {
+    private ListarPersonas()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -42,7 +43,8 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         grillaPersonas.setAutoCreateRowSorter(true);
     }
 
-    public static ListarPersonas getInstancia() {
+    public static ListarPersonas getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new ListarPersonas();
@@ -50,19 +52,23 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public void salir() {
+    public void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaListadoPersonas() {
+    public static JMenuItem getVentanaListadoPersonas()
+    {
         return ventanaListadoPersonas;
     }
 
-    public static void setVentanaListadoPersonas(JMenuItem ventanaListadoPersonas) {
+    public static void setVentanaListadoPersonas(JMenuItem ventanaListadoPersonas)
+    {
         ListarPersonas.ventanaListadoPersonas = ventanaListadoPersonas;
     }
 
-    public Boolean cargarGrillaClientes(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda) {
+    public Boolean cargarGrillaClientes(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda)
+    {
 
         this.labelTitulo.setText(tipoBusqueda);
         this.ventanaListadoPersonas.setName(tipoBusqueda);
@@ -88,8 +94,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                     if (miDtoPersona.getEsCliente())
                     {
                         esCliente = "Si";
-                    }
-                    else
+                    } else
                     {
                         esCliente = "No";
                     }
@@ -114,8 +119,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda de Clientes");
             this.salir();
 
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(ListarPersonas.getInstancia());
 
@@ -123,7 +127,8 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public Boolean cargarGrillaPersonas(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda) {
+    public Boolean cargarGrillaPersonas(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda)
+    {
 
         this.labelTitulo.setText(tipoBusqueda);
         this.setTipoDeBusqueda(tipoBusqueda);
@@ -147,8 +152,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                     if (miDtoPersona.getEsCliente())
                     {
                         esCliente = "Si";
-                    }
-                    else
+                    } else
                     {
                         esCliente = "No";
                     }
@@ -173,15 +177,15 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda");
 
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(ListarPersonas.getInstancia());
         }
         return flag;
     }
 
-    public Boolean cargarGrillaPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda) {
+    public Boolean cargarGrillaPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas, String tipoBusqueda)
+    {
         boolean flag = false;
         this.setTipoDeBusqueda(tipoBusqueda);
         this.labelTitulo.setText(tipoBusqueda);
@@ -201,8 +205,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                 if (miDtoPersona.getEsCliente())
                 {
                     esCliente = "Si";
-                }
-                else
+                } else
                 {
                     esCliente = "No";
                 }
@@ -223,15 +226,15 @@ public class ListarPersonas extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda");
 
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(ListarPersonas.getInstancia());
         }
         return flag;
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaPersonas.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaPersonas.getModel()).getRowCount() > 0)
@@ -242,7 +245,8 @@ public class ListarPersonas extends javax.swing.JInternalFrame
 
     }
 
-    public JMenuItem getVentanaActiva() {
+    public JMenuItem getVentanaActiva()
+    {
         ventanaListadoPersonas.setText(labelTitulo.getText());
         this.setTitle(labelTitulo.getText());
         return ventanaListadoPersonas;
@@ -391,15 +395,18 @@ public class ListarPersonas extends javax.swing.JInternalFrame
     }//GEN-LAST:event_botonSalirActionPerformed
 
     @Override
-    public void dispose() {
+    public void dispose()
+    {
         super.dispose();
     }
 
-    public String getTipoDeBusqueda() {
+    public String getTipoDeBusqueda()
+    {
         return tipoDeBusqueda;
     }
 
-    public void setTipoDeBusqueda(String tipoDeBusqueda) {
+    public void setTipoDeBusqueda(String tipoDeBusqueda)
+    {
         this.tipoDeBusqueda = tipoDeBusqueda;
     }
 
@@ -431,7 +438,6 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                 //Busco todos los datos de la persona seleccionada y cargo  el formulario
                 miDtoPersona = ControllerNegocio.getInstancia().buscarPersonaTipoNumeroIdentificacion(miDtoPersona);
 
-
                 if (miDtoPersona.isValido())
                 {
                     switch (this.getTipoDeBusqueda())
@@ -447,8 +453,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                             if (miForm.agregarClienteGestion(miDtoPersona))
                             {
                                 // No se pudo registrar el nuevo cliente.
-                            }
-                            else
+                            } else
                             {
                                 JOptionPane.showMessageDialog(this, "Se ha agregado un cliente a la gestion indicada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
                             }
@@ -486,8 +491,7 @@ public class ListarPersonas extends javax.swing.JInternalFrame
                             {
                                 Principal.cargarFormulario(listaGestionesCliente);
                                 Principal.setVentanasActivas(BuscarGestionesCliente.getVentanaBuscarGestionesCliente());
-                            }
-                            else
+                            } else
                             {
                                 JOptionPane.showMessageDialog(this, "La persona no tiene gestiones asociadas sin archivar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                             }

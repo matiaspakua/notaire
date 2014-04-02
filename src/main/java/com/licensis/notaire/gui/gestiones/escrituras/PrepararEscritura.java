@@ -29,21 +29,25 @@ public class PrepararEscritura extends javax.swing.JInternalFrame
     /**
      * Creates new form PrepararEscritura
      */
-    public PrepararEscritura() {
+    public PrepararEscritura()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaPrepararEscritura() {
+    public static JMenuItem getVentanaPrepararEscritura()
+    {
         return ventanaPrepararEscritura;
     }
 
-    public void cargarFormulario(DtoGestionDeEscritura miDtoGestionDeEscritura) {
+    public void cargarFormulario(DtoGestionDeEscritura miDtoGestionDeEscritura)
+    {
 
         if (miDtoGestionDeEscritura != null)
         {
@@ -70,8 +74,7 @@ public class PrepararEscritura extends javax.swing.JInternalFrame
                     {
                         campoNC.setText(miDtoTramite.getInmueble().getNomenclaturaCatastral());
                         break;
-                    }
-                    else
+                    } else
                     {
                         labelNC.setVisible(false);
                         campoNC.setVisible(false);
@@ -360,7 +363,7 @@ public class PrepararEscritura extends javax.swing.JInternalFrame
     {//GEN-HEADEREND:event_botonBuscarGestionActionPerformed
         BuscarGestion buscarGestionForm = new BuscarGestion();
         buscarGestionForm.setTipoBusqueda(ConstantesGui.PREPARAR_ESCRITURA);
-        
+
         Principal.cargarFormulario(buscarGestionForm);
         Principal.setVentanasActivas(BuscarGestion.getVentanaBuscarGestion());
         salir();

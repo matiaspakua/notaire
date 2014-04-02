@@ -21,17 +21,20 @@ public class GenerarIndices extends javax.swing.JInternalFrame
     /**
      * Creates new form GenerarIndices
      */
-    public GenerarIndices() {
+    public GenerarIndices()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaGenerarIndice() {
+    public static JMenuItem getVentanaGenerarIndice()
+    {
         return ventanaGenerarIndice;
     }
 

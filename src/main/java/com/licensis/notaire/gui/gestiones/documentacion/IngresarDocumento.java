@@ -9,7 +9,6 @@ import com.licensis.notaire.dto.DtoFlag;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.dto.DtoTramite;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
@@ -29,7 +28,6 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ControllerNegocio;
-import org.hibernate.StaleObjectStateException;
 
 /**
  *
@@ -106,7 +104,6 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
         fechaInicio.setText(formatter.format(this.getDtoGestion().getFechaInicio()));
         labelEncabezado.setText(this.getDtoGestion().getEncabezado());
         escribanoAcargo.setText(this.getDtoGestion().getPersonaEscribano().getNombre());
@@ -180,7 +177,6 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "No hay Documentacion de Entidades externas registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-
 
     }
 
@@ -260,7 +256,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                         dtoDocumentoPresentado,
                         dtoTramite,
                         dtoDocumentoPresentado.getDiasVencimiento(),
-                        fechaVencimiento,                        
+                        fechaVencimiento,
                     };
 
                     ((DefaultTableModel) grillaMovimientoDocumentacion.getModel()).addRow(datos);
@@ -565,21 +561,23 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                         }
                     }
 
-                      try
-                        {
-                            this.limpiarFormulario(); 
-                            this.cargarFormulario(this.getDtoGestion());
-                        } catch (NonexistentJpaException ex)
-                        {
-                            Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    try
+                    {
+                        this.limpiarFormulario();
+                        this.cargarFormulario(this.getDtoGestion());
+                    }
+                    catch (NonexistentJpaException ex)
+                    {
+                        Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                 } else
                 {
                     JOptionPane.showMessageDialog(this, "Los documentos no se modificaron", "Advertencia", JOptionPane.INFORMATION_MESSAGE);
 
                 }
-            } catch (NonexistentEntityException ex)
+            }
+            catch (NonexistentEntityException ex)
             {
                 Logger.getLogger(IngresarDocumento.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -606,7 +604,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
         Date fechaVencimiento = null;
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dtoFlag.setFlag(false);
-         int fila = 0;
+        int fila = 0;
 
         DtoTramite dtoTramite = null;
         DtoTipoDeDocumento dtoTipoDeDocumento = null;
@@ -618,8 +616,8 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
         {
             for (int i = 0; i < filas; i++)
             {
-                 fila = i +1 ;
-                
+                fila = i + 1;
+
                 dtoDocumentoPresentado = (DtoDocumentoPresentado) miGrilla.getValueAt(i, 11);
 
                 dtoTramite = (DtoTramite) miGrilla.getValueAt(i, 12);
@@ -676,9 +674,9 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                 {
                     dtoDocumentoPresentado.setFechaLiberado(null);
                 }
-                  //Fecha Vencimiento
+                //Fecha Vencimiento
                 fecha = (String) miGrilla.getValueAt(i, 14);
-                                
+
                 if (miGrilla.getValueAt(i, 14) != null && !fecha.isEmpty())
                 {
                     this.setError(ConstantesGui.CAMPO_FECHA_VENCIMIENTO);
@@ -688,7 +686,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                 {
                     dtoDocumentoPresentado.setFechaVencimiento(null);
                 }
-                
+
                 this.setError(ConstantesGui.CAMPO_DIAS_VENCIMIENTO);
                 dtoDocumentoPresentado.setDiasVencimiento((Integer) miGrilla.getValueAt(i, 13));
 
@@ -716,9 +714,10 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
                 lisDtoDocumentosPresentados.add(dtoDocumentoPresentado);
                 cont++;
             }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
-            JOptionPane.showMessageDialog(this, "Algun campo es incorrecto: "+ "Fila: " +fila+   " -" +this.getError(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Algun campo es incorrecto: " + "Fila: " + fila + " -" + this.getError(), "Advertencia", JOptionPane.WARNING_MESSAGE);
             return dtoFlag;
         }
         try
@@ -730,7 +729,8 @@ public class IngresarDocumento extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (ClassModifiedException e)
+        }
+        catch (ClassModifiedException e)
         {
             String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
             JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);

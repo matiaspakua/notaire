@@ -21,17 +21,20 @@ public class RegistrarPago extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarPago
      */
-    public RegistrarPago() {
+    public RegistrarPago()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRegistrarPagos() {
+    public static JMenuItem getVentanaRegistrarPagos()
+    {
         return ventanaRegistrarPagos;
     }
 

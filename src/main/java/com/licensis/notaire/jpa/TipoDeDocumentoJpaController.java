@@ -4,6 +4,13 @@
  */
 package com.licensis.notaire.jpa;
 
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.PlantillaTramite;
+import com.licensis.notaire.negocio.TipoDeDocumento;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +19,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.transaction.UserTransaction;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.TipoDeDocumento;
 
 /**
  *
@@ -27,18 +27,21 @@ import com.licensis.notaire.negocio.TipoDeDocumento;
 public class TipoDeDocumentoJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TipoDeDocumentoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TipoDeDocumentoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(TipoDeDocumento tipoDeDocumento) {
+    public int create(TipoDeDocumento tipoDeDocumento)
+    {
 
         int oid = -1;
 
@@ -85,7 +88,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         return oid;
     }
 
-    public Boolean edit(TipoDeDocumento tipoDeDocumento) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException {
+    public Boolean edit(TipoDeDocumento tipoDeDocumento) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         Boolean modificado = false;
         Integer version = -1;
@@ -110,8 +114,7 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
 
                 throw new ClassModifiedException();
 
-            }
-            else
+            } else
             {
 
                 List<PlantillaTramite> plantillaTramiteListOld = persistentTipoDeDocumento.getPlantillaTramiteList();
@@ -156,12 +159,10 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
                     }
                 }
 
-
                 em.getTransaction().commit();
                 modificado = true;
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -174,7 +175,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         return modificado;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException {
+    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         Boolean eliminado = false;
         try
@@ -214,8 +216,7 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
                 em.remove(tipoDeDocumento);
                 em.getTransaction().commit();
                 eliminado = true;
-            }
-            else
+            } else
             {
                 throw new ClassEliminatedException();
             }
@@ -231,15 +232,18 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         return eliminado;
     }
 
-    public List<TipoDeDocumento> findTipoDeDocumentoEntities() {
+    public List<TipoDeDocumento> findTipoDeDocumentoEntities()
+    {
         return findTipoDeDocumentoEntities(true, -1, -1);
     }
 
-    public List<TipoDeDocumento> findTipoDeDocumentoEntities(int maxResults, int firstResult) {
+    public List<TipoDeDocumento> findTipoDeDocumentoEntities(int maxResults, int firstResult)
+    {
         return findTipoDeDocumentoEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoDeDocumento> findTipoDeDocumentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<TipoDeDocumento> findTipoDeDocumentoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -257,7 +261,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         }
     }
 
-    public TipoDeDocumento findTipoDeDocumento(Integer id) {
+    public TipoDeDocumento findTipoDeDocumento(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -269,7 +274,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         }
     }
 
-    public List<TipoDeDocumento> findTipoDeDocumento(String nombre) {
+    public List<TipoDeDocumento> findTipoDeDocumento(String nombre)
+    {
         EntityManager em = getEntityManager();
 
         List<TipoDeDocumento> miTipoDeDocumento = null;
@@ -293,7 +299,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
         }
     }
 
-    public int getTipoDeDocumentoCount() {
+    public int getTipoDeDocumentoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -307,7 +314,8 @@ public class TipoDeDocumentoJpaController implements Serializable, IPersistencia
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

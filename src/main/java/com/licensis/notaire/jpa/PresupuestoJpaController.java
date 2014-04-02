@@ -4,15 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.Query;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -22,6 +13,15 @@ import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -30,18 +30,21 @@ import com.licensis.notaire.negocio.Tramite;
 public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public PresupuestoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public PresupuestoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Presupuesto presupuesto) {
+    public int create(Presupuesto presupuesto)
+    {
         int id = -1;
         if (presupuesto.getPagoList() == null)
         {
@@ -150,7 +153,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         return id;
     }
 
-    public Boolean edit(Presupuesto presupuesto) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException {
+    public Boolean edit(Presupuesto presupuesto) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
+    {
         EntityManager em = null;
         Boolean modificado = Boolean.FALSE;
         Integer version = -1;
@@ -173,8 +177,7 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
                 }
                 throw new ClassModifiedException();
 
-            }
-            else
+            } else
             {
 
                 Persona fkIdPersonaOld = persistentPresupuesto.getFkIdPersona();
@@ -333,14 +336,14 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
             Presupuesto presupuesto;
-
 
             try
             {
@@ -407,15 +410,18 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Presupuesto> findPresupuestoEntities() {
+    public List<Presupuesto> findPresupuestoEntities()
+    {
         return findPresupuestoEntities(true, -1, -1);
     }
 
-    public List<Presupuesto> findPresupuestoEntities(int maxResults, int firstResult) {
+    public List<Presupuesto> findPresupuestoEntities(int maxResults, int firstResult)
+    {
         return findPresupuestoEntities(false, maxResults, firstResult);
     }
 
-    private List<Presupuesto> findPresupuestoEntities(boolean all, int maxResults, int firstResult) {
+    private List<Presupuesto> findPresupuestoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -433,7 +439,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Presupuesto findPresupuesto(Integer id) {
+    public Presupuesto findPresupuesto(Integer id)
+    {
         EntityManager em = getEntityManager();
         Presupuesto miPresupuesto = null;
 
@@ -447,7 +454,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         return miPresupuesto;
     }
 
-    public int getPresupuestoCount() {
+    public int getPresupuestoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -466,7 +474,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
      * @param pIdPersona El ID de la persona.
      * @return misPresupuestos Una lista con todos los presupuestos asociados a la persona indicada.
      */
-    public List<Presupuesto> findPresupuestosPersona(Integer pIdPersona) {
+    public List<Presupuesto> findPresupuestosPersona(Integer pIdPersona)
+    {
         EntityManager em = getEntityManager();
 
         List<Presupuesto> misPresupuestos = new ArrayList<>();
@@ -505,7 +514,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
      * @param pIdTramite
      * @return
      */
-    public List<Presupuesto> findPresupuestosPersonaTramite(Integer pIdPersona, Integer pIdTramite) {
+    public List<Presupuesto> findPresupuestosPersonaTramite(Integer pIdPersona, Integer pIdTramite)
+    {
         EntityManager em = getEntityManager();
 
         List<Presupuesto> misPresupuestos = new ArrayList<>();
@@ -527,8 +537,9 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
         }
         return misPresupuestos;
     }
-    
-    public Presupuesto findPresupuestosById(Integer idPresupuesto) {
+
+    public Presupuesto findPresupuestosById(Integer idPresupuesto)
+    {
         EntityManager em = getEntityManager();
 
         Presupuesto miPresupuesto = null;
@@ -551,7 +562,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

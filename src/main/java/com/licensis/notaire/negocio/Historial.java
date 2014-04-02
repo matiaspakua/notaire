@@ -5,11 +5,8 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoHistorial;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -24,12 +21,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "historial")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Historial.findAll", query = "SELECT h FROM Historial h"),
-    @NamedQuery(name = "Historial.findByIdHistorial", query = "SELECT h FROM Historial h WHERE h.idHistorial = :idHistorial"),
-    @NamedQuery(name = "Historial.findByIdGestion", query = "SELECT h FROM Historial h WHERE h.fkIdGestion.idGestion = :idGestion"),
-    @NamedQuery(name = "Historial.findByFecha", query = "SELECT h FROM Historial h WHERE h.fecha = :fecha")
-})
+        {
+            @NamedQuery(name = "Historial.findAll", query = "SELECT h FROM Historial h"),
+            @NamedQuery(name = "Historial.findByIdHistorial", query = "SELECT h FROM Historial h WHERE h.idHistorial = :idHistorial"),
+            @NamedQuery(name = "Historial.findByIdGestion", query = "SELECT h FROM Historial h WHERE h.fkIdGestion.idGestion = :idGestion"),
+            @NamedQuery(name = "Historial.findByFecha", query = "SELECT h FROM Historial h WHERE h.fecha = :fecha")
+        })
 public class Historial implements Serializable
 {
 
@@ -61,76 +58,93 @@ public class Historial implements Serializable
      * Constructor por default para historial. Asigna al ID el valor de
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
-    public Historial() {
+    public Historial()
+    {
         this.idHistorial = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
     }
 
-    public Historial(Integer idHistorial) {
+    public Historial(Integer idHistorial)
+    {
         this.idHistorial = idHistorial;
     }
 
-    public Historial(Integer idHistorial, Date fecha) {
+    public Historial(Integer idHistorial, Date fecha)
+    {
         this.idHistorial = idHistorial;
         this.fecha = fecha;
     }
 
-    public Integer getIdHistorial() {
+    public Integer getIdHistorial()
+    {
         return idHistorial;
     }
 
-    public void setIdHistorial(Integer idHistorial) {
+    public void setIdHistorial(Integer idHistorial)
+    {
         this.idHistorial = idHistorial;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public EstadoDeGestion getFkIdEstadoGestion() {
+    public EstadoDeGestion getFkIdEstadoGestion()
+    {
         return fkIdEstadoGestion;
     }
 
-    public void setFkIdEstadoGestion(EstadoDeGestion fkIdEstadoGestion) {
+    public void setFkIdEstadoGestion(EstadoDeGestion fkIdEstadoGestion)
+    {
         this.fkIdEstadoGestion = fkIdEstadoGestion;
     }
 
-    public GestionDeEscritura getFkIdGestion() {
+    public GestionDeEscritura getFkIdGestion()
+    {
         return fkIdGestion;
     }
 
-    public void setFkIdGestion(GestionDeEscritura fkIdGestion) {
+    public void setFkIdGestion(GestionDeEscritura fkIdGestion)
+    {
         this.fkIdGestion = fkIdGestion;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (getIdHistorial() != null ? getIdHistorial().hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Historial))
         {
@@ -145,11 +159,13 @@ public class Historial implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Historial[ idHistorial=" + getIdHistorial() + " ]";
     }
 
-    public DtoHistorial getDto() {
+    public DtoHistorial getDto()
+    {
         DtoHistorial dto = new DtoHistorial();
 
         dto.setIdHistorial(this.idHistorial);
@@ -162,6 +178,7 @@ public class Historial implements Serializable
         return dto;
     }
 
-    public void setAtributos(DtoHistorial dto) {
+    public void setAtributos(DtoHistorial dto)
+    {
     }
 }

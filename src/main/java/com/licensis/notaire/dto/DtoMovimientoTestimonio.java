@@ -20,83 +20,103 @@ public class DtoMovimientoTestimonio implements DtoValido
     private String observaciones;
     private int version = 0;
 
-    public DtoMovimientoTestimonio() {
+    public DtoMovimientoTestimonio()
+    {
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Integer getIdMovimientoTestimonio() {
+    public Integer getIdMovimientoTestimonio()
+    {
         return this.idMovimientoTestimonio;
     }
 
-    public void setIdMovimientoTestimonio(Integer idMovimientoTestimonio) {
+    public void setIdMovimientoTestimonio(Integer idMovimientoTestimonio)
+    {
         this.idMovimientoTestimonio = idMovimientoTestimonio;
     }
 
-    public DtoTestimonio getTestimonio() {
+    public DtoTestimonio getTestimonio()
+    {
         return this.testimonio;
     }
 
-    public void setTestimonio(DtoTestimonio testimonios) {
+    public void setTestimonio(DtoTestimonio testimonios)
+    {
         this.testimonio = testimonios;
     }
 
-    public Date getFechaIngreso() {
+    public Date getFechaIngreso()
+    {
         return this.fechaIngreso;
     }
 
-    public void setFechaIngreso(Date fechaIngreso) {
+    public void setFechaIngreso(Date fechaIngreso)
+    {
         this.fechaIngreso = fechaIngreso;
     }
 
-    public Date getFechaSalida() {
+    public Date getFechaSalida()
+    {
         return this.fechaSalida;
     }
 
-    public void setFechaSalida(Date fechaSalida) {
+    public void setFechaSalida(Date fechaSalida)
+    {
         this.fechaSalida = fechaSalida;
     }
 
-    public Date getFechaInscripcion() {
+    public Date getFechaInscripcion()
+    {
         return this.fechaInscripcion;
     }
 
-    public void setFechaInscripcion(Date fechaInscripcion) {
+    public void setFechaInscripcion(Date fechaInscripcion)
+    {
         this.fechaInscripcion = fechaInscripcion;
     }
 
-    public boolean isInscripta() {
+    public boolean isInscripta()
+    {
         return this.inscripta;
     }
 
-    public void setInscripta(boolean inscripta) {
+    public void setInscripta(boolean inscripta)
+    {
         this.inscripta = inscripta;
     }
 
-    public int getNumeroCarton() {
+    public int getNumeroCarton()
+    {
         return this.numeroCarton;
     }
 
-    public void setNumeroCarton(int numeroCarton) {
+    public void setNumeroCarton(int numeroCarton)
+    {
         this.numeroCarton = numeroCarton;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: Implementar.
         return true;
     }

@@ -22,11 +22,13 @@ public class Presupuestos extends javax.swing.JInternalFrame
     /**
      * Creates new form Presupuestos
      */
-    private Presupuestos() {
+    private Presupuestos()
+    {
         initComponents();
     }
 
-    public static Presupuestos getInstancia() {
+    public static Presupuestos getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Presupuestos();
@@ -37,15 +39,18 @@ public class Presupuestos extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Presupuestos.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuPresupuestos() {
+    public static JMenuItem getMenuPresupuestos()
+    {
         return menuPresupuestos;
     }
 

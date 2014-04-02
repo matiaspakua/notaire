@@ -7,7 +7,6 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
-import com.licensis.notaire.dto.DtoTramite;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,15 +25,15 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "presupuestos")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Presupuesto.findAll", query = "SELECT p FROM Presupuesto p"),
-    @NamedQuery(name = "Presupuesto.findByIdPresupuesto", query = "SELECT p FROM Presupuesto p WHERE p.idPresupuesto = :idPresupuesto"),
-    @NamedQuery(name = "Presupuesto.findByFecha", query = "SELECT p FROM Presupuesto p WHERE p.fecha = :fecha"),
-    @NamedQuery(name = "Presupuesto.findByTotal", query = "SELECT p FROM Presupuesto p WHERE p.total = :total"),
-    @NamedQuery(name = "Presupuesto.findBySaldo", query = "SELECT p FROM Presupuesto p WHERE p.saldo = :saldo"),
-    @NamedQuery(name = "Presupuesto.findByPersona", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona"),
-    @NamedQuery(name = "Presupuesto.findByPersonaTramie", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona AND p.fkIdTramite.idTramite = :fkIdTramite"),
-})
+        {
+            @NamedQuery(name = "Presupuesto.findAll", query = "SELECT p FROM Presupuesto p"),
+            @NamedQuery(name = "Presupuesto.findByIdPresupuesto", query = "SELECT p FROM Presupuesto p WHERE p.idPresupuesto = :idPresupuesto"),
+            @NamedQuery(name = "Presupuesto.findByFecha", query = "SELECT p FROM Presupuesto p WHERE p.fecha = :fecha"),
+            @NamedQuery(name = "Presupuesto.findByTotal", query = "SELECT p FROM Presupuesto p WHERE p.total = :total"),
+            @NamedQuery(name = "Presupuesto.findBySaldo", query = "SELECT p FROM Presupuesto p WHERE p.saldo = :saldo"),
+            @NamedQuery(name = "Presupuesto.findByPersona", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona"),
+            @NamedQuery(name = "Presupuesto.findByPersonaTramie", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona AND p.fkIdTramite.idTramite = :fkIdTramite"),
+        })
 public class Presupuesto implements Serializable
 {
 
@@ -78,84 +77,102 @@ public class Presupuesto implements Serializable
      * Constructor por default de presupuesto. Inicializa el ID presupuesto segun el campo
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y todas las listas de objetos.
      */
-    public Presupuesto() {
+    public Presupuesto()
+    {
         this.idPresupuesto = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.itemList = new ArrayList<>();
         this.pagoList = new ArrayList<>();
         this.tramiteList = new ArrayList<>();
     }
 
-    public Presupuesto(Integer idPresupuesto) {
+    public Presupuesto(Integer idPresupuesto)
+    {
         this.idPresupuesto = idPresupuesto;
     }
 
-    public Presupuesto(Integer idPresupuesto, Date fecha, Float total, Float saldo) {
+    public Presupuesto(Integer idPresupuesto, Date fecha, Float total, Float saldo)
+    {
         this.idPresupuesto = idPresupuesto;
         this.fecha = fecha;
         this.total = total;
         this.saldo = saldo;
     }
 
-    public Integer getIdPresupuesto() {
+    public Integer getIdPresupuesto()
+    {
         return idPresupuesto;
     }
 
-    public void setIdPresupuesto(Integer idPresupuesto) {
+    public void setIdPresupuesto(Integer idPresupuesto)
+    {
         this.idPresupuesto = idPresupuesto;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Pago> getPagoList() {
+    public List<Pago> getPagoList()
+    {
         return pagoList;
     }
 
-    public void setPagoList(List<Pago> pagoList) {
+    public void setPagoList(List<Pago> pagoList)
+    {
         this.pagoList = pagoList;
     }
 
-    public Persona getFkIdPersona() {
+    public Persona getFkIdPersona()
+    {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona) {
+    public void setFkIdPersona(Persona fkIdPersona)
+    {
         this.fkIdPersona = fkIdPersona;
     }
 
-    public Tramite getFkIdTramite() {
+    public Tramite getFkIdTramite()
+    {
         return fkIdTramite;
     }
 
-    public void setFkIdTramite(Tramite fkIdTramite) {
+    public void setFkIdTramite(Tramite fkIdTramite)
+    {
         this.fkIdTramite = fkIdTramite;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList() {
+    public List<Tramite> getTramiteList()
+    {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList) {
+    public void setTramiteList(List<Tramite> tramiteList)
+    {
         this.tramiteList = tramiteList;
     }
 
     @XmlTransient
-    public List<Item> getItemList() {
+    public List<Item> getItemList()
+    {
         return itemList;
     }
 
-    public void setItemList(List<Item> itemList) {
+    public void setItemList(List<Item> itemList)
+    {
         this.itemList = itemList;
     }
 
-    public DtoPresupuesto getDto() {
+    public DtoPresupuesto getDto()
+    {
         DtoPresupuesto miDto = new DtoPresupuesto();
 
         miDto.setIdPresupuesto(idPresupuesto);
@@ -167,8 +184,7 @@ public class Presupuesto implements Serializable
         if (fkIdTramite != null)
         {
             miDto.setTramite(fkIdTramite.getDto());
-        }
-        else
+        } else
         {
             miDto.setTramite(null);
         }
@@ -188,8 +204,7 @@ public class Presupuesto implements Serializable
                 personas.setDtoTipoIdentificacion(fkIdPersona.getFkIdTipoIdentificacion().getDto());
                 personas.setNumeroIdentificacion(fkIdPersona.getNumeroIdentificacion());
             }
-        }
-        else
+        } else
         {
             miDto.setPersona(null);
         }
@@ -199,7 +214,8 @@ public class Presupuesto implements Serializable
         return miDto;
     }
 
-    public void setAtributos(DtoPresupuesto dtoPresupuesto) {
+    public void setAtributos(DtoPresupuesto dtoPresupuesto)
+    {
         this.setIdPresupuesto(dtoPresupuesto.getIdPresupuesto());
         this.setFecha(dtoPresupuesto.getFecha());
         this.setObservaciones(dtoPresupuesto.getObservaciones());
@@ -224,14 +240,16 @@ public class Presupuesto implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idPresupuesto != null ? idPresupuesto.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Presupuesto))
         {
@@ -246,39 +264,48 @@ public class Presupuesto implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Presupuesto[ idPresupuesto=" + idPresupuesto + " ]";
     }
 
-    public float getTotal() {
+    public float getTotal()
+    {
         return total;
     }
 
-    public void setTotal(float total) {
+    public void setTotal(float total)
+    {
         this.total = total;
     }
 
-    public float getSaldo() {
+    public float getSaldo()
+    {
         return saldo;
     }
 
-    public void setSaldo(float saldo) {
+    public void setSaldo(float saldo)
+    {
         this.saldo = saldo;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 }

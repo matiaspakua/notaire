@@ -4,14 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.Query;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
@@ -21,6 +13,14 @@ import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
 import com.licensis.notaire.negocio.Testimonio;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -29,18 +29,21 @@ import com.licensis.notaire.negocio.Testimonio;
 public class TestimonioJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public TestimonioJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public TestimonioJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Boolean create(Testimonio testimonio) {
+    public Boolean create(Testimonio testimonio)
+    {
         Boolean creado = false;
         if (testimonio.getMovimientoTestimonioList() == null)
         {
@@ -116,7 +119,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         return creado;
     }
 
-    public void edit(Testimonio testimonio) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Testimonio testimonio) throws IllegalOrphanException, NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -240,7 +244,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -297,15 +302,18 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Testimonio> findTestimonioEntities() {
+    public List<Testimonio> findTestimonioEntities()
+    {
         return findTestimonioEntities(true, -1, -1);
     }
 
-    public List<Testimonio> findTestimonioEntities(int maxResults, int firstResult) {
+    public List<Testimonio> findTestimonioEntities(int maxResults, int firstResult)
+    {
         return findTestimonioEntities(false, maxResults, firstResult);
     }
 
-    private List<Testimonio> findTestimonioEntities(boolean all, int maxResults, int firstResult) {
+    private List<Testimonio> findTestimonioEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -323,7 +331,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Testimonio findTestimonio(Integer id) {
+    public Testimonio findTestimonio(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -335,7 +344,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getTestimonioCount() {
+    public int getTestimonioCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -348,7 +358,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Testimonio> findTestimoniosEscritura(Integer idEscritura) {
+    public List<Testimonio> findTestimoniosEscritura(Integer idEscritura)
+    {
         EntityManager em = getEntityManager();
         List<Testimonio> lista = null;
 
@@ -360,7 +371,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         return lista;
     }
 
-    public Testimonio findTestimonioById(Integer idTestimonio) {
+    public Testimonio findTestimonioById(Integer idTestimonio)
+    {
 
         Testimonio testimonio = null;
         EntityManager em = getEntityManager();
@@ -373,7 +385,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
         return testimonio;
     }
 
-    public Boolean modificarTestimonio(Testimonio miTestimonio) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarTestimonio(Testimonio miTestimonio) throws ClassModifiedException, ClassEliminatedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
@@ -391,8 +404,7 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
                 throw new ClassModifiedException();
-            }
-            else
+            } else
             {
                 em.getTransaction().begin();
 
@@ -402,8 +414,7 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
                 em.close();
                 flag = true;
             }
-        }
-        else //Si fue  eliminado se dispara una excepcion
+        } else //Si fue  eliminado se dispara una excepcion
         {
             throw new ClassEliminatedException();
         }
@@ -411,7 +422,8 @@ public class TestimonioJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

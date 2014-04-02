@@ -8,6 +8,8 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,8 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -34,14 +34,16 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form ListaPersonasPresupuesto
      */
-    private ListaPersonasPresupuesto() {
+    private ListaPersonasPresupuesto()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         grillaPersonas.setAutoCreateRowSorter(true);
     }
 
-    public static ListaPersonasPresupuesto getInstancia() {
+    public static ListaPersonasPresupuesto getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new ListaPersonasPresupuesto();
@@ -49,15 +51,18 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static void setFormModificarPresupuesto(ModificarPresupuesto formulario) {
+    public static void setFormModificarPresupuesto(ModificarPresupuesto formulario)
+    {
         modificarPresupuesto = formulario;
     }
 
-    public static void setFormularioInvocador(String nombreFormulario) {
+    public static void setFormularioInvocador(String nombreFormulario)
+    {
         formularioInvocador = nombreFormulario;
     }
 
-    public Boolean cargarGrillaPersonas(ArrayList<DtoPersona> miListaDtoPersonas) {
+    public Boolean cargarGrillaPersonas(ArrayList<DtoPersona> miListaDtoPersonas)
+    {
         boolean flag = false;
 
         if (miListaDtoPersonas != null)
@@ -87,8 +92,7 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
         {
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda de Personas");
 
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(this);
         }
@@ -96,7 +100,8 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaPersonas.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaPersonas.getModel()).getRowCount() > 0)
@@ -106,11 +111,13 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
         }
     }
 
-    public static JMenuItem getVentanaListaPresupuesto() {
+    public static JMenuItem getVentanaListaPresupuesto()
+    {
         return ventanaListaPresupuesto;
     }
 
-    public static void setVentanaListaPresupuesto(JMenuItem ventanaListaPresupuesto) {
+    public static void setVentanaListaPresupuesto(JMenuItem ventanaListaPresupuesto)
+    {
         ListaPersonasPresupuesto.ventanaListaPresupuesto = ventanaListaPresupuesto;
     }
 
@@ -333,8 +340,7 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame
 
                             Principal.cargarFormulario(presupuestosForm);
                             Principal.setVentanasActivas(ListaPresupuestosClientesSinGestion.getVentanaListaPresupuestoClienteSinGestion());
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "La persona seleccionada aun no ha sido registrada como cliente", "Advertencia", JOptionPane.WARNING_MESSAGE);
                         }

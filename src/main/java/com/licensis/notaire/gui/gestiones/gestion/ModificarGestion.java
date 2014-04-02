@@ -14,7 +14,6 @@ import com.licensis.notaire.gui.clientes.BuscarCliente;
 import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -45,38 +44,46 @@ public class ModificarGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarGestion
      */
-    public ModificarGestion() {
+    public ModificarGestion()
+    {
         initComponents();
         this.setTitle("Ventana Modificar Gestion");
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         this.setMinimumSize(new Dimension(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical));
     }
 
-    public static JMenuItem getVentanaModificarGestion() {
+    public static JMenuItem getVentanaModificarGestion()
+    {
         return ventanaModificarGestion;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public List<DtoPersona> getListaClientesAsociados() {
+    public List<DtoPersona> getListaClientesAsociados()
+    {
         return listaClientesAsociados;
     }
 
-    public void setListaClientesAsociados(List<DtoPersona> listaClientesAsociados) {
+    public void setListaClientesAsociados(List<DtoPersona> listaClientesAsociados)
+    {
         this.listaClientesAsociados = listaClientesAsociados;
     }
 
-    public List<DtoTramite> getListaTramitesAsociados() {
+    public List<DtoTramite> getListaTramitesAsociados()
+    {
         return listaTramitesAsociados;
     }
 
-    public void setListaTramitesAsociados(List<DtoTramite> listaTramitesAsociados) {
+    public void setListaTramitesAsociados(List<DtoTramite> listaTramitesAsociados)
+    {
         this.listaTramitesAsociados = listaTramitesAsociados;
     }
 
-    public void agregarClienteGestion(DtoPersona nuevoCliente) {
+    public void agregarClienteGestion(DtoPersona nuevoCliente)
+    {
         this.listaClientesAgregados.add(nuevoCliente);
         Object[] datos =
         {
@@ -378,7 +385,8 @@ public class ModificarGestion extends javax.swing.JInternalFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void cargarDatosGestion(DtoGestionDeEscritura dtoGestion) {
+    public void cargarDatosGestion(DtoGestionDeEscritura dtoGestion)
+    {
 
         if (dtoGestion.isValido())
         {
@@ -395,7 +403,6 @@ public class ModificarGestion extends javax.swing.JInternalFrame
             this.campoFechaInicio.setText(fecha);
             this.campoEncabezado.setText(dtoGestion.getEncabezado());
             this.campoObservaciones.setText(dtoGestion.getObservaciones());
-
 
             for (Iterator<DtoTramite> itTramites = dtoGestion.getListaTramitesAsociados().iterator(); itTramites.hasNext();)
             {
@@ -430,8 +437,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame
                         && (dtoPersona.getApellido().contains(dtoGestion.getClienteReferencia().getApellido())))
                 {
                     // se pasa de largo, por que el cliente de referencia no debe estar en la lista de clientes asociados.                    
-                }
-                else
+                } else
                 {
                     Object[] datos =
                     {
@@ -443,8 +449,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame
                     this.getListaClientesAsociados().add(dtoPersona);
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "La gestion seleccionada no es valida.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -531,8 +536,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Se ha modificado correctamente la gestion: " + dtoGestionSeleccionada.getNumero(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
                     this.salir();
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "Error al intentar modificar la gestion indicada", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -542,8 +546,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame
                 JOptionPane.showMessageDialog(this, "Alguien ha modificado la gestion indicada!", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 this.salir();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los campo de gestion no es valido", "Error", JOptionPane.ERROR_MESSAGE);
         }

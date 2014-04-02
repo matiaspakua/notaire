@@ -6,11 +6,11 @@ package com.licensis.notaire.gui.administracion.folios;
 
 import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -26,18 +26,21 @@ public class IngresarTipoDeFolio extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarTipoDeFolio
      */
-    public IngresarTipoDeFolio(JInternalFrame padre) {
+    public IngresarTipoDeFolio(JInternalFrame padre)
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
         miPadre = padre;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarTipoDeFolio() {
+    public static JMenuItem getVentanaIngresarTipoDeFolio()
+    {
         return ventanaIngresarTipoDeFolio;
     }
 
@@ -204,8 +207,7 @@ public class IngresarTipoDeFolio extends javax.swing.JInternalFrame
                 JOptionPane.showMessageDialog(this, "El tipo de folio indicado ya existe, pero ha sido modificado por otro usuario. Intentelo nuevamente!", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los valores ingresados nos es valido.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

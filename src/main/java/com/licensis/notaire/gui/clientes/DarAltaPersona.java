@@ -5,7 +5,6 @@
 package com.licensis.notaire.gui.clientes;
 
 import com.licensis.notaire.dto.DtoPersona;
-import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.gui.Principal;
 import java.util.ArrayList;
@@ -32,21 +31,22 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
     /**
      * Creates new form DarAltaPersona
      */
-    public DarAltaPersona() {
+    public DarAltaPersona()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
-      
+
         //this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miController = ControllerNegocio.getInstancia();
 
         /*
          * Cargo el combo de Tipo de Identificacion
          */
-
         this.cargarCombo();
     }
 
-    public static DarAltaPersona getInstancia() {
+    public static DarAltaPersona getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new DarAltaPersona();
@@ -54,11 +54,13 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public void cargarCombo() {
+    public void cargarCombo()
+    {
         String nombre = null;
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<DtoTipoIdentificacion>();
         listaDtoIdentificaciones = miController.listarTiposIdentificacion();
@@ -72,7 +74,8 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         campoNombre.setText("");
         campoApellido.setText("");
         campoEmail.setText("");
@@ -81,7 +84,8 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
 
     }
 
-    public static JMenuItem getVentanaDarAltaPersona() {
+    public static JMenuItem getVentanaDarAltaPersona()
+    {
         return ventanaDarAltaPersona;
     }
 
@@ -307,7 +311,6 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
         if (msj == "")
         {
 
-
             DtoPersona dtoPersona = new DtoPersona();
 
             DtoTipoIdentificacion dtoTipoIdentificacion = new com.licensis.notaire.dto.DtoTipoIdentificacion();
@@ -336,8 +339,7 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
                         JOptionPane.showMessageDialog(this, "Fue dado de alta: " + dtoPersona.getNombre() + " " + dtoPersona.getApellido(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
                         this.limpiarFormulario();
 
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "La persona No pudo darse de alta", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     }
@@ -349,14 +351,12 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
                     this.salir();
                 }
 
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "El numero de Documento, ya se encuetra registrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 this.limpiarFormulario();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, msj, "ADEVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -395,12 +395,10 @@ public class DarAltaPersona extends javax.swing.JInternalFrame
         if (!flag)
         {
             this.advertencia.setText("Esta Ingresando Caracteres");
-        }
-        else
+        } else
         {
             this.advertencia.setText(" ");
         }
-
 
     }//GEN-LAST:event_campoNumeroIdentificacionKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables

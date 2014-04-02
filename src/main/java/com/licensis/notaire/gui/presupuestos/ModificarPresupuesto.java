@@ -23,7 +23,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
- * <p> REGLA DE NEGOCIO: <p>
+ * <p>
+ * REGLA DE NEGOCIO:
+ * <p>
  *
  * <lo> <li> Si queda un saldo a favor del Cliente, al recalcular el total del Presupuesto, se crea
  * un pago con valor negativo para que quede bien el saldo restante. </li> </lo>
@@ -49,7 +51,8 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarPresupuesto
      */
-    public ModificarPresupuesto() {
+    public ModificarPresupuesto()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
@@ -64,24 +67,28 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
     }
 
-    public void setPersona(DtoPersona persona) {
+    public void setPersona(DtoPersona persona)
+    {
         miDtoPersona = persona;
     }
 
-    public void setPresupuesto(DtoPresupuesto dto) {
+    public void setPresupuesto(DtoPresupuesto dto)
+    {
         miDtoPresupuesto = dto;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarPresupuesto() {
+    public static JMenuItem getVentanaModificarPresupuesto()
+    {
         return ventanaModificarPresupuesto;
     }
 
-    public void cargarFormulario() {
-
+    public void cargarFormulario()
+    {
 
         campoNombrePersona.setText(miDtoPersona.getNombre() + " " + miDtoPersona.getApellido());
         campoObservaciones.setText(miDtoPresupuesto.getObservaciones());
@@ -91,8 +98,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         if (miDtoPresupuesto.getTramite().getTipoDeTramite().getAsociaInmuebles())
         {
             botonDetalleInmueble.setEnabled(true);
-        }
-        else
+        } else
         {
             botonDetalleInmueble.setEnabled(false);
         }
@@ -116,8 +122,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
                         miDto.getValor()
                     };
                     ((DefaultTableModel) grillaValoresFijos.getModel()).addRow(datos);
-                }
-                else
+                } else
                 {
 
                     Object[] datos =
@@ -138,14 +143,14 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             botonAgregarItem.setEnabled(true);
             botonEliminarItem.setEnabled(true);
             botonCalcular.setEnabled(true);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "ERROR: Este presupuesto no tiene items asociados.");
         }
     }
 
-    public void limpiarFormulario() {
+    public void limpiarFormulario()
+    {
         campoNombrePersona.setText(" ");
         campoObservaciones.setText(" ");
         campoNombreTramite.setText(" ");
@@ -162,7 +167,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             ((DefaultTableModel) grillaValoresVariables.getModel()).removeRow(i);
             i--;
         }
-        
+
         int j = ((DefaultTableModel) grillaValoresFijos.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaValoresFijos.getModel()).getRowCount() > 0)
@@ -506,7 +511,8 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
     }//GEN-LAST:event_botonCalcularActionPerformed
 
-    private void calcularTotal() {
+    private void calcularTotal()
+    {
 
         if (miDtoPresupuesto != null)
         {
@@ -533,8 +539,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             if (totalNuevo > total)
             {
                 saldo = miDtoPresupuesto.getSaldo() + totalNuevo - total;
-            }
-            else if (totalNuevo < total)
+            } else if (totalNuevo < total)
             {
                 //Traigo los pagos ya realizados por el cliente para este presupuesto:
                 List<DtoPago> pagosPresupuesto = miController.buscarPagosPresupuesto(miDtoPresupuesto);
@@ -555,25 +560,21 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
                     if (saldo < 0)
                     {
                         labelSaldo.setText("SALDO A FAVOR: $" + (-saldo));
-                    }
-                    else
+                    } else
                     {
                         labelSaldo.setText("");
                     }
-                }
-                else
+                } else
                 {
                     saldo = totalNuevo;
                 }
 
-            }
-            else
+            } else
             {
                 saldo = miDtoPresupuesto.getSaldo();
             }
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -624,19 +625,17 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
                 {
                     miItem.setPorcentaje((Integer) miGrilla.getValueAt(i, 2));
 
-                }
-                else
+                } else
                 {
-                    JOptionPane.showMessageDialog(this, "Debe indicar un numero entre 0 y 100 en el Porcentaje del Item " + miGrilla.getValueAt(i,0).toString(), "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
+                    JOptionPane.showMessageDialog(this, "Debe indicar un numero entre 0 y 100 en el Porcentaje del Item " + miGrilla.getValueAt(i, 0).toString(), "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
 
                     flag = false;
                     break;
                 }
 
-            }
-            else
+            } else
             {
-                int option = JOptionPane.showConfirmDialog(this, "¿Esta seguro que el Valor o Porcentaje del Item" + miGrilla.getValueAt(i,0).toString()+ " es 0?", "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(this, "¿Esta seguro que el Valor o Porcentaje del Item" + miGrilla.getValueAt(i, 0).toString() + " es 0?", "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
 
                 if (option == JOptionPane.NO_OPTION)
                 {
@@ -652,17 +651,15 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
                 if (miGrilla.getValueAt(i, 3) != null)
                 {
                     miItem.setObservaciones((String) miGrilla.getValueAt(i, 3));
-                }
-                else
+                } else
                 {
                     miItem.setObservaciones("");
                 }
 
                 itemsNuevos.add(miItem);
-            }
-            else
+            } else
             {
-                JOptionPane.showMessageDialog(this, "Debe completar el Nombre del Item de la fila " + (i+1), "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Debe completar el Nombre del Item de la fila " + (i + 1), "ERROR", JOptionPane.ERROR_MESSAGE);
                 flag = false;
                 break;
             }
@@ -687,8 +684,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
                     miDtoPresupuesto.setSaldo(new Float(0f));
 
-                }
-                else
+                } else
                 {
                     miDtoPresupuesto.setSaldo(saldo);
                 }
@@ -702,9 +698,8 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
                 if (modificado)
                 {
                     JOptionPane.showMessageDialog(this, "Se ha modificado el presupuesto.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
-                    this.limpiarFormulario();                    
-                }
-                else
+                    this.limpiarFormulario();
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "No se ha modificado el presupuesto.", "ERROR", JOptionPane.ERROR_MESSAGE);
                     this.limpiarFormulario();
@@ -724,7 +719,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     private void botonDetalleInmuebleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDetalleInmuebleActionPerformed
-        
+
         if (miDtoPersona != null)
         {
             DtoInmueble miInmueble = null;
@@ -740,8 +735,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
                 Principal.cargarFormulario(miDetalleInmueble);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe buscar primero a una Persona.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -762,8 +756,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             ((DefaultTableModel) grillaValoresVariables.getModel()).addRow(datos);
 
             cantidadFilasNuevasGrilla++;
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -781,8 +774,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             int filaSeleccionada = grillaValoresVariables.getSelectedRow();
 
             ((DefaultTableModel) grillaValoresVariables.getModel()).removeRow(filaSeleccionada);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "El Presupuesto debe tener al menos un Item.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

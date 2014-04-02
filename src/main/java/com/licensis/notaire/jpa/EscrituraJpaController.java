@@ -4,15 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.Query;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
@@ -22,6 +13,15 @@ import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.negocio.Tramite;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -30,18 +30,21 @@ import com.licensis.notaire.negocio.Tramite;
 public class EscrituraJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public EscrituraJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public EscrituraJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Boolean create(Escritura escritura) {
+    public Boolean create(Escritura escritura)
+    {
         Boolean creada = false;
 
         if (escritura.getFolioList() == null)
@@ -129,7 +132,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         return creada;
     }
 
-    public Boolean edit(Escritura escritura) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException {
+    public Boolean edit(Escritura escritura) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
         Boolean modificada = false;
 
@@ -258,8 +262,7 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
             }
             em.getTransaction().commit();
             modificada = true;
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -271,7 +274,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         return modificada;
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -325,15 +329,18 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Escritura> findEscrituraEntities() {
+    public List<Escritura> findEscrituraEntities()
+    {
         return findEscrituraEntities(true, -1, -1);
     }
 
-    public List<Escritura> findEscrituraEntities(int maxResults, int firstResult) {
+    public List<Escritura> findEscrituraEntities(int maxResults, int firstResult)
+    {
         return findEscrituraEntities(false, maxResults, firstResult);
     }
 
-    private List<Escritura> findEscrituraEntities(boolean all, int maxResults, int firstResult) {
+    private List<Escritura> findEscrituraEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -351,7 +358,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Escritura> findEscrituraByNumero(Integer numero) {
+    public List<Escritura> findEscrituraByNumero(Integer numero)
+    {
         EntityManager em = getEntityManager();
         List<Escritura> escrituras = null;
 
@@ -363,7 +371,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         return escrituras;
     }
 
-    public Escritura findEscrituraById(Integer id) {
+    public Escritura findEscrituraById(Integer id)
+    {
         EntityManager em = getEntityManager();
         Escritura escritura = null;
 
@@ -375,7 +384,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         return escritura;
     }
 
-    public Escritura findEscritura(Integer id) {
+    public Escritura findEscritura(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -387,7 +397,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getEscrituraCount() {
+    public int getEscrituraCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -400,7 +411,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Boolean modificarEscritura(Escritura miEscritura) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarEscritura(Escritura miEscritura) throws ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
         Boolean modificada = false;
 
@@ -434,7 +446,6 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
                 persistentEscritura.getFolioList().add(folio);
             }
 
-
             persistentEscritura.setMatriculaInscripcion(miEscritura.getMatriculaInscripcion());
             persistentEscritura.setNumero(miEscritura.getNumero());
             persistentEscritura.setTramiteList(new ArrayList<Tramite>());
@@ -447,8 +458,7 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
             em.getTransaction().commit();
             modificada = true;
             em.close();
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -456,7 +466,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
         return modificada;
     }
 
-    public Boolean modificarEscrituraSimple(Escritura miEscritura) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarEscrituraSimple(Escritura miEscritura) throws ClassModifiedException, ClassEliminatedException
+    {
         EntityManager em = null;
         Boolean modificada = false;
 
@@ -488,8 +499,7 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
             em.getTransaction().commit();
             modificada = true;
             em.close();
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -498,7 +508,8 @@ public class EscrituraJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

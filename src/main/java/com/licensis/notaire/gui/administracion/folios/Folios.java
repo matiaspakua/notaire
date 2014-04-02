@@ -23,11 +23,13 @@ public class Folios extends javax.swing.JInternalFrame
     /**
      * Creates new form Folios
      */
-    private Folios() {
+    private Folios()
+    {
         initComponents();
     }
 
-    public static Folios getInstancia() {
+    public static Folios getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Folios();
@@ -38,15 +40,18 @@ public class Folios extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Folios.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuFolios() {
+    public static JMenuItem getSubmenuFolios()
+    {
         return submenuFolios;
     }
 

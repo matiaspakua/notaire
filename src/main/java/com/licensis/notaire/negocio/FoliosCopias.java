@@ -5,7 +5,16 @@
 package com.licensis.notaire.negocio;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -16,12 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "folios_copias")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "FoliosCopias.findAll", query = "SELECT f FROM FoliosCopias f"),
-    @NamedQuery(name = "FoliosCopias.findByVersion", query = "SELECT f FROM FoliosCopias f WHERE f.version = :version"),
-    @NamedQuery(name = "FoliosCopias.findByFkIdFolio", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdFolio = :fkIdFolio"),
-    @NamedQuery(name = "FoliosCopias.findByFkIdCopia", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdCopia = :fkIdCopia")
-})
+        {
+            @NamedQuery(name = "FoliosCopias.findAll", query = "SELECT f FROM FoliosCopias f"),
+            @NamedQuery(name = "FoliosCopias.findByVersion", query = "SELECT f FROM FoliosCopias f WHERE f.version = :version"),
+            @NamedQuery(name = "FoliosCopias.findByFkIdFolio", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdFolio = :fkIdFolio"),
+            @NamedQuery(name = "FoliosCopias.findByFkIdCopia", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdCopia = :fkIdCopia")
+        })
 public class FoliosCopias implements Serializable
 {
 
@@ -39,63 +48,77 @@ public class FoliosCopias implements Serializable
     @ManyToOne(optional = false)
     private Folio folio;
 
-    public FoliosCopias() {
+    public FoliosCopias()
+    {
     }
 
-    public FoliosCopias(FoliosCopiasPK foliosCopiasPK) {
+    public FoliosCopias(FoliosCopiasPK foliosCopiasPK)
+    {
         this.foliosCopiasPK = foliosCopiasPK;
     }
 
-    public FoliosCopias(FoliosCopiasPK foliosCopiasPK, int version) {
+    public FoliosCopias(FoliosCopiasPK foliosCopiasPK, int version)
+    {
         this.foliosCopiasPK = foliosCopiasPK;
         this.version = version;
     }
 
-    public FoliosCopias(int fkIdFolio, int fkIdCopia) {
+    public FoliosCopias(int fkIdFolio, int fkIdCopia)
+    {
         this.foliosCopiasPK = new FoliosCopiasPK(fkIdFolio, fkIdCopia);
     }
 
-    public FoliosCopiasPK getFoliosCopiasPK() {
+    public FoliosCopiasPK getFoliosCopiasPK()
+    {
         return foliosCopiasPK;
     }
 
-    public void setFoliosCopiasPK(FoliosCopiasPK foliosCopiasPK) {
+    public void setFoliosCopiasPK(FoliosCopiasPK foliosCopiasPK)
+    {
         this.foliosCopiasPK = foliosCopiasPK;
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public Copia getCopia() {
+    public Copia getCopia()
+    {
         return copia;
     }
 
-    public void setCopia(Copia copia) {
+    public void setCopia(Copia copia)
+    {
         this.copia = copia;
     }
 
-    public Folio getFolio() {
+    public Folio getFolio()
+    {
         return folio;
     }
 
-    public void setFolio(Folio folio) {
+    public void setFolio(Folio folio)
+    {
         this.folio = folio;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (foliosCopiasPK != null ? foliosCopiasPK.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof FoliosCopias))
         {
@@ -110,7 +133,8 @@ public class FoliosCopias implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.FoliosCopias[ foliosCopiasPK=" + foliosCopiasPK + " ]";
     }
 }

@@ -6,14 +6,14 @@ package com.licensis.notaire.gui.administracion.estadosGestion;
 
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -30,22 +30,26 @@ public class ModificarEstadoGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarEstadoGestion
      */
-    public ModificarEstadoGestion() {
+    public ModificarEstadoGestion()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
         cargarListaEstadosDeGestion();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarEstadoDeGestion() {
+    public static JMenuItem getVentanaModificarEstadoDeGestion()
+    {
         return ventanaModificarEstadoDeGestion;
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         this.campoNombreEstadoGestion.setText("");
         this.campoObservacionesEstadoGestion.setText("");
     }
@@ -244,8 +248,7 @@ public class ModificarEstadoGestion extends javax.swing.JInternalFrame
                 this.cargarListaEstadosDeGestion();
                 this.limpiarFormulario();
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Algunos de los campos indicados contiene datos invalidos", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
@@ -290,7 +293,8 @@ public class ModificarEstadoGestion extends javax.swing.JInternalFrame
         }
     }//GEN-LAST:event_botonSeleccionarActionPerformed
 
-    private void cargarListaEstadosDeGestion() {
+    private void cargarListaEstadosDeGestion()
+    {
         miListaEstadosDeGestion = miControllerNegocio.obtenerListaEstadosDeGestionDisponibles();
 
         if (!miListaEstadosDeGestion.isEmpty())
@@ -309,15 +313,15 @@ public class ModificarEstadoGestion extends javax.swing.JInternalFrame
             }
 
             this.listaEstadosDisponibles.setModel(lista);
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen estado para modificar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    private void cargarEstado(DtoEstadoDeGestion unDto) {
+    private void cargarEstado(DtoEstadoDeGestion unDto)
+    {
         dtoSeleccionado = unDto;
 
         this.campoNombreEstadoGestion.setText(unDto.getNombre());

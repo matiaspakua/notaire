@@ -13,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.metamodel.ListAttribute;
 import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -29,18 +28,21 @@ import org.hibernate.StaleObjectStateException;
 public class DocumentoPresentadoJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public DocumentoPresentadoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public DocumentoPresentadoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public boolean create(DocumentoPresentado documentoPresentado) throws NonexistentEntityException {
+    public boolean create(DocumentoPresentado documentoPresentado) throws NonexistentEntityException
+    {
 
         boolean flag = false; //Variable para saber el resultado de la transaccion
         int version = 0;    //Variable para Version en bd del Objeto  
@@ -59,8 +61,7 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
             {
                 throw new StaleObjectStateException(null, version);
 
-            }
-            else
+            } else
             {
                 if (fkIdTramite != null)
                 {
@@ -87,11 +88,10 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
         return flag;
 
-
-
     }
 
-    public boolean edit(DocumentoPresentado documentoPresentado) throws NonexistentEntityException, ClassModifiedException {
+    public boolean edit(DocumentoPresentado documentoPresentado) throws NonexistentEntityException, ClassModifiedException
+    {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
@@ -110,8 +110,7 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
             {
                 throw new ClassModifiedException("El documento indicado ha sido modificado por otro usuario");
 
-            }
-            else
+            } else
             {
                 try
                 {
@@ -158,7 +157,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         return flag;
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -192,15 +192,18 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
     }
 
-    public List<DocumentoPresentado> findDocumentoPresentadoEntities() {
+    public List<DocumentoPresentado> findDocumentoPresentadoEntities()
+    {
         return findDocumentoPresentadoEntities(true, -1, -1);
     }
 
-    public List<DocumentoPresentado> findDocumentoPresentadoEntities(int maxResults, int firstResult) {
+    public List<DocumentoPresentado> findDocumentoPresentadoEntities(int maxResults, int firstResult)
+    {
         return findDocumentoPresentadoEntities(false, maxResults, firstResult);
     }
 
-    private List<DocumentoPresentado> findDocumentoPresentadoEntities(boolean all, int maxResults, int firstResult) {
+    private List<DocumentoPresentado> findDocumentoPresentadoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -218,7 +221,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
     }
 
-    public DocumentoPresentado findDocumentoPresentado(Integer id) {
+    public DocumentoPresentado findDocumentoPresentado(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -230,7 +234,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
     }
 
-    public int getDocumentoPresentadoCount() {
+    public int getDocumentoPresentadoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -243,7 +248,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
     }
 
-    public List<DocumentoPresentado> findDocumentosPresentados() {
+    public List<DocumentoPresentado> findDocumentosPresentados()
+    {
         EntityManager em = getEntityManager();
 
         List<DocumentoPresentado> listDocumentoPresentados = null;
@@ -254,7 +260,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         return listDocumentoPresentados;
     }
 
-    public List<DocumentoPresentado> findDocumentosPorVencer() {
+    public List<DocumentoPresentado> findDocumentosPorVencer()
+    {
         EntityManager em = getEntityManager();
         List<DocumentoPresentado> listaDocumentoPorVencer = new ArrayList<>();
 
@@ -268,12 +275,13 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         return listaDocumentoPorVencer;
     }
 
-    private Boolean findDocumentoPresentado(DocumentoPresentado documentoPresentado) {
+    private Boolean findDocumentoPresentado(DocumentoPresentado documentoPresentado)
+    {
 
         boolean flag = false;
         int id_Tramite = documentoPresentado.getFkIdTramite().getIdTramite();
         String nombreDocumento = documentoPresentado.getNombre();
-        
+
         EntityManager em = null;
 
         em = getEntityManager();
@@ -296,7 +304,8 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         return flag;
     }
 
-       public Boolean createDocumentoExterno(DocumentoPresentado documento) throws NonexistentEntityException, ClassModifiedException {
+    public Boolean createDocumentoExterno(DocumentoPresentado documento) throws NonexistentEntityException, ClassModifiedException
+    {
         EntityManager em = null;
         Boolean flag = false;
         em = getEntityManager();
@@ -308,7 +317,6 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
             documentoPresentado.setVersion(documento.getVersion());
             documentoPresentado.setNombre(documento.getNombre());
             documentoPresentado.setQuienEntrega(documento.getQuienEntrega());
-       
 
             Tramite miTramite = documento.getFkIdTramite();
             documentoPresentado.setFkIdTramite(miTramite);
@@ -317,7 +325,7 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
             em.flush();
             em.getTransaction().commit();
             flag = true;
-            
+
             this.edit(documentoPresentado);
         }
         finally
@@ -326,9 +334,10 @@ public class DocumentoPresentadoJpaController implements Serializable, IPersiste
         }
         return flag;
     }
-    
+
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

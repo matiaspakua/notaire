@@ -12,7 +12,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -24,13 +39,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "escrituras")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Escritura.findAll", query = "SELECT e FROM Escritura e"),
-    @NamedQuery(name = "Escritura.findByIdEscritura", query = "SELECT e FROM Escritura e WHERE e.idEscritura = :idEscritura"),
-    @NamedQuery(name = "Escritura.findByNumero", query = "SELECT e FROM Escritura e WHERE e.numero = :numero"),
-    @NamedQuery(name = "Escritura.findByFechaEscrituracion", query = "SELECT e FROM Escritura e WHERE e.fechaEscrituracion = :fechaEscrituracion"),
-    @NamedQuery(name = "Escritura.findByFechaInscripcion", query = "SELECT e FROM Escritura e WHERE e.fechaInscripcion = :fechaInscripcion")
-})
+        {
+            @NamedQuery(name = "Escritura.findAll", query = "SELECT e FROM Escritura e"),
+            @NamedQuery(name = "Escritura.findByIdEscritura", query = "SELECT e FROM Escritura e WHERE e.idEscritura = :idEscritura"),
+            @NamedQuery(name = "Escritura.findByNumero", query = "SELECT e FROM Escritura e WHERE e.numero = :numero"),
+            @NamedQuery(name = "Escritura.findByFechaEscrituracion", query = "SELECT e FROM Escritura e WHERE e.fechaEscrituracion = :fechaEscrituracion"),
+            @NamedQuery(name = "Escritura.findByFechaInscripcion", query = "SELECT e FROM Escritura e WHERE e.fechaInscripcion = :fechaInscripcion")
+        })
 public class Escritura implements Serializable
 {
 
@@ -75,14 +90,17 @@ public class Escritura implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     private List<Testimonio> testimonioList = null;
 
-    public Escritura() {
+    public Escritura()
+    {
     }
 
-    public Escritura(Integer idEscritura) {
+    public Escritura(Integer idEscritura)
+    {
         this.idEscritura = idEscritura;
     }
 
-    public Escritura(Integer idEscritura, int numero, Date fechaEscrituracion, String cuerpo, String estado) {
+    public Escritura(Integer idEscritura, int numero, Date fechaEscrituracion, String cuerpo, String estado)
+    {
         this.idEscritura = idEscritura;
         this.numero = numero;
         this.fechaEscrituracion = fechaEscrituracion;
@@ -90,98 +108,121 @@ public class Escritura implements Serializable
         this.estado = estado;
     }
 
-    public Integer getIdEscritura() {
+    public Integer getIdEscritura()
+    {
         return idEscritura;
     }
 
-    public void setIdEscritura(Integer idEscritura) {
+    public void setIdEscritura(Integer idEscritura)
+    {
         this.idEscritura = idEscritura;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public Date getFechaEscrituracion() {
+    public Date getFechaEscrituracion()
+    {
         return fechaEscrituracion;
     }
 
-    public void setFechaEscrituracion(Date fechaEscrituracion) {
+    public void setFechaEscrituracion(Date fechaEscrituracion)
+    {
         this.fechaEscrituracion = fechaEscrituracion;
     }
 
-    public String getCuerpo() {
+    public String getCuerpo()
+    {
         return cuerpo;
     }
 
-    public void setCuerpo(String cuerpo) {
+    public void setCuerpo(String cuerpo)
+    {
         this.cuerpo = cuerpo;
     }
 
-    public String getEstado() {
+    public String getEstado()
+    {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(String estado)
+    {
         this.estado = estado;
     }
 
-    public String getMatriculaInscripcion() {
+    public String getMatriculaInscripcion()
+    {
         return matriculaInscripcion;
     }
 
-    public void setMatriculaInscripcion(String matriculaInscripcion) {
+    public void setMatriculaInscripcion(String matriculaInscripcion)
+    {
         this.matriculaInscripcion = matriculaInscripcion;
     }
 
-    public Date getFechaInscripcion() {
+    public Date getFechaInscripcion()
+    {
         return fechaInscripcion;
     }
 
-    public void setFechaInscripcion(Date fechaInscripcion) {
+    public void setFechaInscripcion(Date fechaInscripcion)
+    {
         this.fechaInscripcion = fechaInscripcion;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Folio> getFolioList() {
+    public List<Folio> getFolioList()
+    {
         return folioList;
     }
 
-    public void setFolioList(List<Folio> folioList) {
+    public void setFolioList(List<Folio> folioList)
+    {
         this.folioList = folioList;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList() {
+    public List<Tramite> getTramiteList()
+    {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList) {
+    public void setTramiteList(List<Tramite> tramiteList)
+    {
         this.tramiteList = tramiteList;
     }
 
     @XmlTransient
-    public List<Testimonio> getTestimonioList() {
+    public List<Testimonio> getTestimonioList()
+    {
         return testimonioList;
     }
 
-    public void setTestimonioList(List<Testimonio> testimonioList) {
+    public void setTestimonioList(List<Testimonio> testimonioList)
+    {
         this.testimonioList = testimonioList;
     }
 
-    public void setAtributos(DtoEscritura miDtoEscritura) {
+    public void setAtributos(DtoEscritura miDtoEscritura)
+    {
         if (miDtoEscritura != null)
         {
             if (idEscritura != null)
@@ -224,7 +265,8 @@ public class Escritura implements Serializable
         }
     }
 
-    public DtoEscritura getDto() {
+    public DtoEscritura getDto()
+    {
         DtoEscritura miDtoEscritura = new DtoEscritura();
 
         miDtoEscritura.setIdEscritura(idEscritura);
@@ -234,7 +276,7 @@ public class Escritura implements Serializable
         miDtoEscritura.setEstado(estado);
         miDtoEscritura.setMatriculaInscripcion(matriculaInscripcion);
         miDtoEscritura.setFechaInscripcion(fechaInscripcion);
-        
+
         miDtoEscritura.setVersion(version);
 
         if (folioList != null && !folioList.isEmpty())
@@ -247,8 +289,7 @@ public class Escritura implements Serializable
 
                 miDtoEscritura.getFolios().add(miDtoFolio);
             }
-        }
-        else
+        } else
         {
             miDtoEscritura.setFolios(null);
         }
@@ -262,8 +303,7 @@ public class Escritura implements Serializable
 
                 miDtoEscritura.getTramites().add(miDtoTramite);
             }
-        }
-        else
+        } else
         {
             miDtoEscritura.setTramites(null);
         }
@@ -272,14 +312,16 @@ public class Escritura implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idEscritura != null ? idEscritura.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Escritura))
         {
@@ -294,19 +336,22 @@ public class Escritura implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Escritura[ idEscritura=" + idEscritura + " ]"
-                 + "[ numero=" + numero 
-                 + ", fecha escrituracion: " + this.fechaEscrituracion
-                 + ", fecha inscripcion: " + this.fechaInscripcion                 
-                 + ", Estado: " + this.estado + " ]";
+                + "[ numero=" + numero
+                + ", fecha escrituracion: " + this.fechaEscrituracion
+                + ", fecha inscripcion: " + this.fechaInscripcion
+                + ", Estado: " + this.estado + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 }

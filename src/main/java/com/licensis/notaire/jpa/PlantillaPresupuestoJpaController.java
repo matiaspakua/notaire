@@ -4,10 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.List;
-import javax.persistence.*;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
@@ -16,6 +12,14 @@ import com.licensis.notaire.negocio.Concepto;
 import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import com.licensis.notaire.negocio.PlantillaPresupuestoPK;
 import com.licensis.notaire.negocio.TipoDeTramite;
+import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -24,18 +28,21 @@ import com.licensis.notaire.negocio.TipoDeTramite;
 public class PlantillaPresupuestoJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public PlantillaPresupuestoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public PlantillaPresupuestoJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public Boolean create(PlantillaPresupuesto plantillaPresupuesto) throws PreexistingEntityException {
+    public Boolean create(PlantillaPresupuesto plantillaPresupuesto) throws PreexistingEntityException
+    {
         Boolean creada = false;
 
         if (plantillaPresupuesto.getPlantillaPresupuestoPK() == null)
@@ -92,7 +99,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         return creada;
     }
 
-    public void edit(PlantillaPresupuesto plantillaPresupuesto) throws NonexistentEntityException, Exception {
+    public void edit(PlantillaPresupuesto plantillaPresupuesto) throws NonexistentEntityException, Exception
+    {
         plantillaPresupuesto.getPlantillaPresupuestoPK().setFkIdConcepto(plantillaPresupuesto.getConcepto().getIdConcepto());
         plantillaPresupuesto.getPlantillaPresupuestoPK().setFkIdTipoTramite(plantillaPresupuesto.getTipoDeTramite().getIdTipoTramite());
         EntityManager em = null;
@@ -160,7 +168,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public void destroy(PlantillaPresupuestoPK id) throws NonexistentEntityException {
+    public void destroy(PlantillaPresupuestoPK id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -200,15 +209,18 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public List<PlantillaPresupuesto> findPlantillaPresupuestoEntities() {
+    public List<PlantillaPresupuesto> findPlantillaPresupuestoEntities()
+    {
         return findPlantillaPresupuestoEntities(true, -1, -1);
     }
 
-    public List<PlantillaPresupuesto> findPlantillaPresupuestoEntities(int maxResults, int firstResult) {
+    public List<PlantillaPresupuesto> findPlantillaPresupuestoEntities(int maxResults, int firstResult)
+    {
         return findPlantillaPresupuestoEntities(false, maxResults, firstResult);
     }
 
-    private List<PlantillaPresupuesto> findPlantillaPresupuestoEntities(boolean all, int maxResults, int firstResult) {
+    private List<PlantillaPresupuesto> findPlantillaPresupuestoEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -226,7 +238,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public PlantillaPresupuesto findPlantillaPresupuesto(PlantillaPresupuestoPK id) {
+    public PlantillaPresupuesto findPlantillaPresupuesto(PlantillaPresupuestoPK id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -238,7 +251,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public int getPlantillaPresupuestoCount() {
+    public int getPlantillaPresupuestoCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -251,7 +265,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public List<PlantillaPresupuesto> findPlantillasDePresupuesto(int idTipoTramite) {
+    public List<PlantillaPresupuesto> findPlantillasDePresupuesto(int idTipoTramite)
+    {
         EntityManager em = getEntityManager();
 
         List<PlantillaPresupuesto> misPlantillas = null;
@@ -275,7 +290,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
     }
 
-    public Boolean eliminarPlantillaPresupuesto(PlantillaPresupuesto miPlantilla) throws ClassEliminatedException {
+    public Boolean eliminarPlantillaPresupuesto(PlantillaPresupuesto miPlantilla) throws ClassEliminatedException
+    {
 
         Boolean eliminada = false;
         int deleted = 0;
@@ -309,8 +325,7 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
             {
                 eliminada = true;
             }
-        }
-        else
+        } else
         {
             throw new ClassEliminatedException();
         }
@@ -321,7 +336,8 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

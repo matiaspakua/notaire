@@ -6,8 +6,6 @@ package com.licensis.notaire.gui.administracion.estadosGestion;
 
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.gui.Principal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
@@ -26,17 +24,20 @@ public class IngresarEstadoGestion extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarEstadoGestion
      */
-    public IngresarEstadoGestion() {
+    public IngresarEstadoGestion()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarNuevoEstado() {
+    public static JMenuItem getVentanaIngresarNuevoEstado()
+    {
         return ventanaIngresarNuevoEstado;
     }
 
@@ -191,8 +192,7 @@ public class IngresarEstadoGestion extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Se ha dado de alta un nuevo estado de Gestion Correctamente");
                     salir();
-                }
-                else
+                } else
                 {
                     JOptionPane.showMessageDialog(this, "Error al intentar dar de alta el Estado de gestion", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -201,13 +201,10 @@ public class IngresarEstadoGestion extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "El estado de gestion indicado ya se encuentra registrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los datos son invalidos", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 

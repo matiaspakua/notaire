@@ -7,6 +7,7 @@ package com.licensis.notaire.gui.administracion.escribanos;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoSuplencia;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +15,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -35,7 +35,8 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarSuplencia
      */
-    public RegistrarSuplencia() {
+    public RegistrarSuplencia()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miControllerNegocio = ControllerNegocio.getInstancia();
@@ -45,11 +46,13 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
         this.labelMensajeSuplencia.setText("Favor seleccionar el Escribano Suplantado:");
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRegistrarSuplencia() {
+    public static JMenuItem getVentanaRegistrarSuplencia()
+    {
         return ventanaRegistrarSuplencia;
     }
 
@@ -327,17 +330,14 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
                         + " por " + dtoEscribanoSuplente.getNombre() + " " + dtoEscribanoSuplente.getApellido()
                         + "</HTML>");
                 salir();
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Error al registrar suplencia", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los datos ingresados no es valido", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-
 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
@@ -352,8 +352,7 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
         if (this.cantidadSelecciones == CAMPO_ESCRIBANO_SUPLENTE)
         {
             this.labelMensajeSuplencia.setText("Favor seleccionar al escribano suplente:");
-        }
-        else if (this.cantidadSelecciones == CAMPO_ESCRIBANO_SUPLANTADO)
+        } else if (this.cantidadSelecciones == CAMPO_ESCRIBANO_SUPLANTADO)
         {
             this.labelMensajeSuplencia.setText("Favor seleccionar el Escribano Suplantado:");
         }
@@ -381,14 +380,12 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
                         this.cantidadSelecciones = CAMPO_ESCRIBANO_SUPLENTE;
                         this.labelMensajeSuplencia.setText("Favor seleccionar el Escribano Suplente:");
                         this.dtoEscribanoSuplantado = dtoEscribano;
-                    }
-                    else
+                    } else
                     {
                         if (this.dtoEscribanoSuplantado.getRegistroEscribano() == dtoEscribano.getRegistroEscribano())
                         {
                             JOptionPane.showMessageDialog(this, "El escribano suplente y suplantado, son inguales. Favor seleccionar otro", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                        }
-                        else
+                        } else
                         {
                             this.campoEscribanoSuplente.setText(dtoEscribano.getNombre()
                                     + " "
@@ -402,7 +399,6 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
                     break;
                 }
             }
-
 
         }
         catch (ArrayIndexOutOfBoundsException e)
@@ -428,7 +424,8 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_grillaEscribanosDisponiblesMouseClicked
 
-    public void cargarGrilla() {
+    public void cargarGrilla()
+    {
         try
         {
             miListaDtoEscribanos = miControllerNegocio.obtenerListaEscribanosDisponibles();
@@ -436,8 +433,7 @@ public class RegistrarSuplencia extends javax.swing.JInternalFrame
             if (miListaDtoEscribanos.isEmpty())
             {
                 JOptionPane.showMessageDialog(this, "No hay escribanos registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            }
-            else
+            } else
             {
                 for (Iterator<DtoPersona> it = miListaDtoEscribanos.iterator(); it.hasNext();)
                 {

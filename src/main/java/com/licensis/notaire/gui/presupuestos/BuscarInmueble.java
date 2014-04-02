@@ -5,9 +5,9 @@
 package com.licensis.notaire.gui.presupuestos;
 
 import com.licensis.notaire.dto.DtoInmueble;
-import javax.swing.JOptionPane;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,12 +22,14 @@ public class BuscarInmueble extends javax.swing.JInternalFrame
     /**
      * Creates new form BuscarInmueble
      */
-    public BuscarInmueble() {
+    public BuscarInmueble()
+    {
         initComponents();
         miController = ControllerNegocio.getInstancia();
     }
 
-    public void setDetalle(DetalleValoresTramites referencia) {
+    public void setDetalle(DetalleValoresTramites referencia)
+    {
         detalle = referencia;
     }
 
@@ -146,15 +148,13 @@ public class BuscarInmueble extends javax.swing.JInternalFrame
             if (encontrado != null)
             {
                 detalle.setInmueble(encontrado);
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existe un inmueble con la Nomenclatura Catastral indicada.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
             }
 
             this.dispose();
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe completar correctamente la Nomenclatura Catastral.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -170,8 +170,7 @@ public class BuscarInmueble extends javax.swing.JInternalFrame
         if (!AdministradorValidaciones.getInstancia().validarLetrasGuiones(campoNC.getText()))
         {
             labelValidacionCampo.setText("Debe escribir solo letras, numeros o guiones.");
-        }
-        else
+        } else
         {
             labelValidacionCampo.setText("");
         }

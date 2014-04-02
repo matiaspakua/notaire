@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,8 @@ import com.licensis.notaire.negocio.Usuario;
 public class RegistroAuditoriaJpaController implements Serializable, IPersistenciaJpa
 {
 
-    private RegistroAuditoriaJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    private RegistroAuditoriaJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
@@ -30,13 +30,15 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
     private EntityManagerFactory emf = null;
     private static RegistroAuditoriaJpaController instancia = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public boolean create(RegistroAuditoria registroAuditoria) {
+    public boolean create(RegistroAuditoria registroAuditoria)
+    {
         boolean resultado = false;
-        
+
         EntityManager em = null;
         try
         {
@@ -67,7 +69,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         return resultado;
     }
 
-    public static RegistroAuditoriaJpaController getInstancia() {
+    public static RegistroAuditoriaJpaController getInstancia()
+    {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
 
@@ -78,7 +81,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         return instancia;
     }
 
-    public void edit(RegistroAuditoria registroAuditoria) throws NonexistentEntityException, Exception {
+    public void edit(RegistroAuditoria registroAuditoria) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -127,7 +131,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -161,15 +166,18 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         }
     }
 
-    public List<RegistroAuditoria> findRegistroAuditoriaEntities() {
+    public List<RegistroAuditoria> findRegistroAuditoriaEntities()
+    {
         return findRegistroAuditoriaEntities(true, -1, -1);
     }
 
-    public List<RegistroAuditoria> findRegistroAuditoriaEntities(int maxResults, int firstResult) {
+    public List<RegistroAuditoria> findRegistroAuditoriaEntities(int maxResults, int firstResult)
+    {
         return findRegistroAuditoriaEntities(false, maxResults, firstResult);
     }
 
-    private List<RegistroAuditoria> findRegistroAuditoriaEntities(boolean all, int maxResults, int firstResult) {
+    private List<RegistroAuditoria> findRegistroAuditoriaEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -187,7 +195,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         }
     }
 
-    public RegistroAuditoria findRegistroAuditoria(Integer id) {
+    public RegistroAuditoria findRegistroAuditoria(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -199,7 +208,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         }
     }
 
-    public int getRegistroAuditoriaCount() {
+    public int getRegistroAuditoriaCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -212,7 +222,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
         }
     }
 
-    public ArrayList<RegistroAuditoria> buscarRegistroAuditoriasUsuario(Usuario miUsuario) {
+    public ArrayList<RegistroAuditoria> buscarRegistroAuditoriasUsuario(Usuario miUsuario)
+    {
         List<RegistroAuditoria> listaAuditoria = null;
         ArrayList<RegistroAuditoria> usuarioListaAuditoria = new ArrayList<RegistroAuditoria>();
         Boolean flag = false;
@@ -250,7 +261,8 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

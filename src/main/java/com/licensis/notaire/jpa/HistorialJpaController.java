@@ -4,14 +4,6 @@
  */
 package com.licensis.notaire.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
@@ -19,6 +11,14 @@ import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
+import javax.transaction.UserTransaction;
 
 /**
  *
@@ -27,14 +27,16 @@ import com.licensis.notaire.negocio.Historial;
 public class HistorialJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public HistorialJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public HistorialJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
@@ -45,7 +47,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
      * @return idHistorial El del historial persistido,
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO si ha ocurrido algun error.
      */
-    public Integer create(Historial historial) throws CreateEntityException {
+    public Integer create(Historial historial) throws CreateEntityException
+    {
         Integer idHistorial = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         EntityManager em = null;
         try
@@ -92,7 +95,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
         return idHistorial;
     }
 
-    public void edit(Historial historial) throws NonexistentEntityException, Exception {
+    public void edit(Historial historial) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -158,7 +162,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -204,7 +209,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
      * @param idGestion El id de la gestion.
      * @return estadoActualGestion Una entidad tipo historial con el estado actual de la gestion.
      */
-    public Historial findEstadoActualGestion(Integer idGestion) {
+    public Historial findEstadoActualGestion(Integer idGestion)
+    {
         Historial estadoActualGestion = new Historial();
 
         EntityManager em = getEntityManager();
@@ -224,7 +230,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
      * @param idGestion El id de la gestion.
      * @return registroHistorial una lista con todos los cambios de estado de la gestion.
      */
-    public List<Historial> findRegistroHistial(Integer idGestion) {
+    public List<Historial> findRegistroHistial(Integer idGestion)
+    {
         List<Historial> registroHistorial = new ArrayList<Historial>();
 
         EntityManager em = getEntityManager();
@@ -237,15 +244,18 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
         return registroHistorial;
     }
 
-    public List<Historial> findHistorialEntities() {
+    public List<Historial> findHistorialEntities()
+    {
         return findHistorialEntities(true, -1, -1);
     }
 
-    public List<Historial> findHistorialEntities(int maxResults, int firstResult) {
+    public List<Historial> findHistorialEntities(int maxResults, int firstResult)
+    {
         return findHistorialEntities(false, maxResults, firstResult);
     }
 
-    private List<Historial> findHistorialEntities(boolean all, int maxResults, int firstResult) {
+    private List<Historial> findHistorialEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -263,7 +273,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Historial findHistorial(Integer id) {
+    public Historial findHistorial(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -275,7 +286,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public int getHistorialCount() {
+    public int getHistorialCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -289,7 +301,8 @@ public class HistorialJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

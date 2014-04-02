@@ -6,6 +6,8 @@ package com.licensis.notaire.gui.administracion.escribanos;
 
 import com.licensis.notaire.dto.DtoSuplencia;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -14,8 +16,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 
 /**
  *
@@ -30,26 +30,31 @@ public class ConsultarSuplencias extends javax.swing.JInternalFrame
     /**
      * Creates new form ConsultarSuplencias
      */
-    public ConsultarSuplencias() {
+    public ConsultarSuplencias()
+    {
         initComponents();
         miController = ControllerNegocio.getInstancia();
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
         this.grillaSuplencias.setAutoCreateRowSorter(true);
     }
 
-    public static JMenuItem getVentaraConsultarSuplencias() {
+    public static JMenuItem getVentaraConsultarSuplencias()
+    {
         return ventaraConsultarSuplencias;
     }
 
-    public static void setVentaraConsultarSuplencias(JMenuItem ventaraConsultarSuplencias) {
+    public static void setVentaraConsultarSuplencias(JMenuItem ventaraConsultarSuplencias)
+    {
         ConsultarSuplencias.ventaraConsultarSuplencias = ventaraConsultarSuplencias;
     }
 
-    public void salir() {
+    public void salir()
+    {
         this.dispose();
     }
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaSuplencias.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaSuplencias.getModel()).getRowCount() > 0)
@@ -213,18 +218,16 @@ public class ConsultarSuplencias extends javax.swing.JInternalFrame
                         dtoSuplencia.getFechaInicio().toString(),
                         dtoSuplencia.getFechaFin().toString(),
                         dtoSuplencia.getObservaciones()
-                            
+
                     };
 
                     ((DefaultTableModel) grillaSuplencias.getModel()).addRow(datos);
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen suplencias registradas para el periodo indicado,", "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "El año indicado no puede ser superior al año actual", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }

@@ -7,7 +7,22 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoPago;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -18,13 +33,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "pagos")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p"),
-    @NamedQuery(name = "Pago.findByIdPago", query = "SELECT p FROM Pago p WHERE p.idPago = :idPago"),
-    @NamedQuery(name = "Pago.findByMonto", query = "SELECT p FROM Pago p WHERE p.monto = :monto"),
-    @NamedQuery(name = "Pago.findByFecha", query = "SELECT p FROM Pago p WHERE p.fecha = :fecha"),
-    @NamedQuery(name = "Pago.findByPresupuesto", query = "SELECT p FROM Pago p WHERE p.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
-})
+        {
+            @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p"),
+            @NamedQuery(name = "Pago.findByIdPago", query = "SELECT p FROM Pago p WHERE p.idPago = :idPago"),
+            @NamedQuery(name = "Pago.findByMonto", query = "SELECT p FROM Pago p WHERE p.monto = :monto"),
+            @NamedQuery(name = "Pago.findByFecha", query = "SELECT p FROM Pago p WHERE p.fecha = :fecha"),
+            @NamedQuery(name = "Pago.findByPresupuesto", query = "SELECT p FROM Pago p WHERE p.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
+        })
 public class Pago implements Serializable
 {
 
@@ -52,44 +67,54 @@ public class Pago implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Presupuesto fkIdPresupuesto;
 
-    public Pago() {
+    public Pago()
+    {
     }
 
-    public Pago(Integer idPago) {
+    public Pago(Integer idPago)
+    {
         this.idPago = idPago;
     }
 
-    public Pago(Integer idPago, Float monto, Date fecha) {
+    public Pago(Integer idPago, Float monto, Date fecha)
+    {
         this.idPago = idPago;
         this.monto = monto;
         this.fecha = fecha;
     }
 
-    public Integer getIdPago() {
+    public Integer getIdPago()
+    {
         return idPago;
     }
 
-    public void setIdPago(Integer idPago) {
+    public void setIdPago(Integer idPago)
+    {
         this.idPago = idPago;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public Presupuesto getPresupuesto() {
+    public Presupuesto getPresupuesto()
+    {
         return fkIdPresupuesto;
     }
 
-    public void setPresupuesto(Presupuesto fkIdPresupuesto) {
+    public void setPresupuesto(Presupuesto fkIdPresupuesto)
+    {
         this.fkIdPresupuesto = fkIdPresupuesto;
     }
 
-    public DtoPago getDto() {
+    public DtoPago getDto()
+    {
         DtoPago miDtoPago = new DtoPago();
 
         miDtoPago.setIdPago(idPago);
@@ -106,7 +131,8 @@ public class Pago implements Serializable
         return miDtoPago;
     }
 
-    public void setAtributos(DtoPago miDtoPago) {
+    public void setAtributos(DtoPago miDtoPago)
+    {
 
         this.idPago = miDtoPago.getIdPago();
         this.fecha = miDtoPago.getFecha();
@@ -127,14 +153,16 @@ public class Pago implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idPago != null ? idPago.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Pago))
         {
@@ -149,34 +177,41 @@ public class Pago implements Serializable
     }
 
     @Override
-    public String toString() {
-        return "Pago[ idPago=" + idPago 
-              + ", Fecha pago: " + this.getFecha()
-              + ", Monto pago: " + this.monto 
-              + ", Observaciones: " + this.observaciones +  "]";
+    public String toString()
+    {
+        return "Pago[ idPago=" + idPago
+                + ", Fecha pago: " + this.getFecha()
+                + ", Monto pago: " + this.monto
+                + ", Observaciones: " + this.observaciones + "]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public float getMonto() {
+    public float getMonto()
+    {
         return monto;
     }
 
-    public void setMonto(float monto) {
+    public void setMonto(float monto)
+    {
         this.monto = monto;
     }
 
-    public Date getFecha() {
+    public Date getFecha()
+    {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(Date fecha)
+    {
         this.fecha = fecha;
     }
 }

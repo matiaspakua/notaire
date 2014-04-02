@@ -8,7 +8,20 @@ import com.licensis.notaire.dto.DtoTipoDeTramite;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -20,14 +33,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "tipos_de_tramite")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "TipoDeTramite.findAll", query = "SELECT t FROM TipoDeTramite t"),
-    @NamedQuery(name = "TipoDeTramite.findByIdTipoTramite", query = "SELECT t FROM TipoDeTramite t WHERE t.idTipoTramite = :idTipoTramite"),
-    @NamedQuery(name = "TipoDeTramite.findBySeArchiva", query = "SELECT t FROM TipoDeTramite t WHERE t.seArchiva = :seArchiva"),
-    @NamedQuery(name = "TipoDeTramite.findBySeInscribe", query = "SELECT t FROM TipoDeTramite t WHERE t.seInscribe = :seInscribe"),
-    @NamedQuery(name = "TipoDeTramite.findByAsociaInmuebles", query = "SELECT t FROM TipoDeTramite t WHERE t.asociaInmuebles = :asociaInmuebles"),
-    @NamedQuery(name = "TipoDeTramite.findByNombre", query = "SELECT t FROM TipoDeTramite t WHERE t.nombre = :nombre")
-})
+        {
+            @NamedQuery(name = "TipoDeTramite.findAll", query = "SELECT t FROM TipoDeTramite t"),
+            @NamedQuery(name = "TipoDeTramite.findByIdTipoTramite", query = "SELECT t FROM TipoDeTramite t WHERE t.idTipoTramite = :idTipoTramite"),
+            @NamedQuery(name = "TipoDeTramite.findBySeArchiva", query = "SELECT t FROM TipoDeTramite t WHERE t.seArchiva = :seArchiva"),
+            @NamedQuery(name = "TipoDeTramite.findBySeInscribe", query = "SELECT t FROM TipoDeTramite t WHERE t.seInscribe = :seInscribe"),
+            @NamedQuery(name = "TipoDeTramite.findByAsociaInmuebles", query = "SELECT t FROM TipoDeTramite t WHERE t.asociaInmuebles = :asociaInmuebles"),
+            @NamedQuery(name = "TipoDeTramite.findByNombre", query = "SELECT t FROM TipoDeTramite t WHERE t.nombre = :nombre")
+        })
 public class TipoDeTramite implements Serializable
 {
 
@@ -67,14 +80,17 @@ public class TipoDeTramite implements Serializable
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoTramite", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList = new ArrayList<>();
 
-    public TipoDeTramite() {
+    public TipoDeTramite()
+    {
     }
 
-    public TipoDeTramite(Integer idTipoTramite) {
+    public TipoDeTramite(Integer idTipoTramite)
+    {
         this.idTipoTramite = idTipoTramite;
     }
 
-    public TipoDeTramite(Integer idTipoTramite, String nombre, boolean seArchiva, boolean seInscribe, boolean asociaInmuebles) {
+    public TipoDeTramite(Integer idTipoTramite, String nombre, boolean seArchiva, boolean seInscribe, boolean asociaInmuebles)
+    {
         this.idTipoTramite = idTipoTramite;
         this.nombre = nombre;
         this.seArchiva = seArchiva;
@@ -82,82 +98,101 @@ public class TipoDeTramite implements Serializable
         this.asociaInmuebles = asociaInmuebles;
     }
 
-    public Integer getIdTipoTramite() {
+    public Integer getIdTipoTramite()
+    {
         return idTipoTramite;
     }
 
-    public void setIdTipoTramite(Integer idTipoTramite) {
+    public void setIdTipoTramite(Integer idTipoTramite)
+    {
         this.idTipoTramite = idTipoTramite;
     }
 
-    public String getNombre() {
+    public String getNombre()
+    {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre)
+    {
         this.nombre = nombre;
     }
 
-    public boolean getSeArchiva() {
+    public boolean getSeArchiva()
+    {
         return seArchiva;
     }
 
-    public void setSeArchiva(boolean seArchiva) {
+    public void setSeArchiva(boolean seArchiva)
+    {
         this.seArchiva = seArchiva;
     }
 
-    public boolean getSeInscribe() {
+    public boolean getSeInscribe()
+    {
         return seInscribe;
     }
 
-    public void setSeInscribe(boolean seInscribe) {
+    public void setSeInscribe(boolean seInscribe)
+    {
         this.seInscribe = seInscribe;
     }
 
-    public boolean getAsociaInmuebles() {
+    public boolean getAsociaInmuebles()
+    {
         return asociaInmuebles;
     }
 
-    public void setAsociaInmuebles(boolean asociaInmuebles) {
+    public void setAsociaInmuebles(boolean asociaInmuebles)
+    {
         this.asociaInmuebles = asociaInmuebles;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<PlantillaPresupuesto> getPlantillaPresupuestoList() {
+    public List<PlantillaPresupuesto> getPlantillaPresupuestoList()
+    {
         return plantillaPresupuestoList;
     }
 
-    public void setPlantillaPresupuestoList(List<PlantillaPresupuesto> plantillaPresupuestoList) {
+    public void setPlantillaPresupuestoList(List<PlantillaPresupuesto> plantillaPresupuestoList)
+    {
         this.plantillaPresupuestoList = plantillaPresupuestoList;
     }
 
     @XmlTransient
-    public List<PlantillaTramite> getPlantillaTramiteList() {
+    public List<PlantillaTramite> getPlantillaTramiteList()
+    {
         return plantillaTramiteList;
     }
 
-    public void setPlantillaTramiteList(List<PlantillaTramite> plantillaTramiteList) {
+    public void setPlantillaTramiteList(List<PlantillaTramite> plantillaTramiteList)
+    {
         this.plantillaTramiteList = plantillaTramiteList;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList() {
+    public List<Tramite> getTramiteList()
+    {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList) {
+    public void setTramiteList(List<Tramite> tramiteList)
+    {
         this.tramiteList = tramiteList;
     }
 
-    public void setAtributos(DtoTipoDeTramite dtoTipoDeTramite) {
+    public void setAtributos(DtoTipoDeTramite dtoTipoDeTramite)
+    {
         if (dtoTipoDeTramite.isValido())
         {
             this.idTipoTramite = dtoTipoDeTramite.getIdTipoTramite();
@@ -171,7 +206,8 @@ public class TipoDeTramite implements Serializable
         }
     }
 
-    public DtoTipoDeTramite getDto() {
+    public DtoTipoDeTramite getDto()
+    {
         DtoTipoDeTramite miDto = new DtoTipoDeTramite();
 
         miDto.setIdTipoTramite(idTipoTramite);
@@ -187,14 +223,16 @@ public class TipoDeTramite implements Serializable
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idTipoTramite != null ? idTipoTramite.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TipoDeTramite))
         {
@@ -209,24 +247,29 @@ public class TipoDeTramite implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "TipoDeTramite[ idTipoTramite=" + idTipoTramite + " ]"
-                 + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + nombre + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
-    public boolean getHabilitado() {
+    public boolean getHabilitado()
+    {
         return habilitado;
     }
 
-    public void setHabilitado(boolean habilitado) {
+    public void setHabilitado(boolean habilitado)
+    {
         this.habilitado = habilitado;
     }
 }

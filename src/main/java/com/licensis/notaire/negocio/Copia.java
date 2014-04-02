@@ -10,7 +10,25 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,14 +40,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "copias")
 @XmlRootElement
 @NamedQueries(
-{
-    @NamedQuery(name = "Copia.findAll", query = "SELECT c FROM Copia c"),
-    @NamedQuery(name = "Copia.findByIdCopia", query = "SELECT c FROM Copia c WHERE c.idCopia = :idCopia"),
-    @NamedQuery(name = "Copia.findByNumero", query = "SELECT c FROM Copia c WHERE c.numero = :numero"),
-    @NamedQuery(name = "Copia.findByFechaImpresion", query = "SELECT c FROM Copia c WHERE c.fechaImpresion = :fechaImpresion"),
-    @NamedQuery(name = "Copia.findByTestimonio", query = "SELECT c FROM Copia c WHERE c.fkIdTestimonio.idTestimonio = :idTestimonio"),
-    @NamedQuery(name = "Copia.findByFechaRetiro", query = "SELECT c FROM Copia c WHERE c.fechaRetiro = :fechaRetiro")
-})
+        {
+            @NamedQuery(name = "Copia.findAll", query = "SELECT c FROM Copia c"),
+            @NamedQuery(name = "Copia.findByIdCopia", query = "SELECT c FROM Copia c WHERE c.idCopia = :idCopia"),
+            @NamedQuery(name = "Copia.findByNumero", query = "SELECT c FROM Copia c WHERE c.numero = :numero"),
+            @NamedQuery(name = "Copia.findByFechaImpresion", query = "SELECT c FROM Copia c WHERE c.fechaImpresion = :fechaImpresion"),
+            @NamedQuery(name = "Copia.findByTestimonio", query = "SELECT c FROM Copia c WHERE c.fkIdTestimonio.idTestimonio = :idTestimonio"),
+            @NamedQuery(name = "Copia.findByFechaRetiro", query = "SELECT c FROM Copia c WHERE c.fechaRetiro = :fechaRetiro")
+        })
 public class Copia implements Serializable
 {
 
@@ -67,93 +85,114 @@ public class Copia implements Serializable
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Testimonio fkIdTestimonio;
 
-    public Copia() {
+    public Copia()
+    {
     }
 
-    public Copia(Integer idCopia) {
+    public Copia(Integer idCopia)
+    {
         this.idCopia = idCopia;
     }
 
-    public Copia(Integer idCopia, int numero, Date fechaImpresion) {
+    public Copia(Integer idCopia, int numero, Date fechaImpresion)
+    {
         this.idCopia = idCopia;
         this.numero = numero;
         this.fechaImpresion = fechaImpresion;
     }
 
-    public Integer getIdCopia() {
+    public Integer getIdCopia()
+    {
         return idCopia;
     }
 
-    public void setIdCopia(Integer idCopia) {
+    public void setIdCopia(Integer idCopia)
+    {
         this.idCopia = idCopia;
     }
 
-    public int getNumero() {
+    public int getNumero()
+    {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(int numero)
+    {
         this.numero = numero;
     }
 
-    public Date getFechaImpresion() {
+    public Date getFechaImpresion()
+    {
         return fechaImpresion;
     }
 
-    public void setFechaImpresion(Date fechaImpresion) {
+    public void setFechaImpresion(Date fechaImpresion)
+    {
         this.fechaImpresion = fechaImpresion;
     }
 
-    public Date getFechaRetiro() {
+    public Date getFechaRetiro()
+    {
         return fechaRetiro;
     }
 
-    public void setFechaRetiro(Date fechaRetiro) {
+    public void setFechaRetiro(Date fechaRetiro)
+    {
         this.fechaRetiro = fechaRetiro;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
     @XmlTransient
-    public List<Folio> getFolioList() {
+    public List<Folio> getFolioList()
+    {
         return folioList;
     }
 
-    public void setFolioList(List<Folio> folioList) {
+    public void setFolioList(List<Folio> folioList)
+    {
         this.folioList = folioList;
     }
 
-    public Persona getFkIdPersona() {
+    public Persona getFkIdPersona()
+    {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona) {
+    public void setFkIdPersona(Persona fkIdPersona)
+    {
         this.fkIdPersona = fkIdPersona;
     }
 
-    public Testimonio getFkIdTestimonio() {
+    public Testimonio getFkIdTestimonio()
+    {
         return fkIdTestimonio;
     }
 
-    public void setFkIdTestimonio(Testimonio fkIdTestimonio) {
+    public void setFkIdTestimonio(Testimonio fkIdTestimonio)
+    {
         this.fkIdTestimonio = fkIdTestimonio;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += (idCopia != null ? idCopia.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Copia))
         {
@@ -168,28 +207,34 @@ public class Copia implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Copia[ idCopia=" + idCopia + " ]";
     }
 
-    public int getVersion() {
+    public int getVersion()
+    {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(int version)
+    {
         this.version = version;
     }
 
     @XmlTransient
-    public Collection<FoliosCopias> getFoliosCopiasCollection() {
+    public Collection<FoliosCopias> getFoliosCopiasCollection()
+    {
         return foliosCopiasCollection;
     }
 
-    public void setFoliosCopiasCollection(Collection<FoliosCopias> foliosCopiasCollection) {
+    public void setFoliosCopiasCollection(Collection<FoliosCopias> foliosCopiasCollection)
+    {
         this.foliosCopiasCollection = foliosCopiasCollection;
     }
 
-    public DtoCopia getDto() {
+    public DtoCopia getDto()
+    {
         DtoCopia miDto = new DtoCopia();
 
         miDto.setIdCopia(idCopia);
@@ -210,7 +255,8 @@ public class Copia implements Serializable
         return miDto;
     }
 
-    public void setAtributos(DtoCopia miDto) {
+    public void setAtributos(DtoCopia miDto)
+    {
 
         if (miDto.getIdCopia() != null)
         {

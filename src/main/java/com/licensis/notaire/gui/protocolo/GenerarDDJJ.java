@@ -6,7 +6,6 @@ package com.licensis.notaire.gui.protocolo;
 
 import com.licensis.notaire.gui.Principal;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,17 +21,20 @@ public class GenerarDDJJ extends javax.swing.JInternalFrame
     /**
      * Creates new form GenerarDDJJ
      */
-    public GenerarDDJJ() {
+    public GenerarDDJJ()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaGenerarDDJJ() {
+    public static JMenuItem getVentanaGenerarDDJJ()
+    {
         return ventanaGenerarDDJJ;
     }
 
@@ -189,8 +191,7 @@ public class GenerarDDJJ extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(new DeclaracionJuradaRentas());
             Principal.setVentanasActivas(DeclaracionJuradaRentas.getVentanaDeclaracionJuradaRentas());
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(new DeclaracionJurada());
             Principal.setVentanasActivas(DeclaracionJurada.getVentanaDeclaracionJurada());

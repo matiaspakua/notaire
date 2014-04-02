@@ -4,10 +4,7 @@
  */
 package com.licensis.notaire.gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
 /**
@@ -24,29 +21,34 @@ public class BarraProgreso extends javax.swing.JFrame
     /**
      * Creates new form BarraProgreso
      */
-    public BarraProgreso() {
+    public BarraProgreso()
+    {
         initComponents();
         progreso.setMinimum(MY_MINIMUM);
         progreso.setMaximum(MY_MAXIMUM);
         this.setVisible(true);
-        this.pack();        
+        this.pack();
     }
 
-    public static void updateBar(int newValue) {
+    public static void updateBar(int newValue)
+    {
         progreso.setValue(newValue);
     }
 
-    public void cerraBarraProgreso() {
+    public void cerraBarraProgreso()
+    {
 
         this.dispose();
 
     }
-    
-    public JLabel getLabelEstado() {
+
+    public JLabel getLabelEstado()
+    {
         return labelEstado;
     }
 
-    public void setLabelEstado(JLabel labelEstado) {
+    public void setLabelEstado(JLabel labelEstado)
+    {
         this.labelEstado = labelEstado;
     }
 
@@ -146,13 +148,15 @@ public class BarraProgreso extends javax.swing.JFrame
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         /*
          * Set the Nimbus look and feel
          */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and
+         * feel. For details see
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try
@@ -192,7 +196,8 @@ public class BarraProgreso extends javax.swing.JFrame
                 SwingUtilities.invokeLater(new Runnable()
                 {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         BarraProgreso.updateBar(percent);
                     }
                 });

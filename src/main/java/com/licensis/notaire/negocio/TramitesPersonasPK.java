@@ -24,32 +24,39 @@ public class TramitesPersonasPK implements Serializable
     @Column(name = "fk_id_persona_cliente")
     private int fkIdPersonaCliente;
 
-    public TramitesPersonasPK() {
+    public TramitesPersonasPK()
+    {
     }
 
-    public TramitesPersonasPK(int fkIdTramite, int fkIdPersonaCliente) {
+    public TramitesPersonasPK(int fkIdTramite, int fkIdPersonaCliente)
+    {
         this.fkIdTramite = fkIdTramite;
         this.fkIdPersonaCliente = fkIdPersonaCliente;
     }
 
-    public int getFkIdTramite() {
+    public int getFkIdTramite()
+    {
         return fkIdTramite;
     }
 
-    public void setFkIdTramite(int fkIdTramite) {
+    public void setFkIdTramite(int fkIdTramite)
+    {
         this.fkIdTramite = fkIdTramite;
     }
 
-    public int getFkIdPersonaCliente() {
+    public int getFkIdPersonaCliente()
+    {
         return fkIdPersonaCliente;
     }
 
-    public void setFkIdPersonaCliente(int fkIdPersonaCliente) {
+    public void setFkIdPersonaCliente(int fkIdPersonaCliente)
+    {
         this.fkIdPersonaCliente = fkIdPersonaCliente;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 0;
         hash += fkIdTramite;
         hash += fkIdPersonaCliente;
@@ -57,7 +64,8 @@ public class TramitesPersonasPK implements Serializable
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof TramitesPersonasPK))
         {
@@ -76,7 +84,8 @@ public class TramitesPersonasPK implements Serializable
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "negocio.TramitesPersonasPK[ fkIdTramite=" + fkIdTramite + ", fkIdPersonaCliente=" + fkIdPersonaCliente + " ]";
     }
 }

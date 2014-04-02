@@ -24,15 +24,18 @@ public class DtoTramite implements DtoValido
     private List<DtoTipoDeDocumento> listaDocumentosNecesarios;
     private List<DtoDocumentoPresentado> listaDocumentosNoPrecentados;
 
-    public List<DtoTipoDeDocumento> getListaDocumentosNecesarios() {
+    public List<DtoTipoDeDocumento> getListaDocumentosNecesarios()
+    {
         return listaDocumentosNecesarios;
     }
 
-    public void setListaDocumentosNecesarios(List<DtoTipoDeDocumento> listaDocumentosNecesarios) {
+    public void setListaDocumentosNecesarios(List<DtoTipoDeDocumento> listaDocumentosNecesarios)
+    {
         this.listaDocumentosNecesarios = listaDocumentosNecesarios;
     }
 
-    public DtoTramite() {
+    public DtoTramite()
+    {
         this.idTramite = DtoValido.ID_DTO_INICIALIZADO;
         this.setInmueble(new DtoInmueble());
         this.listaPersonas = new ArrayList<>();
@@ -42,11 +45,13 @@ public class DtoTramite implements DtoValido
         this.listaDocumentosNoPrecentados = new ArrayList<>();
     }
 
-    public List<DtoDocumentoPresentado> getListaDocumentosNoPrecentados() {
+    public List<DtoDocumentoPresentado> getListaDocumentosNoPrecentados()
+    {
         return listaDocumentosNoPrecentados;
     }
 
-    public void setListaDocumentosNoPrecentados(List<DtoDocumentoPresentado> listaDocumentosNoPrecentados) {
+    public void setListaDocumentosNoPrecentados(List<DtoDocumentoPresentado> listaDocumentosNoPrecentados)
+    {
         List<DtoDocumentoPresentado> listaDocumentos = new ArrayList<>();
         for (int i = 0; i < listaDocumentosNoPrecentados.size(); i++)
         {
@@ -59,12 +64,14 @@ public class DtoTramite implements DtoValido
         this.listaDocumentosNoPrecentados = listaDocumentos;
     }
 
-    public DtoTramite(DtoTipoDeTramite tiposDeTramite, DtoPresupuesto presupuestos) {
+    public DtoTramite(DtoTipoDeTramite tiposDeTramite, DtoPresupuesto presupuestos)
+    {
         this.tipoDeTramite = tiposDeTramite;
         this.presupuesto = presupuestos;
     }
 
-    public DtoTramite(DtoGestionDeEscritura gestionesDeEscrituras, DtoInmueble inmuebles, DtoEscritura escrituras, DtoTipoDeTramite tiposDeTramite, DtoPresupuesto presupuesto, String observaciones, ArrayList<DtoPersona> personas, ArrayList<DtoPresupuesto> presupuestos, ArrayList<DtoDocumentoPresentado> documentosPresentados) {
+    public DtoTramite(DtoGestionDeEscritura gestionesDeEscrituras, DtoInmueble inmuebles, DtoEscritura escrituras, DtoTipoDeTramite tiposDeTramite, DtoPresupuesto presupuesto, String observaciones, ArrayList<DtoPersona> personas, ArrayList<DtoPresupuesto> presupuestos, ArrayList<DtoDocumentoPresentado> documentosPresentados)
+    {
         this.gestionDeEscrituras = gestionesDeEscrituras;
         this.inmueble = inmuebles;
         this.escritura = escrituras;
@@ -76,67 +83,83 @@ public class DtoTramite implements DtoValido
         this.listaDocumentosPresentados = documentosPresentados;
     }
 
-    public Integer getIdTramite() {
+    public Integer getIdTramite()
+    {
         return this.idTramite;
     }
 
-    public void setIdTramite(Integer idTramite) {
+    public void setIdTramite(Integer idTramite)
+    {
         this.idTramite = idTramite;
     }
 
-    public DtoGestionDeEscritura getGestion() {
+    public DtoGestionDeEscritura getGestion()
+    {
         return this.gestionDeEscrituras;
     }
 
-    public void setGestionDeEscritura(DtoGestionDeEscritura gestionesDeEscrituras) {
+    public void setGestionDeEscritura(DtoGestionDeEscritura gestionesDeEscrituras)
+    {
         this.gestionDeEscrituras = gestionesDeEscrituras;
     }
 
-    public DtoInmueble getInmueble() {
+    public DtoInmueble getInmueble()
+    {
         return this.inmueble;
     }
 
-    public void setInmueble(DtoInmueble inmueble) {
+    public void setInmueble(DtoInmueble inmueble)
+    {
         this.inmueble = inmueble;
     }
 
-    public DtoEscritura getEscritura() {
+    public DtoEscritura getEscritura()
+    {
         return this.escritura;
     }
 
-    public void setEscritura(DtoEscritura escritura) {
+    public void setEscritura(DtoEscritura escritura)
+    {
         this.escritura = escritura;
     }
 
-    public DtoTipoDeTramite getTipoDeTramite() {
+    public DtoTipoDeTramite getTipoDeTramite()
+    {
         return this.tipoDeTramite;
     }
 
-    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite) {
+    public void setTiposDeTramite(DtoTipoDeTramite tiposDeTramite)
+    {
         this.tipoDeTramite = tiposDeTramite;
     }
 
-    public DtoPresupuesto getPresupuesto() {
+    public DtoPresupuesto getPresupuesto()
+    {
         return this.presupuesto;
     }
 
-    public void setPresupuesto(DtoPresupuesto presupuesto) {
+    public void setPresupuesto(DtoPresupuesto presupuesto)
+    {
         this.presupuesto = presupuesto;
     }
 
-    public String getObservaciones() {
+    public String getObservaciones()
+    {
         return this.observaciones;
     }
 
-    public void setObservaciones(String observaciones) {
+    public void setObservaciones(String observaciones)
+    {
         this.observaciones = observaciones;
     }
 
-    public List<DtoDocumentoPresentado> getListaDocumentosGestion() {
+    public List<DtoDocumentoPresentado> getListaDocumentosGestion()
+    {
         return listaDocumentosPresentados;
     }
 
-    public void setListaDocumentosPresentados(List<DtoDocumentoPresentado> listaDocumentosPresentados) {
+    public void setListaDocumentosPresentados(List<DtoDocumentoPresentado> listaDocumentosPresentados)
+    {
 
         for (int i = 0; i < listaDocumentosPresentados.size(); i++)
         {
@@ -147,24 +170,29 @@ public class DtoTramite implements DtoValido
 
     }
 
-    public List<DtoPersona> getListaPersonas() {
+    public List<DtoPersona> getListaPersonas()
+    {
         return listaPersonas;
     }
 
-    public void setListaPersonas(List<DtoPersona> listaPersonas) {
+    public void setListaPersonas(List<DtoPersona> listaPersonas)
+    {
         this.listaPersonas = listaPersonas;
     }
 
-    public List<DtoPresupuesto> getListaPresupuestos() {
+    public List<DtoPresupuesto> getListaPresupuestos()
+    {
         return listaPresupuestos;
     }
 
-    public void setListaPresupuestos(List<DtoPresupuesto> listaPresupuestos) {
+    public void setListaPresupuestos(List<DtoPresupuesto> listaPresupuestos)
+    {
         this.listaPresupuestos = listaPresupuestos;
     }
 
     @Override
-    public Boolean isValido() {
+    public Boolean isValido()
+    {
         //  TODO: implementar.
         return true;
     }

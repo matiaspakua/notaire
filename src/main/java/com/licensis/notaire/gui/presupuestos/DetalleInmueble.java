@@ -18,15 +18,18 @@ public class DetalleInmueble extends javax.swing.JInternalFrame
     /**
      * Creates new form DetalleInmueble
      */
-    public DetalleInmueble() {
+    public DetalleInmueble()
+    {
         initComponents();
     }
 
-    public void setInmueble(DtoInmueble miInmueble) {
+    public void setInmueble(DtoInmueble miInmueble)
+    {
         miDtoInmueble = miInmueble;
     }
 
-    public void cargarFormulario() {
+    public void cargarFormulario()
+    {
         campoNomenclaturaCatastral.setText(miDtoInmueble.getNomenclaturaCatastral());
         campoValuacionFiscal.setText(miDtoInmueble.getValuacionFiscal());
         campoDomicilio.setText(miDtoInmueble.getDomicilio());

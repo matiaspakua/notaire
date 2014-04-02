@@ -26,11 +26,13 @@ public class Gestiones extends javax.swing.JInternalFrame
     /**
      * Creates new form Gestiones
      */
-    private Gestiones() {
+    private Gestiones()
+    {
         initComponents();
     }
 
-    public static Gestiones getInstancia() {
+    public static Gestiones getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Gestiones();
@@ -41,15 +43,18 @@ public class Gestiones extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Gestiones.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getMenuGestions() {
+    public static JMenuItem getMenuGestions()
+    {
         return menuGestions;
     }
 
@@ -198,8 +203,7 @@ public class Gestiones extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Escrituras.getInstancia());
             Principal.setVentanasActivas(Escrituras.getSubmenuEscrituras());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -218,8 +222,7 @@ public class Gestiones extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Testimonios.getInstancia());
             Principal.setVentanasActivas(Testimonios.getSubmenuTestimonios());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -245,8 +248,7 @@ public class Gestiones extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Gestion.getInstancia());
             Principal.setVentanasActivas(Gestion.getSubmenuGestion());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -265,8 +267,7 @@ public class Gestiones extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Documentacion.getInstancia());
             Principal.setVentanasActivas(Documentacion.getSubmenuDocumentacion());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {
@@ -285,8 +286,7 @@ public class Gestiones extends javax.swing.JInternalFrame
         {
             Principal.cargarFormulario(Inscripciones.getInstancia());
             Principal.setVentanasActivas(Inscripciones.getSubmenuInscripciones());
-        }
-        else
+        } else
         {
             for (int i = 0; i < Principal.AreaTrabajo.getAllFrames().length; i++)
             {

@@ -17,7 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
@@ -36,14 +35,16 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form ListarPersonasUsuario
      */
-    private ListarPersonasUsuario() {
+    private ListarPersonasUsuario()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaPersonas.setAutoCreateRowSorter(true);
     }
 
-    public static ListarPersonasUsuario getInstancia() {
+    public static ListarPersonasUsuario getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new ListarPersonasUsuario();
@@ -51,15 +52,18 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static JMenuItem getVentanaListadoPersonas() {
+    public static JMenuItem getVentanaListadoPersonas()
+    {
         return ventanaListadoPersonas;
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public Boolean cargarGrillaPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas) {
+    public Boolean cargarGrillaPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas)
+    {
         Boolean flag = false;
 
         flag = cargarPersonasClientes(miListaDtoPersonas);
@@ -69,7 +73,8 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public Boolean cargarPersonasEscribano(ArrayList<DtoPersona> miListaDtoPersonas, String tipoFormulario) {
+    public Boolean cargarPersonasEscribano(ArrayList<DtoPersona> miListaDtoPersonas, String tipoFormulario)
+    {
         boolean flag = false;
 
         miListaDtoPersonas = miListaDtoPersonas;
@@ -105,8 +110,7 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
             }
             BuscarCliente.getInstancia().dispose();
 
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda");
             this.dispose();
@@ -115,11 +119,11 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas) {
+    public boolean cargarPersonasClientes(ArrayList<DtoPersona> miListaDtoPersonas)
+    {
         Boolean flag = false;
 
         this.labelTitulo.setText("ListadoPersonas - Clientes");
-
 
         if (!miListaDtoPersonas.isEmpty())
         {
@@ -149,8 +153,7 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(this, "No existen Coincidencias en la Busqueda de Personas");
             this.salir();
 
-        }
-        else
+        } else
         {
             Principal.cargarFormulario(ListarPersonasUsuario.getInstancia());
             Principal.setVentanasActivas(ListarPersonasUsuario.getVentanaListadoPersonas());
@@ -159,7 +162,8 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void limpiarJtable() {
+    public void limpiarJtable()
+    {
         int i = ((DefaultTableModel) grillaPersonas.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaPersonas.getModel()).getRowCount() > 0)
@@ -294,7 +298,8 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
     }//GEN-LAST:event_botonCancelarActionPerformed
 
     @Override
-    public void dispose() {
+    public void dispose()
+    {
         super.dispose();
     }
 
@@ -308,7 +313,6 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
 
         DtoPersona miDtoPersona = new DtoPersona();
         DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-
 
         //Recorro la grilla completa, buscando el cliente seleccionado
         for (int i = 0; i < filas; i++)
@@ -331,29 +335,26 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
                     {
                         JOptionPane.showMessageDialog(this, "La persona seleccionada ya se encuentra registradas como 'Escribano'", "Advertencia", JOptionPane.WARNING_MESSAGE);
                         this.salir();
-                    }
-                    else
+                    } else
                     {
                         DarAltaEscribano form = new DarAltaEscribano();
                         miDtoPersona.setRegistroEscribano(0);
                         form.cargarEscribano(miDtoPersona, ConstantesGui.DAR_ALTA_ESCRIBANO);
-                        
+
                         Principal.cargarFormulario(form);
                         Principal.setVentanasActivas(DarAltaEscribano.getVentanaDarAltaEscribano());
                     }
-                }
-                else if (formulario.contains(ConstantesGui.MODIFICAR_ESCRIBANO))
+                } else if (formulario.contains(ConstantesGui.MODIFICAR_ESCRIBANO))
                 {
                     if (miDtoPersona.getRegistroEscribano() == null)
                     {
                         JOptionPane.showMessageDialog(this, "La personas seleccionada no esta registrada como Escribano", "Advertencia", JOptionPane.WARNING_MESSAGE);
                         this.salir();
-                    }
-                    else
+                    } else
                     {
                         DarAltaEscribano form = new DarAltaEscribano();
                         form.cargarEscribano(miDtoPersona, ConstantesGui.MODIFICAR_ESCRIBANO);
-                        
+
                         Principal.cargarFormulario(form);
                         Principal.setVentanasActivas(DarAltaEscribano.getVentanaDarAltaEscribano());
                     }
@@ -367,7 +368,7 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
                     Logger.getLogger(ListarPersonasUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                    this.salir();                    
+                    this.salir();
                 }
 
                 this.limpiarJtable();

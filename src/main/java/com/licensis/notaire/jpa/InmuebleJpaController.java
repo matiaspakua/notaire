@@ -5,6 +5,10 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.dto.DtoInmueble;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.negocio.Inmueble;
+import com.licensis.notaire.negocio.Tramite;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +17,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.transaction.UserTransaction;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Tramite;
 
 /**
  *
@@ -25,18 +25,21 @@ import com.licensis.notaire.negocio.Tramite;
 public class InmuebleJpaController implements Serializable, IPersistenciaJpa
 {
 
-    public InmuebleJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public InmuebleJpaController(UserTransaction utx, EntityManagerFactory emf)
+    {
         this.utx = utx;
         this.emf = emf;
     }
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager()
+    {
         return emf.createEntityManager();
     }
 
-    public int create(Inmueble inmueble) {
+    public int create(Inmueble inmueble)
+    {
         int id = -1;
         if (inmueble.getTramiteList() == null)
         {
@@ -80,7 +83,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
         return id;
     }
 
-    public void edit(Inmueble inmueble) throws NonexistentEntityException, Exception {
+    public void edit(Inmueble inmueble) throws NonexistentEntityException, Exception
+    {
         EntityManager em = null;
         try
         {
@@ -144,7 +148,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException
+    {
         EntityManager em = null;
         try
         {
@@ -178,15 +183,18 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Inmueble> findInmuebleEntities() {
+    public List<Inmueble> findInmuebleEntities()
+    {
         return findInmuebleEntities(true, -1, -1);
     }
 
-    public List<Inmueble> findInmuebleEntities(int maxResults, int firstResult) {
+    public List<Inmueble> findInmuebleEntities(int maxResults, int firstResult)
+    {
         return findInmuebleEntities(false, maxResults, firstResult);
     }
 
-    private List<Inmueble> findInmuebleEntities(boolean all, int maxResults, int firstResult) {
+    private List<Inmueble> findInmuebleEntities(boolean all, int maxResults, int firstResult)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -204,7 +212,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Inmueble findInmueble(Integer id) {
+    public Inmueble findInmueble(Integer id)
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -222,7 +231,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
      * @param dtoInmueble
      * @return el Inmueble encontrado.
      */
-    public Inmueble findInmueble(DtoInmueble dtoInmueble) {
+    public Inmueble findInmueble(DtoInmueble dtoInmueble)
+    {
 
         EntityManager em = getEntityManager();
 
@@ -242,7 +252,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
         return miInmueble;
     }
 
-    public int getInmuebleCount() {
+    public int getInmuebleCount()
+    {
         EntityManager em = getEntityManager();
         try
         {
@@ -256,7 +267,8 @@ public class InmuebleJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNombreJpa()
+    {
         return this.getClass().getName();
     }
 }

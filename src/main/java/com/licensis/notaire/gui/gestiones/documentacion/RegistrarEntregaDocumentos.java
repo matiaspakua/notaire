@@ -12,6 +12,9 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,9 +25,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -110,7 +110,7 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         return ventanaRegistrarEntregaDocumentos;
     }
 
-    public boolean cargarFormulario(DtoGestionDeEscritura dtoGestionDeEscritura) 
+    public boolean cargarFormulario(DtoGestionDeEscritura dtoGestionDeEscritura)
     {
         boolean flag = false;
 
@@ -118,7 +118,6 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         this.limpiarFormulario();
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
 
         labelFechaInicio.setText(formatter.format(this.getDtoGestion().getFechaInicio()));
         labelEncabezado.setText(this.getDtoGestion().getEncabezado());
@@ -142,7 +141,6 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         this.limpiarJtable();
 
         estado = dtoGestion.getEstado().getNombre();
-
 
         dtoGestion = ControllerNegocio.getInstancia().obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
 
@@ -231,7 +229,6 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
             this.toFront();
         }
 
-          
         return flag;
     }
 
@@ -484,20 +481,22 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         {
             DtoFlag flag = null;
 
-                try
-                {
+            try
+            {
                 try
                 {
                     flag = this.ingresarDocumentos();
-                } catch (ClassModifiedException ex)
+                }
+                catch (ClassModifiedException ex)
                 {
                     Logger.getLogger(RegistrarEntregaDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                } catch (NonexistentEntityException ex)
-                {
-                    Logger.getLogger(RegistrarEntregaDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            
+            }
+            catch (NonexistentEntityException ex)
+            {
+                Logger.getLogger(RegistrarEntregaDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             if (flag.getFlag())
             {
                 JOptionPane.showMessageDialog(this, "Los documentos fueron Modificados con Exito");
@@ -551,7 +550,6 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         ArrayList<DtoDocumentoPresentado> lisDtoDocumentosPresentados = new ArrayList<>();
         DtoDocumentoPresentado dtoDocumentoPresentado = null;
 
-
         //Recorro la grilla completa, buscando la gestion seleccionada
         for (int i = 0; i < filas; i++)
         {
@@ -595,7 +593,8 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
                     fechaVencimiento = null;
                     dtoDocumentoPresentado.setFechaVencimiento(fechaVencimiento);
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 JOptionPane.showMessageDialog(this, "Algun campo es incorrecto", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 return dtoFlag;
@@ -606,14 +605,16 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         }
         if (cont > 0)
         {
-            try{
-            dtoFlag = ControllerNegocio.getInstancia().modificarDocumentacion(lisDtoDocumentosPresentados, this.getDtoGestion());
-            }      catch (ClassModifiedException ex)
+            try
             {
-                 String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
+                dtoFlag = ControllerNegocio.getInstancia().modificarDocumentacion(lisDtoDocumentosPresentados, this.getDtoGestion());
+            }
+            catch (ClassModifiedException ex)
+            {
+                String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
                 JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
-            } 
-            } else
+            }
+        } else
         {
             dtoFlag.setFlag(false);
         }
@@ -653,7 +654,6 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame
         this.botonAceptar.setEnabled(true);
     }//GEN-LAST:event_grillaDetalleDocumentosMouseClicked
 
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonBuscarGestion;

@@ -22,11 +22,13 @@ public class Escrituras extends javax.swing.JInternalFrame
     /**
      * Creates new form Escrituras
      */
-    private Escrituras() {
+    private Escrituras()
+    {
         initComponents();
     }
 
-    public static Escrituras getInstancia() {
+    public static Escrituras getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Escrituras();
@@ -37,15 +39,18 @@ public class Escrituras extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Escrituras.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuEscrituras() {
+    public static JMenuItem getSubmenuEscrituras()
+    {
         return submenuEscrituras;
     }
 
@@ -166,7 +171,7 @@ public class Escrituras extends javax.swing.JInternalFrame
     private void botonModificarEscrituraActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModificarEscrituraActionPerformed
     {//GEN-HEADEREND:event_botonModificarEscrituraActionPerformed
         BuscarEscritura buscarEscrituraForm = new BuscarEscritura();
-        buscarEscrituraForm.setFormularioInvocador(ConstantesGui.MODIFICAR_ESCRITURA);        
+        buscarEscrituraForm.setFormularioInvocador(ConstantesGui.MODIFICAR_ESCRITURA);
         buscarEscrituraForm.cargarFormulario();
         Principal.cargarFormulario(buscarEscrituraForm);
         Principal.setVentanasActivas(BuscarEscritura.getVentanaBuscarEscritura());

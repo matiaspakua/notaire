@@ -22,11 +22,13 @@ public class Documentos extends javax.swing.JInternalFrame
     /**
      * Creates new form Documentos
      */
-    private Documentos() {
+    private Documentos()
+    {
         initComponents();
     }
 
-    public static Documentos getInstancia() {
+    public static Documentos getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new Documentos();
@@ -37,15 +39,18 @@ public class Documentos extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         Documentos.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuDocumentos() {
+    public static JMenuItem getSubmenuDocumentos()
+    {
         return submenuDocumentos;
     }
 
