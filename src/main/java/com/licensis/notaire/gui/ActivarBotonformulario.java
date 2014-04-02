@@ -50,7 +50,7 @@ public class ActivarBotonformulario implements PropertyChangeListener
             return;
         }
 
-		//  When focus remains on the same root pane and
+        //  When focus remains on the same root pane and
         //  when leaving a button and not going to a different button
         //  we need to restore the original default button
         Component newValue = (Component) e.getNewValue();
@@ -66,7 +66,7 @@ public class ActivarBotonformulario implements PropertyChangeListener
             }
         }
 
-		//	Make this button the new default button for the root pane
+        //	Make this button the new default button for the root pane
         if (newValue instanceof JButton)
         {
             setDefaultButton(newRootPane, (JButton) newValue);
@@ -97,7 +97,7 @@ public class ActivarBotonformulario implements PropertyChangeListener
             rootPanes.put(rootPane, rootPane.getDefaultButton());
         }
 
-		//  Set the current button to temporarily be the default button
+        //  Set the current button to temporarily be the default button
         rootPane.setDefaultButton(button);
     }
 

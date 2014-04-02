@@ -9,6 +9,12 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
+import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,12 +22,6 @@ import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -40,7 +40,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarFolio
      */
-    public ModificarFolio() {
+    public ModificarFolio()
+    {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioNormalVertical);
@@ -49,21 +50,25 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         this.cargarEstadosFolios();
     }
 
-    private void limpiarFormulario() {
+    private void limpiarFormulario()
+    {
         campoFoliosSeleccionado.setText("");
         campoObservaciones.setText("");
         comboEstadosFolio.setSelectedIndex(0);
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarFolio() {
+    public static JMenuItem getVentanaModificarFolio()
+    {
         return ventanaModificarFolio;
     }
 
-    public void cargarRegistrosEscribanos() {
+    public void cargarRegistrosEscribanos()
+    {
         try
         {
             milistaEscribanos = miController.obtenerListaEscribanosDisponibles();
@@ -76,8 +81,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame
 
                     this.comboRegistroEscribano.addItem(dtoPersona.getRegistroEscribano());
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escribanos registrados", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -88,7 +92,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         }
     }
 
-    public DtoPersona buscarEscribano(Integer registro) {
+    public DtoPersona buscarEscribano(Integer registro)
+    {
         for (Iterator<DtoPersona> it = milistaEscribanos.iterator(); it.hasNext();)
         {
             DtoPersona dtoPersona = it.next();
@@ -101,7 +106,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         return null;
     }
 
-    public void cargarEstadosFolios() {
+    public void cargarEstadosFolios()
+    {
         this.comboEstadosFolio.addItem(ConstantesNegocio.ESTADO_FOLIO_NUEVOS);
         this.comboEstadosFolio.addItem(ConstantesNegocio.ESTADO_FOLIO_UTILIZADO);
         this.comboEstadosFolio.addItem(ConstantesNegocio.ESTADO_FOLIO_ERROSE);
@@ -353,9 +359,9 @@ public class ModificarFolio extends javax.swing.JInternalFrame
                     Integer registro = (Integer) this.comboRegistroEscribano.getSelectedItem();
 
                     DtoPersona escribano = this.buscarEscribano(registro);
-                    
+
                     DtoTipoDeFolio miTipoDeFolio = miController.buscarTipoDeFolio(new DtoTipoDeFolio(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL));
-                    
+
                     dtoFolio.setTiposDeFolio(miTipoDeFolio);
                     dtoFolio.setAnio(this.selectorAnio.getYear());
                     dtoFolio.setPersonaEscribano(escribano);
@@ -366,8 +372,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame
                     {
                         JOptionPane.showMessageDialog(this, "Se ha modificar folios Correctamente");
                         salir();
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "No se ha podido modificar el folio indicado", "Error al modificar folio", JOptionPane.ERROR_MESSAGE);
                     }
@@ -403,7 +408,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonBuscarActionPerformed
     {//GEN-HEADEREND:event_botonBuscarActionPerformed
-        try            
+        try
         {
             this.limpiarFormulario();
             this.limpiarGrilla();
@@ -445,7 +450,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         }
     }//GEN-LAST:event_botonSeleccionarActionPerformed
 
-    public void limpiarGrilla() {
+    public void limpiarGrilla()
+    {
         int i = ((DefaultTableModel) grillaDetalleFolios.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaDetalleFolios.getModel()).getRowCount() > 0)
@@ -455,7 +461,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame
         }
     }
 
-    public void actualizarGrilla(int registro, int anio) {
+    public void actualizarGrilla(int registro, int anio)
+    {
         DtoFolio parametros = new DtoFolio();
         parametros.setAnio(anio);
         DtoPersona escribano = new DtoPersona();

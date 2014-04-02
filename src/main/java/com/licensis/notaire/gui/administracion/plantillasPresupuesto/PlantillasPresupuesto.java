@@ -22,11 +22,13 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form Presupuestos
      */
-    public PlantillasPresupuesto() {
+    public PlantillasPresupuesto()
+    {
         initComponents();
     }
 
-    public static PlantillasPresupuesto getInstancia() {
+    public static PlantillasPresupuesto getInstancia()
+    {
         if (instancia == null)
         {
             instancia = new PlantillasPresupuesto();
@@ -37,15 +39,18 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
         return instancia;
     }
 
-    public static Boolean getEstadoFormulario() {
+    public static Boolean getEstadoFormulario()
+    {
         return estadoFormulario;
     }
 
-    public static void setEstadoFormulario(Boolean estadoFormulario) {
+    public static void setEstadoFormulario(Boolean estadoFormulario)
+    {
         PlantillasPresupuesto.estadoFormulario = estadoFormulario;
     }
 
-    public static JMenuItem getSubmenuPlantillaPresupuesto() {
+    public static JMenuItem getSubmenuPlantillaPresupuesto()
+    {
         return submenuPlantillaPresupuesto;
     }
 
@@ -158,7 +163,7 @@ public class PlantillasPresupuesto extends javax.swing.JInternalFrame
 
         CrearPlantillaPresupuesto miCrearPlantillaPresupuesto = new CrearPlantillaPresupuesto();
         Boolean cargado = miCrearPlantillaPresupuesto.inicializarFormulario();
-        
+
         if (cargado)
         {
             Principal.cargarFormulario(miCrearPlantillaPresupuesto);

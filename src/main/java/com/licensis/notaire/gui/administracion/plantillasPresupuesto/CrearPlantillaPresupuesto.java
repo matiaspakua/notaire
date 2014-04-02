@@ -11,8 +11,6 @@ import com.licensis.notaire.gui.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -38,23 +36,27 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form CrearPlantillaPresupuesto
      */
-    public CrearPlantillaPresupuesto() {
+    public CrearPlantillaPresupuesto()
+    {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         miController = ControllerNegocio.getInstancia();
 
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaCrearPlantillaPresupuesto() {
+    public static JMenuItem getVentanaCrearPlantillaPresupuesto()
+    {
         return ventanaCrearPlantillaPresupuesto;
     }
 
-    public void limpiarGrilla() {
-    //    miDtoSeleccionado = null;
+    public void limpiarGrilla()
+    {
+        //    miDtoSeleccionado = null;
         int i = ((DefaultTableModel) grillaConceptosDisponibles.getModel()).getRowCount() - 1;
 
         while (((DefaultTableModel) grillaConceptosDisponibles.getModel()).getRowCount() > 0)
@@ -64,7 +66,8 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         }
     }
 
-    public Boolean inicializarFormulario() {
+    public Boolean inicializarFormulario()
+    {
         Boolean cargo = false;
 
         miDtoSeleccionado = null;
@@ -81,8 +84,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
 
             JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
             salir();
-        }
-        else
+        } else
         {
             listaTramitesDisponibles.setEnabled(true);
             botonSeleccionar.setEnabled(true);
@@ -104,14 +106,13 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
             {
                 JOptionPane.showMessageDialog(this, "<HTML>Los Tipos de Tramite registrados <BR>ya tienen una plantilla asociada.</HTML>", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
                 salir();
-            }
-            else
+            } else
             {
                 cargo = true;
                 this.listaTramitesDisponibles.setModel(lista);
             }
         }
-        
+
         return cargo;
     }
 
@@ -312,8 +313,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
                         JOptionPane.showMessageDialog(this, "Se ha creado la Plantilla de Presupuesto.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                         limpiarGrilla();
                         inicializarFormulario();
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "No se ha creado la Plantilla de Presupuesto.", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
@@ -324,13 +324,11 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
                     this.limpiarGrilla();
                     this.cargarConceptosDisponibles();
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un concepto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
@@ -347,7 +345,8 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void cargarConceptosDisponibles() {
+    private void cargarConceptosDisponibles()
+    {
         limpiarGrilla();
         conceptosDisponibles = miController.obtenerListaConceptosDisponibles();
 
@@ -374,7 +373,8 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         }
     }
 
-    private ArrayList<DtoConcepto> obtenerConceptosSeleccionados() {
+    private ArrayList<DtoConcepto> obtenerConceptosSeleccionados()
+    {
 
         TableModel miGrilla = grillaConceptosDisponibles.getModel();
         int filas = miGrilla.getRowCount();
@@ -405,7 +405,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
 
     private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeleccionarActionPerformed
         miDtoSeleccionado = null;
-        
+
         if (listaTramitesDisponibles.getSelectedValue() != null)
         {
 
@@ -416,7 +416,6 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
                 DtoTipoDeTramite dtoTipoDeTramite = it.next();
 
                 // Completo los datos en los componentes
-
                 if (dtoTipoDeTramite.getNombre().equals(seleccionado))
                 {
 
@@ -430,8 +429,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
                     break;
                 }
             }
-        }
-        else
+        } else
         {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }

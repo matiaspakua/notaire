@@ -9,6 +9,8 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -34,7 +34,8 @@ public class IngresarFolios extends javax.swing.JInternalFrame
     /**
      * Creates new form IngresarFolios
      */
-    public IngresarFolios() {
+    public IngresarFolios()
+    {
         initComponents();
         IngresarFolios.estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
@@ -42,11 +43,13 @@ public class IngresarFolios extends javax.swing.JInternalFrame
         this.cargarRegistrosEscribanos();
     }
 
-    private void salir() {
+    private void salir()
+    {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaIngresarFolios() {
+    public static JMenuItem getVentanaIngresarFolios()
+    {
         return ventanaIngresarFolios;
     }
 
@@ -235,8 +238,7 @@ public class IngresarFolios extends javax.swing.JInternalFrame
             if (desde >= hasta)
             {
                 JOptionPane.showMessageDialog(this, "Los valores de los folios no son validos", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            }
-            else
+            } else
             {
                 Date date = new Date();
                 SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
@@ -245,8 +247,7 @@ public class IngresarFolios extends javax.swing.JInternalFrame
                 if (this.selectorAnio.getYear() < anio)
                 {
                     JOptionPane.showMessageDialog(this, "El año ingresado es menos que el actual, favor corregir!", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                }
-                else
+                } else
                 {
                     DtoPersona personaEscribanoSeleccionado = null;
                     Integer registroEscribano = Integer.parseInt(comboRegistroEscribano.getSelectedItem().toString());
@@ -275,7 +276,6 @@ public class IngresarFolios extends javax.swing.JInternalFrame
                     if (miController.verificarExistenciaFolios(folioDesde, folioHasta) == true)
                     {
 
-
                         DtoTipoDeFolio miTipoDeFolio = miController.buscarTipoDeFolio(new DtoTipoDeFolio(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL));
 
                         folioDesde.setEstado(ConstantesNegocio.ESTADO_FOLIO_NUEVOS);
@@ -290,18 +290,15 @@ public class IngresarFolios extends javax.swing.JInternalFrame
                         folioHasta.setTiposDeFolio(miTipoDeFolio);
                         folioHasta.setPersonaEscribano(personaEscribanoSeleccionado);
 
-
                         if (miController.registrarIngresoNuevosFolios(folioDesde, folioHasta) == Boolean.TRUE)
                         {
                             JOptionPane.showMessageDialog(this, "Se ha ingresado folios Correctamente");
                             salir();
-                        }
-                        else
+                        } else
                         {
                             JOptionPane.showMessageDialog(this, "Ha ocurrido un error al registrar nuevos folios", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    }
-                    else
+                    } else
                     {
                         JOptionPane.showMessageDialog(this, "Los valores de los folios no son validos. Ya se encuentran registrados en el sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     }
@@ -326,7 +323,8 @@ public class IngresarFolios extends javax.swing.JInternalFrame
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    public void cargarRegistrosEscribanos() {
+    public void cargarRegistrosEscribanos()
+    {
         try
         {
             this.setMilistaEscribanos(miController.obtenerListaEscribanosDisponibles());
@@ -340,8 +338,7 @@ public class IngresarFolios extends javax.swing.JInternalFrame
 
                     this.comboRegistroEscribano.addItem(dtoPersona.getRegistroEscribano());
                 }
-            }
-            else
+            } else
             {
                 JOptionPane.showMessageDialog(this, "No existen escribanos registrados", "Error", JOptionPane.ERROR_MESSAGE);
                 this.salir();
@@ -355,11 +352,13 @@ public class IngresarFolios extends javax.swing.JInternalFrame
         }
     }
 
-    public List<DtoPersona> getMilistaEscribanos() {
+    public List<DtoPersona> getMilistaEscribanos()
+    {
         return milistaEscribanos;
     }
 
-    public void setMilistaEscribanos(List<DtoPersona> milistaEscribanos) {
+    public void setMilistaEscribanos(List<DtoPersona> milistaEscribanos)
+    {
         this.milistaEscribanos = milistaEscribanos;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

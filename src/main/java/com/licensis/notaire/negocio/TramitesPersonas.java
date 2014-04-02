@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "TramitesPersonas.findByFkIdTramite", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
             @NamedQuery(name = "TramitesPersonas.findByFkIdPersonaCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente"),
             @NamedQuery(name = "TramitesPersonas.findByTramiteCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
-    //@NamedQuery(name = "TramitesPersonas.eliminarRegistro", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
+        //@NamedQuery(name = "TramitesPersonas.eliminarRegistro", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
         })
 public class TramitesPersonas implements Serializable
 {
