@@ -9,6 +9,10 @@
 
     <name>Notaire</name>
     <url>http://maven.apache.org</url>
+    <ciManagement>
+        <system>hudson</system>
+        <url>http://localhost:8080/jenkins/job/Notaire/</url>
+    </ciManagement>
     <build>
         <plugins>
             <plugin>
