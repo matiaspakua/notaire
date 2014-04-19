@@ -11,7 +11,7 @@
     <url>http://maven.apache.org</url>
     <ciManagement>
         <system>hudson</system>
-        <url>http://localhost:8080/jenkins/job/Notaire/</url>
+        <url>http://localhost:8080/hudson-3.1.2/job/Notaire/</url>
     </ciManagement>
     <build>
         <plugins>
