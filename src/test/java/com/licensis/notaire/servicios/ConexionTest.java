@@ -38,6 +38,7 @@ public class ConexionTest
     @Before
     public void setUp()
     {
+        Conexion nuevaConexion = Conexion.getInstancia();
     }
     
     @After
@@ -51,7 +52,7 @@ public class ConexionTest
     @Test
     public void testGetInstancia()
     {
-        System.out.println("getInstancia");
+        
         Conexion expResult = null;
         Conexion result = Conexion.getInstancia();
         assertEquals(expResult, result);

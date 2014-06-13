@@ -16,10 +16,14 @@ public class DtoItem implements DtoValido
     private Integer porcentaje;
     private String observaciones;
     private Integer version = 0;
-    private Boolean conceptoFijo = false;
+    private Boolean conceptoFijo;
 
+    /**
+     * Constructor sin argumentos de @link DtoItem
+     */
     public DtoItem()
     {
+        this.conceptoFijo = false;
     }
 
     public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor)
@@ -40,7 +44,7 @@ public class DtoItem implements DtoValido
 
     public Boolean isFijo()
     {
-        return conceptoFijo;
+        return this.conceptoFijo;
     }
 
     public void setConceptoFijo(Boolean conceptoFijo)

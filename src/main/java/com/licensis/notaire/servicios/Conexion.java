@@ -74,6 +74,7 @@ public class Conexion implements Serializable
     {
         try
         {
+            //TODO: usar un archivo de properties para este tipo de configuraciones.
             miConexion = DriverManager.getConnection("jdbc:mysql://localhost/notaire", "root", "");
 
         }

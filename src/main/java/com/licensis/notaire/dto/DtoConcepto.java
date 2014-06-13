@@ -19,11 +19,12 @@ public class DtoConcepto implements DtoValido
     private Integer porcentaje;
     private Integer version = 0;
     private Boolean habilitado;
-    private Boolean fijo = false;
+    private Boolean fijo;
     private List<PlantillaPresupuesto> plantillaPresupuestos = null;
 
     public DtoConcepto()
     {
+        this.fijo = Boolean.FALSE;
     }
 
     public DtoConcepto(String nombre, Float valor, Integer porcentaje)
@@ -35,7 +36,7 @@ public class DtoConcepto implements DtoValido
 
     public Boolean isFijo()
     {
-        return fijo;
+        return this.fijo;
     }
 
     public void setFijo(Boolean fijo)
