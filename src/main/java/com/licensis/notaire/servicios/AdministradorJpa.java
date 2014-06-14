@@ -56,6 +56,7 @@ public class AdministradorJpa
     public static final int ERROR = -1;
     private static AdministradorJpa instancia = null;
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
+    
     private static Collection<IPersistenciaJpa> milistaJpas = null;
 
     /**
@@ -63,6 +64,7 @@ public class AdministradorJpa
      */
     private AdministradorJpa()
     {
+        
         //  aqui ocurre todo el proceso de inicializacion de los JPA
         AdministradorJpa.cargarListaJpas();
 

@@ -4,10 +4,17 @@
  */
 package com.licensis.notaire.servicios;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Clase concreta Conexion, que implementa la interfaz Serializable y el patron Singleton. Tiene
@@ -18,6 +25,7 @@ import java.sql.SQLException;
 public class Conexion implements Serializable
 {
 
+    protected static Log log = LogFactory.getLog(Conexion.class);
     /**
      * Atributo privado y estatico que representa la instancia de la clase conecion (Singleton)
      */
@@ -32,11 +40,28 @@ public class Conexion implements Serializable
      */
     private String datosConexion;
 
+    private Properties notaireProperties;
+
     /**
      * Constructor privado y sin argumentos para la clase conexion.
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
      */
+    private Conexion(int nothig) throws FileNotFoundException, IOException
+    {
+        log.debug("test conexion 1");
+        try (InputStream archivoPropiedades = new FileInputStream("config.properties"))
+        {
+            log.debug("cargando el archivo de conexion");
+            notaireProperties = new Properties();
+            notaireProperties.load(archivoPropiedades);
+        }
+    }
+
     private Conexion()
     {
+
     }
 
     /**
@@ -44,11 +69,11 @@ public class Conexion implements Serializable
      *
      * @return Una instancia de Conexion.
      */
-    public static Conexion getInstancia()
+    public static Conexion getInstancia() throws IOException
     {
         if (instancia == null)
         {
-            instancia = new Conexion();
+            instancia = new Conexion(0);
         }
         return instancia;
     }
@@ -70,13 +95,21 @@ public class Conexion implements Serializable
      * @return Un Objeto tipo Connection si se pudo establecer una conexion o nulo en caso
      * contrario.
      */
-    public Connection getConexion()
+    public Connection getConexion() throws FileNotFoundException, IOException
     {
+        log.debug("test conexion 1");
+        System.out.println("Test conexion");
+        try (InputStream archivoPropiedades = new FileInputStream("config.properties"))
+        {
+            log.debug("cargando el archivo de conexion");
+            notaireProperties = new Properties();
+            notaireProperties.load(archivoPropiedades);
+        }
         try
         {
             //TODO: usar un archivo de properties para este tipo de configuraciones.
-            miConexion = DriverManager.getConnection("jdbc:mysql://localhost/notaire", "root", "");
-
+            //miConexion = DriverManager.getConnection("jdbc:mysql://localhost/notaire", "root", "");
+            miConexion = DriverManager.getConnection("jdbc:mysql://sdfsdfs", "root", "");
         }
         catch (SQLException ex)
         {
@@ -103,5 +136,15 @@ public class Conexion implements Serializable
             System.out.println("No se ha podido cerrar la conexion");
         }
 
+    }
+
+    public Properties getNotaireProperties()
+    {
+        return notaireProperties;
+    }
+
+    public void setNotaireProperties(Properties notaireProperties)
+    {
+        this.notaireProperties = notaireProperties;
     }
 }

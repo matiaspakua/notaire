@@ -6,7 +6,10 @@
 
 package com.licensis.notaire.servicios;
 
+import java.io.IOException;
 import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -38,7 +41,14 @@ public class ConexionTest
     @Before
     public void setUp()
     {
-        Conexion nuevaConexion = Conexion.getInstancia();
+        try
+        {
+            Conexion nuevaConexion = Conexion.getInstancia();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(ConexionTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @After
@@ -50,7 +60,7 @@ public class ConexionTest
      * Test of getInstancia method, of class Conexion.
      */
     @Test
-    public void testGetInstancia()
+    public void testGetInstancia() throws IOException
     {
         
         Conexion expResult = null;
@@ -78,7 +88,7 @@ public class ConexionTest
      * Test of getConexion method, of class Conexion.
      */
     @Test
-    public void testGetConexion()
+    public void testGetConexion() throws IOException
     {
         System.out.println("getConexion");
         Conexion instance = null;

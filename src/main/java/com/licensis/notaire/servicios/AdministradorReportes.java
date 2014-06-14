@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPresupuesto;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.gui.presupuestos.BuscarPresupuesto;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -146,7 +147,7 @@ public class AdministradorReportes
      *
      * @param presupuesto Los datos del presupuesto para generar el reporte.
      */
-    public void generarReportePresupuesto(DtoPresupuesto presupuesto)
+    public void generarReportePresupuesto(DtoPresupuesto presupuesto) throws IOException
     {
         try
         {
@@ -181,7 +182,7 @@ public class AdministradorReportes
      * @param listaTiposTramites El o los tramites para los cuales se requiere la lista de
      * documentacion asociada.
      */
-    public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites)
+    public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites) throws IOException
     {
         for (Iterator<DtoTipoDeTramite> it = listaTiposTramites.iterator(); it.hasNext();)
         {
@@ -206,7 +207,7 @@ public class AdministradorReportes
      *
      * @param gestion El dto gestion con el ID de la gestion.
      */
-    public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion)
+    public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion) throws IOException
     {
         try
         {
@@ -223,7 +224,7 @@ public class AdministradorReportes
 
     }
 
-    public void generarReporteDocumentosPorVencer(List<DtoDocumentoPresentado> listaDocumentosPorVencer)
+    public void generarReporteDocumentosPorVencer(List<DtoDocumentoPresentado> listaDocumentosPorVencer) throws IOException
     {
         for (Iterator<DtoDocumentoPresentado> it = listaDocumentosPorVencer.iterator(); it.hasNext();)
         {
@@ -243,7 +244,7 @@ public class AdministradorReportes
         }
     }
 
-    public void generarReporteConsultarDeudaDocumentos(Integer pNumeroGestion)
+    public void generarReporteConsultarDeudaDocumentos(Integer pNumeroGestion) throws IOException
     {
         try
         {
