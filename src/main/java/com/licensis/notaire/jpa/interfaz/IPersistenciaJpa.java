@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.licensis.notaire.jpa.interfaz;
 
 /**
@@ -21,5 +17,5 @@ public interface IPersistenciaJpa
      *
      * @return Retorna el nombre del JPA actual.
      */
-    public String getNombreJpa();
+    String getNombreJpa();
 }
