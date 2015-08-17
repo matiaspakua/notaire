@@ -8,9 +8,12 @@ import com.licensis.notaire.dto.DtoDocumentoPresentado;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -278,8 +281,13 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
 
         if (!this.listaDocumentos.isEmpty())
         {
-            AdministradorReportes reportes = AdministradorReportes.getInstancia();
-            reportes.generarReporteDocumentosPorVencer(this.listaDocumentos);
+            try {
+                AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                reportes.generarReporteDocumentosPorVencer(this.listaDocumentos);
+            }
+            catch (IOException ex) {
+                Logger.getLogger(ConsultarVencimientosDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_botonImprimirActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

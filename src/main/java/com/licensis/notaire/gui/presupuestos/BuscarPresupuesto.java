@@ -15,6 +15,7 @@ import com.licensis.notaire.gui.pagos.RegistrarPago;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -380,7 +381,14 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame
                         case ConstantesGui.BUSCAR_PRESUPUESTO:
                         {
                             AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                        try
+                        {
                             reportes.generarReportePresupuesto(presupuestoEncontrado);
+                        }
+                        catch (IOException ex)
+                        {
+                            Logger.getLogger(BuscarPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                             break;
                         }
                         case ConstantesGui.REGISTRAR_PAGO:

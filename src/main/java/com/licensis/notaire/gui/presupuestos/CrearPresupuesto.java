@@ -15,11 +15,14 @@ import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -511,8 +514,13 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
                     if (miPresupuestoEncontrado != null)
                     {
 
-                        AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                        reportes.generarReportePresupuesto(miPresupuestoEncontrado);
+                        try {
+                            AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                            reportes.generarReportePresupuesto(miPresupuestoEncontrado);
+                        }
+                        catch (IOException ex) {
+                            Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
                 this.limpiarFormulario();

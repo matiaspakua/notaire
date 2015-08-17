@@ -13,10 +13,13 @@ import com.licensis.notaire.gui.pagos.RegistrarPago;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -338,11 +341,18 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
             }
             case ConstantesGui.BUSCAR_PRESUPUESTO:
             {
+            try
+            {
                 this.extraerPresupuestoSeleccionado();
 
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
                 reportes.generarReportePresupuesto(presupuesto);
                 break;
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(ListaPresupuestosCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
         }
     }//GEN-LAST:event_grillaPresupuestosClienteMouseClicked

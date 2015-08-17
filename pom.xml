@@ -9,10 +9,6 @@
 
     <name>Notaire</name>
     <url>http://maven.apache.org</url>
-    <ciManagement>
-        <system>hudson</system>
-        <url>http://localhost:8080/hudson-3.1.2/job/Notaire/</url>
-    </ciManagement>
     <build>
         <plugins>
             <plugin>
@@ -20,8 +16,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>        

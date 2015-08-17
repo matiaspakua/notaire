@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.licensis.notaire.servicios;
 
 import com.licensis.notaire.jpa.ConceptoJpaController;
@@ -55,6 +51,7 @@ public class AdministradorJpa
      */
     public static final int ERROR = -1;
     private static AdministradorJpa instancia = null;
+    // TODO: ver otra forma de implementar el entity manager.
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
     
     private static Collection<IPersistenciaJpa> milistaJpas = null;
@@ -77,7 +74,7 @@ public class AdministradorJpa
      */
     public static AdministradorJpa getInstancia()
     {
-        if (instancia == null)
+        if (AdministradorJpa.instancia == null)
         {
             instancia = new AdministradorJpa();
         }

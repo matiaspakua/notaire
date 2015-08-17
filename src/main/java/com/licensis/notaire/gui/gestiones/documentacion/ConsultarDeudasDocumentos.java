@@ -18,6 +18,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -489,8 +490,13 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
         if (!this.listaDocumentosPresentados.isEmpty())
         {
-            AdministradorReportes reportes = AdministradorReportes.getInstancia();
-            reportes.generarReporteConsultarDeudaDocumentos(this.getDtoGestion().getNumero());
+            try {
+                AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                reportes.generarReporteConsultarDeudaDocumentos(this.getDtoGestion().getNumero());
+            }
+            catch (IOException ex) {
+                Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_botonImprimirActionPerformed
 

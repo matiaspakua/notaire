@@ -9,9 +9,12 @@ import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -247,11 +250,16 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
     {//GEN-HEADEREND:event_botonImprimirActionPerformed
         if (this.dtoTipoDeTramiteSeleccionado != null)
         {
-            List<DtoTipoDeTramite> listaTramites = new ArrayList<DtoTipoDeTramite>();
-            listaTramites.add(dtoTipoDeTramiteSeleccionado);
-
-            AdministradorReportes reportes = AdministradorReportes.getInstancia();
-            reportes.generarReporteListaDocumentos(listaTramites);
+            try {
+                List<DtoTipoDeTramite> listaTramites = new ArrayList<DtoTipoDeTramite>();
+                listaTramites.add(dtoTipoDeTramiteSeleccionado);
+                
+                AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                reportes.generarReporteListaDocumentos(listaTramites);
+            }
+            catch (IOException ex) {
+                Logger.getLogger(ListarDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else
         {
             JOptionPane.showMessageDialog(this, "No ha seleccionado ningun tipo de tramite.", "Advertencia", JOptionPane.WARNING_MESSAGE);

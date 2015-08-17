@@ -20,12 +20,15 @@ import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import com.licensis.notaire.servicios.AdministradorSesion;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -466,7 +469,14 @@ public class IniciarGestion extends javax.swing.JInternalFrame
                         listaTiposTramites.add(dtoTramite.getTipoDeTramite());
                     }
 
-                    reportes.generarReporteListaDocumentos(listaTiposTramites);
+                    try
+                    {
+                        reportes.generarReporteListaDocumentos(listaTiposTramites);
+                    }
+                    catch (IOException ex)
+                    {
+                        Logger.getLogger(IniciarGestion.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                     salir();
                 }

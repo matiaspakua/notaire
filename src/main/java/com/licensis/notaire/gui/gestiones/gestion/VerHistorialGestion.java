@@ -10,7 +10,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -228,8 +231,13 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
     {//GEN-HEADEREND:event_botonImprimirReporteActionPerformed
         if (gestionSeleccionada != null)
         {
-            AdministradorReportes reportes = AdministradorReportes.getInstancia();
-            reportes.generarReporteHistorialGestion(gestionSeleccionada);
+            try {
+                AdministradorReportes reportes = AdministradorReportes.getInstancia();
+                reportes.generarReporteHistorialGestion(gestionSeleccionada);
+            }
+            catch (IOException ex) {
+                Logger.getLogger(VerHistorialGestion.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else
         {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna gestion.", "Advertencia", JOptionPane.WARNING_MESSAGE);
