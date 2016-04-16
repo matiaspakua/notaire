@@ -1,0 +1,10 @@
+image: maven:3-jdk-8
+
+compile:
+  script: "mvn compile -B"
+  
+test:
+  script: "mvn test -B"
+  
+package:
+  script: "mvn package -B"
