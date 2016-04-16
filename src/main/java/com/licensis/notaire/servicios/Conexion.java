@@ -109,7 +109,7 @@ public class Conexion implements Serializable
         {
             //TODO: usar un archivo de properties para este tipo de configuraciones.
             //miConexion = DriverManager.getConnection("jdbc:mysql://localhost/notaire", "root", "");
-            miConexion = DriverManager.getConnection("jdbc:mysql://sdfsdfs", "root", "");
+            miConexion = DriverManager.getConnection("jdbc:mysql://localhost", "matias", "");
         }
         catch (SQLException ex)
         {
