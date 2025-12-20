@@ -1,0 +1,27 @@
+/*
+ * pgloader script to migrate MySQL dump to PostgreSQL
+ * 
+ * Usage:
+ *   1. First, import the MySQL dump into a running MySQL container or local MySQL
+ *   2. Then run: pgloader migrate.load
+ *
+ * Alternative: Direct SQL import (recommended for this project)
+ *   Since we have SQL dumps, we'll convert them manually and import directly.
+ */
+
+LOAD DATABASE
+     FROM mysql://root:admin@localhost:3306/notaire
+     INTO postgresql://notaire:notaire_password@localhost:5432/notaire
+
+WITH include drop, create tables, create indexes, reset sequences,
+     workers = 4, concurrency = 2
+
+SET MySQL PARAMETERS
+    net_read_timeout = 120,
+    net_write_timeout = 120
+
+CAST type tinyint to boolean using tinyint-to-boolean,
+     type int with auto_increment to serial,
+     type bigint with auto_increment to bigserial
+
+ALTER SCHEMA 'notaire' RENAME TO 'public';
