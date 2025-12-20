@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.transaction.UserTransaction;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
@@ -22,94 +23,82 @@ import com.licensis.notaire.negocio.Usuario;
  *
  * @author juanca
  */
-public class UsuarioJpaController implements Serializable, IPersistenciaJpa
-{
+public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
 
     private UserTransaction utx = null;
-    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
+    private EntityManagerFactory emf = null;
     private static UsuarioJpaController instancia = null;
 
-    private UsuarioJpaController(UserTransaction utx, EntityManagerFactory emf)
-    {
+    private UsuarioJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
 
-    public EntityManager getEntityManager()
-    {
+    public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public static UsuarioJpaController getInstancia()
-    {
+    public static UsuarioJpaController getInstancia() {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
+        EntityManagerFactory emf = AdministradorJpa.getEmf();
 
-        if (instancia == null)
-        {
+        if (instancia == null) {
             instancia = new UsuarioJpaController(null, emf);
         }
         return instancia;
 
     }
 
-    public void create(Usuario usuarios)
-    {
-        if (usuarios.getRegistroAuditoriaList() == null)
-        {
+    public void create(Usuario usuarios) {
+        if (usuarios.getRegistroAuditoriaList() == null) {
             usuarios.setRegistroAuditoriaList(new ArrayList<RegistroAuditoria>());
         }
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             Persona fkIdPersona = usuarios.getFkIdPersona();
-            if (fkIdPersona != null)
-            {
+            if (fkIdPersona != null) {
                 fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getIdPersona());
                 usuarios.setFkIdPersona(fkIdPersona);
             }
             List<RegistroAuditoria> attachedRegistroAuditoriaList = new ArrayList<RegistroAuditoria>();
-            for (RegistroAuditoria registroAuditoriaListRegistroAuditoriaToAttach : usuarios.getRegistroAuditoriaList())
-            {
-                registroAuditoriaListRegistroAuditoriaToAttach = em.getReference(registroAuditoriaListRegistroAuditoriaToAttach.getClass(), registroAuditoriaListRegistroAuditoriaToAttach.getIdRegistroAuditoria());
+            for (RegistroAuditoria registroAuditoriaListRegistroAuditoriaToAttach : usuarios
+                    .getRegistroAuditoriaList()) {
+                registroAuditoriaListRegistroAuditoriaToAttach = em.getReference(
+                        registroAuditoriaListRegistroAuditoriaToAttach.getClass(),
+                        registroAuditoriaListRegistroAuditoriaToAttach.getIdRegistroAuditoria());
                 attachedRegistroAuditoriaList.add(registroAuditoriaListRegistroAuditoriaToAttach);
             }
             usuarios.setRegistroAuditoriaList(attachedRegistroAuditoriaList);
             em.persist(usuarios);
-            if (fkIdPersona != null)
-            {
+            if (fkIdPersona != null) {
                 fkIdPersona.getUsuariosList().add(usuarios);
                 fkIdPersona = em.merge(fkIdPersona);
             }
-            for (RegistroAuditoria registroAuditoriaListRegistroAuditoria : usuarios.getRegistroAuditoriaList())
-            {
-                Usuario oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria = registroAuditoriaListRegistroAuditoria.getFkIdUsuario();
+            for (RegistroAuditoria registroAuditoriaListRegistroAuditoria : usuarios.getRegistroAuditoriaList()) {
+                Usuario oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria = registroAuditoriaListRegistroAuditoria
+                        .getFkIdUsuario();
                 registroAuditoriaListRegistroAuditoria.setFkIdUsuario(usuarios);
                 registroAuditoriaListRegistroAuditoria = em.merge(registroAuditoriaListRegistroAuditoria);
-                if (oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria != null)
-                {
-                    oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria.getRegistroAuditoriaList().remove(registroAuditoriaListRegistroAuditoria);
-                    oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria = em.merge(oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria);
+                if (oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria != null) {
+                    oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria.getRegistroAuditoriaList()
+                            .remove(registroAuditoriaListRegistroAuditoria);
+                    oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria = em
+                            .merge(oldFkIdUsuarioOfRegistroAuditoriaListRegistroAuditoria);
                 }
             }
             em.getTransaction().commit();
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public void edit(Usuario usuarios) throws IllegalOrphanException, NonexistentEntityException, Exception
-    {
+    public void edit(Usuario usuarios) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             Usuario persistentUsuarios = em.find(Usuario.class, usuarios.getIdUsuario());
@@ -118,191 +107,156 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
             List<RegistroAuditoria> registroAuditoriaListOld = persistentUsuarios.getRegistroAuditoriaList();
             List<RegistroAuditoria> registroAuditoriaListNew = usuarios.getRegistroAuditoriaList();
             List<String> illegalOrphanMessages = null;
-            for (RegistroAuditoria registroAuditoriaListOldRegistroAuditoria : registroAuditoriaListOld)
-            {
-                if (!registroAuditoriaListNew.contains(registroAuditoriaListOldRegistroAuditoria))
-                {
-                    if (illegalOrphanMessages == null)
-                    {
+            for (RegistroAuditoria registroAuditoriaListOldRegistroAuditoria : registroAuditoriaListOld) {
+                if (!registroAuditoriaListNew.contains(registroAuditoriaListOldRegistroAuditoria)) {
+                    if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain RegistroAuditoria " + registroAuditoriaListOldRegistroAuditoria + " since its fkIdUsuario field is not nullable.");
+                    illegalOrphanMessages
+                            .add("You must retain RegistroAuditoria " + registroAuditoriaListOldRegistroAuditoria
+                                    + " since its fkIdUsuario field is not nullable.");
                 }
             }
-            if (illegalOrphanMessages != null)
-            {
+            if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            if (fkIdPersonaNew != null)
-            {
+            if (fkIdPersonaNew != null) {
                 fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getIdPersona());
                 usuarios.setFkIdPersona(fkIdPersonaNew);
             }
             List<RegistroAuditoria> attachedRegistroAuditoriaListNew = new ArrayList<RegistroAuditoria>();
-            for (RegistroAuditoria registroAuditoriaListNewRegistroAuditoriaToAttach : registroAuditoriaListNew)
-            {
-                registroAuditoriaListNewRegistroAuditoriaToAttach = em.getReference(registroAuditoriaListNewRegistroAuditoriaToAttach.getClass(), registroAuditoriaListNewRegistroAuditoriaToAttach.getIdRegistroAuditoria());
+            for (RegistroAuditoria registroAuditoriaListNewRegistroAuditoriaToAttach : registroAuditoriaListNew) {
+                registroAuditoriaListNewRegistroAuditoriaToAttach = em.getReference(
+                        registroAuditoriaListNewRegistroAuditoriaToAttach.getClass(),
+                        registroAuditoriaListNewRegistroAuditoriaToAttach.getIdRegistroAuditoria());
                 attachedRegistroAuditoriaListNew.add(registroAuditoriaListNewRegistroAuditoriaToAttach);
             }
             registroAuditoriaListNew = attachedRegistroAuditoriaListNew;
             usuarios.setRegistroAuditoriaList(registroAuditoriaListNew);
             usuarios = em.merge(usuarios);
-            if (fkIdPersonaOld != null && !fkIdPersonaOld.equals(fkIdPersonaNew))
-            {
+            if (fkIdPersonaOld != null && !fkIdPersonaOld.equals(fkIdPersonaNew)) {
                 fkIdPersonaOld.getUsuariosList().remove(usuarios);
                 fkIdPersonaOld = em.merge(fkIdPersonaOld);
             }
-            if (fkIdPersonaNew != null && !fkIdPersonaNew.equals(fkIdPersonaOld))
-            {
+            if (fkIdPersonaNew != null && !fkIdPersonaNew.equals(fkIdPersonaOld)) {
                 fkIdPersonaNew.getUsuariosList().add(usuarios);
                 fkIdPersonaNew = em.merge(fkIdPersonaNew);
             }
-            for (RegistroAuditoria registroAuditoriaListNewRegistroAuditoria : registroAuditoriaListNew)
-            {
-                if (!registroAuditoriaListOld.contains(registroAuditoriaListNewRegistroAuditoria))
-                {
-                    Usuario oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria = registroAuditoriaListNewRegistroAuditoria.getFkIdUsuario();
+            for (RegistroAuditoria registroAuditoriaListNewRegistroAuditoria : registroAuditoriaListNew) {
+                if (!registroAuditoriaListOld.contains(registroAuditoriaListNewRegistroAuditoria)) {
+                    Usuario oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria = registroAuditoriaListNewRegistroAuditoria
+                            .getFkIdUsuario();
                     registroAuditoriaListNewRegistroAuditoria.setFkIdUsuario(usuarios);
                     registroAuditoriaListNewRegistroAuditoria = em.merge(registroAuditoriaListNewRegistroAuditoria);
-                    if (oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria != null && !oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria.equals(usuarios))
-                    {
-                        oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria.getRegistroAuditoriaList().remove(registroAuditoriaListNewRegistroAuditoria);
-                        oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria = em.merge(oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria);
+                    if (oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria != null
+                            && !oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria.equals(usuarios)) {
+                        oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria.getRegistroAuditoriaList()
+                                .remove(registroAuditoriaListNewRegistroAuditoria);
+                        oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria = em
+                                .merge(oldFkIdUsuarioOfRegistroAuditoriaListNewRegistroAuditoria);
                     }
                 }
             }
             em.getTransaction().commit();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0)
-            {
+            if (msg == null || msg.length() == 0) {
                 Integer id = usuarios.getIdUsuario();
-                if (findUsuarios(id) == null)
-                {
+                if (findUsuarios(id) == null) {
                     throw new NonexistentEntityException("The usuarios with id " + id + " no longer exists.");
                 }
             }
             throw ex;
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
 
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
-    {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             Usuario usuarios;
-            try
-            {
+            try {
                 usuarios = em.getReference(Usuario.class, id);
                 usuarios.getIdUsuario();
-            }
-            catch (EntityNotFoundException enfe)
-            {
+            } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The usuarios with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<RegistroAuditoria> registroAuditoriaListOrphanCheck = usuarios.getRegistroAuditoriaList();
-            for (RegistroAuditoria registroAuditoriaListOrphanCheckRegistroAuditoria : registroAuditoriaListOrphanCheck)
-            {
-                if (illegalOrphanMessages == null)
-                {
+            for (RegistroAuditoria registroAuditoriaListOrphanCheckRegistroAuditoria : registroAuditoriaListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Usuarios (" + usuarios + ") cannot be destroyed since the RegistroAuditoria " + registroAuditoriaListOrphanCheckRegistroAuditoria + " in its registroAuditoriaList field has a non-nullable fkIdUsuario field.");
+                illegalOrphanMessages
+                        .add("This Usuarios (" + usuarios + ") cannot be destroyed since the RegistroAuditoria "
+                                + registroAuditoriaListOrphanCheckRegistroAuditoria
+                                + " in its registroAuditoriaList field has a non-nullable fkIdUsuario field.");
             }
-            if (illegalOrphanMessages != null)
-            {
+            if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Persona fkIdPersona = usuarios.getFkIdPersona();
-            if (fkIdPersona != null)
-            {
+            if (fkIdPersona != null) {
                 fkIdPersona.getUsuariosList().remove(usuarios);
                 fkIdPersona = em.merge(fkIdPersona);
             }
             em.remove(usuarios);
             em.getTransaction().commit();
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public List<Usuario> findUsuariosEntities()
-    {
+    public List<Usuario> findUsuariosEntities() {
         return findUsuariosEntities(true, -1, -1);
     }
 
-    public List<Usuario> findUsuariosEntities(int maxResults, int firstResult)
-    {
+    public List<Usuario> findUsuariosEntities(int maxResults, int firstResult) {
         return findUsuariosEntities(false, maxResults, firstResult);
     }
 
-    private List<Usuario> findUsuariosEntities(boolean all, int maxResults, int firstResult)
-    {
+    private List<Usuario> findUsuariosEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select object(o) from Usuarios as o");
-            if (!all)
-            {
+            if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
             return q.getResultList();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public Usuario findUsuarios(Integer id)
-    {
+    public Usuario findUsuarios(Integer id) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             return em.find(Usuario.class, id);
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public int getUsuariosCount()
-    {
+    public int getUsuariosCount() {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select count(o) from Usuarios as o");
             return ((Long) q.getSingleResult()).intValue();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public List<Usuario> buscarUsuarios()
-    {
+    public List<Usuario> buscarUsuarios() {
         List<Usuario> listaUsuarios = null;
 
         EntityManager em = getEntityManager();
@@ -314,50 +268,44 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
         return listaUsuarios;
     }
 
-    public Boolean modificarUsuario(Usuario pUsuario) throws ClassModifiedException, ClassEliminatedException
-    {
+    public Boolean modificarUsuario(Usuario pUsuario) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto       
+        Boolean flag = false; // Variable para saber el resultado de la transaccion
+        int oldVersion = 0; // Variable para Version en memoria del Objeto
+        int version = 0; // Variable para Version en bd del Objeto
 
         EntityManager em = getEntityManager();
 
         Usuario persistenUsuario = em.find(Usuario.class, pUsuario.getIdUsuario()); // Cargo persona de db
 
-        if (persistenUsuario != null)
-        {
+        if (persistenUsuario != null) {
             version = persistenUsuario.getVersion(); // Version del Objeto en db
             oldVersion = pUsuario.getVersion(); // Version del Objeto en memoria
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
                 throw new ClassModifiedException("El usuario indicado ha sido modificado por otro usuario");
 
-            } else
-            {
-                try
-                {
+            } else {
+                try {
 
-                    em.getTransaction().begin(); //Comienzo Transaccion
+                    em.getTransaction().begin(); // Comienzo Transaccion
 
                     persistenUsuario.setNombre(pUsuario.getNombre());
                     persistenUsuario.setContrasenia(pUsuario.getContrasenia());
                     persistenUsuario.setEstado(pUsuario.getEstado());
                     persistenUsuario.setTipo(pUsuario.getTipo());
 
-                    //El valor de la version del objeto queda a cardo de Hibernate
+                    // El valor de la version del objeto queda a cardo de Hibernate
                     em.getTransaction().commit();
                     flag = true;
                     em.close();
 
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
                 }
             }
-        } else//Si fue  eliminado se dispara una excepcion 
+        } else// Si fue eliminado se dispara una excepcion
         {
             throw new ClassEliminatedException("El cliente indicado ya ha sido eliminado con anterioridad");
         }
@@ -366,8 +314,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa()
-    {
+    public String getNombreJpa() {
         return this.getClass().getName();
     }
 }

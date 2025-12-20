@@ -35,47 +35,60 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /**
- * Clase que se encarga de instanciar y administrar todos los JPA. Mantiene una lista de todos los
- * JPA instanciados, haciendo que el proceso de carga de los mismos (que inicialmente es muy lento)
- * solo tenga que realizarse una unica vez. Ademas mantiene una lista de todos los JPA, y los
+ * Clase que se encarga de instanciar y administrar todos los JPA. Mantiene una
+ * lista de todos los
+ * JPA instanciados, haciendo que el proceso de carga de los mismos (que
+ * inicialmente es muy lento)
+ * solo tenga que realizarse una unica vez. Ademas mantiene una lista de todos
+ * los JPA, y los
  * metodos necesarios para poder recuperarlos.
  *
  * @author matias
  */
-public class AdministradorJpa
-{
+public class AdministradorJpa {
 
     /**
-     * Constante que puede ser utilizada para indicar que una entidad no se pudo persistir, obtener
+     * Constante que puede ser utilizada para indicar que una entidad no se pudo
+     * persistir, obtener
      * de la persistencia.
      */
     public static final int ERROR = -1;
     private static AdministradorJpa instancia = null;
-    // TODO: ver otra forma de implementar el entity manager.
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
-    
+    private static EntityManagerFactory emf = null;
+
     private static Collection<IPersistenciaJpa> milistaJpas = null;
 
     /**
-     * Constructor de {@link AdministradorJpa}. Internamente se inicializa y carga la lista de JPA.
+     * Permite establecer el EMF desde el contexto de Spring.
      */
-    private AdministradorJpa()
-    {
-        
-        //  aqui ocurre todo el proceso de inicializacion de los JPA
-        AdministradorJpa.cargarListaJpas();
+    public static void setEmf(EntityManagerFactory factory) {
+        emf = factory;
+        if (instancia != null) {
+            cargarListaJpas();
+        }
+    }
+
+    /**
+     * Constructor de {@link AdministradorJpa}. Internamente se inicializa y carga
+     * la lista de JPA.
+     */
+    private AdministradorJpa() {
+
+        // aqui ocurre todo el proceso de inicializacion de los JPA
+        if (emf != null) {
+            AdministradorJpa.cargarListaJpas();
+        }
 
     }
 
     /**
-     * Metodo estatico para obtener la instancia actual de AdministradorJpa (simgleton)
+     * Metodo estatico para obtener la instancia actual de AdministradorJpa
+     * (simgleton)
      *
      * @return La instancia actual de AdministradorJpa.
      */
-    public static AdministradorJpa getInstancia()
-    {
-        if (AdministradorJpa.instancia == null)
-        {
+    public static AdministradorJpa getInstancia() {
+        if (AdministradorJpa.instancia == null) {
             instancia = new AdministradorJpa();
         }
         return instancia;
@@ -86,27 +99,26 @@ public class AdministradorJpa
      *
      * @return La instancia actual del EMF.
      */
-    public static EntityManagerFactory getEmf()
-    {
+    public static EntityManagerFactory getEmf() {
         return emf;
     }
 
     /**
-     * Permite obtener un JPA especificando el nombre de mismo a traves del metodo del objeto
+     * Permite obtener un JPA especificando el nombre de mismo a traves del metodo
+     * del objeto
      * Class.getName().
      *
-     * @param nombreClase El nombre del JPA a buscar. El nombre proviene del objeto Class.getName().
+     * @param nombreClase El nombre del JPA a buscar. El nombre proviene del objeto
+     *                    Class.getName().
      * @return miJpa Un JPA (IPersistencia) si se encontro coincidencia.
-     * @throws NonexistentJpaException Esta excepcion es lanzada si el JPA indicado no existe en la
-     * lista de JPA's.
+     * @throws NonexistentJpaException Esta excepcion es lanzada si el JPA indicado
+     *                                 no existe en la
+     *                                 lista de JPA's.
      */
-    public IPersistenciaJpa obtenerJpa(String nombreClase) throws NonexistentJpaException
-    {
-        for (Iterator<IPersistenciaJpa> it = milistaJpas.iterator(); it.hasNext();)
-        {
+    public IPersistenciaJpa obtenerJpa(String nombreClase) throws NonexistentJpaException {
+        for (Iterator<IPersistenciaJpa> it = milistaJpas.iterator(); it.hasNext();) {
             IPersistenciaJpa iPersistenciaJpa = it.next();
-            if (iPersistenciaJpa.getNombreJpa().contains(nombreClase))
-            {
+            if (iPersistenciaJpa.getNombreJpa().contains(nombreClase)) {
                 return iPersistenciaJpa;
             }
         }
@@ -114,22 +126,20 @@ public class AdministradorJpa
 
     }
 
-    public static Collection<IPersistenciaJpa> getMilistaJpas()
-    {
+    public static Collection<IPersistenciaJpa> getMilistaJpas() {
         return milistaJpas;
     }
 
-    public static void setMilistaJpas(Collection<IPersistenciaJpa> milistaJpas)
-    {
+    public static void setMilistaJpas(Collection<IPersistenciaJpa> milistaJpas) {
         AdministradorJpa.milistaJpas = milistaJpas;
     }
 
     /**
-     * Metodo estatico que carga las instancia de todos los JPA una unica vez y los guarda en una
+     * Metodo estatico que carga las instancia de todos los JPA una unica vez y los
+     * guarda en una
      * lista para poder ser recuperados posteriormente.
      */
-    private static void cargarListaJpas()
-    {
+    private static void cargarListaJpas() {
         AdministradorJpa.milistaJpas = new ArrayList<>();
         AdministradorJpa.milistaJpas.add(new ConceptoJpaController(null, emf));
 

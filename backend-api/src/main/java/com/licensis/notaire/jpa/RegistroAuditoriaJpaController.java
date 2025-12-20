@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.transaction.UserTransaction;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.RegistroAuditoria;
@@ -18,217 +19,170 @@ import com.licensis.notaire.negocio.Usuario;
  *
  * @author juanca
  */
-public class RegistroAuditoriaJpaController implements Serializable, IPersistenciaJpa
-{
+public class RegistroAuditoriaJpaController implements Serializable, IPersistenciaJpa {
 
-    private RegistroAuditoriaJpaController(UserTransaction utx, EntityManagerFactory emf)
-    {
+    private RegistroAuditoriaJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
+
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
     private static RegistroAuditoriaJpaController instancia = null;
 
-    public EntityManager getEntityManager()
-    {
+    public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public boolean create(RegistroAuditoria registroAuditoria)
-    {
+    public boolean create(RegistroAuditoria registroAuditoria) {
         boolean resultado = false;
 
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             Usuario fkIdUsuario = registroAuditoria.getFkIdUsuario();
-            if (fkIdUsuario != null)
-            {
+            if (fkIdUsuario != null) {
                 fkIdUsuario = em.getReference(fkIdUsuario.getClass(), fkIdUsuario.getIdUsuario());
                 registroAuditoria.setFkIdUsuario(fkIdUsuario);
             }
             em.persist(registroAuditoria);
-            if (fkIdUsuario != null)
-            {
+            if (fkIdUsuario != null) {
                 fkIdUsuario.getRegistroAuditoriaList().add(registroAuditoria);
                 fkIdUsuario = em.merge(fkIdUsuario);
             }
             em.getTransaction().commit();
             resultado = true;
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
         return resultado;
     }
 
-    public static RegistroAuditoriaJpaController getInstancia()
-    {
+    public static RegistroAuditoriaJpaController getInstancia() {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("notairePU");
+        EntityManagerFactory emf = AdministradorJpa.getEmf();
 
-        if (instancia == null)
-        {
+        if (instancia == null) {
             instancia = new RegistroAuditoriaJpaController(null, emf);
         }
         return instancia;
     }
 
-    public void edit(RegistroAuditoria registroAuditoria) throws NonexistentEntityException, Exception
-    {
+    public void edit(RegistroAuditoria registroAuditoria) throws NonexistentEntityException, Exception {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
-            RegistroAuditoria persistentRegistroAuditoria = em.find(RegistroAuditoria.class, registroAuditoria.getIdRegistroAuditoria());
+            RegistroAuditoria persistentRegistroAuditoria = em.find(RegistroAuditoria.class,
+                    registroAuditoria.getIdRegistroAuditoria());
             Usuario fkIdUsuarioOld = persistentRegistroAuditoria.getFkIdUsuario();
             Usuario fkIdUsuarioNew = registroAuditoria.getFkIdUsuario();
-            if (fkIdUsuarioNew != null)
-            {
+            if (fkIdUsuarioNew != null) {
                 fkIdUsuarioNew = em.getReference(fkIdUsuarioNew.getClass(), fkIdUsuarioNew.getIdUsuario());
                 registroAuditoria.setFkIdUsuario(fkIdUsuarioNew);
             }
             registroAuditoria = em.merge(registroAuditoria);
-            if (fkIdUsuarioOld != null && !fkIdUsuarioOld.equals(fkIdUsuarioNew))
-            {
+            if (fkIdUsuarioOld != null && !fkIdUsuarioOld.equals(fkIdUsuarioNew)) {
                 fkIdUsuarioOld.getRegistroAuditoriaList().remove(registroAuditoria);
                 fkIdUsuarioOld = em.merge(fkIdUsuarioOld);
             }
-            if (fkIdUsuarioNew != null && !fkIdUsuarioNew.equals(fkIdUsuarioOld))
-            {
+            if (fkIdUsuarioNew != null && !fkIdUsuarioNew.equals(fkIdUsuarioOld)) {
                 fkIdUsuarioNew.getRegistroAuditoriaList().add(registroAuditoria);
                 fkIdUsuarioNew = em.merge(fkIdUsuarioNew);
             }
             em.getTransaction().commit();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0)
-            {
+            if (msg == null || msg.length() == 0) {
                 Integer id = registroAuditoria.getIdRegistroAuditoria();
-                if (findRegistroAuditoria(id) == null)
-                {
+                if (findRegistroAuditoria(id) == null) {
                     throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.");
                 }
             }
             throw ex;
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException
-    {
+    public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             RegistroAuditoria registroAuditoria;
-            try
-            {
+            try {
                 registroAuditoria = em.getReference(RegistroAuditoria.class, id);
                 registroAuditoria.getIdRegistroAuditoria();
-            }
-            catch (EntityNotFoundException enfe)
-            {
-                throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.", enfe);
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.",
+                        enfe);
             }
             Usuario fkIdUsuario = registroAuditoria.getFkIdUsuario();
-            if (fkIdUsuario != null)
-            {
+            if (fkIdUsuario != null) {
                 fkIdUsuario.getRegistroAuditoriaList().remove(registroAuditoria);
                 fkIdUsuario = em.merge(fkIdUsuario);
             }
             em.remove(registroAuditoria);
             em.getTransaction().commit();
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public List<RegistroAuditoria> findRegistroAuditoriaEntities()
-    {
+    public List<RegistroAuditoria> findRegistroAuditoriaEntities() {
         return findRegistroAuditoriaEntities(true, -1, -1);
     }
 
-    public List<RegistroAuditoria> findRegistroAuditoriaEntities(int maxResults, int firstResult)
-    {
+    public List<RegistroAuditoria> findRegistroAuditoriaEntities(int maxResults, int firstResult) {
         return findRegistroAuditoriaEntities(false, maxResults, firstResult);
     }
 
-    private List<RegistroAuditoria> findRegistroAuditoriaEntities(boolean all, int maxResults, int firstResult)
-    {
+    private List<RegistroAuditoria> findRegistroAuditoriaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select object(o) from RegistroAuditoria as o");
-            if (!all)
-            {
+            if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
             return q.getResultList();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public RegistroAuditoria findRegistroAuditoria(Integer id)
-    {
+    public RegistroAuditoria findRegistroAuditoria(Integer id) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             return em.find(RegistroAuditoria.class, id);
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public int getRegistroAuditoriaCount()
-    {
+    public int getRegistroAuditoriaCount() {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select count(o) from RegistroAuditoria as o");
             return ((Long) q.getSingleResult()).intValue();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public ArrayList<RegistroAuditoria> buscarRegistroAuditoriasUsuario(Usuario miUsuario)
-    {
+    public ArrayList<RegistroAuditoria> buscarRegistroAuditoriasUsuario(Usuario miUsuario) {
         List<RegistroAuditoria> listaAuditoria = null;
         ArrayList<RegistroAuditoria> usuarioListaAuditoria = new ArrayList<RegistroAuditoria>();
         Boolean flag = false;
-        try
-        {
+        try {
 
             EntityManager em = getEntityManager();
 
@@ -236,24 +190,19 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
 
             listaAuditoria = query.getResultList();
 
-            //Filtro el resultado de la busqueda con el Usuario deseado
-            for (int i = 0; i < listaAuditoria.size(); i++)
-            {
-                if (miUsuario.getIdUsuario().equals(listaAuditoria.get(i).getFkIdUsuario().getIdUsuario()))
-                {
+            // Filtro el resultado de la busqueda con el Usuario deseado
+            for (int i = 0; i < listaAuditoria.size(); i++) {
+                if (miUsuario.getIdUsuario().equals(listaAuditoria.get(i).getFkIdUsuario().getIdUsuario())) {
                     flag = true;
                     usuarioListaAuditoria.add(listaAuditoria.get(i));
                 }
             }
 
-            if (!flag)
-            {
+            if (!flag) {
                 usuarioListaAuditoria = null;
             }
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Error Metodo : getDtoRegistroAuditoria");
         }
         return usuarioListaAuditoria;
@@ -261,8 +210,7 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
     }
 
     @Override
-    public String getNombreJpa()
-    {
+    public String getNombreJpa() {
         return this.getClass().getName();
     }
 }
