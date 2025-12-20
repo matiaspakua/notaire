@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.transaction.UserTransaction;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;

@@ -10,11 +10,11 @@ import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Presupuesto;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import javax.transaction.UserTransaction;
 
 /**

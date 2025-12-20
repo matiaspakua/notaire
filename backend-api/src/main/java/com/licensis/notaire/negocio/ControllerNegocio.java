@@ -77,7 +77,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 /**
  * Clase controller de la capa de negocio. Administra toda la logica de la capa
