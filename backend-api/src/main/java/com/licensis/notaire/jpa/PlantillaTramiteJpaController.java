@@ -18,7 +18,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 /**
  *

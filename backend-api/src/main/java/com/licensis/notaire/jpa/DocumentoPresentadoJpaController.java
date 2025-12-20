@@ -13,7 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Query;
 import jakarta.persistence.EntityNotFoundException;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
