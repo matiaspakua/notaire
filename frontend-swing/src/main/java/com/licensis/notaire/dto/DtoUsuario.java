@@ -1,5 +1,4 @@
 package com.licensis.notaire.dto;
-// Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
 /**
  * DTO que representa un Usuario.
@@ -111,3 +110,4 @@ public class DtoUsuario
         this.version = version;
     }
 }
+

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -19,6 +17,33 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - notaire-network
+
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: notaire-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-notaire}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-notaire}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-notaire_password}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/swagger-ui.html" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - notaire-network
 
   # Optional: pgAdmin for database management
   pgadmin:
@@ -35,7 +60,13 @@ services:
       - postgres
     profiles:
       - admin # Only start with: docker-compose --profile admin up
+    networks:
+      - notaire-network
 
 volumes:
   postgres_data:
     driver: local
+
+networks:
+  notaire-network:
+    driver: bridge
