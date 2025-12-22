@@ -21,18 +21,21 @@ public class AdministradorJpa {
     private GenericRestClient copiaClient;
     private GenericRestClient documentoPresentadoClient;
     private GenericRestClient escrituraClient;
+    private GenericRestClient estadoDeGestionClient;
     private GenericRestClient folioClient;
     private GenericRestClient historialClient;
     private GenericRestClient inmuebleClient;
     private GenericRestClient itemClient;
     private GenericRestClient movimientoTestimonioClient;
     private GenericRestClient pagoClient;
+    private GenericRestClient personaClient;
     private GenericRestClient presupuestoClient;
     private GenericRestClient suplenciaClient;
     private GenericRestClient testimonioClient;
     private GenericRestClient tipoDeDocumentoClient;
     private GenericRestClient tipoIdentificacionClient;
     private GenericRestClient tramiteClient;
+    private GenericRestClient usuarioClient;
     
     /**
      * Constructor privado (Singleton)
@@ -51,12 +54,14 @@ public class AdministradorJpa {
         itemClient = new GenericRestClient("/items");
         movimientoTestimonioClient = new GenericRestClient("/movimientos-testimonios");
         pagoClient = new GenericRestClient("/pagos");
+        personaClient = new GenericRestClient("/personas");
         presupuestoClient = new GenericRestClient("/presupuestos");
         suplenciaClient = new GenericRestClient("/suplencias");
         testimonioClient = new GenericRestClient("/testimonios");
         tipoDeDocumentoClient = new GenericRestClient("/tipos-documentos");
         tipoIdentificacionClient = new GenericRestClient("/tipos-identificacion");
         tramiteClient = new GenericRestClient("/tramites");
+        usuarioClient = new GenericRestClient("/usuarios");
         
         logger.info("AdministradorJpa REST inicializado con GenericDto. Base URL: " + ApiConfig.getApiBaseUrl());
     }
@@ -89,6 +94,10 @@ public class AdministradorJpa {
         return escrituraClient;
     }
     
+    public GenericRestClient getEstadoDeGestionJpa() {
+        return estadoDeGestionClient;
+    }
+    
     public GenericRestClient getFolioJpa() {
         return folioClient;
     }
@@ -113,6 +122,10 @@ public class AdministradorJpa {
         return pagoClient;
     }
     
+    public GenericRestClient getPersonaJpa() {
+        return personaClient;
+    }
+    
     public GenericRestClient getPresupuestoJpa() {
         return presupuestoClient;
     }
@@ -129,12 +142,30 @@ public class AdministradorJpa {
         return tipoDeDocumentoClient;
     }
     
+    // Nota: Estos endpoints aún no están implementados en el backend
+    // Se pueden agregar cuando estén disponibles
+    // public GenericRestClient getTipoDeFolioJpa() {
+    //     return tipoDeFolioClient;
+    // }
+    
+    // public GenericRestClient getTipoDeTramiteJpa() {
+    //     return tipoDeTramiteClient;
+    // }
+    
+    // public GenericRestClient getPlantillaPresupuestoJpa() {
+    //     return plantillaPresupuestoClient;
+    // }
+    
     public GenericRestClient getTipoIdentificacionJpa() {
         return tipoIdentificacionClient;
     }
     
     public GenericRestClient getTramiteJpa() {
         return tramiteClient;
+    }
+    
+    public GenericRestClient getUsuarioJpa() {
+        return usuarioClient;
     }
     
     /**

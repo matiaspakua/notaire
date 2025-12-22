@@ -1,0 +1,549 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.licensis.notaire.gui.administracion.tramites;
+
+import com.licensis.notaire.dto.GenericDto;
+import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Tefi
+ */
+public class EliminarTipoTramite extends javax.swing.JInternalFrame
+{
+
+    private static JMenuItem ventanaEliminarTipoTramite = new JMenuItem("Ventana Eliminar Tipo de Tramites");
+    private GenericRestClient tipoTramiteClient = null;
+    private GenericRestClient tipoDocumentoClient = null;
+    private List<GenericDto> tramitesDisponibles = new ArrayList<>();
+    private List<GenericDto> plantillas = null;
+    private List<GenericDto> documentosDisponibles = null;
+    private GenericDto miDtoSeleccionado = null;
+    private static final Logger logger = Logger.getLogger(EliminarTipoTramite.class.getName());
+
+    /**
+     * Creates new form EliminarTipoTramite
+     */
+    public EliminarTipoTramite()
+    {
+        initComponents();
+        this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
+        tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
+        tipoDocumentoClient = AdministradorJpa.getInstancia().getTipoDeDocumentoJpa();
+        inicializarFormulario();
+    }
+
+    private void salir()
+    {
+        this.dispose();
+    }
+
+    public static JMenuItem getVentanaEliminarTipoTramite()
+    {
+        return ventanaEliminarTipoTramite;
+    }
+
+    public static void setVentanaEliminarTipoTramite(JMenuItem ventanaEliminarTipoTramite)
+    {
+        EliminarTipoTramite.ventanaEliminarTipoTramite = ventanaEliminarTipoTramite;
+    }
+
+    private void inicializarFormulario()
+    {
+        try
+        {
+            // Obtener todos los tipos de trámite y filtrar los habilitados
+            List<GenericDto> todosLosTramites = tipoTramiteClient.findAll();
+            tramitesDisponibles = new ArrayList<>();
+            
+            for (GenericDto tramite : todosLosTramites)
+            {
+                Boolean habilitado = tramite.getBoolean("habilitado");
+                if (habilitado != null && habilitado)
+                {
+                    tramitesDisponibles.add(tramite);
+                }
+            }
+
+            if (tramitesDisponibles.isEmpty())
+            {
+                listaTramitesDisponibles.setEnabled(false);
+                botonSeleccionar.setEnabled(false);
+                botonAceptar.setEnabled(false);
+                campoObservaciones.setEnabled(false);
+                checkBoxInmueble.setEnabled(false);
+                checkBoxSeArchiva.setEnabled(false);
+                checkRequiereInscripcion.setEnabled(false);
+
+                JOptionPane.showMessageDialog(this, "No existen Tipos de Tramite para eliminar.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                salir();
+            } else
+            {
+                listaTramitesDisponibles.setEnabled(true);
+                botonSeleccionar.setEnabled(true);
+                botonAceptar.setEnabled(false);
+                campoObservaciones.setEnabled(false);
+                checkBoxInmueble.setEnabled(false);
+                checkBoxSeArchiva.setEnabled(false);
+                checkRequiereInscripcion.setEnabled(false);
+
+                DefaultListModel lista = new DefaultListModel();
+
+                for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();)
+                {
+                    GenericDto miDto = it.next();
+                    String nombre = miDto.getString("nombre");
+                    if (nombre != null)
+                    {
+                        lista.addElement(nombre);
+                    }
+                }
+
+                this.listaTramitesDisponibles.setModel(lista);
+            }
+        }
+        catch (IOException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar tipos de trámite: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            logger.log(Level.SEVERE, "Error al inicializar formulario", ex);
+        }
+    }
+
+    private void limpiarFormulario()
+    {
+        DefaultListModel newModel = new DefaultListModel();
+        listaTramitesDisponibles.setModel(newModel);
+        campoNombreTramite.setText("");
+        campoObservaciones.setText("");
+        checkBoxInmueble.setSelected(false);
+        checkBoxSeArchiva.setSelected(false);
+        checkRequiereInscripcion.setSelected(false);
+
+        int i = ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() - 1;
+
+        while (((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() > 0)
+        {
+            ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).removeRow(i);
+            i--;
+        }
+        miDtoSeleccionado = null;
+        plantillas = null;
+        documentosDisponibles = null;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        checkBoxSeArchiva = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        campoObservaciones = new javax.swing.JTextArea();
+        checkBoxInmueble = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        campoNombreTramite = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listaTramitesDisponibles = new javax.swing.JList();
+        botonSeleccionar = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        checkRequiereInscripcion = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        grillaDocumentosNecesarios = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        botonCerrar = new javax.swing.JButton();
+        botonAceptar = new javax.swing.JButton();
+
+        setClosable(true);
+        setMaximizable(true);
+        setTitle("Ventana Eliminar Tipo de Tramites");
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
+
+        jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        jLabel2.setText("Nombre Trámite");
+
+        checkBoxSeArchiva.setEnabled(false);
+
+        campoObservaciones.setEditable(false);
+        campoObservaciones.setColumns(20);
+        campoObservaciones.setRows(5);
+        jScrollPane1.setViewportView(campoObservaciones);
+
+        checkBoxInmueble.setEnabled(false);
+
+        jLabel8.setText("Se asocia con Inmueble");
+
+        jLabel5.setText("Documentos Necesarios:");
+
+        jLabel4.setText("Observaciones");
+
+        campoNombreTramite.setEditable(false);
+
+        jScrollPane3.setViewportView(listaTramitesDisponibles);
+
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSeleccionarActionPerformed(evt);
+            }
+        });
+
+        checkRequiereInscripcion.setEnabled(false);
+        checkRequiereInscripcion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkRequiereInscripcionActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Requiere Inscripción");
+
+        grillaDocumentosNecesarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre Documento", "Seleccionar"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        grillaDocumentosNecesarios.setEnabled(false);
+        jScrollPane2.setViewportView(grillaDocumentosNecesarios);
+
+        jLabel7.setText("Se archiva");
+
+        jLabel6.setText("Trámites disponibles");
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel1.setText("Eliminar Tipo de Tramite");
+
+        botonCerrar.setText("Cancelar");
+        botonCerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCerrarActionPerformed(evt);
+            }
+        });
+
+        botonAceptar.setText("Aceptar");
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAceptarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator2)
+                    .addComponent(jSeparator1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3))
+                    .addComponent(jLabel5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(checkRequiereInscripcion)
+                                    .addComponent(checkBoxSeArchiva)
+                                    .addComponent(checkBoxInmueble))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(campoNombreTramite)))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(botonSeleccionar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(campoNombreTramite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkRequiereInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(checkBoxSeArchiva)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(checkBoxInmueble))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        jScrollPane4.setViewportView(jPanel1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    public void limpiarGrilla()
+    {
+        int i = ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() - 1;
+
+        while (((DefaultTableModel) grillaDocumentosNecesarios.getModel()).getRowCount() > 0)
+        {
+            ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).removeRow(i);
+            i--;
+        }
+    }
+
+    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeleccionarActionPerformed
+        // TODO add your handling code here:
+
+        if (listaTramitesDisponibles.getSelectedValue() != null)
+        {
+
+            limpiarGrilla();
+            botonAceptar.setEnabled(true);
+            campoObservaciones.setEnabled(true);
+
+            String seleccionado = listaTramitesDisponibles.getSelectedValue().toString();
+
+            try
+            {
+                for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();)
+                {
+                    GenericDto dtoTipoDeTramite = it.next();
+
+                    // Completo los datos en los componentes
+                    if (seleccionado.equals(dtoTipoDeTramite.getString("nombre")))
+                    {
+                        miDtoSeleccionado = dtoTipoDeTramite;
+
+                        campoNombreTramite.setText(dtoTipoDeTramite.getString("nombre"));
+                        checkBoxSeArchiva.setSelected(dtoTipoDeTramite.getBoolean("seArchiva") != null && dtoTipoDeTramite.getBoolean("seArchiva"));
+                        checkRequiereInscripcion.setSelected(dtoTipoDeTramite.getBoolean("seInscribe") != null && dtoTipoDeTramite.getBoolean("seInscribe"));
+                        checkBoxInmueble.setSelected(dtoTipoDeTramite.getBoolean("asociaInmuebles") != null && dtoTipoDeTramite.getBoolean("asociaInmuebles"));
+                        campoObservaciones.setText(dtoTipoDeTramite.getString("observaciones"));
+
+                        //Obtengo los documentos disponibles
+                        documentosDisponibles = tipoDocumentoClient.findAll();
+                        // TODO: Obtener plantillas de trámite asociadas (requiere endpoint específico)
+
+                        if (documentosDisponibles != null && !documentosDisponibles.isEmpty())
+                        {
+                            for (GenericDto miDtoTipoDeDocumento : documentosDisponibles)
+                            {
+                                String nombreDocumento = miDtoTipoDeDocumento.getString("nombre");
+
+                                if (nombreDocumento != null)
+                                {
+                                    // Por ahora, todos los documentos aparecen sin seleccionar
+                                    // TODO: Verificar si están en plantillas cuando el endpoint esté disponible
+                                    Object[] datos =
+                                    {
+                                        nombreDocumento,
+                                        Boolean.FALSE
+                                    };
+                                    ((DefaultTableModel) grillaDocumentosNecesarios.getModel()).addRow(datos);
+                                }
+                            }
+                        } else
+                        {
+                            grillaDocumentosNecesarios.setEnabled(false);
+                        }
+
+                        break;
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Error al cargar datos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                logger.log(Level.SEVERE, "Error al seleccionar trámite", ex);
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_botonSeleccionarActionPerformed
+
+    private void checkRequiereInscripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkRequiereInscripcionActionPerformed
+    }//GEN-LAST:event_checkRequiereInscripcionActionPerformed
+
+    private void botonCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCerrarActionPerformed
+        salir();
+    }//GEN-LAST:event_botonCerrarActionPerformed
+
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        // TODO add your handling code here:
+
+        if (miDtoSeleccionado != null)
+        {
+
+            int respuesta = JOptionPane.showConfirmDialog(this, "¿Esta seguro que desea eliminar el Tipo de Tramite " + miDtoSeleccionado.getString("nombre") + " ?", "CONFIRMACION", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (respuesta == JOptionPane.YES_OPTION)
+            {
+                try
+                {
+                    // En lugar de eliminar, deshabilitamos
+                    miDtoSeleccionado.put("habilitado", false);
+                    tipoTramiteClient.edit(miDtoSeleccionado);
+                    
+                    JOptionPane.showMessageDialog(this, "Se ha eliminado el Tipo de Tramite.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+                    limpiarFormulario();
+                    inicializarFormulario();
+                }
+                catch (IOException ex)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    logger.log(Level.SEVERE, "Error al eliminar tipo de trámite", ex);
+                    limpiarFormulario();
+                    inicializarFormulario();
+                }
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "Debe seleccioanr un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_botonAceptarActionPerformed
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        Principal.removeVentanaActivas(ventanaEliminarTipoTramite);
+        Principal.eliminarFormulario(this);
+    }//GEN-LAST:event_formInternalFrameClosed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonAceptar;
+    private javax.swing.JButton botonCerrar;
+    private javax.swing.JButton botonSeleccionar;
+    private javax.swing.JTextField campoNombreTramite;
+    private javax.swing.JTextArea campoObservaciones;
+    private javax.swing.JCheckBox checkBoxInmueble;
+    private javax.swing.JCheckBox checkBoxSeArchiva;
+    private javax.swing.JCheckBox checkRequiereInscripcion;
+    private javax.swing.JTable grillaDocumentosNecesarios;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JList listaTramitesDisponibles;
+    // End of variables declaration//GEN-END:variables
+}

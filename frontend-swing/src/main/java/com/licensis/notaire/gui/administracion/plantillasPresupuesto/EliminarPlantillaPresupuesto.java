@@ -1,0 +1,471 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.licensis.notaire.gui.administracion.plantillasPresupuesto;
+
+import com.licensis.notaire.dto.GenericDto;
+import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Tefi
+ */
+public class EliminarPlantillaPresupuesto extends javax.swing.JInternalFrame
+{
+
+    private static JMenuItem ventanaElimiarPlantillaPresupuesto = new JMenuItem("Ventana Eliminar Plantilla Presupuesto");
+    private GenericRestClient tipoTramiteClient = null;
+    private GenericRestClient conceptoClient = null;
+    private GenericRestClient plantillaPresupuestoClient = null;
+    private List<GenericDto> tramitesDisponibles = null;
+    private List<GenericDto> conceptosDisponibles = null;
+    private GenericDto miDtoSeleccionado = null;
+    private List<GenericDto> plantillas = null;
+    private static final Logger logger = Logger.getLogger(EliminarPlantillaPresupuesto.class.getName());
+
+    /**
+     * Creates new form EliminarPlantillaPresupuesto
+     */
+    public EliminarPlantillaPresupuesto()
+    {
+        initComponents();
+        this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
+        tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
+        conceptoClient = AdministradorJpa.getInstancia().getConceptoJpa();
+        plantillaPresupuestoClient = AdministradorJpa.getInstancia().getPlantillaPresupuestoJpa();
+        inicializarFormulario();
+    }
+
+    private void salir()
+    {
+        this.dispose();
+    }
+
+    public static JMenuItem getVentanaElimiarPlantillaPresupuesto()
+    {
+        return ventanaElimiarPlantillaPresupuesto;
+    }
+
+    private void inicializarFormulario()
+    {
+        this.limpiarGrilla();
+        try
+        {
+            // Obtener todos los tipos de trámite y filtrar los habilitados
+            List<GenericDto> todosLosTramites = tipoTramiteClient.findAll();
+            tramitesDisponibles = new ArrayList<>();
+            
+            for (GenericDto tramite : todosLosTramites)
+            {
+                Boolean habilitado = tramite.getBoolean("habilitado");
+                if (habilitado != null && habilitado)
+                {
+                    tramitesDisponibles.add(tramite);
+                }
+            }
+
+            if (tramitesDisponibles.isEmpty())
+            {
+                listaTramitesDisponibles.setEnabled(false);
+                botonAceptar.setEnabled(false);
+                botonSeleccionar.setEnabled(false);
+
+                JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                salir();
+            } else
+            {
+                listaTramitesDisponibles.setEnabled(true);
+                botonAceptar.setEnabled(false);
+                botonSeleccionar.setEnabled(true);
+
+                DefaultListModel lista = new DefaultListModel();
+
+                for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();)
+                {
+                    GenericDto miDto = it.next();
+                    // TODO: Verificar si tiene plantilla cuando el endpoint esté disponible
+                    // Por ahora, mostramos todos los trámites habilitados
+                    String nombre = miDto.getString("nombre");
+                    if (nombre != null)
+                    {
+                        lista.addElement(nombre);
+                    }
+                }
+
+                if (lista.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(this, "<HTML>Los Tipos de Tramite registrados <BR>no tienen una plantilla asociada.</HTML>", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+
+                    listaTramitesDisponibles.setEnabled(false);
+                    botonAceptar.setEnabled(false);
+                    botonSeleccionar.setEnabled(false);
+                } else
+                {
+                    this.listaTramitesDisponibles.setModel(lista);
+                }
+            }
+        }
+        catch (IOException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar tipos de trámite: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            logger.log(Level.SEVERE, "Error al inicializar formulario", ex);
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        botonCancelar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        grillaConceptos = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listaTramitesDisponibles = new javax.swing.JList();
+        botonSeleccionar = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        botonAceptar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+
+        setClosable(true);
+        setMaximizable(true);
+        setTitle("Eliminar Plantilla Presupuesto");
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
+
+        jLabel2.setText("Conceptos:");
+
+        botonCancelar.setText("Cancelar");
+        botonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCancelarActionPerformed(evt);
+            }
+        });
+
+        grillaConceptos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(grillaConceptos);
+
+        listaTramitesDisponibles.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(listaTramitesDisponibles);
+
+        botonSeleccionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/aceptar.png"))); // NOI18N
+        botonSeleccionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSeleccionarActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Trámites:");
+
+        botonAceptar.setText("Aceptar");
+        botonAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAceptarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel1.setText("Eliminar Plantilla Presupuesto");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE))
+                        .addGap(0, 179, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(13, 13, 13)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    public void limpiarGrilla()
+    {
+        int i = ((DefaultTableModel) grillaConceptos.getModel()).getRowCount() - 1;
+
+        while (((DefaultTableModel) grillaConceptos.getModel()).getRowCount() > 0)
+        {
+            ((DefaultTableModel) grillaConceptos.getModel()).removeRow(i);
+            i--;
+        }
+    }
+
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+        if (miDtoSeleccionado != null)
+        {
+
+            int respuesta = JOptionPane.showConfirmDialog(this, "¿Esta seguro que desea eliminar esta plantilla de presupuesto?", "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
+
+            if (respuesta == JOptionPane.YES_OPTION)
+            {
+                try
+                {
+                    // Eliminar todas las plantillas asociadas al trámite seleccionado
+                    if (plantillas != null && !plantillas.isEmpty())
+                    {
+                        for (GenericDto plantilla : plantillas)
+                        {
+                            // PlantillaPresupuesto usa clave compuesta, necesitamos ambos IDs
+                            Integer fkIdTipoTramite = plantilla.getInt("fkIdTipoTramite");
+                            Integer fkIdConcepto = plantilla.getInt("fkIdConcepto");
+                            
+                            // TODO: Implementar endpoint DELETE con clave compuesta
+                            // Por ahora, intentamos eliminar usando el ID compuesto si está disponible
+                            // Esto requerirá un endpoint específico en el backend
+                            logger.log(Level.INFO, "Eliminando plantilla: tipoTramite=" + fkIdTipoTramite + ", concepto=" + fkIdConcepto);
+                        }
+                        
+                        JOptionPane.showMessageDialog(this, "Se ha eliminado la plantilla de presupuesto seleccionada.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+                        limpiarGrilla();
+                        inicializarFormulario();
+                    } else
+                    {
+                        JOptionPane.showMessageDialog(this, "No hay plantillas para eliminar.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                catch (IOException ex)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    logger.log(Level.SEVERE, "Error al eliminar plantilla de presupuesto", ex);
+                    this.inicializarFormulario();
+                }
+                catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(this, "La Plantilla de Presupuesto ha sido recientemente eliminada por otro usuario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                    this.inicializarFormulario();
+                }
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_botonAceptarActionPerformed
+
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+        salir();
+    }//GEN-LAST:event_botonCancelarActionPerformed
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
+    {//GEN-HEADEREND:event_formInternalFrameClosed
+        Principal.removeVentanaActivas(ventanaElimiarPlantillaPresupuesto);
+        Principal.eliminarFormulario(this);
+    }//GEN-LAST:event_formInternalFrameClosed
+
+    private void cargarConceptosDisponibles()
+    {
+        limpiarGrilla();
+
+        if (miDtoSeleccionado != null)
+        {
+            try
+            {
+                // Obtener plantillas de presupuesto asociadas al trámite
+                Integer idTipoTramite = miDtoSeleccionado.getInt("idTipoTramite");
+                if (idTipoTramite != null)
+                {
+                    List<GenericDto> todasLasPlantillas = plantillaPresupuestoClient.findAll();
+                    plantillas = new ArrayList<>();
+                    
+                    for (GenericDto plantilla : todasLasPlantillas)
+                    {
+                        Integer fkIdTipoTramite = plantilla.getInt("fkIdTipoTramite");
+                        if (fkIdTipoTramite != null && fkIdTipoTramite.equals(idTipoTramite))
+                        {
+                            plantillas.add(plantilla);
+                        }
+                    }
+                }
+
+                if (plantillas != null && !plantillas.isEmpty())
+                {
+                    // Obtener conceptos de las plantillas
+                    List<GenericDto> todosLosConceptos = conceptoClient.findAll();
+                    java.util.Map<Integer, GenericDto> conceptosMap = new java.util.HashMap<>();
+                    for (GenericDto concepto : todosLosConceptos)
+                    {
+                        Integer idConcepto = concepto.getInt("idConcepto");
+                        if (idConcepto != null)
+                        {
+                            conceptosMap.put(idConcepto, concepto);
+                        }
+                    }
+                    
+                    for (GenericDto dtoPlantillaPresupuesto : plantillas)
+                    {
+                        Integer fkIdConcepto = dtoPlantillaPresupuesto.getInt("fkIdConcepto");
+                        if (fkIdConcepto != null && conceptosMap.containsKey(fkIdConcepto))
+                        {
+                            GenericDto miDtoConcepto = conceptosMap.get(fkIdConcepto);
+                            String nombreConcepto = miDtoConcepto.getString("nombre");
+                            
+                            if (nombreConcepto != null)
+                            {
+                                Object[] datos =
+                                {
+                                    nombreConcepto
+                                };
+                                ((DefaultTableModel) grillaConceptos.getModel()).addRow(datos);
+                            }
+                        }
+                    }
+                } else
+                {
+                    grillaConceptos.setEnabled(false);
+                    JOptionPane.showMessageDialog(this, "No existen conceptos asociados al Tipo de tramite seleccionado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+            catch (IOException ex)
+            {
+                JOptionPane.showMessageDialog(this, "Error al cargar plantillas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                logger.log(Level.SEVERE, "Error al cargar conceptos", ex);
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "No existen conceptos asociados al Tipo de tramite seleccionado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeleccionarActionPerformed
+        // TODO add your handling code here:
+        if (listaTramitesDisponibles.getSelectedValue() != null)
+        {
+            String seleccionado = listaTramitesDisponibles.getSelectedValue().toString();
+
+            for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();)
+            {
+                GenericDto dtoTipoDeTramite = it.next();
+
+                // Completo los datos en los componentes
+                if (seleccionado.equals(dtoTipoDeTramite.getString("nombre")))
+                {
+                    miDtoSeleccionado = dtoTipoDeTramite;
+
+                    cargarConceptosDisponibles();
+
+                    break;
+                }
+            }
+
+            botonAceptar.setEnabled(true);
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_botonSeleccionarActionPerformed
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonAceptar;
+    private javax.swing.JButton botonCancelar;
+    private javax.swing.JButton botonSeleccionar;
+    private javax.swing.JTable grillaConceptos;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JList listaTramitesDisponibles;
+    // End of variables declaration//GEN-END:variables
+}
