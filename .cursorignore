@@ -1,0 +1,46 @@
+# Build outputs
+target/
+build/
+dist/
+*.class
+*.jar
+*.war
+
+# Dependencies
+node_modules/
+.mvn/
+.gradle/
+
+# Logs and temp files
+logs/
+*.log
+tmp/
+temp/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+
+# Sensitive data
+*.env
+*.key
+*.pem
+application-prod.properties
+secrets/
+
+# Large binary files
+*.zip
+*.tar.gz
+images/
+assets/
+
+# Database
+migrations/data/
+dumps/
+
+# Test data
+test-data/
+fixtures/
+
