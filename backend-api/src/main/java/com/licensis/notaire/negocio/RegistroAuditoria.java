@@ -7,8 +7,8 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  *

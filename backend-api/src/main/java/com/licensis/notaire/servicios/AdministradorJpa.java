@@ -31,8 +31,8 @@ import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 /**
  * Clase que se encarga de instanciar y administrar todos los JPA. Mantiene una
