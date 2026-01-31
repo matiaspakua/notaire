@@ -330,14 +330,14 @@ CREATE TABLE suplencias (
   fk_id_suplente integer REFERENCES personas(id_persona)
 );
 
--- Table: usuarios
+-- Table: usuarios (column names match backend entity Usuario)
 CREATE TABLE usuarios (
   version integer NOT NULL,
   id_usuario SERIAL PRIMARY KEY,
-  nombre_usuario text NOT NULL,
+  nombre text NOT NULL,
   contrasenia text NOT NULL,
-  perfil text NOT NULL,
-  habilitado boolean NOT NULL,
+  tipo text NOT NULL,
+  estado boolean NOT NULL,
   fk_id_persona integer REFERENCES personas(id_persona)
 );
 

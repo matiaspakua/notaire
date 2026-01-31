@@ -30,7 +30,10 @@ import javax.swing.table.DefaultTableModel;
 public class ConsultarSuplencias extends javax.swing.JInternalFrame
 {
 
+    private static final Logger logger = Logger.getLogger(ConsultarSuplencias.class.getName());
     private static JMenuItem ventaraConsultarSuplencias = new JMenu("Ventana Consultar Suplencias");
+    private GenericRestClient suplenciaClient;
+    private GenericRestClient personaClient;
 
     /**
      * Creates new form ConsultarSuplencias

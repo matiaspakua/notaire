@@ -7,7 +7,6 @@ package com.licensis.notaire.gui;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorSesion;
-import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
@@ -38,7 +37,7 @@ public class Login extends javax.swing.JFrame
     public Login()
     {
 
-        log.debug("Iniciando el sistema!");
+        log.info("Iniciando el sistema!");
         initComponents();
 
         AdministradorJpa.getInstancia();
@@ -222,21 +221,12 @@ public class Login extends javax.swing.JFrame
         DtoUsuario usuarioLogin = new DtoUsuario();
         usuarioLogin = validarLoginGui(usuarioLogin);
 
-        if (usuarioLogin.isValido() == Boolean.TRUE)
+        if (usuarioLogin.isValido())
         {
             AdministradorSesion.getInstancia().setSesionUsuario(usuarioLogin);
-
-            if (AdministradorValidaciones.getInstancia().validarUsuario(usuarioLogin) == Boolean.TRUE)
-            {
-                formPrincipal = Principal.getInstancia();
-                formPrincipal.setVisible(true);
-                this.dispose();
-
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "El usuario indicado no es valido!", "Error de Login", JOptionPane.ERROR_MESSAGE);
-
-            }
+            formPrincipal = Principal.getInstancia();
+            formPrincipal.setVisible(true);
+            this.dispose();
         } else
         {
             JOptionPane.showMessageDialog(this, "Alguno de los datos ingresados no es valido", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -323,24 +313,16 @@ public class Login extends javax.swing.JFrame
         });
     }
 
-    public DtoUsuario validarLoginGui(DtoUsuario dtoUsuario)
-    {
-
-        dtoUsuario.setNombre(campoUsuario.getText());
-        dtoUsuario.setContrasenia(campoContrasenia.getText());
-
-        //Esta puesto a mano - cambiar con la logica de validacion del usuario!!!        
-        dtoUsuario.setNombre("root");
-        dtoUsuario.setContrasenia("admin");
+    public DtoUsuario validarLoginGui(DtoUsuario dtoUsuario) {
+        dtoUsuario.setNombre(campoUsuario.getText() != null ? campoUsuario.getText().trim() : "");
+        dtoUsuario.setContrasenia(campoContrasenia.getPassword() != null ? new String(campoContrasenia.getPassword()).trim() : "");
 
         dtoUsuario = AdministradorSesion.getInstancia().validarUsuario(dtoUsuario);
-        if (dtoUsuario.isValido())
-        {
+        if (dtoUsuario.isValido() && dtoUsuario.getPersonas() != null) {
             String nombreUsuario = dtoUsuario.getPersonas().getNombre() + " " + dtoUsuario.getPersonas().getApellido();
             Principal.getInstancia().cargarVentanaUsuario(dtoUsuario);
             Principal.getInstancia().itemUsuario.setText(nombreUsuario);
         }
-
         return dtoUsuario;
     }
 

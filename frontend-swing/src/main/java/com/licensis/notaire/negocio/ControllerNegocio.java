@@ -1,14 +1,16 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoFlag;
+import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoUsuario;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Clase controller de la capa de negocio. Versión simplificada para el frontend.
- * Solo contiene los métodos necesarios para compilar.
- * 
- * @author User
+ * Clase controller de la capa de negocio. Versión frontend que delega en API REST.
+ * Métodos no migrados retornan valores por defecto para permitir compilación.
  */
 public class ControllerNegocio {
 
@@ -22,6 +24,39 @@ public class ControllerNegocio {
             instancia = new ControllerNegocio();
         }
         return instancia;
+    }
+
+    /** Stub: delegar a API cuando se implemente. */
+    public List<DtoUsuario> buscarUsuariosDisponibles() {
+        return new ArrayList<>();
+    }
+
+    /** Stub: buscar usuario por persona; delegar a API. */
+    public DtoUsuario buscarUsuario(DtoUsuario dto) {
+        return null;
+    }
+
+    /** Stub: asociar tipo identificación a persona. */
+    public void asociarFkTipoIdentificacion(DtoPersona dto) {
+    }
+
+    /** Stub: buscar persona por tipo y número identificación. */
+    public DtoPersona buscarPersonaTipoNumeroIdentificacion(DtoPersona dto) {
+        return null;
+    }
+
+    /** Stub: control modificación persona. */
+    public boolean controlModificacionPersona(DtoPersona dtoAntes, DtoPersona dtoDespues) {
+        return false;
+    }
+
+    /** Stub: modificar persona; delegar a API. */
+    public void modificarPersona(DtoPersona dto) throws Exception {
+    }
+
+    /** Stub: buscar registros auditoría por usuario. */
+    public List<com.licensis.notaire.dto.DtoRegistroAuditoria> buscarRegistrosAuditoria(DtoUsuario dto) {
+        return new ArrayList<>();
     }
 
     /**

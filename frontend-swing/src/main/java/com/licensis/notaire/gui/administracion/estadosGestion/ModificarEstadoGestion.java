@@ -4,6 +4,7 @@
  */
 package com.licensis.notaire.gui.administracion.estadosGestion;
 
+import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.servicios.AdministradorJpa;
@@ -24,7 +25,9 @@ import javax.swing.JOptionPane;
 public class ModificarEstadoGestion extends javax.swing.JInternalFrame
 {
 
+    private static final Logger logger = Logger.getLogger(ModificarEstadoGestion.class.getName());
     private static JMenuItem ventanaModificarEstadoDeGestion = new JMenuItem("Ventana Modificar Estado de Gestion");
+    private GenericRestClient estadoGestionClient;
     private List<DtoEstadoDeGestion> miListaEstadosDeGestion = null;
     private DtoEstadoDeGestion dtoSeleccionado = null;
 

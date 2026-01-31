@@ -27,9 +27,9 @@ public class GenericRestClient extends BaseRestClient<GenericDto> {
         
         // Intenta varios nombres comunes de campo ID
         String[] idFieldNames = {"idConcepto", "idCopia", "idDocumentoPresentado", "idEscritura",
-            "idFolio", "idHistorial", "idInmueble", "idItem", "idMovimientoTestimonio",
+            "idEstadoGestion", "idFolio", "idHistorial", "idInmueble", "idItem", "idMovimientoTestimonio",
             "idPago", "idPresupuesto", "idSuplencia", "idTestimonio", "idTipoDocumento",
-            "idTipoIdentificacion", "idTramite"};
+            "idTipoIdentificacion", "idTramite", "idUsuario"};
         
         for (String fieldName : idFieldNames) {
             Object val = entity.get(fieldName);

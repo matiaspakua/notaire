@@ -25,7 +25,9 @@ import javax.swing.JOptionPane;
 public class DarAltaEscribano extends javax.swing.JInternalFrame
 {
 
+    private static final Logger logger = Logger.getLogger(DarAltaEscribano.class.getName());
     private static JMenuItem ventanaDarAltaEscribano = new JMenuItem("Ventana Dar de Alta Escribano");
+    private GenericRestClient personaClient;
     private DtoPersona dtoNuevoEscribano = null;
 
     /**

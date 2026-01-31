@@ -1,11 +1,12 @@
 package com.licensis.notaire.dto;
 
+import com.licensis.notaire.dto.interfaces.DtoValido;
 import java.util.Date;
 
 /**
  * DTO que representa una Persona (versión simplificada para frontend)
  */
-public class DtoPersona
+public class DtoPersona implements DtoValido
 {
 
     private Integer idPersona;
@@ -170,6 +171,21 @@ public class DtoPersona
     public boolean getEsCliente()
     {
         return this.esCliente;
+    }
+
+    public boolean isEsCliente()
+    {
+        return this.esCliente;
+    }
+
+    public DtoTipoIdentificacion getDtoTipoIdentificacion()
+    {
+        return dtoTipoIdentificacion;
+    }
+
+    public void setDtoTipoIdentificacion(DtoTipoIdentificacion dtoTipoIdentificacion)
+    {
+        this.dtoTipoIdentificacion = dtoTipoIdentificacion;
     }
 
     public void setEsCliente(boolean esCliente)

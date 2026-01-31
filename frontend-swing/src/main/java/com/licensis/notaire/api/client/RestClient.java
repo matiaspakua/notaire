@@ -1,6 +1,9 @@
 package com.licensis.notaire.api.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.dto.DtoUsuario;
+import com.licensis.notaire.dto.GenericDto;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Cliente base para hacer peticiones REST a la API
@@ -22,12 +26,26 @@ public class RestClient {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     
     /**
-     * Obtiene una lista de objetos desde el endpoint
+     * Obtiene una lista de objetos desde el endpoint.
+     * Si responseType es GenericDto, deserializa cada elemento JSON como Map y lo envuelve en GenericDto.
      */
+    @SuppressWarnings("unchecked")
     public static <T> List<T> getList(String endpoint, Class<T> responseType) throws IOException {
         String url = ApiConfig.getApiBaseUrl() + endpoint;
         String jsonResponse = makeGetRequest(url);
-        
+
+        if (responseType == GenericDto.class) {
+            List<Map<String, Object>> list = objectMapper.readValue(jsonResponse,
+                    new TypeReference<List<Map<String, Object>>>() {});
+            List<GenericDto> result = new ArrayList<>();
+            for (Map<String, Object> map : list) {
+                GenericDto dto = new GenericDto();
+                dto.setData(map != null ? map : new java.util.HashMap<>());
+                result.add(dto);
+            }
+            return (List<T>) result;
+        }
+
         T[] items = objectMapper.readValue(jsonResponse, objectMapper.getTypeFactory()
                 .constructArrayType(responseType));
         return new ArrayList<>(Arrays.asList(items));
@@ -66,6 +84,19 @@ public class RestClient {
         return objectMapper.readValue(jsonResponse, responseType);
     }
     
+    /**
+     * Autentica usuario (POST /usuarios/login).
+     *
+     * @param loginRequest DtoUsuario con nombre y contrasenia
+     * @return DtoUsuario con valido=true y datos del usuario si es correcto; valido=false si no
+     */
+    public static DtoUsuario login(DtoUsuario loginRequest) throws IOException {
+        String url = ApiConfig.getApiBaseUrl() + "/usuarios/login";
+        String jsonBody = objectMapper.writeValueAsString(loginRequest);
+        String jsonResponse = makePostRequest(url, jsonBody);
+        return objectMapper.readValue(jsonResponse, DtoUsuario.class);
+    }
+
     /**
      * Elimina un objeto del servidor
      */

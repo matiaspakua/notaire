@@ -75,9 +75,9 @@ INSERT INTO personas (version, id_persona, apellido, nombre, domicilio, localida
 -- Reset sequence
 SELECT setval('personas_id_persona_seq', (SELECT MAX(id_persona) FROM personas));
 
--- Sample usuario
-INSERT INTO usuarios (version, id_usuario, nombre_usuario, contrasenia, perfil, habilitado, fk_id_persona) VALUES
-(0, 1, 'admin', 'admin', 'Administrador', true, 1);
+-- Sample usuario (nombre/contrasenia for login; tipo: Escribano/Empleado; estado: habilitado)
+INSERT INTO usuarios (version, id_usuario, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
+(0, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
 
 -- Reset sequence  
 SELECT setval('usuarios_id_usuario_seq', (SELECT MAX(id_usuario) FROM usuarios));

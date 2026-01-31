@@ -75,6 +75,11 @@ public class DtoUsuario
         return this.estado;
     }
 
+    public boolean getEstado()
+    {
+        return this.estado;
+    }
+
     public void setEstado(boolean estado)
     {
         this.estado = estado;

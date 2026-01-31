@@ -33,6 +33,8 @@ public class AdministradorJpa {
     private GenericRestClient suplenciaClient;
     private GenericRestClient testimonioClient;
     private GenericRestClient tipoDeDocumentoClient;
+    private GenericRestClient tipoDeFolioClient;
+    private GenericRestClient tipoDeTramiteClient;
     private GenericRestClient tipoIdentificacionClient;
     private GenericRestClient tramiteClient;
     private GenericRestClient usuarioClient;
@@ -43,23 +45,26 @@ public class AdministradorJpa {
     private AdministradorJpa() {
         ApiConfig.loadFromProperties();
         
-        // Inicializa todos los clientes REST genéricos
+        // Inicializa todos los clientes REST (paths deben coincidir con backend /api/v1/...)
         conceptoClient = new GenericRestClient("/conceptos");
-        copiaClient = new GenericRestClient("/copias");
-        documentoPresentadoClient = new GenericRestClient("/documentos-presentados");
+        copiaClient = new GenericRestClient("/copia");
+        documentoPresentadoClient = new GenericRestClient("/documento-presentado");
         escrituraClient = new GenericRestClient("/escrituras");
-        folioClient = new GenericRestClient("/folios");
-        historialClient = new GenericRestClient("/historiales");
-        inmuebleClient = new GenericRestClient("/inmuebles");
+        estadoDeGestionClient = new GenericRestClient("/estado-gestion");
+        folioClient = new GenericRestClient("/folio");
+        historialClient = new GenericRestClient("/historial");
+        inmuebleClient = new GenericRestClient("/inmueble");
         itemClient = new GenericRestClient("/items");
-        movimientoTestimonioClient = new GenericRestClient("/movimientos-testimonios");
-        pagoClient = new GenericRestClient("/pagos");
+        movimientoTestimonioClient = new GenericRestClient("/movimiento-testimonio");
+        pagoClient = new GenericRestClient("/pago");
         personaClient = new GenericRestClient("/personas");
         presupuestoClient = new GenericRestClient("/presupuestos");
-        suplenciaClient = new GenericRestClient("/suplencias");
-        testimonioClient = new GenericRestClient("/testimonios");
-        tipoDeDocumentoClient = new GenericRestClient("/tipos-documentos");
-        tipoIdentificacionClient = new GenericRestClient("/tipos-identificacion");
+        suplenciaClient = new GenericRestClient("/suplencia");
+        testimonioClient = new GenericRestClient("/testimonio");
+        tipoDeDocumentoClient = new GenericRestClient("/tipo-de-documento");
+        tipoDeFolioClient = new GenericRestClient("/tipo-folio");
+        tipoDeTramiteClient = new GenericRestClient("/tipo-tramite");
+        tipoIdentificacionClient = new GenericRestClient("/tipo-identificacion");
         tramiteClient = new GenericRestClient("/tramites");
         usuarioClient = new GenericRestClient("/usuarios");
         
@@ -142,20 +147,14 @@ public class AdministradorJpa {
         return tipoDeDocumentoClient;
     }
     
-    // Nota: Estos endpoints aún no están implementados en el backend
-    // Se pueden agregar cuando estén disponibles
-    // public GenericRestClient getTipoDeFolioJpa() {
-    //     return tipoDeFolioClient;
-    // }
-    
-    // public GenericRestClient getTipoDeTramiteJpa() {
-    //     return tipoDeTramiteClient;
-    // }
-    
-    // public GenericRestClient getPlantillaPresupuestoJpa() {
-    //     return plantillaPresupuestoClient;
-    // }
-    
+    public GenericRestClient getTipoDeFolioJpa() {
+        return tipoDeFolioClient;
+    }
+
+    public GenericRestClient getTipoDeTramiteJpa() {
+        return tipoDeTramiteClient;
+    }
+
     public GenericRestClient getTipoIdentificacionJpa() {
         return tipoIdentificacionClient;
     }

@@ -22,7 +22,9 @@ import javax.swing.JOptionPane;
 public class IngresarDocumento extends javax.swing.JInternalFrame
 {
 
+    private static final Logger logger = Logger.getLogger(IngresarDocumento.class.getName());
     private static JMenuItem ventanaIngresarDocumento = new JMenuItem("Ventana Ingresar Documento");
+    private GenericRestClient tipoDocumentoClient;
 
     /**
      * Creates new form IngresarDocumento
