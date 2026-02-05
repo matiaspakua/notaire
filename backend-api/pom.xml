@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.licensis</groupId>
+            <artifactId>notaire-shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -80,6 +85,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.licensis.notaire.NotaireBackendApplication</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

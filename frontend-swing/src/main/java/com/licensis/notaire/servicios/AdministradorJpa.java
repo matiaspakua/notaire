@@ -12,10 +12,10 @@ import java.util.logging.Logger;
  * Proporciona acceso a servicios REST del backend
  */
 public class AdministradorJpa {
-    
+
     private static AdministradorJpa instancia = null;
     private static final Logger logger = Logger.getLogger(AdministradorJpa.class.getName());
-    
+
     // Clientes REST generales para cada entidad
     private GenericRestClient conceptoClient;
     private GenericRestClient copiaClient;
@@ -38,14 +38,15 @@ public class AdministradorJpa {
     private GenericRestClient tipoIdentificacionClient;
     private GenericRestClient tramiteClient;
     private GenericRestClient usuarioClient;
-    
+
     /**
      * Constructor privado (Singleton)
      */
     private AdministradorJpa() {
         ApiConfig.loadFromProperties();
-        
-        // Inicializa todos los clientes REST (paths deben coincidir con backend /api/v1/...)
+
+        // Inicializa todos los clientes REST (paths deben coincidir con backend
+        // /api/v1/...)
         conceptoClient = new GenericRestClient("/conceptos");
         copiaClient = new GenericRestClient("/copia");
         documentoPresentadoClient = new GenericRestClient("/documento-presentado");
@@ -67,10 +68,10 @@ public class AdministradorJpa {
         tipoIdentificacionClient = new GenericRestClient("/tipo-identificacion");
         tramiteClient = new GenericRestClient("/tramites");
         usuarioClient = new GenericRestClient("/usuarios");
-        
+
         logger.info("AdministradorJpa REST inicializado con GenericDto. Base URL: " + ApiConfig.getApiBaseUrl());
     }
-    
+
     /**
      * Obtiene la instancia singleton
      */
@@ -80,73 +81,73 @@ public class AdministradorJpa {
         }
         return instancia;
     }
-    
+
     // ===================== Accesos a clientes REST =====================
-    
+
     public GenericRestClient getConceptoJpa() {
         return conceptoClient;
     }
-    
+
     public GenericRestClient getCopiaJpa() {
         return copiaClient;
     }
-    
+
     public GenericRestClient getDocumentoPresentadoJpa() {
         return documentoPresentadoClient;
     }
-    
+
     public GenericRestClient getEscrituraJpa() {
         return escrituraClient;
     }
-    
+
     public GenericRestClient getEstadoDeGestionJpa() {
         return estadoDeGestionClient;
     }
-    
+
     public GenericRestClient getFolioJpa() {
         return folioClient;
     }
-    
+
     public GenericRestClient getHistorialJpa() {
         return historialClient;
     }
-    
+
     public GenericRestClient getInmuebleJpa() {
         return inmuebleClient;
     }
-    
+
     public GenericRestClient getItemJpa() {
         return itemClient;
     }
-    
+
     public GenericRestClient getMovimientoTestimonioJpa() {
         return movimientoTestimonioClient;
     }
-    
+
     public GenericRestClient getPagoJpa() {
         return pagoClient;
     }
-    
+
     public GenericRestClient getPersonaJpa() {
         return personaClient;
     }
-    
+
     public GenericRestClient getPresupuestoJpa() {
         return presupuestoClient;
     }
-    
+
     public GenericRestClient getSuplenciaJpa() {
         return suplenciaClient;
     }
-    
+
     public GenericRestClient getTestimonioJpa() {
         return testimonioClient;
     }
-    
+
     public GenericRestClient getTipoDeDocumentoJpa() {
         return tipoDeDocumentoClient;
     }
-    
+
     public GenericRestClient getTipoDeFolioJpa() {
         return tipoDeFolioClient;
     }
@@ -158,15 +159,19 @@ public class AdministradorJpa {
     public GenericRestClient getTipoIdentificacionJpa() {
         return tipoIdentificacionClient;
     }
-    
+
     public GenericRestClient getTramiteJpa() {
         return tramiteClient;
     }
-    
+
     public GenericRestClient getUsuarioJpa() {
         return usuarioClient;
     }
-    
+
+    public GenericRestClient getPlantillaPresupuestoJpa() {
+        return presupuestoClient; // Or dedicated client if needed
+    }
+
     /**
      * Test de conectividad
      */

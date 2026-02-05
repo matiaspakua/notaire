@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.licensis</groupId>
+            <artifactId>notaire-shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
@@ -35,6 +40,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>3.5.3</version>
         </dependency>
     </dependencies>
 

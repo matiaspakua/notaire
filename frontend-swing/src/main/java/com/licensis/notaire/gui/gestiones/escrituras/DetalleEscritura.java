@@ -30,8 +30,7 @@ import javax.swing.table.TableModel;
  *
  * @author matias
  */
-public class DetalleEscritura extends javax.swing.JInternalFrame
-{
+public class DetalleEscritura extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaDetalleEscritura = new JMenuItem("Ventana Detalle Escritura");
     private List<DtoFolio> foliosDisponibles = new ArrayList<>();
@@ -44,8 +43,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
     /**
      * Creates new form DetalleEscritura
      */
-    public DetalleEscritura()
-    {
+    public DetalleEscritura() {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
         grillaListaTramitesGestion.setAutoCreateRowSorter(true);
@@ -56,13 +54,11 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         radioSinFirmar.setSelected(true);
     }
 
-    public void setFormularioInvocador(String formulario)
-    {
+    public void setFormularioInvocador(String formulario) {
         this.formularioInvocador = formulario;
     }
 
-    public Boolean cargarFormularioCrearEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura)
-    {
+    public Boolean cargarFormularioCrearEscritura(DtoGestionDeEscritura miDtoGestionDeEscritura) {
         miGestionDeEscritura = miDtoGestionDeEscritura;
         Boolean flag = false;
         Boolean ok = true;
@@ -74,25 +70,20 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         labelInclusive1.setVisible(false);
 
         if (miGestionDeEscritura.getListaTramitesAsociados() != null
-                && !miGestionDeEscritura.getListaTramitesAsociados().isEmpty())
-        {
+                && !miGestionDeEscritura.getListaTramitesAsociados().isEmpty()) {
 
-            //Verifico que existan Tramites de la gestion sin escrituras para utilizar:
-            for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it.hasNext();)
-            {
+            // Verifico que existan Tramites de la gestion sin escrituras para utilizar:
+            for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it.hasNext();) {
                 DtoTramite dtoTramite = it.next();
 
                 DtoTramite tramiteEncontrado = miController.buscarTramite(dtoTramite);
 
-                if (tramiteEncontrado != null)
-                {
-                    if (tramiteEncontrado.getEscritura() == null)
-                    {
-                        Object[] datos =
-                        {
-                            tramiteEncontrado.getTipoDeTramite().getNombre(),
-                            Boolean.TRUE,
-                            tramiteEncontrado
+                if (tramiteEncontrado != null) {
+                    if (tramiteEncontrado.getEscritura() == null) {
+                        Object[] datos = {
+                                tramiteEncontrado.getTipoDeTramite().getNombre(),
+                                Boolean.TRUE,
+                                tramiteEncontrado
                         };
                         ((DefaultTableModel) grillaListaTramitesGestion.getModel()).addRow(datos);
                         flag = true;
@@ -100,41 +91,38 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                 }
             }
 
-            if (flag)
-            {
+            if (flag) {
 
                 labelDesde.setVisible(false);
                 labelHasta.setVisible(false);
                 labelInclusive1.setVisible(false);
                 labelIndicados.setVisible(false);
 
-                //Buscar folios disponibles
-                foliosDisponibles = miController.buscarFoliosDisponibles(miGestionDeEscritura.getPersonaEscribano().getRegistroEscribano());
+                // Buscar folios disponibles
+                foliosDisponibles = miController
+                        .buscarFoliosDisponibles(miGestionDeEscritura.getPersonaEscribano().getRegistroEscribano());
 
-                if (foliosDisponibles != null && !foliosDisponibles.isEmpty())
-                {
-                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();)
-                    {
+                if (foliosDisponibles != null && !foliosDisponibles.isEmpty()) {
+                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();) {
                         DtoFolio dtoFolio = it.next();
 
                         comboFolioDesde.addItem(dtoFolio.getNumero());
                         comboFolioHasta.addItem(dtoFolio.getNumero());
                     }
 
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "No existen folios disponibles para utilizar.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "No existen folios disponibles para utilizar.", "ADVERTENCIA",
+                            JOptionPane.WARNING_MESSAGE);
                     ok = false;
                     salir();
                 }
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "La gestion ya tiene todos sus tramites asociados a una escritura.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "La gestion ya tiene todos sus tramites asociados a una escritura.",
+                        "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 ok = false;
                 salir();
             }
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "No existen tramites asociados a la gestion actual.");
             ok = false;
             salir();
@@ -143,8 +131,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         return ok;
     }
 
-    public Boolean cargarFormularioModificarEscritura(DtoEscritura miDtoEscritura)
-    {
+    public Boolean cargarFormularioModificarEscritura(DtoEscritura miDtoEscritura) {
         Boolean ok = true;
 
         miGestionDeEscritura = miDtoEscritura.getTramites().get(0).getGestion();
@@ -161,64 +148,56 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         labelDesde.setText(folioDesdeEscritura.toString());
         labelHasta.setText(folioHastaEscritura.toString());
 
-        //Buscar folios disponibles
-        foliosDisponibles = miController.buscarFoliosDisponibles(miGestionDeEscritura.getPersonaEscribano().getRegistroEscribano());
+        // Buscar folios disponibles
+        foliosDisponibles = miController
+                .buscarFoliosDisponibles(miGestionDeEscritura.getPersonaEscribano().getRegistroEscribano());
 
         comboFolioDesde.setVisible(false);
         labelDesdeDisponible.setVisible(false);
 
-        if (foliosDisponibles != null && !foliosDisponibles.isEmpty())
-        {
+        if (foliosDisponibles != null && !foliosDisponibles.isEmpty()) {
             Integer primerFolioHasta = foliosDisponibles.get(0).getNumero();
 
-            if (formularioInvocador.equals(ConstantesGui.MODIFICAR_ESCRITURA))
-            {
-                if (primerFolioHasta != (folioHastaEscritura + 1))
-                {
-                    labelValidacion.setText("<HTML>No se puede modificar los folios ya que <BR>los folios diponibles no son correlativos.</HTML>");
+            if (formularioInvocador.equals(ConstantesGui.MODIFICAR_ESCRITURA)) {
+                if (primerFolioHasta != (folioHastaEscritura + 1)) {
+                    labelValidacion.setText(
+                            "<HTML>No se puede modificar los folios ya que <BR>los folios diponibles no son correlativos.</HTML>");
                     labelHastaNuevo.setVisible(false);
                     comboFolioHasta.setVisible(false);
                     labelInclusiveNuevo.setVisible(false);
                     labelFoliosDisp.setVisible(false);
-                } else
-                {
+                } else {
 
-                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();)
-                    {
+                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();) {
                         DtoFolio dtoFolio = it.next();
                         comboFolioHasta.addItem(dtoFolio.getNumero());
                     }
                     labelValidacion.setText("");
                 }
             }
-        } else
-        {
+        } else {
             comboFolioHasta.setEnabled(false);
             labelValidacion.setText("No existen folios disponibles para utilizar.");
         }
 
         DtoGestionDeEscritura gestionEncontrada = miController.buscarDtoGestion(miGestionDeEscritura);
-        //Cargar grilla de tramites
+        // Cargar grilla de tramites
         miGestionDeEscritura.setListaTramitesAsociados(gestionEncontrada.getListaTramitesAsociados());
 
         if (miGestionDeEscritura.getListaTramitesAsociados() != null
-                && !miGestionDeEscritura.getListaTramitesAsociados().isEmpty())
-        {
-            for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it.hasNext();)
-            {
+                && !miGestionDeEscritura.getListaTramitesAsociados().isEmpty()) {
+            for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it.hasNext();) {
                 DtoTramite miDtoTramite = it.next();
 
                 miDtoTramite = miController.buscarTramite(miDtoTramite);
 
-                if (miDtoTramite.getEscritura() != null)
-                {
-                    if (miDtoTramite.getEscritura().getIdEscritura().intValue() == miEscritura.getIdEscritura().intValue())
-                    {
-                        Object[] datos =
-                        {
-                            miDtoTramite.getTipoDeTramite().getNombre(),
-                            Boolean.TRUE,
-                            miDtoTramite
+                if (miDtoTramite.getEscritura() != null) {
+                    if (miDtoTramite.getEscritura().getIdEscritura().intValue() == miEscritura.getIdEscritura()
+                            .intValue()) {
+                        Object[] datos = {
+                                miDtoTramite.getTipoDeTramite().getNombre(),
+                                Boolean.TRUE,
+                                miDtoTramite
                         };
                         ((DefaultTableModel) grillaListaTramitesGestion.getModel()).addRow(datos);
                     }
@@ -227,22 +206,18 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
             campoCuerpoEscritura.setText(miEscritura.getCuerpo());
 
-            switch (miEscritura.getEstado())
-            {
-                case ConstantesNegocio.ESCRITURA_FIRMADA:
-                {
+            switch (miEscritura.getEstado()) {
+                case ConstantesNegocio.ESCRITURA_FIRMADA: {
                     radioFirmada.setSelected(true);
                     radioSinFirmar.setEnabled(false);
                     break;
                 }
-                case ConstantesNegocio.ESCRITURA_ANULADA:
-                {
+                case ConstantesNegocio.ESCRITURA_ANULADA: {
                     radioAnulada.setSelected(true);
                     radioSinFirmar.setEnabled(false);
                     break;
                 }
-                case ConstantesNegocio.ESCRITURA_NO_PASO:
-                {
+                case ConstantesNegocio.ESCRITURA_NO_PASO: {
                     radioNoPaso.setSelected(true);
                     radioSinFirmar.setEnabled(false);
                     break;
@@ -250,8 +225,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
             }
 
             if (formularioInvocador.equals(ConstantesGui.DETALLE_GESTION)
-                    || formularioInvocador.equals(ConstantesGui.BUSCAR_ESCRITURA))
-            {
+                    || formularioInvocador.equals(ConstantesGui.BUSCAR_ESCRITURA)) {
                 selectorFecha.setEnabled(false);
                 comboFolioHasta.setVisible(false);
                 labelHastaNuevo.setVisible(false);
@@ -266,35 +240,35 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
                 botonAceptar.setVisible(false);
                 botonCancelar.setVisible(false);
-            } else
-            {
+            } else {
                 botonCerrar.setVisible(false);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No existen tramites asociados a la gestion actual.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No existen tramites asociados a la gestion actual.", "Informacion",
+                    JOptionPane.INFORMATION_MESSAGE);
             ok = false;
             salir();
         }
         return ok;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDetalleEscritura()
-    {
+    public static JMenuItem getVentanaDetalleEscritura() {
         return ventanaDetalleEscritura;
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         grupoRadioButtons = new javax.swing.ButtonGroup();
@@ -341,17 +315,23 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -396,26 +376,25 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         });
 
         grillaListaTramitesGestion.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Trámite", "Seleccionado", "DtoTramite"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Boolean.class, java.lang.Object.class
+                },
+                new String[] {
+                        "Trámite", "Seleccionado", "DtoTramite"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.String.class, java.lang.Boolean.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean [] {
-                true, true, false
+            boolean[] canEdit = new boolean[] {
+                    true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane1.setViewportView(grillaListaTramitesGestion);
@@ -490,181 +469,291 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelDetalleEscrituraLayout = new javax.swing.GroupLayout(panelDetalleEscritura);
         panelDetalleEscritura.setLayout(panelDetalleEscrituraLayout);
         panelDetalleEscrituraLayout.setHorizontalGroup(
-            panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                        .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDetalleEscrituraLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(labelValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                        .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                                .addComponent(labelIndicados)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(labelDesde1)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                                .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jLabel3)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(selectorFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                                .addComponent(labelDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(labelHasta1)
-                                                .addGap(12, 12, 12)
-                                                .addComponent(labelHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(labelInclusive1))))
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                        .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                .addComponent(labelFoliosDisp)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelDesdeDisponible)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(labelHastaNuevo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(comboFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelInclusiveNuevo))
-                            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(radioNoPaso)
-                                    .addComponent(radioAnulada)
-                                    .addComponent(radioFirmada)
-                                    .addComponent(radioSinFirmar))))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
+                panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                                .addGroup(panelDetalleEscrituraLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                panelDetalleEscrituraLayout.createSequentialGroup()
+                                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                                        .addGroup(panelDetalleEscrituraLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                .addComponent(labelValidacion,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        450,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addGroup(panelDetalleEscrituraLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addComponent(botonAceptar,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                120,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addPreferredGap(
+                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                        .addComponent(botonCancelar,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                120,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(botonCerrar,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                120,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                                                .addGroup(panelDetalleEscrituraLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(panelDetalleEscrituraLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelDetalleEscrituraLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                false)
+                                                                                        .addComponent(jLabel2,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                154,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addGroup(
+                                                                                                panelDetalleEscrituraLayout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addComponent(
+                                                                                                                labelIndicados)
+                                                                                                        .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                Short.MAX_VALUE)
+                                                                                                        .addComponent(
+                                                                                                                labelDesde1)))
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addGroup(panelDetalleEscrituraLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                false)
+                                                                                        .addGroup(
+                                                                                                panelDetalleEscrituraLayout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addComponent(
+                                                                                                                campoNumeroEscritura,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                107,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addGap(18, 18,
+                                                                                                                18)
+                                                                                                        .addComponent(
+                                                                                                                jLabel3)
+                                                                                                        .addPreferredGap(
+                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                        .addComponent(
+                                                                                                                selectorFecha,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                Short.MAX_VALUE))
+                                                                                        .addGroup(
+                                                                                                panelDetalleEscrituraLayout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addComponent(
+                                                                                                                labelDesde,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                107,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addGap(18, 18,
+                                                                                                                18)
+                                                                                                        .addComponent(
+                                                                                                                labelHasta1)
+                                                                                                        .addGap(12, 12,
+                                                                                                                12)
+                                                                                                        .addComponent(
+                                                                                                                labelHasta,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                115,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addGap(18, 18,
+                                                                                                                18)
+                                                                                                        .addComponent(
+                                                                                                                labelInclusive1))))
+                                                                        .addComponent(jLabel1)
+                                                                        .addComponent(jLabel8)
+                                                                        .addComponent(jLabel7)
+                                                                        .addComponent(jScrollPane2,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                578,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jScrollPane1,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                578,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jSeparator1,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                578,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                                .addContainerGap())
+                                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                                .addGroup(panelDetalleEscrituraLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                                                .addComponent(labelFoliosDisp)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(labelDesdeDisponible)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(comboFolioDesde,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 106,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(labelHastaNuevo)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(comboFolioHasta,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 116,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(labelInclusiveNuevo))
+                                                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                                                .addComponent(jLabel4)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(panelDetalleEscrituraLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(radioNoPaso)
+                                                                        .addComponent(radioAnulada)
+                                                                        .addComponent(radioFirmada)
+                                                                        .addComponent(radioSinFirmar))))
+                                                .addGap(0, 0, Short.MAX_VALUE)))));
         panelDetalleEscrituraLayout.setVerticalGroup(
-            panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
-                    .addComponent(selectorFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(labelIndicados)
-                        .addComponent(labelDesde1))
-                    .addComponent(labelDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelHasta1)
-                    .addComponent(labelHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelInclusive1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelFoliosDisp)
-                    .addComponent(labelDesdeDisponible)
-                    .addComponent(comboFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelHastaNuevo)
-                    .addComponent(comboFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelInclusiveNuevo))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(radioSinFirmar)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioFirmada)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioNoPaso)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radioAnulada)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
-                .addComponent(labelValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                panelDetalleEscrituraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDetalleEscrituraLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDetalleEscrituraLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jLabel2)
+                                                .addComponent(campoNumeroEscritura,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel3))
+                                        .addComponent(selectorFecha, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDetalleEscrituraLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelIndicados)
+                                                .addComponent(labelDesde1))
+                                        .addComponent(labelDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 22,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelHasta1)
+                                        .addComponent(labelHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelInclusive1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelFoliosDisp)
+                                        .addComponent(labelDesdeDisponible)
+                                        .addComponent(comboFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelHastaNuevo)
+                                        .addComponent(comboFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelInclusiveNuevo))
+                                .addGap(18, 18, 18)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 142,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(radioSinFirmar)
+                                        .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioFirmada)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioNoPaso)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioAnulada)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62,
+                                        Short.MAX_VALUE)
+                                .addComponent(labelValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addGroup(panelDetalleEscrituraLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         jScrollPane3.setViewportView(panelDetalleEscritura);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane3));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         Principal.removeVentanaActivas(ventanaDetalleEscritura);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void radioNoPasoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioNoPasoActionPerformed
+    private void radioNoPasoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_radioNoPasoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_radioNoPasoActionPerformed
+    }// GEN-LAST:event_radioNoPasoActionPerformed
 
-    private void botonCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCerrarActionPerformed
+    private void botonCerrarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCerrarActionPerformed
         salir();
-    }//GEN-LAST:event_botonCerrarActionPerformed
+    }// GEN-LAST:event_botonCerrarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCancelarActionPerformed
         salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAceptarActionPerformed
         AdministradorValidaciones admin = AdministradorValidaciones.getInstancia();
 
-        if (selectorFecha.getDate() != null)
-        {
+        if (selectorFecha.getDate() != null) {
             if (!admin.validarCampoVacio(campoNumeroEscritura.getText())
                     && !admin.validarCampoVacio(selectorFecha.getDate().toString())
-                    && !admin.validarCampoVacio(campoCuerpoEscritura.getText()))
-            {
+                    && !admin.validarCampoVacio(campoCuerpoEscritura.getText())) {
                 DtoEscritura miDtoEscritura = new DtoEscritura();
 
                 miDtoEscritura.setTramites(new ArrayList<DtoTramite>());
@@ -673,50 +762,42 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                 int filas = miGrilla.getRowCount();
                 DtoTramite miTramiteGrilla = null;
 
-                for (int i = 0; i < filas; i++)
-                {
-                    if ((boolean) miGrilla.getValueAt(i, 1) == true)
-                    {
+                for (int i = 0; i < filas; i++) {
+                    if ((boolean) miGrilla.getValueAt(i, 1) == true) {
                         miTramiteGrilla = (DtoTramite) miGrilla.getValueAt(i, 2);
 
-                        for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it.hasNext();)
-                        {
+                        for (Iterator<DtoTramite> it = miGestionDeEscritura.getListaTramitesAsociados().iterator(); it
+                                .hasNext();) {
                             DtoTramite dtoTramite = it.next();
                             dtoTramite = miController.buscarTramite(dtoTramite);
 
-                            if (dtoTramite.getIdTramite().intValue() == miTramiteGrilla.getIdTramite().intValue())
-                            {
+                            if (dtoTramite.getIdTramite().intValue() == miTramiteGrilla.getIdTramite().intValue()) {
                                 miDtoEscritura.getTramites().add(dtoTramite);
                             }
                         }
                     }
                 }
 
-                if (miDtoEscritura.getTramites().isEmpty())
-                {
-                    JOptionPane.showMessageDialog(this, "Debe elegir por lo menos un Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-                } else
-                {
+                if (miDtoEscritura.getTramites().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debe elegir por lo menos un Tramite.", "ADVERTENCIA",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
                     Integer numeroEscritura = Integer.parseInt(campoNumeroEscritura.getText());
                     Date fecha = selectorFecha.getDate();
                     DtoEstadoDeGestion estadoGestionConEscritura = null;
                     DtoEstadoDeGestion nombre = new DtoEstadoDeGestion();
                     String cuerpo = campoCuerpoEscritura.getText();
 
-                    if (radioAnulada.isSelected())
-                    {
+                    if (radioAnulada.isSelected()) {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_ANULADA);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_ANULADA);
-                    } else if (radioFirmada.isSelected())
-                    {
+                    } else if (radioFirmada.isSelected()) {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_FIRMADA);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_FIRMADA);
-                    } else if (radioSinFirmar.isSelected())
-                    {
+                    } else if (radioSinFirmar.isSelected()) {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_SIN_FIRMAR);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_SIN_FIRMAR);
-                    } else if (radioNoPaso.isSelected())
-                    {
+                    } else if (radioNoPaso.isSelected()) {
                         miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_NO_PASO);
                         nombre.setNombre(ConstantesNegocio.GESTION_CON_ESCRITURA_NO_PASO);
                     }
@@ -727,29 +808,23 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                     miDtoEscritura.setFechaEscrituracion(fecha);
                     miDtoEscritura.setCuerpo(cuerpo);
 
-                    switch (formularioInvocador)
-                    {
-                        case ConstantesGui.PREPARAR_ESCRITURA:
-                        {
-                            try
-                            {
+                    switch (formularioInvocador) {
+                        case ConstantesGui.PREPARAR_ESCRITURA: {
+                            try {
                                 if (!admin.validarCampoVacio(comboFolioDesde.getSelectedItem().toString())
-                                        && !admin.validarCampoVacio(comboFolioHasta.getSelectedItem().toString()))
-                                {
+                                        && !admin.validarCampoVacio(comboFolioHasta.getSelectedItem().toString())) {
                                     Integer folioDesde = Integer.parseInt(comboFolioDesde.getSelectedItem().toString());
                                     Integer folioHasta = Integer.parseInt(comboFolioHasta.getSelectedItem().toString());
 
-                                    if (folioDesde <= folioHasta)
-                                    {
+                                    if (folioDesde <= folioHasta) {
 
                                         miDtoEscritura.setFolios(new ArrayList<DtoFolio>());
 
-                                        for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();)
-                                        {
+                                        for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();) {
                                             DtoFolio dtoFolio = it.next();
 
-                                            if (dtoFolio.getNumero() >= folioDesde && dtoFolio.getNumero() <= folioHasta)
-                                            {
+                                            if (dtoFolio.getNumero() >= folioDesde
+                                                    && dtoFolio.getNumero() <= folioHasta) {
                                                 dtoFolio.setEstado(ConstantesNegocio.ESTADO_FOLIO_UTILIZADO);
                                                 miDtoEscritura.getFolios().add(dtoFolio);
                                             }
@@ -757,9 +832,8 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
                                         Boolean creada = miController.crearEscritura(miDtoEscritura);
 
-                                        if (creada)
-                                        {
-                                            //  asigno a la gestion el nuevo estado
+                                        if (creada) {
+                                            // asigno a la gestion el nuevo estado
                                             miGestionDeEscritura.setEstado(estadoGestionConEscritura);
 
                                             // modifico el estado de la gestion de escritura.
@@ -768,53 +842,51 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                                             // registro en el historial de la gestion, en nuevo cambio de estado
                                             miController.registrarMovimientoHistorial(miGestionDeEscritura);
 
-                                            JOptionPane.showMessageDialog(this, "Ha sido registrada la escritura.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+                                            JOptionPane.showMessageDialog(this, "Ha sido registrada la escritura.",
+                                                    "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
                                             salir();
                                         }
-                                    } else
-                                    {
-                                        JOptionPane.showMessageDialog(this, "El Folio Desde no puede ser mayor al Folio Hasta.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                                    } else {
+                                        JOptionPane.showMessageDialog(this,
+                                                "El Folio Desde no puede ser mayor al Folio Hasta.", "ADVERTENCIA",
+                                                JOptionPane.WARNING_MESSAGE);
                                     }
-                                } else
-                                {
-                                    JOptionPane.showMessageDialog(this, "Debe seleccionar los folios utilizados.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "Debe seleccionar los folios utilizados.",
+                                            "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                                 }
-                            }
-                            catch (ClassModifiedException | ClassEliminatedException ex)
-                            {
-                                JOptionPane.showMessageDialog(this, "La gestion que se esta modificando fue modificada por otro usuario", "Advertencia", JOptionPane.ERROR_MESSAGE);
-                                this.salir();
-                            }
-                            catch (PreexistingEntityException ex)
-                            {
-                                JOptionPane.showMessageDialog(this, ex.getMessage(), "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                            } catch (Exception ex) {
+                                if (ex instanceof PreexistingEntityException) {
+                                    JOptionPane.showMessageDialog(this, ex.getMessage(), "ADVERTENCIA",
+                                            JOptionPane.WARNING_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(this,
+                                            "Error al registrar la escritura: " + ex.getMessage(), "Error",
+                                            JOptionPane.ERROR_MESSAGE);
+                                    this.salir();
+                                }
                             }
                             break;
                         }
-                        case ConstantesGui.MODIFICAR_ESCRITURA:
-                        {
+                        case ConstantesGui.MODIFICAR_ESCRITURA: {
                             miDtoEscritura.setFolios(miEscritura.getFolios());
                             miDtoEscritura.setIdEscritura(miEscritura.getIdEscritura());
                             miDtoEscritura.setVersion(miEscritura.getVersion());
 
                             Boolean modificada;
-                            try
-                            {
+                            try {
                                 Integer folioHasta = folioHastaSeleccionado;
 
-                                if (folioHasta != null)
-                                {
+                                if (folioHasta != null) {
 
                                     Integer folioHastaUtilizado = Integer.parseInt(labelHasta.getText());
 
-                                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();)
-                                    {
+                                    for (Iterator<DtoFolio> it = foliosDisponibles.iterator(); it.hasNext();) {
                                         DtoFolio dtoFolio = it.next();
 
-                                        if (folioHasta != null)
-                                        {
-                                            if (dtoFolio.getNumero() >= folioHastaUtilizado && dtoFolio.getNumero() <= folioHasta)
-                                            {
+                                        if (folioHasta != null) {
+                                            if (dtoFolio.getNumero() >= folioHastaUtilizado
+                                                    && dtoFolio.getNumero() <= folioHasta) {
                                                 dtoFolio.setEstado(ConstantesNegocio.ESTADO_FOLIO_UTILIZADO);
                                                 miDtoEscritura.getFolios().add(dtoFolio);
                                             }
@@ -824,9 +896,8 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
 
                                 modificada = miController.modificarEscritura(miDtoEscritura);
 
-                                if (modificada)
-                                {
-                                    //  asigno a la gestion el nuevo estado
+                                if (modificada) {
+                                    // asigno a la gestion el nuevo estado
                                     miGestionDeEscritura.setEstado(estadoGestionConEscritura);
 
                                     // modifico el estado de la gestion de escritura.
@@ -835,20 +906,16 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                                     // registro en el historial de la gestion, en nuevo cambio de estado
                                     miController.registrarMovimientoHistorial(miGestionDeEscritura);
 
-                                    JOptionPane.showMessageDialog(this, "La Escritura ha sido modificada.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(this, "La Escritura ha sido modificada.",
+                                            "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
                                     salir();
                                 }
                                 break;
 
-                            }
-                            catch (ClassEliminatedException ex)
-                            {
-                                JOptionPane.showMessageDialog(this, "La Escritura ha sido recientemente eliminada por otro usuario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-                                salir();
-                            }
-                            catch (ClassModifiedException ex)
-                            {
-                                JOptionPane.showMessageDialog(this, "La Escritura ha sido recientemente modificada por otro usuario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(this,
+                                        "Error al modificar la escritura: " + ex.getMessage(), "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                                 salir();
                             }
                         }
@@ -857,41 +924,38 @@ public class DetalleEscritura extends javax.swing.JInternalFrame
                 }
                 labelValidacion.setText("");
 
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "Debe completar todo el formulario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe completar todo el formulario.", "ADVERTENCIA",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    }// GEN-LAST:event_botonAceptarActionPerformed
 
-    private void campoNumeroEscrituraKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNumeroEscrituraKeyPressed
-        if (!AdministradorValidaciones.getInstancia().validarCampoSoloNumerosEnteros(campoNumeroEscritura.getText()))
-        {
+    private void campoNumeroEscrituraKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNumeroEscrituraKeyPressed
+        if (!AdministradorValidaciones.getInstancia().validarCampoSoloNumerosEnteros(campoNumeroEscritura.getText())) {
             labelValidacion.setText("Numero Escritura debe contener solo numeros enteros.");
-        } else
-        {
+        } else {
             labelValidacion.setText("");
         }
-    }//GEN-LAST:event_campoNumeroEscrituraKeyPressed
+    }// GEN-LAST:event_campoNumeroEscrituraKeyPressed
 
-    private void comboFolioHastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboFolioHastaActionPerformed
-   }//GEN-LAST:event_comboFolioHastaActionPerformed
+    private void comboFolioHastaActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboFolioHastaActionPerformed
+    }// GEN-LAST:event_comboFolioHastaActionPerformed
 
-    private void comboFolioHastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboFolioHastaMouseClicked
-        try
-        {
+    private void comboFolioHastaMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_comboFolioHastaMouseClicked
+        try {
             folioHastaSeleccionado = Integer.parseInt(comboFolioHasta.getSelectedItem().toString());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El numero de folio no es valido", "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
         }
-        catch (NumberFormatException ex)
-        {
-            JOptionPane.showMessageDialog(this, "El numero de folio no es valido", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-    }//GEN-LAST:event_comboFolioHastaMouseClicked
+    }// GEN-LAST:event_comboFolioHastaMouseClicked
 
-    private void campoNumeroEscrituraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_campoNumeroEscrituraActionPerformed
+    private void campoNumeroEscrituraActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_campoNumeroEscrituraActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_campoNumeroEscrituraActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_campoNumeroEscrituraActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JButton botonCerrar;

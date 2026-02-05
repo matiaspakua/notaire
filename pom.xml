@@ -17,6 +17,7 @@
     <name>Notaire Root</name>
 
     <modules>
+        <module>notaire-shared</module>
         <module>backend-api</module>
         <module>frontend-swing</module>
     </modules>

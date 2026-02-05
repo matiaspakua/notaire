@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
+import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
@@ -100,7 +101,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         DtoUsuario miDtoUsuario = new DtoUsuario();
         miDtoUsuario.setPersonas(dtoPersona);
 
-        miDtoUsuario = miController.buscarUsuario(miDtoUsuario);
+        miDtoUsuario = ControllerNegocio.getInstancia().buscarUsuario(miDtoUsuario);
 
         if (miDtoUsuario != null)
         {

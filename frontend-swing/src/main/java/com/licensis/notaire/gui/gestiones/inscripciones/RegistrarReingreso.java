@@ -26,8 +26,7 @@ import javax.swing.JOptionPane;
  *
  * @author matias
  */
-public class RegistrarReingreso extends javax.swing.JInternalFrame
-{
+public class RegistrarReingreso extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaRegistrarReingreso = new JMenuItem("Ventana Registrar Reingreso");
     private static Boolean estadoFormulario = Boolean.FALSE;
@@ -39,25 +38,21 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
     /**
      * Creates new form RegistrarReingreso
      */
-    public RegistrarReingreso()
-    {
+    public RegistrarReingreso() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRegistrarReingreso()
-    {
+    public static JMenuItem getVentanaRegistrarReingreso() {
         return ventanaRegistrarReingreso;
     }
 
-    public Boolean cargarFormulario(DtoEscritura dtoEscritura)
-    {
+    public Boolean cargarFormulario(DtoEscritura dtoEscritura) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -65,36 +60,35 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
         Boolean cargada = true;
         testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
 
-        if (testimonios != null && !testimonios.isEmpty())
-        {
+        if (testimonios != null && !testimonios.isEmpty()) {
             DtoTestimonio ultimoTestimonio = testimonios.get(testimonios.size() - 1);
 
             movimientos = miController.obtenerMovimientosTestimonio(ultimoTestimonio);
 
-            if (movimientos != null && !movimientos.isEmpty())
-            {
-                if (movimientos.get(movimientos.size() - 1).getFechaInscripcion() != null)
-                {
-                    JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra inscripta <BR>con fecha: " + movimientos.get(movimientos.size() - 1).getFechaInscripcion().toString() + " <BR>y matricula: " + escrituraSeleccionada.getMatriculaInscripcion() + "</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            if (movimientos != null && !movimientos.isEmpty()) {
+                if (movimientos.get(movimientos.size() - 1).getFechaInscripcion() != null) {
+                    JOptionPane.showMessageDialog(this, "<HTML>La Escritura ya se encuentra inscripta <BR>con fecha: "
+                            + movimientos.get(movimientos.size() - 1).getFechaInscripcion().toString()
+                            + " <BR>y matricula: " + escrituraSeleccionada.getMatriculaInscripcion() + "</HTML>",
+                            "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                     cargada = false;
-                } else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null)
-                {
+                } else if (movimientos.get(movimientos.size() - 1).getFechaIngreso() != null) {
                     cargada = true;
 
                     this.escrituraSeleccionada = dtoEscritura;
                     this.campoNumeroEscritura.setText(Integer.toString(dtoEscritura.getNumero()));
                     this.campoFecha.setText(formatter.format(dtoEscritura.getFechaEscrituracion()).toString());
                     this.campoFolioDesde.setText(new Integer(dtoEscritura.getFolios().get(0).getNumero()).toString());
-                    this.campoFolioHasta.setText(new Integer(dtoEscritura.getFolios().get(dtoEscritura.getFolios().size() - 1).getNumero()).toString());
+                    this.campoFolioHasta.setText(
+                            new Integer(dtoEscritura.getFolios().get(dtoEscritura.getFolios().size() - 1).getNumero())
+                                    .toString());
 
                     List<DtoTramite> tramitesEscritura = dtoEscritura.getTramites();
                     DefaultListModel lista = new DefaultListModel();
 
-                    for (Iterator<DtoTramite> it = tramitesEscritura.iterator(); it.hasNext();)
-                    {
+                    for (Iterator<DtoTramite> it = tramitesEscritura.iterator(); it.hasNext();) {
                         DtoTramite dtoTramite = it.next();
-                        if (dtoTramite.getInmueble() != null)
-                        {
+                        if (dtoTramite.getInmueble() != null) {
                             String nomenclatura = dtoTramite.getInmueble().getNomenclaturaCatastral();
                             lista.addElement(nomenclatura);
                         }
@@ -102,16 +96,19 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
 
                     listaNomenclaturas.setModel(lista);
 
-                    campoNumeroTestimonio.setText(new Integer(testimonios.get(testimonios.size() - 1).getNumero()).toString());
+                    campoNumeroTestimonio
+                            .setText(new Integer(testimonios.get(testimonios.size() - 1).getNumero()).toString());
                 }
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios ingresados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "La Escritura seleccionada no tiene Testimonios ingresados para Inscribir.", "ADVERTENCIA",
+                        JOptionPane.WARNING_MESSAGE);
                 cargada = false;
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "La Escritura seleccionada no tiene Testimonios generados para Inscribir.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "La Escritura seleccionada no tiene Testimonios generados para Inscribir.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
             cargada = false;
         }
 
@@ -119,11 +116,14 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelRegistrarReingreso = new javax.swing.JPanel();
@@ -165,17 +165,23 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -245,174 +251,290 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelRegistrarReingresoLayout = new javax.swing.GroupLayout(panelRegistrarReingreso);
         panelRegistrarReingreso.setLayout(panelRegistrarReingresoLayout);
         panelRegistrarReingresoLayout.setHorizontalGroup(
-            panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRegistrarReingresoLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                        .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelRegistrarReingresoLayout.createSequentialGroup()
-                                    .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel13)
-                                        .addComponent(jLabel15))
-                                    .addGap(22, 22, 22)
-                                    .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoNumeroTestimonio, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(selectorFechaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel1)
-                                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                        .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel2)
-                                            .addComponent(jLabel4)
-                                            .addComponent(jLabel7))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addComponent(campoNumeroEscritura)
-                                                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                                        .addComponent(jLabel10)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addComponent(campoFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                                        .addComponent(jLabel3)
+                panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelRegistrarReingresoLayout.createSequentialGroup()
+                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addGap(18, 18, 18)
-                                                        .addComponent(campoFecha))
-                                                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                                        .addComponent(jLabel5)
-                                                        .addGap(18, 18, 18)
-                                                        .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(jLabel6))))
-                                            .addComponent(jScrollPane1)))
-                                    .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                                        .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel9)
-                                            .addComponent(jLabel11))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(checkBoxObservado)
-                                            .addComponent(campoNumeroCarton, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(selectorFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jLabel14)
-                                    .addComponent(jLabel12))))
-                        .addGap(0, 217, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
+                                                .addGroup(panelRegistrarReingresoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelRegistrarReingresoLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                .addComponent(jScrollPane3,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 304,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        panelRegistrarReingresoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel13)
+                                                                                        .addComponent(jLabel15))
+                                                                                .addGap(22, 22, 22)
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(
+                                                                                                campoNumeroTestimonio,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                124,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addComponent(
+                                                                                                selectorFechaSalida,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                304,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                        .addGroup(panelRegistrarReingresoLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addComponent(jSeparator1,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel8)
+                                                                        .addComponent(jLabel1)
+                                                                        .addGroup(panelRegistrarReingresoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel2)
+                                                                                        .addComponent(jLabel4)
+                                                                                        .addComponent(jLabel7))
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                false)
+                                                                                        .addGroup(
+                                                                                                panelRegistrarReingresoLayout
+                                                                                                        .createSequentialGroup()
+                                                                                                        .addGroup(
+                                                                                                                panelRegistrarReingresoLayout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                false)
+                                                                                                                        .addComponent(
+                                                                                                                                campoNumeroEscritura)
+                                                                                                                        .addGroup(
+                                                                                                                                panelRegistrarReingresoLayout
+                                                                                                                                        .createSequentialGroup()
+                                                                                                                                        .addComponent(
+                                                                                                                                                jLabel10)
+                                                                                                                                        .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                                                                        .addComponent(
+                                                                                                                                                campoFolioDesde,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                59,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                        .addGap(18, 18,
+                                                                                                                18)
+                                                                                                        .addGroup(
+                                                                                                                panelRegistrarReingresoLayout
+                                                                                                                        .createParallelGroup(
+                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                false)
+                                                                                                                        .addGroup(
+                                                                                                                                panelRegistrarReingresoLayout
+                                                                                                                                        .createSequentialGroup()
+                                                                                                                                        .addComponent(
+                                                                                                                                                jLabel3)
+                                                                                                                                        .addGap(18,
+                                                                                                                                                18,
+                                                                                                                                                18)
+                                                                                                                                        .addComponent(
+                                                                                                                                                campoFecha))
+                                                                                                                        .addGroup(
+                                                                                                                                panelRegistrarReingresoLayout
+                                                                                                                                        .createSequentialGroup()
+                                                                                                                                        .addComponent(
+                                                                                                                                                jLabel5)
+                                                                                                                                        .addGap(18,
+                                                                                                                                                18,
+                                                                                                                                                18)
+                                                                                                                                        .addComponent(
+                                                                                                                                                campoFolioHasta,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                61,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                                        .addPreferredGap(
+                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                                                                        .addComponent(
+                                                                                                                                                jLabel6))))
+                                                                                        .addComponent(jScrollPane1)))
+                                                                        .addGroup(panelRegistrarReingresoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel9)
+                                                                                        .addComponent(jLabel11))
+                                                                                .addGap(18, 18, 18)
+                                                                                .addGroup(panelRegistrarReingresoLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(checkBoxObservado)
+                                                                                        .addComponent(campoNumeroCarton,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                115,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addComponent(
+                                                                                                selectorFechaIngreso,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                304,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                        .addComponent(jLabel14)
+                                                                        .addComponent(jLabel12))))
+                                                .addGap(0, 217, Short.MAX_VALUE)))
+                                .addContainerGap()));
         panelRegistrarReingresoLayout.setVerticalGroup(
-            panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(4, 4, 4)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(campoFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel4)
-                    .addComponent(campoFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(campoNumeroTestimonio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel15)
-                    .addComponent(selectorFechaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(campoNumeroCarton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel11)
-                    .addComponent(selectorFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14)
-                    .addComponent(checkBoxObservado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                panelRegistrarReingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelRegistrarReingresoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addGap(4, 4, 4)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel3)
+                                        .addComponent(campoFecha, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel10)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel4)
+                                        .addComponent(campoFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel7)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 65,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel13)
+                                        .addComponent(campoNumeroTestimonio, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel15)
+                                        .addComponent(selectorFechaSalida, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel9)
+                                        .addComponent(campoNumeroCarton, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel11)
+                                        .addComponent(selectorFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel14)
+                                        .addComponent(checkBoxObservado))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel12)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30,
+                                        Short.MAX_VALUE)
+                                .addGroup(panelRegistrarReingresoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelRegistrarReingreso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelRegistrarReingreso, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelRegistrarReingreso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelRegistrarReingreso, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaRegistrarReingreso);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCancelarActionPerformed
         salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAceptarActionPerformed
 
         AdministradorValidaciones admin = AdministradorValidaciones.getInstancia();
 
         if (!admin.validarCampoVacio(campoNumeroCarton.getText())
                 && selectorFechaIngreso.getDate() != null
-                && selectorFechaSalida.getDate() != null)
-        {
+                && selectorFechaSalida.getDate() != null) {
 
-            DtoMovimientoTestimonio miDtoMovimientoTestimonioViejo = miController.buscarMovimientoTestimonio(movimientos.get(movimientos.size() - 1));
+            DtoMovimientoTestimonio miDtoMovimientoTestimonioViejo = miController
+                    .buscarMovimientoTestimonio(movimientos.get(movimientos.size() - 1));
 
             miDtoMovimientoTestimonioViejo.setFechaSalida(selectorFechaSalida.getDate());
-            try
-            {
+            try {
                 Boolean modificado = miController.modificarMovimientoTestimonio(miDtoMovimientoTestimonioViejo);
 
-                if (modificado)
-                {
+                if (modificado) {
                     DtoTestimonio miDtoTestimonio = testimonios.get(testimonios.size() - 1);
                     miDtoTestimonio.setObservado(checkBoxObservado.isSelected());
 
@@ -424,49 +546,43 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame
                     miDtoMovimientoTestimonio.setFechaIngreso(selectorFechaIngreso.getDate());
                     miDtoMovimientoTestimonio.setObservaciones(campoObservaciones.getText());
 
-                    int opcion = JOptionPane.showConfirmDialog(this, "<HTML>¿Esta seguro que desea reingresar <BR> el testimonio numero: " + miDtoTestimonio.getNumero() + "<BR>de la escritura numero: " + escrituraSeleccionada.getNumero() + "?</HTML>", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+                    int opcion = JOptionPane.showConfirmDialog(this,
+                            "<HTML>¿Esta seguro que desea reingresar <BR> el testimonio numero: "
+                                    + miDtoTestimonio.getNumero() + "<BR>de la escritura numero: "
+                                    + escrituraSeleccionada.getNumero() + "?</HTML>",
+                            "CONFIRMACION", JOptionPane.YES_NO_OPTION);
 
-                    if (opcion == JOptionPane.YES_OPTION)
-                    {
-                        try
-                        {
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        try {
                             Boolean creado = miController.crearMovimientoTestimonio(miDtoMovimientoTestimonio);
 
-                            if (creado)
-                            {
-                                JOptionPane.showMessageDialog(this, "Se ha registrado el reingreso de inscripcion.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                            if (creado) {
+                                JOptionPane.showMessageDialog(this, "Se ha registrado el reingreso de inscripcion.",
+                                        "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
                                 salir();
                             }
-                        }
-                        catch (ClassModifiedException ex)
-                        {
-                            JOptionPane.showMessageDialog(this, "El Testimonio ha sido recientemente modificado por otro usuario.", "ERROR", JOptionPane.ERROR_MESSAGE);
-                            salir();
-                        }
-                        catch (ClassEliminatedException ex)
-                        {
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "Error al procesar la solicitud: " + ex.getMessage(),
+                                    "ERROR", JOptionPane.ERROR_MESSAGE);
                             Logger.getLogger(RegistrarReingreso.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
 
-            }
-            catch (ClassEliminatedException ex)
-            {
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al procesar la solicitud: " + ex.getMessage(), "ERROR",
+                        JOptionPane.ERROR_MESSAGE);
                 Logger.getLogger(RegistrarReingreso.class.getName()).log(Level.SEVERE, null, ex);
                 salir();
             }
-            catch (ClassModifiedException ex)
-            {
-                JOptionPane.showMessageDialog(this, "El Testimonio ha sido recientemente modificado por otro usuario.", "ERROR", JOptionPane.ERROR_MESSAGE);
-                salir();
-            }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "<HTML>Debe completar al menos el Fecha de Salida,<BR>Numero de Carton y Fecha de Ingreso.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "<HTML>Debe completar al menos el Fecha de Salida,<BR>Numero de Carton y Fecha de Ingreso.</HTML>",
+                    "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_botonAceptarActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JTextField campoFecha;

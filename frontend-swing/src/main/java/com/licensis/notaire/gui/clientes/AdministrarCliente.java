@@ -24,8 +24,7 @@ import javax.swing.JOptionPane;
  *
  * @author matias
  */
-public class AdministrarCliente extends javax.swing.JInternalFrame
-{
+public class AdministrarCliente extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private ControllerNegocio miController;
@@ -36,38 +35,32 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Creates new form AdministrarCliente
      */
-    public AdministrarCliente()
-    {
+    public AdministrarCliente() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
-        //this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
+        // this.setSize(Principal.tamanioGrandeHorizontal,
+        // Principal.tamanioGrandeVertical);
         miController = ControllerNegocio.getInstancia();
         this.cargarComboTipoIdentificacion();
         this.desactivarFormulario();
 
     }
 
-    public static JMenuItem getVentanaAdministrarCliente()
-    {
+    public static JMenuItem getVentanaAdministrarCliente() {
         return ventanaAdministrarCliente;
     }
 
-    public static void setVentanaAdministrarCliente(JMenuItem ventanaAdministrarCliente)
-    {
+    public static void setVentanaAdministrarCliente(JMenuItem ventanaAdministrarCliente) {
         AdministrarCliente.ventanaAdministrarCliente = ventanaAdministrarCliente;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public void cargarTipoFormulario(String boton)
-    {
-        switch (boton)
-        {
-            case ConstantesGui.MODIFICAR_PERSONA:
-            {
+    public void cargarTipoFormulario(String boton) {
+        switch (boton) {
+            case ConstantesGui.MODIFICAR_PERSONA: {
                 this.setTamanioModificarPersona();
                 labelTitulo.setText("Modificar Persona");
                 labelBusqueda.setText("Persona");
@@ -76,8 +69,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
                 break;
             }
-            case ConstantesGui.MODIFICAR_CLIENTE:
-            {
+            case ConstantesGui.MODIFICAR_CLIENTE: {
                 setTamanioCliente();
                 labelTitulo.setText("Modificar Cliente");
                 labelBusqueda.setText("Cliente");
@@ -85,8 +77,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 panelDatosCliente.setVisible(true);
                 break;
             }
-            case ConstantesGui.DAR_ALTA_CLIENTE:
-            {
+            case ConstantesGui.DAR_ALTA_CLIENTE: {
                 setTamanioCliente();
                 labelTitulo.setText("Dar Alta Cliente");
                 labelBusqueda.setText("Cliente");
@@ -95,8 +86,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 this.activarCamposCliente();
                 break;
             }
-            case ConstantesGui.BUSCAR_CLIENTE:
-            {
+            case ConstantesGui.BUSCAR_CLIENTE: {
                 setTamanioCliente();
                 labelTitulo.setText("Buscar Cliente");
                 labelBusqueda.setText("Cliente");
@@ -115,11 +105,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
      * @param dtoPersonaCliente
      * @param tipoBusqueda
      */
-    public Boolean cargarFormulario(DtoPersona dtoPersonaCliente, String tipoBusqueda)
-    {
+    public Boolean cargarFormulario(DtoPersona dtoPersonaCliente, String tipoBusqueda) {
 
-        //Guarda el Dto de origen para control de modificacion de datos. 
-        //impido que el numero y tipo de identificacion se repitan en una modificacion
+        // Guarda el Dto de origen para control de modificacion de datos.
+        // impido que el numero y tipo de identificacion se repitan en una modificacion
         Boolean flag = false; // Se utiliza para saber si debe activarse el formulario
 
         dtoPersonaOriginal = dtoPersonaCliente;
@@ -127,18 +116,15 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         this.toFront();
         this.updateUI();
 
-        switch (tipoBusqueda)
-        {
-            case ConstantesGui.MODIFICAR_PERSONA:
-            {
+        switch (tipoBusqueda) {
+            case ConstantesGui.MODIFICAR_PERSONA: {
                 flag = this.cargarPersona(dtoPersonaCliente);
                 this.activarCamposPersona();
                 this.botonModoEdicion();
                 this.abilitarFormulario();
                 break;
             }
-            case ConstantesGui.MODIFICAR_CLIENTE:
-            {
+            case ConstantesGui.MODIFICAR_CLIENTE: {
                 flag = this.modificarCliente(dtoPersonaCliente);
                 this.activarCamposCliente();
                 this.botonModoEdicion();
@@ -146,8 +132,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 break;
 
             }
-            case ConstantesGui.DAR_ALTA_CLIENTE:
-            {
+            case ConstantesGui.DAR_ALTA_CLIENTE: {
                 flag = this.cargarPersonaCliente(dtoPersonaCliente);
                 this.activarCamposCliente();
                 this.botonModoEdicion();
@@ -157,19 +142,16 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 break;
 
             }
-            case ConstantesGui.BUSCAR_CLIENTE:
-            {
+            case ConstantesGui.BUSCAR_CLIENTE: {
                 flag = this.modificarCliente(dtoPersonaCliente);
                 activarCamposCliente();
-                desabilitarFormulario(); //No poder editarlos
+                desabilitarFormulario(); // No poder editarlos
                 this.botonModoVista();
                 break;
 
             }
-            case ConstantesGui.BUSCAR_PERSONA_CLIENTE:
-            {
-                if (!dtoPersonaCliente.getEsCliente())
-                {
+            case ConstantesGui.BUSCAR_PERSONA_CLIENTE: {
+                if (!dtoPersonaCliente.getEsCliente()) {
                     flag = this.cargarPersona(dtoPersonaCliente);
 
                     this.labelTitulo.setText(ConstantesGui.PERSONA);
@@ -180,23 +162,23 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                     this.botonCancelar.setAlignmentX(118);
                     this.botonCancelar.setAlignmentX(35);
                     this.activarCamposPersona();
-                    this.desabilitarFormulario(); //No puede editar
+                    this.desabilitarFormulario(); // No puede editar
                     this.botonModoVista();
 
-                } else
-                {
+                } else {
                     flag = this.cargarCliente(dtoPersonaCliente);
 
                     this.labelTitulo.setText(ConstantesGui.CLIENTE);
                     this.labelBusqueda.setVisible(false);
-                    this.panelDatosCliente.setVisible(true);;
+                    this.panelDatosCliente.setVisible(true);
+                    ;
                     this.botonBuscarCliente.setVisible(false);
                     this.botonAceptar.setVisible(false);
                     this.botonCancelar.setAlignmentX(118);
                     this.botonCancelar.setAlignmentX(35);
                     this.botonModoEdicion();
                     this.activarCamposCliente();
-                    this.desabilitarFormulario(); //No puede editar
+                    this.desabilitarFormulario(); // No puede editar
                 }
 
                 break;
@@ -213,8 +195,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarPersona(DtoPersona dtoPersona)
-    {
+    public boolean cargarPersona(DtoPersona dtoPersona) {
 
         boolean flag = false;
 
@@ -230,14 +211,12 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarPersonaCliente(DtoPersona dtoPersona)
-    {
+    public boolean cargarPersonaCliente(DtoPersona dtoPersona) {
 
         boolean flag = false;
 
-        //Si no es cliente, lo cargo
-        if (!dtoPersona.getEsCliente())
-        {
+        // Si no es cliente, lo cargo
+        if (!dtoPersona.getEsCliente()) {
 
             campoNombre.setText(dtoPersona.getNombre());
             campoApellido.setText(dtoPersona.getApellido());
@@ -245,12 +224,11 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoTelefono.setText(dtoPersona.getTelefono());
             campoEmail.setText(dtoPersona.getEmail());
 
-            //Cargo combos
+            // Cargo combos
             comboTipoIdentificacion.setSelectedItem(dtoPersona.getDtoTipoIdentificacion().getNombre());
 
             flag = true;
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "La Persona Esta Registrada Como Cliente");
             this.limpiarFormulario();
             this.desactivarFormulario();
@@ -258,20 +236,18 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean modificarCliente(DtoPersona dtoPersona)
-    {
+    public boolean modificarCliente(DtoPersona dtoPersona) {
         boolean flag = false;
 
-        //Si es cliente, lo cargo
-        if (dtoPersona.getEsCliente())
-        {
+        // Si es cliente, lo cargo
+        if (dtoPersona.getEsCliente()) {
             campoNombre.setText(dtoPersona.getNombre());
             campoApellido.setText(dtoPersona.getApellido());
             campoNumeroIdentificacion.setText(dtoPersona.getNumeroIdentificacion());
             campoTelefono.setText(dtoPersona.getTelefono());
             campoEmail.setText(dtoPersona.getEmail());
 
-            //Cargo combos
+            // Cargo combos
             comboTipoIdentificacion.setSelectedItem(dtoPersona.getDtoTipoIdentificacion().getNombre());
             comboEstadoCivil.setSelectedItem(dtoPersona.getEstadoCivil());
 
@@ -284,8 +260,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoDomicilio.setText(dtoPersona.getDomicilio());
 
             flag = true;
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "La Persona No Esta Registrada Como Cliente");
             this.limpiarFormulario();
             this.desactivarFormulario();
@@ -293,14 +268,12 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public boolean cargarCliente(DtoPersona dtoPersona)
-    {
+    public boolean cargarCliente(DtoPersona dtoPersona) {
 
         boolean flag = false;
 
-        //Si es cliente, lo cargo
-        if (dtoPersona.getEsCliente())
-        {
+        // Si es cliente, lo cargo
+        if (dtoPersona.getEsCliente()) {
 
             campoNombre.setText(dtoPersona.getNombre());
             campoApellido.setText(dtoPersona.getApellido());
@@ -308,7 +281,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoTelefono.setText(dtoPersona.getTelefono());
             campoEmail.setText(dtoPersona.getEmail());
 
-            //cargo combos
+            // cargo combos
             comboTipoIdentificacion.setSelectedItem(dtoPersona.getDtoTipoIdentificacion().getNombre());
             comboEstadoCivil.setSelectedItem(dtoPersona.getEstadoCivil());
             comboSexo.setSelectedItem(dtoPersona.getSexo());
@@ -321,8 +294,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             campoDomicilio.setText(dtoPersona.getDomicilio());
 
             flag = true;
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "La Persona No Esta Registrada Como Cliente");
             this.limpiarFormulario();
             this.desactivarFormulario();
@@ -330,23 +302,19 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void ActivarFormulario(String tipoBusqueda)
-    {
+    public void ActivarFormulario(String tipoBusqueda) {
 
-        switch (this.labelTitulo.getText())
-        {
+        switch (this.labelTitulo.getText()) {
             case ConstantesGui.MODIFICAR_PERSONA:
             case ConstantesGui.BUSCAR_PERSONA:
-            case ConstantesGui.PERSONA:
-            {
+            case ConstantesGui.PERSONA: {
                 this.activarCamposPersona();
                 break;
             }
             case ConstantesGui.MODIFICAR_CLIENTE:
             case ConstantesGui.DAR_ALTA_CLIENTE:
             case ConstantesGui.BUSCAR_CLIENTE:
-            case ConstantesGui.BUSCAR_PERSONA_CLIENTE:
-            {
+            case ConstantesGui.BUSCAR_PERSONA_CLIENTE: {
                 this.activarCamposCliente();
                 break;
 
@@ -356,11 +324,11 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     }
 
     /**
-     * Activa los campos de la persona, estos pueden ser editados el contenido se puede apreciar
+     * Activa los campos de la persona, estos pueden ser editados el contenido se
+     * puede apreciar
      * claramente.
      */
-    public void activarCamposPersona()
-    {
+    public void activarCamposPersona() {
 
         comboTipoIdentificacion.setEnabled(true);
         campoNombre.setEnabled(true);
@@ -376,16 +344,16 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     }
 
     /**
-     * Activa los campos del cliente, estos pueden ser editados el contenido se puede apreciar
+     * Activa los campos del cliente, estos pueden ser editados el contenido se
+     * puede apreciar
      * claramente.
      */
-    public void activarCamposCliente()
-    {
+    public void activarCamposCliente() {
 
-        //Activo los campos de persona
+        // Activo los campos de persona
         activarCamposPersona();
 
-        //Activo los campos del cliente  
+        // Activo los campos del cliente
         campoNacionalidad.setEnabled(true);
         campoFechaNacimiento.setEnabled(true);
         comboTipoIdentificacion.setEnabled(true);
@@ -403,8 +371,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Desactiva los campos del cliente
      */
-    public void desactivarFormulario()
-    {
+    public void desactivarFormulario() {
 
         campoNombre.setEnabled(false);
         campoApellido.setEnabled(false);
@@ -430,8 +397,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
     /**
      * Pone los campos del formulario en estado no editable
      */
-    public void desabilitarFormulario()
-    {
+    public void desabilitarFormulario() {
 
         campoNombre.setEditable(false);
         campoApellido.setEditable(false);
@@ -440,8 +406,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         campoNumeroIdentificacion.setEditable(false);
         comboTipoIdentificacion.setEnabled(false);
 
-        //Quito el combo
-        //layerpanelPersona.remove(comboTipoIdentificacion);
+        // Quito el combo
+        // layerpanelPersona.remove(comboTipoIdentificacion);
         campoNacionalidad.setEditable(false);
         campoFechaNacimiento.setEnabled(false);
         campoCuit.setEditable(false);
@@ -460,8 +426,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
     }
 
-    public void abilitarFormulario()
-    {
+    public void abilitarFormulario() {
 
         campoNombre.setEditable(true);
         campoApellido.setEditable(true);
@@ -470,8 +435,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         campoNumeroIdentificacion.setEditable(true);
         comboTipoIdentificacion.setEnabled(true);
 
-        //Quito el combo
-        //layerpanelPersona.remove(comboTipoIdentificacion);
+        // Quito el combo
+        // layerpanelPersona.remove(comboTipoIdentificacion);
         campoNacionalidad.setEditable(true);
         campoFechaNacimiento.setEnabled(true);
         campoCuit.setEditable(true);
@@ -490,11 +455,9 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
     }
 
-    private void modificarPersona() throws NonexistentJpaException
-    {
+    private void modificarPersona() throws NonexistentJpaException {
 
-        try
-        {
+        try {
             /*
              * Controlo que todos los campos que no contemplan null, esten
              * completos
@@ -502,21 +465,20 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
             String msj = AdministradorValidaciones.getInstancia().validarModificarPersona(this);
 
-            if (msj == "")
-            {
+            if (msj == "") {
 
                 DtoPersona dtoPersonaModificada = new DtoPersona();
 
-                //Version del objeto
+                // Version del objeto
                 dtoPersonaModificada.setVersion(dtoPersonaOriginal.getVersion());
 
-                //Version del Cliente 
+                // Version del Cliente
                 dtoPersonaModificada.setVersion(dtoPersonaOriginal.getVersion());
 
-                //Set id persona, en dto con datos modificados
+                // Set id persona, en dto con datos modificados
                 dtoPersonaModificada.setIdPersona(dtoPersonaOriginal.getIdPersona());
 
-                //Set datos modificados
+                // Set datos modificados
                 DtoTipoIdentificacion dtoTipoIdentificacion = new com.licensis.notaire.dto.DtoTipoIdentificacion();
 
                 dtoPersonaModificada.setNombre(campoNombre.getText());
@@ -526,71 +488,63 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 dtoPersonaModificada.setNumeroIdentificacion(campoNumeroIdentificacion.getText());
                 dtoPersonaModificada.setTelefono(campoTelefono.getText());
                 dtoPersonaModificada.setEmail(campoEmail.getText());
-                dtoPersonaModificada.getDtoTipoIdentificacion().setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoPersonaModificada));
+                dtoPersonaModificada.getDtoTipoIdentificacion()
+                        .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoPersonaModificada));
 
-                //Cotrol de modificacion por tipo y numero de identificacion, no puede repertirse 
+                // Cotrol de modificacion por tipo y numero de identificacion, no puede
+                // repertirse
                 Boolean flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoPersonaModificada);
 
-                //Si la persona fue encontrada, significa que ya existe alguien con el tipo y numero de indentificacion 
-                //ingresado por el usuario en la modificacion
-                if (!flag)
-                {
+                // Si la persona fue encontrada, significa que ya existe alguien con el tipo y
+                // numero de indentificacion
+                // ingresado por el usuario en la modificacion
+                if (!flag) {
                     miController.modificarPersona(dtoPersonaModificada);
-                    JOptionPane.showMessageDialog(this, "La pesona se modifico correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "La pesona se modifico correctamente", "Informacion",
+                            JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
                     this.desactivarFormulario();
 
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia",
+                            JOptionPane.WARNING_MESSAGE);
                     campoNumeroIdentificacion.setText("");
                 }
 
-            } else
-            {
+            } else {
                 JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-        catch (ClassEliminatedException ex)
-        {
-            JOptionPane.showMessageDialog(this, "La persona ha sido eliminada, accion cancelada", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            this.salir();
-        }
-        catch (ClassModifiedException e)
-        {
-            String mensaje = "Persona - Cliente modificado con anterioridad - Accion Cancelada";
-            JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
-
-            //Limpio formulario 
-            this.limpiarFormulario();
-            this.desactivarFormulario();
-
-            return;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al modificar la persona: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            if (ex.getMessage() != null
+                    && (ex.getMessage().contains("eliminada") || ex.getMessage().contains("modificado"))) {
+                this.limpiarFormulario();
+                this.desactivarFormulario();
+            }
         }
     }
 
-    private void modificarCliente() throws NonexistentJpaException
-    {
+    private void modificarCliente() throws NonexistentJpaException {
 
-        try
-        {
+        try {
             /*
              * Controlo que todos los campos que no contemplan null, esten
              * completos
              */
             String msj = AdministradorValidaciones.getInstancia().validarCliente(this);
 
-            if (msj == "")
-            {
+            if (msj == "") {
 
                 DtoPersona dtoClienteModificado = new DtoPersona();
                 DtoTipoIdentificacion dtoTipoIdentificacion = new com.licensis.notaire.dto.DtoTipoIdentificacion();
 
-                //Version del Cliente 
+                // Version del Cliente
                 dtoClienteModificado.setVersion(dtoPersonaOriginal.getVersion());
 
-                //Set atributos persona
+                // Set atributos persona
                 dtoClienteModificado.setNombre(campoNombre.getText());
                 dtoClienteModificado.setApellido(campoApellido.getText());
                 dtoTipoIdentificacion.setNombre(comboTipoIdentificacion.getSelectedItem().toString());
@@ -599,9 +553,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 dtoClienteModificado.setTelefono(campoTelefono.getText());
                 dtoClienteModificado.setEmail(campoEmail.getText());
 
-                dtoClienteModificado.getDtoTipoIdentificacion().setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoClienteModificado));
+                dtoClienteModificado.getDtoTipoIdentificacion()
+                        .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoClienteModificado));
 
-                //Set atributos cliente
+                // Set atributos cliente
                 dtoClienteModificado.setNacionalidad(campoNacionalidad.getText());
                 dtoClienteModificado.setFechaNacimiento(campoFechaNacimiento.getDate());
                 dtoClienteModificado.setCuit(campoCuit.getText());
@@ -611,53 +566,54 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
                 dtoClienteModificado.setOcupacion(campoOcupacion.getText());
                 dtoClienteModificado.setDomicilio(campoDomicilio.getText());
 
-                //Set es Cliente
+                // Set es Cliente
                 dtoClienteModificado.setEsCliente(true);
                 dtoClienteModificado.setIdPersona(dtoPersonaOriginal.getIdPersona());
 
-                //Cotrol de modificacion por tipo y numero de identificacion
+                // Cotrol de modificacion por tipo y numero de identificacion
                 Boolean flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoClienteModificado);
 
-                if (flag == false)
-                {
+                if (flag == false) {
                     miController.modificarCliente(dtoClienteModificado);
-                    JOptionPane.showMessageDialog(this, "El Cliente se modifico correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "El Cliente se modifico correctamente", "Informacion",
+                            JOptionPane.INFORMATION_MESSAGE);
                     limpiarFormulario();
                     desactivarFormulario();
 
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "La persona Existe Error en modificacion Tipo Numero Identificacion", "Advertencia",
+                            JOptionPane.WARNING_MESSAGE);
                     campoNumeroIdentificacion.setText("");
                 }
 
-            } else
-            {
+            } else {
                 JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        catch (ClassModifiedException e)
-        {
-            String mensaje = "Persona - Cliente modificado con anterioridad - Accion Cancelada";
-            JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            if (ex instanceof ClassModifiedException) {
+                String mensaje = "Persona - Cliente modificado con anterioridad - Accion Cancelada";
+                JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
 
-            //Limpio formulario 
-            this.limpiarFormulario();
-            this.desactivarFormulario();
+                // Limpio formulario
+                this.limpiarFormulario();
+                this.desactivarFormulario();
 
-            return;
-        }
-        catch (ClassEliminatedException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
-            Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
-            this.salir();
+                return;
+            } else if (ex instanceof ClassEliminatedException) {
+                JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
+                this.salir();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al modificar el cliente: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
 
     }
 
-    public void limpiarFormulario()
-    {
+    public void limpiarFormulario() {
         campoNombre.setText("");
         campoApellido.setText("");
         campoEmail.setText("");
@@ -677,45 +633,39 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         this.advertencia.setText("");
     }
 
-    public void cargarComboTipoIdentificacion()
-    {
+    public void cargarComboTipoIdentificacion() {
         String nombre = null;
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<DtoTipoIdentificacion>();
         listaDtoIdentificaciones = miController.listarTiposIdentificacion();
 
-        for (int i = 0; i < listaDtoIdentificaciones.size(); i++)
-        {
+        for (int i = 0; i < listaDtoIdentificaciones.size(); i++) {
             nombre = listaDtoIdentificaciones.get(i).getNombre();
             comboTipoIdentificacion.addItem(nombre);
         }
-        //Set como primer opcion el DNI
+        // Set como primer opcion el DNI
         comboTipoIdentificacion.setSelectedItem("D.N.I.");
 
     }
 
-    public static AdministrarCliente getInstancia()
-    {
-        if (instancia == null)
-        {
+    public static AdministrarCliente getInstancia() {
+        if (instancia == null) {
             instancia = new AdministrarCliente();
         }
         instancia.setSize(649, 650);
         return instancia;
     }
 
-    public void darAltaCliente() throws NonexistentJpaException
-    {
+    public void darAltaCliente() throws NonexistentJpaException {
 
         /*
          * Controlo que todos los campos que no contemplan null, esten completos
          */
         String msj = AdministradorValidaciones.getInstancia().validarCliente(this);
-        if (msj == "")
-        {
+        if (msj == "") {
             DtoPersona dtoCliente = new DtoPersona();
             DtoTipoIdentificacion dtoTipoIdentificacion = new com.licensis.notaire.dto.DtoTipoIdentificacion();
 
-            //Set atributos persona
+            // Set atributos persona
             dtoCliente.setNombre(campoNombre.getText());
             dtoCliente.setApellido(campoApellido.getText());
             dtoTipoIdentificacion.setNombre(comboTipoIdentificacion.getSelectedItem().toString());
@@ -724,9 +674,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             dtoCliente.setTelefono(campoTelefono.getText());
             dtoCliente.setEmail(campoEmail.getText());
 
-            dtoCliente.getDtoTipoIdentificacion().setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoCliente));
+            dtoCliente.getDtoTipoIdentificacion()
+                    .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoCliente));
 
-            //Set atributos cliente
+            // Set atributos cliente
             dtoCliente.setNacionalidad(campoNacionalidad.getText());
             dtoCliente.setFechaNacimiento(campoFechaNacimiento.getDate());
             dtoCliente.setCuit(campoCuit.getText());
@@ -736,114 +687,110 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             dtoCliente.setOcupacion(campoOcupacion.getText());
             dtoCliente.setDomicilio(campoDomicilio.getText());
 
-            //Set es Cliente
+            // Set es Cliente
             dtoCliente.setEsCliente(true);
 
-            //Datos originales del cliente - persona 
+            // Datos originales del cliente - persona
             dtoCliente.setIdPersona(dtoPersonaOriginal.getIdPersona());
             dtoCliente.setVersion(dtoPersonaOriginal.getVersion());
 
-            //Controlo si la persona se modifico
+            // Controlo si la persona se modifico
             Boolean flag = true;
             flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoCliente);
 
-            if (flag == false)
-            {
+            if (flag == false) {
 
-                if (dtoCliente.getIdPersona() != -1)
-                {
-                    try
-                    {
+                if (dtoCliente.getIdPersona() != -1) {
+                    try {
                         dtoCliente = miController.modificarCliente(dtoCliente);
-                    }
-                    catch (ClassModifiedException ex)
-                    {
-                        JOptionPane.showMessageDialog(this, "La persona indicada esta siendo modificada por otro usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    } catch (ClassModifiedException ex) {
+                        JOptionPane.showMessageDialog(this,
+                                "La persona indicada esta siendo modificada por otro usuario", "Advertencia",
+                                JOptionPane.WARNING_MESSAGE);
                         Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                         this.salir();
-                    }
-                    catch (ClassEliminatedException ex)
-                    {
-                        JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (ClassEliminatedException ex) {
+                        JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                         Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                         this.salir();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this,
+                                "Error al modificar el cliente durante el alta: " + ex.getMessage(), "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-                } else
-                {
+                } else {
                     dtoCliente = miController.darAltaPersona(dtoCliente);
                 }
 
-                if (dtoCliente != null)
-                {
-                    JOptionPane.showMessageDialog(this, "Fue dado de alta como Cliente: " + dtoCliente.getNombre() + " " + dtoCliente.getApellido(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                if (dtoCliente != null) {
+                    JOptionPane.showMessageDialog(this,
+                            "Fue dado de alta como Cliente: " + dtoCliente.getNombre() + " " + dtoCliente.getApellido(),
+                            "Informacion", JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
                     this.desactivarFormulario();
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "La persona No pudo darse de alta como Cliente", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "La persona No pudo darse de alta como Cliente", "ADVERTENCIA",
+                            JOptionPane.WARNING_MESSAGE);
                 }
 
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "La persona ya Esta Registrada como cliente", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "La persona ya Esta Registrada como cliente", "ADVERTENCIA",
+                        JOptionPane.WARNING_MESSAGE);
                 this.limpiarFormulario();
             }
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, msj, "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
 
     }
 
-    public void botonModoVista()
-    {
+    public void botonModoVista() {
         this.botonCancelar.setText("Cerrar");
         this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cerrar.png")));
     }
 
-    public void botonModoEdicion()
-    {
+    public void botonModoEdicion() {
         this.botonCancelar.setText("Cancelar");
         this.botonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("")));
     }
 
-    //Es publico porque dependiendo el tipo de utilizacion del formulario es como se carga
-    //la ventana activa
-    public JMenuItem getVentanaActiva()
-    {
+    // Es publico porque dependiendo el tipo de utilizacion del formulario es como
+    // se carga
+    // la ventana activa
+    public JMenuItem getVentanaActiva() {
         this.ventanaAdministrarCliente.setText(labelTitulo.getText());
         this.setTitle(labelTitulo.getText());
         return ventanaAdministrarCliente;
     }
 
-    public void setTamanioModificarPersona()
-    {
+    public void setTamanioModificarPersona() {
         this.setSize(649, 366);
         this.panelDatosPersona.setSize(306, 184);
     }
 
-    public void setTamanioCliente()
-    {
+    public void setTamanioCliente() {
         this.setSize(649, 650);
         this.panelDatosPersona.setSize(306, 184);
     }
 
-    public DtoPersona getDtoControlModificacion()
-    {
+    public DtoPersona getDtoControlModificacion() {
         return dtoPersonaOriginal;
     }
 
-    public void setDtoControlModificacion(DtoPersona dtoControlModificacion)
-    {
+    public void setDtoControlModificacion(DtoPersona dtoControlModificacion) {
         this.dtoPersonaOriginal = dtoControlModificacion;
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelDarAltaCliente = new javax.swing.JPanel();
@@ -894,17 +841,23 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -982,7 +935,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             }
         });
 
-        comboEstadoCivil.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a" }));
+        comboEstadoCivil.setModel(new javax.swing.DefaultComboBoxModel(
+                new String[] { "Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a" }));
         comboEstadoCivil.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboEstadoCivilActionPerformed(evt);
@@ -992,74 +946,119 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelDatosClienteLayout = new javax.swing.GroupLayout(panelDatosCliente);
         panelDatosCliente.setLayout(panelDatosClienteLayout);
         panelDatosClienteLayout.setHorizontalGroup(
-            panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDatosClienteLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(23, 23, 23)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelDatosClienteLayout.createSequentialGroup()
-                        .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(campoNacionalidad)
-                                .addComponent(campoFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                                .addComponent(campoCuit))
-                            .addComponent(campoOcupacion, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelDatosClienteLayout.createSequentialGroup()
-                                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(comboEstadoCivil, 0, 145, Short.MAX_VALUE)
-                                    .addComponent(comboSexo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(2, 2, 2)
-                                .addComponent(jLabel12)
-                                .addGap(1, 1, 1)
-                                .addComponent(campoNumeroNupcias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 10, Short.MAX_VALUE)))
-                .addGap(142, 142, 142))
-        );
+                panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDatosClienteLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel11)
+                                        .addComponent(jLabel13)
+                                        .addComponent(jLabel14)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel15)
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(23, 23, 23)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(panelDatosClienteLayout.createSequentialGroup()
+                                                .addGroup(panelDatosClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelDatosClienteLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addComponent(campoNacionalidad)
+                                                                .addComponent(campoFechaNacimiento,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 299,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(campoCuit))
+                                                        .addComponent(campoOcupacion,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 291,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGroup(panelDatosClienteLayout.createSequentialGroup()
+                                                                .addGroup(panelDatosClienteLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                        .addComponent(comboEstadoCivil, 0, 145,
+                                                                                Short.MAX_VALUE)
+                                                                        .addComponent(comboSexo, 0,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE))
+                                                                .addGap(2, 2, 2)
+                                                                .addComponent(jLabel12)
+                                                                .addGap(1, 1, 1)
+                                                                .addComponent(campoNumeroNupcias,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(0, 10, Short.MAX_VALUE)))
+                                .addGap(142, 142, 142)));
         panelDatosClienteLayout.setVerticalGroup(
-            panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDatosClienteLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(campoNacionalidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(campoFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(campoCuit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(14, 14, 14)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDatosClienteLayout.createSequentialGroup()
-                        .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(campoNumeroNupcias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comboEstadoCivil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(comboSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15)))
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13)
-                    .addComponent(campoOcupacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)))
-        );
+                panelDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDatosClienteLayout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel9)
+                                        .addComponent(campoNacionalidad, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(campoFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addGap(18, 18, 18)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(campoCuit, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel1))
+                                .addGap(14, 14, 14)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDatosClienteLayout.createSequentialGroup()
+                                                .addGroup(panelDatosClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(campoNumeroNupcias,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(comboEstadoCivil,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(panelDatosClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(comboSexo, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel15)))
+                                        .addComponent(jLabel11))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel13)
+                                        .addComponent(campoOcupacion, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDatosClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 62,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel14))));
 
         campoOcupacion.getAccessibleContext().setAccessibleName("");
         campoOcupacion.getAccessibleContext().setAccessibleDescription("");
@@ -1097,6 +1096,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 campoNumeroIdentificacionKeyReleased(evt);
             }
+
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 campoNumeroIdentificacionKeyTyped(evt);
             }
@@ -1142,235 +1142,275 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelDarAltaClienteLayout = new javax.swing.GroupLayout(panelDarAltaCliente);
         panelDarAltaCliente.setLayout(panelDarAltaClienteLayout);
         panelDarAltaClienteLayout.setHorizontalGroup(
-            panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelTitulo)
-                            .addComponent(labelBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(separador, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panelDatosCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                        .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                                .addGap(24, 24, 24)
-                                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(labelApellido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(labelTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaClienteLayout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(labelTelefono)
-                                    .addComponent(labelNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(labelCorreo))))
-                        .addGap(32, 32, 32)
-                        .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                                .addComponent(botonBuscarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                                .addGap(336, 336, 336))
-                            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                                .addComponent(panelDatosPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addComponent(advertencia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaClienteLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
-        );
+                panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                .addGroup(panelDarAltaClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                .addGap(24, 24, 24)
+                                                .addGroup(panelDarAltaClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(labelTitulo)
+                                                        .addComponent(labelBusqueda,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 62,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(separador, javax.swing.GroupLayout.PREFERRED_SIZE, 545,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(panelDatosCliente, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                .addGroup(panelDarAltaClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                                .addGap(24, 24, 24)
+                                                                .addGroup(panelDarAltaClienteLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(labelApellido,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)
+                                                                        .addComponent(jLabel2,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)
+                                                                        .addComponent(labelTipo,
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE)))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                panelDarAltaClienteLayout.createSequentialGroup()
+                                                                        .addGap(22, 22, 22)
+                                                                        .addGroup(panelDarAltaClienteLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(labelTelefono)
+                                                                                .addComponent(labelNumero,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        118,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(labelCorreo))))
+                                                .addGap(32, 32, 32)
+                                                .addGroup(panelDarAltaClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                                .addComponent(botonBuscarCliente,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 129,
+                                                                        Short.MAX_VALUE)
+                                                                .addGap(336, 336, 336))
+                                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                                .addComponent(panelDatosPersona,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 306,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(2, 2, 2)
+                                                                .addComponent(advertencia,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)))))
+                                .addContainerGap())
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaClienteLayout
+                                .createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 118,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)));
         panelDarAltaClienteLayout.setVerticalGroup(
-            panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                .addComponent(labelTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonBuscarCliente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelBusqueda))
-                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaClienteLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelDatosPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                        .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addComponent(jLabel2)
+                panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                .addComponent(labelTitulo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(botonBuscarCliente, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelBusqueda))
+                                .addGroup(panelDarAltaClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelDarAltaClienteLayout.createSequentialGroup()
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(panelDatosPersona,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 184,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                .addGroup(panelDarAltaClienteLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                                .addGap(11, 11, 11)
+                                                                .addComponent(jLabel2)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(labelApellido)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(labelTipo)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(labelNumero))
+                                                        .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
+                                                                .addGap(100, 100, 100)
+                                                                .addComponent(advertencia,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 19,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(labelTelefono)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(labelCorreo)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(labelApellido)
-                                .addGap(18, 18, 18)
-                                .addComponent(labelTipo)
+                                .addComponent(separador, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(panelDatosCliente, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(labelNumero))
-                            .addGroup(panelDarAltaClienteLayout.createSequentialGroup()
-                                .addGap(100, 100, 100)
-                                .addComponent(advertencia, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(labelTelefono)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(labelCorreo)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(separador, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(panelDatosCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelDarAltaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
-        );
+                                .addGroup(panelDarAltaClienteLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)));
 
         labelTitulo.getAccessibleContext().setAccessibleDescription("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelDarAltaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelDarAltaCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 645,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelDarAltaCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelDarAltaCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaAdministrarCliente);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCancelarActionPerformed
         this.limpiarFormulario();
         this.dispose();
         salir();
         Principal.removeVentanaActivas(AdministrarCliente.getInstancia().getVentanaActiva());
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void campoTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_campoTelefonoActionPerformed
+    private void campoTelefonoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_campoTelefonoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_campoTelefonoActionPerformed
+    }// GEN-LAST:event_campoTelefonoActionPerformed
 
-    private void campoNumeroIdentificacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNumeroIdentificacionKeyTyped
-    }//GEN-LAST:event_campoNumeroIdentificacionKeyTyped
+    private void campoNumeroIdentificacionKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNumeroIdentificacionKeyTyped
+    }// GEN-LAST:event_campoNumeroIdentificacionKeyTyped
 
-    private void campoNumeroIdentificacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNumeroIdentificacionKeyReleased
+    private void campoNumeroIdentificacionKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNumeroIdentificacionKeyReleased
         Boolean flag = false;
         String campo = campoNumeroIdentificacion.getText();
 
         flag = AdministradorValidaciones.getInstancia().validarCampoSoloNumerosEnteros(campo);
 
-        if (!flag)
-        {
+        if (!flag) {
             this.advertencia.setText("Esta Ingresando Caracteres");
-        } else
-        {
+        } else {
             this.advertencia.setText(" ");
         }
 
-    }//GEN-LAST:event_campoNumeroIdentificacionKeyReleased
+    }// GEN-LAST:event_campoNumeroIdentificacionKeyReleased
 
-    private void comboTipoIdentificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTipoIdentificacionActionPerformed
+    private void comboTipoIdentificacionActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboTipoIdentificacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboTipoIdentificacionActionPerformed
+    }// GEN-LAST:event_comboTipoIdentificacionActionPerformed
 
-    private void comboEstadoCivilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoCivilActionPerformed
+    private void comboEstadoCivilActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboEstadoCivilActionPerformed
         if (comboEstadoCivil.getSelectedItem().toString().equals("Divorciado/a")
                 || comboEstadoCivil.getSelectedItem().toString().equals("Casado/a")
-                || comboEstadoCivil.getSelectedItem().toString().equals("Viudo/a"))
-        {
+                || comboEstadoCivil.getSelectedItem().toString().equals("Viudo/a")) {
             campoNumeroNupcias.setEnabled(true);
-        } else
-        {
+        } else {
             Integer num = new Integer(0);
             campoNumeroNupcias.setValue(num);
             campoNumeroNupcias.setEnabled(false);
         }
 
-    }//GEN-LAST:event_comboEstadoCivilActionPerformed
+    }// GEN-LAST:event_comboEstadoCivilActionPerformed
 
-    private void campoCuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_campoCuitActionPerformed
+    private void campoCuitActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_campoCuitActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_campoCuitActionPerformed
+    }// GEN-LAST:event_campoCuitActionPerformed
 
-    private void comboSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSexoActionPerformed
+    private void comboSexoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_comboSexoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_comboSexoActionPerformed
+    }// GEN-LAST:event_comboSexoActionPerformed
 
-    private void campoNumeroNupciasStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_campoNumeroNupciasStateChanged
+    private void campoNumeroNupciasStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_campoNumeroNupciasStateChanged
         int valor = this.campoNumeroNupcias.getValue().hashCode();
-        if (valor < 0)
-        {
+        if (valor < 0) {
             this.campoNumeroNupcias.setValue(0);
         }
-    }//GEN-LAST:event_campoNumeroNupciasStateChanged
+    }// GEN-LAST:event_campoNumeroNupciasStateChanged
 
-    private void botonBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarClienteActionPerformed
-        //Busca una persona, el parametro de tipo de busqueda es el titulo del formulario
+    private void botonBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonBuscarClienteActionPerformed
+        // Busca una persona, el parametro de tipo de busqueda es el titulo del
+        // formulario
         BuscarCliente formBuscarCliente = new BuscarCliente();
         formBuscarCliente.setTipoBusqueda(this.labelTitulo.getText());
         formBuscarCliente.setTituloForm(this.labelTitulo.getText());
         Principal.cargarFormulario(formBuscarCliente);
 
         Principal.setVentanasActivas(BuscarCliente.getVentanaBuscarCliente());
-    }//GEN-LAST:event_botonBuscarClienteActionPerformed
+    }// GEN-LAST:event_botonBuscarClienteActionPerformed
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
-        switch (labelTitulo.getText())
-        {
-            case ConstantesGui.MODIFICAR_PERSONA:
-            {
-                try
-                {
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAceptarActionPerformed
+        switch (labelTitulo.getText()) {
+            case ConstantesGui.MODIFICAR_PERSONA: {
+                try {
                     this.modificarPersona();
 
-                }
-                catch (Exception ex)
-                {
-                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada: Modificar persona", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada: Modificar persona", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                     this.salir();
                 }
                 break;
             }
-            case ConstantesGui.MODIFICAR_CLIENTE:
-            {
-                try
-                {
+            case ConstantesGui.MODIFICAR_CLIENTE: {
+                try {
                     this.modificarCliente();
 
-                }
-                catch (Exception ex)
-                {
-                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada: Modificar cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada: Modificar cliente", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                     this.salir();
                 }
                 break;
             }
-            case ConstantesGui.DAR_ALTA_CLIENTE:
-            {
-                try
-                {
+            case ConstantesGui.DAR_ALTA_CLIENTE: {
+                try {
                     this.darAltaCliente();
-                }
-                catch (Exception ex)
-                {
-                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada:Dar alta cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada:Dar alta cliente", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
                     this.salir();
                 }
@@ -1378,8 +1418,9 @@ public class AdministrarCliente extends javax.swing.JInternalFrame
 
             }
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_botonAceptarActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JLabel advertencia;
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonBuscarCliente;

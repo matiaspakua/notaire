@@ -30,8 +30,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author matias
  */
-public class RetirarTestimonio extends javax.swing.JInternalFrame
-{
+public class RetirarTestimonio extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaRetirarTestimonio = new JMenuItem("Ventana Retirar Testimonio");
@@ -46,54 +45,48 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
     /**
      * Creates new form RetirarTestimonio
      */
-    public RetirarTestimonio()
-    {
+    public RetirarTestimonio() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         grillaTestimonios.setAutoCreateRowSorter(true);
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaRetirarTestimonio()
-    {
+    public static JMenuItem getVentanaRetirarTestimonio() {
         return ventanaRetirarTestimonio;
     }
 
-    public Boolean cargarFormulario(DtoEscritura miDtoEscritura)
-    {
+    public Boolean cargarFormulario(DtoEscritura miDtoEscritura) {
         miEscritura = miDtoEscritura;
 
         testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
 
         Boolean cargado = true;
-        if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty())
-        {
+        if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty()) {
             DtoTestimonio dtoTestimonio = testimoniosEscritura.get(testimoniosEscritura.size() - 1);
             copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
 
-            for (Iterator<DtoCopia> it1 = copias.iterator(); it1.hasNext();)
-            {
+            for (Iterator<DtoCopia> it1 = copias.iterator(); it1.hasNext();) {
                 DtoCopia dtoCopia = it1.next();
 
-                if (dtoCopia.getFechaRetiro() == null)
-                {
+                if (dtoCopia.getFechaRetiro() == null) {
                     retirados = false;
                     cantidadSinRetirar++;
                 }
             }
 
-            if (retirados != true)
-            {
+            if (retirados != true) {
 
                 campoNumeroEscritura.setText(new Integer(miDtoEscritura.getNumero()).toString());
                 campoFechaEscritura.setText(miDtoEscritura.getFechaEscrituracion().toString());
                 campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
-                campoFolioHasta.setText(new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero()).toString());
+                campoFolioHasta.setText(
+                        new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero())
+                                .toString());
                 campoCopias.setText(cantidadSinRetirar.toString());
 
                 DtoPersona escribano = miController.obtenerEscribanoEscritura(miDtoEscritura);
@@ -101,15 +94,16 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
                 cargarGrilla(testimoniosEscritura);
                 cargarCombo();
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "<HTML>Las copias del testimonio de la escritura seleccionada<BR> han sido todos retirados.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "<HTML>Las copias del testimonio de la escritura seleccionada<BR> han sido todos retirados.</HTML>",
+                        "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 cargado = false;
                 salir();
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No existen testimonios generados para la Escritura seleccionada.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No existen testimonios generados para la Escritura seleccionada.",
+                    "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
             cargado = false;
             salir();
         }
@@ -117,42 +111,35 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
     }
 
-    private void cargarCombo()
-    {
+    private void cargarCombo() {
         String nombre = "";
         ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones;
         listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
 
-        for (int i = 0; i < listaDtoIdentificaciones.size(); i++)
-        {
+        for (int i = 0; i < listaDtoIdentificaciones.size(); i++) {
             nombre = listaDtoIdentificaciones.get(i).getNombre();
             comboTipoIdentificacion.addItem(nombre);
         }
 
     }
 
-    private void cargarGrilla(List<DtoTestimonio> testimonios)
-    {
+    private void cargarGrilla(List<DtoTestimonio> testimonios) {
 
-        for (Iterator<DtoTestimonio> it = testimonios.iterator(); it.hasNext();)
-        {
+        for (Iterator<DtoTestimonio> it = testimonios.iterator(); it.hasNext();) {
             DtoTestimonio dtoTestimonio = it.next();
             Boolean inscripto = false;
 
-            List<DtoMovimientoTestimonio> movimientoTestimonios = miController.obtenerMovimientosTestimonio(dtoTestimonio);
+            List<DtoMovimientoTestimonio> movimientoTestimonios = miController
+                    .obtenerMovimientosTestimonio(dtoTestimonio);
             copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
 
-            if (movimientoTestimonios != null && !movimientoTestimonios.isEmpty())
-            {
-                for (Iterator<DtoMovimientoTestimonio> it1 = movimientoTestimonios.iterator(); it1.hasNext();)
-                {
+            if (movimientoTestimonios != null && !movimientoTestimonios.isEmpty()) {
+                for (Iterator<DtoMovimientoTestimonio> it1 = movimientoTestimonios.iterator(); it1.hasNext();) {
                     DtoMovimientoTestimonio dtoMovimientoTestimonio = it1.next();
 
-                    if (dtoMovimientoTestimonio.isInscripta())
-                    {
+                    if (dtoMovimientoTestimonio.isInscripta()) {
                         inscripto = true;
-                    } else
-                    {
+                    } else {
                         inscripto = false;
                     }
                 }
@@ -161,17 +148,15 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
             Integer numero = (Integer) dtoTestimonio.getNumero();
             String fechaImpresion = null;
 
-            if (copias != null && !copias.isEmpty())
-            {
+            if (copias != null && !copias.isEmpty()) {
                 fechaImpresion = copias.get(0).getFechaImpresion().toString();
 
-                Object[] datos =
-                {
-                    numero,
-                    fechaImpresion,
-                    inscripto,
-                    copias.size(),
-                    dtoTestimonio.getObservaciones()
+                Object[] datos = {
+                        numero,
+                        fechaImpresion,
+                        inscripto,
+                        copias.size(),
+                        dtoTestimonio.getObservaciones()
                 };
                 ((DefaultTableModel) grillaTestimonios.getModel()).addRow(datos);
             }
@@ -179,11 +164,14 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelRetirarTestimonio = new javax.swing.JPanel();
@@ -222,17 +210,23 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -271,26 +265,26 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
         campoNumeroEscritura.setEditable(false);
 
         grillaTestimonios.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Número de Testimonio", "Fecha de Expedición", "Inscripto", "Cantidad Copias", "Observaciones"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class
+                },
+                new String[] {
+                        "Número de Testimonio", "Fecha de Expedición", "Inscripto", "Cantidad Copias", "Observaciones"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Integer.class,
+                    java.lang.String.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+            boolean[] canEdit = new boolean[] {
+                    false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane3.setViewportView(grillaTestimonios);
@@ -310,7 +304,8 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
         jLabel12.setText("Cantidad de copias:");
 
-        selectorCopias.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+        selectorCopias.setModel(
+                new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 
         jLabel13.setText("Escribano Registro:");
 
@@ -323,167 +318,269 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelRetirarTestimonioLayout = new javax.swing.GroupLayout(panelRetirarTestimonio);
         panelRetirarTestimonio.setLayout(panelRetirarTestimonioLayout);
         panelRetirarTestimonioLayout.setHorizontalGroup(
-            panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRetirarTestimonioLayout.createSequentialGroup()
-                        .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(selectorCopias, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel7)
-                            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(campoNombreApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(comboTipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                        .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelRetirarTestimonioLayout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel10)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(campoFolioDesde, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
-                                    .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane3)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelRetirarTestimonioLayout.createSequentialGroup()
+                                                        .addGroup(panelRetirarTestimonioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jLabel12)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                        .addComponent(selectorCopias,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                95,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(jLabel7)
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jLabel8)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                        .addComponent(campoNombreApellido,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                284,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jLabel9)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                        .addComponent(comboTipoIdentificacion,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                99,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(18, 18, 18)
+                                                                        .addComponent(jLabel11)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                        .addComponent(campoNumeroIdentificacion,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                113,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                            .addComponent(jLabel13)
-                                            .addGap(30, 30, 30)
-                                            .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(campoRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                                .addComponent(campoNumeroEscritura)))
-                                        .addComponent(jLabel2)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel3))
-                                .addGap(18, 18, 18)
-                                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                        .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel6))
-                                    .addComponent(campoFechaEscritura)))
-                            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(campoCopias, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                                                .addGroup(panelRetirarTestimonioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                false)
+                                                                        .addGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                panelRetirarTestimonioLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addComponent(jLabel4)
+                                                                                        .addPreferredGap(
+                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                        .addComponent(jLabel10)
+                                                                                        .addPreferredGap(
+                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                        .addComponent(campoFolioDesde,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                80, Short.MAX_VALUE))
+                                                                        .addGroup(panelRetirarTestimonioLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addComponent(jLabel13)
+                                                                                        .addGap(30, 30, 30)
+                                                                                        .addGroup(
+                                                                                                panelRetirarTestimonioLayout
+                                                                                                        .createParallelGroup(
+                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                false)
+                                                                                                        .addComponent(
+                                                                                                                campoRegistro,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                80,
+                                                                                                                Short.MAX_VALUE)
+                                                                                                        .addComponent(
+                                                                                                                campoNumeroEscritura)))
+                                                                                .addComponent(jLabel2)))
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel5)
+                                                                        .addComponent(jLabel3))
+                                                                .addGap(18, 18, 18)
+                                                                .addGroup(panelRetirarTestimonioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                false)
+                                                                        .addGroup(panelRetirarTestimonioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(campoFolioHasta,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        80,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(jLabel6))
+                                                                        .addComponent(campoFechaEscritura)))
+                                                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                                                .addComponent(jLabel14)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(campoCopias,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 85,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap()));
         panelRetirarTestimonioLayout.setVerticalGroup(
-            panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(campoRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoFechaEscritura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel4)
-                    .addComponent(campoFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(campoCopias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(campoNombreApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(comboTipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                        .addGap(21, 70, Short.MAX_VALUE)
-                        .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(selectorCopias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                panelRetirarTestimonioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel13)
+                                        .addComponent(campoRegistro, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(campoNumeroEscritura, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(campoFechaEscritura, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel10)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel4)
+                                        .addComponent(campoFolioDesde, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(campoFolioHasta, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel14)
+                                        .addComponent(campoCopias, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel8)
+                                        .addComponent(campoNombreApellido, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel9)
+                                        .addComponent(comboTipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel11)
+                                        .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(panelRetirarTestimonioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                                .addGap(21, 70, Short.MAX_VALUE)
+                                                .addGroup(panelRetirarTestimonioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(panelRetirarTestimonioLayout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(panelRetirarTestimonioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel12)
+                                                        .addComponent(selectorCopias,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelRetirarTestimonio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelRetirarTestimonio, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelRetirarTestimonio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelRetirarTestimonio, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonAceptarActionPerformed
-    {//GEN-HEADEREND:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonAceptarActionPerformed
+    {// GEN-HEADEREND:event_botonAceptarActionPerformed
 
         /*
          * ESTE CODIGO VA CUANDO IMPLEMENTEMOS LO DE PAGOS!
          *
-         * DtoEscritura escritura = miController.buscarEscritura(miEscritura); Float saldo = 0.0f;
-         * Boolean flag = true; for (Iterator<DtoTramite> it = escritura.getTramites().iterator();
-         * it.hasNext();) { DtoTramite dtoTramite = it.next(); DtoPresupuesto presupuesto =
+         * DtoEscritura escritura = miController.buscarEscritura(miEscritura); Float
+         * saldo = 0.0f;
+         * Boolean flag = true; for (Iterator<DtoTramite> it =
+         * escritura.getTramites().iterator();
+         * it.hasNext();) { DtoTramite dtoTramite = it.next(); DtoPresupuesto
+         * presupuesto =
          * miController.buscarPresupuesto(dtoTramite.getPresupuesto());
          *
          * saldo = saldo + presupuesto.getSaldo(); }
          *
          * if(saldo > 0.0f){ flag = false; }
          *
-         * if(flag = false){ int opcion = JOptionPane.showConfirmDialog(this, "<HTML>El Cliente
-         * posee una deuda sobre la Escritura de $"+ saldo + ". <BR> ¿Desea seguir registrando el
+         * if(flag = false){ int opcion = JOptionPane.showConfirmDialog(this, "<HTML>El
+         * Cliente
+         * posee una deuda sobre la Escritura de $"+ saldo + ". <BR> ¿Desea seguir
+         * registrando el
          * retiro de copias?</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE); }
          */
-        if (retirados != true)
-        {
+        if (retirados != true) {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
             if (!admin.validarCampoVacio(campoNombreApellido.getText())
-                    && !admin.validarCampoVacio(campoNumeroIdentificacion.getText()))
-            {
+                    && !admin.validarCampoVacio(campoNumeroIdentificacion.getText())) {
                 Integer cantidadCopiasRetiradas = (Integer) selectorCopias.getValue();
                 String nombre = campoNombreApellido.getText();
                 String tipoDoc = comboTipoIdentificacion.getSelectedItem().toString();
@@ -498,20 +595,16 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
                 if (cantidadCopiasRetiradas <= copias.size()
                         && cantidadSinRetirar > 0
-                        && cantidadCopiasRetiradas <= cantidadSinRetirar)
-                {
-                    try
-                    {
-                        for (int i = 0; i < copias.size(); i++)
-                        {
+                        && cantidadCopiasRetiradas <= cantidadSinRetirar) {
+                    try {
+                        for (int i = 0; i < copias.size(); i++) {
                             DtoCopia miCopia = copias.get(i);
 
-                            if (miCopia.getFechaRetiro() == null)
-                            {
-                                if (modificadasCopias != 0)
-                                {
+                            if (miCopia.getFechaRetiro() == null) {
+                                if (modificadasCopias != 0) {
                                     miCopia.setFechaRetiro(Calendar.getInstance().getTime());
-                                    miCopia.setObservaciones("Retiro " + nombre + " " + tipoDoc + " " + numeroDoc + ", el dia " + fechaActual + ".");
+                                    miCopia.setObservaciones("Retiro " + nombre + " " + tipoDoc + " " + numeroDoc
+                                            + ", el dia " + fechaActual + ".");
                                     copiasModificar.add(miCopia);
                                     modificadasCopias--;
                                 }
@@ -520,48 +613,48 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame
 
                         Boolean modificadas = miController.modificarCopiasTestimonio(copias, miTestimonio);
 
-                        if (modificadas)
-                        {
-                            JOptionPane.showMessageDialog(this, "El retiro ha sido registrado.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                        if (modificadas) {
+                            JOptionPane.showMessageDialog(this, "El retiro ha sido registrado.", "INFORMACION",
+                                    JOptionPane.INFORMATION_MESSAGE);
                             salir();
                         }
-                    }
-                    catch (ClassModifiedException ex)
-                    {
-                        JOptionPane.showMessageDialog(this, "Esta informacion ha sido recientemente modificada por otro usuario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this,
+                                "Ocurrio un error al registrar el retiro: " + ex.getMessage(), "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
+                        Logger.getLogger(RetirarTestimonio.class.getName()).log(Level.SEVERE, null, ex);
                         salir();
                     }
-                    catch (ClassEliminatedException ex)
-                    {
-                        Logger.getLogger(RetirarTestimonio.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "<HTML>El maximo de copias a retirar es de " + copias.size() + ".<BR>No puede retirar mas copias de <BR>las que existen sin retirar.</HTML>", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "<HTML>El maximo de copias a retirar es de " + copias.size()
+                                    + ".<BR>No puede retirar mas copias de <BR>las que existen sin retirar.</HTML>",
+                            "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 }
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "Debe completar todos los datos.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe completar todos los datos.", "ADVERTENCIA",
+                        JOptionPane.WARNING_MESSAGE);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Todas las copias del testimonio, han sido retiradas.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Todas las copias del testimonio, han sido retiradas.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
             salir();
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    }// GEN-LAST:event_botonAceptarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCancelarActionPerformed
-    {//GEN-HEADEREND:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCancelarActionPerformed
+    {// GEN-HEADEREND:event_botonCancelarActionPerformed
         salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaRetirarTestimonio);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_formInternalFrameClosed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JTextField campoCopias;

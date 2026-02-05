@@ -27,14 +27,15 @@ import javax.swing.table.TableModel;
  * REGLA DE NEGOCIO:
  * <p>
  *
- * <lo> <li> Si queda un saldo a favor del Cliente, al recalcular el total del Presupuesto, se crea
- * un pago con valor negativo para que quede bien el saldo restante. </li> </lo>
+ * <lo>
+ * <li>Si queda un saldo a favor del Cliente, al recalcular el total del
+ * Presupuesto, se crea
+ * un pago con valor negativo para que quede bien el saldo restante.</li> </lo>
  *
  *
  * @author Tefi
  */
-public class ModificarPresupuesto extends javax.swing.JInternalFrame
-{
+public class ModificarPresupuesto extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaModificarPresupuesto = new JMenuItem("Ventana Modificar Presupuestos");
@@ -51,8 +52,7 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarPresupuesto
      */
-    public ModificarPresupuesto()
-    {
+    public ModificarPresupuesto() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
@@ -67,70 +67,57 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
     }
 
-    public void setPersona(DtoPersona persona)
-    {
+    public void setPersona(DtoPersona persona) {
         miDtoPersona = persona;
     }
 
-    public void setPresupuesto(DtoPresupuesto dto)
-    {
+    public void setPresupuesto(DtoPresupuesto dto) {
         miDtoPresupuesto = dto;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarPresupuesto()
-    {
+    public static JMenuItem getVentanaModificarPresupuesto() {
         return ventanaModificarPresupuesto;
     }
 
-    public void cargarFormulario()
-    {
+    public void cargarFormulario() {
 
         campoNombrePersona.setText(miDtoPersona.getNombre() + " " + miDtoPersona.getApellido());
         campoObservaciones.setText(miDtoPresupuesto.getObservaciones());
         campoNombreTramite.setText(miDtoPresupuesto.getTramite().getTipoDeTramite().getNombre());
         campoTotal.setText(miDtoPresupuesto.getTotal().toString());
 
-        if (miDtoPresupuesto.getTramite().getTipoDeTramite().getAsociaInmuebles())
-        {
+        if (miDtoPresupuesto.getTramite().getTipoDeTramite().getAsociaInmuebles()) {
             botonDetalleInmueble.setEnabled(true);
-        } else
-        {
+        } else {
             botonDetalleInmueble.setEnabled(false);
         }
 
         listaItems = miController.buscarItemsPresupuesto(miDtoPresupuesto);
 
-        if (listaItems != null)
-        {
+        if (listaItems != null) {
             DtoItem miDto = null;
 
-            for (int i = 0; i < listaItems.size(); i++)
-            {
+            for (int i = 0; i < listaItems.size(); i++) {
 
                 miDto = listaItems.get(i);
 
-                if (miDto.isFijo())
-                {
-                    Object[] datos =
-                    {
-                        miDto.getNombre(),
-                        miDto.getValor()
+                if (miDto.isFijo()) {
+                    Object[] datos = {
+                            miDto.getNombre(),
+                            miDto.getValor()
                     };
                     ((DefaultTableModel) grillaValoresFijos.getModel()).addRow(datos);
-                } else
-                {
+                } else {
 
-                    Object[] datos =
-                    {
-                        miDto.getNombre(),
-                        miDto.getValor(),
-                        miDto.getPorcentaje(),
-                        miDto.getObservaciones()
+                    Object[] datos = {
+                            miDto.getNombre(),
+                            miDto.getValor(),
+                            miDto.getPorcentaje(),
+                            miDto.getObservaciones()
                     };
                     ((DefaultTableModel) grillaValoresVariables.getModel()).addRow(datos);
                 }
@@ -143,14 +130,12 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             botonAgregarItem.setEnabled(true);
             botonEliminarItem.setEnabled(true);
             botonCalcular.setEnabled(true);
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "ERROR: Este presupuesto no tiene items asociados.");
         }
     }
 
-    public void limpiarFormulario()
-    {
+    public void limpiarFormulario() {
         campoNombrePersona.setText(" ");
         campoObservaciones.setText(" ");
         campoNombreTramite.setText(" ");
@@ -162,27 +147,28 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
         int i = ((DefaultTableModel) grillaValoresVariables.getModel()).getRowCount() - 1;
 
-        while (((DefaultTableModel) grillaValoresVariables.getModel()).getRowCount() > 0)
-        {
+        while (((DefaultTableModel) grillaValoresVariables.getModel()).getRowCount() > 0) {
             ((DefaultTableModel) grillaValoresVariables.getModel()).removeRow(i);
             i--;
         }
 
         int j = ((DefaultTableModel) grillaValoresFijos.getModel()).getRowCount() - 1;
 
-        while (((DefaultTableModel) grillaValoresFijos.getModel()).getRowCount() > 0)
-        {
+        while (((DefaultTableModel) grillaValoresFijos.getModel()).getRowCount() > 0) {
             ((DefaultTableModel) grillaValoresFijos.getModel()).removeRow(j);
             j--;
         }
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -224,17 +210,23 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -294,19 +286,18 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         });
 
         grillaValoresVariables.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Item", "Valor", "Porcentaje", "Observaciones"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Float.class, java.lang.Integer.class, java.lang.String.class
+                },
+                new String[] {
+                        "Item", "Valor", "Porcentaje", "Observaciones"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.String.class, java.lang.Float.class, java.lang.Integer.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         grillaValoresVariables.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -343,179 +334,276 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         jLabel9.setText("Detalle valores fijos:");
 
         grillaValoresFijos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Item", "Valor"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Float.class
+                },
+                new String[] {
+                        "Item", "Valor"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.String.class, java.lang.Float.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false
+            boolean[] canEdit = new boolean[] {
+                    false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane3.setViewportView(grillaValoresFijos);
 
-        javax.swing.GroupLayout panelModificarPresupuestoLayout = new javax.swing.GroupLayout(panelModificarPresupuesto);
+        javax.swing.GroupLayout panelModificarPresupuestoLayout = new javax.swing.GroupLayout(
+                panelModificarPresupuesto);
         panelModificarPresupuesto.setLayout(panelModificarPresupuestoLayout);
         panelModificarPresupuestoLayout.setHorizontalGroup(
-            panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelModificarPresupuestoLayout.createSequentialGroup()
-                            .addComponent(jLabel7)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(campoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(botonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelModificarPresupuestoLayout.createSequentialGroup()
-                                    .addGap(0, 88, Short.MAX_VALUE)
-                                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addContainerGap())
-                                .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                                    .addComponent(labelSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(0, 0, Short.MAX_VALUE))))
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonBuscarPresupuesto))
-                            .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(campoNombreTramite, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonAgregarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEliminarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelModificarPresupuestoLayout.createSequentialGroup()
-                                    .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel6)
-                                        .addComponent(jLabel5))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(botonDetalleInmueble)
-                                        .addComponent(jScrollPane2))))
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelModificarPresupuestoLayout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addGap(36, 36, 36)
-                                    .addComponent(campoNombrePersona))
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(17, Short.MAX_VALUE))))
-        );
+                panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelModificarPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelModificarPresupuestoLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                        panelModificarPresupuestoLayout.createSequentialGroup()
+                                                                .addComponent(jLabel7)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(campoTotal,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(botonCalcular,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGroup(panelModificarPresupuestoLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                panelModificarPresupuestoLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addGap(0, 88, Short.MAX_VALUE)
+                                                                                        .addComponent(botonAceptar,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                120,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addPreferredGap(
+                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                        .addComponent(botonCancelar,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                120,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                        .addContainerGap())
+                                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(labelSaldo,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        198,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addGap(0, 0, Short.MAX_VALUE))))
+                                                .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 452,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                .createSequentialGroup()
+                                                                .addComponent(jLabel2)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(botonBuscarPresupuesto))
+                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                .createSequentialGroup()
+                                                                .addComponent(jLabel3)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(campoNombreTramite,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 335,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(jScrollPane3,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                .createSequentialGroup()
+                                                                .addComponent(jScrollPane1,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 450,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(botonAgregarItem,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(botonEliminarItem,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addComponent(jSeparator3,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 445,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        panelModificarPresupuestoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(
+                                                                                        panelModificarPresupuestoLayout
+                                                                                                .createParallelGroup(
+                                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(jLabel6)
+                                                                                                .addComponent(jLabel5))
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addGroup(
+                                                                                        panelModificarPresupuestoLayout
+                                                                                                .createParallelGroup(
+                                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(
+                                                                                                        botonDetalleInmueble)
+                                                                                                .addComponent(
+                                                                                                        jScrollPane2))))
+                                                        .addComponent(jLabel8)
+                                                        .addComponent(jLabel9)
+                                                        .addGroup(panelModificarPresupuestoLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        panelModificarPresupuestoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(jLabel4)
+                                                                                .addGap(36, 36, 36)
+                                                                                .addComponent(campoNombrePersona))
+                                                                .addComponent(jSeparator1,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 454,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addContainerGap(17, Short.MAX_VALUE)))));
         panelModificarPresupuestoLayout.setVerticalGroup(
-            panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(botonBuscarPresupuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(campoNombrePersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(botonDetalleInmueble))
-                        .addGap(18, 18, 18)
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(campoNombreTramite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(botonAgregarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonEliminarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel7)
-                    .addComponent(campoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelSaldo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addGroup(panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                panelModificarPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelModificarPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(panelModificarPresupuestoLayout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(botonBuscarPresupuesto,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel2))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel4)
+                                                        .addComponent(campoNombrePersona,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(botonDetalleInmueble))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel6)
+                                                        .addComponent(jScrollPane2,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 59,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(panelModificarPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(campoNombreTramite,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel3,
+                                                                javax.swing.GroupLayout.Alignment.TRAILING))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel8)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(botonAgregarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonEliminarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 96,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelModificarPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel7)
+                                        .addComponent(campoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonCalcular, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelSaldo, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41,
+                                        Short.MAX_VALUE)
+                                .addGroup(panelModificarPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         jScrollPane4.setViewportView(panelModificarPresupuesto);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane4));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonCalcularActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCalcularActionPerformed
-    {//GEN-HEADEREND:event_botonCalcularActionPerformed
+    private void botonCalcularActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCalcularActionPerformed
+    {// GEN-HEADEREND:event_botonCalcularActionPerformed
 
         this.calcularTotal();
         campoTotal.setText(totalNuevo.toString());
 
-    }//GEN-LAST:event_botonCalcularActionPerformed
+    }// GEN-LAST:event_botonCalcularActionPerformed
 
-    private void calcularTotal()
-    {
+    private void calcularTotal() {
 
-        if (miDtoPresupuesto != null)
-        {
+        if (miDtoPresupuesto != null) {
 
             TableModel miGrilla = grillaValoresVariables.getModel();
             int filas = miGrilla.getRowCount();
@@ -526,30 +614,24 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
             total = miDtoPresupuesto.getTotal();
             totalNuevo = 0f;
 
-            for (int i = 0; i < filas; i++)
-            {
+            for (int i = 0; i < filas; i++) {
                 totalNuevo = totalNuevo + Float.parseFloat((miGrilla.getValueAt(i, 1)).toString());
             }
 
-            for (int i = 0; i < filasFijos; i++)
-            {
+            for (int i = 0; i < filasFijos; i++) {
                 totalNuevo = totalNuevo + Float.parseFloat((miGrillaFijos.getValueAt(i, 1)).toString());
             }
 
-            if (totalNuevo > total)
-            {
+            if (totalNuevo > total) {
                 saldo = miDtoPresupuesto.getSaldo() + totalNuevo - total;
-            } else if (totalNuevo < total)
-            {
-                //Traigo los pagos ya realizados por el cliente para este presupuesto:
+            } else if (totalNuevo < total) {
+                // Traigo los pagos ya realizados por el cliente para este presupuesto:
                 List<DtoPago> pagosPresupuesto = miController.buscarPagosPresupuesto(miDtoPresupuesto);
 
-                if (pagosPresupuesto != null && !pagosPresupuesto.isEmpty())
-                {
+                if (pagosPresupuesto != null && !pagosPresupuesto.isEmpty()) {
                     Float montoPagos = 0f;
 
-                    for (Iterator<DtoPago> it = pagosPresupuesto.iterator(); it.hasNext();)
-                    {
+                    for (Iterator<DtoPago> it = pagosPresupuesto.iterator(); it.hasNext();) {
                         DtoPago dtoPago = it.next();
 
                         montoPagos += dtoPago.getMonto();
@@ -557,38 +639,34 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
                     saldo = totalNuevo - montoPagos;
 
-                    if (saldo < 0)
-                    {
+                    if (saldo < 0) {
                         labelSaldo.setText("SALDO A FAVOR: $" + (-saldo));
-                    } else
-                    {
+                    } else {
                         labelSaldo.setText("");
                     }
-                } else
-                {
+                } else {
                     saldo = totalNuevo;
                 }
 
-            } else
-            {
+            } else {
                 saldo = miDtoPresupuesto.getSaldo();
             }
 
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaModificarPresupuesto);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonBuscarPresupuestoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonBuscarPresupuestoActionPerformed
-    {//GEN-HEADEREND:event_botonBuscarPresupuestoActionPerformed
+    private void botonBuscarPresupuestoActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonBuscarPresupuestoActionPerformed
+    {// GEN-HEADEREND:event_botonBuscarPresupuestoActionPerformed
         limpiarFormulario();
 
         BuscarPresupuesto miBuscarPresupuesto = new BuscarPresupuesto();
@@ -596,10 +674,10 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
         miBuscarPresupuesto.setFormModificarPresupuesto(this);
         Principal.cargarFormulario(miBuscarPresupuesto);
         Principal.setVentanasActivas(BuscarPresupuesto.getVentanaBuscarPresupuesto());
-    }//GEN-LAST:event_botonBuscarPresupuestoActionPerformed
+    }// GEN-LAST:event_botonBuscarPresupuestoActionPerformed
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonAceptarActionPerformed
-    {//GEN-HEADEREND:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonAceptarActionPerformed
+    {// GEN-HEADEREND:event_botonAceptarActionPerformed
         this.calcularTotal();
 
         miDtoPresupuesto.setObservaciones(campoObservaciones.getText());
@@ -612,67 +690,63 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
         Boolean flag = true;
 
-        for (int i = 0; i < filas; i++)
-        {
+        for (int i = 0; i < filas; i++) {
             DtoItem miItem = new DtoItem();
 
-            if (((Float) miGrilla.getValueAt(i, 1) != 0f) || ((Integer) miGrilla.getValueAt(i, 2) != 0))
-            {
+            if (((Float) miGrilla.getValueAt(i, 1) != 0f) || ((Integer) miGrilla.getValueAt(i, 2) != 0)) {
 
                 miItem.setValor((Float) miGrilla.getValueAt(i, 1));
 
-                if (((Integer) miGrilla.getValueAt(i, 2) <= 100))
-                {
+                if (((Integer) miGrilla.getValueAt(i, 2) <= 100)) {
                     miItem.setPorcentaje((Integer) miGrilla.getValueAt(i, 2));
 
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "Debe indicar un numero entre 0 y 100 en el Porcentaje del Item " + miGrilla.getValueAt(i, 0).toString(), "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
+                } else {
+                    JOptionPane
+                            .showMessageDialog(this,
+                                    "Debe indicar un numero entre 0 y 100 en el Porcentaje del Item "
+                                            + miGrilla.getValueAt(i, 0).toString(),
+                                    "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
 
                     flag = false;
                     break;
                 }
 
-            } else
-            {
-                int option = JOptionPane.showConfirmDialog(this, "¿Esta seguro que el Valor o Porcentaje del Item" + miGrilla.getValueAt(i, 0).toString() + " es 0?", "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
+            } else {
+                int option = JOptionPane.showConfirmDialog(this, "¿Esta seguro que el Valor o Porcentaje del Item"
+                        + miGrilla.getValueAt(i, 0).toString() + " es 0?", "ADVERTENCIA", JOptionPane.YES_NO_OPTION);
 
-                if (option == JOptionPane.NO_OPTION)
-                {
+                if (option == JOptionPane.NO_OPTION) {
                     flag = false;
                     break;
                 }
             }
 
-            if (!((miGrilla.getValueAt(i, 0)).toString()).equals(""))
-            {
+            if (!((miGrilla.getValueAt(i, 0)).toString()).equals("")) {
                 miItem.setNombre((miGrilla.getValueAt(i, 0)).toString());
 
-                if (miGrilla.getValueAt(i, 3) != null)
-                {
+                if (miGrilla.getValueAt(i, 3) != null) {
                     miItem.setObservaciones((String) miGrilla.getValueAt(i, 3));
-                } else
-                {
+                } else {
                     miItem.setObservaciones("");
                 }
 
                 itemsNuevos.add(miItem);
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "Debe completar el Nombre del Item de la fila " + (i + 1), "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe completar el Nombre del Item de la fila " + (i + 1), "ERROR",
+                        JOptionPane.ERROR_MESSAGE);
                 flag = false;
                 break;
             }
         }
 
-        if (flag)
-        {
-            if (saldo < 0)
-            {
-                int option = JOptionPane.showConfirmDialog(this, "<HTML>El cliente cuenta con $" + (-saldo) + " a favor.<BR><BR>¿Desea cancelar deuda con el cliente?</HTML>", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+        if (flag) {
+            if (saldo < 0) {
+                int option = JOptionPane.showConfirmDialog(this,
+                        "<HTML>El cliente cuenta con $" + (-saldo)
+                                + " a favor.<BR><BR>¿Desea cancelar deuda con el cliente?</HTML>",
+                        "CONFIRMACION", JOptionPane.YES_NO_OPTION);
 
-                if (option == JOptionPane.YES_OPTION)
-                {
+                if (option == JOptionPane.YES_OPTION) {
                     DtoPago miDtoPago = new DtoPago();
 
                     miDtoPago.setMonto(saldo);
@@ -684,102 +758,97 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame
 
                     miDtoPresupuesto.setSaldo(new Float(0f));
 
-                } else
-                {
+                } else {
                     miDtoPresupuesto.setSaldo(saldo);
                 }
             }
 
             Boolean modificado;
-            try
-            {
+            try {
                 modificado = miController.modificarPresupuesto(miDtoPresupuesto, listaItems, itemsNuevos);
 
-                if (modificado)
-                {
-                    JOptionPane.showMessageDialog(this, "Se ha modificado el presupuesto.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+                if (modificado) {
+                    JOptionPane.showMessageDialog(this, "Se ha modificado el presupuesto.", "CONFIRMACION",
+                            JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "No se ha modificado el presupuesto.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se ha modificado el presupuesto.", "ERROR",
+                            JOptionPane.ERROR_MESSAGE);
                     this.limpiarFormulario();
                 }
-            }
-            catch (ClassModifiedException ex)
-            {
-                JOptionPane.showMessageDialog(this, "El Presupuesto ha sido recientemente modificado por otro usuario.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "El Presupuesto ha sido recientemente modificado por otro usuario o ha ocurrido un error: "
+                                + ex.getMessage(),
+                        "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 limpiarFormulario();
             }
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    }// GEN-LAST:event_botonAceptarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCancelarActionPerformed
-    {//GEN-HEADEREND:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCancelarActionPerformed
+    {// GEN-HEADEREND:event_botonCancelarActionPerformed
         salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void botonDetalleInmuebleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDetalleInmuebleActionPerformed
+    private void botonDetalleInmuebleActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonDetalleInmuebleActionPerformed
 
-        if (miDtoPersona != null)
-        {
+        if (miDtoPersona != null) {
             DtoInmueble miInmueble = null;
 
             miInmueble = miController.buscarInmueble(miDtoPresupuesto.getTramite());
 
-            if (miInmueble != null)
-            {
-                //Muestro detalle de Inmueble
+            if (miInmueble != null) {
+                // Muestro detalle de Inmueble
                 DetalleInmueble miDetalleInmueble = new DetalleInmueble();
                 miDetalleInmueble.setInmueble(miInmueble);
                 miDetalleInmueble.cargarFormulario();
 
                 Principal.cargarFormulario(miDetalleInmueble);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Debe buscar primero a una Persona.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe buscar primero a una Persona.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonDetalleInmuebleActionPerformed
+    }// GEN-LAST:event_botonDetalleInmuebleActionPerformed
 
-    private void botonAgregarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarItemActionPerformed
+    private void botonAgregarItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAgregarItemActionPerformed
 
-        if (miDtoPresupuesto != null)
-        {
+        if (miDtoPresupuesto != null) {
             // TODO add your handling code here:
-            Object[] datos =
-            {
-                "",
-                0.0f,
-                0,
-                ""
+            Object[] datos = {
+                    "",
+                    0.0f,
+                    0,
+                    ""
             };
             ((DefaultTableModel) grillaValoresVariables.getModel()).addRow(datos);
 
             cantidadFilasNuevasGrilla++;
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Previamente debe buscar un Presupuesto.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonAgregarItemActionPerformed
+    }// GEN-LAST:event_botonAgregarItemActionPerformed
 
-    private void botonEliminarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarItemActionPerformed
+    private void botonEliminarItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonEliminarItemActionPerformed
 
         TableModel miGrilla = grillaValoresVariables.getModel();
         TableModel miGrillaFijos = grillaValoresFijos.getModel();
         int filasFijos = miGrillaFijos.getRowCount();
         int filas = miGrilla.getRowCount();
 
-        if (filas >= 1 || filasFijos >= 1)
-        {
+        if (filas >= 1 || filasFijos >= 1) {
             int filaSeleccionada = grillaValoresVariables.getSelectedRow();
 
             ((DefaultTableModel) grillaValoresVariables.getModel()).removeRow(filaSeleccionada);
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "El Presupuesto debe tener al menos un Item.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "El Presupuesto debe tener al menos un Item.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonEliminarItemActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_botonEliminarItemActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonAgregarItem;
     private javax.swing.JButton botonBuscarPresupuesto;

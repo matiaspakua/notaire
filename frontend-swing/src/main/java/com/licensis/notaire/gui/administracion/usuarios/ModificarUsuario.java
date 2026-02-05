@@ -505,16 +505,7 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                         JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         logger.log(Level.SEVERE, "Error al modificar usuario", ex);
                         this.limpiarFormulario();
-                        try
-                        {
-                            ModificarUsuario.getInstancia().cargarUsuariosDisponibles();
-                        }
-                        catch (IOException ex2)
-                        {
-                            JOptionPane.showMessageDialog(this, "Error grave, accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
-                            logger.log(Level.SEVERE, "Error al cargar usuarios", ex2);
-                            this.salir();
-                        }
+                        ModificarUsuario.getInstancia().cargarUsuariosDisponibles();
                         return;
                     }
                 }

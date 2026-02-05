@@ -35,8 +35,7 @@ import javax.swing.table.TableModel;
  *
  * @author matias
  */
-public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
-{
+public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaConsultarDeudasDocumento = new JMenuItem("Ventana Consultar Deudas Documentos");
@@ -49,65 +48,53 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
     /**
      * Creates new form ConsultarDeudasDocumentos
      */
-    private ConsultarDeudasDocumentos()
-    {
+    private ConsultarDeudasDocumentos() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(800, 600);
         miController = ControllerNegocio.getInstancia();
     }
 
-    public DtoGestionDeEscritura getDtoGestion()
-    {
+    public DtoGestionDeEscritura getDtoGestion() {
         return dtoGestionDeEscritura;
     }
 
-    public void setDtoGestion(DtoGestionDeEscritura dtoGestionDeEscritura)
-    {
+    public void setDtoGestion(DtoGestionDeEscritura dtoGestionDeEscritura) {
         this.dtoGestionDeEscritura = dtoGestionDeEscritura;
     }
 
-    public ArrayList<DtoDocumentoPresentado> getListaDocumentosPresentados()
-    {
+    public ArrayList<DtoDocumentoPresentado> getListaDocumentosPresentados() {
         return listaDocumentosPresentados;
     }
 
-    public void setListaDocumentosPresentados(ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados)
-    {
+    public void setListaDocumentosPresentados(ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados) {
         this.listaDocumentosPresentados = listaDocumentosPresentados;
     }
 
-    public static ConsultarDeudasDocumentos getInstancia()
-    {
-        if (instancia == null)
-        {
+    public static ConsultarDeudasDocumentos getInstancia() {
+        if (instancia == null) {
             instancia = new ConsultarDeudasDocumentos();
         }
         return instancia;
     }
 
-    public String getError()
-    {
+    public String getError() {
         return error;
     }
 
-    public void setError(String error)
-    {
+    public void setError(String error) {
         this.error = error;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaConsultarDeudasDocumento()
-    {
+    public static JMenuItem getVentanaConsultarDeudasDocumento() {
         return ventanaConsultarDeudasDocumento;
     }
 
-    public boolean cargarFormulario(DtoGestionDeEscritura dtoGestionDeEscritura) throws NonexistentJpaException
-    {
+    public boolean cargarFormulario(DtoGestionDeEscritura dtoGestionDeEscritura) throws NonexistentJpaException {
         boolean flag = false;
 
         this.setDtoGestion(dtoGestionDeEscritura);
@@ -126,8 +113,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         return flag;
     }
 
-    public void limpiarForm()
-    {
+    public void limpiarForm() {
         fechaInicio.setText("");
         labelEncabezado.setText("");
         escribanoAcargo.setText("");
@@ -137,20 +123,17 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
     }
 
-    public void limpiarJtable()
-    {
+    public void limpiarJtable() {
         int i = ((DefaultTableModel) grillaDetalleDocumentos.getModel()).getRowCount() - 1;
 
-        while (((DefaultTableModel) grillaDetalleDocumentos.getModel()).getRowCount() > 0)
-        {
+        while (((DefaultTableModel) grillaDetalleDocumentos.getModel()).getRowCount() > 0) {
             ((DefaultTableModel) grillaDetalleDocumentos.getModel()).removeRow(i);
             i--;
         }
 
     }
 
-    public void cargarTramites(DtoGestionDeEscritura dtoGestion) throws NonexistentJpaException
-    {
+    public void cargarTramites(DtoGestionDeEscritura dtoGestion) throws NonexistentJpaException {
         Boolean flag = false;
         ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados = null;
         ArrayList<DtoTramite> listaTramites = null;
@@ -165,62 +148,54 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
 
         listaTramites = (ArrayList<DtoTramite>) dtoGestion.getListaTramitesAsociados();
 
-        for (int i = 0; i < listaTramites.size(); i++)
-        {
+        for (int i = 0; i < listaTramites.size(); i++) {
             DtoTramite dtoTramite = listaTramites.get(i);
             String nombreTramite = listaTramites.get(i).getTipoDeTramite().getNombre();
-            listaDocumentosPresentados = (ArrayList<DtoDocumentoPresentado>) listaTramites.get(i).getListaDocumentosGestion();
+            listaDocumentosPresentados = (ArrayList<DtoDocumentoPresentado>) listaTramites.get(i)
+                    .getListaDocumentosGestion();
 
-            if (!listaDocumentosPresentados.isEmpty())
-            {
+            if (!listaDocumentosPresentados.isEmpty()) {
                 flag = cargarGrilla(listaDocumentosPresentados, nombreTramite, dtoTramite);
                 this.setListaDocumentosPresentados(listaDocumentosPresentados);
             }
         }
-        if (flag)
-        {
+        if (flag) {
             ConsultarDeudasDocumentos.getInstancia().botonImprimir.setEnabled(true);
             ConsultarDeudasDocumentos.getInstancia().toFront();
             Principal.cargarFormulario(ConsultarDeudasDocumentos.getInstancia());
-        } else
-        {
+        } else {
             this.dispose();
             JOptionPane.showMessageDialog(this, "No hay documentos presentados, para la gestion");
         }
     }
 
-    public boolean cargarGrilla(ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados, String tipoTramite, DtoTramite dtoTramite)
-    {
+    public boolean cargarGrilla(ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados, String tipoTramite,
+            DtoTramite dtoTramite) {
         boolean flag = false;
         DtoDocumentoPresentado dtoDocumentoPresentado = null;
         boolean presentaDeuda = false;
         String fechaPago = null;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        for (int i = 0; i < listaDocumentosPresentados.size(); i++)
-        {
+        for (int i = 0; i < listaDocumentosPresentados.size(); i++) {
             dtoDocumentoPresentado = listaDocumentosPresentados.get(i);
 
             if (dtoDocumentoPresentado.getQuienEntrega().equals(ConstantesGui.CLIENTE)
-                    && dtoDocumentoPresentado.isEntregado())
-            {
+                    && dtoDocumentoPresentado.isEntregado()) {
                 flag = true;
-                if (dtoDocumentoPresentado.getFechaPago() != null)
-                {
+                if (dtoDocumentoPresentado.getFechaPago() != null) {
                     fechaPago = formatter.format(dtoDocumentoPresentado.getFechaPago());
-                } else
-                {
+                } else {
                     fechaPago = null;
                 }
 
-                Object[] datos =
-                {
-                    tipoTramite,
-                    dtoDocumentoPresentado.getNombre(),
-                    dtoDocumentoPresentado.getImporteAPagar(),
-                    fechaPago,
-                    dtoDocumentoPresentado,
-                    dtoTramite,
+                Object[] datos = {
+                        tipoTramite,
+                        dtoDocumentoPresentado.getNombre(),
+                        dtoDocumentoPresentado.getImporteAPagar(),
+                        fechaPago,
+                        dtoDocumentoPresentado,
+                        dtoTramite,
                 };
 
                 ((DefaultTableModel) grillaDetalleDocumentos.getModel()).addRow(datos);
@@ -239,7 +214,8 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelConsultarDeudasDocumentos = new javax.swing.JPanel();
@@ -269,17 +245,23 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -328,26 +310,27 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         jLabel9.setText("Detalle de Documentos:");
 
         grillaDetalleDocumentos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Tramite", "Tipo de Documento", "Monto Deuda", "Fecha Pago (*)", "DtoDocumentoPresentado", "DtoTipoTramite"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                },
+                new String[] {
+                        "Tramite", "Tipo de Documento", "Monto Deuda", "Fecha Pago (*)", "DtoDocumentoPresentado",
+                        "DtoTipoTramite"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Object.class,
+                    java.lang.Object.class, java.lang.Object.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true, true, true
+            boolean[] canEdit = new boolean[] {
+                    false, false, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         grillaDetalleDocumentos.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -387,190 +370,235 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         jLabel5.setForeground(new java.awt.Color(255, 0, 51));
         jLabel5.setText("(*) Formato Fecha: dd/MM/aaaa");
 
-        javax.swing.GroupLayout panelConsultarDeudasDocumentosLayout = new javax.swing.GroupLayout(panelConsultarDeudasDocumentos);
+        javax.swing.GroupLayout panelConsultarDeudasDocumentosLayout = new javax.swing.GroupLayout(
+                panelConsultarDeudasDocumentos);
         panelConsultarDeudasDocumentos.setLayout(panelConsultarDeudasDocumentosLayout);
         panelConsultarDeudasDocumentosLayout.setHorizontalGroup(
-            panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 876, Short.MAX_VALUE)
-                    .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                        .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                                    .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel6)
-                                        .addComponent(jLabel4)
-                                        .addComponent(jLabel9)
-                                        .addComponent(jLabel1)
-                                        .addComponent(jLabel2))
-                                    .addGap(67, 67, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                                    .addComponent(jLabel8)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(escribanoAcargo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(botonBuscarGestion, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(nroGestion, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
-                                        .addComponent(labelEncabezado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(fechaInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
+                panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelConsultarDeudasDocumentosLayout.createSequentialGroup()
+                                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(botonImprimir,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 876,
+                                                Short.MAX_VALUE)
+                                        .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
+                                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                        .createSequentialGroup()
+                                                                        .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(jLabel6)
+                                                                                .addComponent(jLabel4)
+                                                                                .addComponent(jLabel9)
+                                                                                .addComponent(jLabel1)
+                                                                                .addComponent(jLabel2))
+                                                                        .addGap(67, 67, Short.MAX_VALUE))
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        panelConsultarDeudasDocumentosLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(jLabel8)
+                                                                                .addGap(18, 18, 18)
+                                                                                .addComponent(escribanoAcargo,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        Short.MAX_VALUE)))
+                                                        .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                .createSequentialGroup()
+                                                                .addComponent(jLabel3)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(botonBuscarGestion,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                120,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addGroup(panelConsultarDeudasDocumentosLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                        false)
+                                                                                .addComponent(nroGestion,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        548, Short.MAX_VALUE)
+                                                                                .addComponent(labelEncabezado,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        Short.MAX_VALUE)
+                                                                                .addComponent(fechaInicio,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        Short.MAX_VALUE)))))
+                                                .addGap(0, 0, Short.MAX_VALUE)))));
         panelConsultarDeudasDocumentosLayout.setVerticalGroup(
-            panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(botonBuscarGestion, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(nroGestion))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(labelEncabezado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(fechaInicio))
-                .addGap(5, 5, 5)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(escribanoAcargo))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(botonImprimir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel5))
-                .addGap(6, 6, 6))
-        );
+                panelConsultarDeudasDocumentosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelConsultarDeudasDocumentosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(botonBuscarGestion, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel3)
+                                        .addComponent(nroGestion))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel6)
+                                        .addComponent(labelEncabezado))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel4)
+                                        .addComponent(fechaInicio))
+                                .addGap(5, 5, 5)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel8)
+                                        .addComponent(escribanoAcargo))
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelConsultarDeudasDocumentosLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(botonImprimir, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(panelConsultarDeudasDocumentosLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(jLabel5))
+                                .addGap(6, 6, 6)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelConsultarDeudasDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 882, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelConsultarDeudasDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 882,
+                                        Short.MAX_VALUE)
+                                .addContainerGap()));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelConsultarDeudasDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelConsultarDeudasDocumentos, javax.swing.GroupLayout.DEFAULT_SIZE, 569,
+                                Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonImprimirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonImprimirActionPerformed
-    {//GEN-HEADEREND:event_botonImprimirActionPerformed
+    private void botonImprimirActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonImprimirActionPerformed
+    {// GEN-HEADEREND:event_botonImprimirActionPerformed
 
-        if (!this.listaDocumentosPresentados.isEmpty())
-        {
+        if (!this.listaDocumentosPresentados.isEmpty()) {
             try {
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
                 reportes.generarReporteConsultarDeudaDocumentos(this.getDtoGestion().getNumero());
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_botonImprimirActionPerformed
+    }// GEN-LAST:event_botonImprimirActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCancelarActionPerformed
-    {//GEN-HEADEREND:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCancelarActionPerformed
+    {// GEN-HEADEREND:event_botonCancelarActionPerformed
         this.limpiarForm();
         this.salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         this.limpiarForm();
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaConsultarDeudasDocumento);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonBuscarGestionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonBuscarGestionActionPerformed
-    {//GEN-HEADEREND:event_botonBuscarGestionActionPerformed
+    private void botonBuscarGestionActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonBuscarGestionActionPerformed
+    {// GEN-HEADEREND:event_botonBuscarGestionActionPerformed
         BuscarGestion formBuscarGestion = new BuscarGestion();
         formBuscarGestion.setTipoBusqueda(ConstantesGui.DOCUMENTACION_DEUDA);
         Principal.cargarFormulario(formBuscarGestion);
         Principal.setVentanasActivas(BuscarGestion.getVentanaBuscarGestion());
-    }//GEN-LAST:event_botonBuscarGestionActionPerformed
+    }// GEN-LAST:event_botonBuscarGestionActionPerformed
 
-    private void grillaDetalleDocumentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grillaDetalleDocumentosMouseClicked
+    private void grillaDetalleDocumentosMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_grillaDetalleDocumentosMouseClicked
         this.botonAceptar.setEnabled(true);
-    }//GEN-LAST:event_grillaDetalleDocumentosMouseClicked
+    }// GEN-LAST:event_grillaDetalleDocumentosMouseClicked
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAceptarActionPerformed
 
-        int i = JOptionPane.showConfirmDialog(this, "¿Desea confirmar los documentos seleccionados?", "Confirmar Salida", JOptionPane.YES_NO_OPTION);
+        int i = JOptionPane.showConfirmDialog(this, "¿Desea confirmar los documentos seleccionados?",
+                "Confirmar Salida", JOptionPane.YES_NO_OPTION);
 
-        if (i == 0)
-        {
+        if (i == 0) {
             DtoFlag flag = null;
-            try
-            {
+            try {
                 flag = this.modificarDocumentacionPresentada();
-            }
-            catch (NonexistentEntityException ex)
-            {
+            } catch (NonexistentEntityException ex) {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (ClassModifiedException ex)
-            {
+            } catch (ClassModifiedException ex) {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (ParseException ex)
-            {
+            } catch (ParseException ex) {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (flag.getFlag())
-            {
-                JOptionPane.showMessageDialog(this, "Los documentos fueron actualizados correctamente.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+            if (flag.getFlag()) {
+                JOptionPane.showMessageDialog(this, "Los documentos fueron actualizados correctamente.", "INFORMACION",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
             this.setDtoGestion(miController.buscarDtoGestion(this.getDtoGestion()));
-            try
-            {
+            try {
                 this.cargarFormulario(this.getDtoGestion());
-            }
-            catch (NonexistentJpaException ex)
-            {
+            } catch (NonexistentJpaException ex) {
                 Logger.getLogger(ConsultarDeudasDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Los documentos no se modificaron", "Advertencia", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Los documentos no se modificaron", "Advertencia",
+                    JOptionPane.INFORMATION_MESSAGE);
 
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
-    public DtoFlag modificarDocumentacionPresentada() throws NonexistentEntityException, ClassModifiedException, ParseException
-    {
+    }// GEN-LAST:event_botonAceptarActionPerformed
+
+    public DtoFlag modificarDocumentacionPresentada()
+            throws NonexistentEntityException, ClassModifiedException, ParseException {
 
         DtoFlag dtoFlag = new DtoFlag();
         TableModel miGrilla = grillaDetalleDocumentos.getModel();
@@ -589,11 +617,9 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
         DtoDocumentoPresentado dtoDocumentoPresentado = null;
         Integer fila = null;
 
-        try
-        {
+        try {
 
-            for (int i = 0; i < filas; i++)
-            {
+            for (int i = 0; i < filas; i++) {
                 fila = i + 1;
 
                 dtoDocumentoPresentado = (DtoDocumentoPresentado) miGrilla.getValueAt(i, 4);
@@ -601,16 +627,14 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
                 dtoDocumentoPresentado.setImporteApagar((Float) miGrilla.getValueAt(i, 2));
                 dtoDocumentoPresentado.setFkTramite(dtoTramite);
 
-                //Fecha Pago
+                // Fecha Pago
                 String fecha = (String) miGrilla.getValueAt(i, 3);
                 this.setError(ConstantesGui.CAMPO_FECHA_PAGO);
 
-                if (miGrilla.getValueAt(i, 3) != null && !fecha.isEmpty())
-                {
+                if (miGrilla.getValueAt(i, 3) != null && !fecha.isEmpty()) {
                     Date fechaPago = dateFormat.parse((String) miGrilla.getValueAt(i, 3));
                     dtoDocumentoPresentado.setFechaPago(fechaPago);
-                } else
-                {
+                } else {
                     dtoDocumentoPresentado.setFechaPago(null);
                 }
                 lisDtoDocumentosPresentados.add(dtoDocumentoPresentado);
@@ -618,30 +642,27 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame
                 cont++;
             }
 
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(this, "Algun campo es incorrecto: " + "Fila: " + fila + " -" + this.getError(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Algun campo es incorrecto: " + "Fila: " + fila + " -" + this.getError(), "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
             return dtoFlag;
         }
-        try
-        {
-            if (cont > 0)
-            {
+        try {
+            if (cont > 0) {
                 dtoFlag = miController.modificarDocumentacion(lisDtoDocumentosPresentados, this.getDtoGestion());
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        catch (ClassModifiedException e)
-        {
-            String mensaje = "Documentacion modificada con anterioridad - Accion Cancelada";
-            JOptionPane.showMessageDialog(this, mensaje, "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception e) {
+            String mensaje = "Error al modificar documentacion: " + e.getMessage();
+            JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return dtoFlag;
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonBuscarGestion;

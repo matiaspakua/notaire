@@ -90,7 +90,7 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
     public void cargarUsuariosDisponibles() throws NonexistentJpaException
     {
         ArrayList<DtoUsuario> miListaUsuarios = null;
-        miListaUsuarios = ControllerNegocio.getInstancia().buscarUsuariosDisponibles();
+        miListaUsuarios = (ArrayList<DtoUsuario>) ControllerNegocio.getInstancia().buscarUsuariosDisponibles();
 
         if (miListaUsuarios != null)
         {

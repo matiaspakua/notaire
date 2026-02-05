@@ -329,16 +329,7 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
 
         this.limpiarFormulario();
 
-        try
-        {
-            dtolistaRegistrosAuditorias = miController.buscarRegistrosAuditoria(this.getDtoUsuario());
-        }
-        catch (NonexistentJpaException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error", JOptionPane.ERROR_MESSAGE);
-            Logger.getLogger(VerRegistroActividadesUsuario.class.getName()).log(Level.SEVERE, null, ex);
-            this.salir();
-        }
+        dtolistaRegistrosAuditorias = (ArrayList<DtoRegistroAuditoria>) miController.buscarRegistrosAuditoria(this.getDtoUsuario());
 
         if (!dtolistaRegistrosAuditorias.isEmpty())
         {

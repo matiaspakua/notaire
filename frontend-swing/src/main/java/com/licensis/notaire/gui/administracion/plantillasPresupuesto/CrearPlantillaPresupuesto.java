@@ -8,6 +8,8 @@ import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.GenericRestClient;
+import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,14 +26,15 @@ import javax.swing.table.TableModel;
  *
  * @author Tefi
  */
-public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
-{
+public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaCrearPlantillaPresupuesto = new JMenuItem("Ventana Crear Plantilla Presupuesto");
-    private GenericRestClient tipoTramiteClient = null;
-    private GenericRestClient conceptoClient = null;
+    private GenericRestClient presupuestoClient;
+    private GenericRestClient tipoTramiteClient;
+    private GenericRestClient conceptoClient;
+    private ControllerNegocio miController = ControllerNegocio.getInstancia();
     private GenericRestClient plantillaPresupuestoClient = null;
-    private List<GenericDto> tramitesDisponibles = new ArrayList<>();
+    private List<DtoTipoDeTramite> tramitesDisponibles = new ArrayList<>();
     private List<GenericDto> conceptosDisponibles = new ArrayList<>();
     private GenericDto miDtoSeleccionado = null;
     private List<GenericDto> plantillasPresupuestoTramite = null;
@@ -40,8 +43,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
     /**
      * Creates new form CrearPlantillaPresupuesto
      */
-    public CrearPlantillaPresupuesto()
-    {
+    public CrearPlantillaPresupuesto() {
         initComponents();
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
         tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
@@ -50,30 +52,25 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
 
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaCrearPlantillaPresupuesto()
-    {
+    public static JMenuItem getVentanaCrearPlantillaPresupuesto() {
         return ventanaCrearPlantillaPresupuesto;
     }
 
-    public void limpiarGrilla()
-    {
-        //    miDtoSeleccionado = null;
+    public void limpiarGrilla() {
+        // miDtoSeleccionado = null;
         int i = ((DefaultTableModel) grillaConceptosDisponibles.getModel()).getRowCount() - 1;
 
-        while (((DefaultTableModel) grillaConceptosDisponibles.getModel()).getRowCount() > 0)
-        {
+        while (((DefaultTableModel) grillaConceptosDisponibles.getModel()).getRowCount() > 0) {
             ((DefaultTableModel) grillaConceptosDisponibles.getModel()).removeRow(i);
             i--;
         }
     }
 
-    public Boolean inicializarFormulario()
-    {
+    public Boolean inicializarFormulario() {
         Boolean cargo = false;
 
         miDtoSeleccionado = null;
@@ -82,38 +79,35 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         conceptosDisponibles = null;
         tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
 
-        if (tramitesDisponibles.isEmpty() || tramitesDisponibles == null)
-        {
+        if (tramitesDisponibles.isEmpty() || tramitesDisponibles == null) {
             listaTramitesDisponibles.setEnabled(false);
             botonAceptar.setEnabled(false);
             botonSeleccionar.setEnabled(false);
 
-            JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION",
+                    JOptionPane.INFORMATION_MESSAGE);
             salir();
-        } else
-        {
+        } else {
             listaTramitesDisponibles.setEnabled(true);
             botonSeleccionar.setEnabled(true);
 
             DefaultListModel lista = new DefaultListModel();
 
-            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();)
-            {
+            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();) {
                 DtoTipoDeTramite miDto = it.next();
                 Boolean tienePlantilla = miController.existePlantillaPresupuesto(miDto);
 
-                if (!tienePlantilla)
-                {
-                    lista.addElement(miDto.getNombre());
+                if (!tienePlantilla) {
+                    lista.addElement(miDto.getString("nombre"));
                 }
             }
 
-            if (lista.isEmpty())
-            {
-                JOptionPane.showMessageDialog(this, "<HTML>Los Tipos de Tramite registrados <BR>ya tienen una plantilla asociada.</HTML>", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+            if (lista.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "<HTML>Los Tipos de Tramite registrados <BR>ya tienen una plantilla asociada.</HTML>",
+                        "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
                 salir();
-            } else
-            {
+            } else {
                 cargo = true;
                 this.listaTramitesDisponibles.setModel(lista);
             }
@@ -123,11 +117,14 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelCrearPlantillaPresupuesto = new javax.swing.JPanel();
@@ -151,17 +148,23 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -184,26 +187,25 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         jScrollPane3.setViewportView(listaTramitesDisponibles);
 
         grillaConceptosDisponibles.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Nombre", "Seleccionar"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Boolean.class
+                },
+                new String[] {
+                        "Nombre", "Seleccionar"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.Object.class, java.lang.Boolean.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, true
+            boolean[] canEdit = new boolean[] {
+                    false, true
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane1.setViewportView(grillaConceptosDisponibles);
@@ -224,200 +226,227 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
 
         jLabel4.setText("Trámite seleccionado:");
 
-        javax.swing.GroupLayout panelCrearPlantillaPresupuestoLayout = new javax.swing.GroupLayout(panelCrearPlantillaPresupuesto);
+        javax.swing.GroupLayout panelCrearPlantillaPresupuestoLayout = new javax.swing.GroupLayout(
+                panelCrearPlantillaPresupuesto);
         panelCrearPlantillaPresupuesto.setLayout(panelCrearPlantillaPresupuestoLayout);
         panelCrearPlantillaPresupuestoLayout.setHorizontalGroup(
-            panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                        .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelTramite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                                .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(230, 230, 230))
-                    .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                        .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
+                panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelCrearPlantillaPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addContainerGap())
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                                        .addGroup(panelCrearPlantillaPresupuestoLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                .addGroup(panelCrearPlantillaPresupuestoLayout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jLabel4)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelTramite,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                Short.MAX_VALUE))
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        panelCrearPlantillaPresupuestoLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(
+                                                                                        panelCrearPlantillaPresupuestoLayout
+                                                                                                .createParallelGroup(
+                                                                                                        javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                .addComponent(jLabel1,
+                                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                .addComponent(jLabel6,
+                                                                                                        javax.swing.GroupLayout.Alignment.LEADING))
+                                                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                                        .addGap(230, 230, 230))
+                                        .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                                .addGroup(panelCrearPlantillaPresupuestoLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                false)
+                                                        .addComponent(jScrollPane1,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 0,
+                                                                Short.MAX_VALUE)
+                                                        .addComponent(botonSeleccionar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jScrollPane3,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, 362,
+                                                                Short.MAX_VALUE)
+                                                        .addComponent(jSeparator1,
+                                                                javax.swing.GroupLayout.Alignment.LEADING))
+                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        Short.MAX_VALUE)))));
         panelCrearPlantillaPresupuestoLayout.setVerticalGroup(
-            panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(13, 13, 13)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(labelTramite, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addGroup(panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                panelCrearPlantillaPresupuestoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCrearPlantillaPresupuestoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addGap(13, 13, 13)
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 88,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelCrearPlantillaPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel4)
+                                        .addComponent(labelTramite, javax.swing.GroupLayout.PREFERRED_SIZE, 14,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35,
+                                        Short.MAX_VALUE)
+                                .addGroup(panelCrearPlantillaPresupuestoLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelCrearPlantillaPresupuesto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelCrearPlantillaPresupuesto, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelCrearPlantillaPresupuesto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(panelCrearPlantillaPresupuesto, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonAceptarActionPerformed
 
-        if (miDtoSeleccionado != null)
-        {
+        if (miDtoSeleccionado != null) {
             List<GenericDto> conceptos = obtenerConceptosSeleccionados();
 
-            if (conceptos != null && !conceptos.isEmpty())
-            {
-                try
-                {
+            if (conceptos != null && !conceptos.isEmpty()) {
+                try {
                     // Crear plantillas de presupuesto para cada concepto seleccionado
                     Integer idTipoTramite = miDtoSeleccionado.getInt("idTipoTramite");
-                    
-                    if (idTipoTramite != null)
-                    {
-                        for (GenericDto concepto : conceptos)
-                        {
+
+                    if (idTipoTramite != null) {
+                        for (GenericDto concepto : conceptos) {
                             Integer idConcepto = concepto.getInt("idConcepto");
-                            if (idConcepto != null)
-                            {
+                            if (idConcepto != null) {
                                 GenericDto plantilla = new GenericDto();
                                 // PlantillaPresupuesto usa una clave compuesta
                                 plantilla.put("fkIdTipoTramite", idTipoTramite);
                                 plantilla.put("fkIdConcepto", idConcepto);
-                                
+
                                 plantillaPresupuestoClient.create(plantilla);
                             }
                         }
-                        
-                        JOptionPane.showMessageDialog(this, "Se ha creado la Plantilla de Presupuesto.", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+
+                        JOptionPane.showMessageDialog(this, "Se ha creado la Plantilla de Presupuesto.", "CONFIRMACION",
+                                JOptionPane.INFORMATION_MESSAGE);
                         limpiarGrilla();
                         inicializarFormulario();
-                    } else
-                    {
-                        JOptionPane.showMessageDialog(this, "Error: No se pudo obtener el ID del tipo de trámite", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error: No se pudo obtener el ID del tipo de trámite",
+                                "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
-                }
-                catch (IOException ex)
-                {
-                    JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                     logger.log(Level.SEVERE, "Error al crear plantilla de presupuesto", ex);
                     this.limpiarGrilla();
                     this.cargarConceptosDisponibles();
                 }
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un concepto.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un concepto.", "ADVERTENCIA",
+                        JOptionPane.WARNING_MESSAGE);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    }// GEN-LAST:event_botonAceptarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCancelarActionPerformed
 
         salir();
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         Principal.removeVentanaActivas(ventanaCrearPlantillaPresupuesto);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void cargarConceptosDisponibles()
-    {
+    private void cargarConceptosDisponibles() {
         limpiarGrilla();
-        try
-        {
+        try {
             conceptosDisponibles = conceptoClient.findAll();
 
-            if (conceptosDisponibles != null && !conceptosDisponibles.isEmpty())
-            {
-                for (GenericDto miDtoConcepto : conceptosDisponibles)
-                {
+            if (conceptosDisponibles != null && !conceptosDisponibles.isEmpty()) {
+                for (GenericDto miDtoConcepto : conceptosDisponibles) {
                     String nombreConcepto = miDtoConcepto.getString("nombre");
 
-                    if (nombreConcepto != null)
-                    {
-                        Object[] datos =
-                        {
-                            nombreConcepto,
-                            Boolean.FALSE
+                    if (nombreConcepto != null) {
+                        Object[] datos = {
+                                nombreConcepto,
+                                Boolean.FALSE
                         };
                         ((DefaultTableModel) grillaConceptosDisponibles.getModel()).addRow(datos);
                     }
                 }
             }
-        }
-        catch (IOException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Error al cargar conceptos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar conceptos: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
             logger.log(Level.SEVERE, "Error al cargar conceptos", ex);
         }
     }
 
-    private List<GenericDto> obtenerConceptosSeleccionados()
-    {
+    private List<GenericDto> obtenerConceptosSeleccionados() {
         TableModel miGrilla = grillaConceptosDisponibles.getModel();
         int filas = miGrilla.getRowCount();
         Boolean flag = true;
         List<GenericDto> conceptosSeleccionados = new ArrayList<>();
 
-        for (int i = 0; i < filas; i++)
-        {
+        for (int i = 0; i < filas; i++) {
             flag = (Boolean) miGrilla.getValueAt(i, 1);
 
-            if (flag == true)
-            {
+            if (flag == true) {
                 String nombreConcepto = (String) miGrilla.getValueAt(i, 0);
-                
-                for (GenericDto dtoConcepto : conceptosDisponibles)
-                {
-                    if (nombreConcepto.equals(dtoConcepto.getString("nombre")))
-                    {
+
+                for (GenericDto dtoConcepto : conceptosDisponibles) {
+                    if (nombreConcepto.equals(dtoConcepto.getString("nombre"))) {
                         conceptosSeleccionados.add(dtoConcepto);
                         break;
                     }
@@ -428,21 +457,18 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
         return conceptosSeleccionados;
     }
 
-    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSeleccionarActionPerformed
+    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonSeleccionarActionPerformed
         miDtoSeleccionado = null;
 
-        if (listaTramitesDisponibles.getSelectedValue() != null)
-        {
+        if (listaTramitesDisponibles.getSelectedValue() != null) {
 
             String seleccionado = listaTramitesDisponibles.getSelectedValue().toString();
 
-            for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();)
-            {
+            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();) {
                 GenericDto dtoTipoDeTramite = it.next();
 
                 // Completo los datos en los componentes
-                if (seleccionado.equals(dtoTipoDeTramite.getString("nombre")))
-                {
+                if (seleccionado.equals(dtoTipoDeTramite.getString("nombre"))) {
                     miDtoSeleccionado = dtoTipoDeTramite;
                     labelTramite.setText(miDtoSeleccionado.getString("nombre"));
 
@@ -453,12 +479,13 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame
                     break;
                 }
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un Tipo de Tramite.", "ADVERTENCIA",
+                    JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_botonSeleccionarActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_botonSeleccionarActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;
     private javax.swing.JButton botonSeleccionar;
