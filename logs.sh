@@ -22,13 +22,39 @@ else
     exit 1
 fi
 
-# Get service argument (default: backend)
-SERVICE=${1:-backend}
+# Get service argument (default: show all services)
+SERVICE=${1:-}
+
+# Show help if requested
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo -e "${BLUE}Notaire Application Logs${NC}"
+    echo ""
+    echo -e "${YELLOW}Usage: $0 [SERVICE_NAME]${NC}"
+    echo ""
+    echo -e "${BLUE}Available services:${NC}"
+    echo -e "  backend     - Backend API logs (default if no service specified)"
+    echo -e "  postgres    - PostgreSQL database logs"
+    echo -e "  pgadmin     - pgAdmin web interface logs"
+    echo -e "  (no args)   - Show all services logs"
+    echo ""
+    echo -e "${BLUE}Examples:${NC}"
+    echo -e "  $0            # Show all logs"
+    echo -e "  $0 backend    # Show backend only"
+    echo -e "  $0 postgres   # Show database only"
+    echo -e "  $0 pgadmin    # Show pgAdmin only"
+    exit 0
+fi
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   Notaire Application Logs${NC}"
 echo -e "${BLUE}========================================${NC}"
-echo -e "${YELLOW}Following logs for service: $SERVICE${NC}\n"
-echo -e "${YELLOW}Press Ctrl+C to exit${NC}\n"
 
-$DC_CMD logs -f "$SERVICE"
+if [ -z "$SERVICE" ]; then
+    echo -e "${YELLOW}Following logs for all services${NC}\n"
+    echo -e "${YELLOW}Press Ctrl+C to exit${NC}\n"
+    $DC_CMD logs -f
+else
+    echo -e "${YELLOW}Following logs for service: $SERVICE${NC}\n"
+    echo -e "${YELLOW}Press Ctrl+C to exit${NC}\n"
+    $DC_CMD logs -f "$SERVICE"
+fi

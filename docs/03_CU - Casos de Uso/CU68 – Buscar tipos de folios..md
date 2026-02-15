@@ -1,0 +1,64 @@
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Caso de Uso:</strong></td>
+<td><h3 id="cu68-buscar-tipos-de-folios.">CU68 – Buscar tipos de folios.</h3></td>
+</tr>
+<tr class="even">
+<td><strong>Actores:</strong></td>
+<td>Escribano</td>
+</tr>
+<tr class="odd">
+<td><strong>Propósito:</strong></td>
+<td>Busca la lista de tipos de folios registrados.</td>
+</tr>
+<tr class="even">
+<td><strong>Descripción:</strong></td>
+<td>El escribano solicita la lista de tipos de folios. El sistema busca y devuelve la lista de todos los tipos de folios registrados. El escribano selecciona uno de ellos y el sistema muestra el detalle del mismo, donde se indica: el nombre del tipo de folio y las observaciones.</td>
+</tr>
+<tr class="odd">
+<td><strong>Tipo:</strong></td>
+<td>Secundario.</td>
+</tr>
+<tr class="even">
+<td><strong>Referencias Cruzadas:</strong></td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 49%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td colspan="2"><strong>Curso de Eventos</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Actor</strong></td>
+<td><strong>Sistema</strong></td>
+</tr>
+<tr class="odd">
+<td><p>1. El escribano solicita la lista de tipos de folios.</p>
+<p>3. Selecciona un tipo de folio.</p></td>
+<td><p>2. Busca y devuelve la lista de todos los tipos de folios registrados.</p>
+<p>4. Muestra el detalle del tipo de folio seleccionado, donde se indica:</p>
+<ul>
+<li><p>El nombre del tipo de folio</p></li>
+<li><p>Las observaciones.</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
+|                 |                                              |
+|-----------------|----------------------------------------------|
+| **Excepciones** |                                              |
+| **Actor**       | **Sistema**                                  |
+|                 | 2.1. no existen tipos de folios registrados. |

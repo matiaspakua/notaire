@@ -83,6 +83,33 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!-- Build a JAR with all dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.licensis.notaire.gui.Login</mainClass>
+                        </manifest>
+                    </archive>
+                    <!-- Optional: use same name as regular artifact (no -jar-with-dependencies suffix) -->
+                    <!-- <appendAssemblyId>false</appendAssemblyId> -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

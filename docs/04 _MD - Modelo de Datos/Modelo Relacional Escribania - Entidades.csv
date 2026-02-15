@@ -1,0 +1,173 @@
+Nombre Entidad,Tipo Entidad,Atributo,Clave,Null?,Tipo_Dato,PK,FK,NULL,Observaciones
+Tipos de Documentos,Fuerte,id_tipo_documento,PK,no,Entero,x,,,No acepta null
+Tipos de Documentos,Fuerte,nombre,,no,Texto,,,,No acepta null
+Tipos de Documentos,Fuerte,vence,,no,Lógico,,,,vence o no vence?
+Tipos de Documentos,Fuerte,dias_vencimiento,,si,Entero,,,x,cantidad de días de validez del documento
+Tipos de Documentos,,quien_entrega,,,Texto,,,,Cliente/Entidad Externa
+Tipos de Tramite,Fuerte,id_tipo_tramite,PK,no,Entero,x,,,No acepta null
+Tipos de Tramite,Fuerte,nombre,,no,Texto,,,,No acepta null
+Tipos de Tramite,,se_archiva,,,Lógico,,,,"Lleva numero de bibliorato y carpeta, o no"
+Tipos de Tramite,,se_inscribe,,,Lógico,,,,No acepta null
+Tipos de Tramite,,asocia_inmuebles,,,Lógico,,,,
+Tipos de Tramite,,observaciones,,,Texto,,,x,
+Tramites,Fuerte,id_tramite,PK,no,Entero,x,,,No acepta null
+Tramites,,observaciones,,,Texto,,,x,
+Tramites,,fk_id_tipo_tramite,,,Entero,,x,,No acepta null
+Tramites,,fk_id_gestion,,,Entero,,x,x,
+Tramites,,fk_id_escritura,,,Entero,,x,x,
+Tramites,,fk_id_presupuesto,,,Entero,,x,,No acepta null
+Tramites,,fk_id_inmueble,,,Entero,,x,x,
+Conceptos,Fuerte,id_concepto,PK,no,Entero,x,,,No acepta null
+Conceptos,Fuerte,nombre,,no,Texto,,,,No acepta null
+Conceptos,Fuerte,valor,,no,Real,,,,No acepta null
+Conceptos,Fuerte,porcentaje,,si,Real,,,,Porcentaje aplicado sobre un valor en particular
+Estados de Gestion,Fuerte,id_estado,PK,no,Entero,x,,,No acepta null
+Estados de Gestion,Fuerte,nombre,,no,Texto,,,,No acepta null
+Estados de Gestion,,observaciones,,,Texto,,,x,
+Presupuestos,Fuerte,id_presupuesto,PK,no,Entero,x,,,No acepta null
+Presupuestos,Fuerte,fecha,,no,Fecha,,,,No acepta null
+Presupuestos,Fuerte,total,,no,Real,,,,No acepta null
+Presupuestos,Fuerte,saldo,,no,Real,,, ,No acepta null
+Presupuestos,,observaciones,,,Texto,,,x,
+Presupuestos,Fuerte,fk_id_tramite,FK,si,Entero,,x,,Inicialmente puede ser NULL
+Presupuestos,,fk_id_persona,,,Entero,,x,,No acepta null
+Personas,Fuerte,id_persona,PK,no,Entero,x,,,Se interpreta con id_persona_cliente ó id_persona_escribano
+Personas,Fuerte,nombre,,no,Texto,,,,No acepta null
+Personas,Fuerte,apellido,,no,Texto,,,,No acepta null
+Personas,Fuerte,nacionalidad,,no,Texto,,,x,
+Personas,,sexo,,,Texto,,,x,
+Personas,Fuerte,fecha_nacimiento,,,Fecha,,,x,
+Personas,Fuerte,estado_civil,,no,Texto,,,x,
+Personas,Fuerte,nro_nupcias,,si,Entero,,,x,
+Personas,Fuerte,ocupación,,si,Texto,,,x,
+Personas,Fuerte,domicilio,,no,Texto,,,x,
+Personas,Fuerte,telefono,,si,Texto,,,x,
+Personas,Fuerte,email,,si,Texto,,,x,
+Personas,Fuerte,registro_escribano,,no,Entero,,,x,"Solo para los escribanos, de lo contrario es NULL"
+Personas,,cuit,,,Texto,,,x,
+Personas,Fuerte,es_cliente,,,Lógico,,,,No acepta null
+Identificaciones,Fuerte,fk_id_tipo_identificación,,no,Entero,x,x,,No acepta null
+Identificaciones,Fuerte,fk_id_persona,FK,no,Entero,x,x,,No acepta null
+Identificaciones,,numero,,,Texto,,,,No acepta null
+Testimonios,Débil,id_testimonio,PK,no,Entero,x,,,No acepta null
+Testimonios,Débil,numero,,no,Entero,,,,No acepta null
+Testimonios,,observado,,,Lógico,,,,No acepta null
+Testimonios,,observaciones,,,Texto,,,x,
+Testimonios,,fk_id_escritura,,,Entero,,x,,No acepta null
+Copias,Débil,id_copia,PK,no,Entero,x,,,No acepta null
+Copias,Débil,numero,,no,Entero,,,,No acepta null
+Copias,Débil,fecha_impresion,,no,Fecha,,,,Indica cuando fue impresa la copia.
+Copias,Débil,fecha_retiro,,,Fecha,,,x,Indica cuando fue retirada la copia.
+Copias,Débil,obsevaciones,,si,Texto,,,x,
+Copias,Débil,fk_id_testimonio,FK,no,Entero,,x,,A qué testimonio pertenece
+Copias,Débil,fk_id_persona,FK,no,Entero,,x,,Para quien esta hecha la copia.
+Pagos,Débil,id_pago,PK,no,Entero,x,,,No acepta null
+Pagos,Débil,monto,,no,Real,,,,No acepta null
+Pagos,Débil,fecha,,no,Fecha,,,,No acepta null
+Pagos,Débil,observaciones,,si,Texto,,,x,
+Pagos,Débil,fk_id_presupuesto,FK,no,Entero,,x,,Indica a que presupuesto se asocia el pago
+Items,Débil,id_item,PK,no,Entero,x,,,No acepta null
+Items,Débil,nombre,,no,Texto,,,,No acepta null
+Items,Débil,valor,,no,Real,,,,No acepta null
+Items,Débil,porcentaje,,si,Real,,,x,
+Items,Débil,observaciones,,si,Texto,,,x,
+Items,Débil,fk_id_presupuesto,FK,no,Entero,,x,,No acepta null
+Documentos Presentados,Débil,id_presentado,PK,no,Entero,x,,,No acepta null
+Documentos Presentados,Débil,nombre,,no,Texto,,,,nombre del documento
+Documentos Presentados,,numero_carton,,,Entero,,,x,
+Documentos Presentados,Débil,fecha_ingreso,,no,Fecha,,, ,Cuando la escribania solicita un determinado documento
+Documentos Presentados,Débil,fecha_salida,,si,Fecha,,,x,Generica para cualquier documento (ingreso a la escribania)
+Documentos Presentados,Débil,preparado,,no,Lógico,,,,V o F (si se preparo en la escribania o no)
+Documentos Presentados,,vence,,,Lógico,,,,No aceptan null
+Documentos Presentados,Débil,fecha_vencimiento,,si,Fecha,,,x,Generica para cualquier documento
+Documentos Presentados,,dias_vencimiento,,,Entero,,,x,
+Documentos Presentados,Débil,importe_a_pagar,,si,Real,,,x,Depen del del documento
+Documentos Presentados,,fecha_pago,,,Fecha,,,x,
+Documentos Presentados,Débil,liberado,,si,Lógico,,,,Asociado a aquellos que requieran un Importa_a_pagar (V o F)
+Documentos Presentados,,fecha_liberado,,,Fecha,,,x,
+Documentos Presentados,,observado,,,Lógico,,,,No acepta null
+Documentos Presentados,Débil,observaciones,,si,Texto,,,x,
+Documentos Presentados,Débil,fk_id_tramite,FK,no,Entero,,x,,No acepta null
+Plantillas Trámites,Asociativa,fk_id_tipo_tramite,FK,no,Entero,x,x,,No acepta null
+Plantillas Trámites,Asociativa,fk_id_tipo_de_documento,FK,no,Entero,x,x,,No acepta null
+Plantillas Trámites,Asociativa,observaciones,,si,Texto,,,x,
+Plantillas Presupuestos,Asociativa,fk_id_tipo_tramite,FK,no,Entero,x,x,,No acepta null
+Plantillas Presupuestos,Asociativa,fk_id_concepto,FK,no,Entero,x,x,,No acepta null
+Plantillas Presupuestos,Asociativa,observaciones,,si,Texto,,,x,
+Historial,Asociativa,id_historial,PK,no,Entero,x,,,No acepta null
+Historial,Asociativa,fk_id_gestion,FK,no,Entero,,x,,No acepta null
+Historial,Asociativa,fk_id_estado,FK,no,Entero,,x,,No acepta null
+Historial,Asociativa,fecha,,no,Fecha,,,,Fecha en que se actualizo el estado de la gestion.
+Historial,Asociativa,observaciones,,si,Texto,,,x,
+Suplencias,Asociativa,id_suplencia,PK,no,Entero,x,,,No acepta null
+Suplencias,Asociativa,fk_id_persona_suplantado,FK,no,Entero,,x,,No acepta null
+Suplencias,Asociativa,fk_id_persona_suplente,FK,no,Entero,,x,,No acepta null
+Suplencias,Asociativa,fecha_inicio,,no,Fecha,,,,No acepta null
+Suplencias,Asociativa,fecha_fin,,no,Fecha,,,,No acepta null
+Suplencias,Asociativa,observaciones,,si,Texto,,,x,
+Gestiones de Escrituras,Asociativa,id_gestion,PK,no,Entero,x,,,"Una gestión puede tener varios trámites, cada trámite puede tener sólo una escritura"
+Gestiones de Escrituras,Asociativa,numero_gestion,,si,Entero,,, ,No acepta null
+Gestiones de Escrituras,,fecha_inicio,,,Fecha,,,,No acepta null
+Gestiones de Escrituras,,encabezado,,,Texto,,, ,"Es el titulo de la gestión, este describe la gestión"
+Gestiones de Escrituras,Asociativa,observaciones,,si,Texto,,,x,
+Gestiones de Escrituras,,numero_bibliorato,,,Entero,,,x,
+Gestiones de Escrituras,,numero_archivo,,,Entero,,,x,Nuevo número de carpeta que se genera cuando se archiva la gestión
+Gestiones de Escrituras,Asociativa,fk_id_persona_escribano,FK,no,Entero,,x,,No acepta null
+Usuarios,Débil,id_usuario,PK,no,Entero,x,,,No acepta null
+Usuarios,,nombre,,,Texto,,,,No acepta null
+Usuarios,Débil,contraseña,,no,Texto,,,,No acepta null
+Usuarios,,estado,,,Lógico,,,,No acepta null
+Usuarios,,tipo,,,Texto,,,,El tipo de usuario (reemplaza grupos y funciones)
+Usuarios,,fk_id_persona,,,Entero,,x,,No acepta null
+Folios,Fuerte,id_folio,PK,no,Entero,x,,,Identificador interno.
+Folios,Fuerte,numero,,no,Entero,,,,Numero de folio asignado por el colegio notarial/default del colegio principal de Roca
+Folios,Fuerte,anio,,no,Entero,,,,Año correspondiente - solo en los protocolos
+Folios,,estado,,,Texto,,,,No acepta null
+Folios,,observaciones,,,Texto,,,x,
+Folios,Fuerte,fk_id_persona_escribano,FK,no,Entero,,x,,Corresponde al escribano asignado a un conjunto de folios.
+Folios,,fk_id_tipos_folio,,,Entero,,x,,El tipo de folio
+Folios,,fk_id_escritura,,,Entero,,x,x,
+Tipos de Folio,,id_tipo_folio,,,Entero,x,,,No acepta null
+Tipos de Folio,,nombre,,,Texto,,,,"Corresponde al protocolo principal o auxiliar, testimonio, concuerda, cert firmas"
+Tipos de Folio,,observaciones,,,Texto,,,x,
+Escrituras,,id_escritura,,,Entero,x,,,No acepta null
+Escrituras,,numero,,,Entero,,,,"Numero de la escritura, por lo tanto, una gestion puede tener varias escritruras, y una escritura puede pertenecer a varios trámites."
+Escrituras,,fecha_escrituracion,,,Fecha,,,,Fecha en que se creo la escritura
+Escrituras,,cuerpo,,,Texto,,,,No acepta null
+Escrituras,,estado,,,Texto,,,,"Firmada,  NO PASO , preparada y otra (esta opción se detal ena el atributo observaciones )"
+Escrituras,,matricula_inscripción,,,Texto,,,x,número de inscripción
+Escrituras,,fecha_inscripción,,,Fecha,,,x,
+Escrituras,,obsevaciones,,,Texto,,,x,
+Movimientos Testimonio,,id_movimiento,,,Entero,x,,,No acepta null
+Movimientos Testimonio,,fecha_ingreso,,,Fecha,,,,Parte de la clave primaria compuesta
+Movimientos Testimonio,,fecha_salida,,,Fecha,,,x,
+Movimientos Testimonio,,fecha_inscripción,,,Fecha,,,x,
+Movimientos Testimonio,,inscripta,,,Lógico,,,,Si fue inscripta o no
+Movimientos Testimonio,,numero_carton,,,Entero,,,,No acepta null
+Movimientos Testimonio,,observaciones,,,Texto,,,x,
+Movimientos Testimonio,,fk_id_testimonio,,,Entero,,x,,
+Grupos,Débil,id,PK,no,Entero,x,,,
+Grupos,Débil,nombre,,no,Texto,,,,No acepta null
+Grupos,Débil,observaciones,,si,Texto,,,x,
+Funciones,Débil,id,PK,no,Entero,x,,,
+Funciones,Débil,nombre,,no,Texto,,,,No acepta null
+Funciones,Débil,observaciones,,si,Texto,,,x,
+Grupos Funcionales,Asociativa,id_grupo,FK,no,Entero,x,x,,
+Grupos Funcionales,Asociativa,id_funcion,FK,no,Entero,x,x,,
+Registro Auditoría,,id_auditoria,,,Entero,x,,,No acepta null
+Registro Auditoría,,fk_id_usuario,,,Entero,,x,,No acepta null
+Registro Auditoría,,detalle_operacion,,,Texto,,,,No acepta null
+Registro Auditoría,,fecha,,,Texto,,,,No acepta null
+Inmuebles,,id_inmueble,,,Entero,x,,,No acepta null
+Inmuebles,,nomenclatura_catastral,,,Texto,,,,No acepta null
+Inmuebles,,valuacion_fiscal,,,Texto,,,x,
+Inmuebles,,domicilio,,,Texto,,,,No acepta null
+Inmuebles,,tipo_inmueble,,,Texto,,,,No acepta null
+Inmuebles,,observaciones,,,Texto,,,x,
+Tipos de Identificación,,id_tipo_identificacióm,,,Entero,x,,,No acepta null
+Tipos de Identificación,,nombre,,,Texto,,,,No acepta null
+MUCHOS A MUCHOS:,,,,,,,,,
+Folios-Copias,,fk_id_folios,,,Entero,x,x,,
+Folios-Copias,,fk_id_copias,,,Entero,x,x,,
+Tramites-Personas,,fk_id_tramites,,,Entero,x,x,,
+Tramites-Personas,,fk_id_persona_cliente,,,Entero,x,x,,

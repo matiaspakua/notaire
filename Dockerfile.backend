@@ -3,18 +3,33 @@ FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
-# Copy pom files
-COPY pom.xml .
-COPY backend-api/pom.xml backend-api/
-
-# Install dependencies
-RUN mvn dependency:resolve -DskipTests -pl backend-api -am
-
-# Copy source code (only necessary parts)
+# Copy source code
 COPY backend-api/ backend-api/
+COPY notaire-shared/ notaire-shared/
 
-# Build only backend-api
-RUN mvn clean package -DskipTests -pl backend-api -am
+# Create minimal parent POM for this build
+RUN echo '<?xml version="1.0" encoding="UTF-8"?>' > parent-pom.xml && \
+    echo '<project xmlns="http://maven.apache.org/POM/4.0.0"' >> parent-pom.xml && \
+    echo '         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' >> parent-pom.xml && \
+    echo '         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">' >> parent-pom.xml && \
+    echo '    <modelVersion>4.0.0</modelVersion>' >> parent-pom.xml && \
+    echo '    <groupId>com.licensis</groupId>' >> parent-pom.xml && \
+    echo '    <artifactId>notaire-parent</artifactId>' >> parent-pom.xml && \
+    echo '    <version>1.0-SNAPSHOT</version>' >> parent-pom.xml && \
+    echo '    <packaging>pom</packaging>' >> parent-pom.xml && \
+    echo '    <modules>' >> parent-pom.xml && \
+    echo '        <module>notaire-shared</module>' >> parent-pom.xml && \
+    echo '        <module>backend-api</module>' >> parent-pom.xml && \
+    echo '    </modules>' >> parent-pom.xml && \
+    echo '</project>' >> parent-pom.xml
+
+# Build notaire-shared first
+WORKDIR /app/notaire-shared
+RUN mvn -f ../parent-pom.xml clean install -DskipTests
+
+# Build backend-api
+WORKDIR /app/backend-api
+RUN mvn -f ../parent-pom.xml clean package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
@@ -24,12 +39,28 @@ WORKDIR /app
 # Copy built JAR from builder
 COPY --from=builder /app/backend-api/target/backend-api-1.0-SNAPSHOT.jar app.jar
 
+# Add curl for health check
+RUN apk add --no-cache curl
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/swagger-ui.html || exit 1
+  CMD curl -f http://localhost:8080/swagger-ui.html || exit 1
 
 # Expose port
 EXPOSE 8080
 
-# Run the application
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Add curl for health check
+RUN apk add --no-cache curl
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8080/swagger-ui.html || exit 1
+
+# Expose port
+EXPOSE 8080
+
+# Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]

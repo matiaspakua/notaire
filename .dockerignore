@@ -1,0 +1,6 @@
+# Ignore target directories to avoid Docker build context issues
+backend-api/target/
+frontend-swing/target/
+notaire-shared/target/
+*.log
+.DS_Store

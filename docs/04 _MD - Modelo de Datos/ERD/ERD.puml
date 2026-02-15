@@ -1,0 +1,158 @@
+@startuml ERD_Escribania
+!theme plain
+skinparam linetype ortho
+
+' ==================== ENTIDADES ====================
+
+entity "Personas" as personas {
+}
+
+entity "Usuarios" as usuarios {
+}
+
+entity "Grupos" as grupos {
+}
+
+entity "Funciones" as funciones {
+}
+
+entity "Grupos Funcionales" as grupos_funcionales {
+}
+
+entity "Tipos de Identificación" as tipos_identificacion {
+}
+
+entity "Trámites" as tramites {
+}
+
+entity "Tipos de Trámite" as tipos_tramite {
+}
+
+entity "Plantillas Trámites" as plantillas_tramites {
+}
+
+entity "Tipos de Documentos" as tipos_documentos {
+}
+
+entity "Documentos Presentados" as documentos_presentados {
+}
+
+entity "Gestiones de Escrituras" as gestiones_escrituras {
+}
+
+entity "Escrituras" as escrituras {
+}
+
+entity "Testimonios" as testimonios {
+}
+
+entity "Folios" as folios {
+}
+
+entity "Tipos de Folio" as tipos_folio {
+}
+
+entity "Movimientos Testimonio" as movimientos_testimonio {
+}
+
+entity "Entidad Lógica" as entidad_logica {
+}
+
+entity "Copias" as copias {
+}
+
+entity "Presupuestos" as presupuestos {
+}
+
+entity "Plantillas Presupuestos" as plantillas_presupuestos {
+}
+
+entity "Conceptos" as conceptos {
+}
+
+entity "Items" as items {
+}
+
+entity "Pagos" as pagos {
+}
+
+entity "Inmuebles" as inmuebles {
+}
+
+entity "Historial" as historial {
+}
+
+entity "Estados" as estados {
+}
+
+entity "Suplencias" as suplencias {
+}
+
+entity "Registros de Auditoría" as registros_auditoria {
+}
+
+' ==================== RELACIONES ====================
+
+' Trámites y Documentos
+tipos_tramite ||--o{ tipos_documentos : "Necesita de"
+plantillas_tramites ||--o{ tipos_documentos : "Necesita de"
+
+' Gestiones y Estados
+gestiones_escrituras }o--|| estados : "Tiene"
+historial }o--|| estados : "Realizan"
+
+' Testimonios y Folios
+testimonios ||--o{ folios : "Tiene"
+
+' Personas y Presupuestos
+personas }o--|| presupuestos : "tiene asignado"
+plantillas_presupuestos ||--o{ presupuestos : "Tienen"
+
+' Presupuestos, Pagos, Conceptos e Items
+presupuestos ||--o{ pagos : "Tiene"
+presupuestos }o--|| conceptos : "Utilizan"
+conceptos ||--o{ items : "Se usan"
+
+' Copias
+testimonios ||--o| copias : "Registra"
+copias ||--o{ copias : "Tienen"
+
+' Suplencias
+suplencias ||--|| personas : "Hace"
+testimonios }o--|| suplencias : "Generan"
+
+' Usuarios, Grupos, Funciones
+usuarios }o--|| tipos_identificacion : "Tienen"
+usuarios }o--o{ grupos : "Pertenecen a"
+grupos }o--|| funciones : "Pertenecen"
+grupos_funcionales }o--o{ funciones : "Pertenecen"
+
+' Personas y Usuarios (relación especial)
+personas |o--o| usuarios : "Tienen"
+
+' Escrituras y Personas (dos relaciones)
+personas }o--|| escrituras : "cliente"
+personas }o--|| escrituras : "escribano"
+
+' Folios y Tipos
+escrituras ||--o{ tipos_folio : "Tienen"
+folios ||--o{ tipos_folio : "Tienen"
+
+' Movimientos y Testimonios
+testimonios ||--o{ movimientos_testimonio : "Tiene"
+entidad_logica ||--o{ testimonios : "Es una"
+
+' Trámites y Gestiones
+tramites ||--o{ tipos_tramite : "Tiene"
+gestiones_escrituras ||--o{ tramites : "Pertenecen"
+tramites }o--|| tipos_tramite : "Concretan"
+tramites }o--o{ documentos_presentados : "Presentan"
+
+' Inmuebles y Escrituras
+inmuebles |o--o{ escrituras : "Incluyen"
+
+' Administración y Auditoría
+gestiones_escrituras ||--o{ usuarios : "Administra"
+usuarios ||--o{ registros_auditoria : "Generan"
+
+@enduml

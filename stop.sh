@@ -29,12 +29,24 @@ fi
 
 echo -e "${YELLOW}Stopping Docker Compose services...${NC}"
 
+# Show what services are currently running
+echo -e "${BLUE}Current services:${NC}"
+$DC_CMD ps
+
+echo -e "\n${YELLOW}Shutting down all services (PostgreSQL, Backend API, pgAdmin)...${NC}"
+
 if $DC_CMD down; then
-    echo -e "${GREEN}✓ Services stopped successfully${NC}"
+    echo -e "${GREEN}✓ All services stopped successfully${NC}"
+    echo -e "  - PostgreSQL (port 5432)"
+    echo -e "  - Backend API (port 8080)"  
+    echo -e "  - pgAdmin (port 5050)"
 else
     echo -e "${RED}✗ Failed to stop services${NC}"
     exit 1
 fi
 
 echo -e "\n${GREEN}✓ Notaire Application shutdown complete${NC}"
+echo -e "${BLUE}Data preserved in Docker volumes:${NC}"
+echo -e "  - PostgreSQL data: ${YELLOW}postgres_data${NC}"
+echo -e "  - pgAdmin config:  ${YELLOW}pgadmin_data${NC}"
 echo ""

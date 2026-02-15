@@ -1,0 +1,148 @@
+@startuml Diagrama_Compensacion_Escribania_V2
+!theme plain
+skinparam monochrome true
+skinparam shadowing false
+skinparam dpi 300
+
+title Diagrama de Compensación\nSistema Notaire - Reglas de Integridad Referencial
+
+' ==================== NOTACIÓN ====================
+'note top of 1 as N1
+'  **Notación:**
+'  - Óvalos: Entidades
+'  - Rectángulos amarillos: 
+'    Mecanismo de compensación
+'  - I: Insertar | M: Modificar | B: Borrar
+'  - I: Impedir | Null: Asignar NULL
+'end note
+
+' ==================== ENTIDADES (Óvalos) ====================
+ellipse "Tipos de\nDocumentos" as td
+ellipse "Historial" as hist
+ellipse "Gestiones de\nEscrituras" as ges
+ellipse "Folios" as folios
+ellipse "Tipos de\nTrámite" as tt
+ellipse "Conceptos" as conc
+ellipse "Estados" as est
+ellipse "Presupuestos" as pres
+ellipse "Identificaciones" as ident
+ellipse "Testimonios" as test
+ellipse "Copias" as cop
+ellipse "Pagos" as pag
+ellipse "Ítems" as items
+ellipse "Documentos\nPresentados" as docp
+ellipse "Plantillas\nTrámites" as pt
+ellipse "Plantillas\nPresupuestos" as pp
+ellipse "Suplencias" as supl
+ellipse "Personas" as pers
+ellipse "Escrituras" as escr
+ellipse "Usuarios" as usua
+ellipse "Trámites" as tram
+ellipse "Inmuebles" as inm
+ellipse "TiposFolio" as tf
+ellipse "FoliosCopias" as fc
+ellipse "Movimientos\nTestimonio" as mt
+ellipse "Registro\nAuditoria" as ra
+ellipse "TramitesPersonas" as tp
+
+' ==================== MECANISMOS DE COMPENSACIÓN ====================
+rectangle "I: I\nM: I\nB: I" as c1 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c2 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c3 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c4 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c5 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c6 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c7 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c8 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c9 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c10 <<constraints>>
+rectangle "I: Null\nM: I\nB: I" as c11 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c12 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c13 <<constraints>>
+rectangle "I: Null\nM: I\nB: I" as c14 <<constraints>>
+rectangle "I: I\nM: I\nB: I" as c15 <<constraints>>
+
+' ==================== CONEXIONES ====================
+
+' Grupo 1: Documentos
+td -down- c1
+c1 -down- hist
+
+' Grupo 2: Gestiones
+ges -right- c2
+c2 -right- folios
+
+' Grupo 3: Trámites
+tt -down- c3
+c3 -down- tram
+
+' Grupo 4: Presupuestos
+conc -right- c4
+c4 -right- pres
+
+' Grupo 5: Identificaciones
+pers -right- c5
+c5 -right- ident
+
+' Grupo 6: Testimonios
+test -down- c6
+c6 -down- cop
+
+' Grupo 7: Pagos
+pres -right- c7
+c7 -right- pag
+
+' Grupo 8: Items
+pres -right- c8
+c8 -right- items
+
+' Grupo 9: Documentos Presentados
+tram -right- c9
+c9 -right- docp
+
+' Grupo 10: Plantillas
+tt -down- c10
+c10 -down- pt
+
+' Grupo 11: Especial - Folios (Null)
+escrituras -right- c11
+c11 -right- folios
+note right of c11
+  Protocolo auxiliar puede
+  no tener gestión
+end note
+
+' Grupo 12: Pagos especial
+pres -down- c12
+c12 -down- pag
+note right of c12
+  No existen pagos si
+  no existe presupuesto
+end note
+
+' Grupo 13: Trámites especial
+ges -right- c13
+c13 -right- tram
+note right of c13
+  Gestión puede ser NULL
+  inicialmente
+end note
+
+' Grupo 14: Inmuebles
+tram -right- c14
+c14 -right- inm
+
+' Grupo 15: Folios especial
+escrituras -down- c15
+c15 -down- folios
+note right of c15
+  Folio en error/no pasó
+  no tiene escritura
+end note
+
+note bottom of cop
+  Se puede eliminar copia
+  que nunca se imprimió
+end note
+
+@enduml
