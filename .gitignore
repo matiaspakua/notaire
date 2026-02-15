@@ -36,3 +36,4 @@ build/
 target/
 *.txt
 *.log
+/scripts/doc2md/venv/
