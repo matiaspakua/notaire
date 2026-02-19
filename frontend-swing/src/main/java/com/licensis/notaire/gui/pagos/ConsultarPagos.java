@@ -4,8 +4,16 @@
  */
 package com.licensis.notaire.gui.pagos;
 
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,6 +24,10 @@ public class ConsultarPagos extends javax.swing.JInternalFrame
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaConsultarPagos = new JMenuItem("Ventana Consultar Pagos");
+    private GenericRestClient pagoClient;
+    private GenericRestClient presupuestoClient;
+    private Integer idPresupuestoActual = null;
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Creates new form ConsultarPagos
@@ -25,6 +37,24 @@ public class ConsultarPagos extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
+        
+        pagoClient = AdministradorJpa.getInstancia().getPagoJpa();
+        presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
+        
+        limpiarFormulario();
+    }
+    
+    private void limpiarFormulario() {
+        campoNumeroGestion.setText("");
+        campoEncabezado.setText("");
+        campoNumeroPresupuesto.setText("");
+        campoTotal.setText("");
+        campoSaldo.setText("");
+        campoObservaciones.setText("");
+        idPresupuestoActual = null;
+        
+        DefaultTableModel model = (DefaultTableModel) grillaConceptosTramite.getModel();
+        model.setRowCount(0);
     }
 
     private void salir()
@@ -257,6 +287,130 @@ public class ConsultarPagos extends javax.swing.JInternalFrame
         Principal.removeVentanaActivas(ventanaConsultarPagos);
         Principal.eliminarFormulario(this);
     }//GEN-LAST:event_formInternalFrameClosed
+    
+    public void cargarPresupuesto(Integer idPresupuesto) {
+        try {
+            GenericDto presupuesto = presupuestoClient.find(idPresupuesto);
+            if (presupuesto == null) {
+                JOptionPane.showMessageDialog(this, "No se encontró el presupuesto", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            idPresupuestoActual = idPresupuesto;
+            campoNumeroPresupuesto.setText(String.valueOf(idPresupuesto));
+            
+            Object encabezado = presupuesto.get("encabezado");
+            if (encabezado != null) {
+                campoEncabezado.setText(encabezado.toString());
+            }
+            
+            Object tramite = presupuesto.get("fkIdTramite");
+            if (tramite instanceof GenericDto) {
+                Object idTramite = ((GenericDto) tramite).get("idTramite");
+                if (idTramite != null) {
+                    campoNumeroGestion.setText(idTramite.toString());
+                }
+            }
+            
+            Object total = presupuesto.get("total");
+            if (total != null) {
+                campoTotal.setText(total.toString());
+            }
+            
+            cargarPagosPorPresupuesto(idPresupuesto);
+            calcularSaldo(idPresupuesto);
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar el presupuesto: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void cargarPagosPorPresupuesto(Integer idPresupuesto) {
+        try {
+            List<GenericDto> todosPagos = pagoClient.findAll();
+            DefaultTableModel model = (DefaultTableModel) grillaConceptosTramite.getModel();
+            model.setRowCount(0);
+            
+            for (GenericDto pago : todosPagos) {
+                Object presupuesto = pago.get("fkIdPresupuesto");
+                if (presupuesto instanceof GenericDto) {
+                    Object idPres = ((GenericDto) presupuesto).get("idPresupuesto");
+                    if (idPres != null && idPres.equals(idPresupuesto)) {
+                        Object idPago = pago.get("idPago");
+                        Object monto = pago.get("monto");
+                        Object fecha = pago.get("fecha");
+                        Object obs = pago.get("observaciones");
+                        
+                        String fechaStr = "";
+                        if (fecha != null) {
+                            try {
+                                fechaStr = DATE_FORMAT.format(fecha);
+                            } catch (Exception e) {
+                                fechaStr = fecha.toString();
+                            }
+                        }
+                        
+                        model.addRow(new Object[]{
+                            idPago != null ? idPago.toString() : "",
+                            monto != null ? monto.toString() : "",
+                            fechaStr,
+                            obs != null ? obs.toString() : ""
+                        });
+                    }
+                }
+            }
+            
+            if (model.getRowCount() == 0) {
+                campoObservaciones.setText("No se encontraron pagos para este presupuesto");
+            }
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar los pagos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void calcularSaldo(Integer idPresupuesto) {
+        try {
+            float total = Float.parseFloat(campoTotal.getText().isEmpty() ? "0" : campoTotal.getText());
+            
+            List<GenericDto> pagos = pagoClient.findAll();
+            float pagado = 0;
+            
+            for (GenericDto pago : pagos) {
+                Object presupuesto = pago.get("fkIdPresupuesto");
+                if (presupuesto instanceof GenericDto) {
+                    Object idPres = ((GenericDto) presupuesto).get("idPresupuesto");
+                    if (idPres != null && idPres.equals(idPresupuesto)) {
+                        Object monto = pago.get("monto");
+                        if (monto != null) {
+                            pagado += Float.parseFloat(monto.toString());
+                        }
+                    }
+                }
+            }
+            
+            float saldo = total - pagado;
+            campoSaldo.setText(String.valueOf(saldo));
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al calcular el saldo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void buscarPresupuestoPorNumero(String numeroPresupuesto) {
+        try {
+            if (numeroPresupuesto == null || numeroPresupuesto.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese un número de presupuesto", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            Integer idPresupuesto = Integer.parseInt(numeroPresupuesto.trim());
+            cargarPresupuesto(idPresupuesto);
+            
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El número de presupuesto debe ser numérico", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;

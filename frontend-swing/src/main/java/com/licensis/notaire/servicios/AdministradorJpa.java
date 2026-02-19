@@ -57,7 +57,7 @@ public class AdministradorJpa {
         inmuebleClient = new GenericRestClient("/inmueble");
         itemClient = new GenericRestClient("/items");
         movimientoTestimonioClient = new GenericRestClient("/movimiento-testimonio");
-        pagoClient = new GenericRestClient("/pago");
+        pagoClient = new GenericRestClient("/pagos");
         personaClient = new GenericRestClient("/personas");
         presupuestoClient = new GenericRestClient("/presupuestos");
         suplenciaClient = new GenericRestClient("/suplencia");
