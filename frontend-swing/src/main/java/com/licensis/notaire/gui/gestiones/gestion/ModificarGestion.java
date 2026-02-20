@@ -4,6 +4,7 @@
  */
 package com.licensis.notaire.gui.gestiones.gestion;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
@@ -20,9 +21,11 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 
 /**
  *
@@ -39,6 +42,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame {
     private List<DtoPersona> listaClientesAsociados = new ArrayList<>();
     private List<DtoTramite> listaTramitesAsociados = new ArrayList<>();
     private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private AdministradorJpa adminJpa = AdministradorJpa.getInstancia();
 
     /**
      * Creates new form ModificarGestion
@@ -463,23 +467,25 @@ public class ModificarGestion extends javax.swing.JInternalFrame {
             for (Iterator<DtoTramite> itTramites = dtoGestion.getListaTramitesAsociados().iterator(); itTramites
                     .hasNext();) {
                 DtoTramite dtoTramite = itTramites.next();
+                DtoTramite tramiteCompleto = buscarTramiteREST(dtoTramite);
+                Integer presupId = tramiteCompleto.getPresupuesto() != null
+                        ? tramiteCompleto.getPresupuesto().getIdPresupuesto()
+                        : (dtoTramite.getPresupuesto() != null ? dtoTramite.getPresupuesto().getIdPresupuesto() : null);
+                DtoPresupuesto dtoPresupuesto = presupId != null ? buscarPresupuestoREST(presupId) : tramiteCompleto.getPresupuesto();
+                tramiteCompleto.setPresupuesto(dtoPresupuesto);
 
-                dtoTramite = miController.buscarTramite(dtoTramite);
-
-                DtoPresupuesto dtoPresupuesto = miController.buscarPresupuestoPorNumero(dtoTramite.getPresupuesto());
-
-                dtoTramite.setPresupuesto(dtoPresupuesto);
+                if (dtoPresupuesto == null) continue;
 
                 Object[] datos = {
-                        dtoTramite.getPresupuesto().getIdPresupuesto(),
-                        dtoTramite.getTipoDeTramite().getNombre(),
-                        dtoTramite.getPresupuesto().getTotal(),
+                        dtoPresupuesto.getIdPresupuesto(),
+                        tramiteCompleto.getTipoDeTramite() != null ? tramiteCompleto.getTipoDeTramite().getNombre() : "",
+                        dtoPresupuesto.getTotal(),
                         true
                 };
 
                 ((DefaultTableModel) this.grillaPresupuestos.getModel()).addRow(datos);
 
-                this.getListaTramitesAsociados().add(dtoTramite);
+                this.getListaTramitesAsociados().add(tramiteCompleto);
             }
 
             this.grillaPresupuestos.setEnabled(false);
@@ -606,6 +612,27 @@ public class ModificarGestion extends javax.swing.JInternalFrame {
         }
 
     }// GEN-LAST:event_botonAceptarActionPerformed
+
+    private DtoTramite buscarTramiteREST(DtoTramite dto) {
+        if (dto == null || dto.getIdTramite() == null) return dto;
+        try {
+            GenericDto raw = adminJpa.getTramiteJpa().find(dto.getIdTramite());
+            return RestMapper.toDtoTramite(raw);
+        } catch (java.io.IOException e) {
+            return dto;
+        }
+    }
+
+    private DtoPresupuesto buscarPresupuestoREST(Integer idPresupuesto) {
+        if (idPresupuesto == null) return null;
+        try {
+            GenericDto raw = adminJpa.getPresupuestoJpa().find(idPresupuesto);
+            return RestMapper.toDtoPresupuesto(raw);
+        } catch (java.io.IOException e) {
+            return null;
+        }
+    }
+
      // Variables declaration - do not modify//GEN-BEGIN:variables
 
     private javax.swing.JButton botonAceptar;

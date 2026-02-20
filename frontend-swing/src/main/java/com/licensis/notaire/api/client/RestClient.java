@@ -52,11 +52,20 @@ public class RestClient {
     }
     
     /**
-     * Obtiene un objeto individual desde el endpoint
+     * Obtiene un objeto individual desde el endpoint.
+     * Si responseType es GenericDto, deserializa el JSON como Map y lo envuelve en GenericDto.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T get(String endpoint, Class<T> responseType) throws IOException {
         String url = ApiConfig.getApiBaseUrl() + endpoint;
         String jsonResponse = makeGetRequest(url);
+        if (responseType == GenericDto.class) {
+            Map<String, Object> map = objectMapper.readValue(jsonResponse,
+                    new TypeReference<Map<String, Object>>() {});
+            GenericDto dto = new GenericDto();
+            dto.setData(map != null ? map : new java.util.HashMap<>());
+            return (T) dto;
+        }
         return objectMapper.readValue(jsonResponse, responseType);
     }
     

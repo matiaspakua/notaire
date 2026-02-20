@@ -4,19 +4,25 @@
  */
 package com.licensis.notaire.gui.presupuestos;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoInmueble;
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPago;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -42,7 +48,10 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
     private DtoPersona miDtoPersona = null;
     private DtoPresupuesto miDtoPresupuesto = null;
     private ArrayList<DtoItem> listaItems = null;
-    private ControllerNegocio miController = null;
+    private final GenericRestClient itemClient = AdministradorJpa.getInstancia().getItemJpa();
+    private final GenericRestClient pagoClient = AdministradorJpa.getInstancia().getPagoJpa();
+    private final GenericRestClient presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
+    private final GenericRestClient tramiteClient = AdministradorJpa.getInstancia().getTramiteJpa();
     private Integer cantidadFilasGrilla = 0;
     private Integer cantidadFilasNuevasGrilla = 0;
     private Float total = 0f;
@@ -56,7 +65,6 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
-        miController = ControllerNegocio.getInstancia();
 
         botonDetalleInmueble.setEnabled(false);
         campoObservaciones.setEnabled(false);
@@ -84,55 +92,69 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
     }
 
     public void cargarFormulario() {
+        campoNombrePersona.setText(miDtoPersona != null ? (miDtoPersona.getNombre() + " " + miDtoPersona.getApellido()) : "");
+        campoObservaciones.setText(miDtoPresupuesto != null ? miDtoPresupuesto.getObservaciones() : "");
+        campoNombreTramite.setText((miDtoPresupuesto != null && miDtoPresupuesto.getTramite() != null && miDtoPresupuesto.getTramite().getTipoDeTramite() != null)
+                ? miDtoPresupuesto.getTramite().getTipoDeTramite().getNombre() : "");
+        campoTotal.setText(miDtoPresupuesto != null && miDtoPresupuesto.getTotal() != null ? miDtoPresupuesto.getTotal().toString() : "");
 
-        campoNombrePersona.setText(miDtoPersona.getNombre() + " " + miDtoPersona.getApellido());
-        campoObservaciones.setText(miDtoPresupuesto.getObservaciones());
-        campoNombreTramite.setText(miDtoPresupuesto.getTramite().getTipoDeTramite().getNombre());
-        campoTotal.setText(miDtoPresupuesto.getTotal().toString());
-
-        if (miDtoPresupuesto.getTramite().getTipoDeTramite().getAsociaInmuebles()) {
+        if (miDtoPresupuesto != null && miDtoPresupuesto.getTramite() != null && miDtoPresupuesto.getTramite().getTipoDeTramite() != null
+                && Boolean.TRUE.equals(miDtoPresupuesto.getTramite().getTipoDeTramite().getAsociaInmuebles())) {
             botonDetalleInmueble.setEnabled(true);
         } else {
             botonDetalleInmueble.setEnabled(false);
         }
 
-        listaItems = miController.buscarItemsPresupuesto(miDtoPresupuesto);
-
-        if (listaItems != null) {
-            DtoItem miDto = null;
-
-            for (int i = 0; i < listaItems.size(); i++) {
-
-                miDto = listaItems.get(i);
-
-                if (miDto.isFijo()) {
-                    Object[] datos = {
-                            miDto.getNombre(),
-                            miDto.getValor()
-                    };
-                    ((DefaultTableModel) grillaValoresFijos.getModel()).addRow(datos);
-                } else {
-
-                    Object[] datos = {
-                            miDto.getNombre(),
-                            miDto.getValor(),
-                            miDto.getPorcentaje(),
-                            miDto.getObservaciones()
-                    };
-                    ((DefaultTableModel) grillaValoresVariables.getModel()).addRow(datos);
+        if (miDtoPresupuesto == null || miDtoPresupuesto.getIdPresupuesto() == null) {
+            JOptionPane.showMessageDialog(this, "ERROR: Presupuesto no válido.");
+            return;
+        }
+        final int idPresupuesto = miDtoPresupuesto.getIdPresupuesto();
+        new SwingWorker<ArrayList<DtoItem>, Void>() {
+            @Override
+            protected ArrayList<DtoItem> doInBackground() throws IOException {
+                List<GenericDto> raw = itemClient.findAllByPath("presupuesto/" + idPresupuesto);
+                ArrayList<DtoItem> list = new ArrayList<>();
+                for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                    list.add(RestMapper.toDtoItem(gd));
+                }
+                return list;
+            }
+            @Override
+            protected void done() {
+                try {
+                    listaItems = get();
+                    if (listaItems != null && !listaItems.isEmpty()) {
+                        for (DtoItem miDto : listaItems) {
+                            if (Boolean.TRUE.equals(miDto.isFijo())) {
+                                ((DefaultTableModel) grillaValoresFijos.getModel()).addRow(new Object[]{
+                                        miDto.getNombre(),
+                                        miDto.getValor()
+                                });
+                            } else {
+                                ((DefaultTableModel) grillaValoresVariables.getModel()).addRow(new Object[]{
+                                        miDto.getNombre(),
+                                        miDto.getValor(),
+                                        miDto.getPorcentaje() != null ? miDto.getPorcentaje() : 0,
+                                        miDto.getObservaciones()
+                                });
+                            }
+                        }
+                        cantidadFilasGrilla = grillaValoresVariables.getRowCount();
+                        campoObservaciones.setEnabled(true);
+                        botonAceptar.setEnabled(true);
+                        botonAgregarItem.setEnabled(true);
+                        botonEliminarItem.setEnabled(true);
+                        botonCalcular.setEnabled(true);
+                    } else {
+                        JOptionPane.showMessageDialog(ModificarPresupuesto.this, "ERROR: Este presupuesto no tiene items asociados.");
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(ModificarPresupuesto.class.getName()).log(Level.WARNING, "Error cargando items", ex);
+                    JOptionPane.showMessageDialog(ModificarPresupuesto.this, "Error al cargar items: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-
-            cantidadFilasGrilla = grillaValoresVariables.getRowCount();
-
-            campoObservaciones.setEnabled(true);
-            botonAceptar.setEnabled(true);
-            botonAgregarItem.setEnabled(true);
-            botonEliminarItem.setEnabled(true);
-            botonCalcular.setEnabled(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "ERROR: Este presupuesto no tiene items asociados.");
-        }
+        }.execute();
     }
 
     public void limpiarFormulario() {
@@ -625,8 +647,15 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
             if (totalNuevo > total) {
                 saldo = miDtoPresupuesto.getSaldo() + totalNuevo - total;
             } else if (totalNuevo < total) {
-                // Traigo los pagos ya realizados por el cliente para este presupuesto:
-                List<DtoPago> pagosPresupuesto = miController.buscarPagosPresupuesto(miDtoPresupuesto);
+                List<DtoPago> pagosPresupuesto = new ArrayList<>();
+                try {
+                    List<GenericDto> raw = pagoClient.findAllByPath("presupuesto/" + miDtoPresupuesto.getIdPresupuesto());
+                    for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                        pagosPresupuesto.add(RestMapper.toDtoPago(gd));
+                    }
+                } catch (IOException e) {
+                    Logger.getLogger(ModificarPresupuesto.class.getName()).log(Level.WARNING, "Error buscando pagos", e);
+                }
 
                 if (pagosPresupuesto != null && !pagosPresupuesto.isEmpty()) {
                     Float montoPagos = 0f;
@@ -686,8 +715,14 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
         TableModel miGrilla = grillaValoresVariables.getModel();
         int filas = miGrilla.getRowCount();
 
-        ArrayList<DtoItem> itemsNuevos = new ArrayList<>();
+        ArrayList<DtoItem> variableItems = new ArrayList<>();
+        if (listaItems != null) {
+            for (DtoItem it : listaItems) {
+                if (!Boolean.TRUE.equals(it.isFijo())) variableItems.add(it);
+            }
+        }
 
+        ArrayList<DtoItem> itemsNuevos = new ArrayList<>();
         Boolean flag = true;
 
         for (int i = 0; i < filas; i++) {
@@ -730,6 +765,10 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
                     miItem.setObservaciones("");
                 }
 
+                if (i < variableItems.size() && variableItems.get(i).getIdItem() != null) {
+                    miItem.setIdItem(variableItems.get(i).getIdItem());
+                }
+
                 itemsNuevos.add(miItem);
             } else {
                 JOptionPane.showMessageDialog(this, "Debe completar el Nombre del Item de la fila " + (i + 1), "ERROR",
@@ -747,26 +786,62 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
                         "CONFIRMACION", JOptionPane.YES_NO_OPTION);
 
                 if (option == JOptionPane.YES_OPTION) {
-                    DtoPago miDtoPago = new DtoPago();
-
-                    miDtoPago.setMonto(saldo);
-                    miDtoPago.setFecha(Calendar.getInstance().getTime());
-                    miDtoPago.setPresupuesto(miDtoPresupuesto);
-                    miDtoPago.setObservaciones("Devolucion al cliente.");
-
-                    Boolean creado = miController.darAltaPago(miDtoPago);
-
-                    miDtoPresupuesto.setSaldo(new Float(0f));
-
+                    try {
+                        GenericDto presupuestoRef = new GenericDto();
+                        presupuestoRef.put("idPresupuesto", miDtoPresupuesto.getIdPresupuesto());
+                        GenericDto pagoPayload = new GenericDto();
+                        pagoPayload.put("monto", saldo);
+                        pagoPayload.put("fecha", Calendar.getInstance().getTimeInMillis());
+                        pagoPayload.put("fkIdPresupuesto", presupuestoRef);
+                        pagoPayload.put("observaciones", "Devolucion al cliente.");
+                        pagoClient.create(pagoPayload);
+                        miDtoPresupuesto.setSaldo(0f);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ModificarPresupuesto.class.getName()).log(Level.WARNING, "Error creando pago", ex);
+                        JOptionPane.showMessageDialog(this, "Error al registrar pago: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
                     miDtoPresupuesto.setSaldo(saldo);
                 }
             }
 
-            Boolean modificado;
             try {
-                modificado = miController.modificarPresupuesto(miDtoPresupuesto, listaItems, itemsNuevos);
+                GenericDto presupuestoPayload = new GenericDto();
+                presupuestoPayload.put("idPresupuesto", miDtoPresupuesto.getIdPresupuesto());
+                presupuestoPayload.put("total", totalNuevo);
+                presupuestoPayload.put("saldo", saldo);
+                presupuestoPayload.put("observaciones", campoObservaciones.getText());
+                if (miDtoPresupuesto.getPersona() != null && miDtoPresupuesto.getPersona().getIdPersona() != null) {
+                    GenericDto personaRef = new GenericDto();
+                    personaRef.put("idPersona", miDtoPresupuesto.getPersona().getIdPersona());
+                    presupuestoPayload.put("fkIdPersona", personaRef);
+                }
+                if (miDtoPresupuesto.getTramite() != null && miDtoPresupuesto.getTramite().getIdTramite() != null) {
+                    GenericDto tramiteRef = new GenericDto();
+                    tramiteRef.put("idTramite", miDtoPresupuesto.getTramite().getIdTramite());
+                    presupuestoPayload.put("fkIdTramite", tramiteRef);
+                }
+                presupuestoClient.edit(presupuestoPayload);
 
+                for (DtoItem itemNuevo : itemsNuevos) {
+                    GenericDto itemPayload = new GenericDto();
+                    itemPayload.put("nombre", itemNuevo.getNombre());
+                    itemPayload.put("valor", itemNuevo.getValor() != null ? itemNuevo.getValor() : 0f);
+                    itemPayload.put("porcentaje", itemNuevo.getPorcentaje() != null ? itemNuevo.getPorcentaje() : 0);
+                    itemPayload.put("observaciones", itemNuevo.getObservaciones());
+                    itemPayload.put("fijo", false);
+                    GenericDto presRef = new GenericDto();
+                    presRef.put("idPresupuesto", miDtoPresupuesto.getIdPresupuesto());
+                    itemPayload.put("fkIdPresupuesto", presRef);
+                    if (itemNuevo.getIdItem() != null && itemNuevo.getIdItem() > 0) {
+                        itemPayload.put("idItem", itemNuevo.getIdItem());
+                        itemClient.edit(itemPayload);
+                    } else {
+                        itemClient.create(itemPayload);
+                    }
+                }
+
+                boolean modificado = true;
                 if (modificado) {
                     JOptionPane.showMessageDialog(this, "Se ha modificado el presupuesto.", "CONFIRMACION",
                             JOptionPane.INFORMATION_MESSAGE);
@@ -776,10 +851,16 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
                             JOptionPane.ERROR_MESSAGE);
                     this.limpiarFormulario();
                 }
-            } catch (Exception ex) {
+            } catch (IOException ex) {
+                Logger.getLogger(ModificarPresupuesto.class.getName()).log(Level.WARNING, "Error modificando presupuesto", ex);
                 JOptionPane.showMessageDialog(this,
                         "El Presupuesto ha sido recientemente modificado por otro usuario o ha ocurrido un error: "
                                 + ex.getMessage(),
+                        "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                limpiarFormulario();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error inesperado: " + ex.getMessage(),
                         "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
                 limpiarFormulario();
             }
@@ -792,19 +873,26 @@ public class ModificarPresupuesto extends javax.swing.JInternalFrame {
     }// GEN-LAST:event_botonCancelarActionPerformed
 
     private void botonDetalleInmuebleActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonDetalleInmuebleActionPerformed
-
-        if (miDtoPersona != null) {
-            DtoInmueble miInmueble = null;
-
-            miInmueble = miController.buscarInmueble(miDtoPresupuesto.getTramite());
-
-            if (miInmueble != null) {
-                // Muestro detalle de Inmueble
-                DetalleInmueble miDetalleInmueble = new DetalleInmueble();
-                miDetalleInmueble.setInmueble(miInmueble);
-                miDetalleInmueble.cargarFormulario();
-
-                Principal.cargarFormulario(miDetalleInmueble);
+        if (miDtoPersona != null && miDtoPresupuesto != null && miDtoPresupuesto.getTramite() != null
+                && miDtoPresupuesto.getTramite().getIdTramite() != null) {
+            try {
+                GenericDto tramiteRaw = tramiteClient.find(miDtoPresupuesto.getTramite().getIdTramite());
+                DtoInmueble miInmueble = null;
+                Object inmuebleObj = tramiteRaw != null ? tramiteRaw.get("fkIdInmueble") : null;
+                if (inmuebleObj instanceof GenericDto gd) {
+                    miInmueble = RestMapper.toDtoInmueble(gd);
+                }
+                if (miInmueble != null && miInmueble.getIdInmueble() != null && miInmueble.getIdInmueble() > 0) {
+                    DetalleInmueble miDetalleInmueble = new DetalleInmueble();
+                    miDetalleInmueble.setInmueble(miInmueble);
+                    miDetalleInmueble.cargarFormulario();
+                    Principal.cargarFormulario(miDetalleInmueble);
+                } else {
+                    JOptionPane.showMessageDialog(this, "El trámite no tiene inmueble asociado.", "INFORMACIÓN", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ModificarPresupuesto.class.getName()).log(Level.WARNING, "Error buscando inmueble", ex);
+                JOptionPane.showMessageDialog(this, "Error al buscar inmueble: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Debe buscar primero a una Persona.", "ADVERTENCIA",

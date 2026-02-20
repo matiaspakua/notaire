@@ -1,9 +1,14 @@
 package com.licensis.notaire.api.client;
 
 import com.licensis.notaire.dto.*;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Maps GenericDto (REST API responses) to domain DTOs.
@@ -11,7 +16,26 @@ import java.util.Map;
  */
 public final class RestMapper {
 
+    private static final Logger LOG = Logger.getLogger(RestMapper.class.getName());
+    private static final GenericRestClient TIPO_IDENT_CLIENT = AdministradorJpa.getInstancia().getTipoIdentificacionJpa();
+
     private RestMapper() {}
+
+    /** Resolves tipo identificacion nombre to id (for asociarFkTipoIdentificacion). */
+    public static int asociarFkTipoIdentificacion(String nombreTipo) {
+        if (nombreTipo == null || nombreTipo.isBlank()) return 0;
+        try {
+            for (com.licensis.notaire.dto.GenericDto gd : TIPO_IDENT_CLIENT.findAll()) {
+                if (nombreTipo.equalsIgnoreCase(gd.getString("nombre"))) {
+                    Integer id = gd.getInt("idTipoIdentificacion");
+                    return id != null ? id : 0;
+                }
+            }
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Error resolving tipo identificacion", e);
+        }
+        return 0;
+    }
 
     @SuppressWarnings("unchecked")
     static GenericDto asGenericDto(Object value) {
@@ -24,6 +48,15 @@ public final class RestMapper {
             return dto;
         }
         return null;
+    }
+
+    public static DtoTipoIdentificacion toDtoTipoIdentificacion(GenericDto dto) {
+        DtoTipoIdentificacion tipo = new DtoTipoIdentificacion();
+        if (dto == null) return tipo;
+        tipo.setIdTipoIdentificacion(dto.getInt("idTipoIdentificacion"));
+        tipo.setNombre(dto.getString("nombre"));
+        tipo.setCaracteres(dto.getString("caracteres"));
+        return tipo;
     }
 
     public static DtoTipoDeTramite toDtoTipoTramite(GenericDto dto) {
@@ -106,9 +139,13 @@ public final class RestMapper {
         persona.setNumeroIdentificacion(dto.getString("numeroIdentificacion"));
         persona.setTelefono(dto.getString("telefono"));
         persona.setDomicilio(dto.getString("domicilio"));
+        persona.setEsCliente(Boolean.TRUE.equals(dto.getBoolean("esCliente")));
+        persona.setRegistroEscribano(dto.getInt("registroEscribano"));
         String email = dto.getString("eMail");
         if (email == null) email = dto.getString("email");
         persona.setEmail(email);
+        GenericDto tipoIdent = asGenericDto(dto.get("fkIdTipoIdentificacion"));
+        if (tipoIdent != null) persona.setDtoTipoIdentificacion(toDtoTipoIdentificacion(tipoIdent));
         return persona;
     }
 
@@ -148,6 +185,8 @@ public final class RestMapper {
         Object fecha = dto.get("fecha");
         if (fecha instanceof Date date) pres.setFecha(date);
         else if (fecha instanceof Number n) pres.setFecha(new Date(n.longValue()));
+        GenericDto personaDto = asGenericDto(dto.get("fkIdPersona"));
+        if (personaDto != null) pres.setPersona(toDtoPersona(personaDto));
         GenericDto tramiteDto = asGenericDto(dto.get("fkIdTramite"));
         if (tramiteDto != null) {
             DtoTramite tramite = new DtoTramite();
@@ -210,5 +249,31 @@ public final class RestMapper {
         item.setObservaciones(dto.getString("observaciones"));
         item.setConceptoFijo(Boolean.TRUE.equals(dto.getBoolean("fijo")));
         return item;
+    }
+
+    public static DtoPago toDtoPago(GenericDto dto) {
+        DtoPago pago = new DtoPago();
+        if (dto == null) return pago;
+        pago.setIdPago(dto.getInt("idPago"));
+        pago.setMonto(dto.getFloat("monto"));
+        Object fecha = dto.get("fecha");
+        if (fecha instanceof Date d) pago.setFecha(d);
+        else if (fecha instanceof Number n) pago.setFecha(new Date(n.longValue()));
+        pago.setObservaciones(dto.getString("observaciones"));
+        GenericDto pres = asGenericDto(dto.get("fkIdPresupuesto"));
+        if (pres != null) pago.setPresupuesto(toDtoPresupuesto(pres));
+        return pago;
+    }
+
+    public static DtoInmueble toDtoInmueble(GenericDto dto) {
+        DtoInmueble inmueble = new DtoInmueble();
+        if (dto == null) return inmueble;
+        inmueble.setIdInmueble(dto.getInt("idInmueble"));
+        inmueble.setNomenclaturaCatastral(dto.getString("nomenclaturaCatastral"));
+        inmueble.setValuacionFiscal(dto.getString("valuacionFiscal"));
+        inmueble.setDomicilio(dto.getString("domicilio"));
+        inmueble.setTipoInmueble(dto.getString("tipoInmueble"));
+        inmueble.setObservaciones(dto.getString("observaciones"));
+        return inmueble;
     }
 }

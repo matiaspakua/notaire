@@ -4,15 +4,22 @@
  */
 package com.licensis.notaire.gui.presupuestos;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -29,6 +36,7 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame {
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static String formularioInvocador = null;
     private static ModificarPresupuesto modificarPresupuesto = null;
+    private final GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
 
     /**
      * Creates new form ListaPersonasPresupuesto
@@ -66,10 +74,12 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame {
                 flag = true;
                 miDtoPersona = miListaDtoPersonas.get(i);
 
+                String nomTipo = (miDtoPersona.getDtoTipoIdentificacion() != null)
+                        ? miDtoPersona.getDtoTipoIdentificacion().getNombre() : "";
                 Object[] datos = {
                         miDtoPersona.getNombre(),
                         miDtoPersona.getApellido(),
-                        miDtoPersona.getDtoTipoIdentificacion().getNombre(),
+                        nomTipo,
                         miDtoPersona.getNumeroIdentificacion(),
                         miDtoPersona.getEsCliente()
                 };
@@ -245,101 +255,106 @@ public class ListaPersonasPresupuesto extends javax.swing.JInternalFrame {
         TableModel miGrilla = grillaPersonas.getModel();
         int filaSeleccionada = grillaPersonas.getSelectedRow();
         filaSeleccionada = grillaPersonas.convertRowIndexToModel(filaSeleccionada);
+        if (filaSeleccionada < 0) return;
 
         int filas = miGrilla.getRowCount();
+        final String nombreTipo = miGrilla.getValueAt(filaSeleccionada, 2) != null
+                ? miGrilla.getValueAt(filaSeleccionada, 2).toString() : "";
+        final String numeroIdent = miGrilla.getValueAt(filaSeleccionada, 3) != null
+                ? miGrilla.getValueAt(filaSeleccionada, 3).toString() : "";
+        final String invocador = ListaPersonasPresupuesto.formularioInvocador;
+        final ModificarPresupuesto formModificar = modificarPresupuesto;
 
-        DtoPersona miDtoPersona = new DtoPersona();
-        DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-
-        Boolean flag = true;
-
-        // Recorro la grilla completa, buscando a la persona seleccionada
-        for (int i = 0; i < filas; i++) {
-            if (i == filaSeleccionada) {
-                dtoTipoIdentificacion.setNombre(miGrilla.getValueAt(i, 2).toString());
-                miDtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
-                miDtoPersona.setNumeroIdentificacion(miGrilla.getValueAt(i, 3).toString());
-
-                // Asocio el nombre tipo Identificacion con su id para buscar la persona
-                dtoTipoIdentificacion.setIdTipoIdentificacion(
-                        ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(miDtoPersona));
-
-                // Busco todos los datos de la persona seleccionada y cargo el formulario
-                miDtoPersona = ControllerNegocio.getInstancia().buscarPersonaTipoNumeroIdentificacion(miDtoPersona);
-
-                switch (ListaPersonasPresupuesto.formularioInvocador) {
-                    case ConstantesGui.MODIFICAR_PRESUPUESTO: {
-                        ListaPresupuestosCliente presupuestosForm = new ListaPresupuestosCliente();
-                        presupuestosForm.setFormModificarPresupuesto(modificarPresupuesto);
-                        presupuestosForm.setFormulario(formularioInvocador);
-                        presupuestosForm.setPersona(miDtoPersona);
-                        try {
-                            presupuestosForm.cargarGrillaPresupuestos();
-                        } catch (Exception ex) {
-                            Logger.getLogger(ListaPersonasPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        Principal.cargarFormulario(presupuestosForm);
-                        Principal.setVentanasActivas(ListaPresupuestosCliente.getVentanaListaPresupuestosCliente());
-
-                        this.dispose();
-
-                        break;
+        new SwingWorker<DtoPersona, Void>() {
+            @Override
+            protected DtoPersona doInBackground() throws IOException {
+                int idTipo = RestMapper.asociarFkTipoIdentificacion(nombreTipo);
+                String path = "buscar?numeroIdentificacion=" + URLEncoder.encode(numeroIdent, StandardCharsets.UTF_8);
+                if (idTipo > 0) path += "&idTipoIdentificacion=" + idTipo;
+                List<GenericDto> raw = personaClient.findAllByPath(path);
+                if (raw != null && !raw.isEmpty()) {
+                    return RestMapper.toDtoPersona(raw.get(0));
+                }
+                return null;
+            }
+            @Override
+            protected void done() {
+                try {
+                    DtoPersona miDtoPersona = get();
+                    if (miDtoPersona == null) {
+                        JOptionPane.showMessageDialog(ListaPersonasPresupuesto.this,
+                                "No se encontró la persona seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
-                    case ConstantesGui.CREAR_PRESUPUESTO: {
-                        CrearPresupuesto formCrearPresupuesto = CrearPresupuesto.getInstancia();
-                        formCrearPresupuesto.limpiarFormulario();
-                        formCrearPresupuesto.cargarFormulario(miDtoPersona);
-
-                        Principal.cargarFormulario(formCrearPresupuesto);
-                        Principal.setVentanasActivas(CrearPresupuesto.getVentanaCrearPresupuesto());
-
-                        this.dispose();
-                        break;
-                    }
-                    case ConstantesGui.BUSCAR_PRESUPUESTO: {
-                        ListaPresupuestosCliente presupuestoForm = new ListaPresupuestosCliente();
-                        presupuestoForm.setFormulario(ConstantesGui.BUSCAR_PRESUPUESTO);
-                        presupuestoForm.setPersona(miDtoPersona);
-                        try {
-                            presupuestoForm.cargarGrillaPresupuestos();
-                        } catch (Exception ex) {
-                            Logger.getLogger(ListaPersonasPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        Principal.cargarFormulario(presupuestoForm);
-                        Principal.setVentanasActivas(ListaPresupuestosCliente.getVentanaListaPresupuestosCliente());
-
-                        this.dispose();
-                        break;
-                    }
-                    case ConstantesGui.INICIAR_GESTION: {
-
-                        if (miDtoPersona.getEsCliente()) {
-                            ListaPresupuestosClientesSinGestion presupuestosForm = new ListaPresupuestosClientesSinGestion();
-                            presupuestosForm.setFormularioInvocador(ConstantesGui.INICIAR_GESTION);
-                            presupuestosForm.setClienteSeleccionado(miDtoPersona);
-
+                    switch (invocador) {
+                        case ConstantesGui.MODIFICAR_PRESUPUESTO: {
+                            ListaPresupuestosCliente presupuestosForm = new ListaPresupuestosCliente();
+                            presupuestosForm.setFormModificarPresupuesto(formModificar);
+                            presupuestosForm.setFormulario(invocador);
+                            presupuestosForm.setPersona(miDtoPersona);
+                            try {
+                                presupuestosForm.cargarGrillaPresupuestos();
+                            } catch (Exception ex) {
+                                Logger.getLogger(ListaPersonasPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             Principal.cargarFormulario(presupuestosForm);
-                            Principal.setVentanasActivas(
-                                    ListaPresupuestosClientesSinGestion.getVentanaListaPresupuestoClienteSinGestion());
-                        } else {
-                            JOptionPane.showMessageDialog(this,
-                                    "La persona seleccionada aun no ha sido registrada como cliente", "Advertencia",
-                                    JOptionPane.WARNING_MESSAGE);
+                            Principal.setVentanasActivas(ListaPresupuestosCliente.getVentanaListaPresupuestosCliente());
+                            limpiarJtable();
+                            dispose();
+                            break;
                         }
-
-                        this.dispose();
-                        break;
+                        case ConstantesGui.CREAR_PRESUPUESTO: {
+                            CrearPresupuesto formCrearPresupuesto = CrearPresupuesto.getInstancia();
+                            formCrearPresupuesto.limpiarFormulario();
+                            formCrearPresupuesto.cargarFormulario(miDtoPersona);
+                            Principal.cargarFormulario(formCrearPresupuesto);
+                            Principal.setVentanasActivas(CrearPresupuesto.getVentanaCrearPresupuesto());
+                            limpiarJtable();
+                            dispose();
+                            break;
+                        }
+                        case ConstantesGui.BUSCAR_PRESUPUESTO: {
+                            ListaPresupuestosCliente presupuestoForm = new ListaPresupuestosCliente();
+                            presupuestoForm.setFormulario(ConstantesGui.BUSCAR_PRESUPUESTO);
+                            presupuestoForm.setPersona(miDtoPersona);
+                            try {
+                                presupuestoForm.cargarGrillaPresupuestos();
+                            } catch (Exception ex) {
+                                Logger.getLogger(ListaPersonasPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            Principal.cargarFormulario(presupuestoForm);
+                            Principal.setVentanasActivas(ListaPresupuestosCliente.getVentanaListaPresupuestosCliente());
+                            limpiarJtable();
+                            dispose();
+                            break;
+                        }
+                        case ConstantesGui.INICIAR_GESTION: {
+                            if (miDtoPersona.getEsCliente()) {
+                                ListaPresupuestosClientesSinGestion presupuestosForm = new ListaPresupuestosClientesSinGestion();
+                                presupuestosForm.setFormularioInvocador(ConstantesGui.INICIAR_GESTION);
+                                presupuestosForm.setClienteSeleccionado(miDtoPersona);
+                                Principal.cargarFormulario(presupuestosForm);
+                                Principal.setVentanasActivas(
+                                        ListaPresupuestosClientesSinGestion.getVentanaListaPresupuestoClienteSinGestion());
+                            } else {
+                                JOptionPane.showMessageDialog(ListaPersonasPresupuesto.this,
+                                        "La persona seleccionada aun no ha sido registrada como cliente", "Advertencia",
+                                        JOptionPane.WARNING_MESSAGE);
+                            }
+                            limpiarJtable();
+                            dispose();
+                            break;
+                        }
+                        default:
+                            break;
                     }
+                } catch (Exception ex) {
+                    Logger.getLogger(ListaPersonasPresupuesto.class.getName()).log(Level.WARNING, "Error al cargar persona", ex);
+                    JOptionPane.showMessageDialog(ListaPersonasPresupuesto.this, "Error al cargar persona: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-
-        this.limpiarJtable();
-
-        this.dispose();
-
+        }.execute();
     }// GEN-LAST:event_grillaPersonasMouseClicked
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {// GEN-FIRST:event_formInternalFrameClosed

@@ -20,6 +20,7 @@ public class AdministradorJpa {
     private GenericRestClient escrituraClient;
     private GenericRestClient estadoDeGestionClient;
     private GenericRestClient folioClient;
+    private GenericRestClient gestionClient;
     private GenericRestClient historialClient;
     private GenericRestClient inmuebleClient;
     private GenericRestClient itemClient;
@@ -53,6 +54,7 @@ public class AdministradorJpa {
         escrituraClient = new GenericRestClient("/escrituras");
         estadoDeGestionClient = new GenericRestClient("/estado-gestion");
         folioClient = new GenericRestClient("/folio");
+        gestionClient = new GenericRestClient("/gestiones");
         historialClient = new GenericRestClient("/historial");
         inmuebleClient = new GenericRestClient("/inmueble");
         itemClient = new GenericRestClient("/items");
@@ -109,6 +111,10 @@ public class AdministradorJpa {
 
     public GenericRestClient getFolioJpa() {
         return folioClient;
+    }
+
+    public GenericRestClient getGestionJpa() {
+        return gestionClient;
     }
 
     public GenericRestClient getHistorialJpa() {

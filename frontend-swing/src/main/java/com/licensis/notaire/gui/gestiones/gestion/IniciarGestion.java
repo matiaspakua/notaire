@@ -9,6 +9,7 @@ import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.dto.interfaces.DtoValido;
@@ -16,8 +17,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
 import com.licensis.notaire.gui.presupuestos.BuscarPresupuesto;
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import com.licensis.notaire.servicios.AdministradorSesion;
 import java.io.IOException;
@@ -48,6 +51,7 @@ public class IniciarGestion extends javax.swing.JInternalFrame
     private List<DtoPersona> listaDtoEscribanos = new ArrayList<>();
     private List<DtoPersona> listaClientesAsociados = new ArrayList<>();
     private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private AdministradorJpa adminJpa = AdministradorJpa.getInstancia();
     private DtoEstadoDeGestion estadoInicial;
 
     /**
@@ -549,8 +553,18 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
     public void cargarRegistrosEscribanos()
     {
-
-        this.setListaDtoEscribanos(this.miController.obtenerListaEscribanosDisponibles());
+        List<DtoPersona> escribanos = new ArrayList<>();
+        try {
+            for (GenericDto raw : adminJpa.getPersonaJpa().findAll()) {
+                DtoPersona dtoPersona = RestMapper.toDtoPersona(raw);
+                if (dtoPersona.getRegistroEscribano() != null) {
+                    escribanos.add(dtoPersona);
+                }
+            }
+        } catch (java.io.IOException ex) {
+            Logger.getLogger(IniciarGestion.class.getName()).log(Level.SEVERE, "Error obteniendo escribanos", ex);
+        }
+        this.setListaDtoEscribanos(escribanos);
 
         //  Verifico si el usuario loguado es un escribano, y en tal caso, es el escribano por defualt
         //  para el combo.
@@ -583,25 +597,32 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
     public void cargarUltimaGestionSugerida()
     {
-
-        this.comboNumeroGestion.addItem(new String(""));
-        DtoGestionDeEscritura dtoProximaGestion = miController.obtenerProximaGestionDeEscritura();
-
-        int proximoNumeroGestion = dtoProximaGestion.getNumero();
-
-        if (proximoNumeroGestion == ConstantesGui.SIN_REGISTRO)
-        {
-            this.comboNumeroGestion.addItem(new Integer(1));
-        } else
-        {
-
-            this.comboNumeroGestion.addItem(++proximoNumeroGestion);
+        this.comboNumeroGestion.addItem("");
+        int maxNumero = 0;
+        try {
+            for (GenericDto raw : adminJpa.getGestionJpa().findAll()) {
+                Integer numero = raw.getInt("numero");
+                if (numero != null && numero > maxNumero) {
+                    maxNumero = numero;
+                }
+            }
+        } catch (java.io.IOException ex) {
+            Logger.getLogger(IniciarGestion.class.getName()).log(Level.SEVERE, "Error obteniendo proxima gestion", ex);
         }
+        int proximoNumeroGestion = maxNumero + 1;
+        this.comboNumeroGestion.addItem(proximoNumeroGestion == 0 ? 1 : proximoNumeroGestion);
     }
 
     public void cargarEstadoGestionInicial()
     {
-        List<DtoEstadoDeGestion> listaEstados = miController.obtenerListaEstadosDeGestionDisponibles();
+        List<DtoEstadoDeGestion> listaEstados = new ArrayList<>();
+        try {
+            for (GenericDto raw : adminJpa.getEstadoDeGestionJpa().findAll()) {
+                listaEstados.add(RestMapper.toDtoEstado(raw));
+            }
+        } catch (java.io.IOException ex) {
+            Logger.getLogger(IniciarGestion.class.getName()).log(Level.SEVERE, "Error obteniendo estados de gestion", ex);
+        }
 
         for (Iterator<DtoEstadoDeGestion> it = listaEstados.iterator(); it.hasNext();)
         {

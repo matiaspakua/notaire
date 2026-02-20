@@ -4,8 +4,11 @@
  */
 package com.licensis.notaire.gui.clientes;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
+import com.licensis.notaire.dto.DtoHistorial;
 import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.documentacion.ConsultarDeudasDocumentos;
@@ -17,14 +20,16 @@ import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
 import com.licensis.notaire.gui.gestiones.gestion.DetalleGestion;
 import com.licensis.notaire.gui.gestiones.gestion.ModificarGestion;
 import com.licensis.notaire.gui.gestiones.gestion.VerHistorialGestion;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.SwingWorker;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
@@ -42,6 +47,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame {
     private static JMenuItem ventanaBuscarGestionesCliente = new JMenuItem("Ventana Buscar Gestiones Cliente");
     private static BuscarGestionesCliente instancia;
     private String tipoDeBusqueda;
+    private final GenericRestClient historialClient = AdministradorJpa.getInstancia().getHistorialJpa();
 
     /**
      * Creates new form BuscarGestionesCliente
@@ -507,30 +513,38 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame {
                         break;
                     }
                     case ConstantesGui.VER_HISTORIAL_GESTION: {
-
-                        // Importante
-                        // La grilla contiene el DtoGestion en la fila nro 6
-                        // y DtoPersona en la fila nro 7
                         dtoGestionEscritura = (DtoGestionDeEscritura) (miGrilla.getValueAt(i, 6));
                         miDtoPersona = (DtoPersona) (miGrilla.getValueAt(i, 7));
-
-                        // Asociamos el cliente de referencia.
                         dtoGestionEscritura.setClienteReferencia(miDtoPersona);
-
-                        // buscamos el registro del historial.
-                        ControllerNegocio miControler = ControllerNegocio.getInstancia();
-                        dtoGestionEscritura
-                                .setRegistroHistorial(miControler.obtenerHistorialGestion(dtoGestionEscritura));
-
-                        VerHistorialGestion formHistorial = (VerHistorialGestion) Principal
-                                .obtenerFormularioActivo(ConstantesGui.VER_HISTORIAL_GESTION);
-
-                        formHistorial.cargarGestion(dtoGestionEscritura);
-
-                        // formDetalleGestion.toFront();
-                        Principal.cargarFormulario(formHistorial);
-                        Principal.setVentanasActivas(VerHistorialGestion.getVentanaVerHistorialGestion());
-                        this.salir();
+                        final DtoGestionDeEscritura gestionFinal = dtoGestionEscritura;
+                        final int idGestion = gestionFinal.getIdGestion();
+                        new SwingWorker<ArrayList<DtoHistorial>, Void>() {
+                            @Override
+                            protected ArrayList<DtoHistorial> doInBackground() throws IOException {
+                                List<GenericDto> raw = historialClient.findAllByPath("gestion/" + idGestion);
+                                ArrayList<DtoHistorial> list = new ArrayList<>();
+                                for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                                    list.add(RestMapper.toDtoHistorial(gd));
+                                }
+                                return list;
+                            }
+                            @Override
+                            protected void done() {
+                                try {
+                                    gestionFinal.setRegistroHistorial(get());
+                                    VerHistorialGestion formHistorial = (VerHistorialGestion) Principal
+                                            .obtenerFormularioActivo(ConstantesGui.VER_HISTORIAL_GESTION);
+                                    formHistorial.cargarGestion(gestionFinal);
+                                    Principal.cargarFormulario(formHistorial);
+                                    Principal.setVentanasActivas(VerHistorialGestion.getVentanaVerHistorialGestion());
+                                    salir();
+                                } catch (Exception ex) {
+                                    Logger.getLogger(BuscarGestionesCliente.class.getName()).log(Level.WARNING, "Error al cargar historial", ex);
+                                    JOptionPane.showMessageDialog(BuscarGestionesCliente.this, "Error al cargar historial: " + ex.getMessage(),
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }.execute();
                         break;
                     }
                     case ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA: {

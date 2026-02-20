@@ -4,16 +4,20 @@
  */
 package com.licensis.notaire.gui.presupuestos;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoInmueble;
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.dto.DtoTramite;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
 import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.SwingWorker;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -39,7 +44,10 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaCrearPresupuesto = new JMenuItem("Ventana Crear Presupuestos");
     private List<DtoTipoDeTramite> tramitesDisponibles = new ArrayList<>();
-    private ControllerNegocio miController = null;
+    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private final GenericRestClient tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
+    private final GenericRestClient plantillaPresupuestoClient = AdministradorJpa.getInstancia().getPlantillaPresupuestoJpa();
+    private final GenericRestClient presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
     private Boolean configurado = false;
     private DtoTipoDeTramite miDtoSeleccionado;
     private DtoPersona miDtoPersona = null;
@@ -59,8 +67,6 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioGrandeVertical);
-
-        miController = ControllerNegocio.getInstancia();
 
         listaTramites.setEnabled(false);
         botonSeleccionar2.setEnabled(false);
@@ -94,7 +100,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
         campoNombre.setText(miPersona.getNombre());
         campoApellido.setText(miPersona.getApellido());
-        campoIdentificacion.setText(miPersona.getDtoTipoIdentificacion().getNombre());
+        campoIdentificacion.setText(miPersona.getDtoTipoIdentificacion() != null ? miPersona.getDtoTipoIdentificacion().getNombre() : "");
         campoNumeroIdentificacion.setText(miPersona.getNumeroIdentificacion());
         campoTelefono.setText(miPersona.getTelefono());
         campoCorreo.setText(miPersona.getEmail());
@@ -131,47 +137,52 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
     private void cargarTramites()
     {
-
         tramitesDisponibles = new ArrayList<>();
-        tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
-
-        if (tramitesDisponibles.isEmpty())
-        {
-
-            JOptionPane.showMessageDialog(this, "No existen tipos de tramite registrados.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
-            salir();
-
-        } else
-        {
-
-            listaTramites.setEnabled(true);
-            botonSeleccionar2.setEnabled(true);
-
-            DefaultListModel lista = new DefaultListModel();
-
-            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();)
-            {
-
-                DtoTipoDeTramite miDto = it.next();
-
-                //Solo agrego las que tienen plantilla de presupuesto configurada
-                if (miController.existePlantillaPresupuesto(miDto))
-                {
-
-                    lista.addElement(miDto.getNombre());
+        new SwingWorker<List<DtoTipoDeTramite>, Void>() {
+            @Override
+            protected List<DtoTipoDeTramite> doInBackground() throws IOException {
+                List<GenericDto> raw = tipoTramiteClient.findAll();
+                List<DtoTipoDeTramite> list = new ArrayList<>();
+                for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                    if (Boolean.TRUE.equals(gd.getBoolean("habilitado"))) {
+                        DtoTipoDeTramite dto = RestMapper.toDtoTipoTramite(gd);
+                        try {
+                            List<GenericDto> plantillas = plantillaPresupuestoClient.findAllByPath("tipo-tramite/" + dto.getIdTipoTramite());
+                            if (plantillas != null && !plantillas.isEmpty()) {
+                                list.add(dto);
+                            }
+                        } catch (IOException e) {
+                            // sin plantilla
+                        }
+                    }
+                }
+                return list;
+            }
+            @Override
+            protected void done() {
+                try {
+                    @SuppressWarnings("unchecked")
+                    List<DtoTipoDeTramite> result = (List<DtoTipoDeTramite>) get();
+                    tramitesDisponibles = result != null ? result : new ArrayList<>();
+                    if (tramitesDisponibles == null || tramitesDisponibles.isEmpty()) {
+                        JOptionPane.showMessageDialog(CrearPresupuesto.this, "No existen tipos de tramite registrados con plantilla.", "INFORMACION", JOptionPane.INFORMATION_MESSAGE);
+                        salir();
+                    } else {
+                        listaTramites.setEnabled(true);
+                        botonSeleccionar2.setEnabled(true);
+                        DefaultListModel lista = new DefaultListModel();
+                        for (DtoTipoDeTramite miDto : tramitesDisponibles) {
+                            lista.addElement(miDto.getNombre());
+                        }
+                        listaTramites.setModel(lista);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.WARNING, "Error cargando tramites", ex);
+                    JOptionPane.showMessageDialog(CrearPresupuesto.this, "Error al cargar tipos de tramite: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    salir();
                 }
             }
-
-            if (lista.isEmpty())
-            {
-                JOptionPane.showMessageDialog(this, "No existen Tipos de Tramite con Plantilla de Presupuesto configurada.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-                salir();
-            } else
-            {
-
-                this.listaTramites.setModel(lista);
-            }
-        }
+        }.execute();
     }
 
     public void setConfigurado(Boolean valor, DtoInmueble miDtoInmueble, DtoTramite miDtoTramite, DtoPresupuesto miDtoPresupuesto, ArrayList<DtoItem> dtoItems)
@@ -506,21 +517,17 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
                 if (option == JOptionPane.YES_OPTION)
                 {
 
-                    DtoPresupuesto miDtoPresupuesto = new DtoPresupuesto();
-                    miDtoPresupuesto.setIdPresupuesto(creado);
-
-                    DtoPresupuesto miPresupuestoEncontrado = miController.buscarPresupuestoPorNumero(miDtoPresupuesto);
-
-                    if (miPresupuestoEncontrado != null)
-                    {
-
-                        try {
+                    try {
+                        GenericDto raw = presupuestoClient.find(creado);
+                        DtoPresupuesto miPresupuestoEncontrado = raw != null ? RestMapper.toDtoPresupuesto(raw) : null;
+                        if (miPresupuestoEncontrado != null) {
                             AdministradorReportes reportes = AdministradorReportes.getInstancia();
                             reportes.generarReportePresupuesto(miPresupuestoEncontrado.getIdPresupuesto());
                         }
-                        catch (IOException ex) {
-                            Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.WARNING, "Error al buscar presupuesto", ex);
                     }
                 }
                 this.limpiarFormulario();

@@ -4,7 +4,8 @@
  */
 package com.licensis.notaire.gui.gestiones.gestion;
 
-import com.licensis.notaire.dto.DtoFlag;
+import com.licensis.notaire.api.client.RestMapper;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import com.licensis.notaire.gui.Principal;
@@ -20,7 +21,7 @@ import javax.swing.table.TableModel;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 
 /**
  *
@@ -31,7 +32,7 @@ public class ArchivarGestion extends javax.swing.JInternalFrame {
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaArchivarGestion = new JMenuItem("Ventana Archivar Gestion");
     private static ArchivarGestion instancia = null;
-    private ControllerNegocio miController;
+    private final AdministradorJpa adminJpa = AdministradorJpa.getInstancia();
 
     /**
      * Creates new form ArchivarGestion
@@ -40,7 +41,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
-        miController = ControllerNegocio.getInstancia();
     }
 
     public static ArchivarGestion getInstancia() {
@@ -68,10 +68,16 @@ public class ArchivarGestion extends javax.swing.JInternalFrame {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
-            // Busco gestiones En Tramite
-            listaDtoGestionDeEscrituras = miController.obtenerGestionesEnTramite();
+            java.util.List<GenericDto> rawGestiones = adminJpa.getGestionJpa().findAll();
+            for (GenericDto raw : rawGestiones) {
+                DtoGestionDeEscritura dto = RestMapper.toDtoGestion(raw);
+                if (dto.getEstado() == null || dto.getEstado().getNombre() == null
+                        || !ConstantesNegocio.GESTION_ARCHIVADA.equalsIgnoreCase(dto.getEstado().getNombre())) {
+                    listaDtoGestionDeEscrituras.add(dto);
+                }
+            }
 
-            if (listaDtoGestionDeEscrituras != null) {
+            if (!listaDtoGestionDeEscrituras.isEmpty()) {
                 DtoGestionDeEscritura miDtoGestion = null;
                 for (int i = 0; i < listaDtoGestionDeEscrituras.size(); i++) {
                     flag = true;
@@ -90,7 +96,6 @@ public class ArchivarGestion extends javax.swing.JInternalFrame {
                     ((DefaultTableModel) grillaGestiones.getModel()).addRow(datos);
 
                 }
-
             }
         } catch (Exception ex) {
             Logger.getLogger(ArchivarGestion.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,40 +337,75 @@ public class ArchivarGestion extends javax.swing.JInternalFrame {
     public List<DtoGestionDeEscritura> archivarGestion()
             throws NonexistentJpaException, DtoInvalidoException, ClassModifiedException {
 
-        Integer filaSeleccionada = this.grillaGestiones.getSelectedRow();
         TableModel miGrilla = this.grillaGestiones.getModel();
-        boolean flag = false;
         int filas = miGrilla.getRowCount();
-        int columnas = miGrilla.getColumnCount();
 
-        DtoGestionDeEscritura dtoGestionEscritura = new DtoGestionDeEscritura();
         List<DtoGestionDeEscritura> listaDtoGestionesArchivadas = new ArrayList<>();
 
-        // Recorro la grilla completa, buscando la gestion seleccionada, para archivar
         try {
             for (int i = 0; i < filas; i++) {
                 if (miGrilla.getValueAt(i, 7) != null) {
-                    flag = (Boolean) miGrilla.getValueAt(i, 7);
-                    if (flag == true) {
-                        dtoGestionEscritura = (DtoGestionDeEscritura) grillaGestiones.getValueAt(i, 6);
-                        dtoGestionEscritura.getEstado().setNombre(ConstantesNegocio.GESTION_ARCHIVADA);
-                        dtoGestionEscritura.setNumeroBibliorato(grillaGestiones.getValueAt(i, 4).hashCode());
-                        dtoGestionEscritura.setObservaciones(grillaGestiones.getValueAt(i, 5).toString());
+                    boolean flag = Boolean.TRUE.equals(miGrilla.getValueAt(i, 7));
+                    if (flag) {
+                        DtoGestionDeEscritura dtoGestionEscritura = (DtoGestionDeEscritura) grillaGestiones.getValueAt(i, 6);
+                        dtoGestionEscritura.setNumeroBibliorato(objToInt(grillaGestiones.getValueAt(i, 4)));
+                        dtoGestionEscritura.setObservaciones(String.valueOf(grillaGestiones.getValueAt(i, 5)));
                         listaDtoGestionesArchivadas.add(dtoGestionEscritura);
                     }
                 }
-
             }
-            DtoFlag archivarGestion = miController.archivarGestion(listaDtoGestionesArchivadas);
 
-            if (!archivarGestion.getFlag()) {
-                listaDtoGestionesArchivadas = null;
+            Integer idEstadoArchivada = resolverIdEstadoArchivada();
+            if (idEstadoArchivada == null) {
+                return null;
             }
-        } catch (NullPointerException ex) {
-            listaDtoGestionesArchivadas = null;
+
+            for (DtoGestionDeEscritura dto : listaDtoGestionesArchivadas) {
+                GenericDto payload = new GenericDto();
+                payload.put("idGestion", dto.getIdGestion());
+                payload.put("numero", dto.getNumero());
+                payload.put("fechaInicio", dto.getFechaInicio());
+                payload.put("encabezado", dto.getEncabezado());
+                payload.put("observaciones", dto.getObservaciones());
+                payload.put("numeroBibliorato", dto.getNumeroBibliorato());
+                payload.put("fkIdEstadoDeGestion", estadoRef(idEstadoArchivada));
+                if (dto.getPersonaEscribano() != null && dto.getPersonaEscribano().getIdPersona() != null) {
+                    payload.put("fkIdPersonaEscribano", personaRef(dto.getPersonaEscribano().getIdPersona()));
+                }
+                adminJpa.getGestionJpa().edit(payload);
+            }
+            return listaDtoGestionesArchivadas;
+        } catch (Exception ex) {
+            Logger.getLogger(ArchivarGestion.class.getName()).log(Level.SEVERE, "Error archivando gestion", ex);
+            return null;
         }
-        return listaDtoGestionesArchivadas;
+    }
 
+    private Integer resolverIdEstadoArchivada() throws java.io.IOException {
+        for (GenericDto e : adminJpa.getEstadoDeGestionJpa().findAll()) {
+            if (ConstantesNegocio.GESTION_ARCHIVADA.equalsIgnoreCase(e.getString("nombre"))) {
+                return e.getInt("idEstadoGestion");
+            }
+        }
+        return null;
+    }
+
+    private static GenericDto estadoRef(int id) {
+        GenericDto ref = new GenericDto();
+        ref.put("idEstadoGestion", id);
+        return ref;
+    }
+
+    private static GenericDto personaRef(int id) {
+        GenericDto ref = new GenericDto();
+        ref.put("idPersona", id);
+        return ref;
+    }
+
+    private static int objToInt(Object o) {
+        if (o == null) return 0;
+        if (o instanceof Number n) return n.intValue();
+        return o.hashCode();
     }
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCancelarActionPerformed

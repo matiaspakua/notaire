@@ -50,10 +50,14 @@ This matrix links analyst use cases to current backend API endpoints, Swing form
 ## Swing Migration Backlog (current)
 
 - Total Swing GUI classes: `97`
-- Still coupled to legacy (`ControllerNegocio` / legacy JPA usage): `39` (10 forms migrated in batch 1–2).
+- Still coupled to legacy (`ControllerNegocio` / legacy JPA usage): reduced after batch 5.
+- **Batch 5 (20/02/2026)**:
+  - `ArchivarGestion`: `obtenerGestionesEnTramite`, `archivarGestion` → REST via `AdministradorJpa.getGestionJpa()`, `getEstadoDeGestionJpa()`
+  - `IniciarGestion`: `obtenerListaEscribanosDisponibles`, `obtenerProximaGestionDeEscritura`, `obtenerListaEstadosDeGestionDisponibles` → REST via `AdministradorJpa` + `RestMapper`
+  - `ModificarGestion`: `buscarTramite`, `buscarPresupuestoPorNumero` → REST via `AdministradorJpa` + `RestMapper`
 - Priority migration batches:
-  1. `gestiones/gestion` + `clientes`
-  2. `presupuestos` + `documentacion`
+  1. `documentacion` (RegistrarEntregaDocumentos, IngresarDocumento, etc.)
+  2. `presupuestos` rest + `documentacion`
   3. `inscripciones` + `testimonios` + `escrituras` + `administracion/usuarios` (VerRegistroActividadesUsuario done) + `protocolo/folios` + `gui/Principal`
 
 ## Test Coverage Baseline
