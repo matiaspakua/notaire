@@ -106,6 +106,14 @@ public class RestClient {
     }
     
     /**
+     * Obtiene bytes desde el endpoint (para PDFs, imágenes, etc.)
+     */
+    public static byte[] getBytes(String endpoint) throws IOException {
+        String url = ApiConfig.getApiBaseUrl() + endpoint;
+        return makeGetRequestBytes(url);
+    }
+    
+    /**
      * Realiza una petición GET
      */
     private static String makeGetRequest(String urlString) throws IOException {
@@ -204,6 +212,41 @@ public class RestClient {
             }
         } finally {
             connection.disconnect();
+        }
+    }
+    
+    /**
+     * Realiza una petición GET y devuelve bytes (para PDFs, imágenes, etc.)
+     */
+    private static byte[] makeGetRequestBytes(String urlString) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(urlString).openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
+        connection.setReadTimeout(ApiConfig.getReadTimeout());
+        
+        try {
+            int responseCode = connection.getResponseCode();
+            if (responseCode == 200 || responseCode == 201) {
+                return readResponseBytes(connection.getInputStream());
+            } else {
+                String error = readResponse(connection.getErrorStream());
+                throw new IOException("HTTP " + responseCode + ": " + error);
+            }
+        } finally {
+            connection.disconnect();
+        }
+    }
+    
+    /**
+     * Lee la respuesta del stream como bytes
+     */
+    private static byte[] readResponseBytes(InputStream is) throws IOException {
+        if (is == null) {
+            return new byte[0];
+        }
+        
+        try (is) {
+            return is.readAllBytes();
         }
     }
     

@@ -32,7 +32,7 @@ mvn clean install -DskipTests
 ### Testing Commands
 ```bash
 # Run HTTP API integration tests
-bash test.sh
+bash scripts/test.sh
 
 # Run specific endpoint test
 cd test/http && bash 01-auth.sh
@@ -50,13 +50,13 @@ mvn test -pl backend-api
 ### Development Commands
 ```bash
 # Start application (uses Docker Compose)
-bash start.sh
+bash scripts/start.sh
 
 # Stop application
-bash stop.sh
+bash scripts/stop.sh
 
 # View logs
-bash logs.sh
+bash scripts/logs.sh
 
 # Access Swagger UI
 http://localhost:8080/swagger-ui.html
@@ -174,8 +174,8 @@ http://localhost:8080/swagger-ui.html
 - **Compose**: Define services, network, volumes, environment variables in .env
 
 ### Development Workflow
-1. Start application with `bash start.sh`
-2. Run tests with `bash test.sh`
+1. Start application with `bash script/start.sh`
+2. Run tests with `bash script/test.sh`
 3. Check Swagger UI at http://localhost:8080/swagger-ui.html
 4. Build with `mvn clean install`
 5. Follow migration progress in MIGRATION_*.md files
@@ -190,5 +190,3 @@ http://localhost:8080/swagger-ui.html
 - **No traditional linting tools configured** - follow Cursor rules in `.cursor/rules/`
 - **IDE Configuration**: VS Code settings in `.vscode/settings.json`
 - **Code Review**: Enforce patterns from `.cursor/rules/programming/RULE.md`
-
-This file serves as the comprehensive guide for agentic coding agents working in this repository. Always refer to these guidelines when making changes to the codebase.

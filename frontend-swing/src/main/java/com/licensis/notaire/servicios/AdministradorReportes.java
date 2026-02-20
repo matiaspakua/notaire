@@ -4,47 +4,30 @@
  */
 package com.licensis.notaire.servicios;
 
-import com.licensis.notaire.dto.DtoDocumentoPresentado;
-import com.licensis.notaire.dto.DtoGestionDeEscritura;
-import com.licensis.notaire.dto.DtoPresupuesto;
-import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.api.client.RestClient;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.view.JasperViewer;
+import javax.swing.JOptionPane;
 
 /**
- * Clase que se encarga de generar todos los reportes del sistema. Cada metodo
- * genera un reporte
- * distinto. Todo los archivos utilizado por Jasper son almacenados en el
- * paquete: gui.reportes.
- * Dentro de este paquete viven los .jaspers y los .jrxml.
+ * Clase que se encarga de generar todos los reportes del sistema.
+ * Versión migrada que utiliza la API REST del backend para generar PDFs.
+ * 
+ * Los reportes se generan en el backend y se descargan como archivos PDF
+ * temporales que se abren con el visor de PDF predeterminado del sistema.
  *
  * @author matias
  */
 public class AdministradorReportes {
 
     private static AdministradorReportes instancia = null;
-    private Map parameters = new HashMap<>();
-    private JasperPrint print = null;
-    private JasperViewer jasperViewer = null;
-    public static String PATH = "";
-    public static String WINDOWS_PATH = "C:\\reportes\\";
-    public static String LINUX_PATH = "/home/matias/reportes/";
-    // Reportes
-    public String RUTA_REPORTE_PRESUPUESTO = "reportePresupuestoSinInmueble.jasper";
-    public String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportePresupuestoInmuebles.jasper";
-    public String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE = "reporteListaDocumetosTramite.jasper";
-    public String RUTA_REPORTE_HISTORIAL_GESTION = "reporteHistorialGestion.jasper";
-    public String RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS = "reporteConsultarVencimientosDocumentos.jasper";
-    public String RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS = "reporteConsultarDeudaDocumentos.jasper";
+    private static final Logger logger = Logger.getLogger(AdministradorReportes.class.getName());
+    
+    // Directorio temporal para guardar PDFs
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
     /**
      * Constructor privado para AdministradorReportes.
@@ -55,205 +38,160 @@ public class AdministradorReportes {
     public static AdministradorReportes getInstancia() {
         if (instancia == null) {
             instancia = new AdministradorReportes();
-
-            String os = System.getProperty("os.name");
-
-            if (os.contains("Linux")) {
-                AdministradorReportes.setPATH(LINUX_PATH);
-            } else {
-                AdministradorReportes.setPATH(WINDOWS_PATH);
-            }
         }
         return instancia;
     }
 
-    public static String getPATH() {
-        return PATH;
-    }
-
-    public static void setPATH(String PATH) {
-        AdministradorReportes.PATH = PATH;
-    }
-
-    public String getRUTA_REPORTE_PRESUPUESTO() {
-        return PATH + RUTA_REPORTE_PRESUPUESTO;
-    }
-
-    public void setRUTA_REPORTE_PRESUPUESTO(String RUTA_REPORTE_PRESUPUESTO) {
-        this.RUTA_REPORTE_PRESUPUESTO = RUTA_REPORTE_PRESUPUESTO;
-    }
-
-    public String getRUTA_REPORTE_PRESUPUESTO_INMUEBLES() {
-        return PATH + RUTA_REPORTE_PRESUPUESTO_INMUEBLES;
-    }
-
-    public void setRUTA_REPORTE_PRESUPUESTO_INMUEBLES(String RUTA_REPORTE_PRESUPUESTO_INMUEBLES) {
-        this.RUTA_REPORTE_PRESUPUESTO_INMUEBLES = RUTA_REPORTE_PRESUPUESTO_INMUEBLES;
-    }
-
-    public String getRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE() {
-        return PATH + RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE;
-    }
-
-    public void setRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE(String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE) {
-        this.RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE = RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE;
-    }
-
-    public String getRUTA_REPORTE_HISTORIAL_GESTION() {
-        return PATH + RUTA_REPORTE_HISTORIAL_GESTION;
-    }
-
-    public void setRUTA_REPORTE_HISTORIAL_GESTION(String RUTA_REPORTE_HISTORIAL_GESTION) {
-        this.RUTA_REPORTE_HISTORIAL_GESTION = RUTA_REPORTE_HISTORIAL_GESTION;
-    }
-
-    public String getRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS() {
-        return PATH + RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS;
-    }
-
-    public void setRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS(String RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS) {
-        this.RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS = RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS;
-    }
-
-    public String getRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS() {
-        return PATH + RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS;
-    }
-
-    public void setRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS(
-            String RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS) {
-        this.RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS = RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS;
+    /**
+     * Genera el reporte correspondiente a la creacion de un nuevo presupuesto.
+     * Elige automáticamente el template según si tiene inmuebles o no.
+     *
+     * @param idPresupuesto El ID del presupuesto para generar el reporte.
+     * @param tieneInmuebles Indica si el presupuesto tiene inmuebles asociados.
+     */
+    public void generarReportePresupuesto(Integer idPresupuesto, boolean tieneInmuebles) throws IOException {
+        try {
+            String endpoint;
+            if (tieneInmuebles) {
+                endpoint = "/reportes/presupuesto-inmuebles/" + idPresupuesto;
+            } else {
+                endpoint = "/reportes/presupuesto/" + idPresupuesto;
+            }
+            
+            byte[] pdfBytes = RestClient.getBytes(endpoint);
+            String fileName = "presupuesto_" + idPresupuesto + ".pdf";
+            abrirPdfEnVisor(pdfBytes, fileName);
+            
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error al generar reporte de presupuesto", ex);
+            JOptionPane.showMessageDialog(null, 
+                "Error al generar el reporte: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            throw ex;
+        }
     }
 
     /**
-     * Genera el reporte correspondiente a la creacion de un nuevo presupuesto.
-     *
-     * @param presupuesto Los datos del presupuesto para generar el reporte.
+     * Genera reporte de presupuesto sin inmuebles (método legacy para compatibilidad)
      */
-    public void generarReportePresupuesto(DtoPresupuesto presupuesto) throws IOException {
-        try {
-
-            if (presupuesto.getTramite().getInmueble() != null) {
-                parameters.put("idPresupuestoParam", presupuesto.getIdPresupuesto());
-                print = JasperFillManager.fillReport(this.getRUTA_REPORTE_PRESUPUESTO_INMUEBLES(), parameters,
-                        Conexion.getInstancia().getConexion());
-                jasperViewer = new JasperViewer(print, false);
-                jasperViewer.setVisible(true);
-            } else {
-                // No tiene inmueble asociado
-                parameters.put("pIdPresupuesto", presupuesto.getIdPresupuesto());
-                print = JasperFillManager.fillReport(this.getRUTA_REPORTE_PRESUPUESTO(), parameters,
-                        Conexion.getInstancia().getConexion());
-                jasperViewer = new JasperViewer(print, false);
-                jasperViewer.setVisible(true);
-            }
-
-        } catch (JRException ex) {
-            Logger.getLogger(AdministradorReportes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        parameters.clear();
+    public void generarReportePresupuesto(Integer idPresupuesto) throws IOException {
+        generarReportePresupuesto(idPresupuesto, false);
     }
 
     /**
      * Genera el reporte correspondiente a la lista de documentacion asociada a un
-     * determinado
-     * tramite.
+     * determinado trámite.
      *
-     * @param listaTiposTramites El o los tramites para los cuales se requiere la
-     *                           lista de
-     *                           documentacion asociada.
+     * @param nombreTipoTramite El nombre del tipo de trámite.
      */
-    public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites) throws IOException {
-        for (Iterator<DtoTipoDeTramite> it = listaTiposTramites.iterator(); it.hasNext();) {
-            try {
-                DtoTipoDeTramite dtoTipoDeTramite = it.next();
-                parameters.put("nombreTipoTramite", dtoTipoDeTramite.getNombre());
-                print = JasperFillManager.fillReport(this.getRUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE(), parameters,
-                        Conexion.getInstancia().getConexion());
-                jasperViewer = new JasperViewer(print, false);
-                jasperViewer.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(AdministradorReportes.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public void generarReporteListaDocumentos(String nombreTipoTramite) throws IOException {
+        try {
+            String endpoint = "/reportes/lista-documentos-tramite?nombreTipoTramite=" + 
+                             java.net.URLEncoder.encode(nombreTipoTramite, "UTF-8");
+            
+            byte[] pdfBytes = RestClient.getBytes(endpoint);
+            String fileName = "lista_documentos_" + nombreTipoTramite.replaceAll("[^a-zA-Z0-9]", "_") + ".pdf";
+            abrirPdfEnVisor(pdfBytes, fileName);
+            
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error al generar reporte de lista de documentos", ex);
+            JOptionPane.showMessageDialog(null, 
+                "Error al generar el reporte: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            throw ex;
         }
-        parameters.clear();
     }
 
     /**
      * Genera el reporte correspondiente al registro del historial de una gestion en
      * particular.
      *
-     * @param gestion El dto gestion con el ID de la gestion.
+     * @param idGestion El ID de la gestión.
      */
-    public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion) throws IOException {
+    public void generarReporteHistorialGestion(Integer idGestion) throws IOException {
         try {
-            parameters.put("idGestion", gestion.getIdGestion());
-            print = JasperFillManager.fillReport(this.getRUTA_REPORTE_HISTORIAL_GESTION(), parameters,
-                    Conexion.getInstancia().getConexion());
-            jasperViewer = new JasperViewer(print, false);
-            jasperViewer.setVisible(true);
-        } catch (JRException ex) {
-            Logger.getLogger(AdministradorReportes.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        parameters.clear();
-
-    }
-
-    public void generarReporteDocumentosPorVencer(List<DtoDocumentoPresentado> listaDocumentosPorVencer)
-            throws IOException {
-        for (Iterator<DtoDocumentoPresentado> it = listaDocumentosPorVencer.iterator(); it.hasNext();) {
-            try {
-                DtoDocumentoPresentado dtoDocumentoPresentado = it.next();
-
-                parameters.put("idDocumentoPresentado", dtoDocumentoPresentado.getIdDocumentoPresentado());
-                print = JasperFillManager.fillReport(this.getRUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS(),
-                        parameters, Conexion.getInstancia().getConexion());
-            } catch (JRException ex) {
-                Logger.getLogger(AdministradorReportes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            jasperViewer = new JasperViewer(print, false);
-            jasperViewer.setVisible(true);
+            String endpoint = "/reportes/historial-gestion/" + idGestion;
+            
+            byte[] pdfBytes = RestClient.getBytes(endpoint);
+            String fileName = "historial_gestion_" + idGestion + ".pdf";
+            abrirPdfEnVisor(pdfBytes, fileName);
+            
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error al generar reporte de historial", ex);
+            JOptionPane.showMessageDialog(null, 
+                "Error al generar el reporte: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            throw ex;
         }
     }
 
-    public void generarReporteConsultarDeudaDocumentos(Integer pNumeroGestion) throws IOException {
+    /**
+     * Genera reporte de documentos por vencer.
+     *
+     * @param idDocumentoPresentado El ID del documento presentado.
+     */
+    public void generarReporteDocumentosPorVencer(Integer idDocumentoPresentado) throws IOException {
         try {
-            parameters.put("numeroGestion", pNumeroGestion);
-            print = JasperFillManager.fillReport(this.getRUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS(),
-                    parameters, Conexion.getInstancia().getConexion());
-            jasperViewer = new JasperViewer(print, false);
-            jasperViewer.setVisible(true);
-        } catch (JRException ex) {
-            Logger.getLogger(AdministradorReportes.class.getName()).log(Level.SEVERE, null, ex);
+            String endpoint = "/reportes/documentos-por-vencer/" + idDocumentoPresentado;
+            
+            byte[] pdfBytes = RestClient.getBytes(endpoint);
+            String fileName = "documentos_vencer_" + idDocumentoPresentado + ".pdf";
+            abrirPdfEnVisor(pdfBytes, fileName);
+            
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error al generar reporte de documentos por vencer", ex);
+            JOptionPane.showMessageDialog(null, 
+                "Error al generar el reporte: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            throw ex;
         }
-
-        parameters.clear();
     }
 
     /**
-     * @return the jasperViewer
+     * Genera reporte de consulta de deuda de documentos.
+     *
+     * @param numeroGestion El número de gestión.
      */
-    public JasperViewer getJasperViewer() {
-        return jasperViewer;
+    public void generarReporteConsultarDeudaDocumentos(Integer numeroGestion) throws IOException {
+        try {
+            String endpoint = "/reportes/consultar-deuda-documentos?numeroGestion=" + numeroGestion;
+            
+            byte[] pdfBytes = RestClient.getBytes(endpoint);
+            String fileName = "deuda_documentos_" + numeroGestion + ".pdf";
+            abrirPdfEnVisor(pdfBytes, fileName);
+            
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error al generar reporte de deuda de documentos", ex);
+            JOptionPane.showMessageDialog(null, 
+                "Error al generar el reporte: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            throw ex;
+        }
     }
 
     /**
-     * @param jasperViewer the jasperViewer to set
+     * Guarda los bytes del PDF en un archivo temporal y lo abre con el visor del sistema.
      */
-    public void setJasperViewer(JasperViewer jasperViewer) {
-        this.jasperViewer = jasperViewer;
-    }
-
-    /**
-     * @return the print
-     */
-    public JasperPrint getPrint() {
-        return print;
-    }
-
-    /**
-     * @param print the print to set
-     */
-    public void setPrint(JasperPrint print) {
-        this.print = print;
+    private void abrirPdfEnVisor(byte[] pdfBytes, String fileName) throws IOException {
+        // Crear archivo temporal
+        File tempFile = new File(TEMP_DIR, fileName);
+        
+        // Guardar el PDF
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(pdfBytes);
+        }
+        
+        // Abrir con el visor de PDF predeterminado
+        if (java.awt.Desktop.isDesktopSupported()) {
+            java.awt.Desktop.getDesktop().open(tempFile);
+        } else {
+            // Fallback: mostrar mensaje con la ubicación del archivo
+            JOptionPane.showMessageDialog(null, 
+                "Reporte guardado en: " + tempFile.getAbsolutePath(), 
+                "Reporte Generado", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        // Programar eliminación del archivo temporal al cerrar la aplicación
+        tempFile.deleteOnExit();
     }
 }

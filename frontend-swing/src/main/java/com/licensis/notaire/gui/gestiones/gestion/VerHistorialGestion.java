@@ -233,7 +233,7 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         {
             try {
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                reportes.generarReporteHistorialGestion(gestionSeleccionada);
+                reportes.generarReporteHistorialGestion(gestionSeleccionada.getIdGestion());
             }
             catch (IOException ex) {
                 Logger.getLogger(VerHistorialGestion.class.getName()).log(Level.SEVERE, null, ex);
