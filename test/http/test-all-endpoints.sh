@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 # ============================================================================
 # Notaire API - Test Scripts using curl
 # ============================================================================
@@ -18,11 +20,11 @@ echo -e "${BLUE}=== TESTING USUARIOS / AUTHENTICATION ===${NC}"
 
 # Login
 echo -e "${GREEN}Test 1: Login${NC}"
-curl -X POST "$BASE_URL/api/v1/auth/login" \
+curl -X POST "$BASE_URL/api/v1/usuarios/login" \
   -H "Content-Type: application/json" \
   -d '{
-    "usuario": "admin",
-    "password": "admin"
+    "nombre": "admin",
+    "contrasenia": "admin"
   }' \
   -w "\nStatus: %{http_code}\n\n"
 
@@ -60,8 +62,8 @@ echo -e "${GREEN}Test 6: Create new concepto${NC}"
 curl -X POST "$BASE_URL/api/v1/conceptos" \
   -H "Content-Type: application/json" \
   -d '{
-    "descripcion": "Concepto de Prueba",
-    "monto": 100.00
+    "nombre": "Concepto de Prueba",
+    "valor": 100.00
   }' \
   -w "\nStatus: %{http_code}\n\n"
 

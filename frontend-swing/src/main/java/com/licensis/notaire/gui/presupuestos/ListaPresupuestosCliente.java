@@ -346,7 +346,7 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
                 this.extraerPresupuestoSeleccionado();
 
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                reportes.generarReportePresupuesto(presupuesto);
+                reportes.generarReportePresupuesto(presupuesto.getIdPresupuesto());
                 break;
             }
             catch (IOException ex)

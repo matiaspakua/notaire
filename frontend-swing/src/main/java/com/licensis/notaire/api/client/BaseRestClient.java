@@ -33,6 +33,21 @@ public abstract class BaseRestClient<T> {
             throw new IOException("Error obteniendo lista desde " + endpoint + ": " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Obtiene una lista de entidades desde una subruta del endpoint base.
+     */
+    public List<T> findAllByPath(String path) throws IOException {
+        try {
+            String normalizedPath = path.startsWith("/") ? path : "/" + path;
+            List<T> items = RestClient.getList(endpoint + normalizedPath, entityClass);
+            logger.log(Level.FINE, "findAllByPath() - Obtenidas " + items.size() + " entidades desde " + endpoint + normalizedPath);
+            return items;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error en findAllByPath(" + path + ") - " + endpoint, e);
+            throw new IOException("Error obteniendo lista desde " + endpoint + "/" + path + ": " + e.getMessage(), e);
+        }
+    }
     
     /**
      * Obtiene una entidad por ID

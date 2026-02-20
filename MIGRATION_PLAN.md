@@ -1,9 +1,12 @@
 # Plan de Migración: Monolito → Microservicios
 
 ## Estado Actual
-- **Migrado**: 69/97 formularios (71%)
-- **Pendiente**: 28 formularios + servicios críticos
-- **Última actualización**: 19/02/2026
+- **Swing (evaluación técnica actual)**: 97 clases GUI totales, 44 clases aún con acoplamiento legacy (`ControllerNegocio`/JPA directo en GUI)
+- **Backend/API**: Endpoints críticos agregados (`/api/v1/items/presupuesto/{idPresupuesto}`, `/api/v1/pagos/presupuesto/{idPresupuesto}`, `/api/v1/gestiones/*`, búsqueda extendida en `/api/v1/personas/buscar`)
+- **Testing**: Suite `mvn test -pl backend-api` en verde (unit + integración H2), tests Testcontainers preparados (ejecución condicionada a compatibilidad Docker host)
+- **E2E HTTP**: `bash scripts/test.sh` en verde con aserciones estrictas
+- **Docker backend**: stack levanta en modo headless (`bash scripts/start.sh --no-frontend --no-admin --skip-build`)
+- **Última actualización**: 20/02/2026
 
 ---
 

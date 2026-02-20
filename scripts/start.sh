@@ -5,8 +5,9 @@
 
 set -e
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$PROJECT_DIR"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_DIR"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -16,7 +17,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Default options
-START_FRONTEND=true
+START_FRONTEND=false
 SKIP_BUILD=false
 WITH_ADMIN=true
 
@@ -47,11 +48,11 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
-echo "  -f, --frontend    Start the Swing frontend GUI after backend is ready (default: true)"
-echo "  -s, --skip-build  Skip Maven build (use existing Docker images)"
-echo "  -a, --admin       Start pgAdmin for database management (default: true)"
-echo "  --no-frontend     Don't start the Swing frontend GUI"
-echo "  --no-admin        Don't start pgAdmin"
+            echo "  -f, --frontend    Start the Swing frontend GUI after backend is ready"
+            echo "  -s, --skip-build  Skip Maven build (use existing Docker images)"
+            echo "  -a, --admin       Start pgAdmin for database management (default: true)"
+            echo "  --no-frontend     Don't start the Swing frontend GUI (default mode)"
+            echo "  --no-admin        Don't start pgAdmin"
             echo "  -h, --help        Show this help message"
             echo ""
             exit 0
@@ -199,7 +200,7 @@ if [ "$START_FRONTEND" = true ]; then
         exit 1
     fi
     
-    FRONTEND_JAR="$PROJECT_DIR/frontend-swing/target/frontend-swing-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    FRONTEND_JAR="$REPO_DIR/frontend-swing/target/frontend-swing-1.0-SNAPSHOT-jar-with-dependencies.jar"
     
     if [ ! -f "$FRONTEND_JAR" ]; then
         echo -e "${RED}✗ Frontend JAR not found at: $FRONTEND_JAR${NC}"
@@ -220,11 +221,11 @@ if [ "$START_FRONTEND" = true ]; then
 fi
 
 echo -e "${BLUE}Useful Commands:${NC}"
-echo -e "  View logs:        ${YELLOW}./logs.sh [backend|postgres|pgadmin]${NC}"
-echo -e "  Stop services:    ${YELLOW}./stop.sh${NC}"
+echo -e "  View logs:        ${YELLOW}bash scripts/logs.sh [backend|postgres|pgadmin]${NC}"
+echo -e "  Stop services:    ${YELLOW}bash scripts/stop.sh${NC}"
 echo -e "  Run tests:        ${YELLOW}cd test/http && bash test-all-endpoints-v2.sh${NC}"
 if [ "$WITH_ADMIN" = true ]; then
-    echo -e "  pgAdmin setup:   ${YELLOW}./setup-pgadmin.sh${NC}"
+    echo -e "  pgAdmin setup:   ${YELLOW}bash scripts/setup-pgadmin.sh${NC}"
 fi
 if [ "$START_FRONTEND" = false ]; then
     echo -e "  Start frontend:   ${YELLOW}java -jar frontend-swing/target/frontend-swing-1.0-SNAPSHOT-jar-with-dependencies.jar${NC}"

@@ -468,34 +468,28 @@ public class RegistrarPago extends javax.swing.JInternalFrame
     
     private void cargarItemsPresupuesto(Integer idPresupuesto) {
         try {
-            List<GenericDto> items = itemClient.findAll();
+            List<GenericDto> items = itemClient.findAllByPath("presupuesto/" + idPresupuesto);
             DefaultTableModel model = (DefaultTableModel) grillaConceptosTramite.getModel();
             model.setRowCount(0);
             
             for (GenericDto item : items) {
-                Object presupuesto = item.get("fkIdPresupuesto");
-                if (presupuesto instanceof GenericDto) {
-                    Object idPres = ((GenericDto) presupuesto).get("idPresupuesto");
-                    if (idPres != null && idPres.equals(idPresupuesto)) {
-                        Object concepto = item.get("fkIdConcepto");
-                        String nombreConcepto = "";
-                        if (concepto instanceof GenericDto) {
-                            Object nom = ((GenericDto) concepto).get("nombre");
-                            if (nom != null) nombreConcepto = nom.toString();
-                        }
-                        
-                        Object valor = item.get("valor");
-                        Object porcentaje = item.get("porcentaje");
-                        Object obs = item.get("observaciones");
-                        
-                        model.addRow(new Object[]{
-                            nombreConcepto,
-                            valor != null ? valor.toString() : "",
-                            porcentaje != null ? porcentaje.toString() : "",
-                            obs != null ? obs.toString() : ""
-                        });
-                    }
+                Object concepto = item.get("fkIdConcepto");
+                String nombreConcepto = "";
+                if (concepto instanceof GenericDto) {
+                    Object nom = ((GenericDto) concepto).get("nombre");
+                    if (nom != null) nombreConcepto = nom.toString();
                 }
+                
+                Object valor = item.get("valor");
+                Object porcentaje = item.get("porcentaje");
+                Object obs = item.get("observaciones");
+                
+                model.addRow(new Object[]{
+                    nombreConcepto,
+                    valor != null ? valor.toString() : "",
+                    porcentaje != null ? porcentaje.toString() : "",
+                    obs != null ? obs.toString() : ""
+                });
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los items: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -506,19 +500,13 @@ public class RegistrarPago extends javax.swing.JInternalFrame
         try {
             float total = Float.parseFloat(campoTotal.getText().isEmpty() ? "0" : campoTotal.getText());
             
-            List<GenericDto> pagos = pagoClient.findAll();
+            List<GenericDto> pagos = pagoClient.findAllByPath("presupuesto/" + idPresupuesto);
             float pagado = 0;
             
             for (GenericDto pago : pagos) {
-                Object presupuesto = pago.get("fkIdPresupuesto");
-                if (presupuesto instanceof GenericDto) {
-                    Object idPres = ((GenericDto) presupuesto).get("idPresupuesto");
-                    if (idPres != null && idPres.equals(idPresupuesto)) {
-                        Object monto = pago.get("monto");
-                        if (monto != null) {
-                            pagado += Float.parseFloat(monto.toString());
-                        }
-                    }
+                Object monto = pago.get("monto");
+                if (monto != null) {
+                    pagado += Float.parseFloat(monto.toString());
                 }
             }
             

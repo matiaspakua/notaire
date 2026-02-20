@@ -2,30 +2,47 @@
 
 # Test script for Item endpoints
 
+set -euo pipefail
+
+BASE_URL="http://localhost:8080"
+
+assert_status() {
+  local expected="$1"
+  local method="$2"
+  local url="$3"
+  local data="${4:-}"
+
+  local status
+  if [ -n "$data" ]; then
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json" -d "$data")
+  else
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json")
+  fi
+
+  echo "$method $url -> $status"
+  if [ "$status" -ne "$expected" ]; then
+    echo "Expected status $expected but got $status"
+    exit 1
+  fi
+}
+
 echo "Testing Item Endpoints..."
 echo "========================"
 
 # Get all items
 echo "1. GET all items"
-curl -X GET "http://localhost:8080/api/v1/items" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
+assert_status 200 GET "$BASE_URL/api/v1/items"
 
 # Get item by ID
 echo "2. GET item by ID (ID=1)"
-curl -X GET "http://localhost:8080/api/v1/items/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
+assert_status 200 GET "$BASE_URL/api/v1/items/1"
 
 # Create new item
 echo "3. POST new item"
-curl -X POST "http://localhost:8080/api/v1/items" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "cantidad": 10,
-    "precioUnitario": 100.50,
-    "subTotal": 1005.00
-  }' \
-  -w "\nStatus: %{http_code}\n\n"
+assert_status 200 POST "$BASE_URL/api/v1/items" '{
+  "nombre": "Item test API",
+  "valor": 100.50,
+  "conceptoFijo": false
+}'
 
 echo "Item tests completed."

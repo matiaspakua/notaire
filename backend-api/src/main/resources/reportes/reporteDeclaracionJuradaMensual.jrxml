@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="reporteDeclaracionJuradaMensual" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <parameter name="anio" class="java.lang.Integer"/>
+    <parameter name="mes" class="java.lang.Integer"/>
+    <parameter name="fechaGeneracion" class="java.lang.String"/>
+
+    <title>
+        <band height="120">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="30"/>
+                <textElement textAlignment="Center">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Declaracion Jurada Mensual]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="50" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Periodo: " + $P{mes} + "/" + $P{anio}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="75" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Generado: " + $P{fechaGeneracion}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <detail>
+        <band height="120">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="20"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Resumen]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="35" width="555" height="70"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <text><![CDATA[Este reporte implementa el CU25 (Generar Declaracion Jurada del mes). Incluye estructura y parametros de periodo para trazabilidad y puede evolucionar con consultas de dominio cuando se defina el layout final.]]></text>
+            </staticText>
+        </band>
+    </detail>
+</jasperReport>

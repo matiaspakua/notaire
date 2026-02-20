@@ -516,7 +516,7 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
                         try {
                             AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                            reportes.generarReportePresupuesto(miPresupuestoEncontrado);
+                            reportes.generarReportePresupuesto(miPresupuestoEncontrado.getIdPresupuesto());
                         }
                         catch (IOException ex) {
                             Logger.getLogger(CrearPresupuesto.class.getName()).log(Level.SEVERE, null, ex);

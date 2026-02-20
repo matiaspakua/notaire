@@ -4,18 +4,22 @@
  */
 package com.licensis.notaire.gui.administracion.usuarios;
 
-import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.dto.DtoUsuario;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
-import java.util.ArrayList;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -24,11 +28,13 @@ import com.licensis.notaire.negocio.ControllerNegocio;
 public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
 {
 
+    private static final Logger LOGGER = Logger.getLogger(VerRegistroActividadesUsuario.class.getName());
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaRegistroActividadesUsuario = new JMenuItem("Ventana Registro de Actividades de Usuario");
     private static VerRegistroActividadesUsuario instancia = null;
     private DtoUsuario dtoUsuario = null;
-    private ControllerNegocio miController;
+    private final GenericRestClient usuarioClient;
+    private final GenericRestClient registroAuditoriaClient;
 
     /**
      * Creates new form VerRegistroActividadesUsuario
@@ -38,7 +44,9 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
-        miController = ControllerNegocio.getInstancia();
+        AdministradorJpa admin = AdministradorJpa.getInstancia();
+        usuarioClient = admin.getUsuarioJpa();
+        registroAuditoriaClient = admin.getRegistroAuditoriaJpa();
         grillaDetalleActividades.setAutoCreateRowSorter(true);
     }
 
@@ -93,20 +101,54 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
 
     public void cargarRegistrosUsuario(DtoUsuario miDtoUsuario) throws NonexistentJpaException
     {
-
         limpiarFormulario();
-
         this.setDtoUsuario(miDtoUsuario);
-        miDtoUsuario = miController.buscarUsuario(dtoUsuario);
-
-        labelPersona.setText(miDtoUsuario.getPersonas().getNombre() + ", " + miDtoUsuario.getPersonas().getApellido());
-        labelUsuario.setText(miDtoUsuario.getNombre());
+        if (dtoUsuario == null || dtoUsuario.getIdUsuario() == null) {
+            JOptionPane.showMessageDialog(this, "Usuario no seleccionado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        final Integer idUsuario = dtoUsuario.getIdUsuario();
+        labelPersona.setText("...");
+        labelUsuario.setText("...");
         fechaDesde.setDate(new Date());
         fechaHasta.setDate(new Date());
 
-        Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
-        Principal.setVentanasActivas(ventanaRegistroActividadesUsuario);
+        new SwingWorker<GenericDto, Void>() {
+            @Override
+            protected GenericDto doInBackground() throws IOException {
+                return usuarioClient.find(idUsuario);
+            }
 
+            @Override
+            protected void done() {
+                try {
+                    GenericDto usuario = get();
+                    if (usuario == null) {
+                        JOptionPane.showMessageDialog(VerRegistroActividadesUsuario.this,
+                                "Usuario no encontrado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    labelUsuario.setText(usuario.getString("nombre"));
+                    Object personaObj = usuario.get("fkIdPersona");
+                    String nombrePersona = "";
+                    String apellidoPersona = "";
+                    if (personaObj instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> p = (Map<String, Object>) personaObj;
+                        nombrePersona = p.get("nombre") != null ? p.get("nombre").toString() : "";
+                        apellidoPersona = p.get("apellido") != null ? p.get("apellido").toString() : "";
+                    }
+                    labelPersona.setText(nombrePersona + ", " + apellidoPersona);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error cargando usuario", e);
+                    JOptionPane.showMessageDialog(VerRegistroActividadesUsuario.this,
+                            "Error al cargar usuario: " + (e.getMessage() != null ? e.getMessage() : "desconocido"),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
+                Principal.setVentanasActivas(ventanaRegistroActividadesUsuario);
+            }
+        }.execute();
     }
 
     /**
@@ -319,59 +361,73 @@ public class VerRegistroActividadesUsuario extends javax.swing.JInternalFrame
     }//GEN-LAST:event_formInternalFrameClosing
 
     private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
-        Date fechaDesde = this.fechaDesde.getDate();
-        Date fechaHasta = this.fechaHasta.getDate();
-
+        final Date fechaDesdeVal = this.fechaDesde.getDate();
+        final Date fechaHastaVal = this.fechaHasta.getDate();
+        if (dtoUsuario == null || dtoUsuario.getIdUsuario() == null) {
+            JOptionPane.showMessageDialog(this, "Usuario no seleccionado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         grillaDetalleActividades.setEnabled(true);
-
-        ArrayList<DtoRegistroAuditoria> dtolistaRegistrosAuditorias = null;
-        int count = 0;
-
         this.limpiarFormulario();
 
-        dtolistaRegistrosAuditorias = (ArrayList<DtoRegistroAuditoria>) miController.buscarRegistrosAuditoria(this.getDtoUsuario());
+        final Integer idUsuario = dtoUsuario.getIdUsuario();
+        new SwingWorker<List<GenericDto>, Void>() {
+            @Override
+            protected List<GenericDto> doInBackground() throws IOException {
+                return registroAuditoriaClient.findAllByPath("usuario/" + idUsuario);
+            }
 
-        if (!dtolistaRegistrosAuditorias.isEmpty())
-        {
-
-            DtoRegistroAuditoria miDtoRegistro = null;
-            count = 0;
-
-            for (int i = 0; i < dtolistaRegistrosAuditorias.size(); i++)
-            {
-
-                Date fecha = dtolistaRegistrosAuditorias.get(i).getFecha();
-
-                if (fecha.after(fechaDesde) && fecha.before(fechaHasta))
-                {
-                    count++;
-                    miDtoRegistro = dtolistaRegistrosAuditorias.get(i);
-
-                    Object[] datos =
-                    {
-                        miDtoRegistro.getFecha(),
-                        miDtoRegistro.getModulo(),
-                        miDtoRegistro.getDetalleOperacion(),
-                    };
-
-                    ((DefaultTableModel) grillaDetalleActividades.getModel()).addRow(datos);
+            @Override
+            protected void done() {
+                try {
+                    List<GenericDto> list = get();
+                    if (list == null || list.isEmpty()) {
+                        JOptionPane.showMessageDialog(VerRegistroActividadesUsuario.this,
+                                "No existen actividades registradas por el Usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    DefaultTableModel model = (DefaultTableModel) grillaDetalleActividades.getModel();
+                    int count = 0;
+                    for (GenericDto reg : list) {
+                        Date fecha = parseFecha(reg);
+                        if (fecha != null && fechaDesdeVal != null && fechaHastaVal != null
+                                && !fecha.before(fechaDesdeVal) && !fecha.after(fechaHastaVal)) {
+                            count++;
+                            model.addRow(new Object[]{
+                                    fecha,
+                                    reg.getString("modulo"),
+                                    reg.getString("detalleOperacion")
+                            });
+                        }
+                    }
+                    if (count == 0) {
+                        JOptionPane.showMessageDialog(VerRegistroActividadesUsuario.this,
+                                "No existen actividades en el rango de fechas seleccionado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error buscando registros auditoría", e);
+                    JOptionPane.showMessageDialog(VerRegistroActividadesUsuario.this,
+                            "Error al buscar actividades: " + (e.getMessage() != null ? e.getMessage() : "desconocido"),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            if (count > 0)
-            {
-                Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
-                Principal.setVentanasActivas(ventanaRegistroActividadesUsuario);
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "No exiten Actividades registradas por el Usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            }
-
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No exiten Actividades registradas por el Usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
-
+        }.execute();
     }//GEN-LAST:event_botonBuscarActionPerformed
+
+    private static Date parseFecha(GenericDto reg) {
+        Object val = reg.get("fecha");
+        if (val == null) return null;
+        if (val instanceof Date) return (Date) val;
+        if (val instanceof Number) return new Date(((Number) val).longValue());
+        if (val instanceof String) {
+            try {
+                return new Date(Long.parseLong(val.toString()));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
 
     private void grillaDetalleActividadesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grillaDetalleActividadesMouseClicked
     }//GEN-LAST:event_grillaDetalleActividadesMouseClicked

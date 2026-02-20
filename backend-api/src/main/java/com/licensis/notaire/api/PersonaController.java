@@ -79,16 +79,18 @@ public class PersonaController {
     }
 
     @GetMapping("/buscar")
-    @Operation(summary = "Buscar personas por nombre y apellido")
+    @Operation(summary = "Buscar personas por nombre, apellido, numero de identificacion o tipo (CU61)")
     public ResponseEntity<List<Persona>> buscarPersonas(
             @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String apellido) {
+            @RequestParam(required = false) String apellido,
+            @RequestParam(required = false) String numeroIdentificacion,
+            @RequestParam(required = false) Integer idTipoIdentificacion) {
         try {
             List<Persona> personas = getJpaController().findPersonaEntities();
-            // Filtrar por nombre y apellido si se proporcionan
-            if (nombre != null || apellido != null) {
+            if (nombre != null || apellido != null || numeroIdentificacion != null || idTipoIdentificacion != null) {
                 final String nombreFilter = nombre != null ? nombre : "";
                 final String apellidoFilter = apellido != null ? apellido : "";
+                final String numeroFilter = numeroIdentificacion != null ? numeroIdentificacion : "";
                 java.util.List<Persona> filtered = new java.util.ArrayList<>();
                 for (Persona p : personas) {
                     boolean matches = true;
@@ -96,6 +98,15 @@ public class PersonaController {
                         matches = false;
                     }
                     if (apellido != null && (p.getApellido() == null || !p.getApellido().contains(apellidoFilter))) {
+                        matches = false;
+                    }
+                    if (numeroIdentificacion != null
+                            && (p.getNumeroIdentificacion() == null
+                            || !p.getNumeroIdentificacion().contains(numeroFilter))) {
+                        matches = false;
+                    }
+                    if (idTipoIdentificacion != null && (p.getFkIdTipoIdentificacion() == null
+                            || !idTipoIdentificacion.equals(p.getFkIdTipoIdentificacion().getIdTipoIdentificacion()))) {
                         matches = false;
                     }
                     if (matches) {

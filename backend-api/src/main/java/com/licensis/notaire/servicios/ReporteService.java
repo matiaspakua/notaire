@@ -5,9 +5,12 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -79,6 +82,33 @@ public class ReporteService {
         return generarPdfDesdeTemplate(RUTA_REPORTE_CONSULTAR_DEUDA_DOCUMENTOS, parameters);
     }
 
+    public byte[] generarReporteLibroIndice(Integer anio) throws Exception {
+        return generarPdfTextoSimple(
+                "Libro de Indice",
+                "CU24",
+                "Periodo: " + anio,
+                "Generado: " + LocalDate.now()
+        );
+    }
+
+    public byte[] generarReporteDeclaracionJuradaMensual(Integer anio, Integer mes) throws Exception {
+        return generarPdfTextoSimple(
+                "Declaracion Jurada Mensual",
+                "CU25",
+                "Periodo: " + mes + "/" + anio,
+                "Generado: " + LocalDate.now()
+        );
+    }
+
+    public byte[] generarReporteDeclaracionJuradaRentas(Integer anio, Integer mes) throws Exception {
+        return generarPdfTextoSimple(
+                "Declaracion Jurada de Rentas",
+                "CU50",
+                "Periodo: " + mes + "/" + anio,
+                "Generado: " + LocalDate.now()
+        );
+    }
+
     /**
      * Método genérico para generar PDF desde un template
      */
@@ -102,5 +132,75 @@ public class ReporteService {
         } catch (JRException e) {
             throw new RuntimeException("Error al generar el reporte: " + e.getMessage(), e);
         }
+    }
+
+    private byte[] generarPdfTextoSimple(String titulo, String cuId, String lineaPeriodo, String lineaFecha) {
+        try {
+            StringBuilder stream = new StringBuilder();
+            stream.append("BT\n");
+            stream.append("/F1 20 Tf\n");
+            stream.append("50 760 Td\n");
+            stream.append("(").append(escapePdfText(titulo)).append(") Tj\n");
+            stream.append("/F1 12 Tf\n");
+            stream.append("0 -30 Td\n");
+            stream.append("(Caso de uso: ").append(escapePdfText(cuId)).append(") Tj\n");
+            stream.append("0 -20 Td\n");
+            stream.append("(").append(escapePdfText(lineaPeriodo)).append(") Tj\n");
+            stream.append("0 -20 Td\n");
+            stream.append("(").append(escapePdfText(lineaFecha)).append(") Tj\n");
+            stream.append("0 -40 Td\n");
+            stream.append("(Reporte operativo generado por backend API.) Tj\n");
+            stream.append("ET\n");
+
+            return buildPdf(stream.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar PDF textual: " + e.getMessage(), e);
+        }
+    }
+
+    private byte[] buildPdf(String contentStream) throws Exception {
+        ArrayList<Integer> xref = new ArrayList<>();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        write(out, "%PDF-1.4\n");
+
+        xref.add(out.size());
+        write(out, "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+
+        xref.add(out.size());
+        write(out, "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n");
+
+        xref.add(out.size());
+        write(out, "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n");
+
+        byte[] streamBytes = contentStream.getBytes(java.nio.charset.StandardCharsets.US_ASCII);
+        xref.add(out.size());
+        write(out, "4 0 obj\n<< /Length " + streamBytes.length + " >>\nstream\n");
+        out.write(streamBytes);
+        write(out, "endstream\nendobj\n");
+
+        xref.add(out.size());
+        write(out, "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n");
+
+        int xrefStart = out.size();
+        write(out, "xref\n0 6\n");
+        write(out, "0000000000 65535 f \n");
+        for (Integer offset : xref) {
+            write(out, String.format("%010d 00000 n \n", offset));
+        }
+        write(out, "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + xrefStart + "\n%%EOF");
+
+        return out.toByteArray();
+    }
+
+    private void write(ByteArrayOutputStream out, String text) throws Exception {
+        out.write(text.getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+    }
+
+    private String escapePdfText(String input) {
+        return input
+                .replace("\\", "\\\\")
+                .replace("(", "\\(")
+                .replace(")", "\\)");
     }
 }

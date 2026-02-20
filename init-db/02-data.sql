@@ -69,8 +69,17 @@ INSERT INTO tipos_de_documento (version, id_tipo_documento, nombre, devuelto, ve
 SELECT setval('tipos_de_documento_id_tipo_documento_seq', (SELECT MAX(id_tipo_documento) FROM tipos_de_documento));
 
 -- Sample persona (escribano)
-INSERT INTO personas (version, id_persona, apellido, nombre, domicilio, localidad, provincia, telefono, celular, email, nacionalidad, profesion, estado_civil, observaciones, es_escribano, fk_id_tipo_identificacion, numero_identificacion) VALUES
-(0, 1, 'Garcia', 'Juan Carlos', 'Av. Principal 123', 'Buenos Aires', 'Buenos Aires', '011-4555-1234', '011-15-5555-1234', 'jcgarcia@notaria.com', 'Argentina', 'Escribano', 'Casado', NULL, true, 1, '20123456');
+INSERT INTO personas (
+    version, id_persona, apellido, nombre, numero_identificacion, cuit, sexo, fecha_nacimiento,
+    estado_civil, numero_nupcias, ocupacion, domicilio, e_mail, registro_escribano, es_cliente,
+    localidad, provincia, telefono, celular, email, nacionalidad, profesion, observaciones,
+    fk_id_tipo_identificacion, es_escribano
+) VALUES (
+    0, 1, 'Garcia', 'Juan Carlos', '20123456', '20-20123456-3', 'M', '1980-01-15',
+    'Casado', 1, 'Escribano', 'Av. Principal 123', 'jcgarcia@notaria.com', 1001, false,
+    'Buenos Aires', 'Buenos Aires', '011-4555-1234', '011-15-5555-1234', 'jcgarcia@notaria.com',
+    'Argentina', 'Escribano', NULL, 1, true
+);
 
 -- Reset sequence
 SELECT setval('personas_id_persona_seq', (SELECT MAX(id_persona) FROM personas));

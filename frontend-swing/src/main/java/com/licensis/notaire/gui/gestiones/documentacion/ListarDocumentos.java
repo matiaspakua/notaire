@@ -251,11 +251,8 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
         if (this.dtoTipoDeTramiteSeleccionado != null)
         {
             try {
-                List<DtoTipoDeTramite> listaTramites = new ArrayList<DtoTipoDeTramite>();
-                listaTramites.add(dtoTipoDeTramiteSeleccionado);
-                
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                reportes.generarReporteListaDocumentos(listaTramites);
+                reportes.generarReporteListaDocumentos(dtoTipoDeTramiteSeleccionado.getNombre());
             }
             catch (IOException ex) {
                 Logger.getLogger(ListarDocumentos.class.getName()).log(Level.SEVERE, null, ex);

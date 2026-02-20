@@ -39,6 +39,16 @@ public class PagoController {
         }
     }
 
+    @GetMapping("/presupuesto/{idPresupuesto}")
+    @Operation(summary = "Obtener pagos por presupuesto")
+    public ResponseEntity<List<Pago>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
+        try {
+            return ResponseEntity.ok(getJpaController().findPagosPresupuesto(idPresupuesto));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Crear nuevo pago")
     public ResponseEntity<Void> create(@RequestBody Pago entity) {

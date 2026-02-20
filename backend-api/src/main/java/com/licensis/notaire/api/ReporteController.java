@@ -131,4 +131,68 @@ public class ReporteController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping(value = "/libro-indice", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generar libro de indice",
+               description = "Endpoint base para CU24. Requiere plantilla Jasper de libro de indice")
+    public ResponseEntity<byte[]> generarLibroIndice(
+            @Parameter(description = "Año del libro de indice")
+            @RequestParam Integer anio) {
+        try {
+            byte[] pdfBytes = reporteService.generarReporteLibroIndice(anio);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"libro_indice_" + anio + ".pdf\"")
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/declaracion-jurada-mensual", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generar declaracion jurada mensual",
+               description = "Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual")
+    public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
+            @Parameter(description = "Año del periodo")
+            @RequestParam Integer anio,
+            @Parameter(description = "Mes del periodo")
+            @RequestParam Integer mes) {
+        if (mes < 1 || mes > 12) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            byte[] pdfBytes = reporteService.generarReporteDeclaracionJuradaMensual(anio, mes);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"ddjj_mensual_" + anio + "_" + mes + ".pdf\"")
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generar declaracion jurada de rentas",
+               description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
+    public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
+            @Parameter(description = "Año del periodo")
+            @RequestParam Integer anio,
+            @Parameter(description = "Mes del periodo")
+            @RequestParam Integer mes) {
+        if (mes < 1 || mes > 12) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            byte[] pdfBytes = reporteService.generarReporteDeclaracionJuradaRentas(anio, mes);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"ddjj_rentas_" + anio + "_" + mes + ".pdf\"")
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

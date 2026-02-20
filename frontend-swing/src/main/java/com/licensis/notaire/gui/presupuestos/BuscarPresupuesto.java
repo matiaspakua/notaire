@@ -455,7 +455,7 @@ public class BuscarPresupuesto extends javax.swing.JInternalFrame {
                         case ConstantesGui.BUSCAR_PRESUPUESTO: {
                             AdministradorReportes reportes = AdministradorReportes.getInstancia();
                             try {
-                                reportes.generarReportePresupuesto(presupuestoEncontrado);
+                                reportes.generarReportePresupuesto(presupuestoEncontrado.getIdPresupuesto());
                             } catch (IOException ex) {
                                 Logger.getLogger(BuscarPresupuesto.class.getName()).log(Level.SEVERE, null, ex);
                             }

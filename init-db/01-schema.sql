@@ -92,7 +92,17 @@ CREATE TABLE personas (
   id_persona SERIAL PRIMARY KEY,
   apellido text NOT NULL,
   nombre text NOT NULL,
+  numero_identificacion text NOT NULL,
+  cuit text,
+  sexo text,
+  fecha_nacimiento date,
+  estado_civil text,
+  numero_nupcias integer,
+  ocupacion text,
   domicilio text,
+  e_mail text,
+  registro_escribano integer,
+  es_cliente boolean NOT NULL DEFAULT false,
   localidad text,
   provincia text,
   telefono text,
@@ -100,11 +110,9 @@ CREATE TABLE personas (
   email text,
   nacionalidad text,
   profesion text,
-  estado_civil text,
   observaciones text,
-  es_escribano boolean NOT NULL,
   fk_id_tipo_identificacion integer REFERENCES tipos_identificacion(id_tipo_identificacion),
-  numero_identificacion text
+  es_escribano boolean NOT NULL DEFAULT false
 );
 
 -- Table: inmuebles
@@ -165,21 +173,19 @@ CREATE TABLE historial (
 -- Table: plantilla_tramites
 CREATE TABLE plantilla_tramites (
   version integer NOT NULL,
-  id_plantilla_tramite SERIAL PRIMARY KEY,
-  orden integer NOT NULL,
-  habilitado boolean NOT NULL,
-  fk_id_tipo_tramite integer REFERENCES tipos_de_tramite(id_tipo_tramite),
-  fk_id_tipo_documento integer REFERENCES tipos_de_documento(id_tipo_documento) ON DELETE CASCADE
+  fk_id_tipo_tramite integer NOT NULL REFERENCES tipos_de_tramite(id_tipo_tramite),
+  fk_id_tipo_documento integer NOT NULL REFERENCES tipos_de_documento(id_tipo_documento) ON DELETE CASCADE,
+  observaciones text,
+  PRIMARY KEY (fk_id_tipo_tramite, fk_id_tipo_documento)
 );
 
 -- Table: plantilla_presupuestos
 CREATE TABLE plantilla_presupuestos (
   version integer NOT NULL,
-  id_plantilla_presupuesto SERIAL PRIMARY KEY,
-  orden integer NOT NULL,
-  habilitado boolean NOT NULL,
-  fk_id_tipo_tramite integer REFERENCES tipos_de_tramite(id_tipo_tramite),
-  fk_id_concepto integer REFERENCES conceptos(id_concepto) ON DELETE CASCADE
+  fk_id_tipo_tramite integer NOT NULL REFERENCES tipos_de_tramite(id_tipo_tramite),
+  fk_id_concepto integer NOT NULL REFERENCES conceptos(id_concepto) ON DELETE CASCADE,
+  observaciones text,
+  PRIMARY KEY (fk_id_tipo_tramite, fk_id_concepto)
 );
 
 -- Table: presupuestos
@@ -344,17 +350,18 @@ CREATE TABLE usuarios (
 -- Table: registro_auditoria
 CREATE TABLE registro_auditoria (
   version integer NOT NULL,
-  id_registro SERIAL PRIMARY KEY,
+  id_registro_auditoria SERIAL PRIMARY KEY,
   fecha timestamp NOT NULL,
-  accion text NOT NULL,
+  modulo text NOT NULL,
+  detalle_operacion text NOT NULL,
   fk_id_usuario integer REFERENCES usuarios(id_usuario)
 );
 
 -- Table: tramites_personas
 CREATE TABLE tramites_personas (
   version integer NOT NULL,
-  id_tramite_persona SERIAL PRIMARY KEY,
-  rol text,
-  fk_id_tramite integer REFERENCES tramites(id_tramite),
-  fk_id_persona_cliente integer REFERENCES personas(id_persona)
+  fk_id_tramite integer NOT NULL REFERENCES tramites(id_tramite),
+  fk_id_persona_cliente integer NOT NULL REFERENCES personas(id_persona),
+  observaciones text NOT NULL DEFAULT '',
+  PRIMARY KEY (fk_id_tramite, fk_id_persona_cliente)
 );

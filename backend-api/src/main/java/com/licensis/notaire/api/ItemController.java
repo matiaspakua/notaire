@@ -39,6 +39,16 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/presupuesto/{idPresupuesto}")
+    @Operation(summary = "Obtener items por presupuesto")
+    public ResponseEntity<List<Item>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
+        try {
+            return ResponseEntity.ok(getJpaController().findItemsPresupuesto(idPresupuesto));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Crear nuevo item")
     public ResponseEntity<Void> create(@RequestBody Item entity) {

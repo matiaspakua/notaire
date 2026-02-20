@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# ============================================================================
-# Notaire API - Complete Test Suite
-# ============================================================================
+set -euo pipefail
+
+# Notaire API - Complete Test Suite (strict mode)
 
 # Base URL for the API
 BASE_URL="http://localhost:8080"
@@ -18,141 +18,40 @@ echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE}   Notaire API - Complete Test Suite${NC}"
 echo -e "${BLUE}==========================================${NC}\n"
 
-# Test counter
-TESTS_RUN=0
-TESTS_PASSED=0
+assert_status() {
+  local expected="$1"
+  local method="$2"
+  local url="$3"
+  local data="${4:-}"
+  local status
 
-# ============================================================================
-# AUTHENTICATION
-# ============================================================================
+  if [ -n "$data" ]; then
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json" -d "$data")
+  else
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json")
+  fi
+
+  echo "$method $url -> $status"
+  if [ "$status" -ne "$expected" ]; then
+    echo -e "${RED}Expected $expected but got $status for $method $url${NC}"
+    exit 1
+  fi
+}
+
 echo -e "${BLUE}=== TESTING AUTHENTICATION ===${NC}"
+assert_status 200 POST "$BASE_URL/api/v1/usuarios/login" '{"nombre":"admin","contrasenia":"admin"}'
 
-echo -e "${GREEN}Test 1: Login${NC}"
-curl -X POST "$BASE_URL/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"usuario": "admin", "password": "admin"}' \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
+echo -e "${BLUE}=== TESTING CORE READ ENDPOINTS ===${NC}"
+assert_status 200 GET "$BASE_URL/api/v1/conceptos"
+assert_status 200 GET "$BASE_URL/api/v1/personas"
+assert_status 200 GET "$BASE_URL/api/v1/tramites"
+assert_status 200 GET "$BASE_URL/api/v1/escrituras"
+assert_status 200 GET "$BASE_URL/api/v1/presupuestos"
+assert_status 200 GET "$BASE_URL/api/v1/items"
 
-# ============================================================================
-# USUARIOS
-# ============================================================================
-echo -e "${BLUE}=== TESTING USUARIOS ===${NC}"
-
-echo -e "${GREEN}Test 2: Get all usuarios${NC}"
-curl -X GET "$BASE_URL/api/v1/usuarios" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 3: Get usuario by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/usuarios/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# CONCEPTOS
-# ============================================================================
-echo -e "${BLUE}=== TESTING CONCEPTOS ===${NC}"
-
-echo -e "${GREEN}Test 4: Get all conceptos${NC}"
-curl -X GET "$BASE_URL/api/v1/conceptos" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 5: Get concepto by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/conceptos/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 6: Create new concepto${NC}"
-curl -X POST "$BASE_URL/api/v1/conceptos" \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Concepto Test", "monto": 500.00}' \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# PERSONAS
-# ============================================================================
-echo -e "${BLUE}=== TESTING PERSONAS ===${NC}"
-
-echo -e "${GREEN}Test 7: Get all personas${NC}"
-curl -X GET "$BASE_URL/api/v1/personas" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 8: Get persona by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/personas/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# TRAMITES
-# ============================================================================
-echo -e "${BLUE}=== TESTING TRAMITES ===${NC}"
-
-echo -e "${GREEN}Test 9: Get all tramites${NC}"
-curl -X GET "$BASE_URL/api/v1/tramites" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 10: Get tramite by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/tramites/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# ESCRITURAS
-# ============================================================================
-echo -e "${BLUE}=== TESTING ESCRITURAS ===${NC}"
-
-echo -e "${GREEN}Test 11: Get all escrituras${NC}"
-curl -X GET "$BASE_URL/api/v1/escrituras" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 12: Get escritura by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/escrituras/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# PRESUPUESTOS
-# ============================================================================
-echo -e "${BLUE}=== TESTING PRESUPUESTOS ===${NC}"
-
-echo -e "${GREEN}Test 13: Get all presupuestos${NC}"
-curl -X GET "$BASE_URL/api/v1/presupuestos" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-echo -e "${GREEN}Test 14: Get presupuesto by ID${NC}"
-curl -X GET "$BASE_URL/api/v1/presupuestos/1" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
-
-# ============================================================================
-# ITEMS
-# ============================================================================
-echo -e "${BLUE}=== TESTING ITEMS ===${NC}"
-
-echo -e "${GREEN}Test 15: Get all items${NC}"
-curl -X GET "$BASE_URL/api/v1/items" \
-  -H "Content-Type: application/json" \
-  -w "\nStatus: %{http_code}\n\n"
-((TESTS_RUN++))
+echo -e "${BLUE}=== TESTING CREATE ENDPOINTS ===${NC}"
+assert_status 200 POST "$BASE_URL/api/v1/conceptos" '{"nombre":"Concepto Test V2","valor":500.0}'
+assert_status 200 POST "$BASE_URL/api/v1/items" '{"nombre":"Item Test V2","valor":10.0,"conceptoFijo":false}'
 
 # ============================================================================
 # SUMMARY
@@ -160,6 +59,6 @@ curl -X GET "$BASE_URL/api/v1/items" \
 echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE}   Test Execution Summary${NC}"
 echo -e "${BLUE}==========================================${NC}"
-echo -e "Total tests run: ${YELLOW}$TESTS_RUN${NC}"
+echo -e "${GREEN}All strict endpoint checks passed${NC}"
 echo -e "${BLUE}==========================================${NC}\n"
 echo -e "${GREEN}Test suite completed!${NC}\n"

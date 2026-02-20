@@ -454,6 +454,26 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         }
     }
 
+    /**
+     * Gestiones en las que participa un cliente (persona) vía TramitesPersonas.
+     */
+    @SuppressWarnings("unchecked")
+    public List<GestionDeEscritura> findGestionesByCliente(Integer idPersona)
+    {
+        EntityManager em = getEntityManager();
+        try
+        {
+            Query q = em.createQuery(
+                    "SELECT DISTINCT t.fkIdGestion FROM com.licensis.notaire.negocio.TramitesPersonas tp JOIN tp.tramite t WHERE tp.tramitesPersonasPK.fkIdPersonaCliente = :idPersona");
+            q.setParameter("idPersona", idPersona);
+            return (List<GestionDeEscritura>) q.getResultList();
+        }
+        finally
+        {
+            em.close();
+        }
+    }
+
     public List<GestionDeEscritura> findGestionesDeEscritura()
     {
         EntityManager em = getEntityManager();

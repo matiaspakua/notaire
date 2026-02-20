@@ -39,6 +39,17 @@ public class PresupuestoController {
         }
     }
 
+    @GetMapping("/persona/{idPersona}")
+    @Operation(summary = "Obtener presupuestos de una persona (CU60)")
+    public ResponseEntity<List<Presupuesto>> getByPersona(@PathVariable Integer idPersona) {
+        try {
+            List<Presupuesto> list = getJpaController().findPresupuestosPersona(idPersona);
+            return ResponseEntity.ok(list != null ? list : List.of());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Crear nuevo presupuesto")
     public ResponseEntity<Void> create(@RequestBody Presupuesto entity) {

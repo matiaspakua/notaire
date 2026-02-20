@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.jpa.ConceptoJpaController;
 import com.licensis.notaire.negocio.Concepto;
 import com.licensis.notaire.config.JpaControllerProvider;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,10 +23,14 @@ public class ConceptoController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los conceptos")
-    public ResponseEntity<List<Concepto>> getAllConceptos() {
+    public ResponseEntity<List<DtoConcepto>> getAllConceptos() {
         try {
             List<Concepto> conceptos = getJpaController().findConceptoEntities();
-            return ResponseEntity.ok(conceptos);
+            List<DtoConcepto> response = new ArrayList<>();
+            for (Concepto concepto : conceptos) {
+                response.add(concepto.getDto());
+            }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -32,10 +38,13 @@ public class ConceptoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener concepto por ID")
-    public ResponseEntity<Concepto> getConceptoById(@PathVariable Integer id) {
+    public ResponseEntity<DtoConcepto> getConceptoById(@PathVariable Integer id) {
         try {
             Concepto concepto = getJpaController().findConcepto(id);
-            return ResponseEntity.ok(concepto);
+            if (concepto == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(concepto.getDto());
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

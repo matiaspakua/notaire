@@ -67,6 +67,9 @@ public class RestClient {
         String url = ApiConfig.getApiBaseUrl() + endpoint;
         String jsonBody = objectMapper.writeValueAsString(body);
         String jsonResponse = makePostRequest(url, jsonBody);
+        if (jsonResponse == null || jsonResponse.isBlank()) {
+            return null;
+        }
         return objectMapper.readValue(jsonResponse, responseType);
     }
     

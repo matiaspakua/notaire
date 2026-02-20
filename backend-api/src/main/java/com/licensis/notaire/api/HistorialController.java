@@ -39,6 +39,17 @@ public class HistorialController {
         }
     }
 
+    @GetMapping("/gestion/{idGestion}")
+    @Operation(summary = "Obtener historial de una gestion (CU13)")
+    public ResponseEntity<List<Historial>> getByGestion(@PathVariable Integer idGestion) {
+        try {
+            List<Historial> list = getJpaController().findRegistroHistial(idGestion);
+            return ResponseEntity.ok(list != null ? list : List.of());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping
     @Operation(summary = "Crear nuevo historial")
     public ResponseEntity<Void> create(@RequestBody Historial entity) {

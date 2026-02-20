@@ -1,9 +1,6 @@
 package com.licensis.notaire.servicios;
 
 import com.licensis.notaire.api.client.ApiConfig;
-import com.licensis.notaire.api.client.BaseRestClient;
-import com.licensis.notaire.dto.GenericDto;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +27,7 @@ public class AdministradorJpa {
     private GenericRestClient pagoClient;
     private GenericRestClient personaClient;
     private GenericRestClient presupuestoClient;
+    private GenericRestClient registroAuditoriaClient;
     private GenericRestClient suplenciaClient;
     private GenericRestClient testimonioClient;
     private GenericRestClient tipoDeDocumentoClient;
@@ -60,6 +58,7 @@ public class AdministradorJpa {
         pagoClient = new GenericRestClient("/pagos");
         personaClient = new GenericRestClient("/personas");
         presupuestoClient = new GenericRestClient("/presupuestos");
+        registroAuditoriaClient = new GenericRestClient("/registro-auditoria");
         suplenciaClient = new GenericRestClient("/suplencia");
         testimonioClient = new GenericRestClient("/testimonio");
         tipoDeDocumentoClient = new GenericRestClient("/tipo-de-documento");
@@ -134,6 +133,10 @@ public class AdministradorJpa {
 
     public GenericRestClient getPresupuestoJpa() {
         return presupuestoClient;
+    }
+
+    public GenericRestClient getRegistroAuditoriaJpa() {
+        return registroAuditoriaClient;
     }
 
     public GenericRestClient getSuplenciaJpa() {

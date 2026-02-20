@@ -283,7 +283,7 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
         {
             try {
                 AdministradorReportes reportes = AdministradorReportes.getInstancia();
-                reportes.generarReporteDocumentosPorVencer(this.listaDocumentos);
+                reportes.generarReporteDocumentosPorVencer(this.listaDocumentos.get(0).getIdDocumentoPresentado());
             }
             catch (IOException ex) {
                 Logger.getLogger(ConsultarVencimientosDocumentos.class.getName()).log(Level.SEVERE, null, ex);

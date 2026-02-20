@@ -458,20 +458,13 @@ public class IniciarGestion extends javax.swing.JInternalFrame
                 {
                     JOptionPane.showMessageDialog(this, "Se ha iniciado la gestion Nro.: " + gestion.getNumero());
 
-                    //  Ahora imprimimos las listas de documentos necesarios para cada tramite de la gestion.
-                    List<DtoTipoDeTramite> listaTiposTramites = new ArrayList<DtoTipoDeTramite>();
-
                     AdministradorReportes reportes = AdministradorReportes.getInstancia();
-
-                    for (Iterator<DtoTramite> it = listaTramites.iterator(); it.hasNext();)
-                    {
-                        DtoTramite dtoTramite = it.next();
-                        listaTiposTramites.add(dtoTramite.getTipoDeTramite());
-                    }
-
-                    try
-                    {
-                        reportes.generarReporteListaDocumentos(listaTiposTramites);
+                    try {
+                        for (Iterator<DtoTramite> it = listaTramites.iterator(); it.hasNext();)
+                        {
+                            DtoTramite dtoTramite = it.next();
+                            reportes.generarReporteListaDocumentos(dtoTramite.getTipoDeTramite().getNombre());
+                        }
                     }
                     catch (IOException ex)
                     {
