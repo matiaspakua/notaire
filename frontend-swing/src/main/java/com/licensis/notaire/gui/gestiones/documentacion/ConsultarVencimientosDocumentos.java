@@ -4,17 +4,23 @@
  */
 package com.licensis.notaire.gui.gestiones.documentacion;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoDocumentoPresentado;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
+import javax.swing.SwingWorker;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,10 +31,11 @@ import javax.swing.table.DefaultTableModel;
 public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
 {
 
+    private static final Logger LOGGER = Logger.getLogger(ConsultarVencimientosDocumentos.class.getName());
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaConsultarVencimientosDocumento = new JMenuItem("Ventana Consultar Vencimientos Documentos");
-    private ControllerNegocio miController;
-    private List<DtoDocumentoPresentado> listaDocumentos;
+    private List<DtoDocumentoPresentado> listaDocumentos = new ArrayList<>();
+    private final GenericRestClient documentoPresentadoClient = AdministradorJpa.getInstancia().getDocumentoPresentadoJpa();
 
     /**
      * Creates new form ConsultarVencimientosDocumentos
@@ -38,9 +45,7 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(1000, 600);
-        miController = ControllerNegocio.getInstancia();
         grillaDocumentosPorVencer.setAutoCreateRowSorter(true);
-
     }
 
     private void salir()
@@ -55,85 +60,61 @@ public class ConsultarVencimientosDocumentos extends javax.swing.JInternalFrame
 
     public void cargarListaDocumentosConVencimiento()
     {
-        this.listaDocumentos = miController.consultarDocumentosProximosVencer();
-
-        if (!listaDocumentos.isEmpty())
-        {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            for (Iterator<DtoDocumentoPresentado> it = listaDocumentos.iterator(); it.hasNext();)
-            {
-                DtoDocumentoPresentado dtoDocumentoPresentado = it.next();
-
-                String numeroCarton = "";
-                if (dtoDocumentoPresentado.getNumeroCarton() != null)
-                {
-                    numeroCarton = dtoDocumentoPresentado.getNumeroCarton().toString();
-                }
-
-                String fechaSalida = "";
-
-                if (dtoDocumentoPresentado.getFechaSalida() != null)
-                {
-                    fechaSalida = formatter.format(dtoDocumentoPresentado.getFechaSalida());
-                }
-                String fechaVencimiento = "";
-
-                if (dtoDocumentoPresentado.getFechaVencimiento() != null)
-                {
-                    fechaVencimiento = formatter.format(dtoDocumentoPresentado.getFechaVencimiento());
-                }
-
-                String importePagar = "";
-
-                if (dtoDocumentoPresentado.getImporteAPagar() != null)
-                {
-                    importePagar = dtoDocumentoPresentado.getImporteAPagar().toString();
-                }
-
-                String fechaPago = "";
-
-                if (dtoDocumentoPresentado.getFechaPago() != null)
-                {
-                    fechaPago = formatter.format(dtoDocumentoPresentado.getFechaPago());
-                }
-                String fechaLiberado = "";
-                if (dtoDocumentoPresentado.getFechaLiberado() != null)
-                {
-                    fechaLiberado = formatter.format(dtoDocumentoPresentado.getFechaLiberado());
-                }
-
-                String observaciones = "";
-
-                if (dtoDocumentoPresentado.getObservaciones() != null)
-                {
-                    observaciones = dtoDocumentoPresentado.getObservaciones();
-                }
-
-                Object[] datos =
-                {
-                    dtoDocumentoPresentado.getNombre(),
-                    dtoDocumentoPresentado.getFkTramite().getGestion().getNumero(),
-                    dtoDocumentoPresentado.getFkTramite().getGestion().getEncabezado(),
-                    dtoDocumentoPresentado.getFkTramite().getGestion().getClienteReferencia().getNombre() + ", " + dtoDocumentoPresentado.getFkTramite().getGestion().getClienteReferencia().getApellido(),
-                    dtoDocumentoPresentado.isPreparado(),
-                    formatter.format(dtoDocumentoPresentado.getFechaIngreso()),
-                    fechaSalida,
-                    numeroCarton,
-                    dtoDocumentoPresentado.isObservado(),
-                    importePagar,
-                    fechaPago,
-                    fechaLiberado,
-                    fechaVencimiento,
-                    observaciones
-                };
-
-                ((DefaultTableModel) this.grillaDocumentosPorVencer.getModel()).addRow(datos);
-
+        new SwingWorker<List<GenericDto>, Void>() {
+            @Override
+            protected List<GenericDto> doInBackground() throws IOException {
+                return documentoPresentadoClient.findAll();
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No existen documentos proximos a vencer.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-        }
+            @Override
+            protected void done() {
+                try {
+                    List<GenericDto> raw = get();
+                    Date hoy = new Date();
+                    listaDocumentos.clear();
+                    for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                        DtoDocumentoPresentado doc = RestMapper.toDtoDocumentoPresentado(gd);
+                        if (doc.getFechaVencimiento() != null && doc.getFechaVencimiento().after(hoy)
+                                && doc.getDiasVencimiento() != null && doc.getDiasVencimiento() <= 30) {
+                            listaDocumentos.add(doc);
+                        }
+                    }
+                    if (!listaDocumentos.isEmpty()) {
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        DefaultTableModel model = (DefaultTableModel) grillaDocumentosPorVencer.getModel();
+                        for (DtoDocumentoPresentado dto : listaDocumentos) {
+                            String numCarton = dto.getNumeroCarton() != null ? dto.getNumeroCarton().toString() : "";
+                            String fechaSalida = dto.getFechaSalida() != null ? formatter.format(dto.getFechaSalida()) : "";
+                            String fechaVenc = dto.getFechaVencimiento() != null ? formatter.format(dto.getFechaVencimiento()) : "";
+                            String importePagar = dto.getImporteAPagar() != null ? dto.getImporteAPagar().toString() : "";
+                            String fechaPago = dto.getFechaPago() != null ? formatter.format(dto.getFechaPago()) : "";
+                            String fechaLib = dto.getFechaLiberado() != null ? formatter.format(dto.getFechaLiberado()) : "";
+                            String obs = dto.getObservaciones() != null ? dto.getObservaciones() : "";
+                            String clienteStr = "";
+                            if (dto.getFkTramite() != null && dto.getFkTramite().getGestion() != null
+                                    && dto.getFkTramite().getGestion().getClienteReferencia() != null) {
+                                var c = dto.getFkTramite().getGestion().getClienteReferencia();
+                                clienteStr = (c.getNombre() != null ? c.getNombre() : "") + ", " + (c.getApellido() != null ? c.getApellido() : "");
+                            }
+                            Integer numGestion = (dto.getFkTramite() != null && dto.getFkTramite().getGestion() != null)
+                                    ? dto.getFkTramite().getGestion().getNumero() : null;
+                            String encabezado = (dto.getFkTramite() != null && dto.getFkTramite().getGestion() != null)
+                                    ? dto.getFkTramite().getGestion().getEncabezado() : "";
+                            String fechaIng = dto.getFechaIngreso() != null ? formatter.format(dto.getFechaIngreso()) : "";
+                            model.addRow(new Object[]{
+                                dto.getNombre(), numGestion, encabezado, clienteStr, dto.isPreparado(),
+                                fechaIng, fechaSalida, numCarton, dto.isObservado(), importePagar,
+                                fechaPago, fechaLib, fechaVenc, obs
+                            });
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(ConsultarVencimientosDocumentos.this, "No existen documentos proximos a vencer.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error cargando documentos proximos a vencer", e);
+                    JOptionPane.showMessageDialog(ConsultarVencimientosDocumentos.this, "Error: " + (e.getMessage() != null ? e.getMessage() : ""), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }.execute();
     }
 
     /**

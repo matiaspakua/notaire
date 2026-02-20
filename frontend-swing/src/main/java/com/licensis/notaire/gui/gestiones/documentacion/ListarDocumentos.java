@@ -4,10 +4,13 @@
  */
 package com.licensis.notaire.gui.gestiones.documentacion;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoPlantillaTramite;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,9 +30,11 @@ import javax.swing.table.DefaultTableModel;
 public class ListarDocumentos extends javax.swing.JInternalFrame
 {
 
+    private static final Logger LOGGER = Logger.getLogger(ListarDocumentos.class.getName());
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaListarDocumentos = new JMenuItem("Ventana Listar Documentos");
-    private ControllerNegocio miController = null;
+    private final GenericRestClient tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
+    private final GenericRestClient plantillaTramiteClient = AdministradorJpa.getInstancia().getPlantillaTramiteJpa();
     private List<DtoTipoDeTramite> listaTiposDeTramites = new ArrayList<>();
     private DtoTipoDeTramite dtoTipoDeTramiteSeleccionado = null;
 
@@ -39,7 +45,6 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
     {
         initComponents();
         this.estadoFormulario = Boolean.TRUE;
-        miController = ControllerNegocio.getInstancia();
         this.setSize(900, 600);
         this.cargarListaTramites();
     }
@@ -56,46 +61,77 @@ public class ListarDocumentos extends javax.swing.JInternalFrame
 
     public void cargarListaTramites()
     {
-        listaTiposDeTramites = miController.buscarTiposDeTramiteHabilitados();
-
-        if (!listaTiposDeTramites.isEmpty())
-        {
-            for (Iterator<DtoTipoDeTramite> it = listaTiposDeTramites.iterator(); it.hasNext();)
-            {
-                DtoTipoDeTramite dtoTipoDeTramite = it.next();
-                this.comboTipoTramites.addItem(dtoTipoDeTramite.getNombre());
+        new SwingWorker<List<GenericDto>, Void>() {
+            @Override
+            protected List<GenericDto> doInBackground() throws IOException {
+                return tipoTramiteClient.findAll();
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No existen tipo de tramites registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            this.salir();
-        }
+            @Override
+            protected void done() {
+                try {
+                    List<GenericDto> raw = get();
+                    listaTiposDeTramites.clear();
+                    for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                        DtoTipoDeTramite dto = RestMapper.toDtoTipoTramite(gd);
+                        if (Boolean.TRUE.equals(dto.getHabilitado())) {
+                            listaTiposDeTramites.add(dto);
+                        }
+                    }
+                    if (!listaTiposDeTramites.isEmpty()) {
+                        for (DtoTipoDeTramite dto : listaTiposDeTramites) {
+                            comboTipoTramites.addItem(dto.getNombre());
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(ListarDocumentos.this, "No existen tipo de tramites registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        salir();
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error cargando tipos de tramite", e);
+                    JOptionPane.showMessageDialog(ListarDocumentos.this, "Error al cargar tipos de tramite: " + (e.getMessage() != null ? e.getMessage() : ""), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }.execute();
     }
 
     public void cargarPlantillaTipoTramite(DtoTipoDeTramite tipoDeTramite)
     {
-        List<DtoPlantillaTramite> listaPlantillaTramites = miController.obtenerPlantillasTramite(tipoDeTramite);
-
-        if (!listaPlantillaTramites.isEmpty())
-        {
-            for (Iterator<DtoPlantillaTramite> it = listaPlantillaTramites.iterator(); it.hasNext();)
-            {
-                DtoPlantillaTramite dtoPlantillaTramite = it.next();
-                Object[] datos =
-                {
-                    dtoPlantillaTramite.getTiposDeDocumento().getNombre(),
-                    dtoPlantillaTramite.getTiposDeDocumento().isVence(),
-                    dtoPlantillaTramite.getTiposDeDocumento().getDiasVencimiento(),
-                    dtoPlantillaTramite.getTiposDeDocumento().getQuienEntrega()
-                };
-
-                ((DefaultTableModel) this.grillaDocumentosTramite.getModel()).addRow(datos);
+        if (tipoDeTramite == null || tipoDeTramite.getIdTipoTramite() == null) return;
+        final Integer idTipoTramite = tipoDeTramite.getIdTipoTramite();
+        new SwingWorker<List<GenericDto>, Void>() {
+            @Override
+            protected List<GenericDto> doInBackground() throws IOException {
+                return plantillaTramiteClient.findAllByPath("tipo-tramite/" + idTipoTramite);
             }
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "El tipo de tramite seleccionado no posee documentos asociados", "Error", JOptionPane.ERROR_MESSAGE);
-            this.salir();
-        }
+            @Override
+            protected void done() {
+                try {
+                    List<GenericDto> raw = get();
+                    List<DtoPlantillaTramite> listaPlantillaTramites = new ArrayList<>();
+                    for (GenericDto gd : raw != null ? raw : List.<GenericDto>of()) {
+                        listaPlantillaTramites.add(RestMapper.toDtoPlantillaTramite(gd));
+                    }
+                    if (!listaPlantillaTramites.isEmpty()) {
+                        DefaultTableModel model = (DefaultTableModel) grillaDocumentosTramite.getModel();
+                        for (DtoPlantillaTramite dtoPlantillaTramite : listaPlantillaTramites) {
+                            if (dtoPlantillaTramite.getTiposDeDocumento() != null) {
+                                model.addRow(new Object[]{
+                                    dtoPlantillaTramite.getTiposDeDocumento().getNombre(),
+                                    dtoPlantillaTramite.getTiposDeDocumento().isVence(),
+                                    dtoPlantillaTramite.getTiposDeDocumento().getDiasVencimiento(),
+                                    dtoPlantillaTramite.getTiposDeDocumento().getQuienEntrega()
+                                });
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(ListarDocumentos.this, "El tipo de tramite seleccionado no posee documentos asociados", "Error", JOptionPane.ERROR_MESSAGE);
+                        salir();
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error cargando plantilla tramite", e);
+                    JOptionPane.showMessageDialog(ListarDocumentos.this, "Error: " + (e.getMessage() != null ? e.getMessage() : ""), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }.execute();
     }
 
     /**

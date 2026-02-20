@@ -8,7 +8,6 @@ import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoHistorial;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import java.io.IOException;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaVerHistorialGestion = new JMenuItem("Ventana Ver Historial Gestion");
-    private ControllerNegocio miController;
     private DtoGestionDeEscritura gestionSeleccionada;
 
     /**
@@ -38,7 +36,6 @@ public class VerHistorialGestion extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioNormalVertical);
-        miController = ControllerNegocio.getInstancia();
         grillaGestionesCliente.setAutoCreateRowSorter(true);
     }
 

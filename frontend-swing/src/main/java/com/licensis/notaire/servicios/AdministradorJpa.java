@@ -26,6 +26,8 @@ public class AdministradorJpa {
     private GenericRestClient movimientoTestimonioClient;
     private GenericRestClient pagoClient;
     private GenericRestClient personaClient;
+    private GenericRestClient plantillaPresupuestoClient;
+    private GenericRestClient plantillaTramiteClient;
     private GenericRestClient presupuestoClient;
     private GenericRestClient registroAuditoriaClient;
     private GenericRestClient suplenciaClient;
@@ -57,6 +59,8 @@ public class AdministradorJpa {
         movimientoTestimonioClient = new GenericRestClient("/movimiento-testimonio");
         pagoClient = new GenericRestClient("/pagos");
         personaClient = new GenericRestClient("/personas");
+        plantillaPresupuestoClient = new GenericRestClient("/plantilla-presupuestos");
+        plantillaTramiteClient = new GenericRestClient("/plantilla-tramite");
         presupuestoClient = new GenericRestClient("/presupuestos");
         registroAuditoriaClient = new GenericRestClient("/registro-auditoria");
         suplenciaClient = new GenericRestClient("/suplencia");
@@ -131,6 +135,14 @@ public class AdministradorJpa {
         return personaClient;
     }
 
+    public GenericRestClient getPlantillaPresupuestoJpa() {
+        return plantillaPresupuestoClient;
+    }
+
+    public GenericRestClient getPlantillaTramiteJpa() {
+        return plantillaTramiteClient;
+    }
+
     public GenericRestClient getPresupuestoJpa() {
         return presupuestoClient;
     }
@@ -169,10 +181,6 @@ public class AdministradorJpa {
 
     public GenericRestClient getUsuarioJpa() {
         return usuarioClient;
-    }
-
-    public GenericRestClient getPlantillaPresupuestoJpa() {
-        return presupuestoClient; // Or dedicated client if needed
     }
 
     /**

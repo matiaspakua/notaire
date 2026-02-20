@@ -4,22 +4,28 @@
  */
 package com.licensis.notaire.gui.presupuestos;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.pagos.ConsultarPagos;
 import com.licensis.notaire.gui.pagos.RegistrarPago;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorReportes;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -38,7 +44,7 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
     private DtoPersona personaSeleccionada = null;
     private DtoPresupuesto presupuesto = null;
     private ArrayList<DtoPresupuesto> listaPresupuestos = new ArrayList<>();
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private final GenericRestClient presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
     private ModificarPresupuesto modificarPresupuesto = null;
     private Map parameters = new HashMap();
 
@@ -119,57 +125,63 @@ public class ListaPresupuestosCliente extends javax.swing.JInternalFrame
 
     public void cargarGrillaPresupuestos() throws NonexistentJpaException
     {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        this.setListaPresupuestos(miController.buscarPresupuestosPersona(personaSeleccionada));
-
-        if ((this.getListaPresupuestos() != null) && (!this.getListaPresupuestos().isEmpty()))
-        {
-            DtoPresupuesto miDto = null;
-
-            for (int i = 0; i < getListaPresupuestos().size(); i++)
-            {
-
-                miDto = getListaPresupuestos().get(i);
-
-                if (miDto.getTramite().getGestion() != null)
-                {
-                    Object[] datos =
-                    {
-                        miDto.getTramite().getGestion().getNumero(),
-                        miDto.getTramite().getGestion().getEncabezado(),
-                        miDto.getIdPresupuesto(),
-                        miDto.getTramite().getTipoDeTramite().getNombre(),
-                        formatter.format(miDto.getFecha()).toString(),
-                        miDto.getTotal(),
-                        miDto.getSaldo(),
-                        miDto.getObservaciones(),
-                        false
-                    };
-                    ((DefaultTableModel) grillaPresupuestosCliente.getModel()).addRow(datos);
-                } else
-                {
-                    Object[] datos =
-                    {
-                        "",
-                        "",
-                        miDto.getIdPresupuesto(),
-                        miDto.getTramite().getTipoDeTramite().getNombre(),
-                        formatter.format(miDto.getFecha()).toString(),
-                        miDto.getTotal(),
-                        miDto.getSaldo(),
-                        miDto.getObservaciones(),
-                        false
-                    };
-                    ((DefaultTableModel) grillaPresupuestosCliente.getModel()).addRow(datos);
+        if (personaSeleccionada == null || personaSeleccionada.getIdPersona() == null) {
+            JOptionPane.showMessageDialog(this, "Persona no seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        final Integer idPersona = personaSeleccionada.getIdPersona();
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        new SwingWorker<List<GenericDto>, Void>() {
+            @Override
+            protected List<GenericDto> doInBackground() throws IOException {
+                return presupuestoClient.findAllByPath("persona/" + idPersona);
+            }
+            @Override
+            protected void done() {
+                try {
+                    List<GenericDto> rawList = get();
+                    ArrayList<DtoPresupuesto> list = new ArrayList<>();
+                    for (GenericDto gd : rawList != null ? rawList : List.<GenericDto>of()) {
+                        list.add(RestMapper.toDtoPresupuesto(gd));
+                    }
+                    setListaPresupuestos(list);
+                    if (list.isEmpty()) {
+                        JOptionPane.showMessageDialog(ListaPresupuestosCliente.this,
+                                "No existen presupuestos asociados a la persona indicada.", "Error", JOptionPane.ERROR_MESSAGE);
+                        dispose();
+                        return;
+                    }
+                    DefaultTableModel model = (DefaultTableModel) grillaPresupuestosCliente.getModel();
+                    for (DtoPresupuesto miDto : list) {
+                        Integer numGestion = null;
+                        String encabezado = "";
+                        if (miDto.getTramite() != null && miDto.getTramite().getGestion() != null) {
+                            numGestion = miDto.getTramite().getGestion().getNumero();
+                            encabezado = miDto.getTramite().getGestion().getEncabezado() != null ? miDto.getTramite().getGestion().getEncabezado() : "";
+                        }
+                        String nombreTramite = (miDto.getTramite() != null && miDto.getTramite().getTipoDeTramite() != null)
+                                ? miDto.getTramite().getTipoDeTramite().getNombre() : "";
+                        String fechaStr = miDto.getFecha() != null ? formatter.format(miDto.getFecha()) : "";
+                        model.addRow(new Object[]{
+                                numGestion != null ? numGestion : "",
+                                encabezado,
+                                miDto.getIdPresupuesto(),
+                                nombreTramite,
+                                fechaStr,
+                                miDto.getTotal(),
+                                miDto.getSaldo(),
+                                miDto.getObservaciones() != null ? miDto.getObservaciones() : "",
+                                false
+                        });
+                    }
+                } catch (Exception e) {
+                    Logger.getLogger(ListaPresupuestosCliente.class.getName()).log(Level.WARNING, "Error cargando presupuestos", e);
+                    JOptionPane.showMessageDialog(ListaPresupuestosCliente.this,
+                            "Error al cargar presupuestos: " + (e.getMessage() != null ? e.getMessage() : "desconocido"),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } else
-        {
-
-            JOptionPane.showMessageDialog(this, "No existen presupuestos asociados a la persona indicada.", "Error", JOptionPane.ERROR_MESSAGE);
-            this.dispose();
-        }
+        }.execute();
     }
 
     /**

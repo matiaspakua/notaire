@@ -40,6 +40,7 @@ This matrix links analyst use cases to current backend API endpoints, Swing form
 - `GET /api/v1/registro-auditoria`
 - `GET /api/v1/registro-auditoria/{id}`
 - `GET /api/v1/registro-auditoria/usuario/{idUsuario}`
+- `GET /api/v1/plantilla-tramite/tipo-tramite/{idTipoTramite}` (for ListarDocumentos)
 - `POST /api/v1/registro-auditoria`
 - `DELETE /api/v1/registro-auditoria/{id}`
 - `GET /api/v1/reportes/libro-indice` (CU24)
@@ -49,7 +50,7 @@ This matrix links analyst use cases to current backend API endpoints, Swing form
 ## Swing Migration Backlog (current)
 
 - Total Swing GUI classes: `97`
-- Still coupled to legacy (`ControllerNegocio` / legacy JPA usage): `45` (VerRegistroActividadesUsuario migrated to REST).
+- Still coupled to legacy (`ControllerNegocio` / legacy JPA usage): `39` (10 forms migrated in batch 1–2).
 - Priority migration batches:
   1. `gestiones/gestion` + `clientes`
   2. `presupuestos` + `documentacion`
