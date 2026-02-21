@@ -12,9 +12,9 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.api.client.DocumentacionRestHelper;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,7 +129,7 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame {
 
         estado = dtoGestion.getEstado().getNombre();
 
-        dtoGestion = ControllerNegocio.getInstancia().obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
+        dtoGestion = DocumentacionRestHelper.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
 
         listaTramites = (ArrayList<DtoTramite>) dtoGestion.getListaTramitesAsociados();
 
@@ -525,15 +525,15 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame {
 
             if (flag.getFlag()) {
                 JOptionPane.showMessageDialog(this, "Los documentos fueron Modificados con Exito");
-                this.setDtoGestion(ControllerNegocio.getInstancia().buscarDtoGestion(this.getDtoGestion()));
+                this.setDtoGestion(DocumentacionRestHelper.buscarDtoGestion(this.getDtoGestion()));
 
-                boolean parcial = ControllerNegocio.getInstancia().documentacionCompletaCliente(this.getDtoGestion());
+                boolean parcial = DocumentacionRestHelper.documentacionCompletaCliente(this.getDtoGestion());
 
                 if (parcial) {
                     JOptionPane.showMessageDialog(this, "Toda la documentacion de Cliente fue ingresada", "Atencion",
                             JOptionPane.INFORMATION_MESSAGE);
 
-                    boolean completa = ControllerNegocio.getInstancia().iscompletaDocumentacion(dtoGestion);
+                    boolean completa = DocumentacionRestHelper.iscompletaDocumentacion(dtoGestion);
 
                     if (completa) {
                         JOptionPane.showMessageDialog(this, "La Gestion se encuentra en estado: Documentacion Completa",
@@ -623,7 +623,7 @@ public class RegistrarEntregaDocumentos extends javax.swing.JInternalFrame {
         }
         if (cont > 0) {
             try {
-                dtoFlag = ControllerNegocio.getInstancia().modificarDocumentacion(lisDtoDocumentosPresentados,
+                dtoFlag = DocumentacionRestHelper.modificarDocumentacion(lisDtoDocumentosPresentados,
                         this.getDtoGestion());
             } catch (Exception ex) {
                 String mensaje = "Error al modificar documentacion: " + ex.getMessage();

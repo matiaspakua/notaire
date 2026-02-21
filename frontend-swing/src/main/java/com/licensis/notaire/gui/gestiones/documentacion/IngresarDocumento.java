@@ -24,10 +24,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import com.licensis.notaire.api.client.DocumentacionRestHelper;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -39,7 +39,6 @@ public class IngresarDocumento extends javax.swing.JInternalFrame {
     private static JMenuItem ventanaIngresarDocumento = new JMenuItem("Ventana Ingresar Documento");
     private static IngresarDocumento instancia = null;
     private DtoGestionDeEscritura dtoGestion = null;
-    private ControllerNegocio miController;
     private String error = null;
 
     /**
@@ -48,8 +47,6 @@ public class IngresarDocumento extends javax.swing.JInternalFrame {
     private IngresarDocumento() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
-
-        miController = ControllerNegocio.getInstancia();
     }
 
     public static IngresarDocumento getInstancia() {
@@ -137,7 +134,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame {
 
         estado = dtoGestion.getEstado().getNombre();
 
-        dtoGestion = miController.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
+        dtoGestion = DocumentacionRestHelper.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
 
         listaTramites = (ArrayList<DtoTramite>) dtoGestion.getListaTramitesAsociados();
 
@@ -545,16 +542,15 @@ public class IngresarDocumento extends javax.swing.JInternalFrame {
                 if (flag.getFlag()) {
                     JOptionPane.showMessageDialog(this, "Los documentos fueron actualizados correctamente",
                             "Infomacion", JOptionPane.INFORMATION_MESSAGE);
-                    this.setDtoGestion(miController.buscarDtoGestion(this.getDtoGestion()));
+                    this.setDtoGestion(DocumentacionRestHelper.buscarDtoGestion(this.getDtoGestion()));
 
-                    boolean parcial = ControllerNegocio.getInstancia()
-                            .documentacionCompletaExterna(this.getDtoGestion());
+                    boolean parcial = DocumentacionRestHelper.documentacionCompletaExterna(this.getDtoGestion());
 
                     if (parcial) {
                         JOptionPane.showMessageDialog(this, "Toda la documentacion del Externa fue ingresada",
                                 "Atencion", JOptionPane.INFORMATION_MESSAGE);
 
-                        boolean completa = ControllerNegocio.getInstancia().iscompletaDocumentacion(dtoGestion);
+                        boolean completa = DocumentacionRestHelper.iscompletaDocumentacion(dtoGestion);
 
                         if (completa) {
                             JOptionPane.showMessageDialog(this,
@@ -705,7 +701,7 @@ public class IngresarDocumento extends javax.swing.JInternalFrame {
         }
         try {
             if (cont > 0) {
-                dtoFlag = miController.modificarDocumentacionEntidadesExternas(lisDtoDocumentosPresentados,
+                dtoFlag = DocumentacionRestHelper.modificarDocumentacionEntidadesExternas(lisDtoDocumentosPresentados,
                         this.getDtoGestion());
             } else {
                 JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto",

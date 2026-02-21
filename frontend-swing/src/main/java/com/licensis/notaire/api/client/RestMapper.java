@@ -38,7 +38,7 @@ public final class RestMapper {
     }
 
     @SuppressWarnings("unchecked")
-    static GenericDto asGenericDto(Object value) {
+    public static GenericDto asGenericDto(Object value) {
         if (value instanceof GenericDto gd) {
             return gd;
         }

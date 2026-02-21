@@ -13,10 +13,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.api.client.DocumentacionRestHelper;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -39,7 +39,6 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame {
     private static JMenuItem ventanaReingresarDocumento = new JMenuItem("Ventana Reingresar Documento");
     private static ReingresarDocumentos instancia = null;
     private static DtoGestionDeEscritura dtoGestion = null;
-    private ControllerNegocio miController;
     private String error = null;
 
     /**
@@ -49,7 +48,6 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(800, 600);
-        miController = ControllerNegocio.getInstancia();
     }
 
     private static DtoGestionDeEscritura getDtoGestion() {
@@ -133,7 +131,7 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame {
 
         estado = dtoGestion.getEstado().getNombre();
 
-        dtoGestion = miController.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
+        dtoGestion = DocumentacionRestHelper.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
 
         listaTramites = (ArrayList<DtoTramite>) dtoGestion.getListaTramitesAsociados();
 
@@ -577,8 +575,8 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame {
 
         if (cont > 0) {
             try {
-                dtoFlag = miController.modificarDocumentacionReingreso(lisDtoDocumentosPresentados,
-                        this.getDtoGestion());
+                dtoFlag = DocumentacionRestHelper.modificarDocumentacionReingreso(lisDtoDocumentosPresentados,
+                        getDtoGestion());
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error al procesar la documentacion: " + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
@@ -623,7 +621,7 @@ public class ReingresarDocumentos extends javax.swing.JInternalFrame {
 
                     JOptionPane.showMessageDialog(this, "Los documentos fueron Modificados Correctamente",
                             "Informacion", JOptionPane.INFORMATION_MESSAGE);
-                    this.setDtoGestion(miController.buscarDtoGestion(this.getDtoGestion()));
+                    setDtoGestion(DocumentacionRestHelper.buscarDtoGestion(getDtoGestion()));
                     this.cargarFormulario(this.getDtoGestion());
 
                 } catch (NonexistentJpaException ex) {

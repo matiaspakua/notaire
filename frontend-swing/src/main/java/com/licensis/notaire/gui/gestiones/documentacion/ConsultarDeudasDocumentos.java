@@ -13,10 +13,10 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.gestiones.gestion.BuscarGestion;
+import com.licensis.notaire.api.client.DocumentacionRestHelper;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -42,7 +42,6 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
     private static ConsultarDeudasDocumentos instancia = null;
     private DtoGestionDeEscritura dtoGestionDeEscritura = null;
     private ArrayList<DtoDocumentoPresentado> listaDocumentosPresentados = null;
-    private ControllerNegocio miController;
     private String error = null;
 
     /**
@@ -52,7 +51,6 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(800, 600);
-        miController = ControllerNegocio.getInstancia();
     }
 
     public DtoGestionDeEscritura getDtoGestion() {
@@ -144,7 +142,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
 
         estado = dtoGestion.getEstado().getNombre();
 
-        dtoGestion = miController.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
+        dtoGestion = DocumentacionRestHelper.obtenerDocNecesarioEntregadosNoEntregadosDeGestion(dtoGestion);
 
         listaTramites = (ArrayList<DtoTramite>) dtoGestion.getListaTramitesAsociados();
 
@@ -584,7 +582,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Los documentos fueron actualizados correctamente.", "INFORMACION",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-            this.setDtoGestion(miController.buscarDtoGestion(this.getDtoGestion()));
+            this.setDtoGestion(DocumentacionRestHelper.buscarDtoGestion(this.getDtoGestion()));
             try {
                 this.cargarFormulario(this.getDtoGestion());
             } catch (NonexistentJpaException ex) {
@@ -650,7 +648,7 @@ public class ConsultarDeudasDocumentos extends javax.swing.JInternalFrame {
         }
         try {
             if (cont > 0) {
-                dtoFlag = miController.modificarDocumentacion(lisDtoDocumentosPresentados, this.getDtoGestion());
+                dtoFlag = DocumentacionRestHelper.modificarDocumentacion(lisDtoDocumentosPresentados, this.getDtoGestion());
             } else {
                 JOptionPane.showMessageDialog(this, "No realizo modificaciones o algun dato es incorrecto",
                         "Advertencia", JOptionPane.WARNING_MESSAGE);

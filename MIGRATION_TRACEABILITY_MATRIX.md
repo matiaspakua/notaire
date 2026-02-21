@@ -55,6 +55,9 @@ This matrix links analyst use cases to current backend API endpoints, Swing form
   - `ArchivarGestion`: `obtenerGestionesEnTramite`, `archivarGestion` → REST via `AdministradorJpa.getGestionJpa()`, `getEstadoDeGestionJpa()`
   - `IniciarGestion`: `obtenerListaEscribanosDisponibles`, `obtenerProximaGestionDeEscritura`, `obtenerListaEstadosDeGestionDisponibles` → REST via `AdministradorJpa` + `RestMapper`
   - `ModificarGestion`: `buscarTramite`, `buscarPresupuestoPorNumero` → REST via `AdministradorJpa` + `RestMapper`
+  - **Documentación (Batch 5b)**:
+    - `DocumentacionRestHelper`: helper con `buscarDtoGestion`, `obtenerDocNecesarioEntregadosNoEntregadosDeGestion`, `modificarDocumentacion`, `documentacionCompletaCliente`, `documentacionCompletaExterna`, `iscompletaDocumentacion`
+    - `RegistrarEntregaDocumentos`, `IngresarDocumento`, `ReingresarDocumentos`, `ConsultarDeudasDocumentos` → usan `DocumentacionRestHelper` en lugar de `ControllerNegocio`
 - Priority migration batches:
   1. `documentacion` (RegistrarEntregaDocumentos, IngresarDocumento, etc.)
   2. `presupuestos` rest + `documentacion`
