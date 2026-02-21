@@ -50,6 +50,21 @@ public abstract class BaseRestClient<T> {
     }
     
     /**
+     * Obtiene una entidad desde una subruta (para endpoints que retornan un solo objeto).
+     */
+    public T findFromPath(String path) throws IOException {
+        try {
+            String normalizedPath = path.startsWith("/") ? path : "/" + path;
+            T entity = RestClient.get(endpoint + normalizedPath, entityClass);
+            logger.log(Level.FINE, "findFromPath() - Entidad encontrada en " + endpoint + normalizedPath);
+            return entity;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error en findFromPath(" + path + ") - " + endpoint, e);
+            throw new IOException("Error obteniendo entidad desde " + endpoint + "/" + path + ": " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Obtiene una entidad por ID
      */
     public T find(Object id) throws IOException {

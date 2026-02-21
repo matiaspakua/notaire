@@ -38,7 +38,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
         {
             @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
             @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
-            @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado")
+            @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado"),
+            @NamedQuery(name = "Usuario.findByFkIdPersona", query = "SELECT u FROM Usuario u WHERE u.fkIdPersona.idPersona = :idPersona")
         })
 public class Usuario implements Serializable
 {

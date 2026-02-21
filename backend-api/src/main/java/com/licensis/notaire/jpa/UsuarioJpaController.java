@@ -268,6 +268,24 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
         return listaUsuarios;
     }
 
+    /**
+     * Busca un usuario por id de persona asociada.
+     * Retorna null si no existe.
+     */
+    public Usuario findUsuarioByPersona(Integer idPersona) {
+        if (idPersona == null) return null;
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createNamedQuery("Usuario.findByFkIdPersona");
+            query.setParameter("idPersona", idPersona);
+            @SuppressWarnings("unchecked")
+            List<Usuario> results = query.getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        } finally {
+            em.close();
+        }
+    }
+
     public Boolean modificarUsuario(Usuario pUsuario) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable para saber el resultado de la transaccion

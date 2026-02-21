@@ -1,10 +1,10 @@
 # Estado de Migración Frontend-Swing
 
-## Resumen General
+## Resumen General (actualizado 21/02/2026)
 
 - **Total archivos GUI**: 97
-- **Archivos migrados**: 1 (IngresarConcepto)
-- **Archivos pendientes**: 62 (que usan ControllerNegocio)
+- **Archivos migrados a REST**: ~65–70 (incl. Pagos, Documentación, Presupuestos parcial, Gestiones parcial, Administración parcial)
+- **Archivos pendientes** (usos de ControllerNegocio): ~30
 - **Formularios (.form)**: 95 copiados ✅
 - **Recursos (iconos)**: Copiados ✅
 
@@ -160,10 +160,11 @@
 
 ## Próximos Pasos
 
-1. Continuar migrando clases módulo por módulo
-2. Verificar coherencia de campos entre DTOs y GenericDto
-3. Probar cada módulo migrado con el backend
-4. Actualizar documentación
+1. Ver **MIGRATION_PLAN.md** (raíz del proyecto) para plan detallado de lo pendiente
+2. Ver **MIGRATION_TRACEABILITY_MATRIX.md** para matriz CU → API → Swing
+3. Migrar formularios con ControllerNegocio siguiendo batches A–F del plan
+4. Verificar coherencia de campos entre DTOs y GenericDto
+5. Probar cada módulo migrado con el backend
 
 ## Notas
 

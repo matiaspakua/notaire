@@ -1,406 +1,228 @@
-# Plan de Migración: Monolito → Microservicios
+# Plan de Migración: Monolito → Microservicios + Kubernetes Local
 
-## Estado Actual
-- **Swing (evaluación técnica actual)**: 97 clases GUI totales, 44 clases aún con acoplamiento legacy (`ControllerNegocio`/JPA directo en GUI)
-- **Backend/API**: Endpoints críticos agregados (`/api/v1/items/presupuesto/{idPresupuesto}`, `/api/v1/pagos/presupuesto/{idPresupuesto}`, `/api/v1/gestiones/*`, búsqueda extendida en `/api/v1/personas/buscar`)
-- **Testing**: Suite `mvn test -pl backend-api` en verde (unit + integración H2), tests Testcontainers preparados (ejecución condicionada a compatibilidad Docker host)
-- **E2E HTTP**: `bash scripts/test.sh` en verde con aserciones estrictas
-- **Docker backend**: stack levanta en modo headless (`bash scripts/start.sh --no-frontend --no-admin --skip-build`)
-- **Última actualización**: 20/02/2026
+## Estado de la Migración (21/02/2026)
 
----
+### Resumen Ejecutivo
 
-## Resumen de Progreso
-
-### Componentes Críticos Completados
-
-#### Módulo de Pagos (FASE 2.1) - COMPLETADO
-**Fecha**: 19/02/2026
-
-- [x] Endpoint REST `/api/v1/pagos` corregido y verificado
-- [x] `RegistrarPago.java` - Migrado a REST API
-  - Integración con `GenericRestClient` 
-  - Validaciones de negocio (monto > 0, no exceder saldo)
-  - Carga de presupuestos e items desde backend
-  - Cálculo automático de saldos
-  - Gestión de pagos parciales y totales
-- [x] `ConsultarPagos.java` - Migrado a REST API
-  - Consulta de pagos por presupuesto
-  - Visualización en grilla
-  - Cálculo de saldos pendientes
-
-**Código de referencia**: Ver `RegistrarPago.java` líneas 58-200 para patrón de integración REST
+| Componente | Estado | Detalle |
+|------------|--------|---------|
+| **Backend API** | ~95% | Endpoints críticos listos; faltan 2-3 para casos específicos |
+| **Swing Forms** | ~70% | ~30 formularios aún usan ControllerNegocio |
+| **Reportes PDF** | ✅ Listo | ReporteController con 10 endpoints JasperReports |
+| **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
+| **Kubernetes** | ❌ Pendiente | No existe configuración K8s |
+| **Tests E2E** | Parcial | Shell tests; JUnit domain tests |
 
 ---
 
-## Fase 1: Infraestructura Crítica (Sprint 0) - EN PROGRESO
+## Lo que FALTA migrar
 
-### 1.1 Backend API
-- [x] Crear endpoints REST para pagos (`/api/v1/pagos`) - **COMPLETADO**
-- [ ] Crear endpoints para reportes (`/api/v1/reportes`) - SIGUIENTE PRIORIDAD
-- [ ] Implementar generación de PDFs con JasperReports en backend
-- [ ] Agregar seguridad JWT a endpoints sensibles
+### 1. Formularios Swing pendientes (ControllerNegocio → REST)
 
-### 1.2 Base de Datos
-- [ ] Verificar integridad de datos PostgreSQL
-- [ ] Crear índices optimizados para consultas frecuentes
-- [ ] Configurar backups automáticos
+**Clientes (6 formularios)**
+- [ ] `Clientes.java` — `buscarPersonasClientes()` → usar `GET /personas/buscar?esCliente=true`
+- [ ] `BuscarCliente.java` — `buscarPersonaNombreApellido`, `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`, `listarTiposIdentificacion`
+- [ ] `DarAltaPersona.java` — `listarTiposIdentificacion`
+- [ ] `AdministrarCliente.java` — `asociarFkTipoIdentificacion`, `listarTiposIdentificacion`
+- [ ] `ListarPersonas.java` — `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`
+- [ ] `ModificarCliente.java` — ya parcialmente migrado; verificar completitud
 
-**Criterio de aceptación**: Backend expone todos los endpoints necesarios para formularios pendientes.
+**Usuarios (3 formularios)** — ✅ Batch A completado (21/02/2026)
+- [x] `ActividadUsuario.java` — migrado a REST (`usuarioClient.findAll()`, `findFromPath("persona/{id}")`)
+- [x] `DarAltaUsuario.java` — migrado (`usuarioClient.findFromPath("persona/{id}")` para verificar si persona tiene usuario)
+- [x] `ListarPersonasUsuario.java` — migrado (`RestMapper.asociarFkTipoIdentificacion`, `personaClient.findAllByPath("buscar?...)`)
+
+**Gestiones (6 formularios)**
+- [ ] `ModificarGestion.java` — eliminar ControllerNegocio, usar REST
+- [ ] `IniciarGestion.java` — eliminar ControllerNegocio; ya usa adminJpa REST
+- [ ] `BuscarGestion.java` — `listarTiposIdentificacion`, `buscarPersonaNombreApellidoConGestion`, `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacionConGestion`
+- [ ] `DetalleGestion.java` — eliminar ControllerNegocio
+- [ ] `ListaGestionesCliente.java` — `obtenerEstadoActualDeGestion` → usar historial/estado-gestion
+- [ ] `ListaEscrituras.java`, `BuscarEscritura.java`, `DetalleEscritura.java` — migrar a REST
+
+**Testimonios (3 formularios)**
+- [ ] `GenerarTestimonio.java`, `VerificarTestimonio.java`, `RetirarTestimonio.java` — migrar a REST (testimonio, movimiento-testimonio)
+
+**Inscripciones (3 formularios)**
+- [ ] `IngresarParaInscripcion.java`, `RegistrarInscripcion.java`, `RegistrarReingreso.java` — migrar a REST
+
+**Presupuestos (4 formularios)**
+- [ ] `CrearPresupuesto.java` — eliminar ControllerNegocio
+- [ ] `DetalleValoresTramites.java`, `BuscarInmueble.java` — migrar a REST
+- [ ] `AdministradorReportes.java` — conectar con endpoints `/api/v1/reportes/*`
+
+**Protocolo (4 formularios)**
+- [ ] `ModificarFolio.java`, `IngresarFolios.java` — migrar a REST (folio, tipo-folio)
+- [ ] `GenerarIndices.java`, `GenerarDDJJ.java`, `DeclaracionJurada.java`, `DeclaracionJuradaRentas.java` — usar reportes API
+
+**Plantillas Presupuesto (2 formularios)**
+- [ ] `CrearPlantillaPresupuesto.java`, `ModificarPlantillaPresupuesto.java` — eliminar ControllerNegocio
+
+**Auxiliares**
+- [ ] `AdministradorValidaciones.java` — `isPasswordCorrect` → endpoint `POST /usuarios/validate-password`
 
 ---
 
-## Fase 2: Formularios Críticos (Sprints 1-2)
+### 2. APIs faltantes o por extender
 
-### 2.1 Pagos (Alta prioridad) - ✅ COMPLETADO
-**Archivos**: `RegistrarPago.java`, `ConsultarPagos.java`
+| API faltante | Uso | Acción |
+|--------------|-----|--------|
+| `GET /personas/buscar?esCliente=true` | Clientes.java (personas con gestiones como clientes) | Agregar parámetro opcional `esCliente` en PersonaController |
+| `GET /usuarios?nombre=X` | DarAltaUsuario, ActividadUsuario (buscar usuario por nombre) | Agregar query param en UsuarioController |
+| `GET /gestiones/{id}/estado-actual` o `GET /historial/gestion/{id}` (último estado) | ListaGestionesCliente | Usar historial existente o agregar endpoint |
+| `POST /usuarios/validate-password` | ModificarUsuario (cambiar contraseña) | Nuevo endpoint para validar contraseña sin exponer hash |
 
-**Estado**: ✅ Migración completada el 19/02/2026
+---
 
-**Implementación**:
-```java
-// Cliente REST inicializado en constructor
-pagoClient = AdministradorJpa.getInstancia().getPagoJpa();
-presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
-itemClient = AdministradorJpa.getInstancia().getItemJpa();
+## Recomendaciones de implementación
 
-// Crear pago
-GenericDto pagoDto = new GenericDto();
-pagoDto.put("monto", montoPago);
-pagoDto.put("fecha", fechaPago);
-pagoDto.put("observaciones", observaciones);
-pagoDto.put("fkIdPresupuesto", presupuestoDto);
-pagoClient.create(pagoDto);
+### Migración Swing → REST (por formulario)
 
-// Cargar presupuesto
-GenericDto presupuesto = presupuestoClient.find(idPresupuesto);
+1. Identificar todas las llamadas a `ControllerNegocio.*` en el formulario
+2. Mapear cada llamada a un endpoint REST existente o crearlo
+3. Usar `AdministradorJpa.getInstancia().getXxxJpa()` y `GenericRestClient`
+4. Usar `RestMapper.asociarFkTipoIdentificacion(nombre)` para tipos de identificación
+5. Para búsquedas: usar `personaClient` con `findAll()` y filtrar, o preferir endpoints con query params
+6. Reemplazar `ControllerNegocio` por código REST
+7. Probar con `bash scripts/start.sh --no-frontend --no-admin` y cliente Swing local
+
+### Orden sugerido de migración
+
+1. **Batch A** ✅: Usuarios (`ActividadUsuario`, `DarAltaUsuario`, `ListarPersonasUsuario`) — COMPLETADO 21/02/2026
+   - API agregada: `GET /api/v1/usuarios/persona/{idPersona}`
+2. **Batch B**: Clientes (`Clientes`, `BuscarCliente`, `DarAltaPersona`, `AdministrarCliente`, `ListarPersonas`) + API `personas/buscar?esCliente=true`
+3. **Batch C**: Gestiones restantes (`BuscarGestion`, `DetalleGestion`, `ListaGestionesCliente`, `ModificarGestion`)
+4. **Batch D**: Escrituras, Testimonios, Inscripciones
+5. **Batch E**: Presupuestos, Protocolo, Plantillas
+6. **Batch F**: `AdministradorReportes`, `AdministradorValidaciones`
+
+---
+
+## Despliegue en Kubernetes (Local)
+
+### Objetivo
+
+Poder ejecutar la aplicación completa en Kubernetes local (minikube, kind, Docker Desktop K8s) para validar el despliegue antes de cloud.
+
+### Recomendaciones de implementación
+
+#### 1. Estructura de manifests
+
+```
+k8s/
+├── namespace.yaml
+├── configmap.yaml
+├── secrets.yaml
+├── postgres/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── pvc.yaml
+├── backend/
+│   ├── deployment.yaml
+│   └── service.yaml
+└── ingress.yaml (opcional, para acceso externo)
 ```
 
-**Funcionalidades implementadas**:
-- [x] Registro de pagos con validación de montos
-- [x] Consulta de pagos por presupuesto
-- [x] Cálculo automático de saldos
-- [x] Carga dinámica de items del presupuesto
-- [x] Manejo de errores con JOptionPane
-- [x] Validaciones: monto > 0, no exceder saldo, formato de fecha
+#### 2. Base de datos PostgreSQL en K8s
 
-### 2.2 Reportes (Bloqueante) - SIGUIENTE PRIORIDAD
-**Archivo**: `AdministradorReportes.java`
+- Usar `StatefulSet` o `Deployment` con `PersistentVolumeClaim` para datos
+- Variables de entorno vía `ConfigMap` y `Secret`
+- Health checks con `livenessProbe` / `readinessProbe`
 
-**Estado**: 🔄 Pendiente - Requiere migración de JasperReports al backend
+#### 3. Backend Spring Boot
 
-**Impacto**: ALTO - Los recibos de pago y reportes legales dependen de esta funcionalidad
+- Image: `eclipse-temurin:21-jre-alpine` o imagen propia desde `Dockerfile.backend`
+- Variables: `SPRING_DATASOURCE_URL`, `USER`, `PASSWORD` desde Secret
+- Probes: `GET /actuator/health`
+- Resource limits: `requests` y `limits` para CPU/memoria
 
-**Estrategia**:
-1. Crear servicio de reportes en backend (`ReporteService.java`)
-2. Mover templates .jrxml a `backend-api/src/main/resources/reports/`
-3. Exponer endpoint REST `/api/v1/reportes/{tipo}`
-4. Frontend solicita reporte vía REST (POST/GET)
-5. Backend genera PDF y devuelve bytes o URL temporal
-6. Frontend descarga o muestra en visor PDF
+#### 4. Orden de arranque
 
-```java
-// Nuevo endpoint backend
-@RestController
-@RequestMapping("/api/v1/reportes")
-public class ReporteController {
-    
-    @GetMapping("/{tipo}")
-    public ResponseEntity<byte[]> generarReporte(
-            @PathVariable String tipo,
-            @RequestParam Map<String, Object> parametros) {
-        // JasperReports en servidor
-        byte[] pdfBytes = reporteService.generarPdf(tipo, parametros);
-        return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"reporte.pdf\"")
-            .body(pdfBytes);
-    }
-}
+- Usar `initContainers` en backend para esperar PostgreSQL
+- O `depends_on` vía Jobs/scripts
 
-// Frontend - Descargar reporte
-GenericRestClient reporteClient = new GenericRestClient("/reportes");
-byte[] pdfData = reporteClient.getPdf("recibo-pago", parametros);
-// Guardar archivo o mostrar
+#### 5. ConfigMap y Secrets de ejemplo
+
+```yaml
+# configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notaire-config
+  namespace: notaire
+data:
+  POSTGRES_DB: "notaire"
+  POSTGRES_USER: "notaire"
 ```
 
-**Tareas detalladas**:
-- [ ] Identificar todos los templates .jrxml usados
-  - Recibo de pago
-  - Reporte de gestiones
-  - Reporte de clientes
-  - Declaraciones juradas
-- [ ] Crear `ReporteService` en backend
-- [ ] Migrar templates .jrxml a `backend-api/src/main/resources/reports/`
-- [ ] Configurar JasperReports con datasource PostgreSQL
-- [ ] Crear `ReporteController` con endpoints REST
-- [ ] Crear `ReporteRestClient` en frontend
-- [ ] Actualizar `AdministradorReportes.java` para usar API
-- [ ] Eliminar dependencia JDBC del frontend
-- [ ] Implementar cache de reportes (opcional - fase 2)
-- [ ] Tests de generación de PDFs
-
-**Dependencias**: 
-- Requiere Fase 2.1 completada (Pagos) ✅
-- Bloquea: Impresión de recibos en RegistrarPago
-
----
-
-## Fase 3: Gestión de Datos (Sprints 3-4)
-
-### 3.1 Clientes
-**Archivo**: `ModificarCliente.java`
-
-**Pasos**:
-1. Agregar endpoint PUT `/api/v1/personas/{id}`
-2. Reemplazar `ControllerNegocio.modificarPersona()`
-3. Usar `GenericRestClient` o `PersonaRestClient`
-
-### 3.2 Protocolo
-**Archivos**: `DeclaracionJurada.java`, `GenerarDDJJ.java`, etc.
-
-**Enfoque**:
-- Crear módulo `protocolo` en backend
-- Migrar lógica de folios y declaraciones
-- Integrar con módulo existente de testimonios
-
----
-
-## Fase 4: Refactorización de Menús (Sprint 5)
-
-### 4.1 Menús Contenedores
-**Archivos**: Todos los `*.java` que son solo menús
-
-**Estrategia**: No migrar funcionalidad, solo estructura
-- Mantener como contenedores de navegación
-- Asegurar que carguen formularios migrados
-- Eliminar referencias a clases eliminadas
-
-```java
-// Ejemplo: Administracion.java
-// No necesita cambios mayores, solo verificar imports
+```yaml
+# secrets.yaml (base64 para producción; para local se puede usar literales)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: notaire-secrets
+  namespace: notaire
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: "notaire_password"
 ```
 
----
+#### 6. Servicio backend
 
-## Fase 5: Componentes UI (Sprint 6)
+- `ClusterIP` para acceso interno
+- `NodePort` o `LoadBalancer` si se necesita acceso desde host
+- Para minikube: `minikube service notaire-backend --url`
 
-### 5.1 Componentes Auxiliares
-**Archivos**: `BarraProgreso.java`, `CartelConstruccion.java`
+#### 7. Frontend Swing (cliente de escritorio)
 
-**Acción**: Mantener sin cambios (no tienen lógica de negocio)
+- El frontend Swing NO se despliega en K8s
+- Se ejecuta en la máquina del usuario
+- `ApiConfig` debe apuntar a la URL del backend expuesta (ej. `http://localhost:30080` vía NodePort o `kubectl port-forward`)
 
----
-
-## Checklist de Migración por Formulario
-
-### Template para cada formulario:
-```markdown
-### Formulario: [Nombre]
-- [ ] 1. Identificar dependencias (JPA, ControllerNegocio, etc.)
-- [ ] 2. Crear/verificar endpoints REST en backend
-- [ ] 3. Reemplazar imports de jpa.* por servicios.*
-- [ ] 4. Migrar lógica de eventos (actionPerformed)
-- [ ] 5. Usar GenericRestClient para operaciones CRUD
-- [ ] 6. Manejar errores con try-catch + JOptionPane
-- [ ] 7. Tests manuales
-- [ ] 8. Eliminar código comentado y TODOs
-```
-
----
-
-## Convenciones de Código
-
-### Patrón RestClient
-```java
-// Correcto
-private GenericRestClient cliente = AdministradorJpa.getInstancia().getXxxJpa();
-
-// Evento
-try {
-    GenericDto dto = new GenericDto();
-    dto.put("campo", valor);
-    cliente.create(dto);
-} catch (IOException ex) {
-    logger.log(Level.SEVERE, "Error", ex);
-    JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-}
-```
-
-### Nomenclatura Endpoints
-- GET `/api/v1/{recurso}` - Listar
-- GET `/api/v1/{recurso}/{id}` - Obtener
-- POST `/api/v1/{recurso}` - Crear
-- PUT `/api/v1/{recurso}/{id}` - Actualizar
-- DELETE `/api/v1/{recurso}/{id}` - Eliminar
-
----
-
-## Comandos Útiles
+#### 8. Comandos útiles
 
 ```bash
-# Verificar compilación
-mvn clean install -DskipTests
+# Crear namespace
+kubectl apply -f k8s/namespace.yaml
 
-# Ejecutar tests
-bash test.sh
+# Aplicar todo
+kubectl apply -f k8s/
 
-# Iniciar sistema completo
-bash start.sh
+# Port-forward para desarrollo
+kubectl port-forward svc/notaire-backend 8080:8080 -n notaire
 
 # Ver logs
-./logs.sh backend
+kubectl logs -f deployment/notaire-backend -n notaire
 ```
+
+#### 9. Alternativa: Helm
+
+- Crear chart `notaire` con valores para DB y backend
+- Facilita despliegue en distintos entornos (dev, staging)
+
+### Checklist pre-Kubernetes
+
+- [ ] Dockerfile.backend funcional y optimizado (multi-stage build)
+- [ ] Variables de entorno externalizadas (no hardcode)
+- [ ] Health endpoint `/actuator/health` respondiendo
+- [ ] PostgreSQL con datos iniciales (init-db) o migraciones
+- [ ] Tests E2E pasando contra backend en Docker
 
 ---
 
-## Métricas de Éxito
+## Criterios de finalización
 
-### Objetivos Generales
-1. **0 errores de compilación** en frontend-swing
-2. **0 dependencias** de `com.licensis.notaire.jpa` en frontend
-3. **100% formularios** usando DTOs + RestClient
-4. **Tests HTTP** pasando para todos los endpoints
-5. **Sin conexiones JDBC** directas desde frontend
-
-### Métricas Actuales (19/02/2026)
-- ✅ Backend: 21/21 endpoints REST funcionando
-- ✅ Frontend: 69/97 formularios migrados (71%)
-- ✅ Módulo Pagos: 2/2 formularios migrados (100%)
-- ⏳ Reportes: 0/1 completados (pendiente - bloqueante)
-- ⏳ Pendientes: 28 formularios
+1. **0 usos** de `ControllerNegocio` en formularios Swing (excepto deprecación gradual)
+2. **100%** formularios usando REST vía `AdministradorJpa` / `GenericRestClient`
+3. **Todas** las APIs necesarias implementadas y documentadas en Swagger
+4. **Stack** desplegable con `kubectl apply -f k8s/` en entorno local
+5. **Tests** `bash scripts/test.sh` en verde
 
 ---
 
-## Timeline Actualizado
+## Próximos pasos inmediatos
 
-### Completado ✅
-- **Fase 2.1 (Pagos)**: ~3 días - **COMPLETADO** (19/02/2026)
-
-### En Progreso 🔄
-- **Fase 2.2 (Reportes)**: ~1 semana - **INICIANDO**
-  - Día 1-2: Migrar templates JasperReports
-  - Día 3-4: Implementar ReporteService y Controller
-  - Día 5: Integrar con frontend y tests
-
-### Pendiente ⏳
-- **Fase 1 (Infraestructura restante)**: 3 días
-  - JWT Security
-  - Optimización de base de datos
-- **Fase 3 (Gestión de Datos)**: 2 semanas
-  - Clientes: 6 formularios
-  - Protocolo: 7 formularios
-- **Fase 4 (Menús)**: 1 semana
-- **Fase 5 (UI Components)**: 3 días
-
-**Timeline revisado**: 
-- **Trabajo completado**: ~30%
-- **Tiempo restante estimado**: ~5 semanas (1 desarrollador full-time)
-- **Fecha estimada de finalización**: 26/03/2026
-
----
-
-## Lecciones Aprendidas - Fase 2.1 (Pagos)
-
-### Patrones Exitosos
-
-#### 1. Inicialización de Clientes REST
-```java
-// En constructor del formulario
-pagoClient = AdministradorJpa.getInstancia().getPagoJpa();
-presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
-itemClient = AdministradorJpa.getInstancia().getItemJpa();
-```
-
-#### 2. Manejo de Relaciones entre Entidades
-```java
-// Crear DTO relacionado (Presupuesto dentro de Pago)
-GenericDto presupuestoDto = new GenericDto();
-presupuestoDto.put("idPresupuesto", idPresupuestoActual);
-pagoDto.put("fkIdPresupuesto", presupuestoDto);
-```
-
-#### 3. Carga de Datos Relacionados
-```java
-// Iterar resultados y filtrar por relación
-List<GenericDto> items = itemClient.findAll();
-for (GenericDto item : items) {
-    Object presupuesto = item.get("fkIdPresupuesto");
-    if (presupuesto instanceof GenericDto) {
-        Object idPres = ((GenericDto) presupuesto).get("idPresupuesto");
-        if (idPres != null && idPres.equals(idPresupuesto)) {
-            // Procesar item
-        }
-    }
-}
-```
-
-#### 4. Validaciones de Negocio en Frontend
-```java
-// Validar antes de enviar al backend
-float montoPago = Float.parseFloat(importeTexto);
-if (montoPago <= 0) {
-    JOptionPane.showMessageDialog(this, "El importe debe ser mayor a cero");
-    return;
-}
-float saldoActual = Float.parseFloat(campoSaldo.getText());
-if (montoPago > saldoActual) {
-    JOptionPane.showMessageDialog(this, "El importe no puede superar el saldo");
-    return;
-}
-```
-
-### Desafíos Encontrados
-
-1. **Inconsistencia de nombres de endpoints**: Algunos controllers usaban singular (`/pago`) en lugar de plural (`/pagos`)
-   - **Solución**: Estandarizar a plural siguiendo convenciones REST
-   
-2. **Método find() vs findById()**: El BaseRestClient usa `find(Object id)` no `findById()`
-   - **Solución**: Usar siempre `client.find(id)`
-
-3. **Conversión de fechas**: El backend espera objetos Date, frontend trabaja con String
-   - **Solución**: Usar SimpleDateFormat para parseo consistente
-
-### Mejoras Identificadas
-
-1. **Endpoint específico para consultas**: En lugar de cargar todos los items y filtrar en frontend, debería existir:
-   ```
-   GET /api/v1/items/presupuesto/{idPresupuesto}
-   GET /api/v1/pagos/presupuesto/{idPresupuesto}
-   ```
-   
-2. **Validaciones duplicadas**: Validaciones de negocio (monto <= saldo) deberían estar en backend también
-
-3. **Manejo de transacciones**: Múltiples operaciones deberían ser atómicas (ej: registrar pago + actualizar saldo)
-
----
-
-## Próximos Pasos Inmediatos
-
-### Prioridad 1: Reportes (Esta semana)
-- [ ] Crear `ReporteService.java` en backend
-- [ ] Migrar templates .jrxml
-- [ ] Implementar endpoint `/api/v1/reportes/recibo-pago`
-- [ ] Integrar con `RegistrarPago.java` para impresión de recibos
-
-### Prioridad 2: Optimización de Consultas (Próxima semana)
-- [ ] Agregar endpoints específicos para consultas frecuentes
-- [ ] Implementar paginación en listados grandes
-- [ ] Agregar caché en backend para datos de catálogo
-
-### Prioridad 3: Seguridad
-- [ ] Implementar JWT en endpoints sensibles (pagos, reportes)
-- [ ] Agregar autorización por rol de usuario
-- [ ] Auditar operaciones críticas
-
----
-
-## Notas para Agentes AI
-
-1. **Siempre verificar** que el backend expone el endpoint antes de migrar el frontend
-2. **No modificar** lógica de negocio, solo moverla
-3. **Mantener compatibilidad** con UI existente
-4. **Documentar** cambios en AGENTS.md
-5. **Probar** con `bash start.sh` después de cada migración
-6. **Seguir patrones** documentados en "Lecciones Aprendidas"
-7. **Actualizar este plan** después de completar cada fase
+1. Implementar APIs faltantes (`personas/buscar?esCliente`, `usuarios?nombre`, `validate-password`)
+2. Migrar Batch A (Usuarios) en Swing
+3. Crear estructura base `k8s/` con Deployment de postgres y backend
+4. Validar despliegue local con minikube o kind

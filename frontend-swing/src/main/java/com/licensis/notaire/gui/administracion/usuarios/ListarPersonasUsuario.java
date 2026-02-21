@@ -4,20 +4,26 @@
  */
 package com.licensis.notaire.gui.administracion.usuarios;
 
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.administracion.escribanos.DarAltaEscribano;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import com.licensis.notaire.negocio.ControllerNegocio;
 
 /**
  *
@@ -31,6 +37,8 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
     private static JMenuItem ventanaListadoPersonas = new JMenuItem("Ventana Listado Personas");
     private String formulario = new String();
     private ArrayList<DtoPersona> miListaPersonas = null;
+    private static final Logger logger = Logger.getLogger(ListarPersonasUsuario.class.getName());
+    private final GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
 
     /**
      * Creates new form ListarPersonasUsuario
@@ -305,31 +313,38 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
 
     private void grillaPersonasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grillaPersonasMouseClicked
 
-        Integer filaSeleccionada = grillaPersonas.getSelectedRow();
-        TableModel miGrilla = grillaPersonas.getModel();
+        int filaSeleccionada = grillaPersonas.getSelectedRow();
+        if (filaSeleccionada < 0) return;
 
+        DefaultTableModel miGrilla = (DefaultTableModel) grillaPersonas.getModel();
         int filas = miGrilla.getRowCount();
-        int columnas = miGrilla.getColumnCount();
 
-        DtoPersona miDtoPersona = new DtoPersona();
-        DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
+        for (int i = 0; i < filas; i++) {
+            if (i != filaSeleccionada) continue;
 
-        //Recorro la grilla completa, buscando el cliente seleccionado
-        for (int i = 0; i < filas; i++)
-        {
-            if (i == filaSeleccionada)
-            {
-                dtoTipoIdentificacion.setNombre(miGrilla.getValueAt(i, 2).toString());
-                miDtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
-                miDtoPersona.setNumeroIdentificacion(miGrilla.getValueAt(i, 3).toString());
+            String nombreTipo = miGrilla.getValueAt(i, 2) != null ? miGrilla.getValueAt(i, 2).toString() : "";
+            String numeroIdent = miGrilla.getValueAt(i, 3) != null ? miGrilla.getValueAt(i, 3).toString() : "";
+            if (numeroIdent.isEmpty()) return;
 
-                //Asocio el nombre tipo Identificacion con su id para buscar la persona
-                dtoTipoIdentificacion.setIdTipoIdentificacion(ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(miDtoPersona));
+            int idTipo = RestMapper.asociarFkTipoIdentificacion(nombreTipo);
+            String path = "buscar?numeroIdentificacion=" + URLEncoder.encode(numeroIdent, StandardCharsets.UTF_8);
+            if (idTipo > 0) path += "&idTipoIdentificacion=" + idTipo;
 
-                //Busco todos los datos de la persona seleccionada y cargo  el formulario
-                miDtoPersona = ControllerNegocio.getInstancia().buscarPersonaTipoNumeroIdentificacion(miDtoPersona);
+            DtoPersona miDtoPersona;
+            try {
+                List<GenericDto> raw = personaClient.findAllByPath(path);
+                if (raw == null || raw.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Persona no encontrada.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                miDtoPersona = RestMapper.toDtoPersona(raw.get(0));
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, "Error buscando persona", ex);
+                JOptionPane.showMessageDialog(this, "Error al buscar persona: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-                if (formulario.contains(ConstantesGui.DAR_ALTA_ESCRIBANO))
+            if (formulario.contains(ConstantesGui.DAR_ALTA_ESCRIBANO))
                 {
                     if (miDtoPersona.getRegistroEscribano() != null)
                     {
@@ -371,11 +386,10 @@ public class ListarPersonasUsuario extends javax.swing.JInternalFrame
                     this.salir();
                 }
 
-                this.limpiarJtable();
-                this.salir();
-            }
+            this.limpiarJtable();
+            this.salir();
+            return;
         }
-
     }//GEN-LAST:event_grillaPersonasMouseClicked
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed

@@ -32,6 +32,17 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/persona/{idPersona}")
+    @Operation(summary = "Obtener usuario por id de persona asociada (Batch A)")
+    public ResponseEntity<Usuario> getUsuarioByPersona(@PathVariable Integer idPersona) {
+        try {
+            Usuario usuario = getJpaController().findUsuarioByPersona(idPersona);
+            return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Integer id) {

@@ -9,9 +9,8 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 import com.licensis.notaire.servicios.GenericRestClient;
@@ -92,26 +91,32 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         checkHabilitado.setSelected(true);
     }
 
-    public Boolean cargarFormulario(DtoPersona dtoPersona) throws NonexistentJpaException
+    public Boolean cargarFormulario(DtoPersona dtoPersona)
     {
-
         Boolean flag = false;
+        if (dtoPersona == null || dtoPersona.getIdPersona() == null) {
+            JOptionPane.showMessageDialog(this, "Persona no seleccionada.");
+            return false;
+        }
 
-        //Controlo que la persona no tenga un usuario asociado
-        DtoUsuario miDtoUsuario = new DtoUsuario();
-        miDtoUsuario.setPersonas(dtoPersona);
+        try {
+            GenericDto usuarioExistente = usuarioClient.findFromPath("persona/" + dtoPersona.getIdPersona());
+            if (usuarioExistente != null) {
+                String nombreUsuario = usuarioExistente.getString("nombre");
+                JOptionPane.showMessageDialog(this, "La persona tiene un Usuario asignado : " + (nombreUsuario != null ? nombreUsuario : ""));
+                return false;
+            }
+        } catch (IOException ex) {
+            if (ex.getMessage() != null && ex.getMessage().contains("404")) {
+                // No existe usuario para esta persona - OK para dar de alta
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al verificar usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
 
-        miDtoUsuario = ControllerNegocio.getInstancia().buscarUsuario(miDtoUsuario);
-
-        if (miDtoUsuario != null)
-        {
-                String nombreUsuario = miDtoUsuario.getNombre() != null ? miDtoUsuario.getNombre() : "";
-                JOptionPane.showMessageDialog(this, "La persona tiene un Usuario asignado : " + nombreUsuario);
-
-        } else
-        {
-            //Habilito la vista pero no se puede modificar los datos de la persona.
-            habilitarFormulario();
+        //Habilito la vista pero no se puede modificar los datos de la persona.
+        habilitarFormulario();
 
             //guardo ref a la persona para insertar el usuario, cuando se Acepte
             this.setDtoPersona(dtoPersona);
@@ -123,9 +128,8 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
             campoEmail.setText(dtoPersona.getEmail());
             campoTipoIdentificacion.setText(dtoPersona.getDtoTipoIdentificacion().getNombre());
 
-            this.toFront();
-            flag = true;
-        }
+        this.toFront();
+        flag = true;
         return flag;
     }
 

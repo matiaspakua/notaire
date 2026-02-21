@@ -6,16 +6,18 @@ package com.licensis.notaire.gui.administracion.usuarios;
 
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
+import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import java.util.ArrayList;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -28,6 +30,8 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
     private static JMenuItem ventanaActividadUsuario = new JMenuItem("Ventana Modificar Usuario");
     private static ActividadUsuario instancia = null;
     private DtoUsuario dtoUsuarioActvidad = null;
+    private static final Logger logger = Logger.getLogger(ActividadUsuario.class.getName());
+    private final GenericRestClient usuarioClient = AdministradorJpa.getInstancia().getUsuarioJpa();
 
     /**
      * Creates new form ModificarUsuario
@@ -87,38 +91,44 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
 
     }
 
-    public void cargarUsuariosDisponibles() throws NonexistentJpaException
+    public void cargarUsuariosDisponibles()
     {
-        ArrayList<DtoUsuario> miListaUsuarios = null;
-        miListaUsuarios = (ArrayList<DtoUsuario>) ControllerNegocio.getInstancia().buscarUsuariosDisponibles();
-
-        if (miListaUsuarios != null)
-        {
-            DtoUsuario miDtoUsuario = null;
-
-            for (int i = 0; i < miListaUsuarios.size(); i++)
-            {
-
-                miDtoUsuario = miListaUsuarios.get(i);
-
-                Object[] datos =
-                {
-                    miDtoUsuario.getNombre(),
-                    miDtoUsuario.getPersonas().getNombre() + " " + miDtoUsuario.getPersonas().getApellido(),
-                    miDtoUsuario.getTipo(),
-                    miDtoUsuario.isEstado(),
-                    miDtoUsuario.getIdUsuario(),
-                    miDtoUsuario.getPersonas().getIdPersona(),
-                };
-
-                ((DefaultTableModel) grillaActividadesUsuarios.getModel()).addRow(datos);
+        try {
+            List<GenericDto> usuarios = usuarioClient.findAll();
+            if (usuarios != null && !usuarios.isEmpty()) {
+                DefaultTableModel model = (DefaultTableModel) grillaActividadesUsuarios.getModel();
+                for (GenericDto u : usuarios) {
+                    if (!Boolean.TRUE.equals(u.getBoolean("estado"))) {
+                        continue;
+                    }
+                    String nombre = u.getString("nombre");
+                    Object personaObj = u.get("fkIdPersona");
+                    String nombrePersona = "";
+                    String apellidoPersona = "";
+                    Integer idPersona = null;
+                    if (personaObj instanceof Map<?, ?> p) {
+                        nombrePersona = p.get("nombre") != null ? p.get("nombre").toString() : "";
+                        apellidoPersona = p.get("apellido") != null ? p.get("apellido").toString() : "";
+                        Object idP = p.get("idPersona");
+                        if (idP instanceof Number) idPersona = ((Number) idP).intValue();
+                    }
+                    Integer idUsuario = u.getInt("idUsuario");
+                    model.addRow(new Object[]{
+                            nombre != null ? nombre : "",
+                            (nombrePersona + " " + apellidoPersona).trim(),
+                            u.getString("tipo"),
+                            Boolean.TRUE.equals(u.getBoolean("estado")),
+                            idUsuario,
+                            idPersona
+                    });
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "No existen Usuarios Registrados");
             }
-
-        } else
-        {
-            JOptionPane.showMessageDialog(this, "No existen Usuarios Registrados");
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error cargando usuarios", ex);
+            JOptionPane.showMessageDialog(this, "Error al cargar usuarios: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     /**
@@ -276,36 +286,32 @@ public class ActividadUsuario extends javax.swing.JInternalFrame
 
     private void grillaActividadesUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_grillaActividadesUsuariosMouseClicked
 
-        TableModel miGrilla = grillaActividadesUsuarios.getModel();
         int filaSeleccionada = grillaActividadesUsuarios.getSelectedRow();
+        if (filaSeleccionada < 0) return;
 
-        int filas = miGrilla.getRowCount();
-        int columnas = miGrilla.getColumnCount();
+        Object idPersonaObj = grillaActividadesUsuarios.getValueAt(filaSeleccionada, 5);
+        if (idPersonaObj == null) return;
 
-        DtoUsuario miUsuario = new DtoUsuario();
-        DtoPersona miPersona = new DtoPersona();
-        miUsuario.setPersonas(miPersona);
-
-        //Recorro la grilla completa, buscando el cliente seleccionado
-        for (int i = 0; i < filas; i++)
-        {
-            if (i == filaSeleccionada)
-            {
-                try
-                {
-                    miUsuario.getPersonas().setIdPersona(Integer.parseInt(grillaActividadesUsuarios.getValueAt(i, 5).toString()));
-                    miUsuario = ControllerNegocio.getInstancia().buscarUsuario(miUsuario);
-                    VerRegistroActividadesUsuario.getInstancia().cargarRegistrosUsuario(miUsuario);
-                    Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
-                    Principal.setVentanasActivas(VerRegistroActividadesUsuario.getVentanaRegistroActividadesUsuario());
-
-                }
-                catch (NonexistentJpaException ex)
-                {
-                    Logger.getLogger(ActividadUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
+        try {
+            int idPersona = Integer.parseInt(idPersonaObj.toString());
+            GenericDto usuario = usuarioClient.findFromPath("persona/" + idPersona);
+            if (usuario == null) {
+                JOptionPane.showMessageDialog(this, "Usuario no encontrado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            DtoUsuario miUsuario = new DtoUsuario();
+            miUsuario.setIdUsuario(usuario.getInt("idUsuario"));
+            DtoPersona miPersona = new DtoPersona();
+            miPersona.setIdPersona(idPersona);
+            miUsuario.setPersonas(miPersona);
+            VerRegistroActividadesUsuario.getInstancia().cargarRegistrosUsuario(miUsuario);
+            Principal.cargarFormulario(VerRegistroActividadesUsuario.getInstancia());
+            Principal.setVentanasActivas(VerRegistroActividadesUsuario.getVentanaRegistroActividadesUsuario());
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error buscando usuario por persona", ex);
+            JOptionPane.showMessageDialog(this, "Error al cargar usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            logger.log(Level.WARNING, "ID persona inválido", ex);
         }
     }//GEN-LAST:event_grillaActividadesUsuariosMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
