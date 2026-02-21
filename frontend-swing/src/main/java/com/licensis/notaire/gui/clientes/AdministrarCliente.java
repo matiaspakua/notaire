@@ -11,7 +11,14 @@ import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.api.client.RestMapper;
+import com.licensis.notaire.dto.GenericDto;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +34,9 @@ import javax.swing.JOptionPane;
 public class AdministrarCliente extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
-    private ControllerNegocio miController;
+    private final GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
+    private final GenericRestClient tipoIdentificacionClient = AdministradorJpa.getInstancia()
+            .getTipoIdentificacionJpa();
     private static JMenuItem ventanaAdministrarCliente = new JMenuItem("");
     private static AdministrarCliente instancia = null;
     private DtoPersona dtoPersonaOriginal = null;
@@ -40,7 +49,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
         estadoFormulario = Boolean.TRUE;
         // this.setSize(Principal.tamanioGrandeHorizontal,
         // Principal.tamanioGrandeVertical);
-        miController = ControllerNegocio.getInstancia();
+        // Controlador inicializado mediante REST clients
         this.cargarComboTipoIdentificacion();
         this.desactivarFormulario();
 
@@ -489,17 +498,13 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
                 dtoPersonaModificada.setTelefono(campoTelefono.getText());
                 dtoPersonaModificada.setEmail(campoEmail.getText());
                 dtoPersonaModificada.getDtoTipoIdentificacion()
-                        .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoPersonaModificada));
+                        .setIdTipoIdentificacion(
+                                RestMapper.asociarFkTipoIdentificacion(dtoTipoIdentificacion.getNombre()));
 
-                // Cotrol de modificacion por tipo y numero de identificacion, no puede
-                // repertirse
-                Boolean flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoPersonaModificada);
+                Boolean flag = controlModificacionPersonaLocal(dtoPersonaOriginal, dtoPersonaModificada);
 
-                // Si la persona fue encontrada, significa que ya existe alguien con el tipo y
-                // numero de indentificacion
-                // ingresado por el usuario en la modificacion
                 if (!flag) {
-                    miController.modificarPersona(dtoPersonaModificada);
+                    personaClient.edit(RestMapper.toGenericDto(dtoPersonaModificada));
                     JOptionPane.showMessageDialog(this, "La pesona se modifico correctamente", "Informacion",
                             JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
@@ -554,7 +559,8 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
                 dtoClienteModificado.setEmail(campoEmail.getText());
 
                 dtoClienteModificado.getDtoTipoIdentificacion()
-                        .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoClienteModificado));
+                        .setIdTipoIdentificacion(
+                                RestMapper.asociarFkTipoIdentificacion(dtoTipoIdentificacion.getNombre()));
 
                 // Set atributos cliente
                 dtoClienteModificado.setNacionalidad(campoNacionalidad.getText());
@@ -571,10 +577,10 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
                 dtoClienteModificado.setIdPersona(dtoPersonaOriginal.getIdPersona());
 
                 // Cotrol de modificacion por tipo y numero de identificacion
-                Boolean flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoClienteModificado);
+                Boolean flag = controlModificacionPersonaLocal(dtoPersonaOriginal, dtoClienteModificado);
 
                 if (flag == false) {
-                    miController.modificarCliente(dtoClienteModificado);
+                    personaClient.edit(RestMapper.toGenericDto(dtoClienteModificado));
                     JOptionPane.showMessageDialog(this, "El Cliente se modifico correctamente", "Informacion",
                             JOptionPane.INFORMATION_MESSAGE);
                     limpiarFormulario();
@@ -634,17 +640,36 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
     }
 
     public void cargarComboTipoIdentificacion() {
-        String nombre = null;
-        ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<DtoTipoIdentificacion>();
-        listaDtoIdentificaciones = miController.listarTiposIdentificacion();
-
-        for (int i = 0; i < listaDtoIdentificaciones.size(); i++) {
-            nombre = listaDtoIdentificaciones.get(i).getNombre();
-            comboTipoIdentificacion.addItem(nombre);
+        try {
+            List<GenericDto> list = tipoIdentificacionClient.findAll();
+            if (list != null) {
+                for (GenericDto gd : list) {
+                    DtoTipoIdentificacion miTipo = RestMapper.toDtoTipoIdentificacion(gd);
+                    comboTipoIdentificacion.addItem(miTipo.getNombre());
+                }
+            }
+            comboTipoIdentificacion.setSelectedItem("D.N.I.");
+        } catch (IOException ex) {
+            Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // Set como primer opcion el DNI
-        comboTipoIdentificacion.setSelectedItem("D.N.I.");
+    }
 
+    private boolean controlModificacionPersonaLocal(DtoPersona original, DtoPersona modificada) {
+        if (!modificada.getDtoTipoIdentificacion().getNombre().equals(original.getDtoTipoIdentificacion().getNombre())
+                ||
+                !modificada.getNumeroIdentificacion().equals(original.getNumeroIdentificacion())) {
+            int idTipo = RestMapper.asociarFkTipoIdentificacion(modificada.getDtoTipoIdentificacion().getNombre());
+            try {
+                String path = String.format("buscar?numeroIdentificacion=%s&idTipoIdentificacion=%d",
+                        URLEncoder.encode(modificada.getNumeroIdentificacion(), StandardCharsets.UTF_8), idTipo);
+                List<GenericDto> result = personaClient.findAllByPath(path);
+                return result != null && !result.isEmpty();
+            } catch (IOException ex) {
+                Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
+                return true; // prevent save
+            }
+        }
+        return false;
     }
 
     public static AdministrarCliente getInstancia() {
@@ -675,7 +700,7 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
             dtoCliente.setEmail(campoEmail.getText());
 
             dtoCliente.getDtoTipoIdentificacion()
-                    .setIdTipoIdentificacion(miController.asociarFkTipoIdentificacion(dtoCliente));
+                    .setIdTipoIdentificacion(RestMapper.asociarFkTipoIdentificacion(dtoTipoIdentificacion.getNombre()));
 
             // Set atributos cliente
             dtoCliente.setNacionalidad(campoNacionalidad.getText());
@@ -696,31 +721,30 @@ public class AdministrarCliente extends javax.swing.JInternalFrame {
 
             // Controlo si la persona se modifico
             Boolean flag = true;
-            flag = miController.controlModificacionPersona(dtoPersonaOriginal, dtoCliente);
+            flag = controlModificacionPersonaLocal(dtoPersonaOriginal, dtoCliente);
 
             if (flag == false) {
 
                 if (dtoCliente.getIdPersona() != -1) {
                     try {
-                        dtoCliente = miController.modificarCliente(dtoCliente);
-                    } catch (ClassModifiedException ex) {
-                        JOptionPane.showMessageDialog(this,
-                                "La persona indicada esta siendo modificada por otro usuario", "Advertencia",
-                                JOptionPane.WARNING_MESSAGE);
-                        Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
-                        this.salir();
-                    } catch (ClassEliminatedException ex) {
-                        JOptionPane.showMessageDialog(this, "Error grave, Accion cancelada", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
-                        this.salir();
+                        personaClient.edit(RestMapper.toGenericDto(dtoCliente));
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this,
                                 "Error al modificar el cliente durante el alta: " + ex.getMessage(), "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
-                    dtoCliente = miController.darAltaPersona(dtoCliente);
+                    try {
+                        GenericDto created = personaClient.create(RestMapper.toGenericDto(dtoCliente));
+                        if (created != null) {
+                            dtoCliente.setIdPersona(created.getInt("idPersona"));
+                        } else {
+                            dtoCliente = null;
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(AdministrarCliente.class.getName()).log(Level.SEVERE, null, ex);
+                        dtoCliente = null;
+                    }
                 }
 
                 if (dtoCliente != null) {

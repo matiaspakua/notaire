@@ -19,13 +19,13 @@
 
 ### 1. Formularios Swing pendientes (ControllerNegocio → REST)
 
-**Clientes (6 formularios)**
-- [ ] `Clientes.java` — `buscarPersonasClientes()` → usar `GET /personas/buscar?esCliente=true`
-- [ ] `BuscarCliente.java` — `buscarPersonaNombreApellido`, `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`, `listarTiposIdentificacion`
-- [ ] `DarAltaPersona.java` — `listarTiposIdentificacion`
-- [ ] `AdministrarCliente.java` — `asociarFkTipoIdentificacion`, `listarTiposIdentificacion`
-- [ ] `ListarPersonas.java` — `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`
-- [ ] `ModificarCliente.java` — ya parcialmente migrado; verificar completitud
+**Clientes (6 formularios)** — ✅ Batch B completado
+- [x] `Clientes.java` — `buscarPersonasClientes()` → usar `GET /personas/buscar?esCliente=true`
+- [x] `BuscarCliente.java` — `buscarPersonaNombreApellido`, `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`, `listarTiposIdentificacion`
+- [x] `DarAltaPersona.java` — `listarTiposIdentificacion`
+- [x] `AdministrarCliente.java` — `asociarFkTipoIdentificacion`, `listarTiposIdentificacion`
+- [x] `ListarPersonas.java` — `asociarFkTipoIdentificacion`, `buscarPersonaTipoNumeroIdentificacion`
+- [x] `ModificarCliente.java` — ya parcialmente migrado; verificar completitud
 
 **Usuarios (3 formularios)** — ✅ Batch A completado (21/02/2026)
 - [x] `ActividadUsuario.java` — migrado a REST (`usuarioClient.findAll()`, `findFromPath("persona/{id}")`)
@@ -67,7 +67,7 @@
 
 | API faltante | Uso | Acción |
 |--------------|-----|--------|
-| `GET /personas/buscar?esCliente=true` | Clientes.java (personas con gestiones como clientes) | Agregar parámetro opcional `esCliente` en PersonaController |
+| `GET /personas/buscar?esCliente=true` | Clientes.java (personas con gestiones como clientes) | ✅ Agregar parámetro opcional `esCliente` en PersonaController |
 | `GET /usuarios?nombre=X` | DarAltaUsuario, ActividadUsuario (buscar usuario por nombre) | Agregar query param en UsuarioController |
 | `GET /gestiones/{id}/estado-actual` o `GET /historial/gestion/{id}` (último estado) | ListaGestionesCliente | Usar historial existente o agregar endpoint |
 | `POST /usuarios/validate-password` | ModificarUsuario (cambiar contraseña) | Nuevo endpoint para validar contraseña sin exponer hash |
@@ -90,7 +90,7 @@
 
 1. **Batch A** ✅: Usuarios (`ActividadUsuario`, `DarAltaUsuario`, `ListarPersonasUsuario`) — COMPLETADO 21/02/2026
    - API agregada: `GET /api/v1/usuarios/persona/{idPersona}`
-2. **Batch B**: Clientes (`Clientes`, `BuscarCliente`, `DarAltaPersona`, `AdministrarCliente`, `ListarPersonas`) + API `personas/buscar?esCliente=true`
+2. **Batch B** ✅: Clientes (`Clientes`, `BuscarCliente`, `DarAltaPersona`, `AdministrarCliente`, `ListarPersonas`) + API `personas/buscar?esCliente=true` — COMPLETADO
 3. **Batch C**: Gestiones restantes (`BuscarGestion`, `DetalleGestion`, `ListaGestionesCliente`, `ModificarGestion`)
 4. **Batch D**: Escrituras, Testimonios, Inscripciones
 5. **Batch E**: Presupuestos, Protocolo, Plantillas

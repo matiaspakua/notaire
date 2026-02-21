@@ -46,10 +46,11 @@ public class PersonaController {
 
     @PostMapping
     @Operation(summary = "Crear nueva persona")
-    public ResponseEntity<Integer> createPersona(@RequestBody Persona persona) {
+    public ResponseEntity<Persona> createPersona(@RequestBody Persona persona) {
         try {
             int id = getJpaController().create(persona);
-            return ResponseEntity.ok(id);
+            Persona created = getJpaController().findPersona(id);
+            return ResponseEntity.ok(created);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -84,10 +85,12 @@ public class PersonaController {
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String apellido,
             @RequestParam(required = false) String numeroIdentificacion,
-            @RequestParam(required = false) Integer idTipoIdentificacion) {
+            @RequestParam(required = false) Integer idTipoIdentificacion,
+            @RequestParam(required = false) Boolean esCliente) {
         try {
             List<Persona> personas = getJpaController().findPersonaEntities();
-            if (nombre != null || apellido != null || numeroIdentificacion != null || idTipoIdentificacion != null) {
+            if (nombre != null || apellido != null || numeroIdentificacion != null || idTipoIdentificacion != null
+                    || esCliente != null) {
                 final String nombreFilter = nombre != null ? nombre : "";
                 final String apellidoFilter = apellido != null ? apellido : "";
                 final String numeroFilter = numeroIdentificacion != null ? numeroIdentificacion : "";
@@ -102,11 +105,14 @@ public class PersonaController {
                     }
                     if (numeroIdentificacion != null
                             && (p.getNumeroIdentificacion() == null
-                            || !p.getNumeroIdentificacion().contains(numeroFilter))) {
+                                    || !p.getNumeroIdentificacion().contains(numeroFilter))) {
                         matches = false;
                     }
                     if (idTipoIdentificacion != null && (p.getFkIdTipoIdentificacion() == null
                             || !idTipoIdentificacion.equals(p.getFkIdTipoIdentificacion().getIdTipoIdentificacion()))) {
+                        matches = false;
+                    }
+                    if (esCliente != null && p.getEsCliente() != esCliente) {
                         matches = false;
                     }
                     if (matches) {
@@ -121,4 +127,3 @@ public class PersonaController {
         }
     }
 }
-
