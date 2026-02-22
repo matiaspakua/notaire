@@ -1,37 +1,37 @@
 services:
   postgres:
     image: postgres:16
-    container_name: notaire-postgres
+    container_name: notary-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-notaire}
-      POSTGRES_USER: ${POSTGRES_USER:-notaire}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-notaire_password}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-notaire} -d ${POSTGRES_DB:-notaire}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-notaire}" ]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - notaire-network
+      - notary-network
 
   # Backend API Service
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    container_name: notaire-backend
+    container_name: notary-backend
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-notaire}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-notaire}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-notaire_password}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-admin}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
     ports:
       - "8080:8080"
 
@@ -39,20 +39,20 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/swagger-ui.html" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - notaire-network
+      - notary-network
 
   # pgAdmin for database management
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: notaire-pgadmin
+    container_name: notary-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@notaire.local
+      PGADMIN_DEFAULT_EMAIL: admin@notaire.com
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
@@ -70,7 +70,7 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - notaire-network
+      - notary-network
 
 volumes:
   postgres_data:
@@ -79,5 +79,5 @@ volumes:
     driver: local
 
 networks:
-  notaire-network:
+  notary-network:
     driver: bridge

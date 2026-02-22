@@ -19,7 +19,7 @@ echo -e "${BLUE}========================================${NC}\n"
 
 echo -e "${BLUE}Step 1: Access pgAdmin${NC}"
 echo -e "  URL:        ${YELLOW}http://localhost:5050${NC}"
-echo -e "  Email:      ${YELLOW}admin@notaire.local${NC}"
+echo -e "  Email:      ${YELLOW}admin@notaire.com${NC}"
 echo -e "  Password:   ${YELLOW}admin${NC}"
 echo ""
 

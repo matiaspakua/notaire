@@ -102,6 +102,12 @@ else
     echo -e "${YELLOW}Skipping Maven build (--skip-build)${NC}\n"
 fi
 
+# Stop and remove existing containers to handle credential changes
+echo -e "${YELLOW}Step $STEP: Cleaning up existing containers...${NC}"
+STEP=$((STEP + 1))
+$DC_CMD down --volumes 2>/dev/null || true
+echo -e "${GREEN}✓ Containers cleaned up${NC}\n"
+
 # Start Docker Compose services
 echo -e "${YELLOW}Step $STEP: Starting Docker Compose services...${NC}"
 STEP=$((STEP + 1))
@@ -117,7 +123,7 @@ sleep 5
 echo -e "${YELLOW}Step $STEP: Verifying PostgreSQL...${NC}"
 STEP=$((STEP + 1))
 for i in {1..30}; do
-    if $DC_CMD exec -T postgres pg_isready -U notaire &> /dev/null; then
+    if $DC_CMD exec -T postgres psql -U admin -d notaire -c "SELECT 1" &> /dev/null; then
         echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
         break
     fi
@@ -130,11 +136,26 @@ for i in {1..30}; do
     sleep 1
 done
 
+# Load database initialization scripts if tables don't exist
+echo -e "${YELLOW}Step $STEP: Loading database schema and data...${NC}"
+STEP=$((STEP + 1))
+TABLE_COUNT=$($DC_CMD exec -T postgres psql -U admin -d notaire -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null | tr -d ' ' || echo "0")
+
+if [ "$TABLE_COUNT" = "0" ] || [ -z "$TABLE_COUNT" ]; then
+    echo "  Loading schema from init-db/01-schema.sql..."
+    $DC_CMD exec -T postgres psql -U admin -d notaire -f /docker-entrypoint-initdb.d/01-schema.sql &> /dev/null || true
+    echo "  Loading data from init-db/02-data.sql..."
+    $DC_CMD exec -T postgres psql -U admin -d notaire -f /docker-entrypoint-initdb.d/02-data.sql &> /dev/null || true
+    echo -e "${GREEN}✓ Database schema and data loaded${NC}"
+else
+    echo -e "${GREEN}✓ Database already initialized ($TABLE_COUNT tables)${NC}"
+fi
+
 # Check Backend
 echo -e "${YELLOW}Step $STEP: Verifying Backend API...${NC}"
 STEP=$((STEP + 1))
 for i in {1..60}; do
-    if curl -s http://localhost:8080/swagger-ui.html > /dev/null; then
+    if curl -s http://localhost:8080/actuator/health > /dev/null; then
         echo -e "${GREEN}✓ Backend API is ready${NC}"
         break
     fi
@@ -174,7 +195,7 @@ echo -e "${BLUE}Available Services:${NC}"
 echo -e "  API Swagger:  ${YELLOW}http://localhost:8080/swagger-ui.html${NC}"
 echo -e "  API Docs:     ${YELLOW}http://localhost:8080/v3/api-docs${NC}"
 if [ "$WITH_ADMIN" = true ]; then
-    echo -e "  PgAdmin:      ${YELLOW}http://localhost:5050${NC} (admin@notaire.local / admin)"
+    echo -e "  PgAdmin:      ${YELLOW}http://localhost:5050${NC} (admin@notaire.com / admin)"
 else
     echo -e "  PgAdmin:      ${RED}Disabled${NC}"
 fi
@@ -184,7 +205,7 @@ echo -e "${BLUE}Database Access:${NC}"
 echo -e "  Username:     ${YELLOW}admin${NC} (app login)"
 echo -e "  Password:     ${YELLOW}admin${NC} (app login)"
 if [ "$WITH_ADMIN" = true ]; then
-    echo -e "  PgAdmin:      ${YELLOW}admin@notaire.local / admin${NC}"
+    echo -e "  PgAdmin:      ${YELLOW}admin@notaire.com / admin${NC}"
 fi
 echo ""
 

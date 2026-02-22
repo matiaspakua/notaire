@@ -131,7 +131,7 @@ docker-compose --profile admin up -d
 
 # Acceder en el navegador
 # URL: http://localhost:5050
-# Email: admin@notaire.local
+# Email: admin@notaire.com
 # Password: admin
 
 # Agregar servidor PostgreSQL:

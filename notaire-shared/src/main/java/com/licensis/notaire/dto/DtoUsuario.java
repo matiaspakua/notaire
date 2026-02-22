@@ -1,5 +1,7 @@
 package com.licensis.notaire.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * DTO que representa un Usuario.
  */
@@ -95,6 +97,7 @@ public class DtoUsuario
         this.tipo = tipo;
     }
 
+    @JsonIgnore
     public String getRegistroAuditorias()
     {
         String registroAuditoria;
