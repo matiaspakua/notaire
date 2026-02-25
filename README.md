@@ -157,6 +157,76 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
 ---
 
+## Proceso de Migración de Base de Datos
+
+### Resumen de la Migración MySQL → PostgreSQL
+
+La migración de la base de datos fue un paso crítico en el proceso de modernización del proyecto. A continuación se documenta el proceso seguido:
+
+| Etapa | Descripción | Estado |
+|-------|-------------|--------|
+| 1. Export | Exportar datos desde MySQL 5.7 | ✅ Completado |
+| 2. Conversión | Convertir tipos MySQL a PostgreSQL | ✅ Completado |
+| 3. Schema | Crear 01-schema.sql | ✅ Completado |
+| 4. Datos | Crear 02-data.sql | ✅ Completado |
+| 5. Validación | Verificar integridad de datos | ✅ Completado |
+
+### Archivos de Migración
+
+```
+init-db/
+├── 01-schema.sql      # Esquema de tablas PostgreSQL
+├── 02-data.sql        # Datos iniciales
+└── migrate.load       # Script pgloader (referencia histórica)
+```
+
+### Conversión de Tipos MySQL → PostgreSQL
+
+| Tipo MySQL | Tipo PostgreSQL | Notas |
+|------------|----------------|-------|
+| INT | INTEGER | Tipo base |
+| DATETIME | TIMESTAMP | Fecha y hora |
+| AUTO_INCREMENT | SERIAL | Auto-incremento |
+| TINYINT(1) | BOOLEAN | Booleanos |
+| TEXT | TEXT | Textos largos |
+| VARCHAR(n) | VARCHAR(n) | Textos variables |
+| BIGINT | BIGINT | Enteros grandes |
+
+### Uso de pgloader (Alternativo)
+
+El archivo `init-db/migrate.load` contiene un script de **pgloader** que puede usarse para migraciones futuras:
+
+```bash
+# 1. Instalar pgloader
+sudo apt-get install pgloader
+
+# 2. Ejecutar migración
+cd init-db/
+pgloader migrate.load
+```
+
+**Nota**: Este método no se usó activamente. Se prefirió la conversión manual de SQL para mayor control.
+
+### Configuración en Docker
+
+La base de datos PostgreSQL se configura automáticamente al iniciar Docker Compose:
+
+```yaml
+# docker-compose.yml
+postgres:
+  image: postgres:16
+  environment:
+    POSTGRES_DB: notary
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: admin
+  volumes:
+    - ./init-db:/docker-entrypoint-initdb.d:ro
+```
+
+Los scripts en `init-db/` se ejecutan automáticamente al crear el contenedor.
+
+---
+
 ## Estado de la Migración
 
 ### Formularios Migrados (Completados)
