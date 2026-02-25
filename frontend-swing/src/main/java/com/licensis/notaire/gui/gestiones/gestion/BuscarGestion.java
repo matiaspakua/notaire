@@ -10,8 +10,11 @@ import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarGestionesCliente;
 import com.licensis.notaire.gui.clientes.ListarPersonas;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.api.client.RestMapper;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -26,7 +29,10 @@ public class BuscarGestion extends javax.swing.JInternalFrame
     private static JMenuItem ventanaBuscarGestion = new JMenuItem("Ventana Buscar Gestion");
     private String formularioInvocador = new String();
     private String tipoBusqueda;
-    private Boolean flag = false; //Sirve para saber cuando hay que cerrar el form de busqueda
+    private Boolean flag = false;
+    private GenericRestClient tipoIdentificacionClient = AdministradorJpa.getInstancia().getTipoIdentificacionJpa();
+    private GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
+    private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
 
     public String getTipoBusqueda()
     {
@@ -64,12 +70,21 @@ public class BuscarGestion extends javax.swing.JInternalFrame
 
     public void cargarCombo()
     {
-        ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
-
-        for (int i = 0; i < listaDtoIdentificaciones.size(); i++)
+        try
         {
-            String nombre = listaDtoIdentificaciones.get(i).getNombre();
-            this.comboTipoIdentificacion.addItem(nombre);
+            List<com.licensis.notaire.dto.GenericDto> lista = tipoIdentificacionClient.findAll();
+            for (com.licensis.notaire.dto.GenericDto gd : lista)
+            {
+                String nombre = gd.getString("nombre");
+                if (nombre != null)
+                {
+                    this.comboTipoIdentificacion.addItem(nombre);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar tipos de identificación: " + e.getMessage());
         }
     }
 
@@ -295,8 +310,35 @@ public class BuscarGestion extends javax.swing.JInternalFrame
             miDtoPersona.setNombre(campoNombre.getText());
             miDtoPersona.setApellido(campoApellido.getText());
 
-            //Busco todas las personas con gestioon que tengan alguna coincidencia ya sea por Nombre o Apellido
-            miListaDtoPersonasEncontradas = ControllerNegocio.getInstancia().buscarPersonaNombreApellidoConGestion(miDtoPersona);
+            //Busco todas las personas con gestion que tengan alguna coincidencia ya sea por Nombre o Apellido
+            try
+            {
+                String nombre = campoNombre.getText().isEmpty() ? null : campoNombre.getText();
+                String apellido = campoApellido.getText().isEmpty() ? null : campoApellido.getText();
+                String path = "buscar?esCliente=true";
+                if (nombre != null && !nombre.isEmpty())
+                {
+                    path += "&nombre=" + nombre;
+                }
+                if (apellido != null && !apellido.isEmpty())
+                {
+                    path += "&apellido=" + apellido;
+                }
+                List<com.licensis.notaire.dto.GenericDto> resultados = personaClient.findAllByPath(path);
+                for (com.licensis.notaire.dto.GenericDto gd : resultados)
+                {
+                    DtoPersona dto = new DtoPersona();
+                    dto.setIdPersona(gd.getInt("idPersona"));
+                    dto.setNombre(gd.getString("nombre"));
+                    dto.setApellido(gd.getString("apellido"));
+                    dto.setNumeroIdentificacion(gd.getString("numeroIdentificacion"));
+                    miListaDtoPersonasEncontradas.add(dto);
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar personas: " + e.getMessage());
+            }
 
             if (!miListaDtoPersonasEncontradas.isEmpty())
             {
@@ -382,14 +424,40 @@ public class BuscarGestion extends javax.swing.JInternalFrame
             }
         } else if (buscarTipoIdentificacion.isSelected() && !campoNumeroIdentificacion.getText().isEmpty())
         {
-            //Set dato de busqueda 
-            miDtoIdentificacion.setNombre(comboTipoIdentificacion.getSelectedItem().toString());
-            miDtoPersona.setDtoTipoIdentificacion(miDtoIdentificacion);
-            miDtoPersona.setNumeroIdentificacion(campoNumeroIdentificacion.getText());
-            miDtoPersona.getDtoTipoIdentificacion().setIdTipoIdentificacion(ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(miDtoPersona));
+            String nombreTipo = comboTipoIdentificacion.getSelectedItem().toString();
+            int idTipo = RestMapper.asociarFkTipoIdentificacion(nombreTipo);
+            String numeroIdentificacion = campoNumeroIdentificacion.getText();
 
-            //Busco la persona por Tipo y Numero de documento con gestion
-            DtoPersona personaEncontrada = ControllerNegocio.getInstancia().buscarPersonaTipoNumeroIdentificacionConGestion(miDtoPersona);
+            DtoPersona personaEncontrada = null;
+
+            try
+            {
+                String path = "buscar?idTipoIdentificacion=" + idTipo + "&numeroIdentificacion=" + numeroIdentificacion + "&esCliente=true";
+                List<com.licensis.notaire.dto.GenericDto> resultados = personaClient.findAllByPath(path);
+                if (!resultados.isEmpty())
+                {
+                    com.licensis.notaire.dto.GenericDto gd = resultados.get(0);
+                    Integer idPersona = gd.getInt("idPersona");
+
+                    List<com.licensis.notaire.dto.GenericDto> gestiones = gestionClient.findAllByPath("cliente/" + idPersona);
+                    if (!gestiones.isEmpty())
+                    {
+                        personaEncontrada = new DtoPersona();
+                        personaEncontrada.setIdPersona(idPersona);
+                        personaEncontrada.setNombre(gd.getString("nombre"));
+                        personaEncontrada.setApellido(gd.getString("apellido"));
+                        personaEncontrada.setNumeroIdentificacion(gd.getString("numeroIdentificacion"));
+                        personaEncontrada.setTelefono(gd.getString("telefono"));
+                        personaEncontrada.setDomicilio(gd.getString("domicilio"));
+                        personaEncontrada.setEmail(gd.getString("eMail"));
+                        personaEncontrada.setDtoTipoIdentificacion(miDtoIdentificacion);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar persona: " + e.getMessage());
+            }
 
             if (personaEncontrada != null)
             {

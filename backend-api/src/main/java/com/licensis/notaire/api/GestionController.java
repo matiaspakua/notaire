@@ -2,12 +2,15 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.jpa.GestionDeEscrituraJpaController;
+import com.licensis.notaire.jpa.HistorialJpaController;
 import com.licensis.notaire.negocio.GestionDeEscritura;
+import com.licensis.notaire.negocio.Historial;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -17,6 +20,10 @@ public class GestionController {
 
     private GestionDeEscrituraJpaController getJpaController() {
         return new GestionDeEscrituraJpaController(null, JpaControllerProvider.getEntityManagerFactory());
+    }
+
+    private HistorialJpaController getHistorialController() {
+        return new HistorialJpaController(null, JpaControllerProvider.getEntityManagerFactory());
     }
 
     @GetMapping
@@ -57,6 +64,42 @@ public class GestionController {
         try {
             List<GestionDeEscritura> list = getJpaController().findGestionesByCliente(idPersona);
             return ResponseEntity.ok(list != null ? list : List.of());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/{id}/estado-actual")
+    @Operation(summary = "Obtener estado actual de una gestion")
+    public ResponseEntity<Historial> getEstadoActual(@PathVariable Integer id) {
+        try {
+            List<Historial> historiales = getHistorialController().findRegistroHistial(id);
+            if (historiales == null || historiales.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            Historial ultimo = historiales.stream()
+                    .max(Comparator.comparing(Historial::getFecha))
+                    .orElse(null);
+            return ResponseEntity.ok(ultimo);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/{id}/cliente-referencia")
+    @Operation(summary = "Obtener cliente referencia de una gestion (primer cliente involucrado)")
+    public ResponseEntity<Integer> getClienteReferencia(@PathVariable Integer id) {
+        try {
+            GestionDeEscritura gestion = getJpaController().findGestionDeEscritura(id);
+            if (gestion == null || gestion.getTramiteList() == null || gestion.getTramiteList().isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (gestion.getTramiteList().get(0).getPersonaList() != null 
+                    && !gestion.getTramiteList().get(0).getPersonaList().isEmpty()) {
+                Integer idPersona = gestion.getTramiteList().get(0).getPersonaList().get(0).getIdPersona();
+                return ResponseEntity.ok(idPersona);
+            }
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
