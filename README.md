@@ -1,615 +1,449 @@
-# README #
+# Notaire - Sistema de Administración de Escribanía
 
-El proyecto Notaire es un sistema de administración para gestión de escribanía. Está desarrollado en Java, MySql y Apache.
+## Resumen del Proyecto
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
-
-# Guia de instalación #
-
-1. Instalar el servidor WAMP, que se encuenta en la carpeta "WAMP".
-2. Usando phpMyadmin, crear una base de datos con el nombre "notaire".
-3. Importar base de datos "notaire.sql", que se encuentra en la carpeta "BBDD". NOTA: usar usuario "root", sin clave.
-4. Instalar Java 1.7 JRE, que se encuenta en la carpeta "Java VM"
-5. Copiar la carpeta "reportes" en c:\
-6. Copiar el contenido de la carpeta "Ejecutable" en c:\notarire\
-7. Ejecutar el archivo "notaire.jar" haciendo doble click ó en una consola: c:\java -jar notaire.jar
-7. En el primer inicio, usar el usuario y contraseña: "root" - "admin" (usuario ADMINISTRADOR).
-
+**Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 10 años como una aplicación monolítica Java Swing con conexión directa a MySQL. Este proyecto documenta el proceso de refactoring y modernización completa del sistema hacia una arquitectura moderna de microservicios.
 
 ---
 
-# Notaire - Docker Setup Guide
+## Introducción: El Proceso de Refactoring
 
-Este documento describe cómo ejecutar la aplicación Notaire con PostgreSQL en Docker.
+### ¿Por qué refactorizar?
 
-## Prerequisitos
+El código original de Notaire, aunque funcional, presentaba varios problemas que motivaron el proceso de modernización:
 
-- Docker Desktop (o Docker Engine + Docker Compose)
-- Java 8+ (para ejecutar la aplicación)
-- Maven 3.x (para compilar)
+1. **Acoplamiento fuerte**: La GUI Swing estaba directamente conectada a la base de datos MySQL mediante JDBC, sin ninguna capa de abstracción
+2. **Sin separación de responsabilidades**: La lógica de negocio, la presentación y el acceso a datos estaban entremezcladas en los mismos formularios
+3. **Tecnología obsoleta**: Java 8 (sin actualizaciones de seguridad), MySQL 5.7, y librerías sin soporte
+4. **Sin integración externa**: No existía forma de comunicar la aplicación con otros sistemas
+5. **Dificultad de mantenimiento**: Cualquier cambio requería modificar código directamente relacionado con la interfaz gráfica
 
-## Inicio Rápido
+### Visión del Proyecto Modernizado
 
-### 1. Configurar Variables de Entorno
+El objetivo principal fue transformar el monolito Java en una arquitectura moderna:
 
-```bash
-# Copiar el template de variables
-cp .env.example .env
-
-# Editar si es necesario (los valores por defecto funcionan)
-nano .env
+```
+Monolito Java Swing  →  API REST + PostgreSQL + Docker
+(10+ años)               (2026)
 ```
 
-### 2. Iniciar PostgreSQL
-
-```bash
-# Iniciar solo PostgreSQL
-docker-compose up -d postgres
-
-# Verificar que está corriendo
-docker-compose ps
-
-# Ver logs
-docker-compose logs -f postgres
-```
-
-### 3. Verificar la Base de Datos
-
-```bash
-# Conectar a PostgreSQL
-docker exec -it notaire-postgres psql -U notaire -d notaire
-
-# Listar tablas
-\dt
-
-# Contar tablas (esperado: 27)
-SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';
-
-# Ver datos de ejemplo
-SELECT * FROM conceptos;
-SELECT * FROM usuarios;
-
-# Salir
-\q
-```
-
-### 4. Compilar la Aplicación
-
-```bash
-cd project/notaire
-mvn clean package -DskipTests
-```
-
-### 5. Ejecutar la Aplicación
-
-El proceso de build ahora genera un "Fat JAR" (Uber-JAR) que contiene todas las dependencias necesarias.
-
-```bash
-java -jar target/Notaire-1.0-SNAPSHOT.jar
-```
-
-**Credenciales de acceso:**
-- Usuario: `admin`
-- Contraseña: `admin`
-
-> **Nota:** Al ser una aplicación Swing, requiere un entorno gráfico (Display). Si estás ejecutando esto en un servidor sin entorno gráfico, obtendrás una excepción `HeadlessException`.
+**Arquitectura objetivo:**
+- **Backend**: API REST con Spring Boot 3.2.9 y Java 21 LTS
+- **Frontend**: Cliente Swing que consume la API REST
+- **Base de Datos**: PostgreSQL 16 en contenedor Docker
+- **Módulos**: Separación en backend-api, frontend-swing, notary-shared
+- **Documentación**: Swagger/OpenAPI para la API REST
 
 ---
 
-## pgAdmin (Opcional)
+## Arquitectura Original (Monolito)
 
-Para gestión visual de la base de datos:
+La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 
-```bash
-# Iniciar con perfil admin
-docker-compose --profile admin up -d
+![Arquitectura Original](./arquitectura-original.drawio)
 
-# Acceder en el navegador
-# URL: http://localhost:5050
-# Email: admin@notaire.com
-# Password: admin
+### Componentes de la Arquitectura Original
 
-# Agregar servidor PostgreSQL:
-# - Host: postgres
-# - Port: 5432
-# - Database: notaire
-# - Username: notaire
-# - Password: notaire_password
+| Componente | Descripción |
+|------------|-------------|
+| **GUI Swing** | Interfaz gráfica con JFrame y JPanel |
+| **Event Handlers** | Manejadores de eventos con lógica de presentación |
+| **ControllerNegocio** | Clase central con toda la lógica de negocio |
+| **JDBC Directo** | Conexiones SQL directas sin pooling |
+| **MySQL 5.7** | Base de datos relacional (27 tablas) |
+
+### Problemas Identificados
+
+1. **Acoplamiento fuerte**: La capa GUI depende directamente de la base de datos
+2. **Sin separación de capas**: UI + Negocio + Datos todo en el mismo código
+3. **JDBC directo sin pooling**: Conexiones costosas y lentas
+4. **Java 8 obsoleto**: Sin actualizaciones de seguridad
+5. **Sin API REST**: No existe forma de integración con sistemas externos
+
+---
+
+## Arquitectura Actual (Refactorizada)
+
+La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
+
+![Arquitectura Actual](./arquitectura-notaire.drawio)
+
+### Componentes de la Nueva Arquitectura
+
+| Capa | Componente | Descripción |
+|------|------------|-------------|
+| **Frontend** | GUI Views | Formularios Swing (JFrame, JPanel) |
+| | GUI Controllers | Event Handlers con SwingWorker |
+| | REST Client | HttpClient para consumo de API |
+| | GUI Models | TableModel, ComboBoxModel |
+| **Backend** | REST Controllers | Endpoints con @RestController |
+| | Business Services | Lógica de negocio con @Service |
+| | JPA Controllers | Persistencia con Hibernate |
+| | Domain Entities | Objetos del dominio (negocio package) |
+| **Datos** | PostgreSQL 16 | Base de datos en Docker |
+| | HikariCP | Pool de conexiones |
+| **Shared** | notary-shared | DTOs y código común |
+
+---
+
+## Cronología del Proceso de Migración
+
+### Fase 1: Orígenes y Mantenimiento (2014-2018)
+
+| Fecha | Commit | Descripción |
+|-------|--------|-------------|
+| 2014-03-27 | `fa4de5e` | Arreglo de log4j, agregados paquetes de iconos |
+| 2014-03-28 | `43d8d54` | Primer TestCase con JUnit |
+| 2014-04-02 | `7e3e87b` | JOB en Jenkins para compilar Notaire |
+| 2014-06-12 | `e187044` | Archivo de configuración para la aplicación |
+| 2016-04-16 | `2969110` | Archivo de integración continua para GitLab |
+| 2018-07-05 | `da7510c` | CI con MySQL para testing |
+
+**Estado inicial**: Aplicación monolítica Java 7/8 con MySQL, GUI Swing, conexión directa a base de datos.
+
+---
+
+### Fase 2: Inicio del Refactoring (Diciembre 2025)
+
+| Fecha | Commit | Descripción |
+|-------|--------|-------------|
+| 2025-12-20 | `778c25d` | **First separation of modules** - Separación inicial en módulos Maven |
+| 2025-12-20 | `d7cf75b` | **Upgrade Java to 21** - Upgrade Java 8 → 21 y Spring Boot 2.7 → 3.2.9 |
+| 2025-12-20 | `70fe932` | **Migrate javax to jakarta** - Migración de paquetes javax a jakarta para Jakarta EE |
+| 2025-12-20 | `f2f090a` | Migración de javax.transaction a jakarta.transaction |
+| 2025-12-22 | `dde4803` | Limpieza general del proyecto |
+| 2025-12-22 | `af394c6` | Agregadas Cursor rules y .cursorringore |
+| 2025-12-22 | `cf68433` | Documentación legacy en /docs para migración |
+
+**Cambios clave**:
+- Creación de estructura multi-módulo Maven
+- Upgrade a Java 21 LTS y Spring Boot 3.2.9
+- Preparación para migrar de MySQL a PostgreSQL
+
+---
+
+### Fase 3: Refactoring Principal (Enero-Febrero 2026)
+
+| Fecha | Commit | Descripción |
+|-------|--------|-------------|
+| 2026-01-31 | `bbb7c43` | **General refactor** - Refactorización general del código |
+| 2026-02-05 | `811152c` | **Major refactor to separate layers** - Separación de capas (Controller/Service/Repository) |
+| 2026-02-15 | `a5b2c36` | Refactoring y trabajo en carpeta /docs |
+| 2026-02-19 | `e9a7c36` | **Creating a migration plan** - Creación formal del plan de migración |
+| 2026-02-20 | `93afb51` | Proceso de migración de monolito a módulos Swing |
+| 2026-02-20 | `341cbf5` | Migración de formularios por lotes (batches) |
+| 2026-02-21 | `dc4c562` | Batch migration Step 1/6 |
+| 2026-02-21 | `11b092e` | **Batch B success** - Migración de clientes exitosa |
+| 2026-02-22 | `f7da74e` | Testing de la aplicación en ejecución |
+| 2026-02-24 | `caf084b` | Mejoras en AGENTS.md |
+
+**Cambios clave**:
+- Separación en 3 módulos: `backend-api`, `frontend-swing`, `notaire-shared`
+- Creación de REST Controllers para entidades del dominio
+- Implementación de Docker Compose con PostgreSQL
+- Migración de formularios Swing de ControllerNegocio a REST API
+
+---
+
+### Fase 4: Estado Actual (Febrero 2026)
+
+| Componente | Estado | Detalle |
+|------------|--------|---------|
+| **Backend API** | ~95% | Endpoints críticos listos; faltan 2-3 para casos específicos |
+| **Swing Forms** | ~70% | ~30 formularios aún usan ControllerNegocio |
+| **Reportes PDF** | ✅ Listo | ReporteController con 10 endpoints JasperReports |
+| **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
+| **Tests E2E** | Parcial | Shell tests; JUnit domain tests |
+
+---
+
+## Estado de la Migración
+
+### Formularios Migrados (Completados)
+
+| Batch | Módulo | Formularios | Estado |
+|-------|--------|-------------|--------|
+| A | Usuarios | ActividadUsuario, DarAltaUsuario, ListarPersonasUsuario | ✅ Completado |
+| B | Clientes | Clientes, BuscarCliente, DarAltaPersona, AdministrarCliente, ListarPersonas | ✅ Completado |
+
+### Formularios Pendientes (Por Migrar)
+
+| Prioridad | Módulo | Formularios |
+|-----------|--------|-------------|
+| 1 | Gestiones | BuscarGestion, ListaGestionesCliente, ModificarGestion, DetalleGestion |
+| 2 | Escrituras | BuscarEscritura, ListaEscrituras, DetalleEscritura |
+| 3 | Testimonios | GenerarTestimonio, VerificarTestimonio, RetirarTestimonio |
+| 4 | Inscripciones | IngresarParaInscripcion, RegistrarInscripcion, RegistrarReingreso |
+| 5 | Presupuestos | CrearPresupuesto, DetalleValoresTramites, BuscarInmueble |
+| 6 | Protocolo | ModificarFolio, IngresarFolios |
+
+### APIs Disponibles
+
+Se han implementado los siguientes endpoints REST:
+
+- `/api/v1/personas` - Personas
+- `/api/v1/usuarios` - Usuarios
+- `/api/v1/gestiones` - Gestiones
+- `/api/v1/tramites` - Trámites
+- `/api/v1/escrituras` - Escrituras
+- `/api/v1/presupuestos` - Presupuestos
+- `/api/v1/items` - Items
+- `/api/v1/pagos` - Pagos
+- `/api/v1/folios` - Folios
+- `/api/v1/testimonios` - Testimonios
+- `/api/v1/reportes` - Reportes PDF (10 endpoints)
+- Y más...
+
+---
+
+## Guía de Prompts para Refactoring
+
+A continuación se documentan los prompts utilizados para llevar adelante cada fase de la migración.
+
+### 2.1 Prompts para Configuración Inicial
+
+```markdown
+# Prompt: Actualizar proyecto Java a última versión LTS
+
+El proyecto Notaire es una aplicación Java monolitica. Necesito:
+1. Upgrade de Java 8 a Java 21 LTS
+2. Upgrade de Spring Boot 2.7 a 3.2.9
+3. Migrar paquetes javax a jakarta (Jakarta EE)
+4. Actualizar todas las dependencias obsoletas
+
+Pasos a seguir:
+- Actualizar pom.xml con las nuevas versiones
+- Cambiar imports de javax.* a jakarta.*
+- Verificar compatibilidad de librerias
+- Ejecutar tests de integracion
+```
+
+### 2.2 Prompts para Separación de Módulos
+
+```markdown
+# Prompt: Crear estructura multi-modulo Maven
+
+Crear una estructura multi-modulo Maven para refactorizar un monolito Java:
+
+Modulos requeridos:
+1. **notaire-shared**: DTOs y codigo comun compartido
+2. **backend-api**: API REST con Spring Boot (Java 21)
+3. **frontend-swing**: Cliente GUI Swing (sin dependencias de base de datos)
+
+Requisitos:
+- Cada modulo debe tener su propio pom.xml
+- Dependencias entre modulos configuradas correctamente
+- Build con mvn clean install debe funcionar
+```
+
+### 2.3 Prompts para Dockerización
+
+```markdown
+# Prompt: Crear Docker Compose para la aplicacion
+
+Crear docker-compose.yml con:
+1. PostgreSQL 16 como base de datos
+2. Backend API como servicio
+3. pgAdmin para administracion de DB
+4. Variables de entorno en .env
+5. Health checks para cada servicio
+6. Red compartida entre servicios
+
+Consideraciones:
+- Usar postgres:16-alpine
+- Configurar inicializacion de DB desde scripts
+- Exponer puertos: 5432 (postgres), 8080 (backend), 5050 (pgadmin)
+```
+
+### 2.4 Prompts para Creación de REST API
+
+```markdown
+# Prompt: Crear REST Controller para entidad
+
+Crear un REST Controller completo para la entidad {Entidad} siguiendo las mejores practicas:
+
+Estructura requerida:
+- @RestController con @RequestMapping("/api/v1/{recurso}")
+- Constructor injection para el service
+- Metodos: GET (listar/buscar), POST (crear), PUT (actualizar), DELETE (eliminar)
+- DTOsRequest y DTOsResponse para todas las operaciones
+- Validacion con javax.validation (@NotNull, @NotBlank, etc.)
+- Manejo de excepciones con @ControllerAdvice
+- Documentacion con @Operation y @ApiResponse
+```
+
+### 2.5 Prompts para Migración de Formularios Swing
+
+```markdown
+# Prompt: Migrar formulario Swing de ControllerNegocio a REST
+
+Migrar el formulario {NombreFormulario}.java de usar ControllerNegocio a usar REST API:
+
+Pasos:
+1. Identificar todas las llamadas a ControllerNegocio.* en el formulario
+2. Mapear cada llamada a un endpoint REST existente o crearlo
+3. Usar AdministradorJpa.getInstancia().getXxxJpa() y GenericRestClient
+4. Usar RestMapper para mapeos de datos
+5. Reemplazar ControllerNegocio por codigo REST
+6. Probar con la aplicacion en ejecucion
+```
+
+### 2.6 Prompts para Refactoring de Arquitectura
+
+```markdown
+# Prompt: Aplicar reglas de codigo limpio
+
+Aplicar las siguientes reglas de refactoring al codigo:
+
+1. **SOLID Principles**: SRP, OCP, LSP, ISP, DIP
+2. **Naming Conventions**:
+   - Variables/metodos: camelCase (isLoading, hasError)
+   - Clases: PascalCase
+   - Constantes: UPPER_SNAKE_CASE
+3. **Code Structure**:
+   - Max 20-30 lineas por metodo
+   - Max 3-4 parametros por metodo
+   - Usar Optional<T> para retornos nullable
+   - Retornar Collections.emptyList() en vez de null
+4. **Imports**: Sin wildcards, orden: java, javax, third-party, own packages
 ```
 
 ---
 
-## Comandos Útiles
+## Pasos Siguientes (Futuro)
 
-### Docker
+### Validación Funcional
+
+- [ ] Completar migración del 30% de formularios restantes
+- [ ] Validar que todos los formularios funcionen correctamente con la API REST
+- [ ] Probar flujos completos de negocio (cliente → gestión → presupuesto → pago)
+- [ ] Verificar generación de reportes PDF
+- [ ] Testing manual de casos edge
+
+### Mejoras de Backend
+
+- [ ] Implementar autenticación JWT/OAuth2
+- [ ] Agregar rate limiting
+- [ ] Implementar cache con Redis
+- [ ] Completar el 5% de APIs restantes
+- [ ] Agregar paginación a todos los endpoints
+
+### Testing y Calidad
+
+- [ ] Coverage de tests al 80% mínimo
+- [ ] Tests de integración con Testcontainers
+- [ ] Tests E2E automatizados
+- [ ] Configurar pipeline CI/CD
+- [ ] Análisis estático de código (SonarQube)
+
+### Despliegue
+
+- [ ] Configurar Kubernetes (K8s)
+- [ ] Implementar Docker multi-stage build
+- [ ] Configurar HTTPS/TLS
+- [ ] Setup de monitoreo (Prometheus, Grafana)
+- [ ] Backup automatizado de PostgreSQL
+
+### Documentación
+
+- [ ] Documentar todos los endpoints en Swagger
+- [ ] Crear guía de instalación para producción
+- [ ] Documentar arquitectura del sistema
+- [ ] Crear manual de usuario
+
+---
+
+## Comandos de Uso
+
+### Build y Ejecución
 
 ```bash
-# Iniciar servicios
-docker-compose up -d
+# Compilar todo el proyecto
+mvn clean install
 
-# Detener servicios
-docker-compose down
+# Compilar un modulo especifico
+mvn clean install -pl backend-api
 
-# Detener y eliminar datos
-docker-compose down -v
+# Ejecutar backend API
+cd backend-api && mvn spring-boot:run
 
-# Ver logs en tiempo real
-docker-compose logs -f
+# Iniciar aplicacion (Docker Compose)
+bash scripts/start.sh
 
-# Reiniciar PostgreSQL (mantiene datos)
-docker-compose restart postgres
-
-# Recrear base de datos desde cero
-docker-compose down -v
-docker-compose up -d postgres
+# Detener aplicacion
+bash scripts/stop.sh
 ```
 
-### Base de Datos
+### Testing
 
 ```bash
-# Backup de la base de datos
-docker exec notaire-postgres pg_dump -U notaire notaire > backup.sql
+# Ejecutar todos los tests
+mvn test
 
-# Restaurar backup
-docker exec -i notaire-postgres psql -U notaire -d notaire < backup.sql
+# Ejecutar tests de un modulo
+mvn test -pl backend-api
 
-# Ejecutar SQL desde archivo
-docker exec -i notaire-postgres psql -U notaire -d notaire < script.sql
+# Ejecutar una clase de test
+mvn test -Dtest=DocumentServiceTest
+
+# Ejecutar un metodo de test
+mvn test -Dtest=DocumentServiceTest#shouldCreateDocument
+
+# Tests de integracion HTTP
+bash scripts/test.sh
 ```
 
-### Aplicación
+### API
 
 ```bash
-# Compilar con logs detallados
-mvn clean package -DskipTests -X
+# Health check
+curl http://localhost:8080/actuator/health
 
-# Ejecutar con logging debug
-java -Dlog4j.debug -jar target/Notaire-1.0-SNAPSHOT.jar
+# Documentacion Swagger
+curl http://localhost:8080/swagger-ui.html
+
+# Ejemplo de consulta
+curl http://localhost:8080/api/v1/personas
 ```
 
 ---
 
-## Troubleshooting
-
-### Error: "Connection refused to localhost:5432"
-
-**Causa:** PostgreSQL no está corriendo o no está listo.
+## Resumen de Comandos Utilizados
 
 ```bash
-# Verificar estado
-docker-compose ps
+# Build
+mvn clean install
+mvn clean install -pl backend-api
 
-# Ver logs
-docker-compose logs postgres
+# Testing
+mvn test
+mvn test -Dtest=ClassName#methodName
 
-# Reiniciar si es necesario
-docker-compose restart postgres
-```
+# Docker
+bash scripts/start.sh
+bash scripts/stop.sh
+bash scripts/test.sh
 
-### Error: "password authentication failed"
-
-**Causa:** Credenciales incorrectas o base de datos no inicializada.
-
-```bash
-# Verificar credenciales en .env
-cat .env
-
-# Recrear base de datos
-docker-compose down -v
-docker-compose up -d postgres
-```
-
-### Error: "relation does not exist"
-
-**Causa:** Las tablas no fueron creadas.
-
-```bash
-# Verificar si los scripts de init se ejecutaron
-docker exec -it notaire-postgres psql -U notaire -d notaire -c "\dt"
-
-# Si no hay tablas, reiniciar desde cero
-docker-compose down -v
-docker-compose up -d postgres
-```
-
-### La aplicación no compila
-
-```bash
-# Limpiar cache de Maven
-mvn clean
-rm -rf ~/.m2/repository/org/postgresql
-
-# Volver a compilar
-mvn package -DskipTests
-```
-
-### Puerto 5432 ya está en uso
-
-```bash
-# Ver qué proceso usa el puerto
-sudo lsof -i :5432
-
-# Opción 1: Detener el proceso
-sudo kill <PID>
-
-# Opción 2: Cambiar el puerto en docker-compose.yml
-# Cambiar "5432:5432" a "5433:5432" y actualizar persistence.xml
+# API
+curl http://localhost:8080/api/v1/personas
 ```
 
 ---
 
-## Estructura de Archivos Docker
+## stack Tecnológico
 
-```
-notaire/
-├── docker-compose.yml      # Configuración de servicios
-├── .env.example            # Template de variables
-├── .env                    # Variables (crear desde template)
-├── init-db/
-│   ├── 01-schema.sql       # Estructura de tablas
-│   └── 02-data.sql         # Datos iniciales
-└── migrate.load            # Script pgloader (alternativo)
-```
+| Componente | Original | Actual |
+|------------|----------|--------|
+| Java | 8 | 21 LTS |
+| Framework | N/A | Spring Boot 3.2.9 |
+| Base de Datos | MySQL 5.7 | PostgreSQL 16 |
+| GUI | Swing (Monolito) | Swing + REST Client |
+| API | No existe | REST API |
+| Contenedores | No | Docker + Docker Compose |
+| Pool de Conexiones | No | HikariCP |
 
 ---
 
-## Migración desde MySQL Original
+*Ultima actualizacion: 25 de Febrero de 2026*
 
-Si tienes datos en MySQL que quieres migrar:
-
-### Opción 1: pgloader (Recomendado)
-
-```bash
-# Instalar pgloader
-sudo apt-get install pgloader
-
-# Editar migrate.load con tu URL MySQL
-nano migrate.load
-
-# Ejecutar migración
-pgloader migrate.load
-```
-
-### Opción 2: Dump SQL Manual
-
-```bash
-# Exportar de MySQL
-mysqldump -u root -p notaire > mysql_backup.sql
-
-# Convertir a PostgreSQL (herramienta online o manual)
-# Importar a PostgreSQL
-docker exec -i notaire-postgres psql -U notaire -d notaire < postgres_backup.sql
-```
-
-
-# Notaire REST API - Deployment Guide
-
-## Overview
-
-This guide provides instructions for deploying and managing the Notaire application, which has been migrated from a legacy Swing GUI to a modern Spring Boot REST API with PostgreSQL backend.
-
-## Architecture
-
-- **Backend API**: Spring Boot 3.2.9 with Java 21 LTS
-- **Database**: PostgreSQL 16
-- **Build Tool**: Maven 3.9
-- **Containerization**: Docker & Docker Compose
-- **API Documentation**: Swagger/OpenAPI 2.0
-
-## Prerequisites
-
-- Docker (20.10+) and Docker Compose (2.0+)
-- Maven 3.9+ (for local development)
-- Java 21 LTS (for local development)
-- Bash shell
-- cURL (for testing)
-
-## Quick Start
-
-### Option 1: Using Provided Scripts (Recommended)
-
-```bash
-# Start the entire application stack
-bash start.sh
-
-# In another terminal, run the test suite
-bash test.sh
-
-# View logs
-bash logs.sh backend
-
-# Stop the application
-bash stop.sh
-```
-
-### Option 2: Manual Docker Compose
-
-```bash
-# Build backend Docker image
-docker-compose build
-
-# Start all services
-docker-compose up -d
-
-# Verify services are running
-docker-compose ps
-
-# View logs
-docker-compose logs -f backend
-
-# Stop services
-docker-compose down
-```
-
-## Available Services
-
-### Backend API
-- **URL**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **API Docs**: http://localhost:8080/v3/api-docs
-- **Health Check**: http://localhost:8080/actuator/health
-
-### PostgreSQL Database
-- **Host**: localhost:5432
-- **Database**: notaire
-- **Username**: notaire
-- **Password**: (see environment.env)
-
-### PgAdmin (Optional)
-- **URL**: http://localhost:5050
-- **Username**: admin@pgadmin.org
-- **Password**: admin
-- **Start with**: `docker-compose --profile admin up -d`
-
-## REST API Endpoints
-
-All endpoints follow RESTful conventions:
-
-```
-GET    /api/v1/{entity}           - List all entities
-GET    /api/v1/{entity}/{id}      - Get entity by ID
-POST   /api/v1/{entity}           - Create new entity
-PUT    /api/v1/{entity}/{id}      - Update entity
-DELETE /api/v1/{entity}/{id}      - Delete entity
-```
-
-### Available Entities
-
-- `conceptos` - Conceptos
-- `personas` - Personas
-- `tramites` - Trámites
-- `escrituras` - Escrituras
-- `presupuestos` - Presupuestos
-- `items` - Items
-- `folios` - Folios
-- `testimonios` - Testimonios
-- `pagos` - Pagos
-- `historial` - Historial
-- `inmuebles` - Inmuebles
-- `usuarios` - Usuarios
-- And 8 more...
-
-## Testing the API
-
-### Using Provided Test Scripts
-
-```bash
-# Test all endpoints
-bash test.sh
-
-# View test source code
-cat test/http/test-all-endpoints-v2.sh
-```
-
-### Manual Testing with cURL
-
-```bash
-# List all conceptos
-curl http://localhost:8080/api/v1/conceptos
-
-# Get specific concepto
-curl http://localhost:8080/api/v1/conceptos/1
-
-# Create new concepto
-curl -X POST http://localhost:8080/api/v1/conceptos \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "New Concepto"}'
-
-# Update concepto
-curl -X PUT http://localhost:8080/api/v1/conceptos/1 \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Updated Concepto"}'
-
-# Delete concepto
-curl -X DELETE http://localhost:8080/api/v1/conceptos/1
-```
-
-## Troubleshooting
-
-### Services Won't Start
-
-```bash
-# Check Docker daemon
-docker ps
-
-# View detailed logs
-docker-compose logs backend
-docker-compose logs postgres
-
-# Clean up and retry
-docker-compose down -v
-docker system prune
-bash start.sh
-```
-
-### Database Connection Issues
-
-```bash
-# Verify PostgreSQL is running
-docker-compose exec postgres pg_isready
-
-# Check database exists
-docker-compose exec postgres psql -U notaire -c "\l"
-
-# View database logs
-docker-compose logs postgres
-```
-
-### API Not Responding
-
-```bash
-# Check if port 8080 is in use
-netstat -tlnp | grep 8080
-
-# Check API logs
-docker-compose logs -f backend
-
-# Test connectivity
-curl -v http://localhost:8080/swagger-ui.html
-```
-
-## Development
-
-### Building Locally
-
-```bash
-# Build entire project
-mvn clean package -DskipTests
-
-# Build only backend
-mvn clean package -DskipTests -pl backend-api
-
-# Run backend locally (requires PostgreSQL)
-java -jar backend-api/target/backend-api-1.0-SNAPSHOT.jar
-```
-
-### Modifying the API
-
-1. Update entity in the appropriate JPA Controller (`backend-api/src/main/java/com/licensis/notaire/jpa/`)
-2. REST endpoint automatically picks up changes via Spring Data JPA
-3. Swagger documentation updates automatically
-
-### Database Schema Changes
-
-1. Modify SQL files in `init-db/`
-2. Stop services: `docker-compose down -v` (removes volumes)
-3. Restart services: `bash start.sh` (reinitializes database)
-
-## Deployment
-
-### Docker Hub
-
-```bash
-# Build and tag image
-docker build -t yourusername/notaire-backend:1.0 -f Dockerfile.backend .
-
-# Push to registry
-docker push yourusername/notaire-backend:1.0
-```
-
-### Kubernetes (Future)
-
-The Docker image can be deployed to any Kubernetes cluster:
-
-```bash
-# Create deployment
-kubectl apply -f k8s-deployment.yaml
-
-# Scale replicas
-kubectl scale deployment notaire-backend --replicas=3
-```
-
-## Environment Variables
-
-See `environment.env` for configuration:
-
-```env
-POSTGRES_USER=notaire
-POSTGRES_PASSWORD=notaire-password
-POSTGRES_DB=notaire
-NOTAIRE_DATABASE_HOST=postgres
-NOTAIRE_DATABASE_PORT=5432
-```
-
-## Performance Monitoring
-
-### CPU & Memory Usage
-
-```bash
-docker stats backend postgres
-```
-
-### Database Queries
-
-```bash
-# Connect to database
-docker-compose exec postgres psql -U notaire -d notaire
-
-# View running queries
-SELECT * FROM pg_stat_activity;
-```
-
-## Security Considerations
-
-⚠️ **Important for Production:**
-
-1. Change all default passwords in `environment.env`
-2. Use strong PostgreSQL credentials
-3. Enable HTTPS/TLS for API endpoints
-4. Implement API authentication (JWT, OAuth2)
-5. Use network policies to restrict access
-6. Regular database backups
-7. Update Java/Maven/Docker to latest LTS versions
-
-## Migration Notes
-
-This application was migrated from:
-- **Java 8** → **Java 21 LTS**
-- **Spring Boot 2.7** → **Spring Boot 3.2**
-- **javax** → **jakarta** packages
-- **Monolithic Swing GUI** → **REST API + PostgreSQL**
-
-19 out of 26 entities are exposed via REST API. The 7 remaining entities have composite primary keys and require custom handling (future work).
-
-## Support
-
-For issues or questions:
-
-1. Check logs: `bash logs.sh backend`
-2. Review Swagger docs: http://localhost:8080/swagger-ui.html
-3. Check database: `docker-compose exec postgres psql -U notaire`
-4. Review test results: `bash test.sh`
-
-## References
-
-- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-- [SpringDoc OpenAPI](https://springdoc.org/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [PostgreSQL](https://www.postgresql.org/docs/)
-
+*Proyecto en proceso de migracion - Arquitectura en evolucion*
