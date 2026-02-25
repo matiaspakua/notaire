@@ -40,7 +40,7 @@ Monolito Java Swing  →  API REST + PostgreSQL + Docker
 
 La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 
-![Arquitectura Original](./arquitectura-original.drawio)
+![Arquitectura Original](images/arquitectura-original.png)
 
 ### Componentes de la Arquitectura Original
 
@@ -66,7 +66,7 @@ La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 
 La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
-![Arquitectura Actual](./arquitectura-notaire.drawio)
+![Arquitectura Actual](images/arquitectura-notaire.png)
 
 ### Componentes de la Nueva Arquitectura
 
