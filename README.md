@@ -34,6 +34,378 @@ Monolito Java Swing  →  API REST + PostgreSQL + Docker
 - **Módulos**: Separación en backend-api, frontend-swing, notary-shared
 - **Documentación**: Swagger/OpenAPI para la API REST
 
+## Herramientas de IA Utilizadas en la Migración
+
+Durante el proceso de migración de Notaire, fui utilizando diferentes herramientas de inteligencia artificial para asistir en el refactoring. Cada una aportando capacidades únicas que fueron evolucionando con las necesidades del proyecto.
+
+### Fase 1: Google Antigravity (Primeros Pasos)
+
+Mi primer acercamiento a la IA para este proyecto fue **Google Antigravity**, una herramienta de Google que permite hacer búsquedas en repositorios de código. En aquel momento, necesitaba entender cómo estaban estructurados ciertos patrones en el código existente y buscar ejemplos similares.
+
+**Qué utilicé:**
+- Búsqueda de patrones de código en el proyecto
+- Identificación de dependencias entre clases
+- Ejemplos de implementación de patrones similares
+
+**Limitaciones:**
+- Solo búsqueda, sin capacidad de generar código
+- Sin contexto del proyecto completo
+
+---
+
+### Fase 2: Visual Studio Code con Copilot
+
+Avanzamos a **VS Code con Copilot**, lo que representó un salto significativo en productividad. Copilot podía sugerir código en tiempo real basándose en el contexto del archivo.
+
+**Qué utilicé:**
+- Autocompletado inteligente de código
+- Sugerencias de refactoring inline
+- Explicación de código existente
+- Generación de tests unitarios
+
+**Configuración inicial:**
+```bash
+# Instalar VS Code
+sudo apt-get update
+sudo apt-get install code
+
+# Instalar extensión de Copilot
+# Buscar "GitHub Copilot" en la Marketplace de VS Code
+```
+
+**Ejemplo de prompt:**
+```markdown
+"Explica qué hace este método y cómo podría refactorizarlo para seguir principios SOLID"
+```
+
+**Limitaciones:**
+- Sin acceso a herramientas externas (bash, sistema de archivos)
+- Contexto limitado al archivo actual
+- Sin capacidad de ejecutar comandos
+
+---
+
+### Fase 3: Cursor (Versión Paid)
+
+**Cursor** fue un cambio de paradigma. Es un IDE basado en VS Code pero potenciado con IA avanzado. La versión de pago incluye:
+- **Modo Edit**: Edita código en todo el proyecto
+- **Modo Chat**: Conversación con contexto del proyecto
+- **Predicciones de código más precisas**
+- **Capacidad de ejecutar terminal desde el chat**
+
+**Qué utilicé:**
+- Editores de código multi-archivo
+- Búsqueda semántica en todo el proyecto
+- Terminal integrada con IA
+- Reglas personalizadas del proyecto (`.cursorrules`)
+
+**Archivo de configuración de Cursor (`.cursorrules`):**
+Cursor permite definir reglas específicas del proyecto en un archivo `.cursorrules`:
+
+```markdown
+# .cursorrules
+# Reglas específicas para el proyecto Notaire
+
+[Rules]
+- Usar Java 21 LTS
+- Spring Boot 3.2.9 para backend
+- Código limpio y bien documentado
+- Seguir principios SOLID
+- Tests con JUnit 5
+```
+
+**Limitaciones:**
+- No tiene acceso a herramientas externas como Docker
+- No puede ejecutar la aplicación
+- Contexto limitado a lo que está en el editor
+
+---
+
+### Fase 4: OpenCode (Actual)
+
+Actualmente estoy utilizando **OpenCode**, una herramienta de código abierto que está revolucionando la forma de trabajar con IA. Lo que hace a OpenCode único es su arquitectura basada en **MCP (Model Context Protocol)**.
+
+#### ¿Qué es OpenCode?
+
+OpenCode es un asistente de IA diseñado específicamente para tareas de ingeniería de software. A diferencia de otras herramientas, permite:
+
+- **Herramientas nativas**: Ejecutar bash, leer/escribir archivos, buscar en el proyecto
+- **Servidores MCP**: Conectar con servicios externos (bases de datos, APIs, Docker, Draw.io, Excalidraw)
+- **Agentes especializados**: Diferentes tipos de agentes para diferentes tareas
+- **Memoria persistente**: Mantiene contexto entre sesiones
+
+#### Instalación de OpenCode
+
+```bash
+# Instalación en Linux
+wget -qO- https://get.opencode.ai | sh
+
+# Verificar instalación
+opencode --version
+```
+
+#### Configuración de Servidores MCP
+
+Una de las características más poderosas de OpenCode son los **MCP Servers**. Permiten conectar herramientas externas directamente al contexto de IA.
+
+**Instalación y configuración de MCPs:**
+
+```bash
+# 1. Crear directorio de configuración
+mkdir -p ~/.opencode
+
+# 2. Configurar MCPs en ~/.opencode/config.json
+```
+
+**Ejemplo de configuración de MCPs:**
+
+```json
+{
+  "mcpServers": {
+    "docker": {
+      "command": "docker",
+      "args": ["ps"],
+      "env": {}
+    },
+    "filesystem": {
+      "command": "node",
+      "args": ["/ruta/a/mcp-filesystem/server.js", "--allowed-directory", "/home/matias/workspace/notaire/notaire"]
+    },
+    "drawio": {
+      "command": "node", 
+      "args": ["/ruta/a/mcp-drawio/server.js"]
+    },
+    "excalidraw": {
+      "command": "node",
+      "args": ["/ruta/a/mcp-excalidraw/server.js"]
+    }
+  }
+}
+```
+
+**MCPs actualmente utilizados en Notaire:**
+
+| MCP Server | Propósito | Uso en el Proyecto |
+|-----------|-----------|-------------------|
+| **Filesystem** | Acceso al sistema de archivos | Leer, escribir y buscar archivos del proyecto |
+| **Draw.io** | Diagramas de arquitectura | Crear diagramas visuales de la arquitectura |
+| **Excalidraw** | Diagramas estilo "pizarra" | Diagramas conceptuales a mano |
+| **Git** | Control de versiones | Commits, status, diffs |
+| **Web Fetch** | Consultar documentación | Traer documentación oficial de APIs |
+
+#### Cómo Utilizo OpenCode en Notaire
+
+**1. Exploración del código:**
+```bash
+# Buscar archivos por patrón
+glob "**/*Gestion*.java"
+
+# Buscar contenido en archivos
+grep "ControllerNegocio" --include="*.java"
+```
+
+**2. Lectura y análisis:**
+```bash
+# Leer archivos específicos
+read "frontend-swing/src/main/java/com/licensis/notaire/gui/gestiones/gestion/BuscarGestion.java"
+
+# Ver estructura del proyecto
+ls -la
+```
+
+**3. Ejecución de comandos:**
+```bash
+# Compilar el proyecto
+mvn clean install
+
+# Ejecutar tests
+mvn test -pl backend-api
+
+# Iniciar aplicación
+bash scripts/start.sh
+```
+
+**4. Edición de código:**
+```bash
+# Editar archivos con edit tool
+edit filePath="..." oldString="..." newString="..."
+```
+
+---
+
+## Archivos de Configuración de IA
+
+A medida que evolucionaba el uso de IA, fui creando archivos de configuración específicos para cada herramienta. Estos archivos contienen "conocimiento" del proyecto y reglas que la IA debe seguir.
+
+### 1. SKILLS (OpenCode)
+
+El archivo de **skills** define capacidades especializadas para el agente. OpenCode puede cargar skills que le dan instrucciones específicas para ciertas tareas.
+
+**Ubicación**: `~/.opencode/skills/` o definido en configuración
+
+**Ejemplo de skill para refactoring:**
+```json
+{
+  "name": "java-refactor",
+  "description": "Refactorización de código Java",
+  "instructions": [
+    "Buscar usos de ControllerNegocio en el archivo",
+    "Reemplazar con llamadas REST a la API",
+    "Usar AdministradorJpa para clientes REST",
+    "Mantener estructura existente del código"
+  ]
+}
+```
+
+### 2. RULES (VS Code / Cursor)
+
+Los archivos **rules** contienen reglas de codificación específicas del proyecto. Se configuran en el archivo de configuración de cada herramienta.
+
+**Para VS Code (settings.json):**
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "redhat.java",
+  "editor.tabSize": 4
+}
+```
+
+**Para Cursor (.cursorrules):**
+```markdown
+[Project]
+- Nombre: Notaire
+- Tipo: Sistema de gestión de escribanía
+- Stack: Java 21, Spring Boot 3.2.9, PostgreSQL, Swing
+
+[Code Style]
+- Identación: 4 espacios
+- Líneas máximo: 120 caracteres
+- Imports: Sin wildcards, orden: java, javax, third-party, own
+
+[Patterns]
+- Controllers: @RestController, constructor injection
+- Services: @Service, @Transactional
+- DTOs: Request/Response suffix
+```
+
+### 3. AGENTS (OpenCode)
+
+El archivo **AGENTS.md** es específico de OpenCode. Contiene instrucciones detalladas para el agente, incluyendo:
+
+- Comandos de build y ejecución
+- Convenciones de código del proyecto
+- Patrones de arquitectura
+- Reglas de testing
+- Prohibiciones y antipatrones
+
+**Ubicación**: `/home/matias/workspace/notaire/notaire/AGENTS.md`
+
+**Contenido principal:**
+
+```markdown
+# Agent Instructions for Notaire Project
+
+## Project Overview
+- Multi-module Maven project
+- Backend: Spring Boot REST API (Java 21, PostgreSQL)
+- Frontend: Swing GUI client
+- Shared: DTOs and common code
+
+## Build Commands
+```bash
+mvn clean install
+mvn clean install -pl backend-api
+cd backend-api && mvn spring-boot:run
+```
+
+## Code Style Guidelines
+- Java Version: 21
+- Indentation: 4 spaces
+- Line Limit: 120 characters
+- Naming: PascalCase (classes), camelCase (methods/variables)
+- No wildcard imports
+
+## Architecture Rules
+- Controllers: @RestController, constructor injection
+- Services: @Service, business logic only
+- Repositories: JpaRepository<Entity, ID>
+- Frontend: REST client only, no direct DB access
+```
+
+### 4. Documentación Oficial
+
+A lo largo del proceso, fui consultando documentación oficial de las herramientas:
+
+| Herramienta | Documentación |
+|------------|----------------|
+| OpenCode | https://opencode.ai |
+| MCP Protocol | https://modelcontextprotocol.io |
+| Cursor | https://cursor.sh |
+| GitHub Copilot | https://copilot.github.com |
+| Spring Boot | https://spring.io/projects/spring-boot |
+| Java 21 | https://docs.oracle.com/en/java/javase/21/ |
+
+---
+
+## Comparativa de Herramientas
+
+| Característica | Antigravity | VS Code + Copilot | Cursor (Paid) | OpenCode |
+|---------------|-------------|-------------------|---------------|----------|
+| **Búsqueda de código** | ✅ | ✅ | ✅ | ✅ |
+| **Generación de código** | ❌ | ✅ | ✅ | ✅ |
+| **Ejecutar terminal** | ❌ | ❌ | ✅ | ✅ |
+| **Archivos del proyecto** | ❌ | Parcial | ✅ | ✅ |
+| **Herramientas externas** | ❌ | ❌ | ❌ | ✅ (MCP) |
+| **Diagramas** | ❌ | ❌ | ❌ | ✅ (Draw.io, Excalidraw) |
+| **Servidores MCP** | ❌ | ❌ | ❌ | ✅ |
+| **Costo** | Gratuito | Gratuito/Pago | Pago | **Gratuito** (open source) |
+
+---
+
+## Lecciones Aprendidas
+
+1. **Comenzar con herramientas simples**: Google Antigravity fue ideal para entender el código existente
+2. **Copilot como assistant diario**: Excelente para autocompletado y sugerencias rápidas
+3. **Cursor para trabajo intenso**: Perfecto para refactorizaciones grandes
+4. **OpenCode para control total**: La mejor opción por su arquitectura abierta y MCPs
+
+### ¿Por qué elegí OpenCode?
+
+1. **Gratuito y open source**: No requiere suscripción
+2. **Arquitectura extensible**: MCPs permiten conectar cualquier herramienta
+3. **Herramientas nativas**: bash, archivos, git integrados
+4. **Comunidad activa**: Desarrollo constante de nuevas features
+5. **Perfecto para DevOps**: Puedo ejecutar Docker, compilar, testear desde el chat
+
+---
+
+## Próximos Pasos con IA
+
+- Experimentar con más servidores MCP (database, kubernetes)
+- Implementar agentes especializados para cada módulo
+- Automatizar testing con ayuda de IA
+- Generar documentación automática
+
+---
+
+## Recursos Adicionales
+
+### Links Oficiales
+
+- **OpenCode**: https://opencode.ai
+- **Documentación OpenCode**: https://docs.opencode.ai
+- **MCP Specification**: https://spec.modelcontextprotocol.io
+- **Awesome MCP Servers**: https://github.com/modelcontextprotocol/awesome-mcp-servers
+
+### Comunidad
+
+- **OpenCode Discord**: https://discord.gg/opencode
+- **r/opencode**: https://reddit.com/r/opencode
+
+---
+
+*Esta sección fue documentada el 25 de Febrero de 2026*
+
 ---
 
 ## Arquitectura Original (Monolito)
@@ -515,5 +887,7 @@ curl http://localhost:8080/api/v1/personas
 ---
 
 *Ultima actualizacion: 25 de Febrero de 2026*
+
+*Esta sección de herramientas IA fue documentada: 25 de Febrero de 2026*
 
 *Proyecto en proceso de migracion - Arquitectura en evolucion*
