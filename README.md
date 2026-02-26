@@ -330,7 +330,6 @@ cd backend-api && mvn spring-boot:run
 - Services: @Service, business logic only
 - Repositories: JpaRepository<Entity, ID>
 - Frontend: REST client only, no direct DB access
-```
 
 ### 4. Documentación Oficial
 
@@ -364,10 +363,11 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 
 ## Lecciones Aprendidas
 
-1. **Comenzar con herramientas simples**: Google Antigravity fue ideal para entender el código existente
-2. **Copilot como assistant diario**: Excelente para autocompletado y sugerencias rápidas
+1. **Comenzar con herramientas como Google Antigrativy**: Google Antigravity fue ideal para entender el código existente
+2. **Switch a otras herramientas como Copilot**: Sobre todo para unit test, migración, análisis y validación.
 3. **Cursor para trabajo intenso**: Perfecto para refactorizaciones grandes
 4. **OpenCode para control total**: La mejor opción por su arquitectura abierta y MCPs
+5. **Cluade Code** (pago): Finalmente, voy a hacer una validación de todo lo que hicieron las herramientas anteriores usando el estado-del-arte en cuanto a código.
 
 ### ¿Por qué elegí OpenCode?
 
@@ -376,6 +376,7 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 3. **Herramientas nativas**: bash, archivos, git integrados
 4. **Comunidad activa**: Desarrollo constante de nuevas features
 5. **Perfecto para DevOps**: Puedo ejecutar Docker, compilar, testear desde el chat
+6. **Aprender**: punto clave y uno de los más importantes antes de arrancar con Claude Code, por que aprendiendo se cometen muchos errores.
 
 ---
 
@@ -385,7 +386,8 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 - Implementar agentes especializados para cada módulo
 - Automatizar testing con ayuda de IA
 - Generar documentación automática
-
+- Implementar mejoras y modernización general: observabilidad, patrones de arquitectura avanzados, eventos, etc.
+  
 ---
 
 ## Recursos Adicionales
@@ -396,6 +398,7 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 - **Documentación OpenCode**: https://docs.opencode.ai
 - **MCP Specification**: https://spec.modelcontextprotocol.io
 - **Awesome MCP Servers**: https://github.com/modelcontextprotocol/awesome-mcp-servers
+- 
 
 ### Comunidad
 
