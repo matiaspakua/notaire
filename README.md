@@ -481,6 +481,8 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 | **Shared** | notary-shared | DTOs y código común |
 
 
+![](images/login.png)
+
 ## Cronología del Proceso de Migración
 
 ### Fase 1: Orígenes y Mantenimiento (2014-2018)
