@@ -553,7 +553,7 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
 ### Resumen de la Migración MySQL → PostgreSQL
 
-La migración de la base de datos fue un paso crítico en el proceso de modernización del proyecto. A continuación se documenta el proceso seguido:
+La migración de la base de datos fue un paso clave en el proceso de modernización del proyecto. A continuación se documenta el proceso seguido:
 
 | Etapa | Descripción | Estado |
 |-------|-------------|--------|
@@ -790,6 +790,10 @@ Aplicar las siguientes reglas de refactoring al codigo:
 - [ ] Completar el 5% de APIs restantes
 - [ ] Agregar paginación a todos los endpoints
 
+### Mejoras de base de datos
+
+- [ ] flyway para migración y versionado de base de datos
+
 ### Testing y Calidad
 
 - [ ] Coverage de tests al 80% mínimo
@@ -812,6 +816,15 @@ Aplicar las siguientes reglas de refactoring al codigo:
 - [ ] Crear guía de instalación para producción
 - [ ] Documentar arquitectura del sistema
 - [ ] Crear manual de usuario
+
+
+
+logs en formato prometeus
+visualización con alguna herramienta sencilla: grafana u otra
+sonarqube community edition para controlar la calidad de código
+test unitarios con tags a los requerimientos
+/docs => tener toda la documentación original migrada a Markdown y csv, etc. de manera de poder actualizarla y usarla de referencia.
+preparar proceso de testing completo: unit, integracion (usando Bruno), trazabilidad y covertura y reporting.
 
 ---
 
