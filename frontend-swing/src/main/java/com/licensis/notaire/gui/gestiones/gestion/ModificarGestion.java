@@ -22,10 +22,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import com.licensis.notaire.dto.GenericDto;
-import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 
 /**
  *
@@ -41,7 +40,7 @@ public class ModificarGestion extends javax.swing.JInternalFrame {
     private DtoGestionDeEscritura dtoGestionSeleccionada;
     private List<DtoPersona> listaClientesAsociados = new ArrayList<>();
     private List<DtoTramite> listaTramitesAsociados = new ArrayList<>();
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
     private AdministradorJpa adminJpa = AdministradorJpa.getInstancia();
 
     /**
@@ -584,26 +583,25 @@ public class ModificarGestion extends javax.swing.JInternalFrame {
 
         if (dtoGestionSeleccionada.isValido()) {
             try {
-                DtoGestionDeEscritura gestion = miController.modificarGestionDeEscritura(dtoGestionSeleccionada,
-                        this.listaClientesAgregados, this.listaClientesEliminados);
-                if (gestion.getIdGestion() != ConstantesNegocio.ID_OBJETO_NO_VALIDO) {
-                    JOptionPane.showMessageDialog(this,
-                            "Se ha modificado correctamente la gestion: " + dtoGestionSeleccionada.getNumero(),
-                            "Informacion", JOptionPane.INFORMATION_MESSAGE);
-                    this.salir();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error al intentar modificar la gestion indicada", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+                GenericDto payload = new GenericDto();
+                payload.put("idGestion", dtoGestionSeleccionada.getIdGestion());
+                payload.put("numero", dtoGestionSeleccionada.getNumero());
+                payload.put("fechaInicio", dtoGestionSeleccionada.getFechaInicio());
+                payload.put("encabezado", dtoGestionSeleccionada.getEncabezado());
+                payload.put("observaciones", dtoGestionSeleccionada.getObservaciones());
+                payload.put("numeroArchivo", dtoGestionSeleccionada.getNumeroArchivo());
+                payload.put("numeroBibliorato", dtoGestionSeleccionada.getNumeroBibliorato());
+                
+                gestionClient.edit(payload);
+                
+                JOptionPane.showMessageDialog(this,
+                        "Se ha modificado correctamente la gestion: " + dtoGestionSeleccionada.getNumero(),
+                        "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                this.salir();
             } catch (Exception ex) {
-                if (ex instanceof ClassModifiedException) {
-                    JOptionPane.showMessageDialog(this, "Alguien ha modificado la gestion indicada!", "Advertencia",
-                            JOptionPane.WARNING_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this,
-                            "Error al intentar modificar la gestion indicada: " + ex.getMessage(), "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(this,
+                        "Error al intentar modificar la gestion indicada: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 this.salir();
             }
         } else {

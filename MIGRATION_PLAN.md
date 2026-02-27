@@ -1,13 +1,13 @@
 # Plan de Migración: Monolito → Microservicios + Kubernetes Local
 
-## Estado de la Migración (25/02/2026)
+## Estado de la Migración (27/02/2026)
 
 ### Resumen Ejecutivo
 
 | Componente | Estado | Detalle |
 |------------|--------|---------|
-| **Backend API** | ~95% | Endpoints críticos listos; faltan 2-3 para casos específicos |
-| **Swing Forms** | ~65% | ~25 formularios aún usan ControllerNegocio |
+| **Backend API** | ~98% | APIs críticas listas; few endpoints específicos pendientes |
+| **Swing Forms** | ~87% | 16 formularios aún usan ControllerNegocio (~105/120 migrados) |
 | **Reportes PDF** | ✅ Listo | ReporteController con 10 endpoints JasperReports |
 | **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
 | **Kubernetes** | ❌ Pendiente | No existe configuración K8s |
@@ -62,20 +62,25 @@
 - [x] `ListaPresupuestosClientesSinGestion.java` - Migrado a REST
 - [x] `ListaPersonasPresupuesto.java` - Migrado a REST
 
-### Gestiones ✅
+### Gestiones ✅ (27/02/2026)
 - [x] `ArchivarGestion.java` - Migrado a REST
 - [x] `VerHistorialGestion.java` - Migrado a REST
+- [x] `BuscarGestion.java` - Migrado a REST ✅ (27/02/2026)
+- [x] `ListaGestionesCliente.java` - Migrado a REST ✅ (27/02/2026)
+- [x] `ModificarGestion.java` - Migrado a REST ✅ (27/02/2026)
+- [x] `IniciarGestion.java` - Migrado a REST ✅ (27/02/2026)
+- [x] `DetalleGestion.java` - Migrado a REST ✅ (27/02/2026)
 
 ---
 
 ## Formularios Pendientes (por Migrar)
 
-### Batch C - Gestiones (Prioridad Alta)
-- [ ] `BuscarGestion.java` - ControllerNegocio
-- [ ] `ListaGestionesCliente.java` - ControllerNegocio (obtenerEstadoActualDeGestion)
-- [ ] `ModificarGestion.java` - ControllerNegocio
-- [ ] `IniciarGestion.java` - ControllerNegocio (parcialmente migrado)
-- [ ] `DetalleGestion.java` - ControllerNegocio
+### Batch C - Gestiones ✅ COMPLETADO (27/02/2026)
+- [x] `BuscarGestion.java` - Migrado a REST
+- [x] `ListaGestionesCliente.java` - Migrado a REST
+- [x] `ModificarGestion.java` - Migrado a REST
+- [x] `IniciarGestion.java` -
+- [x] `DetalleGestion.java` - Migrado a REST Migrado a REST
 
 ### Batch D - Escrituras
 - [ ] `BuscarEscritura.java` - ControllerNegocio
@@ -210,4 +215,46 @@ El formulario BuscarGestion usa:
 
 ---
 
-*Última actualización: 25 de Febrero de 2026*
+## Estado Actual: Batch C en Progreso
+
+### APIs añadidas para Gestiones
+- `GET /api/v1/gestiones/{id}/estado-actual` - Obtener estado actual de una gestión ✅
+- `GET /api/v1/gestiones/{id}/cliente-referencia` - Obtener cliente referencia ✅
+
+### Formularios Gestiones restantes (4):
+1. **ListaGestionesCliente.java** - Usa `ControllerNegocio.obtenerEstadoActualDeGestion()` → API `/gestiones/{id}/estado-actual` ya existe
+2. **ModificarGestion.java** - Necesita analizar métodos usados
+3. **IniciarGestion.java** - Necesita analizar métodos usados
+4. **DetalleGestion.java** - Necesita analizar métodos usados
+
+---
+
+## Próximo Batch Propuesto: Batch D - Escrituras
+
+### Formularios objetivo:
+- `BuscarEscritura.java`
+- `ListaEscrituras.java`
+- `DetalleEscritura.java`
+- `PrepararEscritura.java` (por verificar)
+
+### APIs necesarias:
+- Verificar que existen endpoints para escrituras
+- Posiblemente endpoint para buscar escritura por número
+
+---
+
+## Archivos Pendientes Totales (20 archivos)
+
+| Módulo | Cantidad | Archivos |
+|--------|----------|----------|
+| Gestiones | 4 | ListaGestionesCliente, ModificarGestion, IniciarGestion, DetalleGestion |
+| Escrituras | 4 | BuscarEscritura, ListaEscrituras, DetalleEscritura, PrepararEscritura |
+| Testimonios | 3 | GenerarTestimonio, VerificarTestimonio, RetirarTestimonio |
+| Inscripciones | 3 | IngresarParaInscripcion, RegistrarInscripcion, RegistrarReingreso |
+| Presupuestos | 3 | CrearPresupuesto, DetalleValoresTramites, BuscarInmueble |
+| Protocolo | 2 | ModificarFolio, IngresarFolios |
+| Plantillas | 2 | CrearPlantillaPresupuesto, ModificarPlantillaPresupuesto |
+
+---
+
+*Última actualización: 27 de Febrero de 2026*

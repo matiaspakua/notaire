@@ -19,8 +19,8 @@ import com.licensis.notaire.gui.clientes.BuscarCliente;
 import com.licensis.notaire.gui.presupuestos.BuscarPresupuesto;
 import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import com.licensis.notaire.servicios.AdministradorReportes;
 import com.licensis.notaire.servicios.AdministradorSesion;
 import java.io.IOException;
@@ -50,8 +50,9 @@ public class IniciarGestion extends javax.swing.JInternalFrame
     private DtoPersona dtoCliente = null;
     private List<DtoPersona> listaDtoEscribanos = new ArrayList<>();
     private List<DtoPersona> listaClientesAsociados = new ArrayList<>();
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
     private AdministradorJpa adminJpa = AdministradorJpa.getInstancia();
+    private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
+    private GenericRestClient tramiteClient = AdministradorJpa.getInstancia().getTramiteJpa();
     private DtoEstadoDeGestion estadoInicial;
 
     /**
@@ -450,7 +451,47 @@ public class IniciarGestion extends javax.swing.JInternalFrame
 
             if (nuevaGestion.isValido())
             {
-                DtoGestionDeEscritura gestion = this.getMiController().iniciarGestionDeEscritura(nuevaGestion);
+                DtoGestionDeEscritura gestion = new DtoGestionDeEscritura();
+                
+                try
+                {
+                    for (com.licensis.notaire.dto.GenericDto gestionExistente : gestionClient.findAll())
+                    {
+                        if (gestionExistente.getInt("numero") != null 
+                            && gestionExistente.getInt("numero").equals(nuevaGestion.getNumero()))
+                        {
+                            gestion.setIdGestion(DtoValido.VERSION_INICIAL);
+                            break;
+                        }
+                    }
+                    
+                    if (gestion.getIdGestion() == null)
+                    {
+                        com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                        payload.put("numero", nuevaGestion.getNumero());
+                        payload.put("fechaInicio", nuevaGestion.getFechaInicio());
+                        payload.put("encabezado", nuevaGestion.getEncabezado());
+                        payload.put("observaciones", nuevaGestion.getObservaciones());
+                        payload.put("numeroArchivo", nuevaGestion.getNumeroArchivo());
+                        payload.put("numeroBibliorato", nuevaGestion.getNumeroBibliorato());
+                        
+                        gestionClient.create(payload);
+                        
+                        for (com.licensis.notaire.dto.GenericDto gestionRaw : gestionClient.findAll())
+                        {
+                            if (gestionRaw.getInt("numero") != null 
+                                && gestionRaw.getInt("numero").equals(nuevaGestion.getNumero()))
+                            {
+                                gestion = RestMapper.toDtoGestion(gestionRaw);
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    gestion.setIdGestion(DtoValido.ID_DTO_INICIALIZADO);
+                }
 
                 if (gestion.getIdGestion() == DtoValido.ID_DTO_INICIALIZADO)
                 {
@@ -772,16 +813,6 @@ public class IniciarGestion extends javax.swing.JInternalFrame
     public void setListaClientesAsociados(List<DtoPersona> listaClientesAsociados)
     {
         this.listaClientesAsociados.addAll(listaClientesAsociados);
-    }
-
-    public ControllerNegocio getMiController()
-    {
-        return miController;
-    }
-
-    public void setMiController(ControllerNegocio miController)
-    {
-        this.miController = miController;
     }
 
     /**

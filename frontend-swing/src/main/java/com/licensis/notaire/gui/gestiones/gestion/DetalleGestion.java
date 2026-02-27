@@ -11,8 +11,10 @@ import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.escrituras.ListaEscrituras;
+import com.licensis.notaire.api.client.RestMapper;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,8 @@ public class DetalleGestion extends javax.swing.JInternalFrame
     private static DetalleGestion instancia;
     private static JMenuItem ventanaDetalleGestion = new JMenuItem("Ventana Detalle Gestion");
     private DtoGestionDeEscritura miDtoGestionDeEscritura;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
+    private GenericRestClient escrituraClient = AdministradorJpa.getInstancia().getEscrituraJpa();
 
     /**
      * Creates new form NewJInternalFrame
@@ -69,7 +72,33 @@ public class DetalleGestion extends javax.swing.JInternalFrame
         labelFechaInicio.setText(fecha);
         labelEscribano.setText(miDtoGestion.getPersonaEscribano().getNombre() + ", " + miDtoGestion.getPersonaEscribano().getApellido());
 
-        DtoPersona clienteReferencia = miController.obtenerClienteReferenciaGestion(miDtoGestion);
+        DtoPersona clienteReferencia = new DtoPersona();
+        
+        try
+        {
+            Integer idGestion = miDtoGestion.getIdGestion();
+            if (idGestion != null)
+            {
+                List<com.licensis.notaire.dto.GenericDto> resultados = gestionClient.findAllByPath(idGestion + "/cliente-referencia");
+                if (!resultados.isEmpty())
+                {
+                    Integer idPersona = resultados.get(0).getInt("idPersona");
+                    if (idPersona != null)
+                    {
+                        com.licensis.notaire.dto.GenericDto personaRaw = AdministradorJpa.getInstancia().getPersonaJpa().find(idPersona);
+                        if (personaRaw != null)
+                        {
+                            clienteReferencia = RestMapper.toDtoPersona(personaRaw);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            clienteReferencia.setNombre("No disponible");
+            clienteReferencia.setApellido("");
+        }
 
         labelClienteReferencia.setText(clienteReferencia.getNombre() + ", " + clienteReferencia.getApellido());
 
@@ -458,7 +487,45 @@ public class DetalleGestion extends javax.swing.JInternalFrame
 
     private void botonListarEscriturasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListarEscriturasActionPerformed
 
-        List<DtoEscritura> escriturasGestion = miController.buscarEscriturasGestion(miDtoGestionDeEscritura);
+        List<DtoEscritura> escriturasGestion = new ArrayList<>();
+        
+        try
+        {
+            Integer idGestion = miDtoGestionDeEscritura.getIdGestion();
+            if (idGestion != null)
+            {
+                List<com.licensis.notaire.dto.GenericDto> todasEscrituras = escrituraClient.findAll();
+                for (com.licensis.notaire.dto.GenericDto escRaw : todasEscrituras)
+                {
+                    Object tramiteObj = escRaw.get("fkIdTramite");
+                    if (tramiteObj instanceof com.licensis.notaire.dto.GenericDto tramiteDto)
+                    {
+                        Object gestionObj = tramiteDto.get("fkIdGestion");
+                        if (gestionObj instanceof com.licensis.notaire.dto.GenericDto gestionDto)
+                        {
+                            Integer idGes = gestionDto.getInt("idGestion");
+                            if (idGes != null && idGes.equals(idGestion))
+                            {
+                                DtoEscritura esc = new DtoEscritura();
+                                esc.setIdEscritura(escRaw.getInt("idEscritura"));
+                                esc.setNumero(escRaw.getInt("numero") != null ? escRaw.getInt("numero") : 0);
+                                Object fechaObj = escRaw.get("fechaEscrituracion");
+                                if (fechaObj instanceof Number fechaNum)
+                                {
+                                    esc.setFechaEscrituracion(new java.util.Date(fechaNum.longValue()));
+                                }
+                                esc.setCuerpo(escRaw.getString("cuerpo"));
+                                escriturasGestion.add(esc);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al buscar escrituras: " + e.getMessage());
+        }
 
         if (!escriturasGestion.isEmpty())
         {

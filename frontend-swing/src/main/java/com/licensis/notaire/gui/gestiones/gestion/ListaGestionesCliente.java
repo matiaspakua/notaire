@@ -10,11 +10,14 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.gestiones.escrituras.PrepararEscritura;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.api.client.RestMapper;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -27,6 +30,7 @@ public class ListaGestionesCliente extends javax.swing.JInternalFrame
     private String formularioInvocador = new String();
     private DtoPersona cliente;
     private List<DtoGestionDeEscritura> gestionesCliente = new ArrayList<>();
+    private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
 
     /**
      * Creates new form ListaGestionesCliente
@@ -245,12 +249,30 @@ public class ListaGestionesCliente extends javax.swing.JInternalFrame
 
     public void cargarGrillaGestiones(List<DtoGestionDeEscritura> listaDtoGestiones)
     {
-        gestionesCliente = listaDtoGestiones;
-        for (Iterator<DtoGestionDeEscritura> it = listaDtoGestiones.iterator(); it.hasNext();)
+        DefaultTableModel model = (DefaultTableModel) grillaGestionesCliente.getModel();
+        model.setRowCount(0);
+        
+        for (DtoGestionDeEscritura dtoGestionDeEscritura : listaDtoGestiones)
         {
-            DtoGestionDeEscritura dtoGestionDeEscritura = it.next();
-
-            DtoEstadoDeGestion estadoActual = ControllerNegocio.getInstancia().obtenerEstadoActualDeGestion(dtoGestionDeEscritura);
+            DtoEstadoDeGestion estadoActual = new DtoEstadoDeGestion();
+            
+            try
+            {
+                Integer idGestion = dtoGestionDeEscritura.getIdGestion();
+                if (idGestion != null)
+                {
+                    List<com.licensis.notaire.dto.GenericDto> resultados = gestionClient.findAllByPath(idGestion + "/estado-actual");
+                    if (!resultados.isEmpty())
+                    {
+                        com.licensis.notaire.dto.GenericDto raw = resultados.get(0);
+                        estadoActual = RestMapper.toDtoEstado(raw);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                estadoActual.setNombre("Sin estado");
+            }
 
             Object[] datos =
             {
@@ -260,7 +282,7 @@ public class ListaGestionesCliente extends javax.swing.JInternalFrame
                 estadoActual.getNombre(),
                 dtoGestionDeEscritura.getObservaciones()
             };
-
+            model.addRow(datos);
         }
 
     }
