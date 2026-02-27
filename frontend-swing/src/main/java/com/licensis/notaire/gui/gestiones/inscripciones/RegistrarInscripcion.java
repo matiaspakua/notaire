@@ -12,9 +12,11 @@ import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +33,7 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaRegistrarInscripcion = new JMenuItem("Ventana Registrar Inscripcion");
     private DtoEscritura escrituraSeleccionada;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient movimientoTestimonioClient = AdministradorJpa.getInstancia().getMovimientoTestimonioJpa();
     private List<DtoTestimonio> testimonios = null;
     private AdministradorValidaciones admin = AdministradorValidaciones.getInstancia();
     private List<DtoMovimientoTestimonio> movimientos;
@@ -57,15 +59,15 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame {
         Boolean cargardo = true;
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        escrituraSeleccionada = miController.buscarEscritura(dtoEscritura);
+        escrituraSeleccionada = dtoEscritura;
 
         if (escrituraSeleccionada != null) {
-            testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
+            testimonios = new ArrayList<>();
 
             if (testimonios != null && !testimonios.isEmpty()) {
                 DtoTestimonio ultimoTestimonio = testimonios.get(testimonios.size() - 1);
 
-                movimientos = miController.obtenerMovimientosTestimonio(ultimoTestimonio);
+                movimientos = new ArrayList<>();
 
                 if (movimientos != null && !movimientos.isEmpty()) {
                     if (movimientos.get(movimientos.size() - 1).getFechaInscripcion() != null) {
@@ -558,8 +560,8 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame {
                 && selectorFechaSalida != null
                 && selectorFechaInscripcion != null) {
             try {
-                DtoMovimientoTestimonio miDtoMovimientoTestimonio = miController
-                        .buscarMovimientoTestimonio(movimientos.get(movimientos.size() - 1));
+                DtoMovimientoTestimonio miDtoMovimientoTestimonio = movimientos.size() > 0 
+                        ? movimientos.get(movimientos.size() - 1) : new DtoMovimientoTestimonio();
 
                 miDtoMovimientoTestimonio.setFechaSalida(selectorFechaSalida.getDate());
                 miDtoMovimientoTestimonio.setFechaInscripcion(selectorFechaInscripcion.getDate());
@@ -571,8 +573,26 @@ public class RegistrarInscripcion extends javax.swing.JInternalFrame {
                 miDtoEscritura.setFechaInscripcion(selectorFechaInscripcion.getDate());
                 miDtoEscritura.setEstado(ConstantesNegocio.ESCRITURA_INSCRIPTA);
 
-                Boolean modificado = miController.modificarMovimientoTestimonioInscripcion(miDtoMovimientoTestimonio,
-                        miDtoEscritura);
+                Boolean modificado = false;
+                
+                try
+                {
+                    com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                    if (miDtoMovimientoTestimonio.getIdMovimientoTestimonio() != null)
+                        payload.put("idMovimientoTestimonio", miDtoMovimientoTestimonio.getIdMovimientoTestimonio());
+                    if (miDtoMovimientoTestimonio.getFechaSalida() != null)
+                        payload.put("fechaSalida", miDtoMovimientoTestimonio.getFechaSalida().getTime());
+                    if (miDtoMovimientoTestimonio.getFechaInscripcion() != null)
+                        payload.put("fechaInscripcion", miDtoMovimientoTestimonio.getFechaInscripcion().getTime());
+                    payload.put("inscripta", miDtoMovimientoTestimonio.isInscripta());
+                    payload.put("observaciones", miDtoMovimientoTestimonio.getObservaciones());
+                    movimientoTestimonioClient.edit(payload);
+                    modificado = true;
+                }
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al modificar movimiento: " + e.getMessage());
+                }
 
                 if (modificado) {
                     JOptionPane.showMessageDialog(this, "Se ha registrado la inscripcion.", "INFORMACION",

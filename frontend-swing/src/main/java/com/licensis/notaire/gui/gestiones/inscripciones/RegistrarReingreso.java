@@ -11,9 +11,11 @@ import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +33,7 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame {
     private static JMenuItem ventanaRegistrarReingreso = new JMenuItem("Ventana Registrar Reingreso");
     private static Boolean estadoFormulario = Boolean.FALSE;
     private DtoEscritura escrituraSeleccionada;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient movimientoTestimonioClient = AdministradorJpa.getInstancia().getMovimientoTestimonioJpa();
     private List<DtoTestimonio> testimonios = null;
     private List<DtoMovimientoTestimonio> movimientos = null;
 
@@ -56,14 +58,14 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        escrituraSeleccionada = miController.buscarEscritura(dtoEscritura);
+        escrituraSeleccionada = dtoEscritura;
         Boolean cargada = true;
-        testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
+        testimonios = new ArrayList<>();
 
         if (testimonios != null && !testimonios.isEmpty()) {
             DtoTestimonio ultimoTestimonio = testimonios.get(testimonios.size() - 1);
 
-            movimientos = miController.obtenerMovimientosTestimonio(ultimoTestimonio);
+            movimientos = new ArrayList<>();
 
             if (movimientos != null && !movimientos.isEmpty()) {
                 if (movimientos.get(movimientos.size() - 1).getFechaInscripcion() != null) {
@@ -527,15 +529,30 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame {
                 && selectorFechaIngreso.getDate() != null
                 && selectorFechaSalida.getDate() != null) {
 
-            DtoMovimientoTestimonio miDtoMovimientoTestimonioViejo = miController
-                    .buscarMovimientoTestimonio(movimientos.get(movimientos.size() - 1));
+            DtoMovimientoTestimonio miDtoMovimientoTestimonioViejo = movimientos.size() > 0 
+                    ? movimientos.get(movimientos.size() - 1) : new DtoMovimientoTestimonio();
 
             miDtoMovimientoTestimonioViejo.setFechaSalida(selectorFechaSalida.getDate());
             try {
-                Boolean modificado = miController.modificarMovimientoTestimonio(miDtoMovimientoTestimonioViejo);
+                Boolean modificado = false;
+                
+                try
+                {
+                    com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                    if (miDtoMovimientoTestimonioViejo.getIdMovimientoTestimonio() != null)
+                        payload.put("idMovimientoTestimonio", miDtoMovimientoTestimonioViejo.getIdMovimientoTestimonio());
+                    if (miDtoMovimientoTestimonioViejo.getFechaSalida() != null)
+                        payload.put("fechaSalida", miDtoMovimientoTestimonioViejo.getFechaSalida().getTime());
+                    movimientoTestimonioClient.edit(payload);
+                    modificado = true;
+                }
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al modificar movimiento: " + e.getMessage());
+                }
 
                 if (modificado) {
-                    DtoTestimonio miDtoTestimonio = testimonios.get(testimonios.size() - 1);
+                    DtoTestimonio miDtoTestimonio = testimonios.size() > 0 ? testimonios.get(testimonios.size() - 1) : new DtoTestimonio();
                     miDtoTestimonio.setObservado(checkBoxObservado.isSelected());
 
                     DtoMovimientoTestimonio miDtoMovimientoTestimonio = new DtoMovimientoTestimonio();
@@ -554,7 +571,23 @@ public class RegistrarReingreso extends javax.swing.JInternalFrame {
 
                     if (opcion == JOptionPane.YES_OPTION) {
                         try {
-                            Boolean creado = miController.crearMovimientoTestimonio(miDtoMovimientoTestimonio);
+                            Boolean creado = false;
+                            
+                            try
+                            {
+                                com.licensis.notaire.dto.GenericDto payload2 = new com.licensis.notaire.dto.GenericDto();
+                                payload2.put("numeroCarton", miDtoMovimientoTestimonio.getNumeroCarton());
+                                if (miDtoMovimientoTestimonio.getFechaIngreso() != null)
+                                    payload2.put("fechaIngreso", miDtoMovimientoTestimonio.getFechaIngreso().getTime());
+                                payload2.put("observaciones", miDtoMovimientoTestimonio.getObservaciones());
+                                payload2.put("inscripta", miDtoMovimientoTestimonio.isInscripta());
+                                movimientoTestimonioClient.create(payload2);
+                                creado = true;
+                            }
+                            catch (Exception e)
+                            {
+                                JOptionPane.showMessageDialog(this, "Error al crear movimiento: " + e.getMessage());
+                            }
 
                             if (creado) {
                                 JOptionPane.showMessageDialog(this, "Se ha registrado el reingreso de inscripcion.",

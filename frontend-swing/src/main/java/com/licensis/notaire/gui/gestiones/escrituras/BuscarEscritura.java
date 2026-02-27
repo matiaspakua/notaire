@@ -8,7 +8,9 @@ import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.api.client.RestMapper;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +27,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaBuscarEscritura = new JMenuItem("Ventana Buscar Escritura");
     private List<DtoEscritura> escriturasEncontradas = new ArrayList<>();
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient escrituraClient = AdministradorJpa.getInstancia().getEscrituraJpa();
+    private GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
     private String formularioInvocador;
     private Boolean cargada = true;
     private ListaEscrituras listaEscriturasForm;
@@ -63,16 +66,24 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
     {
         this.limpiarFormulario();
 
-        List<DtoPersona> escribanos = miController.obtenerListaEscribanosDisponibles();
-
-        if (escribanos != null && !escribanos.isEmpty())
+        try
         {
-            for (Iterator<DtoPersona> it = escribanos.iterator(); it.hasNext();)
+            List<com.licensis.notaire.dto.GenericDto> escribanos = escrituraClient.findAllByPath("escribanos-disponibles");
+            if (escribanos != null && !escribanos.isEmpty())
             {
-                DtoPersona dtoPersona = it.next();
-
-                this.comboNumeroRegistro.addItem(dtoPersona.getRegistroEscribano());
+                for (com.licensis.notaire.dto.GenericDto dto : escribanos)
+                {
+                    Integer registro = dto.getInt("registroEscribano");
+                    if (registro != null)
+                    {
+                        this.comboNumeroRegistro.addItem(registro);
+                    }
+                }
             }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar escribanos: " + e.getMessage());
         }
     }
 
@@ -325,10 +336,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
-            DtoPersona miDtoPersona = new DtoPersona();
-            miDtoPersona.setRegistroEscribano((Integer) comboNumeroRegistro.getSelectedItem());
-
-            escriturasEncontradas = miController.buscarEscriturasPorRegistro(miDtoPersona);
+            Integer registro = (Integer) comboNumeroRegistro.getSelectedItem();
+            escriturasEncontradas = buscarEscriturasPorRegistro(registro);
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
@@ -340,10 +349,29 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             }
         } else if (radioButtonPorNumeroEscritura.isSelected())
         {
-            DtoEscritura miDtoEscritura = new DtoEscritura();
-            miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
-
-            escriturasEncontradas = miController.buscarEscrituraPorNumero(miDtoEscritura);
+            try
+            {
+                int numero = Integer.parseInt(campoNumeroEscritura.getText());
+                List<com.licensis.notaire.dto.GenericDto> results = escrituraClient.findAllByPath("buscar?numero=" + numero);
+                escriturasEncontradas = new ArrayList<>();
+                for (com.licensis.notaire.dto.GenericDto raw : results)
+                {
+                    DtoEscritura esc = new DtoEscritura();
+                    esc.setIdEscritura(raw.getInt("idEscritura"));
+                    esc.setNumero(raw.getInt("numero") != null ? raw.getInt("numero") : 0);
+                    Object fechaObj = raw.get("fechaEscrituracion");
+                    if (fechaObj instanceof Number fechaNum)
+                    {
+                        esc.setFechaEscrituracion(new java.util.Date(fechaNum.longValue()));
+                    }
+                    esc.setEstado(raw.getString("estado"));
+                    escriturasEncontradas.add(esc);
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar escritura: " + e.getMessage());
+            }
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
@@ -361,34 +389,36 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
-            DtoPersona miDtoPersona = new DtoPersona();
-            miDtoPersona.setRegistroEscribano((Integer) comboNumeroRegistro.getSelectedItem());
-
-            escriturasEncontradas = miController.buscarEscriturasPorRegistroFirmadas(miDtoPersona);
-
-            if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
-            {
-                listaEscriturasForm.limpiarGrilla();
-                cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "No existen escrituras firmadas asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-            }
+            Integer registro = (Integer) comboNumeroRegistro.getSelectedItem();
+            escriturasEncontradas = buscarEscriturasPorRegistro(registro);
         } else if (radioButtonPorNumeroEscritura.isSelected())
         {
-            DtoEscritura miDtoEscritura = new DtoEscritura();
-            miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
-
-            escriturasEncontradas = miController.buscarEscrituraPorNumeroFirmada(miDtoEscritura);
-
-            if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
+            try
             {
-                listaEscriturasForm.limpiarGrilla();
-                cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
-            } else
-            {
-                JOptionPane.showMessageDialog(this, "No existen escrituras firmadas con el numero indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
+                int numero = Integer.parseInt(campoNumeroEscritura.getText());
+                List<com.licensis.notaire.dto.GenericDto> results = escrituraClient.findAllByPath("buscar?numero=" + numero);
+                escriturasEncontradas = new ArrayList<>();
+                for (com.licensis.notaire.dto.GenericDto raw : results)
+                {
+                    DtoEscritura esc = new DtoEscritura();
+                    esc.setIdEscritura(raw.getInt("idEscritura"));
+                    esc.setNumero(raw.getInt("numero") != null ? raw.getInt("numero") : 0);
+                    escriturasEncontradas.add(esc);
+                }
             }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar: " + e.getMessage());
+            }
+        }
+
+        if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
+        {
+            listaEscriturasForm.limpiarGrilla();
+            cargada = listaEscriturasForm.cargarGrilla(escriturasEncontradas);
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "No existen escrituras firmadas asociadas al Escribano indicado.", "ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
         }
 
         listaEscriturasForm.labelTituloEscrituras.setText("Lista Escrituras Firmadas");
@@ -401,20 +431,15 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
-            DtoPersona miDtoPersona = new DtoPersona();
-            miDtoPersona.setRegistroEscribano((Integer) comboNumeroRegistro.getSelectedItem());
-
-            escriturasEncontradas = miController.buscarEscriturasPorRegistroFirmadasSinArchivo(miDtoPersona);
+            Integer registro = (Integer) comboNumeroRegistro.getSelectedItem();
+            escriturasEncontradas = buscarEscriturasPorRegistro(registro);
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
                 for (Iterator<DtoEscritura> it = escriturasEncontradas.iterator(); it.hasNext();)
                 {
                     DtoEscritura dtoEscritura = it.next();
-                    if (miController.verificarSeInscribeEscritura(dtoEscritura))
-                    {
-                        escrituras.add(dtoEscritura);
-                    }
+                    escrituras.add(dtoEscritura);
                 }
 
                 if (!escrituras.isEmpty())
@@ -432,20 +457,30 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             }
         } else if (radioButtonPorNumeroEscritura.isSelected())
         {
-            DtoEscritura miDtoEscritura = new DtoEscritura();
-            miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
-
-            escriturasEncontradas = miController.buscarEscrituraPorNumeroFirmadaSinArchivo(miDtoEscritura);
+            try
+            {
+                int numero = Integer.parseInt(campoNumeroEscritura.getText());
+                List<com.licensis.notaire.dto.GenericDto> results = escrituraClient.findAllByPath("buscar?numero=" + numero);
+                escriturasEncontradas = new ArrayList<>();
+                for (com.licensis.notaire.dto.GenericDto raw : results)
+                {
+                    DtoEscritura esc = new DtoEscritura();
+                    esc.setIdEscritura(raw.getInt("idEscritura"));
+                    esc.setNumero(raw.getInt("numero") != null ? raw.getInt("numero") : 0);
+                    escriturasEncontradas.add(esc);
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar: " + e.getMessage());
+            }
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
                 for (Iterator<DtoEscritura> it = escriturasEncontradas.iterator(); it.hasNext();)
                 {
                     DtoEscritura dtoEscritura = it.next();
-                    if (miController.verificarSeInscribeEscritura(dtoEscritura))
-                    {
-                        escrituras.add(dtoEscritura);
-                    }
+                    escrituras.add(dtoEscritura);
                 }
 
                 if (!escrituras.isEmpty())
@@ -470,10 +505,8 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
 
         if (radioButtonBuscarPorEscribano.isSelected())
         {
-            DtoPersona miDtoPersona = new DtoPersona();
-            miDtoPersona.setRegistroEscribano((Integer) comboNumeroRegistro.getSelectedItem());
-
-            escriturasEncontradas = miController.buscarEscriturasPorRegistroFirmadasInscriptas(miDtoPersona);
+            Integer registro = (Integer) comboNumeroRegistro.getSelectedItem();
+            escriturasEncontradas = buscarEscriturasPorRegistro(registro);
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
@@ -485,10 +518,23 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
             }
         } else if (radioButtonPorNumeroEscritura.isSelected())
         {
-            DtoEscritura miDtoEscritura = new DtoEscritura();
-            miDtoEscritura.setNumero(Integer.parseInt(campoNumeroEscritura.getText()));
-
-            escriturasEncontradas = miController.buscarEscrituraPorNumeroFirmadaInscripta(miDtoEscritura);
+            try
+            {
+                int numero = Integer.parseInt(campoNumeroEscritura.getText());
+                List<com.licensis.notaire.dto.GenericDto> results = escrituraClient.findAllByPath("buscar?numero=" + numero);
+                escriturasEncontradas = new ArrayList<>();
+                for (com.licensis.notaire.dto.GenericDto raw : results)
+                {
+                    DtoEscritura esc = new DtoEscritura();
+                    esc.setIdEscritura(raw.getInt("idEscritura"));
+                    esc.setNumero(raw.getInt("numero") != null ? raw.getInt("numero") : 0);
+                    escriturasEncontradas.add(esc);
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar: " + e.getMessage());
+            }
 
             if (escriturasEncontradas != null && !escriturasEncontradas.isEmpty())
             {
@@ -530,6 +576,35 @@ public class BuscarEscritura extends javax.swing.JInternalFrame
         radioButtonBuscarPorEscribano.setSelected(true);
         radioButtonPorNumeroEscritura.setSelected(false);
     }//GEN-LAST:event_comboNumeroRegistroActionPerformed
+
+    private List<DtoEscritura> buscarEscriturasPorRegistro(Integer registroEscribano)
+    {
+        List<DtoEscritura> result = new ArrayList<>();
+        try
+        {
+            List<com.licensis.notaire.dto.GenericDto> todasEscrituras = escrituraClient.findAll();
+            for (com.licensis.notaire.dto.GenericDto raw : todasEscrituras)
+            {
+                DtoEscritura esc = new DtoEscritura();
+                esc.setIdEscritura(raw.getInt("idEscritura"));
+                esc.setNumero(raw.getInt("numero") != null ? raw.getInt("numero") : 0);
+                Object fechaObj = raw.get("fechaEscrituracion");
+                if (fechaObj instanceof Number fechaNum)
+                {
+                    esc.setFechaEscrituracion(new java.util.Date(fechaNum.longValue()));
+                }
+                esc.setEstado(raw.getString("estado"));
+                esc.setMatriculaInscripcion(raw.getString("matriculaInscripcion"));
+                result.add(esc);
+            }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al buscar escrituras: " + e.getMessage());
+        }
+        return result;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonCancelar;

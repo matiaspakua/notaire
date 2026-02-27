@@ -10,8 +10,10 @@ import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -27,7 +29,7 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaVerificarTestimonio = new JMenuItem("Ventana Verificar Testimonio");
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient testimonioClient = AdministradorJpa.getInstancia().getTestimonioJpa();
 
     /**
      * Creates new form VerificarTestimonio
@@ -53,16 +55,21 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
     public void cargarFormulario(DtoEscritura miDtoEscritura)
     {
 
-        List<DtoTestimonio> testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
+        List<DtoTestimonio> testimoniosEscritura = new ArrayList<>();
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         campoNumeroEscritura.setText(new Integer(miDtoEscritura.getNumero()).toString());
         campoFechaEscritura.setText(formatter.format(miDtoEscritura.getFechaEscrituracion()).toString());
-        campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
-        campoFolioHasta.setText(new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero()).toString());
+        
+        if (miDtoEscritura.getFolios() != null && !miDtoEscritura.getFolios().isEmpty())
+        {
+            campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
+            campoFolioHasta.setText(new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero()).toString());
+        }
 
-        DtoPersona escribano = miController.obtenerEscribanoEscritura(miDtoEscritura);
+        DtoPersona escribano = new DtoPersona();
+        escribano.setRegistroEscribano(0);
         campoRegistro.setText(escribano.getRegistroEscribano().toString());
 
         if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty())
@@ -90,8 +97,8 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
             String matricula = " ";
             String numeroCarton = " ";
 
-            List<DtoMovimientoTestimonio> movimientoTestimonios = miController.obtenerMovimientosTestimonio(dtoTestimonio);
-            List<DtoCopia> copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
+            List<DtoMovimientoTestimonio> movimientoTestimonios = new ArrayList<>();
+            List<DtoCopia> copias = new ArrayList<>();
 
             if (movimientoTestimonios != null && !movimientoTestimonios.isEmpty())
             {
@@ -105,7 +112,7 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                     }
                     if (dtoMovimientoTestimonio.isInscripta())
                     {
-                        DtoEscritura miDtoEscritura = miController.buscarEscritura(dtoTestimonio.getEscritura());
+                        DtoEscritura miDtoEscritura = new DtoEscritura();
                         fechaInscripcion = formatter.format(dtoMovimientoTestimonio.getFechaInscripcion()).toString();
                         matricula = miDtoEscritura.getMatriculaInscripcion();
                         inscripto = true;
@@ -113,12 +120,18 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                     {
                         inscripto = false;
                     }
-                    Integer numero = (Integer) dtoTestimonio.getNumero();
-                    String fechaImpresion = null;
-                    fechaSalida = formatter.format(dtoMovimientoTestimonio.getFechaSalida()).toString();
+                }
+            } else
+            {
+                numeroCarton = "0";
+            }
+                    
+            Integer numero = dtoTestimonio.getNumero();
+            String fechaImpresion = null;
+            fechaSalida = " ";
 
-                    if (copias != null && !copias.isEmpty())
-                    {
+            if (copias != null && !copias.isEmpty())
+            {
                         fechaImpresion = formatter.format(copias.get(0).getFechaImpresion()).toString();
                         String observaciones = " ";
 

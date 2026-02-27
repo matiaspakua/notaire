@@ -9,8 +9,9 @@ import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,8 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
     private static JMenuItem ventanaGenerarTestimonio = new JMenuItem("Ventana Generar Testimonios");
     private static Integer cantidadCopias = new Integer(0);
     private DtoEscritura miEscritura = null;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient testimonioClient = AdministradorJpa.getInstancia().getTestimonioJpa();
+    private GenericRestClient copiaClient = AdministradorJpa.getInstancia().getCopiaJpa();
     private int numeroTestimonio = 1;
 
     /**
@@ -57,11 +59,11 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
 
         if (miDtoEscritura.getFechaInscripcion() == null)
         {
-            List<DtoTestimonio> testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
+            List<DtoTestimonio> testimoniosEscritura = new ArrayList<>();
 
             if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty())
             {
-                List<DtoMovimientoTestimonio> movimientoTestimonios = miController.obtenerMovimientosTestimonio(testimoniosEscritura.get(testimoniosEscritura.size() - 1));
+                List<DtoMovimientoTestimonio> movimientoTestimonios = new ArrayList<>();
 
                 if (movimientoTestimonios == null)
                 {
@@ -397,7 +399,20 @@ public class GenerarTestimonio extends javax.swing.JInternalFrame
                     misCopias.add(miDtoCopia);
                 }
 
-                Boolean creado = miController.crearTestimonio(miDtoTestimonio, misCopias);
+                Boolean creado = false;
+                
+                try
+                {
+                    com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                    payload.put("numero", miDtoTestimonio.getNumero());
+                    payload.put("observaciones", miDtoTestimonio.getObservaciones());
+                    testimonioClient.create(payload);
+                    creado = true;
+                }
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al crear testimonio: " + e.getMessage());
+                }
 
                 if (creado)
                 {

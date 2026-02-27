@@ -10,6 +10,7 @@ import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,8 +20,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 
 /**
  *
@@ -31,7 +33,7 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame {
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaIngresarParaInscribir = new JMenuItem("Ventana Ingresar Para Inscribir");
     private DtoEscritura escrituraSeleccionada;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient movimientoTestimonioClient = AdministradorJpa.getInstancia().getMovimientoTestimonioJpa();
     private List<DtoTestimonio> testimonios = null;
 
     /**
@@ -55,14 +57,14 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        escrituraSeleccionada = miController.buscarEscritura(dtoEscritura);
+        escrituraSeleccionada = dtoEscritura;
         Boolean cargada = true;
-        testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
+        testimonios = new ArrayList<>();
 
         if (testimonios != null && !testimonios.isEmpty()) {
             DtoTestimonio ultimoTestimonio = testimonios.get(testimonios.size() - 1);
 
-            List<DtoMovimientoTestimonio> movimientos = miController.obtenerMovimientosTestimonio(ultimoTestimonio);
+            List<DtoMovimientoTestimonio> movimientos = new ArrayList<>();
 
             if (movimientos != null && !movimientos.isEmpty()) {
                 if (movimientos.get(movimientos.size() - 1).getFechaInscripcion() != null) {
@@ -495,7 +497,23 @@ public class IngresarParaInscripcion extends javax.swing.JInternalFrame {
                 miDtoMovimientoTestimonio.setFechaIngreso(selectorFechaIngreso.getDate());
                 miDtoMovimientoTestimonio.setObservaciones(campoObservaciones.getText());
 
-                Boolean creado = miController.crearMovimientoTestimonio(miDtoMovimientoTestimonio);
+                Boolean creado = false;
+                
+                try
+                {
+                    com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                    payload.put("numeroCarton", miDtoMovimientoTestimonio.getNumeroCarton());
+                    if (miDtoMovimientoTestimonio.getFechaIngreso() != null)
+                        payload.put("fechaIngreso", miDtoMovimientoTestimonio.getFechaIngreso().getTime());
+                    payload.put("observaciones", miDtoMovimientoTestimonio.getObservaciones());
+                    payload.put("inscripta", miDtoMovimientoTestimonio.isInscripta());
+                    movimientoTestimonioClient.create(payload);
+                    creado = true;
+                }
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(this, "Error al crear movimiento: " + e.getMessage());
+                }
 
                 if (creado) {
                     JOptionPane.showMessageDialog(this, "Se ha registrado el ingreso de inscripcion.", "INFORMACION",

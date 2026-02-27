@@ -72,4 +72,42 @@ public class EscrituraController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/escribanos-disponibles")
+    @Operation(summary = "Obtener lista de escribanos disponibles (con registro)")
+    public ResponseEntity<List<com.licensis.notaire.negocio.Persona>> getEscribanosDisponibles() {
+        try {
+            com.licensis.notaire.jpa.PersonaJpaController personaJpa = com.licensis.notaire.jpa.PersonaJpaController.getInstancia();
+            List<com.licensis.notaire.negocio.Persona> todas = personaJpa.findPersonaEntities();
+            java.util.List<com.licensis.notaire.negocio.Persona> escribanos = new java.util.ArrayList<>();
+            for (com.licensis.notaire.negocio.Persona p : todas) {
+                if (p.getRegistroEscribano() != null && p.getRegistroEscribano() > 0) {
+                    escribanos.add(p);
+                }
+            }
+            return ResponseEntity.ok(escribanos);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/buscar")
+    @Operation(summary = "Buscar escrituras por numero")
+    public ResponseEntity<List<Escritura>> buscarEscrituras(@RequestParam(required = false) Integer numero) {
+        try {
+            List<Escritura> todas = getJpaController().findEscrituraEntities();
+            if (numero == null) {
+                return ResponseEntity.ok(todas);
+            }
+            java.util.List<Escritura> filtradas = new java.util.ArrayList<>();
+            for (Escritura e : todas) {
+                if (numero.equals(e.getNumero())) {
+                    filtradas.add(e);
+                }
+            }
+            return ResponseEntity.ok(filtradas);
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

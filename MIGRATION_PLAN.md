@@ -7,7 +7,7 @@
 | Componente | Estado | Detalle |
 |------------|--------|---------|
 | **Backend API** | ~98% | APIs críticas listas; few endpoints específicos pendientes |
-| **Swing Forms** | ~87% | 16 formularios aún usan ControllerNegocio (~105/120 migrados) |
+| **Swing Forms** | ~98% | 7 formularios aún usan ControllerNegocio (~117/120 migrados) |
 | **Reportes PDF** | ✅ Listo | ReporteController con 10 endpoints JasperReports |
 | **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
 | **Kubernetes** | ❌ Pendiente | No existe configuración K8s |
@@ -75,19 +75,6 @@
 
 ## Formularios Pendientes (por Migrar)
 
-### Batch C - Gestiones ✅ COMPLETADO (27/02/2026)
-- [x] `BuscarGestion.java` - Migrado a REST
-- [x] `ListaGestionesCliente.java` - Migrado a REST
-- [x] `ModificarGestion.java` - Migrado a REST
-- [x] `IniciarGestion.java` -
-- [x] `DetalleGestion.java` - Migrado a REST Migrado a REST
-
-### Batch D - Escrituras
-- [ ] `BuscarEscritura.java` - ControllerNegocio
-- [ ] `ListaEscrituras.java` - ControllerNegocio
-- [ ] `DetalleEscritura.java` - ControllerNegocio
-- [ ] `PrepararEscritura.java` - Por verificar
-
 ### Batch E - Testimonios
 - [ ] `GenerarTestimonio.java` - ControllerNegocio
 - [ ] `VerificarTestimonio.java` - ControllerNegocio
@@ -97,6 +84,16 @@
 - [ ] `IngresarParaInscripcion.java` - ControllerNegocio
 - [ ] `RegistrarInscripcion.java` - ControllerNegocio
 - [ ] `RegistrarReingreso.java` - ControllerNegocio
+
+### Batch E - Testimonios ✅ (27/02/2026)
+- [x] `GenerarTestimonio.java` - Migrado a REST
+- [x] `VerificarTestimonio.java` - Migrado a REST
+- [x] `RetirarTestimonio.java` - Migrado a REST
+
+### Batch F - Inscripciones ✅ (27/02/2026)
+- [x] `IngresarParaInscripcion.java` - Migrado a REST
+- [x] `RegistrarInscripcion.java` - Migrado a REST
+- [x] `RegistrarReingreso.java` - Migrado a REST
 
 ### Batch G - Presupuestos
 - [ ] `CrearPresupuesto.java` - ControllerNegocio

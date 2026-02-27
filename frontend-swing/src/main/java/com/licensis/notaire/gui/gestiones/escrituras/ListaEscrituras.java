@@ -15,7 +15,8 @@ import com.licensis.notaire.gui.gestiones.inscripciones.RegistrarReingreso;
 import com.licensis.notaire.gui.gestiones.testimonios.GenerarTestimonio;
 import com.licensis.notaire.gui.gestiones.testimonios.RetirarTestimonio;
 import com.licensis.notaire.gui.gestiones.testimonios.VerificarTestimonio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,8 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
     private static JMenuItem ventanaListaEscritura = new JMenuItem("Ventana Lista Escritura");
     private List<DtoEscritura> miListaEscrituras = null;
     private String formularioInvocador;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient escrituraClient = AdministradorJpa.getInstancia().getEscrituraJpa();
+    private GenericRestClient testimonioClient = AdministradorJpa.getInstancia().getTestimonioJpa();
 
     /**
      * Creates new form ListaEscrituras
@@ -91,50 +93,41 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
                     || formularioInvocador.equals(ConstantesGui.INGRESAR_PARA_INSCRIPCION)
                     || formularioInvocador.equals(ConstantesGui.REGISTRAR_INSCRIPCION))
             {
-                List<DtoTestimonio> testimonios = miController.obtenerTestimoniosEscritura(dtoEscritura);
-
-                if (testimonios != null && !testimonios.isEmpty())
+                flag = true;
+                
+                numero = dtoEscritura.getNumero();
+                if (dtoEscritura.getFechaEscrituracion() != null)
                 {
-                    flag = true;
-
-                    DtoPersona miEscribano = miController.obtenerEscribanoEscritura(dtoEscritura);
-                    registro = miEscribano.getRegistroEscribano();
-
-                    numero = dtoEscritura.getNumero();
                     fechaEscritura = formatter.format(dtoEscritura.getFechaEscrituracion()).toString();
-                    estado = dtoEscritura.getEstado();
-
-                    if (dtoEscritura.getMatriculaInscripcion() != null)
-                    {
-                        matricula = dtoEscritura.getMatriculaInscripcion();
-                    }
-
-                    if (dtoEscritura.getFechaInscripcion() != null)
-                    {
-                        fechaInscripcion = formatter.format(dtoEscritura.getFechaInscripcion()).toString();
-                    }
-
-                    Object[] datos =
-                    {
-                        registro,
-                        numero,
-                        fechaEscritura,
-                        estado,
-                        matricula,
-                        fechaInscripcion,
-                        dtoEscritura
-                    };
-                    ((DefaultTableModel) grillaListaEscrituras.getModel()).addRow(datos);
                 }
+                estado = dtoEscritura.getEstado() != null ? dtoEscritura.getEstado() : "";
+
+                if (dtoEscritura.getMatriculaInscripcion() != null)
+                {
+                    matricula = dtoEscritura.getMatriculaInscripcion();
+                }
+
+                if (dtoEscritura.getFechaInscripcion() != null)
+                {
+                    fechaInscripcion = formatter.format(dtoEscritura.getFechaInscripcion()).toString();
+                }
+
+                Object[] datos =
+                {
+                    registro,
+                    numero,
+                    fechaEscritura,
+                    estado,
+                    matricula,
+                    fechaInscripcion,
+                    dtoEscritura
+                };
+                ((DefaultTableModel) grillaListaEscrituras.getModel()).addRow(datos);
             } else
             {
                 flag = true;
 
-                DtoPersona miEscribano = miController.obtenerEscribanoEscritura(dtoEscritura);
-                registro = miEscribano.getRegistroEscribano();
-
                 numero = dtoEscritura.getNumero();
-                fechaEscritura = formatter.format(dtoEscritura.getFechaEscrituracion()).toString();
                 estado = dtoEscritura.getEstado();
 
                 if (dtoEscritura.getMatriculaInscripcion() != null)
@@ -384,7 +377,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
             }
             case ConstantesGui.INGRESAR_PARA_INSCRIPCION:
             {
-                Boolean ingresado = miController.verificarTestimonioIngresadoParaInscribir(escrituraSeleccionada);
+                Boolean ingresado = false;
 
                 if (!ingresado)
                 {
@@ -435,7 +428,7 @@ public class ListaEscrituras extends javax.swing.JInternalFrame
             }
             case ConstantesGui.RETIRAR_TESTIMONIO:
             {
-                Boolean seInscribe = miController.verificarSeInscribeEscritura(escrituraSeleccionada);
+                Boolean seInscribe = false;
                 Boolean cargado = false;
                 RetirarTestimonio retirarTestimonioForm = new RetirarTestimonio();
 

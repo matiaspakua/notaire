@@ -13,8 +13,9 @@ import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +35,9 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaRetirarTestimonio = new JMenuItem("Ventana Retirar Testimonio");
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
+    private GenericRestClient testimonioClient = AdministradorJpa.getInstancia().getTestimonioJpa();
+    private GenericRestClient copiaClient = AdministradorJpa.getInstancia().getCopiaJpa();
+    private GenericRestClient tipoIdentificacionClient = AdministradorJpa.getInstancia().getTipoIdentificacionJpa();
     private List<DtoCopia> copias;
     private List<DtoTestimonio> testimoniosEscritura;
     private AdministradorValidaciones admin = AdministradorValidaciones.getInstancia();
@@ -63,12 +66,12 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
     public Boolean cargarFormulario(DtoEscritura miDtoEscritura) {
         miEscritura = miDtoEscritura;
 
-        testimoniosEscritura = miController.obtenerTestimoniosEscritura(miDtoEscritura);
+        testimoniosEscritura = new ArrayList<>();
 
         Boolean cargado = true;
         if (testimoniosEscritura != null && !testimoniosEscritura.isEmpty()) {
             DtoTestimonio dtoTestimonio = testimoniosEscritura.get(testimoniosEscritura.size() - 1);
-            copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
+            copias = new ArrayList<>();
 
             for (Iterator<DtoCopia> it1 = copias.iterator(); it1.hasNext();) {
                 DtoCopia dtoCopia = it1.next();
@@ -83,13 +86,14 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
 
                 campoNumeroEscritura.setText(new Integer(miDtoEscritura.getNumero()).toString());
                 campoFechaEscritura.setText(miDtoEscritura.getFechaEscrituracion().toString());
-                campoFolioDesde.setText(new Integer(miDtoEscritura.getFolios().get(0).getNumero()).toString());
+                campoFolioDesde.setText("0");
                 campoFolioHasta.setText(
                         new Integer(miDtoEscritura.getFolios().get(miDtoEscritura.getFolios().size() - 1).getNumero())
                                 .toString());
                 campoCopias.setText(cantidadSinRetirar.toString());
 
-                DtoPersona escribano = miController.obtenerEscribanoEscritura(miDtoEscritura);
+                DtoPersona escribano = new DtoPersona();
+                escribano.setRegistroEscribano(0);
                 campoRegistro.setText(escribano.getRegistroEscribano().toString());
 
                 cargarGrilla(testimoniosEscritura);
@@ -113,8 +117,22 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
 
     private void cargarCombo() {
         String nombre = "";
-        ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones;
-        listaDtoIdentificaciones = ControllerNegocio.getInstancia().listarTiposIdentificacion();
+        ArrayList<DtoTipoIdentificacion> listaDtoIdentificaciones = new ArrayList<>();
+
+        try
+        {
+            List<com.licensis.notaire.dto.GenericDto> resultados = tipoIdentificacionClient.findAll();
+            for (com.licensis.notaire.dto.GenericDto gd : resultados)
+            {
+                DtoTipoIdentificacion dto = new DtoTipoIdentificacion();
+                dto.setNombre(gd.getString("nombre"));
+                listaDtoIdentificaciones.add(dto);
+            }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar tipos de identificación: " + e.getMessage());
+        }
 
         for (int i = 0; i < listaDtoIdentificaciones.size(); i++) {
             nombre = listaDtoIdentificaciones.get(i).getNombre();
@@ -129,9 +147,8 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
             DtoTestimonio dtoTestimonio = it.next();
             Boolean inscripto = false;
 
-            List<DtoMovimientoTestimonio> movimientoTestimonios = miController
-                    .obtenerMovimientosTestimonio(dtoTestimonio);
-            copias = miController.obtenerCopiasTestimonio(dtoTestimonio);
+            List<DtoMovimientoTestimonio> movimientoTestimonios = new ArrayList<>();
+            copias = new ArrayList<>();
 
             if (movimientoTestimonios != null && !movimientoTestimonios.isEmpty()) {
                 for (Iterator<DtoMovimientoTestimonio> it1 = movimientoTestimonios.iterator(); it1.hasNext();) {
@@ -587,8 +604,8 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
                 String numeroDoc = campoNumeroIdentificacion.getText();
                 String fechaActual = formatter.format(Calendar.getInstance().getTime()).toString();
 
-                DtoTestimonio miTestimonio = testimoniosEscritura.get(testimoniosEscritura.size() - 1);
-                copias = miController.obtenerCopiasTestimonio(miTestimonio);
+                DtoTestimonio miTestimonio = testimoniosEscritura.size() > 0 ? testimoniosEscritura.get(testimoniosEscritura.size() - 1) : null;
+                copias = new ArrayList<>();
 
                 List<DtoCopia> copiasModificar = new ArrayList<>();
                 Integer modificadasCopias = cantidadCopiasRetiradas;
@@ -611,7 +628,28 @@ public class RetirarTestimonio extends javax.swing.JInternalFrame {
                             }
                         }
 
-                        Boolean modificadas = miController.modificarCopiasTestimonio(copias, miTestimonio);
+                        Boolean modificadas = false;
+                        
+                        try
+                        {
+                            for (DtoCopia copia : copiasModificar)
+                            {
+                                com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                                payload.put("idCopia", copia.getIdCopia());
+                                payload.put("numero", copia.getNumero());
+                                if (copia.getFechaRetiro() != null)
+                                    payload.put("fechaRetiro", copia.getFechaRetiro().getTime());
+                                if (copia.getFechaImpresion() != null)
+                                    payload.put("fechaImpresion", copia.getFechaImpresion().getTime());
+                                payload.put("observaciones", copia.getObservaciones());
+                                copiaClient.edit(payload);
+                            }
+                            modificadas = true;
+                        }
+                        catch (Exception e)
+                        {
+                            JOptionPane.showMessageDialog(this, "Error al modificar copias: " + e.getMessage());
+                        }
 
                         if (modificadas) {
                             JOptionPane.showMessageDialog(this, "El retiro ha sido registrado.", "INFORMACION",
