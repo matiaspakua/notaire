@@ -15,6 +15,7 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
+import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
 import com.licensis.notaire.servicios.GenericRestClient;
@@ -35,6 +36,7 @@ public class DetalleEscritura extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaDetalleEscritura = new JMenuItem("Ventana Detalle Escritura");
     private List<DtoFolio> foliosDisponibles = new ArrayList<>();
+    private ControllerNegocio miController = ControllerNegocio.getInstancia();
     private GenericRestClient gestionClient = AdministradorJpa.getInstancia().getGestionJpa();
     private GenericRestClient escrituraClient = AdministradorJpa.getInstancia().getEscrituraJpa();
     private GenericRestClient tramiteClient = AdministradorJpa.getInstancia().getTramiteJpa();

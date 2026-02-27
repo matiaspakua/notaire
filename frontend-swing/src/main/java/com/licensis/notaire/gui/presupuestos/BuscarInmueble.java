@@ -5,8 +5,10 @@
 package com.licensis.notaire.gui.presupuestos;
 
 import com.licensis.notaire.dto.DtoInmueble;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,7 +18,7 @@ import javax.swing.JOptionPane;
 public class BuscarInmueble extends javax.swing.JInternalFrame
 {
 
-    private ControllerNegocio miController = null;
+    private GenericRestClient inmuebleClient = AdministradorJpa.getInstancia().getInmuebleJpa();
     private DetalleValoresTramites detalle;
 
     /**
@@ -25,7 +27,6 @@ public class BuscarInmueble extends javax.swing.JInternalFrame
     public BuscarInmueble()
     {
         initComponents();
-        miController = ControllerNegocio.getInstancia();
     }
 
     public void setDetalle(DetalleValoresTramites referencia)
@@ -143,7 +144,27 @@ public class BuscarInmueble extends javax.swing.JInternalFrame
             DtoInmueble dto = new DtoInmueble();
             dto.setNomenclaturaCatastral(campoNC.getText());
 
-            DtoInmueble encontrado = miController.buscarInmueble(dto);
+            DtoInmueble encontrado = null;
+            
+            try
+            {
+                List<com.licensis.notaire.dto.GenericDto> resultados = inmuebleClient.findAll();
+                for (com.licensis.notaire.dto.GenericDto gd : resultados)
+                {
+                    String nc = gd.getString("nomenclaturaCatastral");
+                    if (nc != null && nc.equals(campoNC.getText()))
+                    {
+                        encontrado = new DtoInmueble();
+                        encontrado.setIdInmueble(gd.getInt("idInmueble"));
+                        encontrado.setNomenclaturaCatastral(nc);
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "Error al buscar inmueble: " + e.getMessage());
+            }
 
             if (encontrado != null)
             {

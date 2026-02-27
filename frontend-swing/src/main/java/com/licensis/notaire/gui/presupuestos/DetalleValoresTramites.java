@@ -11,9 +11,11 @@ import com.licensis.notaire.dto.DtoPresupuesto;
 import com.licensis.notaire.dto.DtoTipoDeTramite;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.gui.Principal;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.AdministradorValidaciones;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -30,7 +32,7 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
     private static JMenuItem ventanaDetalleValoresTramitePresupuesto = new JMenuItem("Ventana Detalle Valores Tramite Presupuestos");
     private DtoTipoDeTramite miTipoTramite = null;
     private ArrayList<DtoConcepto> conceptos = null;
-    private ControllerNegocio miController = null;
+    private GenericRestClient conceptoClient = AdministradorJpa.getInstancia().getConceptoJpa();
     private DtoInmueble inmuebleEncontrado = null;
     private AdministradorValidaciones validador = AdministradorValidaciones.getInstancia();
     private DtoTramite miDtoTramite = new DtoTramite();
@@ -45,7 +47,6 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
-        miController = ControllerNegocio.getInstancia();
     }
 
     private void salir()
@@ -105,7 +106,27 @@ public class DetalleValoresTramites extends javax.swing.JInternalFrame
 
     private void cargarGrillas()
     {
-        conceptos = miController.obtenerConceptosTramite(miTipoTramite);
+        conceptos = new ArrayList<>();
+        
+        try
+        {
+            List<com.licensis.notaire.dto.GenericDto> resultados = conceptoClient.findAll();
+            for (com.licensis.notaire.dto.GenericDto gd : resultados)
+            {
+                DtoConcepto concepto = new DtoConcepto();
+                concepto.setNombre(gd.getString("nombre"));
+                concepto.setIdConcepto(gd.getInt("idConcepto"));
+                Boolean habilitado = gd.getBoolean("habilitado");
+                if (habilitado != null && habilitado)
+                {
+                    conceptos.add(concepto);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar conceptos: " + e.getMessage());
+        }
 
         if (!conceptos.isEmpty())
         {

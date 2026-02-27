@@ -8,8 +8,6 @@ import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.GenericRestClient;
-import com.licensis.notaire.dto.DtoTipoDeTramite;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +31,6 @@ public class ModificarPlantillaPresupuesto extends javax.swing.JInternalFrame {
     private GenericRestClient presupuestoClient;
     private GenericRestClient tipoTramiteClient = null;
     private GenericRestClient conceptoClient = null;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
     private GenericRestClient plantillaPresupuestoClient = null;
     private List<GenericDto> tramitesDisponibles = null;
     private List<GenericDto> conceptosDisponibles = null;

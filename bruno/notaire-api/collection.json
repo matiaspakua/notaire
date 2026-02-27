@@ -1,0 +1,12 @@
+{
+  "name": "Notaire API",
+  "version": "1.0.0",
+  "environments": [
+    {
+      "name": "Local",
+      "variables": {
+        "baseUrl": "http://localhost:8080"
+      }
+    }
+  ]
+}

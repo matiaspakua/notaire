@@ -2,9 +2,8 @@
 
 ## Resumen del Proyecto
 
-**Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 10 años como una aplicación monolítica Java Swing con conexión directa a MySQL. Este proyecto documenta el proceso de refactoring y modernización completa del sistema hacia una arquitectura moderna de microservicios.
+**Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años (en el último año de universidad)como una aplicación monolítica Java Swing con conexión directa a MySQL. Este proyecto documenta el proceso de refactoring y modernización completa del sistema hacia una arquitectura moderna de microservicios.
 
----
 
 ## Introducción: El Proceso de Refactoring
 
@@ -14,7 +13,7 @@ El código original de Notaire, aunque funcional, presentaba varios problemas qu
 
 1. **Acoplamiento fuerte**: La GUI Swing estaba directamente conectada a la base de datos MySQL mediante JDBC, sin ninguna capa de abstracción
 2. **Sin separación de responsabilidades**: La lógica de negocio, la presentación y el acceso a datos estaban entremezcladas en los mismos formularios
-3. **Tecnología obsoleta**: Java 8 (sin actualizaciones de seguridad), MySQL 5.7, y librerías sin soporte
+3. **Tecnología obsoleta**: Java 6 (sin actualizaciones de seguridad), MySQL 5.7, y librerías sin soporte
 4. **Sin integración externa**: No existía forma de comunicar la aplicación con otros sistemas
 5. **Dificultad de mantenimiento**: Cualquier cambio requería modificar código directamente relacionado con la interfaz gráfica
 
@@ -23,39 +22,58 @@ El código original de Notaire, aunque funcional, presentaba varios problemas qu
 El objetivo principal fue transformar el monolito Java en una arquitectura moderna:
 
 ```
-Monolito Java Swing  →  API REST + PostgreSQL + Docker
+Monolito Java Swing  →  API REST + PostgreSQL + Docker + Tecnologías nuevas
 (10+ años)               (2026)
 ```
 
 **Arquitectura objetivo:**
-- **Backend**: API REST con Spring Boot 3.2.9 y Java 21 LTS
-- **Frontend**: Cliente Swing que consume la API REST
+
+Como parte del proceso de "modernización" (o refactoring), la idea es transformar progresivamente el proyecto original en un sistema conformado de multiples servicios separados, que tengan su propio ciclo de vida independiente.
+
+
+
+- **Backend**: API REST con Spring Boot 3.2.9 y Java 21 LTS (luego modernizar a Java 25 LTS)
+- **Frontend**: Cliente Swing que consume la API REST (luego, implementar un nuevo frontend con tecnología a definir.)
 - **Base de Datos**: PostgreSQL 16 en contenedor Docker
-- **Módulos**: Separación en backend-api, frontend-swing, notary-shared
-- **Documentación**: Swagger/OpenAPI para la API REST
+- **Módulos**: Separación en backend-api, frontend-swing, notary-shared (librería compartida)
+- **Documentación**: 
+  - En el repositorio;
+  - Análisis y Diseño: documentación especifica del proyecto (migrada desde la origina)
+  - Swagger/OpenAPI para la API REST
+  - Proceso de testing: test plan, procedure, test cases y test report.
+  - Otras metricas y observabilidad del sistema.
+
+ 
 
 ## Herramientas de IA Utilizadas en la Migración
 
-Durante el proceso de migración de Notaire, fui utilizando diferentes herramientas de inteligencia artificial para asistir en el refactoring. Cada una aportando capacidades únicas que fueron evolucionando con las necesidades del proyecto.
+Durante el proceso de migración de Notaire, fui utilizando diferentes herramientas de inteligencia artificial para asistir en el refactoring. Cada una aportando diferentes capacidades que fueron evolucionando con las necesidades del proyecto.
 
 ### Fase 1: Google Antigravity (Primeros Pasos)
 
-Mi primer acercamiento a la IA para este proyecto fue **Google Antigravity**, una herramienta de Google que permite hacer búsquedas en repositorios de código. En aquel momento, necesitaba entender cómo estaban estructurados ciertos patrones en el código existente y buscar ejemplos similares.
+Mi primer acercamiento a la IA para este proyecto fue **Google Antigravity**, una herramienta de Google en modo agente integrado con Visual Studio CODE y actuando direntamente sobre el repositorios de código. En aquel momento, necesitaba entender cómo estaban estructurados ciertos patrones en el código existente y buscar ejemplos similares.
 
 **Qué utilicé:**
 - Búsqueda de patrones de código en el proyecto
 - Identificación de dependencias entre clases
 - Ejemplos de implementación de patrones similares
+- Primeros pasos de migración y validación del código
+- Generación de los primeros test unitarios.
 
-**Limitaciones:**
-- Solo búsqueda, sin capacidad de generar código
-- Sin contexto del proyecto completo
 
----
+**Configuración inicial:**
+```bash
+# Instalar Antigravity
+sudo apt-get update
+sudo apt-get install antigravity
+
+# Login usando una cuenta de goole.
+```
+
 
 ### Fase 2: Visual Studio Code con Copilot
 
-Avanzamos a **VS Code con Copilot**, lo que representó un salto significativo en productividad. Copilot podía sugerir código en tiempo real basándose en el contexto del archivo.
+Avanzamos a **VS Code con Copilot**. Muy similar a Antigravity, también un agente de AI basado en VS CODE.
 
 **Qué utilicé:**
 - Autocompletado inteligente de código
@@ -64,6 +82,7 @@ Avanzamos a **VS Code con Copilot**, lo que representó un salto significativo e
 - Generación de tests unitarios
 
 **Configuración inicial:**
+
 ```bash
 # Instalar VS Code
 sudo apt-get update
@@ -78,14 +97,8 @@ sudo apt-get install code
 "Explica qué hace este método y cómo podría refactorizarlo para seguir principios SOLID"
 ```
 
-**Limitaciones:**
-- Sin acceso a herramientas externas (bash, sistema de archivos)
-- Contexto limitado al archivo actual
-- Sin capacidad de ejecutar comandos
 
----
-
-### Fase 3: Cursor (Versión Paid)
+### Fase 3: Cursor (Versión paga)
 
 **Cursor** fue un cambio de paradigma. Es un IDE basado en VS Code pero potenciado con IA avanzado. La versión de pago incluye:
 - **Modo Edit**: Edita código en todo el proyecto
@@ -97,13 +110,12 @@ sudo apt-get install code
 - Editores de código multi-archivo
 - Búsqueda semántica en todo el proyecto
 - Terminal integrada con IA
-- Reglas personalizadas del proyecto (`.cursorrules`)
+- Reglas personalizadas del proyecto (`.cursor/rules`)
 
-**Archivo de configuración de Cursor (`.cursorrules`):**
-Cursor permite definir reglas específicas del proyecto en un archivo `.cursorrules`:
+**Archivo de configuración de Cursor (`.cursor/rules`):**
+Cursor permite definir reglas específicas del proyecto en un archivo `/rules`:
 
 ```markdown
-# .cursorrules
 # Reglas específicas para el proyecto Notaire
 
 [Rules]
@@ -114,16 +126,42 @@ Cursor permite definir reglas específicas del proyecto en un archivo `.cursorru
 - Tests con JUnit 5
 ```
 
-**Limitaciones:**
-- No tiene acceso a herramientas externas como Docker
-- No puede ejecutar la aplicación
-- Contexto limitado a lo que está en el editor
 
----
+### Reglas
+
+Ya para ésta altura, comenzo a cobrar mucha importancia el hecho de como definir el contexto de los agentes de AI. El contexto se refiere a indicaciones generales que ayudan y acotan a los agentes de AI en las tareas que los usuarios necesitan, basadon en el contexto de negocio, organización y procesos y prácticas entre otras cosas.
+
+En Cursor, se pueden definir desde reglas e indicaciones a nivel "agente" general y luego, con mayor nivel de granularidad a nivel de "procesos" o metodologías concretas:
+
+Por ejemplo, en la raiz del repositorio, se puede crear un archivo Markdown llamado "AGENT.md" que le indica a nivel general al agente, como se debe comportar.
+
+Luego, dentro de el directorio ".cursor" se pueden crear subcarpetas con conjunto de reglas especificas, por ejemplo:
+
+```
+.cursor/programming/RULE.md
+.cursor/analysis/RULE.md
+.cursor/devops/RULE.md
+.cursor/testing/RULE.md
+...
+
+```
+
+Las herramientas basadas en agentes (VS Code Copilot, Google Antigravity, Cursor, etc), leen estos archivos y configuran el "contexto" necesario para que el agente de AI al momento de ejecutar las instrucciones dadas por el ususario (prompt's), se guien basandose en el contexto del proyecto.
+
+
+
+
+### Markdown: el lenguaje de los agentes de AI
+
+// TODO explicar este concepto: facilidad de lectura y reducción de uso de token.
+
+
 
 ### Fase 4: OpenCode (Actual)
 
-Actualmente estoy utilizando **OpenCode**, una herramienta de código abierto que está revolucionando la forma de trabajar con IA. Lo que hace a OpenCode único es su arquitectura basada en **MCP (Model Context Protocol)**.
+Luego comence con **OpenCode**, una herramienta de código abierto que está revolucionando la forma de trabajar con IA. Lo que hace a OpenCode único es su arquitectura opensource, que permite configurar muchos modelos de AI y permite extender su funcionalidad con las capacidades basadas en **MCP (Model Context Protocol)**, LSP y plugins.
+
+
 
 #### ¿Qué es OpenCode?
 
@@ -133,6 +171,8 @@ OpenCode es un asistente de IA diseñado específicamente para tareas de ingenie
 - **Servidores MCP**: Conectar con servicios externos (bases de datos, APIs, Docker, Draw.io, Excalidraw)
 - **Agentes especializados**: Diferentes tipos de agentes para diferentes tareas
 - **Memoria persistente**: Mantiene contexto entre sesiones
+
+
 
 #### Instalación de OpenCode
 
@@ -146,7 +186,7 @@ opencode --version
 
 #### Configuración de Servidores MCP
 
-Una de las características más poderosas de OpenCode son los **MCP Servers**. Permiten conectar herramientas externas directamente al contexto de IA.
+Una de las características más poderosas de las herramientas tipo CLI como OpenCode son los **MCP Servers**. Permiten conectar herramientas externas directamente al contexto de IA.
 
 **Instalación y configuración de MCPs:**
 
@@ -290,7 +330,7 @@ Los archivos **rules** contienen reglas de codificación específicas del proyec
 
 ### 3. AGENTS (OpenCode)
 
-El archivo **AGENTS.md** es específico de OpenCode. Contiene instrucciones detalladas para el agente, incluyendo:
+El archivo **AGENTS.md** de OpenCode contiene instrucciones detalladas para el agente, incluyendo:
 
 - Comandos de build y ejecución
 - Convenciones de código del proyecto
@@ -344,20 +384,6 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 | Spring Boot | https://spring.io/projects/spring-boot |
 | Java 21 | https://docs.oracle.com/en/java/javase/21/ |
 
----
-
-## Comparativa de Herramientas
-
-| Característica | Antigravity | VS Code + Copilot | Cursor (Paid) | OpenCode |
-|---------------|-------------|-------------------|---------------|----------|
-| **Búsqueda de código** | ✅ | ✅ | ✅ | ✅ |
-| **Generación de código** | ❌ | ✅ | ✅ | ✅ |
-| **Ejecutar terminal** | ❌ | ❌ | ✅ | ✅ |
-| **Archivos del proyecto** | ❌ | Parcial | ✅ | ✅ |
-| **Herramientas externas** | ❌ | ❌ | ❌ | ✅ (MCP) |
-| **Diagramas** | ❌ | ❌ | ❌ | ✅ (Draw.io, Excalidraw) |
-| **Servidores MCP** | ❌ | ❌ | ❌ | ✅ |
-| **Costo** | Gratuito | Gratuito/Pago | Pago | **Gratuito** (open source) |
 
 ---
 
@@ -397,17 +423,8 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 - **OpenCode**: https://opencode.ai
 - **Documentación OpenCode**: https://docs.opencode.ai
 - **MCP Specification**: https://spec.modelcontextprotocol.io
-- **Awesome MCP Servers**: https://github.com/modelcontextprotocol/awesome-mcp-servers
-- 
+- **Awesome MCP Servers**: https://github.com/modelcontextprotocol/awesome-mcp-servers 
 
-### Comunidad
-
-- **OpenCode Discord**: https://discord.gg/opencode
-- **r/opencode**: https://reddit.com/r/opencode
-
----
-
-*Esta sección fue documentada el 25 de Febrero de 2026*
 
 ---
 
@@ -416,6 +433,11 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 
 ![Arquitectura Original](images/arquitectura-original.png)
+
+
+Algo interesante es que la imagen fue generada usando Drawio conectado por MCP, entonces le pedi a OpenCode que generara el diagrama leyendo el código original (viejo).
+
+
 
 ### Componentes de la Arquitectura Original
 
@@ -435,7 +457,6 @@ La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 4. **Java 8 obsoleto**: Sin actualizaciones de seguridad
 5. **Sin API REST**: No existe forma de integración con sistemas externos
 
----
 
 ## Arquitectura Actual (Refactorizada)
 
@@ -459,7 +480,6 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 | | HikariCP | Pool de conexiones |
 | **Shared** | notary-shared | DTOs y código común |
 
----
 
 ## Cronología del Proceso de Migración
 
@@ -476,7 +496,6 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
 **Estado inicial**: Aplicación monolítica Java 7/8 con MySQL, GUI Swing, conexión directa a base de datos.
 
----
 
 ### Fase 2: Inicio del Refactoring (Diciembre 2025)
 
@@ -495,7 +514,6 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 - Upgrade a Java 21 LTS y Spring Boot 3.2.9
 - Preparación para migrar de MySQL a PostgreSQL
 
----
 
 ### Fase 3: Refactoring Principal (Enero-Febrero 2026)
 
@@ -518,7 +536,6 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 - Implementación de Docker Compose con PostgreSQL
 - Migración de formularios Swing de ControllerNegocio a REST API
 
----
 
 ### Fase 4: Estado Actual (Febrero 2026)
 
@@ -530,7 +547,7 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 | **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
 | **Tests E2E** | Parcial | Shell tests; JUnit domain tests |
 
----
+
 
 ## Proceso de Migración de Base de Datos
 

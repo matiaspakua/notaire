@@ -8,8 +8,6 @@ import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.GenericRestClient;
-import com.licensis.notaire.dto.DtoTipoDeTramite;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,9 +30,8 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame {
     private GenericRestClient presupuestoClient;
     private GenericRestClient tipoTramiteClient;
     private GenericRestClient conceptoClient;
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
-    private GenericRestClient plantillaPresupuestoClient = null;
-    private List<DtoTipoDeTramite> tramitesDisponibles = new ArrayList<>();
+    private GenericRestClient plantillaPresupuestoClient = AdministradorJpa.getInstancia().getPlantillaPresupuestoJpa();
+    private List<GenericDto> tramitesDisponibles = new ArrayList<>();
     private List<GenericDto> conceptosDisponibles = new ArrayList<>();
     private GenericDto miDtoSeleccionado = null;
     private List<GenericDto> plantillasPresupuestoTramite = null;
@@ -77,7 +74,15 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame {
         tramitesDisponibles = null;
         plantillasPresupuestoTramite = null;
         conceptosDisponibles = null;
-        tramitesDisponibles = miController.buscarTiposDeTramiteHabilitados();
+        try {
+            tramitesDisponibles = tipoTramiteClient.findAll();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar tipos de tramite: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            logger.log(Level.SEVERE, "Error al cargar tipos de tramite", ex);
+            salir();
+            return cargo;
+        }
 
         if (tramitesDisponibles.isEmpty() || tramitesDisponibles == null) {
             listaTramitesDisponibles.setEnabled(false);
@@ -93,12 +98,25 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame {
 
             DefaultListModel lista = new DefaultListModel();
 
-            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();) {
-                DtoTipoDeTramite miDto = it.next();
-                Boolean tienePlantilla = miController.existePlantillaPresupuesto(miDto);
+            for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();) {
+                GenericDto miDto = it.next();
+                Boolean habilitado = miDto.getBoolean("habilitado");
+                if (habilitado != null && habilitado) {
+                    Integer idTipoTramite = miDto.getInt("idTipoTramite");
+                    List<GenericDto> plantillas;
+                    try {
+                        plantillas = plantillaPresupuestoClient.findAllByPath("tipo-tramite/" + idTipoTramite);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, "Error al verificar plantillas: " + ex.getMessage(), "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        logger.log(Level.SEVERE, "Error al verificar plantillas", ex);
+                        salir();
+                        return cargo;
+                    }
 
-                if (!tienePlantilla) {
-                    lista.addElement(miDto.getString("nombre"));
+                    if (plantillas == null || plantillas.isEmpty()) {
+                        lista.addElement(miDto.getString("nombre"));
+                    }
                 }
             }
 
@@ -464,7 +482,7 @@ public class CrearPlantillaPresupuesto extends javax.swing.JInternalFrame {
 
             String seleccionado = listaTramitesDisponibles.getSelectedValue().toString();
 
-            for (Iterator<DtoTipoDeTramite> it = tramitesDisponibles.iterator(); it.hasNext();) {
+            for (Iterator<GenericDto> it = tramitesDisponibles.iterator(); it.hasNext();) {
                 GenericDto dtoTipoDeTramite = it.next();
 
                 // Completo los datos en los componentes

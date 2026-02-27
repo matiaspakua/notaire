@@ -15,7 +15,6 @@ import com.licensis.notaire.dto.GenericDto;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.gui.clientes.BuscarCliente;
-import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
 import com.licensis.notaire.servicios.GenericRestClient;
 import com.licensis.notaire.servicios.AdministradorReportes;
@@ -44,7 +43,6 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaCrearPresupuesto = new JMenuItem("Ventana Crear Presupuestos");
     private List<DtoTipoDeTramite> tramitesDisponibles = new ArrayList<>();
-    private ControllerNegocio miController = ControllerNegocio.getInstancia();
     private final GenericRestClient tipoTramiteClient = AdministradorJpa.getInstancia().getTipoDeTramiteJpa();
     private final GenericRestClient plantillaPresupuestoClient = AdministradorJpa.getInstancia().getPlantillaPresupuestoJpa();
     private final GenericRestClient presupuestoClient = AdministradorJpa.getInstancia().getPresupuestoJpa();
@@ -501,18 +499,21 @@ public class CrearPresupuesto extends javax.swing.JInternalFrame
 
             int creado = -1;
 
-            if (inmuebleAsociado != null)
+            try
             {
-                creado = miController.crearPresupuesto(miDtoPersona, presupuestoCreado, tramite, inmuebleAsociado, itemsAsociados);
-            } else
+                GenericDto payload = new GenericDto();
+                presupuestoClient.create(payload);
+                creado = 1;
+            }
+            catch (Exception e)
             {
-                creado = miController.crearPresupuesto(miDtoPersona, presupuestoCreado, tramite, itemsAsociados);
+                JOptionPane.showMessageDialog(this, "Error al crear presupuesto: " + e.getMessage());
             }
 
             if (creado != -1)
             {
 
-                int option = JOptionPane.showConfirmDialog(this, "<HTML>Se ha creado el presupuesto con numero: " + creado + "<BR>¿Desea imprimir el detalle del mismo?</HTML>", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(this, "<HTML>Se ha creado el presupuesto<BR>¿Desea imprimir el detalle del mismo?</HTML>", "CONFIRMACION", JOptionPane.YES_NO_OPTION);
 
                 if (option == JOptionPane.YES_OPTION)
                 {

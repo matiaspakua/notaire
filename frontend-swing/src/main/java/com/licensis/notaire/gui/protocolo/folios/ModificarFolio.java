@@ -14,7 +14,10 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +34,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
 
     private static JMenuItem ventanaModificarFolio = new JMenuItem("Ventana Modificar Folio");
     private static Boolean estadoFormulario = Boolean.FALSE;
-    private ControllerNegocio miController = null;
+    private GenericRestClient folioClient = AdministradorJpa.getInstancia().getFolioJpa();
+    private GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
     private List<DtoPersona> milistaEscribanos = null;
     private List<DtoFolio> dtoListaFolios = null;
     private Integer folioSeleccionado = null;
@@ -43,7 +47,6 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioNormalVertical);
-        this.miController = ControllerNegocio.getInstancia();
         this.cargarRegistrosEscribanos();
         this.cargarEstadosFolios();
     }
@@ -63,20 +66,33 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
     }
 
     public void cargarRegistrosEscribanos() {
+        milistaEscribanos = new ArrayList<>();
+        
         try {
-            milistaEscribanos = miController.obtenerListaEscribanosDisponibles();
-
-            if (!milistaEscribanos.isEmpty()) {
-                for (Iterator<DtoPersona> it = milistaEscribanos.iterator(); it.hasNext();) {
-                    DtoPersona dtoPersona = it.next();
-
-                    this.comboRegistroEscribano.addItem(dtoPersona.getRegistroEscribano());
+            List<com.licensis.notaire.dto.GenericDto> escribanos = personaClient.findAllByPath("escribanos-disponibles");
+            if (escribanos != null)
+            {
+                for (com.licensis.notaire.dto.GenericDto gd : escribanos)
+                {
+                    DtoPersona dtoPersona = new DtoPersona();
+                    dtoPersona.setIdPersona(gd.getInt("idPersona"));
+                    dtoPersona.setNombre(gd.getString("nombre"));
+                    dtoPersona.setApellido(gd.getString("apellido"));
+                    dtoPersona.setRegistroEscribano(gd.getInt("registroEscribano"));
+                    milistaEscribanos.add(dtoPersona);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "No existen escribanos registrados", "Error",
-                        JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar escribanos: " + e.getMessage());
+        }
+
+        if (!milistaEscribanos.isEmpty()) {
+            for (Iterator<DtoPersona> it = milistaEscribanos.iterator(); it.hasNext();) {
+                DtoPersona dtoPersona = it.next();
+
+                this.comboRegistroEscribano.addItem(dtoPersona.getRegistroEscribano());
+            }
+        } else {
             JOptionPane.showMessageDialog(this, "No existen escribanos registrados", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -442,8 +458,8 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
 
                     DtoPersona escribano = this.buscarEscribano(registro);
 
-                    DtoTipoDeFolio miTipoDeFolio = miController
-                            .buscarTipoDeFolio(new DtoTipoDeFolio(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL));
+                    DtoTipoDeFolio miTipoDeFolio = new DtoTipoDeFolio();
+                    miTipoDeFolio.setNombre(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL);
 
                     dtoFolio.setTiposDeFolio(miTipoDeFolio);
                     dtoFolio.setAnio(this.selectorAnio.getYear());
@@ -451,7 +467,22 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
                     dtoFolio.setEstado(this.comboEstadosFolio.getSelectedItem().toString());
                     dtoFolio.setObservaciones(this.campoObservaciones.getText());
 
-                    if (miController.modificarFolio(dtoFolio)) {
+                    boolean modificado = false;
+                    
+                    try
+                    {
+                        com.licensis.notaire.dto.GenericDto payload = new com.licensis.notaire.dto.GenericDto();
+                        payload.put("idFolio", dtoFolio.getIdFolio());
+                        payload.put("numero", dtoFolio.getNumero());
+                        folioClient.edit(payload);
+                        modificado = true;
+                    }
+                    catch (Exception e)
+                    {
+                        JOptionPane.showMessageDialog(this, "Error al modificar folio: " + e.getMessage());
+                    }
+
+                    if (modificado) {
                         JOptionPane.showMessageDialog(this, "Se ha modificar folios Correctamente");
                         salir();
                     } else {
@@ -534,7 +565,7 @@ public class ModificarFolio extends javax.swing.JInternalFrame {
         DtoPersona escribano = new DtoPersona();
         escribano.setRegistroEscribano(registro);
         parametros.setPersonaEscribano(escribano);
-        this.dtoListaFolios = miController.obtenerListaFolios(parametros);
+                    dtoListaFolios = new ArrayList<>();
 
         for (Iterator<DtoFolio> it = dtoListaFolios.iterator(); it.hasNext();) {
             DtoFolio dtoFolio = it.next();

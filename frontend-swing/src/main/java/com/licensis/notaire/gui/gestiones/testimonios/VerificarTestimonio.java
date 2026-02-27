@@ -120,19 +120,14 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                     {
                         inscripto = false;
                     }
-                }
-            } else
-            {
-                numeroCarton = "0";
-            }
-                    
-            Integer numero = dtoTestimonio.getNumero();
-            String fechaImpresion = null;
-            fechaSalida = " ";
 
-            if (copias != null && !copias.isEmpty())
-            {
+                    Integer numero = dtoTestimonio.getNumero();
+                    String fechaImpresion = null;
+
+                    if (copias != null && !copias.isEmpty())
+                    {
                         fechaImpresion = formatter.format(copias.get(0).getFechaImpresion()).toString();
+
                         String observaciones = " ";
 
                         if (dtoTestimonio.getObservaciones() != null && !dtoTestimonio.getObservaciones().equals(""))
@@ -168,45 +163,7 @@ public class VerificarTestimonio extends javax.swing.JInternalFrame
                 }
             } else
             {
-                Integer numero = (Integer) dtoTestimonio.getNumero();
-                String fechaImpresion = null;
-
-                if (copias != null && !copias.isEmpty())
-                {
-                    fechaImpresion = formatter.format(copias.get(0).getFechaImpresion()).toString();
-
-                    String observaciones = " ";
-
-                    if (dtoTestimonio.getObservaciones() != null && !dtoTestimonio.getObservaciones().equals(""))
-                    {
-                        observaciones = observaciones + dtoTestimonio.getObservaciones();
-                    }
-
-                    for (Iterator<DtoCopia> it2 = copias.iterator(); it2.hasNext();)
-                    {
-                        DtoCopia dtoCopia = it2.next();
-
-                        if (dtoCopia.getObservaciones() != null && !dtoCopia.getObservaciones().equals(""))
-                        {
-                            observaciones = observaciones + " " + dtoCopia.getObservaciones();
-                        }
-                    }
-
-                    Object[] datos =
-                    {
-                        numero,
-                        fechaImpresion,
-                        copias.size(),
-                        observaciones,
-                        fechaIngreso,
-                        numeroCarton,
-                        fechaSalida,
-                        inscripto,
-                        fechaInscripcion,
-                        matricula
-                    };
-                    ((DefaultTableModel) grillaTestimonios.getModel()).addRow(datos);
-                }
+                numeroCarton = "0";
             }
 
         }

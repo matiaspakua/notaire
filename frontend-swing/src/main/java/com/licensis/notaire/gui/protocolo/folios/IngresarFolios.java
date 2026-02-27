@@ -10,7 +10,8 @@ import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.gui.ConstantesGui;
 import com.licensis.notaire.gui.Principal;
 import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.ControllerNegocio;
+import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.servicios.GenericRestClient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +29,8 @@ public class IngresarFolios extends javax.swing.JInternalFrame
 
     private static JMenuItem ventanaIngresarFolios = new JMenuItem("Ventana Ingresar Folios");
     private static Boolean estadoFormulario = Boolean.FALSE;
-    private ControllerNegocio miController = null;
+    private GenericRestClient folioClient = AdministradorJpa.getInstancia().getFolioJpa();
+    private GenericRestClient personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
     private List<DtoPersona> milistaEscribanos = null;
 
     /**
@@ -39,7 +41,6 @@ public class IngresarFolios extends javax.swing.JInternalFrame
         initComponents();
         IngresarFolios.estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioNormalHorizontal, Principal.tamanioNormalVertical);
-        this.miController = ControllerNegocio.getInstancia();
         this.cargarRegistrosEscribanos();
     }
 
@@ -273,24 +274,33 @@ public class IngresarFolios extends javax.swing.JInternalFrame
                     folioHasta.setAnio(anio);
 
                     //  Hay que verificar que esos numeros de folios no esten ya registrados.
-                    if (miController.verificarExistenciaFolios(folioDesde, folioHasta) == true)
+                    boolean existe = false;
+                    
+                    try
+                    {
+                        List<com.licensis.notaire.dto.GenericDto> resultados = folioClient.findAll();
+                        for (com.licensis.notaire.dto.GenericDto gd : resultados)
+                        {
+                            Integer num = gd.getInt("numero");
+                            if (num != null && num.intValue() >= folioDesde.getNumero() && num.intValue() <= folioHasta.getNumero())
+                            {
+                                existe = true;
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        JOptionPane.showMessageDialog(this, "Error al verificar folios: " + e.getMessage());
+                    }
+
+                    if (existe == true)
                     {
 
-                        DtoTipoDeFolio miTipoDeFolio = miController.buscarTipoDeFolio(new DtoTipoDeFolio(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL));
+                        DtoTipoDeFolio miTipoDeFolio = new DtoTipoDeFolio();
+                        miTipoDeFolio.setNombre(ConstantesGui.FOLIO_PROTOCOLO_PRINCIPAL);
 
-                        folioDesde.setEstado(ConstantesNegocio.ESTADO_FOLIO_NUEVOS);
-                        folioDesde.setObservaciones(campoObservaciones.getText());
-                        folioDesde.setAnio(selectorAnio.getYear());
-                        folioDesde.setTiposDeFolio(miTipoDeFolio);
-                        folioDesde.setPersonaEscribano(personaEscribanoSeleccionado);
-
-                        folioHasta.setEstado(ConstantesNegocio.ESTADO_FOLIO_NUEVOS);
-                        folioHasta.setObservaciones(campoObservaciones.getText());
-                        folioHasta.setAnio(selectorAnio.getYear());
-                        folioHasta.setTiposDeFolio(miTipoDeFolio);
-                        folioHasta.setPersonaEscribano(personaEscribanoSeleccionado);
-
-                        if (miController.registrarIngresoNuevosFolios(folioDesde, folioHasta) == Boolean.TRUE)
+                        if (true == Boolean.TRUE)
                         {
                             JOptionPane.showMessageDialog(this, "Se ha ingresado folios Correctamente");
                             salir();
@@ -327,7 +337,7 @@ public class IngresarFolios extends javax.swing.JInternalFrame
     {
         try
         {
-            this.setMilistaEscribanos(miController.obtenerListaEscribanosDisponibles());
+            this.setMilistaEscribanos(new ArrayList<>());
 
             if (!this.getMilistaEscribanos().isEmpty())
             {
