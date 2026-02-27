@@ -23,26 +23,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Clase que reune la mayoria de los metodos de validaciones requeridos en distintas etapas y capas
- * de la aplicacion. Permite centralizar todos los metodos asociados a distintos tipos de
- * validaciones en una misma clase, alentando de esta manera la reutilizacion de dichos metodos y
+ * Clase que reune la mayoria de los metodos de validaciones requeridos en
+ * distintas etapas y capas
+ * de la aplicacion. Permite centralizar todos los metodos asociados a distintos
+ * tipos de
+ * validaciones en una misma clase, alentando de esta manera la reutilizacion de
+ * dichos metodos y
  * tecnicas.
  *
  * @author matias
  */
-public class AdministradorValidaciones
-{
+public class AdministradorValidaciones {
 
     private static AdministradorValidaciones instancia = null;
+    private static final Logger LOG = Logger.getLogger(AdministradorValidaciones.class.getName());
 
-    private AdministradorValidaciones()
-    {
+    private AdministradorValidaciones() {
     }
 
-    public static AdministradorValidaciones getInstancia()
-    {
-        if (instancia == null)
-        {
+    public static AdministradorValidaciones getInstancia() {
+        if (instancia == null) {
             instancia = new AdministradorValidaciones();
         }
         return instancia;
@@ -55,28 +55,28 @@ public class AdministradorValidaciones
      * @param campoParaValidar El campo tipo string a ser validado.
      * @return Verdadero si el campo es vacio, falso en caso contrario.
      */
-    public Boolean validarCampoVacio(String campoParaValidar)
-    {
+    public Boolean validarCampoVacio(String campoParaValidar) {
         return campoParaValidar.isEmpty();
     }
 
     /**
-     * Determina si el argumento tipo string contiene algun caracter que no sea un letra del
-     * alfabeto. Basicamente, devuelve verdadero si todos los caracteres que componen el string son
-     * unicamente letras, y falso si existe algun otro caracter, como por ejemplo, un numero, un
+     * Determina si el argumento tipo string contiene algun caracter que no sea un
+     * letra del
+     * alfabeto. Basicamente, devuelve verdadero si todos los caracteres que
+     * componen el string son
+     * unicamente letras, y falso si existe algun otro caracter, como por ejemplo,
+     * un numero, un
      * signo de puntuacion. etc.
      *
      * @param campoParaValidar Un string que debe ser validado.
-     * @return resultado Verdadero si el string solo contiene letras, falso en caso contrario.
+     * @return resultado Verdadero si el string solo contiene letras, falso en caso
+     *         contrario.
      */
-    public Boolean validarCampoSoloTexto(String campoParaValidar)
-    {
+    public Boolean validarCampoSoloTexto(String campoParaValidar) {
         Boolean resultado = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
-        for (char c : caractes)
-        {
-            if (!((Character.isLetter(c)) || (Character.isSpaceChar(c))))
-            {
+        for (char c : caractes) {
+            if (!((Character.isLetter(c)) || (Character.isSpaceChar(c)))) {
                 resultado = Boolean.FALSE;
             }
         }
@@ -84,23 +84,24 @@ public class AdministradorValidaciones
     }
 
     /**
-     * Determina si el argumento tipo string contiene algun caracter que no sea un numero decimal.
-     * Basicamente, devuelve verdadero si todos los caracteres que componen el string son unicamente
-     * numeros decimales, y falso si existe algun otro caracter, como por ejemplo, una letra del
+     * Determina si el argumento tipo string contiene algun caracter que no sea un
+     * numero decimal.
+     * Basicamente, devuelve verdadero si todos los caracteres que componen el
+     * string son unicamente
+     * numeros decimales, y falso si existe algun otro caracter, como por ejemplo,
+     * una letra del
      * alfabeto, un signo de puntuacion, etc.
      *
      * @param campoParaValidar Un string que debe ser validado.
-     * @return resultado Verdadero si el string solo contiene numeros decimales, falso en caso
-     * contrario.
+     * @return resultado Verdadero si el string solo contiene numeros decimales,
+     *         falso en caso
+     *         contrario.
      */
-    public Boolean validarCampoSoloNumerosEnteros(String campoParaValidar)
-    {
+    public Boolean validarCampoSoloNumerosEnteros(String campoParaValidar) {
         Boolean resultado = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
-        for (char c : caractes)
-        {
-            if (!Character.isDigit(c))
-            {
+        for (char c : caractes) {
+            if (!Character.isDigit(c)) {
                 resultado = Boolean.FALSE;
             }
         }
@@ -108,36 +109,30 @@ public class AdministradorValidaciones
     }
 
     /**
-     * Determina si el argumento tipo string contiene algun caracter que no sea ni letra ni numero.
+     * Determina si el argumento tipo string contiene algun caracter que no sea ni
+     * letra ni numero.
      *
      * @param campoParaValidar Un string que debe ser validado.
-     * @return resultado Verdadero si el el argumento solo contiene letras y numeros, falso en caso
-     * contrario.
+     * @return resultado Verdadero si el el argumento solo contiene letras y
+     *         numeros, falso en caso
+     *         contrario.
      */
-    public Boolean validarCampoLetrasYNumeros(String campoParaValidar)
-    {
+    public Boolean validarCampoLetrasYNumeros(String campoParaValidar) {
         Boolean resultado = Boolean.TRUE;
-        try
-        {
-            if (campoParaValidar.isEmpty())
-            {
+        try {
+            if (campoParaValidar.isEmpty()) {
                 return false;
             }
             char[] caractes = campoParaValidar.toCharArray();
-            for (char c : caractes)
-            {
-                if (!Character.isLetterOrDigit(c))
-                {
-                    if (!Character.isWhitespace(c))
-                    {
+            for (char c : caractes) {
+                if (!Character.isLetterOrDigit(c)) {
+                    if (!Character.isWhitespace(c)) {
                         resultado = Boolean.FALSE;
                     }
                 }
             }
 
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             return false;
         }
         return resultado;
@@ -147,15 +142,14 @@ public class AdministradorValidaciones
      * Metodo que permite saber cuando se ingresa un caracter raro o especial
      *
      * @param pCampo
-     * @return Retorno verdadero si hay carcateres raros o especiales como / ( ) ? ; y Falso si solo
-     * son numeros
+     * @return Retorno verdadero si hay carcateres raros o especiales como / ( ) ? ;
+     *         y Falso si solo
+     *         son numeros
      */
-    public Boolean validarCaracteres(String pCampo)
-    {
+    public Boolean validarCaracteres(String pCampo) {
         Boolean flag = false;
 
-        for (int i = 0; i < pCampo.length(); i++)
-        {
+        for (int i = 0; i < pCampo.length(); i++) {
             char c = pCampo.charAt(i);
 
             if ((!Character.isLetter(c)
@@ -163,8 +157,7 @@ public class AdministradorValidaciones
                     || c == '-' || c == '_' || c == '(' || c == '.' || c == ','
                     || c == '@' || c == '<' || c == '>' || c == '/' || c == '?'
                     || c == '¿') || c == '=' || c == '!' || c == '"' || c == '#'
-                    || c == '&' || c == '¡' || c == '+' || c == '*' || c == ' ')
-            {
+                    || c == '&' || c == '¡' || c == '+' || c == '*' || c == ' ') {
                 return flag = true;
 
             }
@@ -176,22 +169,20 @@ public class AdministradorValidaciones
      * Metodo que permite validar que el campo unicamente contega letras y/o numeros
      *
      * @param pCampo
-     * @return Retorna Verdadero si no contiene caracteres y/o numeros, y Falso si el campo contiene
-     * caracteres raros
+     * @return Retorna Verdadero si no contiene caracteres y/o numeros, y Falso si
+     *         el campo contiene
+     *         caracteres raros
      */
-    public Boolean validarSoloLetrasNumeros(String pCampo)
-    {
+    public Boolean validarSoloLetrasNumeros(String pCampo) {
         Boolean flag = true;
 
-        for (int i = 0; i < pCampo.length(); i++)
-        {
+        for (int i = 0; i < pCampo.length(); i++) {
             char c = pCampo.charAt(i);
 
             if (c == '-' || c == '_' || c == '(' || c == '.' || c == ','
                     || c == '@' || c == '<' || c == '>' || c == '/' || c == '?'
                     || c == '¿' || c == '=' || c == '!' || c == '"' || c == '#'
-                    || c == '&' || c == '¡' || c == '+' || c == '*')
-            {
+                    || c == '&' || c == '¡' || c == '+' || c == '*') {
                 return flag = false;
 
             }
@@ -206,18 +197,14 @@ public class AdministradorValidaciones
      * @param pCampo
      * @return Retorno FALSE si no es valido.
      */
-    public Boolean validarLetrasGuiones(String pCampo)
-    {
+    public Boolean validarLetrasGuiones(String pCampo) {
         Boolean flag = true;
 
-        for (int i = 0; i < pCampo.length(); i++)
-        {
+        for (int i = 0; i < pCampo.length(); i++) {
             char c = pCampo.charAt(i);
 
-            if (!Character.isLetterOrDigit(c))
-            {
-                if (c != '-')
-                {
+            if (!Character.isLetterOrDigit(c)) {
+                if (c != '-') {
                     return flag = false;
                 }
             }
@@ -228,22 +215,20 @@ public class AdministradorValidaciones
     /**
      * Metodo que permite validar una cantidad de caracteres en un campo determinado
      *
-     * @param pCantCharter La cantidad de campos que se desea que tenga el campo como maximo
-     * @param pCampo La cadena que se desea contar
+     * @param pCantCharter La cantidad de campos que se desea que tenga el campo
+     *                     como maximo
+     * @param pCampo       La cadena que se desea contar
      * @return True si la cadena supera pCantCharter y false si no se cumple
      */
-    public Boolean validarCantidadCaracteres(int pCantCharter, String pCampo)
-    {
+    public Boolean validarCantidadCaracteres(int pCantCharter, String pCampo) {
         Boolean flag = false;
         int count = 0;
 
-        for (int i = 0; i < pCampo.length(); i++)
-        {
+        for (int i = 0; i < pCampo.length(); i++) {
             count++;
         }
 
-        if (count > pCantCharter)
-        {
+        if (count > pCantCharter) {
             flag = true;
         }
 
@@ -256,12 +241,10 @@ public class AdministradorValidaciones
      * @param numeroParaValidar
      * @return
      */
-    public Boolean validarNumero(int numeroParaValidar)
-    {
+    public Boolean validarNumero(int numeroParaValidar) {
         Boolean resultado = Boolean.TRUE;
 
-        if (numeroParaValidar < 0)
-        {
+        if (numeroParaValidar < 0) {
             return false;
         }
 
@@ -274,16 +257,13 @@ public class AdministradorValidaciones
      * @param pCampo
      * @return Verdadero si contiene espacios, y falso si no contiene
      */
-    public Boolean validarCampoEspacios(String pCampo)
-    {
+    public Boolean validarCampoEspacios(String pCampo) {
         Boolean flag = false;
 
-        for (int i = 0; i < pCampo.length(); i++)
-        {
+        for (int i = 0; i < pCampo.length(); i++) {
             char c = pCampo.charAt(i);
 
-            if ((Character.isSpaceChar(c)))
-            {
+            if ((Character.isSpaceChar(c))) {
                 return flag = true;
             }
 
@@ -297,20 +277,14 @@ public class AdministradorValidaciones
      * @param numero
      * @return Verdadero si es el string es un numero, falso de lo contrarip
      */
-    public Boolean validarNumeroFloat(String numero)
-    {
+    public Boolean validarNumeroFloat(String numero) {
         Boolean valido = true;
 
-        try
-        {
+        try {
             Float numeroFloat = Float.parseFloat(numero);
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             valido = false;
-        }
-        finally
-        {
+        } finally {
             return valido;
         }
     }
@@ -319,15 +293,14 @@ public class AdministradorValidaciones
      * Determina si la fecha indicada es anterior a la fecha actual.
      *
      * @param fechaParaValidar La fecha para validar.
-     * @return resultado Verdadero si la fecha es igual o mayor a hoy, falso en caso contrario.
+     * @return resultado Verdadero si la fecha es igual o mayor a hoy, falso en caso
+     *         contrario.
      *
      */
-    public Boolean validarFechaPosteriorHoy(Date fechaParaValidar)
-    {
+    public Boolean validarFechaPosteriorHoy(Date fechaParaValidar) {
         boolean resultado = true;
 
-        if (fechaParaValidar.before(Calendar.getInstance().getTime()))
-        {
+        if (fechaParaValidar.before(Calendar.getInstance().getTime())) {
             return false;
         }
 
@@ -339,55 +312,49 @@ public class AdministradorValidaciones
      *
      * @param fechaDesde La fecha inicial.
      * @param fechaHasta La fecha final.
-     * @return resultado Verdadero si fechaDesde es mayor que hoy, y fechaHasta es mayor que
-     * fechaDesde.
+     * @return resultado Verdadero si fechaDesde es mayor que hoy, y fechaHasta es
+     *         mayor que
+     *         fechaDesde.
      */
-    public Boolean validarFechasPosterioresHoy(Date fechaDesde, Date fechaHasta)
-    {
-        try
-        {
-//            if (this.validarFechaPosteriorHoy(fechaDesde))
-//            {
-//            
-//            }
-//            else
-//            {
-//                return false;
-//            }
-            if (fechaHasta.after(fechaDesde))
-            {
+    public Boolean validarFechasPosterioresHoy(Date fechaDesde, Date fechaHasta) {
+        try {
+            // if (this.validarFechaPosteriorHoy(fechaDesde))
+            // {
+            //
+            // }
+            // else
+            // {
+            // return false;
+            // }
+            if (fechaHasta.after(fechaDesde)) {
                 return true;
-            } else
-            {
+            } else {
                 return false;
             }
 
-        }
-        catch (NullPointerException ex)
-        {
+        } catch (NullPointerException ex) {
             return false;
         }
     }
 
     /**
-     * Metodo que permite validar que el anio indicado no sea mayor que el anio actual.
+     * Metodo que permite validar que el anio indicado no sea mayor que el anio
+     * actual.
      *
      * @param anio El anio a ser validado.
-     * @return resultado Verdadero si el anio indicado es igual o menor que el anio actual, falso en
-     * caso contrario.
+     * @return resultado Verdadero si el anio indicado es igual o menor que el anio
+     *         actual, falso en
+     *         caso contrario.
      */
-    public Boolean validarFechaAnioLimite(Date anio)
-    {
+    public Boolean validarFechaAnioLimite(Date anio) {
         boolean resultado = false;
 
         Date actual = Calendar.getInstance().getTime();
 
-        if (actual.before(anio))
-        {
+        if (actual.before(anio)) {
             resultado = true;
         }
-        if (anio.getYear() == actual.getYear())
-        {
+        if (anio.getYear() == actual.getYear()) {
             resultado = true;
         }
 
@@ -396,34 +363,42 @@ public class AdministradorValidaciones
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Validaciones por Formulario">
-// <editor-fold defaultstate="collapsed" desc="Login">    
+    // <editor-fold defaultstate="collapsed" desc="Login">
     /**
-     * Metodo que valida que el usuario ingresado sea valido para lo cual se tiene que cumplir que
-     * exista en la BBDD; que el nombre de usuario y contraseña coincida; y que el estado del
+     * Metodo que valida que el usuario ingresado sea valido para lo cual se tiene
+     * que cumplir que
+     * exista en la BBDD; que el nombre de usuario y contraseña coincida; y que el
+     * estado del
      * usuario sea "valido" / "activo".
      *
      * @param usuarioLogin El DtoUsuario a ser validado.
-     * @return resultadoValidacion Verdadero si es el usuario indicado existe y es valido, falso en
-     * caso contrario.
+     * @return resultadoValidacion Verdadero si es el usuario indicado existe y es
+     *         valido, falso en
+     *         caso contrario.
      */
     /**
      * Método que valida un usuario usando REST API.
      * Nota: La validación real se hace en AdministradorSesion.validarUsuario()
      * Este método solo verifica que el usuario tenga datos válidos.
      */
-    public Boolean validarUsuario(DtoUsuario usuarioLogin)
-    {
+    public Boolean validarUsuario(DtoUsuario usuarioLogin) {
+        LOG.info("Validando datos de usuario para login - usuario: "
+                + (usuarioLogin != null ? usuarioLogin.getNombre() : "null"));
         // La validación real se hace en AdministradorSesion.validarUsuario()
-        // que usa REST API. Este método solo verifica que el usuario tenga datos válidos.
-        if (usuarioLogin != null && usuarioLogin.isValido())
-        {
+        // que usa REST API. Este método solo verifica que el usuario tenga datos
+        // válidos.
+        if (usuarioLogin != null && usuarioLogin.isValido()) {
+            LOG.info("Validacion de datos de usuario exitosa - usuario valido: " + usuarioLogin.getNombre());
             AdministradorSesion.getInstancia().setSesionUsuario(usuarioLogin);
             return Boolean.TRUE;
         }
+        LOG.warning("Validacion de datos de usuario fallida - usuario: "
+                + (usuarioLogin != null ? usuarioLogin.getNombre() : "null")
+                + ", valido: " + (usuarioLogin != null ? usuarioLogin.isValido() : "N/A"));
         return Boolean.FALSE;
     }
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Clientes">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Clientes">
 
     /**
      * Metodo que permite validar el formulario DarAltaPersona,
@@ -431,8 +406,8 @@ public class AdministradorValidaciones
      * @param formulario
      * @return Un string con el mensaje de error correspondiente
      */
-    public String validarDarAltaPersona(DarAltaPersona formulario)
-    {
+    public String validarDarAltaPersona(DarAltaPersona formulario) {
+        LOG.info("Iniciando validacion del formulario DarAltaPersona");
 
         String msj = "";
 
@@ -442,9 +417,14 @@ public class AdministradorValidaciones
 
         if (this.validarCampoVacio(campoNombre)
                 || this.validarCampoVacio(campoApellido)
-                || this.validarCampoVacio(campoNroIdentificacion))
-        {
+                || this.validarCampoVacio(campoNroIdentificacion)) {
             msj = "Debe completar al menos: Nombre, Apellido, Tipo y Nro ident.";
+            LOG.warning("Validacion DarAltaPersona fallida - campos obligatorios vacios"
+                    + ", nombre_vacio: " + this.validarCampoVacio(campoNombre)
+                    + ", apellido_vacio: " + this.validarCampoVacio(campoApellido)
+                    + ", nro_ident_vacio: " + this.validarCampoVacio(campoNroIdentificacion));
+        } else {
+            LOG.info("Validacion DarAltaPersona exitosa - todos los campos obligatorios completos");
         }
 
         return msj;
@@ -452,14 +432,15 @@ public class AdministradorValidaciones
     }
 
     /**
-     * Metodo que permite validar el formulario AdministrarCliente, cuando es instanciado para
+     * Metodo que permite validar el formulario AdministrarCliente, cuando es
+     * instanciado para
      * modificar una persona.
      *
      * @param formulario
      * @return Un string con el mensaje de error correspondiente
      */
-    public String validarModificarPersona(AdministrarCliente formulario)
-    {
+    public String validarModificarPersona(AdministrarCliente formulario) {
+        LOG.info("Iniciando validacion del formulario ModificarPersona");
 
         String msj = "";
 
@@ -469,9 +450,11 @@ public class AdministradorValidaciones
 
         if (this.validarCampoVacio(campoNombre)
                 || this.validarCampoVacio(campoApellido)
-                || this.validarCampoVacio(campoNroIdentificacion))
-        {
+                || this.validarCampoVacio(campoNroIdentificacion)) {
             msj = "Debe completar al menos: Nombre, Apellido, Tipo y Nro ident.";
+            LOG.warning("Validacion ModificarPersona fallida - campos obligatorios vacios");
+        } else {
+            LOG.info("Validacion ModificarPersona exitosa - campos obligatorios completos");
         }
 
         return msj;
@@ -479,86 +462,88 @@ public class AdministradorValidaciones
     }
 
     /**
-     * Metodo que permite validar el formulario AdministrarCliente, cuando es instanciado para
+     * Metodo que permite validar el formulario AdministrarCliente, cuando es
+     * instanciado para
      * darAltaCliente y modificarCliente,
      *
      * @param formulario
      * @return Un string con el mensaje de error correspondiente
      */
-    public String validarCliente(AdministrarCliente formulario)
-    {
+    public String validarCliente(AdministrarCliente formulario) {
+        LOG.info("Iniciando validacion del formulario Cliente (persona + datos de cliente)");
         String msj = "";
 
         // 1- Controlo los campos de persona
         msj = this.validarModificarPersona(formulario);
 
         // 2- Controlo los campos de cliente
-        if ("".equals(msj))
-        {
+        if ("".equals(msj)) {
 
             if (formulario.campoNombre.getText().isEmpty()
                     || formulario.campoApellido.getText().isEmpty()
                     || formulario.campoNacionalidad.getText().isEmpty()
                     || formulario.campoOcupacion.getText().isEmpty()
                     || formulario.campoDomicilio.getText().isEmpty()
-                    || formulario.campoCuit.getText().isEmpty())
-            {
+                    || formulario.campoCuit.getText().isEmpty()) {
                 msj = "Debe completar Todos los datos del Cliente";
+                LOG.warning("Validacion Cliente fallida - campos de cliente incompletos");
+            } else {
+                LOG.info("Validacion Cliente exitosa - todos los datos del cliente completos");
             }
         }
 
         return msj;
     }
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Presupuestos">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Gestiones">
-// <editor-fold defaultstate="collapsed" desc="Gestion">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Documentacion">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Presupuestos">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Gestiones">
+    // <editor-fold defaultstate="collapsed" desc="Gestion">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Documentacion">
 
     /**
-     * Metodo que valida el dto de un documento presenta, donde, para aquellos campos nulos (aun no
+     * Metodo que valida el dto de un documento presenta, donde, para aquellos
+     * campos nulos (aun no
      * se
-     * han registrado datos de ingresos, salidas, etc. para ese documento) se setean con un valor
+     * han registrado datos de ingresos, salidas, etc. para ese documento) se setean
+     * con un valor
      * por default.
      *
      * @param dtoDocumento
      */
-    public DtoDocumentoPresentado validarDtoDocumentoPresentado(DtoDocumentoPresentado dtoDocumento)
-    {
+    public DtoDocumentoPresentado validarDtoDocumentoPresentado(DtoDocumentoPresentado dtoDocumento) {
 
-        if (dtoDocumento.getNumeroCarton() == null)
-        {
+        if (dtoDocumento.getNumeroCarton() == null) {
 
         }
         return dtoDocumento;
     }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Escrituras">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Testimonios">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Inscripciones">
-// </editor-fold>
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Protocolo">
-// <editor-fold defaultstate="collapsed" desc="Folios">
-// </editor-fold>
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Pagos">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Administracion">
-// <editor-fold defaultstate="collapsed" desc="Usuarios">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Escrituras">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Testimonios">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Inscripciones">
+    // </editor-fold>
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Protocolo">
+    // <editor-fold defaultstate="collapsed" desc="Folios">
+    // </editor-fold>
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Pagos">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Administracion">
+    // <editor-fold defaultstate="collapsed" desc="Usuarios">
     /**
      * Metodo que permite validar los campos del formulario DarAltaUsuario
      *
      * @param formulario
      * @return Un string con el mensaje de error correspondiente
      */
-    public String validarAltaUsuario(DarAltaUsuario formulario)
-    {
+    public String validarAltaUsuario(DarAltaUsuario formulario) {
+        LOG.info("Iniciando validacion del formulario DarAltaUsuario");
 
         String campo = "";
         Boolean flag = false;
@@ -566,37 +551,39 @@ public class AdministradorValidaciones
 
         if (formulario.campoNombreUsuario.getText().isEmpty()
                 && formulario.campoContrasenia.getText().isEmpty()
-                && formulario.campoRepetirNuevaContrasenia.getText().isEmpty())
-        {
+                && formulario.campoRepetirNuevaContrasenia.getText().isEmpty()) {
+            LOG.warning("Validacion AltaUsuario fallida - todos los campos vacios");
             return msj = "Completar todos los campos del Usuario.";
         }
 
-        if (!ControllerNegocio.getInstancia().isPasswordCorrect(formulario.campoContrasenia.getPassword(), formulario.campoRepetirNuevaContrasenia.getPassword()).getFlag())
-        {
+        if (!ControllerNegocio.getInstancia().isPasswordCorrect(formulario.campoContrasenia.getPassword(),
+                formulario.campoRepetirNuevaContrasenia.getPassword()).getFlag()) {
+            LOG.warning("Validacion AltaUsuario fallida - las contrasenias no coinciden");
             return msj = "La contrasenia no coincide";
         }
 
         Integer longContrasenia = formulario.campoContrasenia.getText().length();
-        if (longContrasenia <= 4)
-        {
+        if (longContrasenia <= 4) {
+            LOG.warning("Validacion AltaUsuario fallida - contrasenia muy corta: " + longContrasenia + " caracteres");
             return msj = "La constrasenia debe contener un minimo de 5 caracteres";
         }
 
         campo = formulario.campoNombreUsuario.getText();
         flag = AdministradorValidaciones.getInstancia().validarCampoEspacios(campo);
 
-        if (flag)
-        {
+        if (flag) {
+            LOG.warning("Validacion AltaUsuario fallida - nombre de usuario contiene espacios");
             return msj = "Nombre de Usuario NO permite espacios.";
         }
 
         flag = AdministradorValidaciones.getInstancia().validarCaracteres(campo);
 
-        if (flag)
-        {
+        if (flag) {
+            LOG.warning("Validacion AltaUsuario fallida - nombre de usuario contiene caracteres no permitidos");
             return msj = "Nombre de Usuario solo permite Letras.";
         }
 
+        LOG.info("Validacion AltaUsuario exitosa - usuario: " + campo);
         return msj;
     }
 
@@ -607,8 +594,8 @@ public class AdministradorValidaciones
      * @return Un string con el mensaje de error correspondiente
      *
      */
-    public String validarModificarUsuario(ModificarUsuario formulario)
-    {
+    public String validarModificarUsuario(ModificarUsuario formulario) {
+        LOG.info("Iniciando validacion del formulario ModificarUsuario");
 
         String campo = "";
         Boolean flag = false;
@@ -616,37 +603,40 @@ public class AdministradorValidaciones
 
         if (formulario.campoNuevoNombreUsuario.getText().isEmpty()
                 && formulario.campoNuevaContrasenia.getText().isEmpty()
-                && formulario.campoRepetirNuevaContrasenia.getText().isEmpty())
-        {
+                && formulario.campoRepetirNuevaContrasenia.getText().isEmpty()) {
+            LOG.warning("Validacion ModificarUsuario fallida - todos los campos vacios");
             return msj = "Completar todos los campos de Usuario";
         }
 
-        if (!ControllerNegocio.getInstancia().isPasswordCorrect(formulario.campoNuevaContrasenia.getPassword(), formulario.campoRepetirNuevaContrasenia.getPassword()).getFlag())
-        {
+        if (!ControllerNegocio.getInstancia().isPasswordCorrect(formulario.campoNuevaContrasenia.getPassword(),
+                formulario.campoRepetirNuevaContrasenia.getPassword()).getFlag()) {
+            LOG.warning("Validacion ModificarUsuario fallida - las contrasenias no coinciden");
             return msj = "La conrasenia no coincide";
         }
 
         Integer longContrasenia = formulario.campoNuevaContrasenia.getText().length();
-        if (longContrasenia <= 4)
-        {
+        if (longContrasenia <= 4) {
+            LOG.warning(
+                    "Validacion ModificarUsuario fallida - contrasenia muy corta: " + longContrasenia + " caracteres");
             return msj = "La constrasenia debe contener un minimo de 5 caracteres";
         }
 
         campo = formulario.campoNuevoNombreUsuario.getText();
         flag = AdministradorValidaciones.getInstancia().validarCampoEspacios(campo);
 
-        if (flag)
-        {
+        if (flag) {
+            LOG.warning("Validacion ModificarUsuario fallida - nombre de usuario contiene espacios");
             return msj = "Nombre de Usuario No permite especios";
         }
+        LOG.info("Validacion ModificarUsuario exitosa - usuario: " + campo);
         return msj;
     }
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Escribanos">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Tramites">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Documentos">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Escribanos">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Tramites">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Documentos">
 
     /**
      * Metodo que permite validar los campos del formulario IngresarDocumento
@@ -654,22 +644,18 @@ public class AdministradorValidaciones
      * @param pFormualrio
      * @return Un mensaje con el resultado de la validacion
      */
-    public String validarIngresarDocumento(IngresarDocumento pFormualrio)
-    {
+    public String validarIngresarDocumento(IngresarDocumento pFormualrio) {
         String msj = "";
 
         String nombreDocumento = pFormualrio.campoNombreDocumento.getText();
         Boolean vence = pFormualrio.checkVenceDocumento.isSelected();
         Integer diasVencimiento = new Integer(pFormualrio.selectorDiasVencimiento.getValue().hashCode());
 
-        if (!nombreDocumento.isEmpty())
-        {
-            if (vence && diasVencimiento.intValue() <= 0)
-            {//Si vence el docuemento tiene que tener dias de validez
+        if (!nombreDocumento.isEmpty()) {
+            if (vence && diasVencimiento.intValue() <= 0) {// Si vence el docuemento tiene que tener dias de validez
                 msj = "Debe ingresar la cantidad de dias a vencer del documento";
             }
-        } else
-        {
+        } else {
             msj = "Debe completar el campo Nombre del Documento";
         }
 
@@ -682,38 +668,33 @@ public class AdministradorValidaciones
      * @param pFormualrio
      * @return Un mensaje con el resultado de la validacion
      */
-    public String validarModificarDocumento(ModificarDocumento pFormualrio)
-    {
+    public String validarModificarDocumento(ModificarDocumento pFormualrio) {
         String msj = "";
 
         String nombreDocumento = pFormualrio.campoNombreDocumento.getText();
         Boolean vence = pFormualrio.checkVenceDocumento.isSelected();
         Integer diasVencimiento = new Integer(pFormualrio.selectorDiasVencimiento.getValue().hashCode());
 
-        if (!nombreDocumento.isEmpty())
-        {
-            if (vence && diasVencimiento.intValue() <= 0)
-            {//Si vence el docuemento tiene que tener dias de validez
+        if (!nombreDocumento.isEmpty()) {
+            if (vence && diasVencimiento.intValue() <= 0) {// Si vence el docuemento tiene que tener dias de validez
                 msj = "Debe ingresar la cantidad de dias a vencer del documento";
             }
-        } else
-        {
+        } else {
             msj = "Debe completar el campo Nombre";
         }
 
         return msj;
     }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Conceptos">   
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Conceptos">
     /**
      * Metodo que permite validar los campos del formulario Ingresar Concepto
      *
      * @param pformulario
      * @return Un mensaje con el resultado de la validacion
      */
-    public String validarIngresarConcepto(IngresarConcepto pformulario)
-    {
+    public String validarIngresarConcepto(IngresarConcepto pformulario) {
 
         String msj = "";
 
@@ -721,45 +702,34 @@ public class AdministradorValidaciones
         String valorConcepto = pformulario.campoValorConcepto.getText();
         String valorPorcentaje = pformulario.selectorPorcentaje.getValue().toString();
 
-        if (!validarCampoVacio(nombreConcepto))
-        {
+        if (!validarCampoVacio(nombreConcepto)) {
 
-            if (!validarCampoLetrasYNumeros(nombreConcepto))
-            {
+            if (!validarCampoLetrasYNumeros(nombreConcepto)) {
                 msj = "Nombre debe contener solo letras o numeros.";
-            } else
-            {
+            } else {
 
-                if (!validarCampoVacio(valorConcepto))
-                {
-                    if (!validarNumeroFloat(valorConcepto))
-                    {
+                if (!validarCampoVacio(valorConcepto)) {
+                    if (!validarNumeroFloat(valorConcepto)) {
                         msj = "Debe completar un numero valido en valor, ej: 12.50";
                     }
-                } else
-                {
-                    if (validarCampoVacio(valorPorcentaje))
-                    {
+                } else {
+                    if (validarCampoVacio(valorPorcentaje)) {
                         msj = "Debe completar valor o porcentaje.";
-                    } else
-                    {
-                        if ((Integer) pformulario.selectorPorcentaje.getValue() <= 0)
-                        {
+                    } else {
+                        if ((Integer) pformulario.selectorPorcentaje.getValue() <= 0) {
                             msj = "El porcentaje debe ser mayor a 0.";
                         }
                     }
                 }
             }
 
-        } else
-        {
+        } else {
             msj = "Debe completar el nombre.";
         }
         return msj;
     }
 
-    public String validarModificarConcepto(ModificarConcepto pformulario)
-    {
+    public String validarModificarConcepto(ModificarConcepto pformulario) {
 
         String msj = "";
 
@@ -767,43 +737,35 @@ public class AdministradorValidaciones
         String valorConcepto = pformulario.campoNuevoValor.getText();
         String valorPorcentaje = pformulario.selectorNuevoPorcentaje.getValue().toString();
 
-        if (!validarCampoVacio(nombreConcepto))
-        {
+        if (!validarCampoVacio(nombreConcepto)) {
 
-            if (!validarCampoLetrasYNumeros(nombreConcepto))
-            {
+            if (!validarCampoLetrasYNumeros(nombreConcepto)) {
                 msj = "Nombre debe contener solo letras o numeros.";
-            } else
-            {
+            } else {
 
-                if (!validarCampoVacio(valorConcepto))
-                {
-                    if (!validarNumeroFloat(valorConcepto))
-                    {
+                if (!validarCampoVacio(valorConcepto)) {
+                    if (!validarNumeroFloat(valorConcepto)) {
                         msj = "Debe completar un numero valido en valor, ej: 12.50";
                     }
-                } else
-                {
-                    if (!validarCampoVacio(valorPorcentaje))
-                    {
+                } else {
+                    if (!validarCampoVacio(valorPorcentaje)) {
                         msj = "Debe completar valor o porcentaje.";
                     }
                 }
             }
 
-        } else
-        {
+        } else {
             msj = "Debe completar el nombre.";
         }
         return msj;
     }
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Estados de Gestion">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Folios">
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Plantillas de Presupuesto">
-// </editor-fold>
-// </editor-fold>
-// </editor-fold>
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Estados de Gestion">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Folios">
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Plantillas de Presupuesto">
+    // </editor-fold>
+    // </editor-fold>
+    // </editor-fold>
 }

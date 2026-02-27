@@ -19,7 +19,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
@@ -73,7 +72,6 @@ public class Copia implements Serializable
     @Basic(optional = false)
     @Column(name = "numero")
     private int numero;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @ManyToMany(mappedBy = "copiaList", fetch = FetchType.LAZY)

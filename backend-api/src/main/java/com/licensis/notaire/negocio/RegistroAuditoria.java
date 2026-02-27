@@ -44,7 +44,6 @@ public class RegistroAuditoria implements Serializable
     @Column(name = "id_registro_auditoria")
     private Integer idRegistroAuditoria;
     @Basic(optional = false)
-    @Lob
     @Column(name = "detalle_operacion")
     private String detalleOperacion;
     @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id_usuario")

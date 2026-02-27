@@ -26,8 +26,7 @@ import javax.swing.table.TableModel;
  *
  * @author matias
  */
-public class ModificarUsuario extends javax.swing.JInternalFrame
-{
+public class ModificarUsuario extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaModificarUsuario = new JMenuItem("Ventana Modificar Usuario");
@@ -40,8 +39,7 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form ModificarUsuario
      */
-    public ModificarUsuario()
-    {
+    public ModificarUsuario() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -49,45 +47,38 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
 
         grillaUsuarioDisponibles.setAutoCreateRowSorter(true);
-        //Oculto columnas
+        // Oculto columnas
         grillaUsuarioDisponibles.getColumnModel().getColumn(5).setMaxWidth(0);
         grillaUsuarioDisponibles.getColumnModel().getColumn(5).setMinWidth(0);
         grillaUsuarioDisponibles.getColumnModel().getColumn(6).setMaxWidth(0);
         grillaUsuarioDisponibles.getColumnModel().getColumn(6).setMinWidth(0);
     }
 
-    public static ModificarUsuario getInstancia()
-    {
+    public static ModificarUsuario getInstancia() {
 
-        if (instancia == null)
-        {
+        if (instancia == null) {
             instancia = new ModificarUsuario();
         }
         return instancia;
     }
 
-    public DtoUsuario getDtoUsuarioModificado()
-    {
+    public DtoUsuario getDtoUsuarioModificado() {
         return dtoUsuarioModificado;
     }
 
-    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado)
-    {
+    public void setDtoUsuarioModificado(DtoUsuario dtoUsuarioModificado) {
         this.dtoUsuarioModificado = dtoUsuarioModificado;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaModificarUsuario()
-    {
+    public static JMenuItem getVentanaModificarUsuario() {
         return ventanaModificarUsuario;
     }
 
-    public void limpiarFormulario()
-    {
+    public void limpiarFormulario() {
         limpiarJtable();
         campoNuevoNombreUsuario.setText("");
         campoNuevaContrasenia.setText("");
@@ -96,21 +87,18 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         comboTipoDeUsuario.setSelectedItem("Recepcionista");
     }
 
-    public void limpiarJtable()
-    {
+    public void limpiarJtable() {
 
         int i = ((DefaultTableModel) grillaUsuarioDisponibles.getModel()).getRowCount() - 1;
 
-        while (((DefaultTableModel) grillaUsuarioDisponibles.getModel()).getRowCount() > 0)
-        {
+        while (((DefaultTableModel) grillaUsuarioDisponibles.getModel()).getRowCount() > 0) {
             ((DefaultTableModel) grillaUsuarioDisponibles.getModel()).removeRow(i);
             i--;
         }
 
     }
 
-    public void desabilitarFormulario()
-    {
+    public void desabilitarFormulario() {
 
         campoNuevoNombreUsuario.setEnabled(false);
         campoNuevaContrasenia.setEnabled(false);
@@ -121,8 +109,7 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         botonGuardar.setEnabled(false);
     }
 
-    public void habilitarFormulario()
-    {
+    public void habilitarFormulario() {
         campoNuevoNombreUsuario.setEnabled(true);
         campoNuevaContrasenia.setEnabled(true);
         campoRepetirNuevaContrasenia.setEnabled(true);
@@ -132,65 +119,54 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         botonGuardar.setEnabled(true);
     }
 
-    public void cargarUsuariosDisponibles()
-    {
-        try
-        {
+    public void cargarUsuariosDisponibles() {
+        try {
             List<GenericDto> todosLosUsuarios = usuarioClient.findAll();
             List<GenericDto> todasLasPersonas = personaClient.findAll();
             java.util.Map<Integer, GenericDto> personasMap = new java.util.HashMap<>();
-            
-            for (GenericDto persona : todasLasPersonas)
-            {
+
+            for (GenericDto persona : todasLasPersonas) {
                 Integer idPersona = persona.getInt("idPersona");
-                if (idPersona != null)
-                {
+                if (idPersona != null) {
                     personasMap.put(idPersona, persona);
                 }
             }
 
-            if (todosLosUsuarios != null && !todosLosUsuarios.isEmpty())
-            {
-                for (GenericDto miDtoUsuario : todosLosUsuarios)
-                {
+            if (todosLosUsuarios != null && !todosLosUsuarios.isEmpty()) {
+                for (GenericDto miDtoUsuario : todosLosUsuarios) {
                     Integer fkIdPersona = miDtoUsuario.getInt("fkIdPersona");
                     GenericDto persona = personasMap.get(fkIdPersona);
-                    
+
                     String nombrePersona = persona != null ? persona.getString("nombre") : "N/A";
                     String apellidoPersona = persona != null ? persona.getString("apellido") : "N/A";
                     String nombreUsuario = miDtoUsuario.getString("nombre");
-                    
-                    Object[] datos =
-                    {
-                        nombrePersona,
-                        apellidoPersona,
-                        nombreUsuario,
-                        miDtoUsuario.getString("tipo"),
-                        miDtoUsuario.getBoolean("estado"),
-                        miDtoUsuario.getInt("idUsuario"),
-                        //Controlo la version del objeto
-                        miDtoUsuario.getInt("version")
+
+                    Object[] datos = {
+                            nombrePersona,
+                            apellidoPersona,
+                            nombreUsuario,
+                            miDtoUsuario.getString("tipo"),
+                            miDtoUsuario.getBoolean("estado"),
+                            miDtoUsuario.getInt("idUsuario"),
+                            // Controlo la version del objeto
+                            miDtoUsuario.getInt("version")
                     };
 
                     ((DefaultTableModel) grillaUsuarioDisponibles.getModel()).addRow(datos);
                 }
-            } else
-            {
+            } else {
                 JOptionPane.showMessageDialog(this, "No existen Usuarios Registrados");
             }
-        }
-        catch (IOException ex)
-        {
-            JOptionPane.showMessageDialog(this, "Error al cargar usuarios: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar usuarios: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public void ocultarColumnasJtable()
-    {
+    public void ocultarColumnasJtable() {
     }
 
-    public void cargarVistaUsuario(DtoUsuario dtoUsuario)
-    {
+    public void cargarVistaUsuario(DtoUsuario dtoUsuario) {
         campoNuevoNombreUsuario.setText(dtoUsuario.getNombre());
         campoNuevaContrasenia.setText(dtoUsuario.getContrasenia());
         campoRepetirNuevaContrasenia.setText(dtoUsuario.getContrasenia());
@@ -200,11 +176,14 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -235,17 +214,23 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -264,32 +249,32 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         jLabel2.setText("Lista de Usuarios Disponibles:");
 
         grillaUsuarioDisponibles.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Nombre", "Apellido", "Usuario", "Tipo", "Estado", "id_usuario", "version"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.Integer.class
+                },
+                new String[] {
+                        "Nombre", "Apellido", "Usuario", "Tipo", "Estado", "id_usuario", "version"
+                }) {
+            Class[] types = new Class[] {
+                    java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class,
+                    java.lang.Boolean.class, java.lang.Integer.class, java.lang.Integer.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+            boolean[] canEdit = new boolean[] {
+                    false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane1.setViewportView(grillaUsuarioDisponibles);
         grillaUsuarioDisponibles.getColumnModel().getColumn(5).setResizable(false);
         grillaUsuarioDisponibles.getColumnModel().getColumn(6).setResizable(false);
-        //Oculto columnas
+        // Oculto columnas
         grillaUsuarioDisponibles.getColumnModel().getColumn(5).setMaxWidth(0);
         grillaUsuarioDisponibles.getColumnModel().getColumn(5).setMinWidth(0);
         grillaUsuarioDisponibles.getColumnModel().getColumn(6).setMaxWidth(0);
@@ -339,131 +324,201 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelModificarUsuarioLayout = new javax.swing.GroupLayout(panelModificarUsuario);
         panelModificarUsuario.setLayout(panelModificarUsuarioLayout);
         panelModificarUsuarioLayout.setHorizontalGroup(
-            panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1)
-                    .addComponent(jScrollPane1)
-                    .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel11))
-                                .addGap(37, 37, 37)
-                                .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(comboTipoDeUsuario, 0, 168, Short.MAX_VALUE)
-                                    .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
-                                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(checkHabilitado)
-                                            .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(campoNuevaContrasenia, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                                                .addComponent(campoRepetirNuevaContrasenia)
-                                                .addComponent(campoNuevoNombreUsuario)))
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 55, Short.MAX_VALUE)
-                        .addComponent(labelAdvertencia, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelModificarUsuarioLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelModificarUsuarioLayout.createSequentialGroup()
-                                .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(botonSeleccionar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
+                panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelModificarUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jSeparator1)
+                                        .addComponent(jScrollPane1)
+                                        .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
+                                                .addGroup(panelModificarUsuarioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(jLabel2)
+                                                        .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
+                                                                .addComponent(jButton2,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 105,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(18, 18, 18)
+                                                                .addGroup(panelModificarUsuarioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel12)
+                                                                        .addComponent(jLabel9)
+                                                                        .addComponent(jLabel10)
+                                                                        .addComponent(jLabel11))
+                                                                .addGap(37, 37, 37)
+                                                                .addGroup(panelModificarUsuarioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                false)
+                                                                        .addComponent(comboTipoDeUsuario, 0, 168,
+                                                                                Short.MAX_VALUE)
+                                                                        .addGroup(panelModificarUsuarioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelModificarUsuarioLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(checkHabilitado)
+                                                                                        .addGroup(
+                                                                                                panelModificarUsuarioLayout
+                                                                                                        .createParallelGroup(
+                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                false)
+                                                                                                        .addComponent(
+                                                                                                                campoNuevaContrasenia,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                168,
+                                                                                                                Short.MAX_VALUE)
+                                                                                                        .addComponent(
+                                                                                                                campoRepetirNuevaContrasenia)
+                                                                                                        .addComponent(
+                                                                                                                campoNuevoNombreUsuario)))
+                                                                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED,
+                                                        55, Short.MAX_VALUE)
+                                                .addComponent(labelAdvertencia, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelModificarUsuarioLayout.createSequentialGroup()
+                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addGroup(panelModificarUsuarioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        panelModificarUsuarioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addComponent(botonGuardar,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        120,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(botonCerrar,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        120,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(botonSeleccionar,
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap()));
         panelModificarUsuarioLayout.setVerticalGroup(
-            panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelModificarUsuarioLayout.createSequentialGroup()
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelAdvertencia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel9)
-                                .addComponent(campoNuevoNombreUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(campoNuevaContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(campoRepetirNuevaContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(comboTipoDeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12)))
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addComponent(checkHabilitado)
-                .addGap(18, 18, 18)
-                .addGroup(panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                panelModificarUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelModificarUsuarioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonSeleccionar, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(panelModificarUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelModificarUsuarioLayout.createSequentialGroup()
+                                                        .addGroup(panelModificarUsuarioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addComponent(labelAdvertencia,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addGroup(panelModificarUsuarioLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jLabel9)
+                                                                        .addComponent(campoNuevoNombreUsuario,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addGroup(panelModificarUsuarioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(jLabel10)
+                                                                .addComponent(campoNuevaContrasenia,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addGroup(panelModificarUsuarioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(jLabel11)
+                                                                .addComponent(campoRepetirNuevaContrasenia,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addGroup(panelModificarUsuarioLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(comboTipoDeUsuario,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(jLabel12)))
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(15, 15, 15)
+                                .addComponent(checkHabilitado)
+                                .addGap(18, 18, 18)
+                                .addGroup(panelModificarUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(botonCerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
         jScrollPane2.setViewportView(panelModificarUsuario);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaModificarUsuario);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonGuardarActionPerformed
-    {//GEN-HEADEREND:event_botonGuardarActionPerformed
+    private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonGuardarActionPerformed
+    {// GEN-HEADEREND:event_botonGuardarActionPerformed
         String msj = AdministradorValidaciones.getInstancia().validarModificarUsuario(this);
 
-        if (msj == "")
-        {
+        if (msj == "") {
 
             // Validar contraseñas
             String nuevaContrasenia = new String(campoNuevaContrasenia.getPassword());
             String repetirContrasenia = new String(campoRepetirNuevaContrasenia.getPassword());
             boolean flag = nuevaContrasenia.equals(repetirContrasenia);
 
-            if (flag)
-            {
+            if (flag) {
                 DtoUsuario miDtoUsuario = this.getDtoUsuarioModificado();
-                
-                if (miDtoUsuario != null && miDtoUsuario.getIdUsuario() != null)
-                {
+
+                if (miDtoUsuario != null && miDtoUsuario.getIdUsuario() != null) {
                     // Convertir DtoUsuario a GenericDto
                     GenericDto usuarioDto = new GenericDto();
                     usuarioDto.put("idUsuario", miDtoUsuario.getIdUsuario());
@@ -471,38 +526,37 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     usuarioDto.put("contrasenia", nuevaContrasenia);
                     usuarioDto.put("estado", checkHabilitado.isSelected());
                     usuarioDto.put("version", miDtoUsuario.getVersion());
-                    
-                    switch (comboTipoDeUsuario.getSelectedItem().toString())
-                    {
-                        case ConstantesNegocio.USUARIO_EMPLEADO:
-                        {
+
+                    switch (comboTipoDeUsuario.getSelectedItem().toString()) {
+                        case ConstantesNegocio.USUARIO_EMPLEADO: {
                             usuarioDto.put("tipo", ConstantesNegocio.USUARIO_EMPLEADO);
                             break;
                         }
-                        case ConstantesNegocio.USUARIO_ESCRIBANO:
-                        {
+                        case ConstantesNegocio.USUARIO_ESCRIBANO: {
                             usuarioDto.put("tipo", ConstantesNegocio.USUARIO_ESCRIBANO);
                             break;
                         }
                     }
-                    
-                    if (miDtoUsuario.getPersonas() != null && miDtoUsuario.getPersonas().getIdPersona() != null)
-                    {
-                        usuarioDto.put("fkIdPersona", miDtoUsuario.getPersonas().getIdPersona());
+
+                    if (miDtoUsuario.getPersonas() != null && miDtoUsuario.getPersonas().getIdPersona() != null) {
+                        GenericDto pDto = new GenericDto();
+                        pDto.put("idPersona", miDtoUsuario.getPersonas().getIdPersona());
+                        usuarioDto.put("fkIdPersona", pDto);
                     }
 
-                    try
-                    {
+                    try {
                         usuarioClient.edit(usuarioDto);
-                        
-                        JOptionPane.showMessageDialog(this, "Se ha modificado un usuario: " + miDtoUsuario.getPersonas().getNombre() + " " + miDtoUsuario.getPersonas().getApellido(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+                        JOptionPane.showMessageDialog(this,
+                                "Se ha modificado un usuario: " + miDtoUsuario.getPersonas().getNombre() + " "
+                                        + miDtoUsuario.getPersonas().getApellido(),
+                                "Informacion", JOptionPane.INFORMATION_MESSAGE);
                         this.limpiarFormulario();
                         this.desabilitarFormulario();
                         ModificarUsuario.getInstancia().cargarUsuariosDisponibles();
-                    }
-                    catch (IOException ex)
-                    {
-                        JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         logger.log(Level.SEVERE, "Error al modificar usuario", ex);
                         this.limpiarFormulario();
                         ModificarUsuario.getInstancia().cargarUsuariosDisponibles();
@@ -510,32 +564,28 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     }
                 }
             }
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, msj);
         }
 
-    }//GEN-LAST:event_botonGuardarActionPerformed
+    }// GEN-LAST:event_botonGuardarActionPerformed
 
-    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonSeleccionarActionPerformed
-    {//GEN-HEADEREND:event_botonSeleccionarActionPerformed
+    private void botonSeleccionarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonSeleccionarActionPerformed
+    {// GEN-HEADEREND:event_botonSeleccionarActionPerformed
 
         TableModel miGrilla = grillaUsuarioDisponibles.getModel();
         int filaSeleccionada = grillaUsuarioDisponibles.getSelectedRow();
         filaSeleccionada = grillaUsuarioDisponibles.convertRowIndexToModel(filaSeleccionada);
 
-        if (filaSeleccionada > -1)
-        {
+        if (filaSeleccionada > -1) {
             int filas = miGrilla.getRowCount();
             int columnas = miGrilla.getColumnCount();
 
-            //Recorro la grilla completa, buscando el cliente seleccionado
-            for (int i = 0; i < filas; i++)
-            {
-                if (i == filaSeleccionada)
-                {
+            // Recorro la grilla completa, buscando el cliente seleccionado
+            for (int i = 0; i < filas; i++) {
+                if (i == filaSeleccionada) {
                     dtoUsuarioModificado = new DtoUsuario();
-                    //Set id usuario para modificarlo
+                    // Set id usuario para modificarlo
                     DtoPersona miPersona = new DtoPersona();
                     miPersona.setNombre(miGrilla.getValueAt(i, 0).toString());
                     miPersona.setApellido(miGrilla.getValueAt(i, 1).toString());
@@ -546,40 +596,38 @@ public class ModificarUsuario extends javax.swing.JInternalFrame
                     dtoUsuarioModificado.setEstado((Boolean) (miGrilla.getValueAt(i, 4)));
                     dtoUsuarioModificado.setIdUsuario(miGrilla.getValueAt(i, 5).hashCode());
 
-                    //Conotrlo Version del Objeto
+                    // Conotrlo Version del Objeto
                     dtoUsuarioModificado.setVersion(miGrilla.getValueAt(i, 6).hashCode());
 
-                    //Cargo datos del usuario en el formulario
+                    // Cargo datos del usuario en el formulario
                     cargarVistaUsuario(dtoUsuarioModificado);
                 }
             }
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Usuario");
         }
 
-    }//GEN-LAST:event_botonSeleccionarActionPerformed
+    }// GEN-LAST:event_botonSeleccionarActionPerformed
 
-    private void campoNuevoNombreUsuarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNuevoNombreUsuarioKeyReleased
+    private void campoNuevoNombreUsuarioKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNuevoNombreUsuarioKeyReleased
         String campo = this.campoNuevoNombreUsuario.getText();
         Boolean flag = AdministradorValidaciones.getInstancia().validarCantidadCaracteres(10, campo);
 
-        if (flag)
-        {
+        if (flag) {
             this.labelAdvertencia.setText("Maximo 10(diez) Caracteres");
             this.campoNuevoNombreUsuario.setText(campo.substring(0, 10));
-        } else
-        {
+        } else {
             this.labelAdvertencia.setText("");
         }
 
-    }//GEN-LAST:event_campoNuevoNombreUsuarioKeyReleased
+    }// GEN-LAST:event_campoNuevoNombreUsuarioKeyReleased
 
-    private void botonCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCerrarActionPerformed
+    private void botonCerrarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonCerrarActionPerformed
         salir();
         Principal.removeVentanaActivas(ModificarUsuario.getInstancia().getVentanaModificarUsuario());
-    }//GEN-LAST:event_botonCerrarActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_botonCerrarActionPerformed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonCerrar;
     private javax.swing.JButton botonGuardar;
     private javax.swing.JButton botonSeleccionar;

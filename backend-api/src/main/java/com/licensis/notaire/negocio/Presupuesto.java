@@ -55,7 +55,6 @@ public class Presupuesto implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_presupuesto")
     private Integer idPresupuesto;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.EAGER)

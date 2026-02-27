@@ -17,7 +17,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -60,7 +59,6 @@ public class TipoDeDocumento implements Serializable
     @Column(name = "id_tipo_documento")
     private Integer idTipoDocumento;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
@@ -69,7 +67,6 @@ public class TipoDeDocumento implements Serializable
     @Column(name = "dias_vencimiento")
     private Integer diasVencimiento;
     @Basic(optional = false)
-    @Lob
     @Column(name = "quien_entrega")
     private String quienEntrega;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDeDocumento", fetch = FetchType.EAGER)

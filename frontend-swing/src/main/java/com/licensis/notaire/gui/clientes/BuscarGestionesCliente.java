@@ -222,7 +222,8 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame {
         try {
             setSelected(true);
         } catch (java.beans.PropertyVetoException e1) {
-            e1.printStackTrace();
+            Logger.getLogger(BuscarGestionesCliente.class.getName()).log(Level.SEVERE,
+                    "Error setting selected state for internal frame", e1);
         }
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
@@ -528,6 +529,7 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame {
                                 }
                                 return list;
                             }
+
                             @Override
                             protected void done() {
                                 try {
@@ -539,8 +541,10 @@ public class BuscarGestionesCliente extends javax.swing.JInternalFrame {
                                     Principal.setVentanasActivas(VerHistorialGestion.getVentanaVerHistorialGestion());
                                     salir();
                                 } catch (Exception ex) {
-                                    Logger.getLogger(BuscarGestionesCliente.class.getName()).log(Level.WARNING, "Error al cargar historial", ex);
-                                    JOptionPane.showMessageDialog(BuscarGestionesCliente.this, "Error al cargar historial: " + ex.getMessage(),
+                                    Logger.getLogger(BuscarGestionesCliente.class.getName()).log(Level.WARNING,
+                                            "Error al cargar historial", ex);
+                                    JOptionPane.showMessageDialog(BuscarGestionesCliente.this,
+                                            "Error al cargar historial: " + ex.getMessage(),
                                             "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                             }

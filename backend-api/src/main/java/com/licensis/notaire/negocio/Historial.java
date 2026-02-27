@@ -44,7 +44,6 @@ public class Historial implements Serializable
     @Basic(optional = false)
     @Column(name = "id_historial")
     private Integer idHistorial;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_estado_gestion", referencedColumnName = "id_estado_gestion")

@@ -20,7 +20,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -70,17 +69,13 @@ public class Escritura implements Serializable
     @Column(name = "numero")
     private int numero;
     @Basic(optional = false)
-    @Lob
     @Column(name = "cuerpo")
     private String cuerpo;
     @Basic(optional = false)
-    @Lob
     @Column(name = "estado")
     private String estado = ConstantesNegocio.ESCRITURA_SIN_FIRMAR;
-    @Lob
     @Column(name = "matricula_inscripcion")
     private String matriculaInscripcion;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)

@@ -16,7 +16,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -56,10 +55,8 @@ public class TipoDeFolio implements Serializable
     @Column(name = "id_tipo_folio")
     private Integer idTipoFolio;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoFolio", fetch = FetchType.EAGER)

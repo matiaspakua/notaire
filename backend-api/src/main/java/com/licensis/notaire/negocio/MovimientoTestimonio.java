@@ -16,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -73,7 +72,6 @@ public class MovimientoTestimonio implements Serializable
     @Basic(optional = false)
     @Column(name = "numero_carton")
     private int numeroCarton;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id_testimonio")

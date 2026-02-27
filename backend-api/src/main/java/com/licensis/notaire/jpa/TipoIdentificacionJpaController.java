@@ -23,252 +23,208 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class TipoIdentificacionJpaController implements Serializable, IPersistenciaJpa
-{
+public class TipoIdentificacionJpaController implements Serializable, IPersistenciaJpa {
 
     private static TipoIdentificacionJpaController instancia = null;
 
-    public TipoIdentificacionJpaController(UserTransaction utx, EntityManagerFactory emf)
-    {
+    public TipoIdentificacionJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
+
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
-    public EntityManager getEntityManager()
-    {
+    public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(TipoIdentificacion tipoIdentificacion)
-    {
-        if (tipoIdentificacion.getPersonaList() == null)
-        {
+    public void create(TipoIdentificacion tipoIdentificacion) {
+        if (tipoIdentificacion.getPersonaList() == null) {
             tipoIdentificacion.setPersonaList(new ArrayList<Persona>());
         }
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             List<Persona> attachedPersonaList = new ArrayList<Persona>();
-            for (Persona personaListPersonaToAttach : tipoIdentificacion.getPersonaList())
-            {
-                personaListPersonaToAttach = em.getReference(personaListPersonaToAttach.getClass(), personaListPersonaToAttach.getIdPersona());
+            for (Persona personaListPersonaToAttach : tipoIdentificacion.getPersonaList()) {
+                personaListPersonaToAttach = em.getReference(personaListPersonaToAttach.getClass(),
+                        personaListPersonaToAttach.getIdPersona());
                 attachedPersonaList.add(personaListPersonaToAttach);
             }
             tipoIdentificacion.setPersonaList(attachedPersonaList);
             em.persist(tipoIdentificacion);
-            for (Persona personaListPersona : tipoIdentificacion.getPersonaList())
-            {
-                TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListPersona = personaListPersona.getFkIdTipoIdentificacion();
+            for (Persona personaListPersona : tipoIdentificacion.getPersonaList()) {
+                TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListPersona = personaListPersona
+                        .getFkIdTipoIdentificacion();
                 personaListPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
                 personaListPersona = em.merge(personaListPersona);
-                if (oldFkIdTipoIdentificacionOfPersonaListPersona != null)
-                {
+                if (oldFkIdTipoIdentificacionOfPersonaListPersona != null) {
                     oldFkIdTipoIdentificacionOfPersonaListPersona.getPersonaList().remove(personaListPersona);
-                    oldFkIdTipoIdentificacionOfPersonaListPersona = em.merge(oldFkIdTipoIdentificacionOfPersonaListPersona);
+                    oldFkIdTipoIdentificacionOfPersonaListPersona = em
+                            .merge(oldFkIdTipoIdentificacionOfPersonaListPersona);
                 }
             }
             em.getTransaction().commit();
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public void edit(TipoIdentificacion tipoIdentificacion) throws IllegalOrphanException, NonexistentEntityException, Exception
-    {
+    public void edit(TipoIdentificacion tipoIdentificacion)
+            throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoIdentificacion persistentTipoIdentificacion = em.find(TipoIdentificacion.class, tipoIdentificacion.getIdTipoIdentificacion());
+            TipoIdentificacion persistentTipoIdentificacion = em.find(TipoIdentificacion.class,
+                    tipoIdentificacion.getIdTipoIdentificacion());
             List<Persona> personaListOld = persistentTipoIdentificacion.getPersonaList();
             List<Persona> personaListNew = tipoIdentificacion.getPersonaList();
             List<String> illegalOrphanMessages = null;
-            for (Persona personaListOldPersona : personaListOld)
-            {
-                if (!personaListNew.contains(personaListOldPersona))
-                {
-                    if (illegalOrphanMessages == null)
-                    {
+            for (Persona personaListOldPersona : personaListOld) {
+                if (!personaListNew.contains(personaListOldPersona)) {
+                    if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Persona " + personaListOldPersona + " since its fkIdTipoIdentificacion field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Persona " + personaListOldPersona
+                            + " since its fkIdTipoIdentificacion field is not nullable.");
                 }
             }
-            if (illegalOrphanMessages != null)
-            {
+            if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             List<Persona> attachedPersonaListNew = new ArrayList<Persona>();
-            for (Persona personaListNewPersonaToAttach : personaListNew)
-            {
-                personaListNewPersonaToAttach = em.getReference(personaListNewPersonaToAttach.getClass(), personaListNewPersonaToAttach.getIdPersona());
+            for (Persona personaListNewPersonaToAttach : personaListNew) {
+                personaListNewPersonaToAttach = em.getReference(personaListNewPersonaToAttach.getClass(),
+                        personaListNewPersonaToAttach.getIdPersona());
                 attachedPersonaListNew.add(personaListNewPersonaToAttach);
             }
             personaListNew = attachedPersonaListNew;
             tipoIdentificacion.setPersonaList(personaListNew);
             tipoIdentificacion = em.merge(tipoIdentificacion);
-            for (Persona personaListNewPersona : personaListNew)
-            {
-                if (!personaListOld.contains(personaListNewPersona))
-                {
-                    TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListNewPersona = personaListNewPersona.getFkIdTipoIdentificacion();
+            for (Persona personaListNewPersona : personaListNew) {
+                if (!personaListOld.contains(personaListNewPersona)) {
+                    TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListNewPersona = personaListNewPersona
+                            .getFkIdTipoIdentificacion();
                     personaListNewPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
                     personaListNewPersona = em.merge(personaListNewPersona);
-                    if (oldFkIdTipoIdentificacionOfPersonaListNewPersona != null && !oldFkIdTipoIdentificacionOfPersonaListNewPersona.equals(tipoIdentificacion))
-                    {
+                    if (oldFkIdTipoIdentificacionOfPersonaListNewPersona != null
+                            && !oldFkIdTipoIdentificacionOfPersonaListNewPersona.equals(tipoIdentificacion)) {
                         oldFkIdTipoIdentificacionOfPersonaListNewPersona.getPersonaList().remove(personaListNewPersona);
-                        oldFkIdTipoIdentificacionOfPersonaListNewPersona = em.merge(oldFkIdTipoIdentificacionOfPersonaListNewPersona);
+                        oldFkIdTipoIdentificacionOfPersonaListNewPersona = em
+                                .merge(oldFkIdTipoIdentificacionOfPersonaListNewPersona);
                     }
                 }
             }
             em.getTransaction().commit();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0)
-            {
+            if (msg == null || msg.length() == 0) {
                 Integer id = tipoIdentificacion.getIdTipoIdentificacion();
-                if (findTipoIdentificacion(id) == null)
-                {
+                if (findTipoIdentificacion(id) == null) {
                     throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.");
                 }
             }
             throw ex;
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
-    {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
-        try
-        {
+        try {
             em = getEntityManager();
             em.getTransaction().begin();
             TipoIdentificacion tipoIdentificacion;
-            try
-            {
+            try {
                 tipoIdentificacion = em.getReference(TipoIdentificacion.class, id);
                 tipoIdentificacion.getIdTipoIdentificacion();
-            }
-            catch (EntityNotFoundException enfe)
-            {
-                throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.", enfe);
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.",
+                        enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<Persona> personaListOrphanCheck = tipoIdentificacion.getPersonaList();
-            for (Persona personaListOrphanCheckPersona : personaListOrphanCheck)
-            {
-                if (illegalOrphanMessages == null)
-                {
+            for (Persona personaListOrphanCheckPersona : personaListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoIdentificacion (" + tipoIdentificacion + ") cannot be destroyed since the Persona " + personaListOrphanCheckPersona + " in its personaList field has a non-nullable fkIdTipoIdentificacion field.");
+                illegalOrphanMessages.add("This TipoIdentificacion (" + tipoIdentificacion
+                        + ") cannot be destroyed since the Persona " + personaListOrphanCheckPersona
+                        + " in its personaList field has a non-nullable fkIdTipoIdentificacion field.");
             }
-            if (illegalOrphanMessages != null)
-            {
+            if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(tipoIdentificacion);
             em.getTransaction().commit();
-        }
-        finally
-        {
-            if (em != null)
-            {
+        } finally {
+            if (em != null) {
                 em.close();
             }
         }
     }
 
-    public List<TipoIdentificacion> findTipoIdentificacionEntities()
-    {
+    public List<TipoIdentificacion> findTipoIdentificacionEntities() {
         return findTipoIdentificacionEntities(true, -1, -1);
     }
 
-    public List<TipoIdentificacion> findTipoIdentificacionEntities(int maxResults, int firstResult)
-    {
+    public List<TipoIdentificacion> findTipoIdentificacionEntities(int maxResults, int firstResult) {
         return findTipoIdentificacionEntities(false, maxResults, firstResult);
     }
 
-    private List<TipoIdentificacion> findTipoIdentificacionEntities(boolean all, int maxResults, int firstResult)
-    {
+    private List<TipoIdentificacion> findTipoIdentificacionEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select object(o) from TipoIdentificacion as o");
-            if (!all)
-            {
+            if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
             return q.getResultList();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public TipoIdentificacion findTipoIdentificacion(Integer id)
-    {
+    public TipoIdentificacion findTipoIdentificacion(Integer id) {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             return em.find(TipoIdentificacion.class, id);
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public int getTipoIdentificacionCount()
-    {
+    public int getTipoIdentificacionCount() {
         EntityManager em = getEntityManager();
-        try
-        {
+        try {
             Query q = em.createQuery("select count(o) from TipoIdentificacion as o");
             return ((Long) q.getSingleResult()).intValue();
-        }
-        finally
-        {
+        } finally {
             em.close();
         }
     }
 
-    public static TipoIdentificacionJpaController getInstancia()
-    {
+    public static TipoIdentificacionJpaController getInstancia() {
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
-        if (instancia == null)
-        {
+        if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new TipoIdentificacionJpaController(null, emf);
         }
         return instancia;
     }
 
     @Override
-    public String getNombreJpa()
-    {
+    public String getNombreJpa() {
         return this.getClass().getName();
     }
 }

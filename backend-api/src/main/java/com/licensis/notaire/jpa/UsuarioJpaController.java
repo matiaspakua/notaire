@@ -42,7 +42,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
-        if (instancia == null) {
+        if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new UsuarioJpaController(null, emf);
         }
         return instancia;
@@ -273,7 +273,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
      * Retorna null si no existe.
      */
     public Usuario findUsuarioByPersona(Integer idPersona) {
-        if (idPersona == null) return null;
+        if (idPersona == null)
+            return null;
         EntityManager em = getEntityManager();
         try {
             Query query = em.createNamedQuery("Usuario.findByFkIdPersona");

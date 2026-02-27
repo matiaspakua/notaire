@@ -54,7 +54,6 @@ public class Concepto implements Serializable
     @Column(name = "id_concepto")
     private Integer idConcepto;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "concepto", fetch = FetchType.EAGER)

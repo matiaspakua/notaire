@@ -136,7 +136,8 @@ public class Usuario {
             miDto.setVersion(version);
 
         } catch (NullPointerException e) {
-            System.out.println("Error Metodo : getDtoUsuario");
+            java.util.logging.Logger.getLogger(Usuario.class.getName()).log(java.util.logging.Level.SEVERE,
+                    "Error Metodo : getDtoUsuario", e);
         }
         return miDto;
     }

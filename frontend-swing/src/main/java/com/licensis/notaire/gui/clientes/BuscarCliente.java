@@ -497,8 +497,10 @@ public class BuscarCliente extends javax.swing.JInternalFrame {
                         try {
                             this.flag = DarAltaUsuario.getInstancia().cargarFormulario(miDtoPersonaParametros);
                         } catch (Exception ex) {
-                            System.out.println("Exception BuscarCliente - cargarFormulario");
+                            Logger.getLogger(BuscarCliente.class.getName()).log(Level.SEVERE,
+                                    "Exception BuscarCliente - cargarFormulario", ex);
                         }
+
                         break;
                     }
                     case ConstantesGui.CREAR_PRESUPUESTO: {

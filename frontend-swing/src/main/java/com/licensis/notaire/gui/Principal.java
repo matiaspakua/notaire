@@ -19,16 +19,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.servicios.AdministradorJpa;
+import java.util.logging.Logger;
 
 /**
  *
  * @author matias
  */
-public class Principal extends javax.swing.JFrame
-{
+public class Principal extends javax.swing.JFrame {
 
     // <editor-fold defaultstate="collapsed" desc="ATRIBUTOS">
     private static Principal instancia = null;
+    private static final Logger LOG = Logger.getLogger(Principal.class.getName());
     public static final Integer tamanioMinimoHorizontal = 650;
     public static final Integer tamanioMinimoVertical = 350;
     public static final Integer tamanioNormalHorizontal = 700;
@@ -41,73 +42,99 @@ public class Principal extends javax.swing.JFrame
     /**
      * Creates new form Principal
      */
-    private Principal()
-    {
-        initComponents();
-        Principal.AreaTrabajo.setBackground(Color.LIGHT_GRAY);
+    private Principal() {
+        try {
+            LOG.info("Iniciando componentes de la ventana Principal");
+            initComponents();
 
-        this.setExtendedState(Principal.MAXIMIZED_BOTH);
+            if (Principal.AreaTrabajo != null) {
+                Principal.AreaTrabajo.setBackground(Color.LIGHT_GRAY);
+            }
 
-        miAdministradorJpa = AdministradorJpa.getInstancia();
-        menuOpciones.setVisible(false);
+            this.setExtendedState(Principal.MAXIMIZED_BOTH);
 
-        this.scrollAreaTrabajo.setEnabled(true);
-        this.scrollAreaTrabajo.setWheelScrollingEnabled(true);
-        this.scrollAreaTrabajo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        this.scrollAreaTrabajo.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            LOG.info("Inicializando AdministradorJpa en ventana Principal");
+            miAdministradorJpa = AdministradorJpa.getInstancia();
+
+            if (menuOpciones != null) {
+                menuOpciones.setVisible(false);
+            }
+
+            if (this.scrollAreaTrabajo != null) {
+                this.scrollAreaTrabajo.setEnabled(true);
+                this.scrollAreaTrabajo.setWheelScrollingEnabled(true);
+                this.scrollAreaTrabajo.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                this.scrollAreaTrabajo.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            }
+            LOG.info("Ventana Principal inicializada correctamente");
+        } catch (Exception ex) {
+            LOG.log(java.util.logging.Level.SEVERE, "Error fatal durante la creacion de la ventana Principal", ex);
+            throw ex; // Re-throw to inform caller
+        }
     }
 
-    public static Principal getInstancia()
-    {
-        if (instancia == null)
-        {
+    public static Principal getInstancia() {
+        if (instancia == null) {
             instancia = new Principal();
         }
         return instancia;
     }
 
-    public void cargarVentanaUsuario(DtoUsuario miDtoUsuario)
-    {
+    public void cargarVentanaUsuario(DtoUsuario miDtoUsuario) {
+        String tipo = miDtoUsuario.getTipo();
+        LOG.info("Cargando ventana segun tipo de usuario - tipo: " + tipo
+                + ", usuario: " + miDtoUsuario.getNombre());
 
-        switch (miDtoUsuario.getTipo())
-        {
-            case ConstantesNegocio.USUARIO_EMPLEADO:
-            {
-                cargarVentanaEmpleado();
-                break;
-            }
-            case ConstantesNegocio.USUARIO_ESCRIBANO:
-            {
-                cargarVentanaEscribano();
-                break;
-            }
-
+        if (tipo == null) {
+            LOG.warning("Tipo de usuario es NULL para " + miDtoUsuario.getNombre()
+                    + ". Usando perfil EMPLEADO por defecto.");
+            cargarVentanaEmpleado();
+            return;
         }
 
+        switch (tipo.toUpperCase()) {
+            case "ADMIN":
+            case "ADMINISTRADOR":
+            case "ESCRIBANO":
+                LOG.info("Configurando ventana para perfil ADMINISTRADOR/ESCRIBANO - acceso completo");
+                cargarVentanaEscribano();
+                menuOpciones.setVisible(true);
+                break;
+            case "EMPLEADO":
+                LOG.info("Configurando ventana para perfil EMPLEADO - modulo administracion deshabilitado");
+                cargarVentanaEmpleado();
+                break;
+            default:
+                LOG.warning("Tipo de usuario no reconocido: " + tipo + ". Usando perfil EMPLEADO por defecto.");
+                cargarVentanaEmpleado();
+                break;
+        }
     }
 
-    private void cargarVentanaEmpleado()
-    {
+    private void cargarVentanaEmpleado() {
         botonModuloAdministracion.setVisible(false);
     }
 
-    private void cargarVentanaEscribano()
-    {
+    private void cargarVentanaEscribano() {
+        LOG.info("Configurando todos los modulos visibles para perfil administrativo");
+        botonModuloClientes.setVisible(true);
+        botonModuloPresupuestos.setVisible(true);
+        botonModuloGestiones.setVisible(true);
+        botonModuloProtocolo.setVisible(true);
+        botonModuloAdministracion.setVisible(true);
+        botonModuloPagos.setVisible(true);
+        menuOpciones.setVisible(true);
     }
 
-    static class MenuActionListener implements ActionListener
-    {
+    static class MenuActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             String nombreMenu = (((JMenuItem) e.getSource()).getText());
 
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
                 JInternalFrame miFrame = AreaTrabajo.getAllFrames()[i];
-                if (miFrame.getTitle().contains(nombreMenu))
-                {
+                if (miFrame.getTitle().contains(nombreMenu)) {
                     miFrame.show();
                     miFrame.toFront();
                     break;
@@ -118,38 +145,34 @@ public class Principal extends javax.swing.JFrame
     }
 
     /**
-     * Metodo que permite obtener la instancia activa de un determinado formulario en base al nombre
+     * Metodo que permite obtener la instancia activa de un determinado formulario
+     * en base al nombre
      * del mismo.
      *
      * @param nombreFormulario El nombre de un formulario.
-     * @return miFrame Un JInternalFrame correspondiente al formulario activo o nulo si no existe.
+     * @return miFrame Un JInternalFrame correspondiente al formulario activo o nulo
+     *         si no existe.
      */
-    public static JInternalFrame obtenerFormularioActivo(String nombreFormulario)
-    {
-        for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-        {
+    public static JInternalFrame obtenerFormularioActivo(String nombreFormulario) {
+        for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
             JInternalFrame miFrame = AreaTrabajo.getAllFrames()[i];
-            if (miFrame.getTitle().contains(nombreFormulario))
-            {
+            if (miFrame.getTitle().contains(nombreFormulario)) {
                 return miFrame;
             }
         }
         return null;
     }
 
-    public static void setVentanasActivas(JMenuItem nuevaVentana)
-    {
+    public static void setVentanasActivas(JMenuItem nuevaVentana) {
         nuevaVentana.addActionListener(new MenuActionListener());
         ventanasActivas.add(nuevaVentana);
     }
 
-    public static void removeVentanaActivas(JMenuItem ventana)
-    {
+    public static void removeVentanaActivas(JMenuItem ventana) {
         ventanasActivas.remove(ventana);
     }
 
-    public static void cargarFormulario(JInternalFrame form)
-    {
+    public static void cargarFormulario(JInternalFrame form) {
         AreaTrabajo.remove(form);
         AreaTrabajo.add(form);
         form.show();
@@ -157,17 +180,19 @@ public class Principal extends javax.swing.JFrame
 
     }
 
-    public static void eliminarFormulario(JInternalFrame form)
-    {
+    public static void eliminarFormulario(JInternalFrame form) {
         AreaTrabajo.remove(form);
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         Modulos = new javax.swing.JPanel();
@@ -196,7 +221,8 @@ public class Principal extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Notaire");
 
-        botonModuloClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraClientes.png"))); // NOI18N
+        botonModuloClientes
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraClientes.png"))); // NOI18N
         botonModuloClientes.setText("Clientes");
         botonModuloClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloClientes.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -210,7 +236,8 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloPresupuestos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraPresup.png"))); // NOI18N
+        botonModuloPresupuestos
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraPresup.png"))); // NOI18N
         botonModuloPresupuestos.setText("Presupuestos");
         botonModuloPresupuestos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloPresupuestos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -223,7 +250,8 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloGestiones.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraGestion.png"))); // NOI18N
+        botonModuloGestiones
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraGestion.png"))); // NOI18N
         botonModuloGestiones.setText("Gestiones");
         botonModuloGestiones.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloGestiones.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -236,7 +264,8 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloProtocolo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraProt.png"))); // NOI18N
+        botonModuloProtocolo
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraProt.png"))); // NOI18N
         botonModuloProtocolo.setText("Protocolo");
         botonModuloProtocolo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloProtocolo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -261,7 +290,8 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloAdministracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraAdmin.png"))); // NOI18N
+        botonModuloAdministracion
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraAdmin.png"))); // NOI18N
         botonModuloAdministracion.setText("Administración");
         botonModuloAdministracion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloAdministracion.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -274,7 +304,8 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        botonModuloPagos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraPagos.png"))); // NOI18N
+        botonModuloPagos
+                .setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/barraPagos.png"))); // NOI18N
         botonModuloPagos.setText("Pagos");
         botonModuloPagos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         botonModuloPagos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -287,54 +318,99 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/logoPalabraRojoVertical.png"))); // NOI18N
+        jButton1.setIcon(
+                new javax.swing.ImageIcon(getClass().getResource("/iconos/barraLateral/logoPalabraRojoVertical.png"))); // NOI18N
         jButton1.setContentAreaFilled(false);
 
         javax.swing.GroupLayout ModulosLayout = new javax.swing.GroupLayout(Modulos);
         Modulos.setLayout(ModulosLayout);
         ModulosLayout.setHorizontalGroup(
-            ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ModulosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ModulosLayout.createSequentialGroup()
-                        .addGroup(ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(botonModuloGestiones, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(botonModuloClientes, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(botonModuloPresupuestos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(botonSalir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(botonModuloProtocolo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(botonModuloPagos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(botonModuloAdministracion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ModulosLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
+                ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ModulosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ModulosLayout.createSequentialGroup()
+                                                .addGroup(ModulosLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(ModulosLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addComponent(botonModuloGestiones,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(botonModuloClientes,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(botonModuloPresupuestos,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE))
+                                                        .addGroup(ModulosLayout
+                                                                .createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                        false)
+                                                                .addComponent(botonSalir,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(botonModuloProtocolo,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(botonModuloPagos,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(botonModuloAdministracion,
+                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                ModulosLayout.createSequentialGroup()
+                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap()));
         ModulosLayout.setVerticalGroup(
-            ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ModulosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(botonModuloClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonModuloPresupuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonModuloGestiones, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonModuloProtocolo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonModuloPagos, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonModuloAdministracion, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                ModulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ModulosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(botonModuloClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonModuloPresupuestos, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonModuloGestiones, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonModuloProtocolo, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonModuloPagos, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonModuloAdministracion, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45,
+                                        Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 200,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
 
         AreaTrabajo.setAutoscrolls(true);
         scrollAreaTrabajo.setViewportView(AreaTrabajo);
@@ -370,7 +446,8 @@ public class Principal extends javax.swing.JFrame
 
         Menu.add(menuAyuda);
 
-        jMenuseparador.setText("                                                                                                                                                 ");
+        jMenuseparador.setText(
+                "                                                                                                                                                 ");
         jMenuseparador.setEnabled(false);
         jMenuseparador.setMaximumSize(new java.awt.Dimension(1000, 32767));
         jMenuseparador.setPreferredSize(new java.awt.Dimension(750, 23));
@@ -387,208 +464,185 @@ public class Principal extends javax.swing.JFrame
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(Modulos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollAreaTrabajo, javax.swing.GroupLayout.DEFAULT_SIZE, 1110, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(Modulos, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(scrollAreaTrabajo, javax.swing.GroupLayout.DEFAULT_SIZE, 1110,
+                                        Short.MAX_VALUE)));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Modulos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(scrollAreaTrabajo)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(Modulos, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollAreaTrabajo));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonModuloAdministracionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloAdministracionActionPerformed
-    {//GEN-HEADEREND:event_botonModuloAdministracionActionPerformed
-        if (Administracion.getEstadoFormulario() == Boolean.FALSE)
-        {
+    private void botonModuloAdministracionActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloAdministracionActionPerformed
+    {// GEN-HEADEREND:event_botonModuloAdministracionActionPerformed
+        LOG.info("Usuario navego al modulo: Administracion");
+        if (Administracion.getEstadoFormulario() == Boolean.FALSE) {
             Principal.cargarFormulario(Administracion.getInstancia());
             Principal.setVentanasActivas(Administracion.getMenuAdministracion());
 
-        } else
-        {
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
-                if (AreaTrabajo.getAllFrames()[i].equals(Administracion.getInstancia()))
-                {
+        } else {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
+                if (AreaTrabajo.getAllFrames()[i].equals(Administracion.getInstancia())) {
                     Principal.cargarFormulario(Administracion.getInstancia());
                     Principal.setVentanasActivas(Administracion.getMenuAdministracion());
                 }
             }
         }
-    }//GEN-LAST:event_botonModuloAdministracionActionPerformed
+    }// GEN-LAST:event_botonModuloAdministracionActionPerformed
 
-    private void botonSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonSalirActionPerformed
-    {//GEN-HEADEREND:event_botonSalirActionPerformed
+    private void botonSalirActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonSalirActionPerformed
+    {// GEN-HEADEREND:event_botonSalirActionPerformed
         salir();
-    }//GEN-LAST:event_botonSalirActionPerformed
+    }// GEN-LAST:event_botonSalirActionPerformed
 
-    private void botonModuloClientesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloClientesActionPerformed
-    {//GEN-HEADEREND:event_botonModuloClientesActionPerformed
-        if (Clientes.getEstadoFormulario() == Boolean.FALSE)
-        {
+    private void botonModuloClientesActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloClientesActionPerformed
+    {// GEN-HEADEREND:event_botonModuloClientesActionPerformed
+        LOG.info("Usuario navego al modulo: Clientes");
+        if (Clientes.getEstadoFormulario() == Boolean.FALSE) {
             Principal.cargarFormulario(Clientes.getInstancia());
             Principal.setVentanasActivas(Clientes.getMenuClientes());
-        } else
-        {
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
-                if (AreaTrabajo.getAllFrames()[i].equals(Clientes.getInstancia()))
-                {
+        } else {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
+                if (AreaTrabajo.getAllFrames()[i].equals(Clientes.getInstancia())) {
                     Principal.cargarFormulario(Clientes.getInstancia());
                     Principal.setVentanasActivas(Clientes.getMenuClientes());
                 }
             }
         }
-    }//GEN-LAST:event_botonModuloClientesActionPerformed
+    }// GEN-LAST:event_botonModuloClientesActionPerformed
 
-    private void botonModuloPresupuestosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloPresupuestosActionPerformed
-    {//GEN-HEADEREND:event_botonModuloPresupuestosActionPerformed
-        if (Presupuestos.getEstadoFormulario() == Boolean.FALSE)
-        {
+    private void botonModuloPresupuestosActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloPresupuestosActionPerformed
+    {// GEN-HEADEREND:event_botonModuloPresupuestosActionPerformed
+        LOG.info("Usuario navego al modulo: Presupuestos");
+        if (Presupuestos.getEstadoFormulario() == Boolean.FALSE) {
             Principal.cargarFormulario(Presupuestos.getInstancia());
             Principal.setVentanasActivas(Presupuestos.getMenuPresupuestos());
 
-        } else
-        {
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
-                if (AreaTrabajo.getAllFrames()[i].equals(Presupuestos.getInstancia()))
-                {
+        } else {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
+                if (AreaTrabajo.getAllFrames()[i].equals(Presupuestos.getInstancia())) {
                     Principal.cargarFormulario(Presupuestos.getInstancia());
                     Principal.setVentanasActivas(Presupuestos.getMenuPresupuestos());
                 }
             }
         }
-    }//GEN-LAST:event_botonModuloPresupuestosActionPerformed
+    }// GEN-LAST:event_botonModuloPresupuestosActionPerformed
 
-    private void botonModuloGestionesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloGestionesActionPerformed
-    {//GEN-HEADEREND:event_botonModuloGestionesActionPerformed
-        if (Gestiones.getEstadoFormulario() == Boolean.FALSE)
-        {
+    private void botonModuloGestionesActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloGestionesActionPerformed
+    {// GEN-HEADEREND:event_botonModuloGestionesActionPerformed
+        LOG.info("Usuario navego al modulo: Gestiones");
+        if (Gestiones.getEstadoFormulario() == Boolean.FALSE) {
             Principal.cargarFormulario(Gestiones.getInstancia());
             Principal.setVentanasActivas(Gestiones.getMenuGestions());
-        } else
-        {
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
-                if (AreaTrabajo.getAllFrames()[i].equals(Gestiones.getInstancia()))
-                {
+        } else {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
+                if (AreaTrabajo.getAllFrames()[i].equals(Gestiones.getInstancia())) {
                     Principal.cargarFormulario(Gestiones.getInstancia());
                     Principal.setVentanasActivas(Gestiones.getMenuGestions());
                 }
             }
         }
-    }//GEN-LAST:event_botonModuloGestionesActionPerformed
+    }// GEN-LAST:event_botonModuloGestionesActionPerformed
 
-    private void botonModuloProtocoloActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloProtocoloActionPerformed
-    {//GEN-HEADEREND:event_botonModuloProtocoloActionPerformed
-        if (Protocolo.getEstadoFormulario() == Boolean.FALSE)
-        {
+    private void botonModuloProtocoloActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloProtocoloActionPerformed
+    {// GEN-HEADEREND:event_botonModuloProtocoloActionPerformed
+        LOG.info("Usuario navego al modulo: Protocolo");
+        if (Protocolo.getEstadoFormulario() == Boolean.FALSE) {
             Principal.cargarFormulario(Protocolo.getInstancia());
             Principal.setVentanasActivas(Protocolo.getMenuProtocolos());
-        } else
-        {
-            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++)
-            {
-                if (AreaTrabajo.getAllFrames()[i].equals(Protocolo.getInstancia()))
-                {
+        } else {
+            for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) {
+                if (AreaTrabajo.getAllFrames()[i].equals(Protocolo.getInstancia())) {
                     Principal.cargarFormulario(Protocolo.getInstancia());
                     Principal.setVentanasActivas(Protocolo.getMenuProtocolos());
                 }
             }
         }
-    }//GEN-LAST:event_botonModuloProtocoloActionPerformed
+    }// GEN-LAST:event_botonModuloProtocoloActionPerformed
 
-    private void botonModuloPagosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonModuloPagosActionPerformed
-    {//GEN-HEADEREND:event_botonModuloPagosActionPerformed
+    private void botonModuloPagosActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonModuloPagosActionPerformed
+    {// GEN-HEADEREND:event_botonModuloPagosActionPerformed
         CartelConstruccion miConstruccion = new CartelConstruccion();
         Principal.cargarFormulario(miConstruccion);
         /*
          * if (Pagos.getEstadoFormulario() == Boolean.FALSE) {
-         * cargarFormulario(Pagos.getInstancia()); setVentanasActivas(Pagos.getMenuPagos()); } else
+         * cargarFormulario(Pagos.getInstancia());
+         * setVentanasActivas(Pagos.getMenuPagos()); } else
          * { for (int i = 0; i < AreaTrabajo.getAllFrames().length; i++) { if
          * (AreaTrabajo.getAllFrames()[i].equals(Pagos.getInstancia())) {
          * cargarFormulario(Pagos.getInstancia()); } } }
          */
-    }//GEN-LAST:event_botonModuloPagosActionPerformed
+    }// GEN-LAST:event_botonModuloPagosActionPerformed
 
-    private void menuSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_menuSalirActionPerformed
-    {//GEN-HEADEREND:event_menuSalirActionPerformed
+    private void menuSalirActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_menuSalirActionPerformed
+    {// GEN-HEADEREND:event_menuSalirActionPerformed
         salir();
-    }//GEN-LAST:event_menuSalirActionPerformed
+    }// GEN-LAST:event_menuSalirActionPerformed
 
-    private void salir()
-    {
+    private void salir() {
         int n = JOptionPane.showConfirmDialog(this, "¿Desea Salir del Sistema?", "Sesion", JOptionPane.YES_NO_OPTION);
 
-        if (n == 0)
-        {
+        if (n == 0) {
+            LOG.info("Usuario confirmo cierre de sesion - cerrando aplicacion");
             setDefaultCloseOperation(EXIT_ON_CLOSE);
             System.exit(0);
+        } else {
+            LOG.info("Usuario cancelo cierre de sesion - continuando");
         }
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[])
-    {
+    public static void main(String args[]) {
         /*
          * Set the Nimbus look and feel
          */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
+        // (optional) ">
         /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and
+         * If Nimbus (introduced in Java SE 6) is not available, stay with the default
+         * look and
          * feel. For details see
          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
-        try
-        {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
-            {
-                if ("Nimbus".equals(info.getName()))
-                {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        catch (InstantiationException ex)
-        {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex)
-        {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+        // </editor-fold>
 
         /*
          * Create and display the form
          */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
-            public void run()
-            {
+            public void run() {
                 new Principal().setVisible(true);
             }
         });
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JDesktopPane AreaTrabajo;
     private javax.swing.JMenuBar Menu;

@@ -65,7 +65,7 @@ public class RegistroAuditoriaJpaController implements Serializable, IPersistenc
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
-        if (instancia == null) {
+        if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new RegistroAuditoriaJpaController(null, emf);
         }
         return instancia;

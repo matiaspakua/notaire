@@ -17,7 +17,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -53,10 +52,8 @@ public class EstadoDeGestion implements Serializable {
     @Column(name = "id_estado_gestion")
     private Integer idEstadoGestion;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdEstadoGestion", fetch = FetchType.EAGER)

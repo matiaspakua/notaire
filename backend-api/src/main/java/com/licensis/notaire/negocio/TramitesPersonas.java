@@ -11,7 +11,6 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -45,7 +44,6 @@ public class TramitesPersonas implements Serializable
     @EmbeddedId
     protected TramitesPersonasPK tramitesPersonasPK;
     @Basic(optional = false)
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_persona_cliente", referencedColumnName = "id_persona", insertable = false, updatable = false)

@@ -15,7 +15,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -31,13 +30,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "tipos_identificacion")
 @XmlRootElement
-@NamedQueries(
-        {
-            @NamedQuery(name = "TipoIdentificacion.findAll", query = "SELECT t FROM TipoIdentificacion t"),
-            @NamedQuery(name = "TipoIdentificacion.findByIdTipoIdentificacion", query = "SELECT t FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = :idTipoIdentificacion")
-        })
-public class TipoIdentificacion implements Serializable
-{
+@NamedQueries({
+        @NamedQuery(name = "TipoIdentificacion.findAll", query = "SELECT t FROM TipoIdentificacion t"),
+        @NamedQuery(name = "TipoIdentificacion.findByIdTipoIdentificacion", query = "SELECT t FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = :idTipoIdentificacion")
+})
+public class TipoIdentificacion implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -50,115 +47,96 @@ public class TipoIdentificacion implements Serializable
     @Column(name = "id_tipo_identificacion")
     private Integer idTipoIdentificacion;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoIdentificacion", fetch = FetchType.LAZY)
     private List<Persona> personaList;
 
-    public TipoIdentificacion()
-    {
+    public TipoIdentificacion() {
     }
 
-    public TipoIdentificacion(Integer idTipoIdentificacion)
-    {
+    public TipoIdentificacion(Integer idTipoIdentificacion) {
         this.idTipoIdentificacion = idTipoIdentificacion;
     }
 
-    public TipoIdentificacion(Integer idTipoIdentificacion, String nombre)
-    {
+    public TipoIdentificacion(Integer idTipoIdentificacion, String nombre) {
         this.idTipoIdentificacion = idTipoIdentificacion;
         this.nombre = nombre;
     }
 
-    public Integer getIdTipoIdentificacion()
-    {
+    public Integer getIdTipoIdentificacion() {
         return idTipoIdentificacion;
     }
 
-    public void setIdTipoIdentificacion(Integer idTipoIdentificacion)
-    {
+    public void setIdTipoIdentificacion(Integer idTipoIdentificacion) {
         this.idTipoIdentificacion = idTipoIdentificacion;
     }
 
-    public String getNombre()
-    {
+    public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre)
-    {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
     @XmlTransient
-    public List<Persona> getPersonaList()
-    {
+    public List<Persona> getPersonaList() {
         return personaList;
     }
 
-    public void setPersonaList(List<Persona> personaList)
-    {
+    public void setPersonaList(List<Persona> personaList) {
         this.personaList = personaList;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 0;
         hash += (idTipoIdentificacion != null ? idTipoIdentificacion.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object)
-    {
+    public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TipoIdentificacion))
-        {
+        if (!(object instanceof TipoIdentificacion)) {
             return false;
         }
         TipoIdentificacion other = (TipoIdentificacion) object;
-        if ((this.idTipoIdentificacion == null && other.idTipoIdentificacion != null) || (this.idTipoIdentificacion != null && !this.idTipoIdentificacion.equals(other.idTipoIdentificacion)))
-        {
+        if ((this.idTipoIdentificacion == null && other.idTipoIdentificacion != null)
+                || (this.idTipoIdentificacion != null
+                        && !this.idTipoIdentificacion.equals(other.idTipoIdentificacion))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "TipoIdentificacion[ idTipoIdentificacion=" + idTipoIdentificacion + " ]"
                 + "[ nombre=" + nombre + " ]";
     }
 
-    public DtoTipoIdentificacion getDto()
-    {
+    public DtoTipoIdentificacion getDto() {
 
         DtoTipoIdentificacion miDto = new DtoTipoIdentificacion();
 
-        try
-        {
+        try {
             miDto.setIdTipoIdentificacion(this.getIdTipoIdentificacion());
             miDto.setNombre(this.getNombre());
 
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             System.out.println("Erro getDto Tipo Identificacion");
         }
         return miDto;
 
     }
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 }

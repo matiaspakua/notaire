@@ -14,7 +14,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -45,7 +44,6 @@ public class PlantillaPresupuesto implements Serializable
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected PlantillaPresupuestoPK plantillaPresupuestoPK;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id_tipo_tramite", insertable = false, updatable = false)

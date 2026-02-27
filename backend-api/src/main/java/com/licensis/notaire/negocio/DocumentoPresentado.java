@@ -17,7 +17,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -64,7 +63,6 @@ public class DocumentoPresentado implements Serializable
     @Column(name = "fk_id_tipo_documento")
     private Integer fkIdTipoDocumento;
     @Basic(optional = false)
-    @Lob
     @Column(name = "quien_entrega")
     private String quienEntrega;
     @Column(name = "reingresado")
@@ -94,7 +92,6 @@ public class DocumentoPresentado implements Serializable
     @Column(name = "id_documento_presentado")
     private Integer idDocumentoPresentado;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "numero_carton")
@@ -110,7 +107,6 @@ public class DocumentoPresentado implements Serializable
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "importe_a_pagar")
     private Float importeAPagar;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")

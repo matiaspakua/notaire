@@ -24,7 +24,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -42,8 +41,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * REGLA DE NEGOCIO:
  * <p>
  *
- * <lo> <li> El numero de carpeta es auto-incremental sugerido por el sistema, pero puede ser
- * modificado por el usuario, donde se verifica que el numero indicado no exista ya registrado.
+ * <lo>
+ * <li>El numero de carpeta es auto-incremental sugerido por el sistema, pero
+ * puede ser
+ * modificado por el usuario, donde se verifica que el numero indicado no exista
+ * ya registrado.
  * </li> </lo>
  *
  *
@@ -52,17 +54,15 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "gestiones_de_escrituras")
 @XmlRootElement
-@NamedQueries(
-        {
-            @NamedQuery(name = "GestionDeEscritura.findAll", query = "SELECT g FROM GestionDeEscritura g"),
-            @NamedQuery(name = "GestionDeEscritura.findByIdGestion", query = "SELECT g FROM GestionDeEscritura g WHERE g.idGestion = :idGestion"),
-            @NamedQuery(name = "GestionDeEscritura.findByNumero", query = "SELECT g FROM GestionDeEscritura g WHERE g.numero = :numero"),
-            @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM GestionDeEscritura g WHERE g.fechaInicio = :fechaInicio"),
-            @NamedQuery(name = "GestionDeEscritura.findByNumeroArchivo", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroArchivo = :numeroArchivo"),
-            @NamedQuery(name = "GestionDeEscritura.findByNumeroBibliorato", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroBibliorato = :numeroBibliorato")
-        })
-public class GestionDeEscritura implements Serializable
-{
+@NamedQueries({
+        @NamedQuery(name = "GestionDeEscritura.findAll", query = "SELECT g FROM GestionDeEscritura g"),
+        @NamedQuery(name = "GestionDeEscritura.findByIdGestion", query = "SELECT g FROM GestionDeEscritura g WHERE g.idGestion = :idGestion"),
+        @NamedQuery(name = "GestionDeEscritura.findByNumero", query = "SELECT g FROM GestionDeEscritura g WHERE g.numero = :numero"),
+        @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM GestionDeEscritura g WHERE g.fechaInicio = :fechaInicio"),
+        @NamedQuery(name = "GestionDeEscritura.findByNumeroArchivo", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroArchivo = :numeroArchivo"),
+        @NamedQuery(name = "GestionDeEscritura.findByNumeroBibliorato", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroBibliorato = :numeroBibliorato")
+})
+public class GestionDeEscritura implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "fecha_inicio")
@@ -85,10 +85,8 @@ public class GestionDeEscritura implements Serializable
     @Column(name = "numero")
     private int numero;
     @Basic(optional = false)
-    @Lob
     @Column(name = "encabezado")
     private String encabezado;
-    @Lob
     @Column(name = "observaciones")
     private String observaciones;
     @Column(name = "numero_archivo")
@@ -104,165 +102,138 @@ public class GestionDeEscritura implements Serializable
     private List<Tramite> tramiteList;
 
     /**
-     * Constructor por default para gestion de escritura. Asigna al ID y al numero de gestion el
+     * Constructor por default para gestion de escritura. Asigna al ID y al numero
+     * de gestion el
      * valor de {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
-    public GestionDeEscritura()
-    {
+    public GestionDeEscritura() {
         this.idGestion = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.numero = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.tramiteList = new ArrayList<>();
         this.historialList = new ArrayList<>();
     }
 
-    public GestionDeEscritura(Integer idGestion)
-    {
+    public GestionDeEscritura(Integer idGestion) {
         this.idGestion = idGestion;
     }
 
-    public GestionDeEscritura(Integer idGestion, int numero, Date fechaInicio, String encabezado)
-    {
+    public GestionDeEscritura(Integer idGestion, int numero, Date fechaInicio, String encabezado) {
         this.idGestion = idGestion;
         this.numero = numero;
         this.fechaInicio = fechaInicio;
         this.encabezado = encabezado;
     }
 
-    public Integer getIdGestion()
-    {
+    public Integer getIdGestion() {
         return idGestion;
     }
 
-    public void setIdGestion(Integer idGestion)
-    {
+    public void setIdGestion(Integer idGestion) {
         this.idGestion = idGestion;
     }
 
-    public int getNumero()
-    {
+    public int getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero)
-    {
+    public void setNumero(int numero) {
         this.numero = numero;
     }
 
-    public Date getFechaInicio()
-    {
+    public Date getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(Date fechaInicio)
-    {
+    public void setFechaInicio(Date fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public String getEncabezado()
-    {
+    public String getEncabezado() {
         return encabezado;
     }
 
-    public void setEncabezado(String encabezado)
-    {
+    public void setEncabezado(String encabezado) {
         this.encabezado = encabezado;
     }
 
-    public String getObservaciones()
-    {
+    public String getObservaciones() {
         return observaciones;
     }
 
-    public void setObservaciones(String observaciones)
-    {
+    public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
 
-    public Integer getNumeroArchivo()
-    {
+    public Integer getNumeroArchivo() {
         return numeroArchivo;
     }
 
-    public void setNumeroArchivo(Integer numeroArchivo)
-    {
+    public void setNumeroArchivo(Integer numeroArchivo) {
         this.numeroArchivo = numeroArchivo;
     }
 
-    public Integer getNumeroBibliorato()
-    {
+    public Integer getNumeroBibliorato() {
         return numeroBibliorato;
     }
 
-    public void setNumeroBibliorato(Integer numeroBibliorato)
-    {
+    public void setNumeroBibliorato(Integer numeroBibliorato) {
         this.numeroBibliorato = numeroBibliorato;
     }
 
     @XmlTransient
-    public List<Historial> getHistorialList()
-    {
+    public List<Historial> getHistorialList() {
         return historialList;
     }
 
-    public void setHistorialList(List<Historial> historialList)
-    {
+    public void setHistorialList(List<Historial> historialList) {
         this.historialList = historialList;
     }
 
-    public Persona getFkIdPersonaEscribano()
-    {
+    public Persona getFkIdPersonaEscribano() {
         return fkIdPersonaEscribano;
     }
 
-    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano)
-    {
+    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano) {
         this.fkIdPersonaEscribano = fkIdPersonaEscribano;
     }
 
     @XmlTransient
-    public List<Tramite> getTramiteList()
-    {
+    public List<Tramite> getTramiteList() {
         return tramiteList;
     }
 
-    public void setTramiteList(List<Tramite> tramiteList)
-    {
+    public void setTramiteList(List<Tramite> tramiteList) {
         this.tramiteList = tramiteList;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 0;
         hash += (idGestion != null ? idGestion.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object)
-    {
+    public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof GestionDeEscritura))
-        {
+        if (!(object instanceof GestionDeEscritura)) {
             return false;
         }
         GestionDeEscritura other = (GestionDeEscritura) object;
-        if ((this.idGestion == null && other.idGestion != null) || (this.idGestion != null && !this.idGestion.equals(other.idGestion)))
-        {
+        if ((this.idGestion == null && other.idGestion != null)
+                || (this.idGestion != null && !this.idGestion.equals(other.idGestion))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "GestionDeEscritura[ idGestion=" + idGestion + " ]"
                 + "[ numero=" + numero + " ]";
     }
 
-    public void setAtributos(DtoGestionDeEscritura dtoGestion) throws DtoInvalidoException
-    {
+    public void setAtributos(DtoGestionDeEscritura dtoGestion) throws DtoInvalidoException {
 
         this.setVersion(dtoGestion.getVersion());
         this.setIdGestion(dtoGestion.getIdGestion());
@@ -273,36 +244,33 @@ public class GestionDeEscritura implements Serializable
         this.setNumeroArchivo(dtoGestion.getNumeroArchivo());
         this.setNumeroBibliorato(dtoGestion.getNumeroBibliorato());
 
-        if (dtoGestion.getPersonaEscribano() != null)
-        {
+        if (dtoGestion.getPersonaEscribano() != null) {
             Persona escribano = new Persona();
             escribano.setAtributos(dtoGestion.getPersonaEscribano());
 
             this.setFkIdPersonaEscribano(escribano);
         }
 
-        for (Iterator<DtoTramite> it = dtoGestion.getListaTramitesAsociados().iterator(); it.hasNext();)
-        {
+        for (Iterator<DtoTramite> it = dtoGestion.getListaTramitesAsociados().iterator(); it.hasNext();) {
             DtoTramite dtoTramite = it.next();
 
             dtoTramite.setGestionDeEscritura(dtoGestion);
             dtoTramite.setInmueble(new DtoInmueble());
 
-//            Tramite tramiteAsociado = new Tramite();
-//            tramiteAsociado.setAtributos(dtoTramite);
-//
-//            this.getTramiteList().add(tramiteAsociado);
+            // Tramite tramiteAsociado = new Tramite();
+            // tramiteAsociado.setAtributos(dtoTramite);
+            //
+            // this.getTramiteList().add(tramiteAsociado);
         }
 
-        //Estado de la gestion
+        // Estado de la gestion
         EstadoDeGestion fkEstadoGestion = new EstadoDeGestion();
         fkEstadoGestion.setAtributo(dtoGestion.getEstado());
         this.setFkIdEstadoDeGestion(fkEstadoGestion);
 
     }
 
-    public DtoGestionDeEscritura getDto()
-    {
+    public DtoGestionDeEscritura getDto() {
         DtoGestionDeEscritura dtoGestion = new DtoGestionDeEscritura();
 
         dtoGestion.setVersion(this.getVersion());
@@ -315,16 +283,14 @@ public class GestionDeEscritura implements Serializable
         dtoGestion.setNumeroBibliorato(this.getNumeroBibliorato());
         dtoGestion.setEstado(this.fkIdEstadoDeGestion.getDto());
 
-        //Evito que se produzca un bucle, por esta razon esta el 
-        //metodo getDtoEscribano y no getDto.
+        // Evito que se produzca un bucle, por esta razon esta el
+        // metodo getDtoEscribano y no getDto.
         dtoGestion.setPersonaEscribano(this.getDtoEscribano());
 
-        //Tramites asociados a la gestion
+        // Tramites asociados a la gestion
         ArrayList<DtoTramite> listaDtoTramites = new ArrayList<>();
-        if (!tramiteList.isEmpty())
-        {
-            for (int i = 0; i < tramiteList.size(); i++)
-            {
+        if (!tramiteList.isEmpty()) {
+            for (int i = 0; i < tramiteList.size(); i++) {
                 listaDtoTramites.add(this.getDtoTramite(tramiteList.get(i)));
             }
             dtoGestion.setListaTramitesAsociados(listaDtoTramites);
@@ -334,25 +300,23 @@ public class GestionDeEscritura implements Serializable
          * Personas asociadas a la gestion
          * Cargo los clientes asociados a la gestion, no descrimino por tRamite,
          * esto signifca que se eliminan las personas duplicadas,
-         * debido a que una gestion tien mas de un tarmite, y un tarmite mas de una persona
+         * debido a que una gestion tien mas de un tarmite, y un tarmite mas de una
+         * persona
          * involucrada,
          * esto produce que se repitan las personas involucradas en la gesion
-         * Atencion: para mejorar se puede filtrar que persona pertenece a que tramite, lo soporta
+         * Atencion: para mejorar se puede filtrar que persona pertenece a que tramite,
+         * lo soporta
          */
         ArrayList<DtoPersona> listaDtoPersonas = new ArrayList<>();
         ArrayList<Integer> listaIdPersona = new ArrayList<>();
 
-        if (!(this.tramiteList.isEmpty()))
-        {
-            for (int j = 0; j < tramiteList.size(); j++)
-            {
-                for (int i = 0; i < tramiteList.get(j).getPersonaList().size(); i++)
-                {
+        if (!(this.tramiteList.isEmpty())) {
+            for (int j = 0; j < tramiteList.size(); j++) {
+                for (int i = 0; i < tramiteList.get(j).getPersonaList().size(); i++) {
 
                     DtoPersona miDtoPersona = this.getDtoPersonaInvolucrada(tramiteList.get(j).getPersonaList().get(i));
 
-                    if (!listaIdPersona.contains(miDtoPersona.getIdPersona()))
-                    {
+                    if (!listaIdPersona.contains(miDtoPersona.getIdPersona())) {
                         listaIdPersona.add(miDtoPersona.getIdPersona());
                         listaDtoPersonas.add(miDtoPersona);
                     }
@@ -362,7 +326,7 @@ public class GestionDeEscritura implements Serializable
             dtoGestion.setListaClientesInvolucrados(listaDtoPersonas);
         }
 
-        //Estado de la gestion
+        // Estado de la gestion
         DtoEstadoDeGestion estadoDto = new DtoEstadoDeGestion();
         estadoDto.setIdEstadoGestion(this.getFkIdEstadoDeGestion().getIdEstadoGestion());
         estadoDto.setNombre(fkIdEstadoDeGestion.getNombre());
@@ -374,12 +338,11 @@ public class GestionDeEscritura implements Serializable
         return dtoGestion;
     }
 
-    public DtoPersona getDtoEscribano()
-    {
+    public DtoPersona getDtoEscribano() {
 
         DtoPersona dtoPersona = new DtoPersona();
 
-        //Version del objeto
+        // Version del objeto
         dtoPersona.setVersion(fkIdPersonaEscribano.getVersion());
         dtoPersona.setIdPersona(fkIdPersonaEscribano.getIdPersona());
         dtoPersona.setNombre(fkIdPersonaEscribano.getNombre());
@@ -399,18 +362,18 @@ public class GestionDeEscritura implements Serializable
         dtoPersona.setTelefono(fkIdPersonaEscribano.getTelefono());
 
         DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-        dtoTipoIdentificacion.setIdTipoIdentificacion(fkIdPersonaEscribano.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
+        dtoTipoIdentificacion
+                .setIdTipoIdentificacion(fkIdPersonaEscribano.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
 
         dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
 
-        //Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
+        // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
         dtoTipoIdentificacion.setNombre(ControllerNegocio.getInstancia().asociarNombreTipoIdentificacion(dtoPersona));
 
         return dtoPersona;
     }
 
-    public DtoTramite getDtoTramite(Tramite miTramite)
-    {
+    public DtoTramite getDtoTramite(Tramite miTramite) {
 
         DtoTramite miDto = new DtoTramite();
 
@@ -418,22 +381,19 @@ public class GestionDeEscritura implements Serializable
         miDto.setObservaciones(miTramite.getObservaciones());
         miDto.setTiposDeTramite(miTramite.getFkIdTipoTramite().getDto());
 
-        if (miTramite.getFkIdInmueble() != null)
-        {
+        if (miTramite.getFkIdInmueble() != null) {
             miDto.setInmueble(miTramite.getFkIdInmueble().getDto());
-        } else
-        {
+        } else {
             miDto.setInmueble(null);
         }
 
         return miDto;
     }
 
-    public DtoPersona getDtoPersonaInvolucrada(Persona miPersona)
-    {
+    public DtoPersona getDtoPersonaInvolucrada(Persona miPersona) {
         DtoPersona dtoPersona = new DtoPersona();
 
-        //Version del objeto
+        // Version del objeto
         dtoPersona.setVersion(miPersona.getVersion());
         dtoPersona.setIdPersona(miPersona.getIdPersona());
         dtoPersona.setNombre(miPersona.getNombre());
@@ -457,29 +417,25 @@ public class GestionDeEscritura implements Serializable
 
         dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
 
-        //Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
+        // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
         dtoTipoIdentificacion.setNombre(ControllerNegocio.getInstancia().asociarNombreTipoIdentificacion(dtoPersona));
 
         return dtoPersona;
     }
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 
-    public EstadoDeGestion getFkIdEstadoDeGestion()
-    {
+    public EstadoDeGestion getFkIdEstadoDeGestion() {
         return fkIdEstadoDeGestion;
     }
 
-    public void setFkIdEstadoDeGestion(EstadoDeGestion fkIdEstadoDeGestion)
-    {
+    public void setFkIdEstadoDeGestion(EstadoDeGestion fkIdEstadoDeGestion) {
         this.fkIdEstadoDeGestion = fkIdEstadoDeGestion;
     }
 }

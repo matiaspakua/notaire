@@ -27,11 +27,13 @@ public class AdministradorSesion {
     public static AdministradorSesion getInstancia() {
         if (instancia == null) {
             instancia = new AdministradorSesion();
+            LOG.info("AdministradorSesion instancia creada - singleton inicializado");
         }
         return instancia;
     }
 
     public void sesionIniciada(DtoUsuario miDtoUsuario) {
+        LOG.info("Sesion iniciada para usuario: " + miDtoUsuario.getNombre());
         this.setSesionUsuario(miDtoUsuario);
     }
 
@@ -39,19 +41,30 @@ public class AdministradorSesion {
      * Valida usuario contra el backend (POST /api/v1/usuarios/login).
      *
      * @param miDtoUsuario DTO con nombre y contrasenia.
-     * @return DtoUsuario con valido=true y datos del usuario si es correcto; valido=false si no.
+     * @return DtoUsuario con valido=true y datos del usuario si es correcto;
+     *         valido=false si no.
      */
     public DtoUsuario validarUsuario(DtoUsuario miDtoUsuario) {
         miDtoUsuario.setValido(false);
+        LOG.info("Iniciando validacion de usuario contra API REST - usuario: " + miDtoUsuario.getNombre());
         try {
             ApiConfig.loadFromProperties();
+            LOG.fine("Configuracion de API cargada correctamente - enviando POST /api/v1/usuarios/login");
             DtoUsuario response = RestClient.login(miDtoUsuario);
             if (response != null && response.isValido()) {
                 miDtoUsuario = response;
                 miDtoUsuario.setValido(true);
+                LOG.info("Validacion de usuario exitosa - usuario: " + miDtoUsuario.getNombre()
+                        + ", tipo: " + miDtoUsuario.getTipo()
+                        + ", tiene_persona: " + (miDtoUsuario.getPersonas() != null));
+            } else {
+                LOG.warning(
+                        "Validacion de usuario fallida - respuesta del API indica credenciales invalidas para usuario: "
+                                + miDtoUsuario.getNombre());
             }
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Error al validar usuario desde API REST", ex);
+            LOG.log(Level.SEVERE, "Error de comunicacion con API REST al validar usuario: "
+                    + miDtoUsuario.getNombre() + " - " + ex.getMessage(), ex);
         }
         return miDtoUsuario;
     }
@@ -74,6 +87,8 @@ public class AdministradorSesion {
     }
 
     public void setSesionUsuario(DtoUsuario sesionUsuario) {
+        LOG.info("Sesion de usuario actualizada - usuario: "
+                + (sesionUsuario != null ? sesionUsuario.getNombre() : "null"));
         this.sesionUsuario = sesionUsuario;
     }
 }

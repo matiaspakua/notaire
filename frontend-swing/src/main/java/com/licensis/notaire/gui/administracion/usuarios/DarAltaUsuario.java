@@ -25,8 +25,7 @@ import javax.swing.JOptionPane;
  *
  * @author matias
  */
-public class DarAltaUsuario extends javax.swing.JInternalFrame
-{
+public class DarAltaUsuario extends javax.swing.JInternalFrame {
 
     private static Boolean estadoFormulario = Boolean.FALSE;
     private static JMenuItem ventanaDarAltaUsuario = new JMenuItem("Ventana Dar Alta Usuario");
@@ -39,8 +38,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
     /**
      * Creates new form DarAltaUsuario
      */
-    private DarAltaUsuario()
-    {
+    private DarAltaUsuario() {
         initComponents();
         estadoFormulario = Boolean.TRUE;
         this.setSize(Principal.tamanioGrandeHorizontal, Principal.tamanioGrandeVertical);
@@ -48,37 +46,30 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         personaClient = AdministradorJpa.getInstancia().getPersonaJpa();
     }
 
-    public DtoPersona getDtoPersona()
-    {
+    public DtoPersona getDtoPersona() {
         return dtoPersona;
     }
 
-    public void setDtoPersona(DtoPersona dtoPersona)
-    {
+    public void setDtoPersona(DtoPersona dtoPersona) {
         this.dtoPersona = dtoPersona;
     }
 
-    public static DarAltaUsuario getInstancia()
-    {
-        if (instancia == null)
-        {
+    public static DarAltaUsuario getInstancia() {
+        if (instancia == null) {
             instancia = new DarAltaUsuario();
         }
         return instancia;
     }
 
-    private void salir()
-    {
+    private void salir() {
         this.dispose();
     }
 
-    public static JMenuItem getVentanaDarAltaUsuario()
-    {
+    public static JMenuItem getVentanaDarAltaUsuario() {
         return ventanaDarAltaUsuario;
     }
 
-    public void limpiarFormulario()
-    {
+    public void limpiarFormulario() {
         campoNombre.setText("");
         campoApellido.setText("");
         campoEmail.setText("");
@@ -91,8 +82,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         checkHabilitado.setSelected(true);
     }
 
-    public Boolean cargarFormulario(DtoPersona dtoPersona)
-    {
+    public Boolean cargarFormulario(DtoPersona dtoPersona) {
         Boolean flag = false;
         if (dtoPersona == null || dtoPersona.getIdPersona() == null) {
             JOptionPane.showMessageDialog(this, "Persona no seleccionada.");
@@ -103,38 +93,39 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
             GenericDto usuarioExistente = usuarioClient.findFromPath("persona/" + dtoPersona.getIdPersona());
             if (usuarioExistente != null) {
                 String nombreUsuario = usuarioExistente.getString("nombre");
-                JOptionPane.showMessageDialog(this, "La persona tiene un Usuario asignado : " + (nombreUsuario != null ? nombreUsuario : ""));
+                JOptionPane.showMessageDialog(this,
+                        "La persona tiene un Usuario asignado : " + (nombreUsuario != null ? nombreUsuario : ""));
                 return false;
             }
         } catch (IOException ex) {
             if (ex.getMessage() != null && ex.getMessage().contains("404")) {
                 // No existe usuario para esta persona - OK para dar de alta
             } else {
-                JOptionPane.showMessageDialog(this, "Error al verificar usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al verificar usuario: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
 
-        //Habilito la vista pero no se puede modificar los datos de la persona.
+        // Habilito la vista pero no se puede modificar los datos de la persona.
         habilitarFormulario();
 
-            //guardo ref a la persona para insertar el usuario, cuando se Acepte
-            this.setDtoPersona(dtoPersona);
+        // guardo ref a la persona para insertar el usuario, cuando se Acepte
+        this.setDtoPersona(dtoPersona);
 
-            campoNombre.setText(dtoPersona.getNombre());
-            campoApellido.setText(dtoPersona.getApellido());
-            campoNumeroIdentificacion.setText(dtoPersona.getNumeroIdentificacion());
-            campoTelefono.setText(dtoPersona.getTelefono());
-            campoEmail.setText(dtoPersona.getEmail());
-            campoTipoIdentificacion.setText(dtoPersona.getDtoTipoIdentificacion().getNombre());
+        campoNombre.setText(dtoPersona.getNombre());
+        campoApellido.setText(dtoPersona.getApellido());
+        campoNumeroIdentificacion.setText(dtoPersona.getNumeroIdentificacion());
+        campoTelefono.setText(dtoPersona.getTelefono());
+        campoEmail.setText(dtoPersona.getEmail());
+        campoTipoIdentificacion.setText(dtoPersona.getDtoTipoIdentificacion().getNombre());
 
         this.toFront();
         flag = true;
         return flag;
     }
 
-    public void habilitarFormulario()
-    {
+    public void habilitarFormulario() {
         campoNombre.setEnabled(true);
         campoNombre.setEditable(false);
 
@@ -167,8 +158,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         botonAceptar.setEnabled(true);
     }
 
-    public void desabilitarFormulario()
-    {
+    public void desabilitarFormulario() {
 
         campoNombre.setEnabled(false);
         campoApellido.setEnabled(false);
@@ -187,24 +177,18 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         botonAceptar.setEnabled(false);
     }
 
-    public static JMenuItem getVentanaDarAltaPersona()
-    {
+    public static JMenuItem getVentanaDarAltaPersona() {
         return ventanaDarAltaUsuario;
     }
 
-    private boolean isPasswordCorrect(char[] j1, char[] j2)
-    {
+    private boolean isPasswordCorrect(char[] j1, char[] j2) {
         boolean valor = true;
         int puntero = 0;
-        if (j1.length != j2.length)
-        {
+        if (j1.length != j2.length) {
             valor = false;
-        } else
-        {
-            while ((valor) && (puntero < j1.length))
-            {
-                if (j1[puntero] != j2[puntero])
-                {
+        } else {
+            while ((valor) && (puntero < j1.length)) {
+                if (j1[puntero] != j2[puntero]) {
                     valor = false;
                 }
                 puntero++;
@@ -214,11 +198,14 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT
+     * modify this code. The content of this method is always regenerated by the
+     * Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -242,7 +229,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        campoNombreUsuario = new  javax.swing.JTextField();
+        campoNombreUsuario = new javax.swing.JTextField();
 
         ;
         jSeparator2 = new javax.swing.JSeparator();
@@ -262,17 +249,23 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameClosed(evt);
             }
+
             public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
+
             public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
             }
         });
@@ -327,9 +320,11 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 campoNombreUsuarioKeyTyped(evt);
             }
+
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 campoNombreUsuarioKeyPressed(evt);
             }
+
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 campoNombreUsuarioKeyReleased(evt);
             }
@@ -353,180 +348,275 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
         javax.swing.GroupLayout panelDarAltaUsuarioLayout = new javax.swing.GroupLayout(panelDarAltaUsuario);
         panelDarAltaUsuario.setLayout(panelDarAltaUsuarioLayout);
         panelDarAltaUsuarioLayout.setHorizontalGroup(
-            panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelTitulo)
-                            .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                .addComponent(labelBusqueda)
-                                .addGap(18, 18, 18)
-                                .addComponent(botonBuscarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(campoTipoIdentificacion)
-                                        .addComponent(campoApellido, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoNombre, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoTelefono, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoEmail, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
-                                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel9)
-                                            .addComponent(jLabel10)
-                                            .addComponent(jLabel11)
-                                            .addComponent(jLabel12))
-                                        .addGap(37, 37, 37)
-                                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(campoRepetirNuevaContrasenia)
-                                            .addComponent(campoNombreUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                                            .addComponent(campoContrasenia)
-                                            .addComponent(checkHabilitado)
-                                            .addComponent(comboTipoDeUsuario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(labelAdvertencia, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 109, Short.MAX_VALUE))
-                    .addComponent(jSeparator3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE))
-        );
+                panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                .addGroup(panelDarAltaUsuarioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(labelTitulo)
+                                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                                .addComponent(labelBusqueda)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(botonBuscarPersona,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jLabel5)
+                                                                        .addComponent(jLabel6)
+                                                                        .addComponent(jLabel7)
+                                                                        .addComponent(jLabel4)
+                                                                        .addComponent(jLabel3)
+                                                                        .addComponent(jLabel2)
+                                                                        .addComponent(jButton2,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                105,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(18, 18, 18)
+                                                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(panelDarAltaUsuarioLayout
+                                                                                .createParallelGroup(
+                                                                                        javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                        false)
+                                                                                .addComponent(campoTipoIdentificacion)
+                                                                                .addComponent(campoApellido,
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(campoNombre,
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(campoTelefono,
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(campoEmail,
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(campoNumeroIdentificacion,
+                                                                                        javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        300, Short.MAX_VALUE))
+                                                                        .addGroup(panelDarAltaUsuarioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGroup(panelDarAltaUsuarioLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                        .addComponent(jLabel9)
+                                                                                        .addComponent(jLabel10)
+                                                                                        .addComponent(jLabel11)
+                                                                                        .addComponent(jLabel12))
+                                                                                .addGap(37, 37, 37)
+                                                                                .addGroup(panelDarAltaUsuarioLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                false)
+                                                                                        .addComponent(
+                                                                                                campoRepetirNuevaContrasenia)
+                                                                                        .addComponent(
+                                                                                                campoNombreUsuario,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                168, Short.MAX_VALUE)
+                                                                                        .addComponent(campoContrasenia)
+                                                                                        .addComponent(checkHabilitado)
+                                                                                        .addComponent(
+                                                                                                comboTipoDeUsuario, 0,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                Short.MAX_VALUE))
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(labelAdvertencia,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        221,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                .addGap(0, 109, Short.MAX_VALUE))
+                                        .addComponent(jSeparator3)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaUsuarioLayout
+                                                .createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 120,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
+                        .addGroup(
+                                panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)));
         panelDarAltaUsuarioLayout.setVerticalGroup(
-            panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(labelTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelBusqueda)
-                    .addComponent(botonBuscarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jLabel2))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(campoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(campoApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(campoTipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(campoTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGap(0, 45, Short.MAX_VALUE)
-                        .addComponent(labelAdvertencia, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(241, 241, 241)
-                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(botonAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel9)
-                                    .addComponent(campoNombreUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(jLabel10)
-                                            .addComponent(campoContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLabel11))
-                                    .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                                        .addGap(47, 47, 47)
-                                        .addComponent(campoRepetirNuevaContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(labelTitulo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(comboTipoDeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel12))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(checkHabilitado)))
-                        .addGap(0, 167, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
-                    .addGap(90, 90, 90)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(565, Short.MAX_VALUE)))
-        );
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelBusqueda)
+                                        .addComponent(botonBuscarPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                .addGap(32, 32, 32)
+                                                .addComponent(jLabel2))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                        .addGap(26, 26, 26)
+                                                        .addComponent(campoNombre,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(campoApellido, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel4)
+                                        .addComponent(campoTipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(campoNumeroIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(campoTelefono, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel6))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel7))
+                                .addGap(18, 18, 18)
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelDarAltaUsuarioLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelDarAltaUsuarioLayout
+                                                .createSequentialGroup()
+                                                .addGap(0, 45, Short.MAX_VALUE)
+                                                .addComponent(labelAdvertencia, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(241, 241, 241)
+                                                .addGroup(panelDarAltaUsuarioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(botonAceptar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(botonCancelar,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                .addGroup(panelDarAltaUsuarioLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(jLabel9)
+                                                                        .addComponent(campoNombreUsuario,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(panelDarAltaUsuarioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addGroup(panelDarAltaUsuarioLayout
+                                                                                        .createParallelGroup(
+                                                                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                                        .addComponent(jLabel10)
+                                                                                        .addComponent(campoContrasenia,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                .addPreferredGap(
+                                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(jLabel11))
+                                                                        .addGroup(panelDarAltaUsuarioLayout
+                                                                                .createSequentialGroup()
+                                                                                .addGap(47, 47, 47)
+                                                                                .addComponent(
+                                                                                        campoRepetirNuevaContrasenia,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addGroup(panelDarAltaUsuarioLayout.createParallelGroup(
+                                                                        javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                        .addComponent(comboTipoDeUsuario,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(jLabel12))
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(checkHabilitado)))
+                                                .addGap(0, 167, Short.MAX_VALUE)))
+                                .addContainerGap())
+                        .addGroup(
+                                panelDarAltaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelDarAltaUsuarioLayout.createSequentialGroup()
+                                                .addGap(90, 90, 90)
+                                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addContainerGap(565, Short.MAX_VALUE))));
 
         jScrollPane1.setViewportView(panelDarAltaUsuario);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonAceptarActionPerformed
-    {//GEN-HEADEREND:event_botonAceptarActionPerformed
+    private void botonAceptarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonAceptarActionPerformed
+    {// GEN-HEADEREND:event_botonAceptarActionPerformed
         /*
          * Controlo que todos los campos que no contemplan null, esten completos
          */
         String msj = AdministradorValidaciones.getInstancia().validarAltaUsuario(this);
 
-        if (msj == "")
-        {
-            try
-            {
+        if (msj == "") {
+            try {
                 DtoUsuario dtoUsuario = new DtoUsuario();
 
-                //Version Inicial del objeto
+                // Version Inicial del objeto
                 dtoUsuario.setVersion(0);
 
-                //Armo Usuario
+                // Armo Usuario
                 dtoUsuario.setContrasenia(campoContrasenia.getText());
                 dtoUsuario.setEstado(checkHabilitado.isSelected());
                 dtoUsuario.setNombre(campoNombreUsuario.getText());
 
-                switch (comboTipoDeUsuario.getSelectedItem().toString())
-                {
+                switch (comboTipoDeUsuario.getSelectedItem().toString()) {
                     case ConstantesNegocio.USUARIO_EMPLEADO:
                         dtoUsuario.setTipo(ConstantesNegocio.USUARIO_EMPLEADO);
                         break;
@@ -535,7 +625,7 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
                         break;
                 }
 
-                //Set dtoPersona asociada al usuario
+                // Set dtoPersona asociada al usuario
                 dtoUsuario.setPersonas(this.getDtoPersona());
 
                 // Convertir DtoUsuario a GenericDto
@@ -545,94 +635,92 @@ public class DarAltaUsuario extends javax.swing.JInternalFrame
                 usuarioDto.put("estado", dtoUsuario.getEstado());
                 usuarioDto.put("tipo", dtoUsuario.getTipo());
                 usuarioDto.put("version", dtoUsuario.getVersion());
-                
-                if (dtoPersona != null && dtoPersona.getIdPersona() != null)
-                {
-                    usuarioDto.put("fkIdPersona", dtoPersona.getIdPersona());
+
+                if (dtoPersona != null && dtoPersona.getIdPersona() != null) {
+                    GenericDto pDto = new GenericDto();
+                    pDto.put("idPersona", dtoPersona.getIdPersona());
+                    usuarioDto.put("fkIdPersona", pDto);
                 }
 
                 // Verificar si ya existe un usuario con ese nombre
                 List<GenericDto> todosLosUsuarios = usuarioClient.findAll();
                 boolean usuarioExiste = false;
-                for (GenericDto usuario : todosLosUsuarios)
-                {
-                    if (dtoUsuario.getNombre().equals(usuario.getString("nombre")))
-                    {
+                for (GenericDto usuario : todosLosUsuarios) {
+                    if (dtoUsuario.getNombre().equals(usuario.getString("nombre"))) {
                         usuarioExiste = true;
                         break;
                     }
                 }
 
-                if (!usuarioExiste)
-                {
+                if (!usuarioExiste) {
                     // Se da de alta el usuario
                     usuarioClient.create(usuarioDto);
-                    JOptionPane.showMessageDialog(this, "Fue dado de alta: " + dtoUsuario.getNombre() + " " + dtoUsuario.getTipo(), "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Fue dado de alta: " + dtoUsuario.getNombre() + " " + dtoUsuario.getTipo(), "Informacion",
+                            JOptionPane.INFORMATION_MESSAGE);
                     this.limpiarFormulario();
                     this.desabilitarFormulario();
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "Error - El nombre de usuario ya se encuentra registrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error - El nombre de usuario ya se encuentra registrado",
+                            "Advertencia", JOptionPane.WARNING_MESSAGE);
                 }
-            }
-            catch (IOException ex)
-            {
-                JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error al comunicarse con el servidor: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 logger.log(Level.SEVERE, "Error al dar de alta usuario", ex);
             }
-        } else
-        {
+        } else {
             JOptionPane.showMessageDialog(this, msj);
         }
 
-    }//GEN-LAST:event_botonAceptarActionPerformed
+    }// GEN-LAST:event_botonAceptarActionPerformed
 
-    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_botonCancelarActionPerformed
-    {//GEN-HEADEREND:event_botonCancelarActionPerformed
+    private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_botonCancelarActionPerformed
+    {// GEN-HEADEREND:event_botonCancelarActionPerformed
         salir();
         Principal.removeVentanaActivas(DarAltaUsuario.getInstancia().getVentanaDarAltaUsuario());
-    }//GEN-LAST:event_botonCancelarActionPerformed
+    }// GEN-LAST:event_botonCancelarActionPerformed
 
-    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameClosed
-    {//GEN-HEADEREND:event_formInternalFrameClosed
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt)// GEN-FIRST:event_formInternalFrameClosed
+    {// GEN-HEADEREND:event_formInternalFrameClosed
         estadoFormulario = Boolean.FALSE;
         Principal.removeVentanaActivas(ventanaDarAltaUsuario);
         Principal.eliminarFormulario(this);
-    }//GEN-LAST:event_formInternalFrameClosed
+    }// GEN-LAST:event_formInternalFrameClosed
 
-    private void botonBuscarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarPersonaActionPerformed
+    private void botonBuscarPersonaActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_botonBuscarPersonaActionPerformed
 
-        //Busca una persona, el parametro de tipo de busqueda es el titulo del formulario
+        // Busca una persona, el parametro de tipo de busqueda es el titulo del
+        // formulario
         this.limpiarFormulario();
         BuscarCliente formBuscarPersona = new BuscarCliente();
         formBuscarPersona.setTipoBusqueda(labelTitulo.getText());
         Principal.cargarFormulario(formBuscarPersona);
 
         Principal.setVentanasActivas(BuscarCliente.getVentanaBuscarCliente());
-    }//GEN-LAST:event_botonBuscarPersonaActionPerformed
+    }// GEN-LAST:event_botonBuscarPersonaActionPerformed
 
-    private void campoNombreUsuarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNombreUsuarioKeyReleased
+    private void campoNombreUsuarioKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNombreUsuarioKeyReleased
         String campo = this.campoNombreUsuario.getText();
         Boolean flag = AdministradorValidaciones.getInstancia().validarCantidadCaracteres(10, campo);
-        if (flag)
-        {
+        if (flag) {
             this.labelAdvertencia.setText("Maximo 10(diez) Caracteres");
             this.campoNombreUsuario.setText(campo.substring(0, 10));
-        } else
-        {
+        } else {
             this.labelAdvertencia.setText("");
         }
 
-    }//GEN-LAST:event_campoNombreUsuarioKeyReleased
+    }// GEN-LAST:event_campoNombreUsuarioKeyReleased
 
-    private void campoNombreUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNombreUsuarioKeyTyped
+    private void campoNombreUsuarioKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNombreUsuarioKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_campoNombreUsuarioKeyTyped
+    }// GEN-LAST:event_campoNombreUsuarioKeyTyped
 
-    private void campoNombreUsuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoNombreUsuarioKeyPressed
+    private void campoNombreUsuarioKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_campoNombreUsuarioKeyPressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_campoNombreUsuarioKeyPressed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }// GEN-LAST:event_campoNombreUsuarioKeyPressed
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JButton botonAceptar;
     private javax.swing.JButton botonBuscarPersona;
     private javax.swing.JButton botonCancelar;

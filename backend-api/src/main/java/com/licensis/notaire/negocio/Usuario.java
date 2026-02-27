@@ -17,7 +17,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -34,15 +33,13 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "usuarios")
 @XmlRootElement
-@NamedQueries(
-        {
-            @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
-            @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
-            @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado"),
-            @NamedQuery(name = "Usuario.findByFkIdPersona", query = "SELECT u FROM Usuario u WHERE u.fkIdPersona.idPersona = :idPersona")
-        })
-public class Usuario implements Serializable
-{
+@NamedQueries({
+        @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
+        @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
+        @NamedQuery(name = "Usuario.findByEstado", query = "SELECT u FROM Usuario u WHERE u.estado = :estado"),
+        @NamedQuery(name = "Usuario.findByFkIdPersona", query = "SELECT u FROM Usuario u WHERE u.fkIdPersona.idPersona = :idPersona")
+})
+public class Usuario implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -55,18 +52,15 @@ public class Usuario implements Serializable
     @Column(name = "id_usuario")
     private Integer idUsuario;
     @Basic(optional = false)
-    @Lob
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @Lob
     @Column(name = "contrasenia")
     private String contrasenia;
     @Basic(optional = false)
     @Column(name = "estado")
     private boolean estado;
     @Basic(optional = false)
-    @Lob
     @Column(name = "tipo")
     private String tipo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUsuario", fetch = FetchType.LAZY)
@@ -75,17 +69,14 @@ public class Usuario implements Serializable
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Persona fkIdPersona;
 
-    public Usuario()
-    {
+    public Usuario() {
     }
 
-    public Usuario(Integer idUsuario)
-    {
+    public Usuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 
-    public Usuario(Integer idUsuario, String nombre, String contrasenia, boolean estado, String tipo)
-    {
+    public Usuario(Integer idUsuario, String nombre, String contrasenia, boolean estado, String tipo) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.contrasenia = contrasenia;
@@ -93,104 +84,86 @@ public class Usuario implements Serializable
         this.tipo = tipo;
     }
 
-    public Integer getIdUsuario()
-    {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(Integer idUsuario)
-    {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 
-    public String getNombre()
-    {
+    public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre)
-    {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public String getContrasenia()
-    {
+    public String getContrasenia() {
         return contrasenia;
     }
 
-    public void setContrasenia(String contrasenia)
-    {
+    public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
 
-    public boolean getEstado()
-    {
+    public boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado)
-    {
+    public void setEstado(boolean estado) {
         this.estado = estado;
     }
 
-    public String getTipo()
-    {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo)
-    {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
     @XmlTransient
-    public List<RegistroAuditoria> getRegistroAuditoriaList()
-    {
+    public List<RegistroAuditoria> getRegistroAuditoriaList() {
         return registroAuditoriaList;
     }
 
-    public void setRegistroAuditoriaList(List<RegistroAuditoria> registroAuditoriaList)
-    {
+    public void setRegistroAuditoriaList(List<RegistroAuditoria> registroAuditoriaList) {
         this.registroAuditoriaList = registroAuditoriaList;
     }
 
-    public Persona getFkIdPersona()
-    {
+    public Persona getFkIdPersona() {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona)
-    {
+    public void setFkIdPersona(Persona fkIdPersona) {
         this.fkIdPersona = fkIdPersona;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 0;
         hash += (idUsuario != null ? idUsuario.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object)
-    {
+    public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuario))
-        {
+        if (!(object instanceof Usuario)) {
             return false;
         }
         Usuario other = (Usuario) object;
-        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario)))
-        {
+        if ((this.idUsuario == null && other.idUsuario != null)
+                || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Usuarios[ version=" + version + " ]"
                 + "[ idUsuario=" + idUsuario + " ]"
                 + "[ nombre=" + nombre + " ]"
@@ -198,34 +171,31 @@ public class Usuario implements Serializable
                 + "[ estado=" + estado + " ]";
     }
 
-    public void setAtributos(DtoUsuario dtoUsuario)
-    {
+    public void setAtributos(DtoUsuario dtoUsuario) {
 
-        //Ref persona de Usuario
+        // Ref persona de Usuario
         Persona miPersona = new Persona();
         miPersona.setAtributos(dtoUsuario.getPersonas());
         setFkIdPersona(miPersona);
 
-        //Atributos usuario
-        setContrasenia(dtoUsuario.getContrasenia());;
+        // Atributos usuario
+        setContrasenia(dtoUsuario.getContrasenia());
+        ;
         setEstado(dtoUsuario.isEstado());
         setIdUsuario(dtoUsuario.getIdUsuario());
         setNombre(dtoUsuario.getNombre());
         setTipo(dtoUsuario.getTipo());
 
-        if (dtoUsuario.getVersion() != null)
-        {
-            //Controlo Version Objeto
+        if (dtoUsuario.getVersion() != null) {
+            // Controlo Version Objeto
             setVersion(dtoUsuario.getVersion());
         }
 
     }
 
-    public DtoUsuario getDto()
-    {
+    public DtoUsuario getDto() {
         DtoUsuario miDto = new DtoUsuario();
-        try
-        {
+        try {
             miDto.setContrasenia(contrasenia);
             miDto.setEstado(estado);
             miDto.setIdUsuario(idUsuario);
@@ -237,24 +207,20 @@ public class Usuario implements Serializable
             miDto.setPersonas(miDtoPersona);
             miDto.setTipo(tipo);
 
-            //Controlo la version del objeto
+            // Controlo la version del objeto
             miDto.setVersion(version);
 
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             System.out.println("Error Metodo : getDtoUsuario");
         }
         return miDto;
     }
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 }
