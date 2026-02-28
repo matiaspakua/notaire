@@ -130,7 +130,6 @@ bash scripts/test.sh
 - **Frontend**: Lazy loading, background threads for API calls, virtual scrolling for large datasets
 - **Database**: Index columns used in WHERE clauses, monitor slow queries
 - **Migration Phases**: Database (MySQL→PostgreSQL) → Backend REST API → Refactor GUI to API client
-- **Backwards Compatibility**: Keep legacy code during migration
 
 ### Dependencies & Docker
 - **Spring Boot**: 3.2.9 parent, **Java**: 21

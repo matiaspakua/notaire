@@ -5,6 +5,7 @@ import com.licensis.notaire.negocio.Persona;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class PersonaController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las personas")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Persona>> getAllPersonas() {
         try {
             List<Persona> personas = getJpaController().findPersonaEntities();

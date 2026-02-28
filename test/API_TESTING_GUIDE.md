@@ -524,5 +524,3 @@ curl -s "http://localhost:8080/v3/api-docs" | \
 - **Swagger UI**: http://localhost:8080/swagger-ui.html
 - **OpenAPI Docs**: http://localhost:8080/v3/api-docs
 - **Health Check**: http://localhost:8080/actuator/health
-
-For more information, see `DEPLOYMENT.md`

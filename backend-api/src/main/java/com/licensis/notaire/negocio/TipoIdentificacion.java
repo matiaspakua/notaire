@@ -17,11 +17,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
@@ -49,6 +51,9 @@ public class TipoIdentificacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "nombre")
     private String nombre;
+    @XmlTransient
+    @JsonIgnore
+    @JsonIgnoreProperties("fkIdTipoIdentificacion")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoIdentificacion", fetch = FetchType.LAZY)
     private List<Persona> personaList;
 

@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.hibernate.LazyInitializationException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Clase que representa a la entidad persona (general).
@@ -70,6 +71,8 @@ public class Persona implements Serializable {
     @Column(name = "version")
     @Version
     private int version;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private List<TramitesPersonas> tramitesPersonasList;
     private static final long serialVersionUID = 1L;
@@ -110,23 +113,39 @@ public class Persona implements Serializable {
     @Basic(optional = false)
     @Column(name = "es_cliente")
     private boolean esCliente;
+    @XmlTransient
+    @JsonIgnore
     @ManyToMany(mappedBy = "personaList", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList;
     @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id_tipo_identificacion")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private TipoIdentificacion fkIdTipoIdentificacion;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
     private List<Presupuesto> presupuestoList;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersonaEscribano", fetch = FetchType.LAZY)
     private List<GestionDeEscritura> GestionDeEscrituraList;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersonaEscribano", fetch = FetchType.LAZY)
     private List<Folio> folioList;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSuplente", fetch = FetchType.LAZY)
     private List<Suplencia> suplenciaList;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSuplantado", fetch = FetchType.LAZY)
     private List<Suplencia> suplenciaList1;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
     private List<Usuario> usuariosList;
+    @XmlTransient
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
     private List<Copia> copiaList;
 
