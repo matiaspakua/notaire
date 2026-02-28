@@ -2,12 +2,12 @@
 
 ![](images/logoRojoLetraMediano.png)
 
-## Resumen del Proyecto
+## 1. Introduccion: Resumen del Proyecto
 
 **Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años (en el último año de universidad)como una aplicación monolítica Java Swing con conexión directa a MySQL. Este proyecto documenta el proceso de refactoring y modernización completa del sistema hacia una arquitectura moderna de microservicios.
 
 
-## Introducción: El Proceso de Refactoring
+## 2. El Proceso de Refactoring
 
 ### ¿Por qué refactorizar?
 
@@ -47,11 +47,11 @@ Como parte del proceso de "modernización" (o refactoring), la idea es transform
 
  
 
-## Herramientas de IA Utilizadas en la Migración
+## 3. Herramientas de IA Utilizadas en la Migración
 
 Durante el proceso de migración de Notaire, fui utilizando diferentes herramientas de inteligencia artificial para asistir en el refactoring. Cada una aportando diferentes capacidades que fueron evolucionando con las necesidades del proyecto.
 
-### Fase 1: Google Antigravity (Primeros Pasos)
+###  Google Antigravity (Primeros Pasos)
 
 Mi primer acercamiento a la IA para este proyecto fue **Google Antigravity**, una herramienta de Google en modo agente integrado con Visual Studio CODE y actuando direntamente sobre el repositorios de código. En aquel momento, necesitaba entender cómo estaban estructurados ciertos patrones en el código existente y buscar ejemplos similares.
 
@@ -73,7 +73,7 @@ sudo apt-get install antigravity
 ```
 
 
-### Fase 2: Visual Studio Code con Copilot
+### Visual Studio Code con Copilot
 
 Avanzamos a **VS Code con Copilot**. Muy similar a Antigravity, también un agente de AI basado en VS CODE.
 
@@ -100,7 +100,7 @@ sudo apt-get install code
 ```
 
 
-### Fase 3: Cursor (Versión paga)
+### Cursor (Versión paga)
 
 **Cursor** fue un cambio de paradigma. Es un IDE basado en VS Code pero potenciado con IA avanzado. La versión de pago incluye:
 - **Modo Edit**: Edita código en todo el proyecto
@@ -140,32 +140,24 @@ Por ejemplo, en la raiz del repositorio, se puede crear un archivo Markdown llam
 Luego, dentro de el directorio ".cursor" se pueden crear subcarpetas con conjunto de reglas especificas, por ejemplo:
 
 ```
-.cursor/programming/RULE.md
-.cursor/analysis/RULE.md
-.cursor/devops/RULE.md
-.cursor/testing/RULE.md
-...
+.claude/programming.md
+.claude/refactoring.md
+.claude/analysis.md
+.claude/devops.md
+.claude/testing.md
 
 ```
 
 Las herramientas basadas en agentes (VS Code Copilot, Google Antigravity, Cursor, etc), leen estos archivos y configuran el "contexto" necesario para que el agente de AI al momento de ejecutar las instrucciones dadas por el ususario (prompt's), se guien basandose en el contexto del proyecto.
 
 
-
-
-### Markdown: el lenguaje de los agentes de AI
-
-// TODO explicar este concepto: facilidad de lectura y reducción de uso de token.
-
-
-
-### Fase 4: OpenCode (Actual)
+### OpenCode (Actual)
 
 Luego comence con **OpenCode**, una herramienta de código abierto que está revolucionando la forma de trabajar con IA. Lo que hace a OpenCode único es su arquitectura opensource, que permite configurar muchos modelos de AI y permite extender su funcionalidad con las capacidades basadas en **MCP (Model Context Protocol)**, LSP y plugins.
 
 
 
-#### ¿Qué es OpenCode?
+### ¿Qué es OpenCode?
 
 OpenCode es un asistente de IA diseñado específicamente para tareas de ingeniería de software. A diferencia de otras herramientas, permite:
 
@@ -176,7 +168,7 @@ OpenCode es un asistente de IA diseñado específicamente para tareas de ingenie
 
 
 
-#### Instalación de OpenCode
+### Instalación de OpenCode
 
 ```bash
 # Instalación en Linux
@@ -186,7 +178,7 @@ wget -qO- https://get.opencode.ai | sh
 opencode --version
 ```
 
-#### Configuración de Servidores MCP
+### Configuración de Servidores MCP
 
 Una de las características más poderosas de las herramientas tipo CLI como OpenCode son los **MCP Servers**. Permiten conectar herramientas externas directamente al contexto de IA.
 
@@ -235,7 +227,7 @@ mkdir -p ~/.opencode
 | **Git** | Control de versiones | Commits, status, diffs |
 | **Web Fetch** | Consultar documentación | Traer documentación oficial de APIs |
 
-#### Cómo Utilizo OpenCode en Notaire
+### Cómo Utilizo OpenCode en Notaire
 
 **1. Exploración del código:**
 ```bash
@@ -273,24 +265,28 @@ bash scripts/start.sh
 edit filePath="..." oldString="..." newString="..."
 ```
 
----
+
+# 2. Markdown: el lenguaje de los agentes de AI
+
+// TODO explicar este concepto: facilidad de lectura y reducción de uso de token.
+
 
 ## Archivos de Configuración de IA
 
 A medida que evolucionaba el uso de IA, fui creando archivos de configuración específicos para cada herramienta. Estos archivos contienen "conocimiento" del proyecto y reglas que la IA debe seguir.
 
-### 1. SKILLS
+### SKILLS
 
 El archivo de **skills** define capacidades especializadas para el agente. OpenCode puede cargar skills que le dan instrucciones específicas para ciertas tareas.
 
 **Ubicación**: `~/.agents/skills/` o definido en configuración
 
-### 2. RULES
+### RULES
 
 Los archivos **rules** contienen reglas de codificación específicas del proyecto. Se configuran en el archivo de configuración de cada herramienta.
 
 
-### 3. AGENTS
+### AGENTS
 
 El archivo **AGENTS.md** de OpenCode contiene instrucciones detalladas para el agente, incluyendo:
 
@@ -302,7 +298,7 @@ El archivo **AGENTS.md** de OpenCode contiene instrucciones detalladas para el a
 
 **Ubicación**: `/home/matias/workspace/notaire/notaire/AGENTS.md`
 
-### 4. Documentación Oficial
+### Documentación Oficial
 
 A lo largo del proceso, fui consultando documentación oficial de las herramientas:
 
@@ -316,7 +312,7 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 | Java 21 | https://docs.oracle.com/en/java/javase/21/ |
 
 
----
+
 
 ## Lecciones Aprendidas
 
@@ -326,7 +322,7 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 4. **OpenCode para control total**: La mejor opción por su arquitectura abierta y MCPs
 5. **Cluade Code** (pago): Finalmente, voy a hacer una validación de todo lo que hicieron las herramientas anteriores usando el estado-del-arte en cuanto a código.
 
-### ¿Por qué elegí OpenCode?
+## ¿Por qué elegí OpenCode?
 
 1. **Gratuito y open source**: No requiere suscripción
 2. **Arquitectura extensible**: MCPs permiten conectar cualquier herramienta
@@ -335,7 +331,6 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 5. **Perfecto para DevOps**: Puedo ejecutar Docker, compilar, testear desde el chat
 6. **Aprender**: punto clave y uno de los más importantes antes de arrancar con Claude Code, por que aprendiendo se cometen muchos errores.
 
----
 
 ## Próximos Pasos con IA
 
@@ -345,7 +340,6 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 - Generar documentación automática
 - Implementar mejoras y modernización general: observabilidad, patrones de arquitectura avanzados, eventos, etc.
   
----
 
 ## Recursos Adicionales
 
@@ -357,9 +351,8 @@ A lo largo del proceso, fui consultando documentación oficial de las herramient
 - **Awesome MCP Servers**: https://github.com/modelcontextprotocol/awesome-mcp-servers 
 
 
----
 
-## Arquitectura Original (Monolito)
+# 3. Arquitectura Original NOTAIRE (Monolito)
 
 La siguiente imagen muestra la arquitectura original del proyecto Notaire:
 
@@ -370,7 +363,7 @@ Algo interesante es que la imagen fue generada usando Drawio conectado por MCP, 
 
 
 
-### Componentes de la Arquitectura Original
+## Componentes de la Arquitectura Original
 
 | Componente | Descripción |
 |------------|-------------|
@@ -380,7 +373,7 @@ Algo interesante es que la imagen fue generada usando Drawio conectado por MCP, 
 | **JDBC Directo** | Conexiones SQL directas sin pooling |
 | **MySQL 5.7** | Base de datos relacional (27 tablas) |
 
-### Problemas Identificados
+## Problemas Identificados
 
 1. **Acoplamiento fuerte**: La capa GUI depende directamente de la base de datos
 2. **Sin separación de capas**: UI + Negocio + Datos todo en el mismo código
@@ -395,7 +388,7 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
 ![Arquitectura Actual](images/arquitectura-notaire.png)
 
-### Componentes de la Nueva Arquitectura
+## Componentes de la Nueva Arquitectura
 
 | Capa | Componente | Descripción |
 |------|------------|-------------|
@@ -558,34 +551,13 @@ postgres:
 
 Los scripts en `init-db/` se ejecutan automáticamente al crear el contenedor.
 
----
 
-## Estado de la Migración
 
-### APIs Disponibles
-
-Se han implementado los siguientes endpoints REST:
-
-- `/api/v1/personas` - Personas
-- `/api/v1/usuarios` - Usuarios
-- `/api/v1/gestiones` - Gestiones
-- `/api/v1/tramites` - Trámites
-- `/api/v1/escrituras` - Escrituras
-- `/api/v1/presupuestos` - Presupuestos
-- `/api/v1/items` - Items
-- `/api/v1/pagos` - Pagos
-- `/api/v1/folios` - Folios
-- `/api/v1/testimonios` - Testimonios
-- `/api/v1/reportes` - Reportes PDF (10 endpoints)
-- Y más...
-
----
-
-## Guía de Prompts para Refactoring
+# 4. Guía de Prompts para Refactoring
 
 A continuación se documentan los prompts utilizados para llevar adelante cada fase de la migración.
 
-### 2.1 Prompts para Configuración Inicial
+## Prompts para Configuración Inicial
 
 ```markdown
 # Prompt: Actualizar proyecto Java a última versión LTS
@@ -603,7 +575,7 @@ Pasos a seguir:
 - Ejecutar tests de integracion
 ```
 
-### 2.2 Prompts para Separación de Módulos
+### Prompts para Separación de Módulos
 
 ```markdown
 # Prompt: Crear estructura multi-modulo Maven
@@ -621,7 +593,7 @@ Requisitos:
 - Build con mvn clean install debe funcionar
 ```
 
-### 2.3 Prompts para Dockerización
+### Prompts para Dockerización
 
 ```markdown
 # Prompt: Crear Docker Compose para la aplicacion
@@ -640,7 +612,7 @@ Consideraciones:
 - Exponer puertos: 5432 (postgres), 8080 (backend), 5050 (pgadmin)
 ```
 
-### 2.4 Prompts para Creación de REST API
+### Prompts para Creación de REST API
 
 ```markdown
 # Prompt: Crear REST Controller para entidad
@@ -657,7 +629,7 @@ Estructura requerida:
 - Documentacion con @Operation y @ApiResponse
 ```
 
-### 2.5 Prompts para Migración de Formularios Swing
+### Prompts para Migración de Formularios Swing
 
 ```markdown
 # Prompt: Migrar formulario Swing de ControllerNegocio a REST
@@ -673,7 +645,7 @@ Pasos:
 6. Probar con la aplicacion en ejecucion
 ```
 
-### 2.6 Prompts para Refactoring de Arquitectura
+### Prompts para Refactoring de Arquitectura
 
 ```markdown
 # Prompt: Aplicar reglas de codigo limpio
@@ -693,9 +665,8 @@ Aplicar las siguientes reglas de refactoring al codigo:
 4. **Imports**: Sin wildcards, orden: java, javax, third-party, own packages
 ```
 
----
 
-## Pasos Siguientes (Futuro)
+# 5. Pasos Siguientes (Futuro)
 
 ### Validación Funcional
 
@@ -749,7 +720,6 @@ Aplicar las siguientes reglas de refactoring al codigo:
 - [ ] /docs => tener toda la documentación original migrada a Markdown y csv, etc. de manera de poder actualizarla y usarla de referencia.
 - [ ] preparar proceso de testing completo: unit, integracion (usando Bruno), trazabilidad y covertura y reporting.
 
----
 
 ## Comandos de Uso
 
@@ -806,28 +776,6 @@ curl http://localhost:8080/api/v1/personas
 
 ---
 
-## Resumen de Comandos Utilizados
-
-```bash
-# Build
-mvn clean install
-mvn clean install -pl backend-api
-
-# Testing
-mvn test
-mvn test -Dtest=ClassName#methodName
-
-# Docker
-bash scripts/start.sh
-bash scripts/stop.sh
-bash scripts/test.sh
-
-# API
-curl http://localhost:8080/api/v1/personas
-```
-
----
-
 ## stack Tecnológico
 
 | Componente | Original | Actual |
@@ -839,11 +787,3 @@ curl http://localhost:8080/api/v1/personas
 | API | No existe | REST API |
 | Contenedores | No | Docker + Docker Compose |
 | Pool de Conexiones | No | HikariCP |
-
----
-
-*Ultima actualizacion: 25 de Febrero de 2026*
-
-*Esta sección de herramientas IA fue documentada: 25 de Febrero de 2026*
-
-*Proyecto en proceso de migracion - Arquitectura en evolucion*
