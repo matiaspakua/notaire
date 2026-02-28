@@ -127,4 +127,15 @@ public class GestionController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar gestion")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        try {
+            getJpaController().destroy(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

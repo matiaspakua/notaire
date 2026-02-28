@@ -1,0 +1,35 @@
+meta {
+  name: Update Pago
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/pagos/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  monto: 2000.00
+  fecha: "2025-02-01"
+  formaPago: "transferencia"
+  estado: "pagado"
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  ## Update Pago
+  Actualiza un pago existente en el sistema.
+  
+  **Method:** PUT
+  **Path:** /api/v1/pagos/{id}
+}

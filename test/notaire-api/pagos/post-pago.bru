@@ -1,0 +1,35 @@
+meta {
+  name: Create Pago
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/pagos
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  monto: 1000.00
+  fecha: "2025-01-15"
+  formaPago: "efectivo"
+  estado: "pendiente"
+}
+
+tests {
+  test("Status 201 or 200", function () {
+    expect([200, 201]).to.include(res.getStatus());
+  });
+}
+
+docs {
+  ## Create Pago
+  Crea un nuevo pago en el sistema.
+  
+  **Method:** POST
+  **Path:** /api/v1/pagos
+}

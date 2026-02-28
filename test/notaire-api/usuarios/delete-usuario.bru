@@ -1,0 +1,24 @@
+meta {
+  name: Delete Usuario
+  type: http
+}
+
+delete {
+  url: {{base_url}}/api/v1/usuarios/{{user_id}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  ## Delete Usuario
+  Elimina un usuario del sistema.
+  
+  **Method:** DELETE
+  **Path:** /api/v1/usuarios/{id}
+}
