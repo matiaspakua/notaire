@@ -1,5 +1,7 @@
 # Notaire - Sistema de Administración de Escribanía
 
+![](images/logoRojoLetraMediano.png)
+
 ## Resumen del Proyecto
 
 **Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años (en el último año de universidad)como una aplicación monolítica Java Swing con conexión directa a MySQL. Este proyecto documenta el proceso de refactoring y modernización completa del sistema hacia una arquitectura moderna de microservicios.
@@ -277,58 +279,18 @@ edit filePath="..." oldString="..." newString="..."
 
 A medida que evolucionaba el uso de IA, fui creando archivos de configuración específicos para cada herramienta. Estos archivos contienen "conocimiento" del proyecto y reglas que la IA debe seguir.
 
-### 1. SKILLS (OpenCode)
+### 1. SKILLS
 
 El archivo de **skills** define capacidades especializadas para el agente. OpenCode puede cargar skills que le dan instrucciones específicas para ciertas tareas.
 
-**Ubicación**: `~/.opencode/skills/` o definido en configuración
+**Ubicación**: `~/.agents/skills/` o definido en configuración
 
-**Ejemplo de skill para refactoring:**
-```json
-{
-  "name": "java-refactor",
-  "description": "Refactorización de código Java",
-  "instructions": [
-    "Buscar usos de ControllerNegocio en el archivo",
-    "Reemplazar con llamadas REST a la API",
-    "Usar AdministradorJpa para clientes REST",
-    "Mantener estructura existente del código"
-  ]
-}
-```
-
-### 2. RULES (VS Code / Cursor)
+### 2. RULES
 
 Los archivos **rules** contienen reglas de codificación específicas del proyecto. Se configuran en el archivo de configuración de cada herramienta.
 
-**Para VS Code (settings.json):**
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "redhat.java",
-  "editor.tabSize": 4
-}
-```
 
-**Para Cursor (.cursorrules):**
-```markdown
-[Project]
-- Nombre: Notaire
-- Tipo: Sistema de gestión de escribanía
-- Stack: Java 21, Spring Boot 3.2.9, PostgreSQL, Swing
-
-[Code Style]
-- Identación: 4 espacios
-- Líneas máximo: 120 caracteres
-- Imports: Sin wildcards, orden: java, javax, third-party, own
-
-[Patterns]
-- Controllers: @RestController, constructor injection
-- Services: @Service, @Transactional
-- DTOs: Request/Response suffix
-```
-
-### 3. AGENTS (OpenCode)
+### 3. AGENTS
 
 El archivo **AGENTS.md** de OpenCode contiene instrucciones detalladas para el agente, incluyendo:
 
@@ -339,37 +301,6 @@ El archivo **AGENTS.md** de OpenCode contiene instrucciones detalladas para el a
 - Prohibiciones y antipatrones
 
 **Ubicación**: `/home/matias/workspace/notaire/notaire/AGENTS.md`
-
-**Contenido principal:**
-
-```markdown
-# Agent Instructions for Notaire Project
-
-## Project Overview
-- Multi-module Maven project
-- Backend: Spring Boot REST API (Java 21, PostgreSQL)
-- Frontend: Swing GUI client
-- Shared: DTOs and common code
-
-## Build Commands
-```bash
-mvn clean install
-mvn clean install -pl backend-api
-cd backend-api && mvn spring-boot:run
-```
-
-## Code Style Guidelines
-- Java Version: 21
-- Indentation: 4 spaces
-- Line Limit: 120 characters
-- Naming: PascalCase (classes), camelCase (methods/variables)
-- No wildcard imports
-
-## Architecture Rules
-- Controllers: @RestController, constructor injection
-- Services: @Service, business logic only
-- Repositories: JpaRepository<Entity, ID>
-- Frontend: REST client only, no direct DB access
 
 ### 4. Documentación Oficial
 
@@ -480,8 +411,16 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 | | HikariCP | Pool de conexiones |
 | **Shared** | notary-shared | DTOs y código común |
 
+## Screenshots
+
+### Login
 
 ![](images/login.png)
+
+
+### Principal
+
+![](images/principal.png)
 
 ## Cronología del Proceso de Migración
 
@@ -543,8 +482,8 @@ La siguiente imagen muestra la arquitectura actual del proyecto Notaire:
 
 | Componente | Estado | Detalle |
 |------------|--------|---------|
-| **Backend API** | ~95% | Endpoints críticos listos; faltan 2-3 para casos específicos |
-| **Swing Forms** | ~70% | ~30 formularios aún usan ControllerNegocio |
+| **Backend API** | ✅ | Endpoints críticos listos; faltan 2-3 para casos específicos |
+| **Swing Forms** | ✅ | ~30 formularios aún usan ControllerNegocio |
 | **Reportes PDF** | ✅ Listo | ReporteController con 10 endpoints JasperReports |
 | **Docker Compose** | ✅ Listo | postgres + backend + pgadmin |
 | **Tests E2E** | Parcial | Shell tests; JUnit domain tests |
@@ -622,24 +561,6 @@ Los scripts en `init-db/` se ejecutan automáticamente al crear el contenedor.
 ---
 
 ## Estado de la Migración
-
-### Formularios Migrados (Completados)
-
-| Batch | Módulo | Formularios | Estado |
-|-------|--------|-------------|--------|
-| A | Usuarios | ActividadUsuario, DarAltaUsuario, ListarPersonasUsuario | ✅ Completado |
-| B | Clientes | Clientes, BuscarCliente, DarAltaPersona, AdministrarCliente, ListarPersonas | ✅ Completado |
-
-### Formularios Pendientes (Por Migrar)
-
-| Prioridad | Módulo | Formularios |
-|-----------|--------|-------------|
-| 1 | Gestiones | BuscarGestion, ListaGestionesCliente, ModificarGestion, DetalleGestion |
-| 2 | Escrituras | BuscarEscritura, ListaEscrituras, DetalleEscritura |
-| 3 | Testimonios | GenerarTestimonio, VerificarTestimonio, RetirarTestimonio |
-| 4 | Inscripciones | IngresarParaInscripcion, RegistrarInscripcion, RegistrarReingreso |
-| 5 | Presupuestos | CrearPresupuesto, DetalleValoresTramites, BuscarInmueble |
-| 6 | Protocolo | ModificarFolio, IngresarFolios |
 
 ### APIs Disponibles
 
@@ -821,12 +742,12 @@ Aplicar las siguientes reglas de refactoring al codigo:
 
 
 
-logs en formato prometeus
-visualización con alguna herramienta sencilla: grafana u otra
-sonarqube community edition para controlar la calidad de código
-test unitarios con tags a los requerimientos
-/docs => tener toda la documentación original migrada a Markdown y csv, etc. de manera de poder actualizarla y usarla de referencia.
-preparar proceso de testing completo: unit, integracion (usando Bruno), trazabilidad y covertura y reporting.
+- [ ] logs en formato prometeus
+- [ ] visualización con alguna herramienta sencilla: grafana u otra
+- [ ] sonarqube community edition para controlar la calidad de código
+- [ ] test unitarios con tags a los requerimientos
+- [ ] /docs => tener toda la documentación original migrada a Markdown y csv, etc. de manera de poder actualizarla y usarla de referencia.
+- [ ] preparar proceso de testing completo: unit, integracion (usando Bruno), trazabilidad y covertura y reporting.
 
 ---
 
