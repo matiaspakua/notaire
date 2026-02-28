@@ -12,10 +12,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 @RequestMapping("/api/v1/usuarios")
 @Tag(name = "Usuarios", description = "API para gestionar usuarios")
 public class UsuarioController {
+
+    private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
     private UsuarioJpaController getJpaController() {
         return UsuarioJpaController.getInstancia();
@@ -107,28 +112,42 @@ public class UsuarioController {
     public ResponseEntity<DtoUsuario> login(@RequestBody DtoUsuario loginRequest) {
         try {
             List<Usuario> usuarios = getJpaController().buscarUsuarios();
-            
+
             if (usuarios == null || usuarios.isEmpty()) {
+                log.warn("Login fallido: No hay usuarios en la base de datos.");
                 DtoUsuario errorResponse = new DtoUsuario();
                 errorResponse.setValido(false);
                 return ResponseEntity.ok(errorResponse);
             }
 
             String passwordIngresado = encriptaEnMD5(loginRequest.getContrasenia());
-            
+            log.debug("Intento de login para usuario: '{}' (hash: '{}')", loginRequest.getNombre(), passwordIngresado);
+
             for (Usuario usuario : usuarios) {
-                if (usuario.getNombre().equals(loginRequest.getNombre())) {
-                    if (usuario.getContrasenia().equals(passwordIngresado) && usuario.getEstado()) {
-                        DtoUsuario dtoUsuario = usuario.getDto();
-                        dtoUsuario.setValido(true);
-                        return ResponseEntity.ok(dtoUsuario);
+                log.debug("Comparando con usuario en DB: '{}' (estado: {}, hash_db: '{}')",
+                        usuario.getNombre(), usuario.getEstado(), usuario.getContrasenia());
+                if (usuario.getNombre().equalsIgnoreCase(loginRequest.getNombre())) {
+                    if (usuario.getContrasenia().equals(passwordIngresado)) {
+                        if (usuario.getEstado()) {
+                            log.info("Login exitoso para usuario: '{}'", usuario.getNombre());
+                            DtoUsuario dtoUsuario = usuario.getDto();
+                            dtoUsuario.setValido(true);
+                            return ResponseEntity.ok(dtoUsuario);
+                        } else {
+                            log.warn("Login fallido para '{}': usuario inactivo", usuario.getNombre());
+                        }
+                    } else {
+                        log.warn("Login fallido para '{}': contraseña incorrecta", usuario.getNombre());
                     }
                 }
             }
-            
+
+            log.warn("Login fallido: usuario '{}' no encontrado en {} usuarios cargados.", loginRequest.getNombre(),
+                    usuarios.size());
             DtoUsuario errorResponse = new DtoUsuario();
             errorResponse.setValido(false);
             return ResponseEntity.ok(errorResponse);
+
         } catch (Exception e) {
             DtoUsuario errorResponse = new DtoUsuario();
             errorResponse.setValido(false);
@@ -141,7 +160,7 @@ public class UsuarioController {
      */
     private String encriptaEnMD5(String stringAEncriptar) {
         char[] CONSTS_HEX = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
         try {
             MessageDigest msgd = MessageDigest.getInstance("MD5");
@@ -159,4 +178,3 @@ public class UsuarioController {
         }
     }
 }
-

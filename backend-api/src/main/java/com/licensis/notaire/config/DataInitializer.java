@@ -11,12 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import jakarta.persistence.EntityManagerFactory;
+import com.licensis.notaire.servicios.AdministradorJpa;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
- * Crea usuario admin/persona/tipo identificación inicial si la base está vacía (p. ej. con ddl-auto=create).
+ * Crea usuario admin/persona/tipo identificación inicial si la base está vacía
+ * (p. ej. con ddl-auto=create).
  */
 @Component
 public class DataInitializer {
@@ -24,45 +27,73 @@ public class DataInitializer {
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
     private static final String ADMIN_USER = "admin";
     private static final String ADMIN_PASS_PLAIN = "admin";
+    private final EntityManagerFactory emf;
+
+    public DataInitializer(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
     @PostConstruct
     public void init() {
         try {
+            AdministradorJpa.setEmf(emf);
             UsuarioJpaController usuarioJpa = UsuarioJpaController.getInstancia();
             List<Usuario> usuarios = usuarioJpa.buscarUsuarios();
-            if (usuarios != null && !usuarios.isEmpty()) {
-                log.info("Usuarios ya existen, omitiendo creación de admin.");
-                return;
+
+            Usuario admin = null;
+            if (usuarios != null) {
+                for (Usuario u : usuarios) {
+                    if (u.getNombre().equalsIgnoreCase(ADMIN_USER)) {
+                        admin = u;
+                        break;
+                    }
+                }
             }
-            var emf = JpaControllerProvider.getEntityManagerFactory();
-            TipoIdentificacionJpaController tipoIdJpa = TipoIdentificacionJpaController.getInstancia();
-            List<TipoIdentificacion> tipos = tipoIdJpa.findTipoIdentificacionEntities();
-            TipoIdentificacion tipoDni;
-            if (tipos != null && !tipos.isEmpty()) {
-                tipoDni = tipos.get(0);
+
+            if (admin != null) {
+                log.info("Usuario 'admin' ya existe. Actualizando contraseña para asegurar acceso.");
+                admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
+                admin.setEstado(true);
+                // Usamos un metodo que asuma que ya existe
+                try {
+                    // Intenta editar si existe el controlador
+                    usuarioJpa.edit(admin);
+                } catch (Exception e) {
+                    log.error("No se pudo actualizar admin: {}", e.getMessage());
+                }
             } else {
-                tipoDni = new TipoIdentificacion();
-                tipoDni.setNombre("DNI");
-                tipoIdJpa.create(tipoDni);
+                log.info("Usuario 'admin' no encontrado. Creando...");
+                // Reutilizamos la logica de creacion
+                TipoIdentificacionJpaController tipoIdJpa = TipoIdentificacionJpaController.getInstancia();
+                List<TipoIdentificacion> tipos = tipoIdJpa.findTipoIdentificacionEntities();
+                TipoIdentificacion tipoDni;
+                if (tipos != null && !tipos.isEmpty()) {
+                    tipoDni = tipos.get(0);
+                } else {
+                    tipoDni = new TipoIdentificacion();
+                    tipoDni.setNombre("DNI");
+                    tipoIdJpa.create(tipoDni);
+                }
+
+                PersonaJpaController personaJpa = PersonaJpaController.getInstancia();
+                Persona adminPersona = new Persona();
+                adminPersona.setNombre("Admin");
+                adminPersona.setApellido("Sistema");
+                adminPersona.setEsCliente(false);
+                adminPersona.setNumeroIdentificacion("00000000");
+                adminPersona.setFkIdTipoIdentificacion(tipoDni);
+                personaJpa.create(adminPersona);
+
+                admin = new Usuario();
+                admin.setNombre(ADMIN_USER);
+                admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
+                admin.setEstado(true);
+                admin.setTipo("Escribano");
+                admin.setFkIdPersona(adminPersona);
+                usuarioJpa.create(admin);
+                log.info("Usuario inicial 'admin' creado correctamente.");
             }
 
-            PersonaJpaController personaJpa = PersonaJpaController.getInstancia();
-            Persona adminPersona = new Persona();
-            adminPersona.setNombre("Admin");
-            adminPersona.setApellido("Sistema");
-            adminPersona.setEsCliente(false);
-            adminPersona.setNumeroIdentificacion("00000000");
-            adminPersona.setFkIdTipoIdentificacion(tipoDni);
-            personaJpa.create(adminPersona);
-
-            Usuario admin = new Usuario();
-            admin.setNombre(ADMIN_USER);
-            admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
-            admin.setEstado(true);
-            admin.setTipo("Escribano");
-            admin.setFkIdPersona(adminPersona);
-            usuarioJpa.create(admin);
-            log.info("Usuario inicial 'admin' creado (contraseña: admin).");
         } catch (Exception e) {
             log.warn("No se pudo crear usuario inicial: {}", e.getMessage());
         }
