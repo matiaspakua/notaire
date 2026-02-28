@@ -66,6 +66,19 @@ bash scripts/test.sh
 - **@Override**: Use consistently for overridden methods
 - **One statement per line**
 
+### Critical Java Pitfalls (MUST AVOID)
+- `==` compares references, not content — always use `.equals()` for strings
+- Override `equals()` must also override `hashCode()` — HashMap/HashSet break otherwise
+- `Optional.get()` throws if empty — use `orElse()`, `orElseGet()`, or `ifPresent()`
+- Modifying while iterating throws `ConcurrentModificationException` — use Iterator.remove()
+- Type erasure: generic type info gone at runtime — can't do `new T()` or `instanceof List<String>`
+- `volatile` ensures visibility, not atomicity — `count++` still needs synchronization
+- Unboxing null throws NPE — `Integer i = null; int x = i;` crashes
+- `Integer == Integer` uses reference for values outside -128 to 127 — use `.equals()`
+- Try-with-resources auto-closes — implement `AutoCloseable`, Java 7+
+- Inner classes hold reference to outer — use static nested class if not needed
+- Streams are single-use — can't reuse after terminal operation
+
 ### Naming Conventions
 - **Classes**: PascalCase (DocumentController, NotaryService)
 - **Methods/Variables**: camelCase with auxiliary verbs (isLoading, hasError)
@@ -82,6 +95,8 @@ bash scripts/test.sh
 - **Services**: @Service, business logic only, @Transactional
 - **Repositories**: JpaRepository<Entity, ID>, no business logic
 - **DTOs**: Required for all endpoints, use javax.validation
+- **Dependency Injection**: Use constructor injection with final fields, avoid @Autowired on fields
+- **Use interfaces**: For dependencies to enable mocking and alternative implementations
 
 #### Frontend (Swing Client)
 - **Package**: com.licensis.notaire.gui.{client,view,controller,model,util}
@@ -100,6 +115,8 @@ bash scripts/test.sh
 - **Frontend**: Catch API exceptions, show JOptionPane with user-friendly message
 - **Validation**: Client-side for UX, server-side for security
 - **Logging**: Use SLF4J, don't log sensitive data
+- **Never ignore exceptions silently**: Catch specific exceptions, propagate with context
+- **Use Optional<T>**: For nullable return values, use orElse/orElseThrow instead of null
 
 ### Code Quality & Testing
 - **SOLID Principles**: Single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion
@@ -112,7 +129,12 @@ bash scripts/test.sh
 - **Conditional Logic**: Limit to 2 levels depth, use guard clauses over nested else
 - **Empty Collections**: Return empty collections instead of null (Collections.emptyList())
 - **Never ignore exceptions silently**: Catch specific exceptions, propagate with context
-- **Testing**: AAA pattern, 80% coverage minimum, descriptive test names
+- **Testing**: AAA pattern (Arrange-Act-Assert), 80% coverage minimum, descriptive test names
+- **Use AssertJ**: For fluent assertions in tests
+- **Test Naming**: Use @DisplayName and descriptive method names (shouldReturnXWhenY)
+- **Use @ParameterizedTest**: For data-driven tests with @ValueSource
+- **Use @Nested**: To organize related tests in inner classes
+- **Mocking**: Use @Mock for dependencies, @InjectMocks for the service under test
 
 ### Database & Security
 - **JPA**: Use Spring Data JPA, lazy loading for relationships
@@ -142,9 +164,16 @@ bash scripts/test.sh
 ### Development Workflow
 1. Start application with `bash script/start.sh`
 2. Run tests with `bash script/test.sh`
-3. Check Swagger UI:8080/swagger-ui.html
- at http://localhost4. Build with `mvn clean install`
+3. Build with `mvn clean install`
+4. Check Swagger UI at http://localhost:8080/swagger-ui.html
 5. Follow migration progress in MIGRATION_*.md files
+
+### Modern Java Features (JDK 21)
+- **Records**: Use for immutable DTOs and data carriers (auto-generated equals/hashCode/toString)
+- **Pattern Matching**: Use `instanceof` pattern matching and switch expressions
+- **Virtual Threads**: Use for high-throughput concurrent operations
+- **Text Blocks**: Use for multiline strings (JSON, SQL in code)
+- **Sealed Classes**: Use for controlled inheritance hierarchies
 
 ### Prohibited Patterns
 - **Backend**: Swing dependencies, direct database access from controllers

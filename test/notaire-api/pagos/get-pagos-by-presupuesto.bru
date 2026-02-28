@@ -1,0 +1,33 @@
+meta {
+  name: Get Pagos By Presupuesto
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/pagos/presupuesto/{{presupuesto_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("Response is array", function () {
+    const body = res.getBody();
+    expect(body).to.be.an('array');
+  });
+}
+
+docs {
+  ## Get Pagos By Presupuesto
+  Obtiene los pagos de un presupuesto.
+  
+  **Method:** GET
+  **Path:** /api/v1/pagos/presupuesto/{idPresupuesto}
+}

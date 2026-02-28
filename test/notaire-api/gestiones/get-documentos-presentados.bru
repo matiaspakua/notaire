@@ -1,0 +1,33 @@
+meta {
+  name: Get All Documentos Presentados
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/documento-presentado
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("Response is array", function () {
+    const body = res.getBody();
+    expect(body).to.be.an('array');
+  });
+}
+
+docs {
+  ## Get All Documentos Presentados
+  Obtiene todos los documentos presentados del sistema.
+  
+  **Method:** GET
+  **Path:** /api/v1/documento-presentado
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Get All Items
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/items
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("Response is array", function () {
+    const body = res.getBody();
+    expect(body).to.be.an('array');
+  });
+}
+
+docs {
+  ## Get All Items
+  Obtiene todos los items del sistema.
+  
+  **Method:** GET
+  **Path:** /api/v1/items
+}

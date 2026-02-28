@@ -1,0 +1,35 @@
+meta {
+  name: Get All Usuarios
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/usuarios
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("Response is array", function () {
+    const body = res.getBody();
+    expect(body).to.be.an('array');
+  });
+}
+
+docs {
+  ## Get All Usuarios
+  Obtiene todos los usuarios del sistema.
+  
+  **Method:** GET
+  **Path:** /api/v1/usuarios
+  
+  **Response:** Array of Usuario objects
+}
