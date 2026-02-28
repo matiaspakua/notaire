@@ -49,16 +49,13 @@ public class Inmueble implements Serializable {
     @Column(name = "id_inmueble")
     private Integer idInmueble;
     @Basic(optional = false)
-    @Column(name = "nomenclatura_catastral")
+    @Column(name = "nomenclatura")
     private String nomenclaturaCatastral;
     @Column(name = "valuacion_fiscal")
     private String valuacionFiscal;
     @Basic(optional = false)
     @Column(name = "domicilio")
     private String domicilio;
-    @Basic(optional = false)
-    @Column(name = "tipo_inmueble")
-    private String tipoInmueble;
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "fkIdInmueble", fetch = FetchType.LAZY)
@@ -76,13 +73,6 @@ public class Inmueble implements Serializable {
 
     public Inmueble(Integer idInmueble) {
         this.idInmueble = idInmueble;
-    }
-
-    public Inmueble(Integer idInmueble, String nomenclaturaCatastral, String domicilio, String tipoInmueble) {
-        this.idInmueble = idInmueble;
-        this.nomenclaturaCatastral = nomenclaturaCatastral;
-        this.domicilio = domicilio;
-        this.tipoInmueble = tipoInmueble;
     }
 
     public Integer getIdInmueble() {
@@ -117,14 +107,6 @@ public class Inmueble implements Serializable {
         this.domicilio = domicilio;
     }
 
-    public String getTipoInmueble() {
-        return tipoInmueble;
-    }
-
-    public void setTipoInmueble(String tipoInmueble) {
-        this.tipoInmueble = tipoInmueble;
-    }
-
     public String getObservaciones() {
         return observaciones;
     }
@@ -149,7 +131,6 @@ public class Inmueble implements Serializable {
         miDto.setIdInmueble(this.getIdInmueble());
         miDto.setNomenclaturaCatastral(this.getNomenclaturaCatastral());
         miDto.setObservaciones(this.getObservaciones());
-        miDto.setTipoInmueble(this.getTipoInmueble());
         miDto.setValuacionFiscal(this.getValuacionFiscal());
 
         return miDto;
@@ -165,7 +146,6 @@ public class Inmueble implements Serializable {
 
             this.nomenclaturaCatastral = miDtoInmueble.getNomenclaturaCatastral();
             this.observaciones = miDtoInmueble.getObservaciones();
-            this.tipoInmueble = miDtoInmueble.getTipoInmueble();
             this.valuacionFiscal = miDtoInmueble.getValuacionFiscal();
         }
     }

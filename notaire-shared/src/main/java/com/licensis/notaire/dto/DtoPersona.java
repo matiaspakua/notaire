@@ -1,6 +1,7 @@
 package com.licensis.notaire.dto;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.licensis.notaire.dto.interfaces.DtoValido;
 import java.util.ArrayList;
 import java.util.Date;
@@ -286,6 +287,7 @@ public class DtoPersona implements DtoValido {
         this.dtoTipoIdentificacion = dtoTipoIdentificacion;
     }
 
+    @JsonIgnore
     @Override
     public Boolean isValido() {
         // Simplified validation without backend dependencies

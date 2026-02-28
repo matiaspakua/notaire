@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.jpa.UsuarioJpaController;
 import com.licensis.notaire.negocio.Usuario;
@@ -130,7 +131,19 @@ public class UsuarioController {
                     if (usuario.getContrasenia().equals(passwordIngresado)) {
                         if (usuario.getEstado()) {
                             log.info("Login exitoso para usuario: '{}'", usuario.getNombre());
-                            DtoUsuario dtoUsuario = usuario.getDto();
+                            DtoUsuario dtoUsuario = new DtoUsuario();
+                            dtoUsuario.setIdUsuario(usuario.getIdUsuario());
+                            dtoUsuario.setNombre(usuario.getNombre());
+                            dtoUsuario.setEstado(usuario.getEstado());
+                            dtoUsuario.setTipo(usuario.getTipo());
+                            dtoUsuario.setVersion(usuario.getVersion());
+                            if (usuario.getFkIdPersona() != null) {
+                                DtoPersona dtoPersona = new DtoPersona();
+                                dtoPersona.setIdPersona(usuario.getFkIdPersona().getIdPersona());
+                                dtoPersona.setNombre(usuario.getFkIdPersona().getNombre());
+                                dtoPersona.setApellido(usuario.getFkIdPersona().getApellido());
+                                dtoUsuario.setPersonas(dtoPersona);
+                            }
                             dtoUsuario.setValido(true);
                             return ResponseEntity.ok(dtoUsuario);
                         } else {

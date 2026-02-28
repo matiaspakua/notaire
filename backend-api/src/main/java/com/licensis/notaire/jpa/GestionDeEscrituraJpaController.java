@@ -513,8 +513,6 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
                     em.getTransaction().begin();
                     persistentGestion.setFkIdEstadoDeGestion(pGestioneDeEscrituras.getFkIdEstadoDeGestion());
                     persistentGestion.setObservaciones(pGestioneDeEscrituras.getObservaciones());
-                    persistentGestion.setNumeroArchivo(pGestioneDeEscrituras.getNumeroBibliorato());
-                    persistentGestion.setNumeroArchivo(pGestioneDeEscrituras.getIdGestion());
 
                     em.getTransaction().commit();
                     em.close();

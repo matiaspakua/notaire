@@ -58,9 +58,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "GestionDeEscritura.findAll", query = "SELECT g FROM GestionDeEscritura g"),
         @NamedQuery(name = "GestionDeEscritura.findByIdGestion", query = "SELECT g FROM GestionDeEscritura g WHERE g.idGestion = :idGestion"),
         @NamedQuery(name = "GestionDeEscritura.findByNumero", query = "SELECT g FROM GestionDeEscritura g WHERE g.numero = :numero"),
-        @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM GestionDeEscritura g WHERE g.fechaInicio = :fechaInicio"),
-        @NamedQuery(name = "GestionDeEscritura.findByNumeroArchivo", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroArchivo = :numeroArchivo"),
-        @NamedQuery(name = "GestionDeEscritura.findByNumeroBibliorato", query = "SELECT g FROM GestionDeEscritura g WHERE g.numeroBibliorato = :numeroBibliorato")
+        @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM GestionDeEscritura g WHERE g.fechaInicio = :fechaInicio")
 })
 public class GestionDeEscritura implements Serializable {
 
@@ -89,10 +87,6 @@ public class GestionDeEscritura implements Serializable {
     private String encabezado;
     @Column(name = "observaciones")
     private String observaciones;
-    @Column(name = "numero_archivo")
-    private Integer numeroArchivo;
-    @Column(name = "numero_bibliorato")
-    private Integer numeroBibliorato;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdGestion")
     private List<Historial> historialList;
     @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id_persona")
@@ -164,22 +158,6 @@ public class GestionDeEscritura implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Integer getNumeroArchivo() {
-        return numeroArchivo;
-    }
-
-    public void setNumeroArchivo(Integer numeroArchivo) {
-        this.numeroArchivo = numeroArchivo;
-    }
-
-    public Integer getNumeroBibliorato() {
-        return numeroBibliorato;
-    }
-
-    public void setNumeroBibliorato(Integer numeroBibliorato) {
-        this.numeroBibliorato = numeroBibliorato;
-    }
-
     @XmlTransient
     public List<Historial> getHistorialList() {
         return historialList;
@@ -241,8 +219,6 @@ public class GestionDeEscritura implements Serializable {
         this.setEncabezado(dtoGestion.getEncabezado());
         this.setFechaInicio(dtoGestion.getFechaInicio());
         this.setObservaciones(dtoGestion.getObservaciones());
-        this.setNumeroArchivo(dtoGestion.getNumeroArchivo());
-        this.setNumeroBibliorato(dtoGestion.getNumeroBibliorato());
 
         if (dtoGestion.getPersonaEscribano() != null) {
             Persona escribano = new Persona();
@@ -279,8 +255,6 @@ public class GestionDeEscritura implements Serializable {
         dtoGestion.setEncabezado(this.getEncabezado());
         dtoGestion.setFechaInicio(this.getFechaInicio());
         dtoGestion.setObservaciones(this.getObservaciones());
-        dtoGestion.setNumeroArchivo(this.getNumeroArchivo());
-        dtoGestion.setNumeroBibliorato(this.getNumeroBibliorato());
         dtoGestion.setEstado(this.fkIdEstadoDeGestion.getDto());
 
         // Evito que se produzca un bucle, por esta razon esta el
