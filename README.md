@@ -22,7 +22,24 @@
 
 ## 1. Resumen del Proyecto
 
-**Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años como una aplicación monolítica Java Swing con conexión directa a MySQL.
+**Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años (durante la universidad) como una aplicación monolítica con Java y con UI usando  Swing (de java, ahora ya casi en desuso) con conexión directa a MySQL.
+
+El proyecto en si, tenia una arquitectura de capas sencillo, pero robusto para ser un monolito. El siguiente diagrama es un ejemplo de la arquitectura original:
+
+### Arquitectura Original (Monolito)
+
+![Arquitectura Original](images/arquitectura-original.png)
+
+| Componente            | Descripción                                  |
+| --------------------- | -------------------------------------------- |
+| **GUI Swing**         | Interfaz gráfica con JFrame y JPanel         |
+| **Event Handlers**    | Manejadores de eventos con lógica de negocio |
+| **ControllerNegocio** | Clase central con toda la lógica de negocio  |
+| **JDBC Directo**      | Conexiones SQL directas sin pooling          |
+| **MySQL 5.7**         | Base de datos relacional (27 tablas)         |
+
+El diagrama fue generado con OpenCode y el conector MCP a drawio local.
+
 
 ### Problemas del Código Original
 
@@ -73,17 +90,6 @@ notaire/
 
 ## 3. Arquitectura del Sistema
 
-### Arquitectura Original (Monolito)
-
-![Arquitectura Original](images/arquitectura-original.png)
-
-| Componente | Descripción |
-|------------|-------------|
-| **GUI Swing** | Interfaz gráfica con JFrame y JPanel |
-| **Event Handlers** | Manejadores de eventos con lógica de negocio |
-| **ControllerNegocio** | Clase central con toda la lógica de negocio |
-| **JDBC Directo** | Conexiones SQL directas sin pooling |
-| **MySQL 5.7** | Base de datos relacional (27 tablas) |
 
 ### Arquitectura Actual (Refactorizada)
 
@@ -256,6 +262,14 @@ Contiene:
 | **Excalidraw** | Diagramas conceptuales |
 | **Git** | Control de versiones |
 | **Web Fetch** | Consultar documentación |
+
+#### Instalar servidor MCP drawio
+
+```
+$ sudo npm install -g @drawio/mcp
+```
+
+
 
 ---
 
