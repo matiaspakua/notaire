@@ -6,15 +6,20 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.nio.file.Paths;
+
 @Testcontainers(disabledWithoutDocker = true)
 public abstract class BaseIntegrationTest {
 
     @Container
     @SuppressWarnings("resource")
-    protected static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:16-alpine")
+    protected static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = 
+        new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("notaire_test")
             .withUsername("notaire")
-            .withPassword("notaire_password");
+            .withPassword("notaire_password")
+            .withInitScript(Paths.get("../init-db/01-schema.sql").toAbsolutePath().toString())
+            .withInitScript(Paths.get("../init-db/02-data.sql").toAbsolutePath().toString());
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -22,6 +27,6 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
         registry.add("spring.datasource.driver-class-name", POSTGRESQL_CONTAINER::getDriverClassName);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
     }
 }

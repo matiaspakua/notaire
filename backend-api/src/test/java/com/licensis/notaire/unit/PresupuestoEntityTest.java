@@ -1,0 +1,155 @@
+package com.licensis.notaire.unit;
+
+import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.TipoDeTramite;
+import com.licensis.notaire.negocio.Tramite;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DisplayName("Presupuesto Entity Tests")
+class PresupuestoEntityTest {
+
+    @Nested
+    @DisplayName("CU01 - Preparar Presupuesto - Unit Tests")
+    class PrepararPresupuestoTests {
+
+        @Test
+        @DisplayName("Should create presupuesto with required fields")
+        void shouldCreatePresupuestoWithRequiredFields() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setFecha(new Date());
+            presupuesto.setTotal(15000.00f);
+            presupuesto.setSaldo(15000.00f);
+
+            assertThat(presupuesto.getTotal()).isEqualTo(15000.00f);
+            assertThat(presupuesto.getSaldo()).isEqualTo(15000.00f);
+        }
+
+        @Test
+        @DisplayName("Should calculate saldo after payment")
+        void shouldCalculateSaldoAfterPayment() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setTotal(10000.00f);
+            presupuesto.setSaldo(5000.00f);
+
+            assertThat(presupuesto.getSaldo()).isEqualTo(5000.00f);
+            assertThat(presupuesto.getTotal() - presupuesto.getSaldo()).isEqualTo(5000.00f);
+        }
+
+        @Test
+        @DisplayName("Should link presupuesto to persona")
+        void shouldLinkPresupuestoToPersona() {
+            Persona persona = new Persona();
+            persona.setIdPersona(1);
+            persona.setNombre("Juan");
+            persona.setApellido("Perez");
+
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setFkIdPersona(persona);
+
+            assertThat(presupuesto.getFkIdPersona()).isNotNull();
+            assertThat(presupuesto.getFkIdPersona().getNombre()).isEqualTo("Juan");
+        }
+
+        @Test
+        @DisplayName("Should link presupuesto to tramite")
+        void shouldLinkPresupuestoToTramite() {
+            Tramite tramite = new Tramite();
+            tramite.setIdTramite(1);
+            
+            TipoDeTramite tipoTramite = new TipoDeTramite();
+            tipoTramite.setNombre("Compraventa");
+            tramite.setFkIdTipoTramite(tipoTramite);
+
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setFkIdTramite(tramite);
+
+            assertThat(presupuesto.getFkIdTramite()).isNotNull();
+            assertThat(presupuesto.getFkIdTramite().getFkIdTipoTramite().getNombre()).isEqualTo("Compraventa");
+        }
+
+        @Test
+        @DisplayName("Should implement equals based on id")
+        void shouldImplementEqualsBasedOnId() {
+            Presupuesto p1 = new Presupuesto(1);
+            Presupuesto p2 = new Presupuesto(1);
+            Presupuesto p3 = new Presupuesto(2);
+
+            assertThat(p1).isEqualTo(p2);
+            assertThat(p1).isNotEqualTo(p3);
+        }
+
+        @Test
+        @DisplayName("Should initialize lists in constructor")
+        void shouldInitializeListsInConstructor() {
+            Presupuesto presupuesto = new Presupuesto();
+            
+            assertThat(presupuesto.getItemList()).isNotNull();
+            assertThat(presupuesto.getItemList()).isEmpty();
+            assertThat(presupuesto.getPagoList()).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("CU60 - Buscar Presupuesto - Unit Tests")
+    class BuscarPresupuestoTests {
+
+        @Test
+        @DisplayName("Should filter presupuestos by persona")
+        void shouldFilterPresupuestosByPersona() {
+            Persona persona1 = new Persona(1);
+            Persona persona2 = new Persona(2);
+
+            Presupuesto presupuesto1 = new Presupuesto(1);
+            presupuesto1.setFkIdPersona(persona1);
+            
+            Presupuesto presupuesto2 = new Presupuesto(2);
+            presupuesto2.setFkIdPersona(persona2);
+
+            Presupuesto presupuesto3 = new Presupuesto(3);
+            presupuesto3.setFkIdPersona(persona1);
+
+            List<Presupuesto> presupuestos = List.of(presupuesto1, presupuesto2, presupuesto3);
+
+            var filtered = presupuestos.stream()
+                .filter(p -> p.getFkIdPersona() != null && p.getFkIdPersona().getIdPersona().equals(1))
+                .toList();
+
+            assertThat(filtered).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("Should filter presupuestos with pending saldo")
+        void shouldFilterPresupuestosWithPendingSaldo() {
+            Presupuesto presupuesto1 = new Presupuesto(1);
+            presupuesto1.setTotal(10000f);
+            presupuesto1.setSaldo(5000f);
+            
+            Presupuesto presupuesto2 = new Presupuesto(2);
+            presupuesto2.setTotal(5000f);
+            presupuesto2.setSaldo(0f);
+
+            List<Presupuesto> presupuestos = List.of(presupuesto1, presupuesto2);
+
+            var pending = presupuestos.stream()
+                .filter(p -> p.getSaldo() > 0)
+                .toList();
+
+            assertThat(pending).hasSize(1);
+            assertThat(pending.get(0).getIdPresupuesto()).isEqualTo(1);
+        }
+    }
+}
