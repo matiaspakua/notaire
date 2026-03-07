@@ -9,9 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,24 +25,30 @@ class PresupuestoEntityTest {
         void shouldCreatePresupuestoWithRequiredFields() {
             Presupuesto presupuesto = new Presupuesto();
             presupuesto.setIdPresupuesto(1);
+            presupuesto.setNumero(1001);
             presupuesto.setFecha(new Date());
-            presupuesto.setTotal(15000.00f);
-            presupuesto.setSaldo(15000.00f);
+            presupuesto.setEncabezado("Compraventa de inmueble");
+            presupuesto.setEstado("pendiente");
+            presupuesto.setMontoInmueble(500000.00f);
 
-            assertThat(presupuesto.getTotal()).isEqualTo(15000.00f);
-            assertThat(presupuesto.getSaldo()).isEqualTo(15000.00f);
+            assertThat(presupuesto.getNumero()).isEqualTo(1001);
+            assertThat(presupuesto.getEncabezado()).isEqualTo("Compraventa de inmueble");
+            assertThat(presupuesto.getEstado()).isEqualTo("pendiente");
+            assertThat(presupuesto.getMontoInmueble()).isEqualTo(500000.00f);
         }
 
         @Test
-        @DisplayName("Should calculate saldo after payment")
-        void shouldCalculateSaldoAfterPayment() {
+        @DisplayName("Should update presupuesto estado")
+        void shouldUpdatePresupuestoEstado() {
             Presupuesto presupuesto = new Presupuesto();
             presupuesto.setIdPresupuesto(1);
-            presupuesto.setTotal(10000.00f);
-            presupuesto.setSaldo(5000.00f);
+            presupuesto.setNumero(1001);
+            presupuesto.setFecha(new Date());
+            presupuesto.setEncabezado("Compraventa");
+            presupuesto.setEstado("pendiente");
 
-            assertThat(presupuesto.getSaldo()).isEqualTo(5000.00f);
-            assertThat(presupuesto.getTotal() - presupuesto.getSaldo()).isEqualTo(5000.00f);
+            presupuesto.setEstado("aprobado");
+            assertThat(presupuesto.getEstado()).isEqualTo("aprobado");
         }
 
         @Test
@@ -132,20 +136,18 @@ class PresupuestoEntityTest {
         }
 
         @Test
-        @DisplayName("Should filter presupuestos with pending saldo")
-        void shouldFilterPresupuestosWithPendingSaldo() {
+        @DisplayName("Should filter presupuestos by estado")
+        void shouldFilterPresupuestosByEstado() {
             Presupuesto presupuesto1 = new Presupuesto(1);
-            presupuesto1.setTotal(10000f);
-            presupuesto1.setSaldo(5000f);
+            presupuesto1.setEstado("pendiente");
             
             Presupuesto presupuesto2 = new Presupuesto(2);
-            presupuesto2.setTotal(5000f);
-            presupuesto2.setSaldo(0f);
+            presupuesto2.setEstado("aprobado");
 
             List<Presupuesto> presupuestos = List.of(presupuesto1, presupuesto2);
 
             var pending = presupuestos.stream()
-                .filter(p -> p.getSaldo() > 0)
+                .filter(p -> "pendiente".equals(p.getEstado()))
                 .toList();
 
             assertThat(pending).hasSize(1);

@@ -12,24 +12,19 @@ import java.util.List;
 public class DtoPresupuesto implements DtoValido {
 
     private Integer idPresupuesto;
-    private DtoTramite tramite;
-    private DtoPersona persona;
+    private Integer numero;
     private Date fecha;
-    private Float total;
-    private Float saldo;
+    private String encabezado;
+    private String estado;
+    private Float montoInmueble;
     private String observaciones;
     private Integer version = 0;
+    private DtoTramite tramite;
+    private DtoPersona persona;
     private List<DtoTramite> listaTramites = new ArrayList<>();
+    private List<DtoItem> items = new ArrayList<>();
 
     public DtoPresupuesto() {
-    }
-
-    public DtoPresupuesto(DtoTramite tramites, DtoPersona personas, Date fecha, Float total, Float saldo) {
-        this.tramite = tramites;
-        this.persona = personas;
-        this.fecha = fecha;
-        this.total = total;
-        this.saldo = saldo;
     }
 
     public Integer getVersion() {
@@ -48,6 +43,54 @@ public class DtoPresupuesto implements DtoValido {
         this.idPresupuesto = idPresupuesto;
     }
 
+    public Integer getNumero() {
+        return this.numero;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public Date getFecha() {
+        return this.fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getEncabezado() {
+        return this.encabezado;
+    }
+
+    public void setEncabezado(String encabezado) {
+        this.encabezado = encabezado;
+    }
+
+    public String getEstado() {
+        return this.estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Float getMontoInmueble() {
+        return this.montoInmueble;
+    }
+
+    public void setMontoInmueble(Float montoInmueble) {
+        this.montoInmueble = montoInmueble;
+    }
+
+    public String getObservaciones() {
+        return this.observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
     public DtoTramite getTramite() {
         return this.tramite;
     }
@@ -64,38 +107,6 @@ public class DtoPresupuesto implements DtoValido {
         this.persona = personas;
     }
 
-    public Date getFecha() {
-        return this.fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public Float getTotal() {
-        return this.total;
-    }
-
-    public void setTotal(Float total) {
-        this.total = total;
-    }
-
-    public Float getSaldo() {
-        return this.saldo;
-    }
-
-    public void setSaldo(Float saldo) {
-        this.saldo = saldo;
-    }
-
-    public String getObservaciones() {
-        return this.observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
     public List<DtoTramite> getListaTramites() {
         return this.listaTramites;
     }
@@ -105,15 +116,33 @@ public class DtoPresupuesto implements DtoValido {
     }
 
     public List<DtoItem> getItems() {
-        return new ArrayList<>();
+        return this.items;
     }
 
     public void setItems(List<DtoItem> items) {
+        this.items = items;
+    }
+
+    @Deprecated
+    public Float getSaldo() {
+        return null;
+    }
+
+    @Deprecated
+    public void setSaldo(Float saldo) {
+    }
+
+    @Deprecated
+    public Float getTotal() {
+        return montoInmueble;
+    }
+
+    @Deprecated
+    public void setTotal(Float total) {
     }
 
     @Override
     public Boolean isValido() {
-        // TODO: implementar.
-        return true;
+        return numero != null && fecha != null && encabezado != null && estado != null;
     }
 }

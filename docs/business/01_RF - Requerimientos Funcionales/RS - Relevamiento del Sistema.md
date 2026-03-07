@@ -1,8 +1,5 @@
   
-*Sistema de*  
-*Gestión Notarial*
-
-*![][image1]*  
+*Sistema de*  *Gestión Notarial*
 Relevamiento del Sistema (RS)  
 ***Indice***
 

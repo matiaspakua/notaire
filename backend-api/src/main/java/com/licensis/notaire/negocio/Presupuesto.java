@@ -28,45 +28,63 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "Presupuesto.findAll", query = "SELECT p FROM Presupuesto p"),
         @NamedQuery(name = "Presupuesto.findByIdPresupuesto", query = "SELECT p FROM Presupuesto p WHERE p.idPresupuesto = :idPresupuesto"),
         @NamedQuery(name = "Presupuesto.findByFecha", query = "SELECT p FROM Presupuesto p WHERE p.fecha = :fecha"),
-        @NamedQuery(name = "Presupuesto.findByTotal", query = "SELECT p FROM Presupuesto p WHERE p.total = :total"),
-        @NamedQuery(name = "Presupuesto.findBySaldo", query = "SELECT p FROM Presupuesto p WHERE p.saldo = :saldo"),
+        @NamedQuery(name = "Presupuesto.findByNumero", query = "SELECT p FROM Presupuesto p WHERE p.numero = :numero"),
+        @NamedQuery(name = "Presupuesto.findByEstado", query = "SELECT p FROM Presupuesto p WHERE p.estado = :estado"),
         @NamedQuery(name = "Presupuesto.findByPersona", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona"),
         @NamedQuery(name = "Presupuesto.findByPersonaTramie", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona AND p.fkIdTramite.idTramite = :fkIdTramite"),
 })
 public class Presupuesto implements Serializable {
 
-    @Basic(optional = false)
-    @Column(name = "fecha")
-    @Temporal(TemporalType.DATE)
-    private Date fecha;
-    @Basic(optional = false)
-    @Column(name = "version")
-    @Version
-    private int version = 0;
-    @Basic(optional = false)
-    @Column(name = "total")
-    private float total;
-    @Basic(optional = false)
-    @Column(name = "saldo")
-    private float saldo;
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_presupuesto")
     private Integer idPresupuesto;
+    
+    @Basic(optional = false)
+    @Column(name = "numero")
+    private int numero;
+    
+    @Basic(optional = false)
+    @Column(name = "fecha")
+    @Temporal(TemporalType.DATE)
+    private Date fecha;
+    
+    @Basic(optional = false)
+    @Column(name = "encabezado")
+    private String encabezado;
+    
     @Column(name = "observaciones")
     private String observaciones;
+    
+    @Basic(optional = false)
+    @Column(name = "estado")
+    private String estado;
+    
+    @Column(name = "monto_inmueble")
+    private Float montoInmueble;
+    
+    @Basic(optional = false)
+    @Column(name = "version")
+    @Version
+    private int version = 0;
+    
+    private static final long serialVersionUID = 1L;
+    
+    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Persona fkIdPersona;
+    
+    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Tramite fkIdTramite;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.EAGER)
     private java.util.Set<Pago> pagoList;
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Persona fkIdPersona;
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Tramite fkIdTramite;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.LAZY)
     private List<Item> itemList = new ArrayList<>();
 
@@ -86,11 +104,12 @@ public class Presupuesto implements Serializable {
         this.idPresupuesto = idPresupuesto;
     }
 
-    public Presupuesto(Integer idPresupuesto, Date fecha, Float total, Float saldo) {
+    public Presupuesto(Integer idPresupuesto, int numero, Date fecha, String encabezado, String estado) {
         this.idPresupuesto = idPresupuesto;
+        this.numero = numero;
         this.fecha = fecha;
-        this.total = total;
-        this.saldo = saldo;
+        this.encabezado = encabezado;
+        this.estado = estado;
     }
 
     public Integer getIdPresupuesto() {
@@ -157,8 +176,10 @@ public class Presupuesto implements Serializable {
 
         miDto.setIdPresupuesto(idPresupuesto);
         miDto.setFecha(fecha);
-        miDto.setSaldo(saldo);
-        miDto.setTotal(total);
+        miDto.setNumero(numero);
+        miDto.setEncabezado(encabezado);
+        miDto.setEstado(estado);
+        miDto.setMontoInmueble(montoInmueble);
         miDto.setObservaciones(observaciones);
 
         if (fkIdTramite != null) {
@@ -190,15 +211,19 @@ public class Presupuesto implements Serializable {
     public void setAtributos(DtoPresupuesto dtoPresupuesto) {
         this.setIdPresupuesto(dtoPresupuesto.getIdPresupuesto());
         this.setFecha(dtoPresupuesto.getFecha());
+        this.setNumero(dtoPresupuesto.getNumero());
+        this.setEncabezado(dtoPresupuesto.getEncabezado());
+        this.setEstado(dtoPresupuesto.getEstado());
+        this.setMontoInmueble(dtoPresupuesto.getMontoInmueble());
         this.setObservaciones(dtoPresupuesto.getObservaciones());
-        this.setSaldo(dtoPresupuesto.getSaldo());
-        this.setTotal(dtoPresupuesto.getTotal());
 
-        Persona cliente = new Persona();
-        cliente.setAtributos(dtoPresupuesto.getPersona());
-        this.setFkIdPersona(cliente);
+        if (dtoPresupuesto.getPersona() != null) {
+            Persona cliente = new Persona();
+            cliente.setAtributos(dtoPresupuesto.getPersona());
+            this.setFkIdPersona(cliente);
+        }
 
-        if (!dtoPresupuesto.getItems().isEmpty()) {
+        if (dtoPresupuesto.getItems() != null && !dtoPresupuesto.getItems().isEmpty()) {
             for (Iterator<DtoItem> it = dtoPresupuesto.getItems().iterator(); it.hasNext();) {
                 DtoItem dtoItem = it.next();
                 Item item = new Item();
@@ -235,20 +260,36 @@ public class Presupuesto implements Serializable {
         return "Presupuesto[ idPresupuesto=" + idPresupuesto + " ]";
     }
 
-    public float getTotal() {
-        return total;
+    public int getNumero() {
+        return numero;
     }
 
-    public void setTotal(float total) {
-        this.total = total;
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 
-    public float getSaldo() {
-        return saldo;
+    public String getEncabezado() {
+        return encabezado;
     }
 
-    public void setSaldo(float saldo) {
-        this.saldo = saldo;
+    public void setEncabezado(String encabezado) {
+        this.encabezado = encabezado;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Float getMontoInmueble() {
+        return montoInmueble;
+    }
+
+    public void setMontoInmueble(Float montoInmueble) {
+        this.montoInmueble = montoInmueble;
     }
 
     public int getVersion() {
@@ -265,5 +306,23 @@ public class Presupuesto implements Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    @Deprecated
+    public Float getSaldo() {
+        return null;
+    }
+
+    @Deprecated
+    public void setSaldo(Float saldo) {
+    }
+
+    @Deprecated
+    public Float getTotal() {
+        return montoInmueble;
+    }
+
+    @Deprecated
+    public void setTotal(Float total) {
     }
 }
