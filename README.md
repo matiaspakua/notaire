@@ -75,6 +75,25 @@ Monolito Java Swing + MySQL    →    API REST + PostgreSQL + Docker
 | **Pool de Conexiones** | No | HikariCP |
 | **Documentación API** | No | Swagger/OpenAPI |
 
+
+### IMPORTANTE
+
+Respecto al ambiente de instalación, es decir:
+
+- Java
+- Git
+- Maven
+- Docker
+- Python
+- VSCode u otros IDE's
+- etc.
+
+Se asume que todas las herramientas ya se encuentran instaladas en el ambiente de desarrollo. 
+
+Para más instrucciones, dirigirse a las paginas oficiales de cada proyecto e instalar las herramientas, según sea neccesario en cada ambiente.
+
+
+
 ### Estructura de Módulos Maven
 
 ```
