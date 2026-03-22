@@ -1,4 +1,4 @@
-  
+   
 *Sistema de*  *Gestión Notarial*
 Especificación de Requerimientos de Software (SRS)  
 ***Indice***
@@ -6,16 +6,36 @@ Especificación de Requerimientos de Software (SRS)
 [I.	Sistema a desarrollar	3](#sistema-a-desarrollar)  
 [1.1	Objetivos del sistema.	3](#heading=h.wtm7h4fqev14)  
 [1.2	Requerimientos Funcionales.	3](#heading=h.5ccxdd3dcq4i)  
-[1.3	Requerimientos de Rendimiento.	7](#heading=h.vauami9tcn1k)  
-[3.1	Requerimientos de Interfaz	7](#heading=h.8kya0q2n93o6)  
-[5.1	Requerimientos de Seguridad y Privacidad.	8](#heading=h.kbix86ou2ntu)  
-[2.1	Requerimientos de software para el sistema.	8](#heading=h.kysmcmuvnw7t)  
-[1.1	Requerimientos de Hardware para el sistema.	8](#heading=h.rvt4f8ais91)  
-[1.2	Requerimientos para el desarrollo.	8](#heading=h.qt21jm2sindo)
+[2.	Requerimientos Funcionales Adicionales (del RS).	9](#heading=h.rf-adicionales)  
+[1.3	Requerimientos de Rendimiento.	11](#heading=h.vauami9tcn1k)  
+[3.1	Requerimientos de Interfaz	11](#heading=h.8kya0q2n93o6)  
+[5.1	Requerimientos de Seguridad y Privacidad.	12](#heading=h.kbix86ou2ntu)  
+[2.1	Requerimientos de software para el sistema.	12](#heading=h.kysmcmuvnw7t)  
+[1.1	Requerimientos de Hardware para el sistema.	12](#heading=h.rvt4f8ais91)  
+[1.2	Requerimientos para el desarrollo.	12](#heading=h.qt21jm2sindo)
 
 1. **Sistema a desarrollar**
 
 Se debe desarrollar un producto de software que permita administrar y llevar el control de los trámites de una escribanía.
+
+## Requerimientos Funcionales Adicionales (del RS) {#rf-adicionales}
+
+Esta sección incluye los requerimientos funcionales identificados en el Relevamiento del Sistema (RS) que no estaban contemplados en la versión original del SRS.
+
+### Tabla de Contenidos Adicionales
+
+| Sección | Descripción |
+|---------|-------------|
+| 8 | Administrar Folios |
+| 9 | Administrar Cuadernos |
+| 10 | Administrar Carpetas de Trámite |
+| 11 | Estados y Transiciones del Trámite |
+| 12 | Protocolo Auxiliar |
+| 13 | Administrar Suplencias |
+| 14 | Gestión de Inscripciones (Ampliación) |
+| 15 | Impresión de Testimonios |
+| 16 | Control de Numeración de Escrituras |
+| 17 | Diferencias entre Protocolos |
 
 1. ***Objetivos del sistema.***
 
@@ -107,7 +127,51 @@ Se debe desarrollar un producto de software que permita administrar y llevar el 
       2. Modificar plantillas de Presupuestos. Según plantillas existentes, se deberá poder acceder a cualquiera de ella y modifica la composición de conceptos asociados.  
    3. Eliminar Plantilla de Presupuestos. Según plantillas existentes, se deberá poder eliminar/deshabilitar para su uso, determinadas plantilla para Presupuestos.
 
-   3. ***Requerimientos de Rendimiento.***
+8. **Administrar Folios**
+   1. Cargar folios del Colegio Notarial. Permitir cargar los folios provistos por el Colegio Notarial. Cada folio tiene una numeración asignada que va desde el folio Nº 1 hasta el Nº X por año. El escribano puede hacer varios pedidos de folios por año. Se debe permitir asignar una numeración propia al conjunto de folios provistos, distinta a la numeración oficial del Colegio.
+   2. Control de numeración correlativa. Controlar que la numeración de los folios sea correlativa, tanto dentro de cada pedido como a lo largo del año. No deben faltar folios en la secuencia. El sistema debe alertar cuando se detecten faltantes.
+   3. Manejo de folios dañados (errose). Si hay un error de impresión, se deben registrar y etiquetar con la leyenda "errose". Si una escritura compuesta por 5 folios tiene el folio 3 dañado, los primeros tres folios deben ser etiquetados como "errose" y la escritura se debe volver a imprimir comenzando desde el folio 4.
+   4. Manejo de folios no usados (no pasó). Si una escritura fue bien impresa pero no llegó a firmarse, se debe etiquetar como "no pasó".
+   5. Seguimiento de disponibilidad de folios. Permitir conocer en todo momento qué folios están disponibles, cuáles están usados, cuáles están dañados (errose) y cuáles están marcados como no usados (no pasó).
+
+9. **Administrar Cuadernos**
+   1. Generar cuadernos. Los folios se agrupan siempre de a diez en carpetas que se denominan cuadernos. Por ejemplo, si un cuaderno contiene los folios del 1 al 10 y el siguiente del folio 11 al 20. Si una escritura comienza en el folio 9 y termina en el 12, entonces la escritura estará repartida en dos cuadernos consecutivos.
+   2. Numerar cuadernos. A los cuadernos se les asigna una numeración correlativa (de 1 a N). El sistema debe garantizar que la numeración sea única y correlativa dentro de cada año y registro.
+   3. Generar carátula de cuaderno. Todos los cuadernos tienen una carátula para identificarlos. En la misma se debe detallar: Año, Registro (número único asignado a cada escribano), número de cuaderno y una descripción de los trámites que contiene.
+
+10. **Administrar Carpetas de Trámite**
+    1. Generar carpeta de trámite. Cuando un cliente solicita a la escribanía un determinado trámite, se genera una carpeta. Esta carpeta es rotulada y se le agregan datos que incluyen: fecha de inicio del trámite, el cliente, el tipo de trámite, etc. Si el cliente no es habitual de la escribanía, se le solicitan sus datos personales. La carpeta debe tener un número único.
+    2. Estados de carpeta. Gestionar los estados de la carpeta del trámite. Los estados posibles incluyen: activa, espera, archivada. Si el cliente decide no seguir adelante con el trámite, la carpeta se podrá archivar o se dejará en estado de espera.
+
+11. **Estados y Transiciones del Trámite**
+    1. Definir estados del trámite. Definir los posibles estados que puede tener un trámite a lo largo de su ciclo de vida. Los estados típicos incluyen: Generado, En Proceso, Con Documentos, Con Certificados, Listo para Firmar, Firmado, Para Inscribir, Inscripto, Archivado, Cancelado.
+    2. Definir transiciones válidas. Definir qué transiciones de estado son válidas para cada tipo de trámite. No todos los trámites pasan por todos los estados (ej: algunos no requieren inscripción).
+    3. Registrar historial de cambios de estado. Registrar cada cambio de estado del trámite con fecha, hora, usuario que realizó el cambio y observaciones.
+
+12. **Protocolo Auxiliar**
+    1. Gestionar trámites del Protocolo Auxiliar. La diferencia con el Protocolo Principal es el tipo de trámite y la cantidad de pasos requeridos. Para los trámites de este protocolo, no se generan carpetas.
+    2. Tipos de trámite del Protocolo Auxiliar: Acta de Certificaciones, Acta de Manifestaciones, Acta de Domicilio, Protocolización, Autorizaciones, Poderes, Actas de Constatación.
+    3. Flujo simplificado: Solicitar trámite, Registrar cliente, Preparar Escritura, Firmar Escritura, Entregar testimonio.
+
+13. **Administrar Suplencias**
+    1. Registrar suplentes del escribano. Registrar los escribanos suplentes que pueden actuar en representación del escribano titular.
+    2. Asignar suplente a una gestión. Permitir asignar un escribano suplente a una gestión específica cuando el titular no puede realizarla.
+    3. Historial de suplencias. Mantener un historial completo de las suplencias de cada escribano.
+
+14. **Gestión de Inscripciones (Ampliación)**
+    1. Generar Minuta de Inscripción. Cuando se trata de una operación relacionada con inmuebles, en base a sus certificados, se debe generar un certificado llamado "minuta de inscripción".
+    2. Seguimiento de presentación para inscripción. Registrar la presentación del testimonio y minuta ante el organismo correspondiente, la fecha de devolución, y la fecha de inscripción con el número de inscripción.
+
+15. **Impresión de Testimonios**
+    1. Impresión de testimonios. Una vez firmada la escritura, se hace una copia denominada "testimonio", que se imprime en hojas especiales diferentes a los folios y debe estar firmado por el escribano.
+
+16. **Control de Numeración de Escrituras**
+    1. Numeración correlativa. La numeración de las escrituras debe ser única y correlativa. Solo cuando la escritura esté correctamente impresa en folios, se procede a la asignación del número.
+
+17. **Diferencias entre Protocolos**
+    1. Definir diferencias Protocolo Principal vs Auxiliar. Implementar las diferencias en el sistema: generación de carpetas, pasos del proceso, requisitos de inscripción, tipos de folios.
+
+    3. ***Requerimientos de Rendimiento.***
 
 1. El sistema no deberá consumir mas de 300MB de memoria RAM, debido a que superado este límite se puede provocar que la computadora de ralentice.  
 2. No se deberá utilizar más del 50% del uso del procesador, por el mismo motivo que el punto anterior.  
