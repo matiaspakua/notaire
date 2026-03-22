@@ -1,0 +1,10 @@
+Documento,Agregar,Estado
+Manual de Sistema,Auditoría. Como esta implementado el mecanismo de auditoria.,Listo
+Manual de Sistema,Capa de Servicios. Indica como están distribuidas las capas (tiers) del sistema y cual es la función de cada una.,Listo
+Manual de Sistema,"Seguridad. Cuales son las políticas y mecanismos de seguridad. Esquema de usuarios-privilegios (seguridad lógica a nivel de dominio de la aplicación). Esquema de seguridad de datos: encriptación de claves, seguridad en la base de datos, etc.",n/a
+Manual de Usuario,"Estaría bueno hacer tipo un diagrama de flujo que muestre todos los estados (pasos) por los cuales pasa una gestión, y las pantallas asociadas a cada paso",Sin Comenzar
+Manual de Instalación,"Sistema operativo, Java",Sin Comenzar
+Manual de Sistema,"Configuración de Ambiente del sistema. Indica todas los elementos que se deben configurar en el sistema, antes de poder ser utilizado ",n/a
+Modelo relacional,Actualizar,Comenzado
+Diagrama de Compensaciòn,Actualizar,Comenzado
+Manual de Usuario,Explicar el uso de la tecla TAB,n/a
