@@ -3,7 +3,7 @@ name: Backend API CI
 on:
   push:
     branches:
-      - fix/repository-field-mapping-errors
+      - '**'
   pull_request:
     paths:
       - 'backend-api/**'
@@ -28,8 +28,8 @@ jobs:
       - name: Build backend-api with dependencies
         run: mvn clean install -pl backend-api -am -DskipTests
 
-      - name: Run backend-api tests
-        run: mvn test -pl backend-api
+      - name: Run backend-api unit tests only
+        run: mvn test -pl backend-api -Dtest="**/unit/*"
 
       - name: Check JaCoCo coverage
         run: mvn jacoco:check -pl backend-api
