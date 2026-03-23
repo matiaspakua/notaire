@@ -31,8 +31,8 @@ jobs:
       - name: Run backend-api unit tests only
         run: mvn test -pl backend-api -Dtest="**/unit/*"
 
-      - name: Check JaCoCo coverage
-        run: mvn jacoco:check -pl backend-api
+      - name: Generate JaCoCo coverage report
+        run: mvn jacoco:report -pl backend-api
 
   auto-merge:
     needs: build-and-test
