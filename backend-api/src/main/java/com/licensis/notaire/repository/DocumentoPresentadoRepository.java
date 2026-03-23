@@ -16,9 +16,9 @@ public interface DocumentoPresentadoRepository extends JpaRepository<DocumentoPr
 
     List<DocumentoPresentado> findByFkIdTramiteIdTramite(Integer idTramite);
 
-    @Query("SELECT d FROM DocumentoPresentado d WHERE d.estado = :estado")
-    List<DocumentoPresentado> findByEstado(@Param("estado") String estado);
+    List<DocumentoPresentado> findByLiberado(Boolean liberado);
 
-    @Query("SELECT d FROM DocumentoPresentado d WHERE d.tipoDocumento = :tipoDocumento")
-    List<DocumentoPresentado> findByTipoDocumento(@Param("tipoDocumento") String tipoDocumento);
+    List<DocumentoPresentado> findByObservado(Boolean observado);
+
+    List<DocumentoPresentado> findByPreparado(Boolean preparado);
 }

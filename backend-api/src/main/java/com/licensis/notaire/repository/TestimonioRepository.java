@@ -16,9 +16,8 @@ public interface TestimonioRepository extends JpaRepository<Testimonio, Integer>
 
     List<Testimonio> findByFkIdEscrituraIdEscritura(Integer idEscritura);
 
-    @Query("SELECT t FROM Testimonio t WHERE t.estado = :estado")
-    List<Testimonio> findByEstado(@Param("estado") String estado);
+    List<Testimonio> findByObservado(boolean observado);
 
-    @Query("SELECT t FROM Testimonio t WHERE t.numeroTestimonio = :numero")
-    List<Testimonio> findByNumeroTestimonio(@Param("numero") String numero);
+    @Query("SELECT t FROM Testimonio t WHERE t.numero = :numero")
+    List<Testimonio> findByNumeroTestimonio(@Param("numero") int numero);
 }

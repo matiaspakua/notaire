@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Escritura;
+import com.licensis.notaire.negocio.Testimonio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +12,11 @@ import java.util.List;
 @Repository
 public interface CopiaRepository extends JpaRepository<Copia, Integer> {
 
-    List<Copia> findByFkIdEscritura(Escritura escritura);
+    List<Copia> findByFkIdTestimonio(Testimonio testimonio);
 
-    List<Copia> findByFkIdEscrituraIdEscritura(Integer idEscritura);
+    List<Copia> findByFkIdTestimonioIdTestimonio(Integer idTestimonio);
 
-    @Query("SELECT c FROM Copia c WHERE c.estado = :estado")
-    List<Copia> findByEstado(@Param("estado") String estado);
+    List<Copia> findByFkIdPersonaIdPersona(Integer idPersona);
 
-    @Query("SELECT c FROM Copia c WHERE c.tipoCopia = :tipoCopia")
-    List<Copia> findByTipoCopia(@Param("tipoCopia") String tipoCopia);
+    List<Copia> findByNumero(int numero);
 }

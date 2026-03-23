@@ -14,8 +14,8 @@ public interface InmuebleRepository extends JpaRepository<Inmueble, Integer> {
     @Query("SELECT i FROM Inmueble i WHERE i.domicilio LIKE %:domicilio%")
     List<Inmueble> findByDomicilioContaining(@Param("domicilio") String domicilio);
 
-    @Query("SELECT i FROM Inmueble i WHERE i.matricula LIKE %:matricula%")
-    List<Inmueble> findByMatriculaContaining(@Param("matricula") String matricula);
+    @Query("SELECT i FROM Inmueble i WHERE i.nomenclaturaCatastral LIKE %:nomenclatura%")
+    List<Inmueble> findByNomenclaturaContaining(@Param("nomenclatura") String nomenclatura);
 
-    List<Inmueble> findByTipoInmueble(String tipoInmueble);
+    List<Inmueble> findByNomenclaturaCatastral(String nomenclaturaCatastral);
 }

@@ -132,7 +132,8 @@ CREATE TABLE inmuebles (
   poligono text,
   unidad_funcional text,
   domicilio text,
-  localidad text
+  localidad text,
+  observaciones text
 );
 
 -- Table: escrituras

@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.Concepto;
+import com.licensis.notaire.negocio.Presupuesto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +12,10 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    List<Item> findByFkIdConcepto(Concepto concepto);
+    List<Item> findByFkIdPresupuesto(Presupuesto presupuesto);
 
-    List<Item> findByFkIdConceptoIdConcepto(Integer idConcepto);
+    List<Item> findByFkIdPresupuestoIdPresupuesto(Integer idPresupuesto);
 
-    @Query("SELECT i FROM Item i WHERE i.nombreItem LIKE %:nombre%")
+    @Query("SELECT i FROM Item i WHERE i.nombre LIKE %:nombre%")
     List<Item> findByNombreItemContaining(@Param("nombre") String nombre);
-
-    @Query("SELECT i FROM Item i WHERE i.estado = :estado")
-    List<Item> findByEstado(@Param("estado") String estado);
 }

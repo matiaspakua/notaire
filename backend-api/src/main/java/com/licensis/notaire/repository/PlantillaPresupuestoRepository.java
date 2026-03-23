@@ -1,21 +1,23 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.PlantillaPresupuesto;
+import com.licensis.notaire.negocio.TipoDeTramite;
+import com.licensis.notaire.negocio.Concepto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PlantillaPresupuestoRepository extends JpaRepository<PlantillaPresupuesto, Integer> {
 
-    Optional<PlantillaPresupuesto> findByNombre(String nombre);
+    List<PlantillaPresupuesto> findByTipoDeTramite(TipoDeTramite tipoDeTramite);
 
-    @Query("SELECT p FROM PlantillaPresupuesto p WHERE p.tipoTramite = :tipoTramite")
-    List<PlantillaPresupuesto> findByTipoTramite(@Param("tipoTramite") String tipoTramite);
+    List<PlantillaPresupuesto> findByTipoDeTramiteIdTipoTramite(Integer idTipoTramite);
 
-    boolean existsByNombre(String nombre);
+    List<PlantillaPresupuesto> findByConcepto(Concepto concepto);
+
+    List<PlantillaPresupuesto> findByConceptoIdConcepto(Integer idConcepto);
 }
