@@ -20,6 +20,49 @@
 
 ---
 
+## CI/CD Pipeline
+
+[![CI - Build, Test & Security](https://github.com/matiaspakua/notaire/actions/workflows/ci.yml/badge.svg)](https://github.com/matiaspakua/notaire/actions/workflows/ci.yml)
+[![CD - Build & Publish Docker](https://github.com/matiaspakua/notaire/actions/workflows/cd.yml/badge.svg)](https://github.com/matiaspakua/notaire/actions/workflows/cd.yml)
+[![PR Validation](https://github.com/matiaspakua/notaire/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/matiaspakua/notaire/actions/workflows/pr-validation.yml)
+
+### Workflows Disponibles
+
+| Workflow | Descripción | Trigger |
+|----------|-------------|---------|
+| **CI** | Build, test, coverage, security scan | Push a main/develop/feature/** |
+| **CD** | Build & publish Docker image | Push a tags v* o main |
+| **PR Validation** | Validación de PR | Pull requests |
+| **OpenCode** | Integración con OpenCode AI | Comandos /oc en comentarios |
+
+### Features del CI
+
+- **Build**: Compilación Maven con Java 21
+- **Unit Tests**: Tests unitarios con JUnit 5
+- **Integration Tests**: Tests de integración
+- **Code Coverage**: JaCoCo (80% mínimo requerido)
+- **Security Scan**: Trivy para vulnerabilidades
+- **Docker Build**: Construcción de imagen
+- **Code Quality**: SpotBugs y Checkstyle
+
+### Configuración de Secrets
+
+Para GitHub Actions, configurar en Settings > Secrets:
+
+| Secret | Descripción |
+|--------|-------------|
+| DOCKERHUB_USERNAME | Usuario de Docker Hub (opcional) |
+| DOCKERHUB_TOKEN | Token de Docker Hub (opcional) |
+
+### Uso de GitHub Container Registry
+
+La imagen se publica automáticamente en:
+```
+ghcr.io/matiaspakua/notaire/backend:latest
+```
+
+---
+
 ## 1. Resumen del Proyecto
 
 **Notaire** es un sistema de administración para la gestión de escribanía, originalmente desarrollado hace más de 14 años (durante la universidad) como una aplicación monolítica con Java y con UI usando  Swing (de java, ahora ya casi en desuso) con conexión directa a MySQL.
@@ -431,11 +474,11 @@ notaire/
 
 ### Prioridad Media - Testing y Calidad
 
-- [ ] Coverage de tests al 80% mínimo
-- [ ] Tests de integración con Testcontainers
+- [x] Coverage de tests al 80% mínimo (JaCoCo)
+- [x] Tests de integración con Testcontainers
 - [ ] Tests E2E automatizados
-- [ ] Configurar pipeline CI/CD
-- [ ] Análisis estático de código (SonarQube)
+- [x] Configurar pipeline CI/CD (GitHub Actions)
+- [x] Análisis estático de código (SpotBugs)
 - [ ] Logs en formato Prometheus
 - [ ] Visualización con Grafana
 - [ ] Tests unitarios con tags a requerimientos
@@ -447,7 +490,7 @@ notaire/
 ### Prioridad Baja - Despliegue
 
 - [ ] Configurar Kubernetes (K8s)
-- [ ] Implementar Docker multi-stage build
+- [x] Implementar Docker multi-stage build
 - [ ] Configurar HTTPS/TLS
 - [ ] Setup de monitoreo (Prometheus, Grafana)
 - [ ] Backup automatizado de PostgreSQL
@@ -471,6 +514,122 @@ notaire/
 ### Principal
 
 ![Principal](images/principal.png)
+
+---
+
+## CI/CD - Pipeline de Integración y Entrega Continua
+
+### Visión General
+
+El proyecto Notaire utiliza GitHub Actions para implementar CI/CD con las siguientes características:
+
+```
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Commit    │ -> │     CI      │ -> │     CD     │ -> │  Production │
+│             │    │ Build/Test  │    │   Docker   │    │   Deploy   │
+└─────────────┘    └──────────────┘    └─────────────┘    └─────────────┘
+```
+
+### Workflows Implementados
+
+#### 1. CI - Build, Test & Security (`ci.yml`)
+
+Ejecuta en cada push y PR:
+
+| Job | Descripción | Tiempo estimado |
+|-----|-------------|-----------------|
+| `build` | Compilación Maven | ~2 min |
+| `unit-tests` | Tests unitarios | ~3 min |
+| `integration-tests` | Tests de integración | ~5 min |
+| `coverage` | JaCoCo coverage report | ~3 min |
+| `security` | Trivy vulnerability scan | ~2 min |
+| `docker-build` | Build imagen Docker | ~5 min |
+| `quality` | SpotBugs checkstyle | ~2 min |
+
+#### 2. CD - Build & Publish Docker (`cd.yml`)
+
+Publica imagen Docker cuando:
+- Se hace push a `main`
+- Se crea un tag `v*`
+
+Ubicación: `ghcr.io/matiaspakua/notaire/backend`
+
+#### 3. PR Validation (`pr-validation.yml`)
+
+Valida pull requests:
+- Título y descripción semántica
+- Compilación rápida
+- Análisis de dependencias
+- Lint con Checkstyle
+- Auto-comentario en PR
+
+### Configuración de Tests
+
+```bash
+# Ejecutar tests unitarios
+mvn test -pl backend-api -Dtest="**/unit/*"
+
+# Ejecutar tests de integración  
+mvn test -pl backend-api -Dtest="**/integration/*"
+
+# Coverage con JaCoCo
+mvn test -pl backend-api
+mvn jacoco:report -pl backend-api
+
+# Ver reporte
+# backend-api/target/site/jacoco/index.html
+```
+
+### Cobertura de Código
+
+- **Target**: 80% mínimo
+- **Method**: 80% mínimo
+- **Branch**: 80% mínimo
+
+El reporte se publica automáticamente en PRs con comentarios de cobertura.
+
+### Seguridad
+
+#### Escaneo de Vulnerabilidades
+
+| Herramienta | Qué escanea |
+|-------------|-------------|
+| Trivy | Contenedores y dependencias |
+| SpotBugs | Bytecode Java |
+| Dependabot | Actualizaciones de dependencias |
+| GitHub Code Scanning | SAST integrado |
+
+#### Imágenes Docker Seguras
+
+- Base: `eclipse-temurin:21-jre-alpine` (~180MB)
+- Usuario no-root
+- Health checks integrados
+- Scaneo con Trivy en CI
+
+### Dependabot
+
+Configurado para:
+- Actualizaciones semanales de Maven
+- Actualizaciones de GitHub Actions
+- Grupos de dependencias
+
+### GitHub Packages
+
+La imagen Docker se publica en:
+- **ghcr.io** (GitHub Container Registry)
+
+```bash
+# Pull de la imagen
+docker pull ghcr.io/matiaspakua/notaire/backend:latest
+```
+
+### Variables de Entorno para CI
+
+```yaml
+JAVA_VERSION: '21'
+MAVEN_OPTS: -Xmx1024m -XX:MaxMetaspaceSize=512m
+REGISTRY: ghcr.io
+```
 
 ---
 
