@@ -75,10 +75,7 @@ CREATE TABLE tipos_de_tramite (
   id_tipo_tramite SERIAL PRIMARY KEY,
   nombre text NOT NULL,
   observaciones text,
-  habilitado boolean NOT NULL,
-  se_archiva boolean NOT NULL,
-  se_inscribe boolean NOT NULL,
-  asocia_inmuebles boolean NOT NULL
+  habilitado boolean NOT NULL
 );
 
 -- Table: tipos_identificacion
