@@ -102,22 +102,20 @@ cd backend-api && mvn spring-boot:run
 ## Architecture Rules
 
 ### Backend (Spring Boot)
-```
+
 Package: com.licensis.notaire.{api,service,jpa,negocio,dto}
 - api/         → @RestController, @RequestMapping("/api/v1/...")
 - service/     → @Service, @Transactional, business logic only
 - jpa/         → JpaController.getInstancia() singleton pattern
 - negocio/     → Entity classes (Usuario, Persona, Presupuesto, etc.)
 - dto/         → DtoUsuario, DtoPersona for API transfer
-```
 
 ### Frontend (Swing)
-```
+
 Package: com.licensis.notaire.gui
 - No direct database access — use REST client only
 - No business logic — presentation logic only
 - Use SwingWorker for API calls, show errors in JOptionPane
-```
 
 ### REST API Design
 - **URL**: `/api/v1/resource` (plural nouns)
@@ -139,30 +137,6 @@ Package: com.licensis.notaire.gui
 - **Coverage**: Minimum 80% (JaCoCo enforces this)
 - **Use `@ParameterizedTest`** for data-driven tests
 
-```java
-@DisplayName("Presupuesto Entity Tests")
-class PresupuestoEntityTest {
-
-    @Nested
-    @DisplayName("CU01 - Preparar Presupuesto - Unit Tests")
-    class PrepararPresupuestoTests {
-
-        @Test
-        @DisplayName("Should create presupuesto with required fields")
-        void shouldCreatePresupuestoWithRequiredFields() {
-            // Arrange
-            Presupuesto presupuesto = new Presupuesto();
-            
-            // Act
-            presupuesto.setNumero(1001);
-            
-            // Assert
-            assertThat(presupuesto.getNumero()).isEqualTo(1001);
-        }
-    }
-}
-```
-
 ## Database
 - **Engine**: PostgreSQL 15 in Docker
 - **ORM**: Spring Data JPA with EclipseLink
@@ -174,3 +148,36 @@ class PresupuestoEntityTest {
 - Backend: Swing dependencies, direct database access from controllers
 - Frontend: Direct JDBC connections, SQL queries, business logic in event handlers
 - General: Hardcoded credentials, ignored exceptions, wildcard imports
+
+## Git, Branches, Commits and PR's rules
+When modifying Java code in this repository, always follow this workflow.
+
+1. Ensure the current branch is clean and committed; do not proceed until all pending work is committed and pushed or explicitly confirmed by the user.
+2. Before editing any file, create a feature branch:
+`git checkout -b <TASK-ID>/[feat/fix/add]/<short-task-name>.`
+
+3. Never commit directly to main, master, or any other protected branch.
+4. Use clear, conventional commit messages, for example:
+   `<TASK-ID>/feat: ... (new features)`
+   `<TASK-ID>/fix: ... (bug fixes)`
+   `<TASK-ID>/refactor: ... (code restructuring without behavior change)`
+
+5. After completing your changes:
+5.1. run the test suite (mandatory)
+5.2. run linters and static analysis tools
+
+6. verify that the Java project builds successfully (e.g., mvn test, mvn package or Gradle equivalents).
+7. Commit and push the changes in the current feature branch.
+8. Once the full TASK/ISSUE is completed, push changes to remote and create a PR with a descriptive menssage.
+
+# Agent Session and Memory Management
+1. After each completed agent execution or development session, ensure traceability and persistent context.
+2. Export the agent session for audit and replay:
+   `opencode export (or equivalent)`
+3. Store a Markdown summary at:
+   `<root-project>docs/agent-sessions/<date>-session.md (use an ISO-like format, for example 2026-03-24-session.md).`
+4. The session summary must include at least:
+4.1. session objective and high-level outcome
+4.2. list of files created, modified, or deleted
+4.3. key commands executed (build, test, tooling, scripts)
+4.4. any known limitations, TODOs, or follow-up actions the next agent/developer should know.
