@@ -1,0 +1,21 @@
+# CODEOWNERS - Define who owns what in this repository
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @matiaspakua
+
+# Backend-specific owners
+/backend-api/ @matiaspakua
+
+# Frontend-specific owners
+/frontend-swing/ @matiaspakua
+
+# Shared module
+/notaire-shared/ @matiaspakua
+
+# CI/CD workflows
+/.github/workflows/ @matiaspakua
+
+# Documentation
+/docs/ @matiaspakua
+/README.md @matiaspakua

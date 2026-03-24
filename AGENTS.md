@@ -15,9 +15,6 @@ mvn clean install
 # Build specific module
 mvn clean install -pl backend-api -am  # -am builds dependencies too
 
-# Skip tests during build
-mvn clean install -DskipTests
-
 # Package for deployment
 mvn clean package
 ```

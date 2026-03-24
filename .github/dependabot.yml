@@ -1,0 +1,55 @@
+# Dependabot Configuration
+# Automatically check for dependency updates
+
+version: 2
+updates:
+  # Enable version updates for Maven
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Argentina/Buenos_Aires"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "maven"
+    groups:
+      # Group minor and patch updates together
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "**/*test*"
+          - "**/*testcontainers*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Test dependencies can update more frequently
+      test-dependencies:
+        patterns:
+          - "**/test/**"
+          - "**/testcontainers/**"
+        update-types:
+          - "minor"
+          - "patch"
+          - "major"
+    reviewers:
+      - matiaspakua
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "ci"
+      - "dependencies"
+    reviewers:
+      - matiaspakua

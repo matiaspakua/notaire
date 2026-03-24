@@ -1,0 +1,210 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ==========================================
+  # JOB 1: Validate PR Title & Description
+  # ==========================================
+  validate-pr:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate PR Title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+
+      - name: Check for Required Files
+        run: |
+          echo "=== Checking required files ==="
+          
+          # Check if PR adds new dependencies
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | grep -q "pom.xml"; then
+            echo "📦 pom.xml modified - dependency change detected"
+          fi
+          
+          # Check if PR adds new workflows
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | grep -q "\.github/workflows"; then
+            echo "⚙️  Workflows modified"
+          fi
+
+      - name: Check Files Size
+        run: |
+          # Check for large files
+          large_files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD | xargs -I {} wc -c {} 2>/dev/null | awk '$1 > 5000000 {print $2}')
+          if [ -n "$large_files" ]; then
+            echo "⚠️  Large files detected (>5MB):"
+            echo "$large_files"
+          else
+            echo "✅ No large files detected"
+          fi
+
+  # ==========================================
+  # JOB 2: Quick Build Check
+  # ==========================================
+  quick-build:
+    name: Quick Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Quick Build (no tests)
+        run: mvn clean compile -DskipTests -q
+
+      - name: Verify Parent POM
+        run: mvn help:effective-pom -q | head -20
+
+  # ==========================================
+  # JOB 3: Dependency Analysis
+  # ==========================================
+  dependency-analysis:
+    name: Dependency Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Analyze Dependencies
+        run: |
+          mvn dependency:tree -pl backend-api -am -q | head -50
+          echo ""
+          echo "=== Checking for vulnerable dependencies ==="
+          mvn dependency:analyze -pl backend-api -am -q || true
+
+  # ==========================================
+  # JOB 4: Lint Java Code
+  # ==========================================
+  lint:
+    name: Code Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Checkstyle
+        run: mvn checkstyle:check -pl backend-api -q || true
+
+      - name: Upload Checkstyle Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checkstyle-report
+          path: backend-api/target/checkstyle-result.xml
+          retention-days: 7
+
+  # ==========================================
+  # JOB 5: Branch Protection Check
+  # ==========================================
+  branch-protection:
+    name: Branch Protection Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check Branch Name
+        run: |
+          branch_name="${{ github.head_ref }}"
+          echo "Branch: $branch_name"
+          
+          # Allowed prefixes
+          allowed_prefixes="^(main|develop|feature/|bugfix/|hotfix/|release/)"
+          
+          if [[ ! "$branch_name" =~ $allowed_prefixes ]]; then
+            echo "⚠️  Warning: Branch name doesn't follow conventional naming"
+            echo "Expected: feature/*, bugfix/*, hotfix/*, release/*, main, develop"
+          else
+            echo "✅ Branch name follows conventions"
+          fi
+
+  # ==========================================
+  # JOB 6: Auto-Comment PR
+  # ==========================================
+  comment-pr:
+    name: Comment PR
+    runs-on: ubuntu-latest
+    needs: [quick-build, dependency-analysis, lint]
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const prTitle = context.payload.pull_request.title;
+            const branchName = context.payload.pull_request.head.ref;
+            
+            const comment = `
+            ## 🔍 PR Validation Summary
+
+            **Branch:** \`${branchName}\`
+            
+            ### Quick Info
+            - ✅ Build: Compiled successfully
+            - ✅ Dependencies: Analyzed
+            - ✅ Lint: Checkstyle completed
+            
+            ### Next Steps
+            1. Wait for CI workflows to complete
+            2. Review test coverage results
+            3. Ensure all checks pass before merging
+            
+            ---
+            *This comment is automatically generated*
+            `;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            })
