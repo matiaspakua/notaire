@@ -75,7 +75,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: unit-test-results
@@ -115,7 +115,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload Integration Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: integration-test-results
@@ -160,7 +160,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: jacoco-report
@@ -197,7 +197,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-results
           path: trivy-results.sarif
@@ -264,7 +264,7 @@ jobs:
           output: 'docker-trivy.sarif'
 
       - name: Upload Docker Trivy Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: docker-trivy-results
@@ -295,7 +295,7 @@ jobs:
         run: mvn spotbugs:xml -pl backend-api -DskipSpotBugs=false -q || true
 
       - name: Upload SpotBugs Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: spotbugs-report
