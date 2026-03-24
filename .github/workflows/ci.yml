@@ -70,8 +70,12 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           cache: 'maven'
 
-      - name: Run Unit Tests
+      - name: Run Unit Tests (Backend API)
         run: mvn test -pl backend-api -Dtest="**/unit/*" -DfailIfNoTests=false -Dmaven.test.failure.ignore=true
+        continue-on-error: true
+
+      - name: Run Unit Tests (Frontend Swing)
+        run: mvn test -pl frontend-swing -DfailIfNoTests=false -Dmaven.test.failure.ignore=true
         continue-on-error: true
 
       - name: Upload Test Results
@@ -79,7 +83,9 @@ jobs:
         if: always()
         with:
           name: unit-test-results
-          path: backend-api/target/surefire-reports/*.xml
+          path: |
+            backend-api/target/surefire-reports/*.xml
+            frontend-swing/target/surefire-reports/*.xml
           retention-days: 30
 
       - name: Publish Unit Test Results
