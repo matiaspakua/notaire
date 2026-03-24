@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -16,9 +17,8 @@ public interface MovimientoTestimonioRepository extends JpaRepository<Movimiento
 
     List<MovimientoTestimonio> findByFkIdTestimonioIdTestimonio(Integer idTestimonio);
 
-    @Query("SELECT m FROM MovimientoTestimonio m WHERE m.estado = :estado")
-    List<MovimientoTestimonio> findByEstado(@Param("estado") String estado);
+    List<MovimientoTestimonio> findByInscripta(boolean inscripta);
 
-    @Query("SELECT m FROM MovimientoTestimonio m WHERE m.fechaMovimiento BETWEEN :startDate AND :endDate")
-    List<MovimientoTestimonio> findByFechaMovimientoBetween(@Param("startDate") java.util.Date startDate, @Param("endDate") java.util.Date endDate);
+    @Query("SELECT m FROM MovimientoTestimonio m WHERE m.fechaIngreso BETWEEN :startDate AND :endDate")
+    List<MovimientoTestimonio> findByFechaMovimientoBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

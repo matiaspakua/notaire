@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +20,11 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Intege
 
     List<Presupuesto> findByFkIdPersonaIdPersona(Integer idPersona);
 
-    @Query("SELECT p FROM Presupuesto p WHERE p.estado = :estado")
-    List<Presupuesto> findByEstado(@Param("estado") String estado);
+    List<Presupuesto> findByEstado(String estado);
 
     @Query("SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona AND p.estado = :estado")
     List<Presupuesto> findByFkIdPersonaIdPersonaAndEstado(@Param("idPersona") Integer idPersona, @Param("estado") String estado);
 
-    @Query("SELECT p FROM Presupuesto p WHERE p.fechaEmision BETWEEN :startDate AND :endDate")
-    List<Presupuesto> findByFechaEmisionBetween(@Param("startDate") java.util.Date startDate, @Param("endDate") java.util.Date endDate);
+    @Query("SELECT p FROM Presupuesto p WHERE p.fecha BETWEEN :startDate AND :endDate")
+    List<Presupuesto> findByFechaBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

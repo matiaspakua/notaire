@@ -13,18 +13,15 @@ import java.util.List;
 @Repository
 public interface TramitesPersonasRepository extends JpaRepository<TramitesPersonas, Integer> {
 
-    List<TramitesPersonas> findByFkIdPersona(Persona persona);
+    List<TramitesPersonas> findByPersona(Persona persona);
 
-    List<TramitesPersonas> findByFkIdPersonaIdPersona(Integer idPersona);
+    List<TramitesPersonas> findByPersonaIdPersona(Integer idPersona);
 
-    List<TramitesPersonas> findByFkIdTramite(Tramite tramite);
+    List<TramitesPersonas> findByTramite(Tramite tramite);
 
-    List<TramitesPersonas> findByFkIdTramiteIdTramite(Integer idTramite);
+    List<TramitesPersonas> findByTramiteIdTramite(Integer idTramite);
 
-    @Query("SELECT tp FROM TramitesPersonas tp WHERE tp.fkIdPersona.idPersona = :idPersona AND tp.fkIdTramite.idTramite = :idTramite")
-    List<TramitesPersonas> findByFkIdPersonaIdPersonaAndFkIdTramiteIdTramite(
+    @Query("SELECT tp FROM TramitesPersonas tp WHERE tp.persona.idPersona = :idPersona AND tp.tramite.idTramite = :idTramite")
+    List<TramitesPersonas> findByPersonaIdPersonaAndTramiteIdTramite(
             @Param("idPersona") Integer idPersona, @Param("idTramite") Integer idTramite);
-
-    @Query("SELECT tp FROM TramitesPersonas tp WHERE tp.tipoRelacion = :tipoRelacion")
-    List<TramitesPersonas> findByTipoRelacion(@Param("tipoRelacion") String tipoRelacion);
 }

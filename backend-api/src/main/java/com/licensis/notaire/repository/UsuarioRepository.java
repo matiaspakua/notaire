@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+    Optional<Usuario> findByNombre(String nombre);
 
     Optional<Usuario> findByFkIdPersona(Persona persona);
 
     Optional<Usuario> findByFkIdPersonaIdPersona(Integer idPersona);
 
-    List<Usuario> findByEstado(String estado);
+    List<Usuario> findByEstado(boolean estado);
 
-    boolean existsByNombreUsuario(String nombreUsuario);
+    boolean existsByNombre(String nombre);
 }

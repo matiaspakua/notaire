@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SuplenciaRepository extends JpaRepository<Suplencia, Integer> {
@@ -24,7 +23,4 @@ public interface SuplenciaRepository extends JpaRepository<Suplencia, Integer> {
 
     @Query("SELECT s FROM Suplencia s WHERE s.fechaInicio <= :fecha AND s.fechaFin >= :fecha")
     List<Suplencia> findByFechaInicioBeforeAndFechaFinAfter(@Param("fecha") Date fecha);
-
-    @Query("SELECT s FROM Suplencia s WHERE s.estado = :estado")
-    List<Suplencia> findByEstado(@Param("estado") String estado);
 }

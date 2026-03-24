@@ -278,7 +278,6 @@ Contiene:
 |-------------|-----------|
 | **Filesystem** | Acceso al sistema de archivos |
 | **Draw.io** | Diagramas de arquitectura |
-| **Excalidraw** | Diagramas conceptuales |
 | **Git** | Control de versiones |
 | **Web Fetch** | Consultar documentación |
 
@@ -315,6 +314,18 @@ El siguiente comando inicia el proceso para autorizar con github:
 $ gh auth login
 ```
 
+
+### Hooks de OpenCode (simil Claude Code)
+
+https://dev.to/einarcesar/does-opencode-support-hooks-a-complete-guide-to-extensibility-k3p
+
+Para agregar controles custom antes y despues de cada acción a ejecutar por los modelos.
+
+
+
+### Sub-Agentes
+
+https://opencode.ai/docs/agents/
 
 
 ---

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
-    Optional<Folio> findByNumeroFolio(String numeroFolio);
+    Optional<Folio> findByNumero(int numero);
 
     List<Folio> findByFkIdTipoFolio(TipoDeFolio tipoFolio);
 
@@ -24,6 +24,5 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
     List<Folio> findByFkIdPersonaEscribanoIdPersona(Integer idEscribano);
 
-    @Query("SELECT f FROM Folio f WHERE f.estado = :estado")
-    List<Folio> findByEstado(@Param("estado") String estado);
+    List<Folio> findByAnio(int anio);
 }
