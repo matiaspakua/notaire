@@ -7,7 +7,7 @@ WORKDIR /build
 
 # Copy POM files first for dependency caching
 COPY pom.xml pom.xml
-COPY notary-shared/pom.xml notary-shared/pom.xml
+COPY notaire-shared/pom.xml notaire-shared/pom.xml
 COPY backend-api/pom.xml backend-api/pom.xml
 COPY frontend-swing/pom.xml frontend-swing/pom.xml
 
@@ -15,7 +15,7 @@ COPY frontend-swing/pom.xml frontend-swing/pom.xml
 RUN mvn dependency:go-offline -B -q || true
 
 # Copy source code
-COPY notary-shared/src notary-shared/src
+COPY notaire-shared/src notaire-shared/src
 COPY backend-api/src backend-api/src
 COPY frontend-swing/src frontend-swing/src
 
