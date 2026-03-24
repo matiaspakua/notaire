@@ -6,8 +6,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.nio.file.Paths;
-
 @Testcontainers(disabledWithoutDocker = true)
 public abstract class BaseIntegrationTest {
 
@@ -18,8 +16,8 @@ public abstract class BaseIntegrationTest {
             .withDatabaseName("notaire_test")
             .withUsername("notaire")
             .withPassword("notaire_password")
-            .withInitScript(Paths.get("../init-db/01-schema.sql").toAbsolutePath().toString())
-            .withInitScript(Paths.get("../init-db/02-data.sql").toAbsolutePath().toString());
+            .withInitScript("init-db/01-schema.sql")
+            .withInitScript("init-db/02-data.sql");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
