@@ -23,6 +23,9 @@ echo -e "${YELLOW}Checking if API is running...${NC}"
 if ! curl -s http://localhost:8080/swagger-ui.html > /dev/null 2>&1; then
     echo -e "${RED}✗ API is not running at http://localhost:8080${NC}"
     echo -e "${YELLOW}Start the application first with: bash start.sh${NC}"
+    echo ""
+    echo -e "${YELLOW}Alternatively, run unit tests without API:${NC}"
+    echo -e "  bash scripts/test-all.sh"
     exit 1
 fi
 echo -e "${GREEN}✓ API is running${NC}\n"
