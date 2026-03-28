@@ -186,15 +186,37 @@ notaire/
 
 ### Iniciar la Aplicación
 
+#### Opción 1: Backend + Frontend completo
+
 ```bash
-# 1. Iniciar servicios con Docker Compose
+# 1. Iniciar servicios con Docker Compose (PostgreSQL)
 bash scripts/start.sh
 
-# 2. Compilar el proyecto
+# 2. Compilar el proyecto completo
 mvn clean install
 
-# 3. Ejecutar la aplicación (desde backend-api)
+# 3. Ejecutar el Backend (API REST)
 cd backend-api && mvn spring-boot:run
+
+# 4. Ejecutar el Frontend (en otra terminal)
+cd frontend-swing && mvn exec:java -Dexec.mainClass="com.licensis.notaire.gui.Login"
+```
+
+#### Opción 2: Solo Frontend (con backend ya corriendo)
+
+```bash
+# El frontend requiere que la API esté corriendo en http://localhost:8080
+cd frontend-swing && mvn exec:java -Dexec.mainClass="com.licensis.notaire.gui.Login"
+```
+
+#### Opción 3: Generar JAR ejecutable
+
+```bash
+# Generar JAR con todas las dependencias
+cd frontend-swing && mvn clean package
+
+# Ejecutar el JAR
+java -jar frontend-swing/target/frontend-swing-jar-with-dependencies.jar
 ```
 
 ### Comandos de Build
