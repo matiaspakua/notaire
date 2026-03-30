@@ -170,6 +170,12 @@ When modifying Java code in this repository, always follow this workflow.
 7. Commit and push the changes in the current feature branch.
 8. Once the full TASK/ISSUE is completed, push changes to remote and create a PR with a descriptive menssage.
 
+## PR rules
+
+1. Follow the naming convention defined in [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) (e.g., `feat:`, `fix:`, `chore:`, etc.).  
+2. Ensure the pull request references an existing issue (e.g., `TASK-123`) before creation.  
+3. Provide a complete and clear description of all implemented changes in the PR body.
+
 # Agent Session and Memory Management
 1. After each completed agent execution or development session, ensure traceability and persistent context.
 2. Export the agent session for audit and replay:
