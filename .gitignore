@@ -41,3 +41,9 @@ target/
 .DS_Store/*
 docs/.DS_Store/*
 docs/business/.DS_Store/*
+
+# E2E Swing tests
+integration-test/e2e-swing/.venv/
+integration-test/e2e-swing/results/
+integration-test/e2e-swing/screenshots/
+**/__pycache__/
