@@ -10,6 +10,7 @@ Bienvenido a la wiki del proyecto Notaire. Esta wiki documenta el proceso de des
 | [Business Documentation](Business-Documentation) | Documentación de negocio y requerimientos |
 | [Refactoring Plan](Refactoring-Plan) | Plan de refactoring del monolito |
 | [Development Setup](Development-Setup) | Configuración del ambiente de desarrollo |
+| [DevSecOps Pipeline](DevSecOps-Pipeline) | Pipeline CI/CD y seguridad |
 
 ## Agregar Páginas a GitHub Wiki
 
