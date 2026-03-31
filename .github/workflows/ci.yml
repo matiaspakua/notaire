@@ -91,23 +91,25 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: dorny/test-reporter@v1
-        if: always() && files_exists('backend-api/target/surefire-reports')
+        if: always()
         continue-on-error: true
         with:
           name: Unit Tests
           path: backend-api/target/surefire-reports
           reporter: java-junit
           fail-on-error: false
+          only-if: backend-api/target/surefire-reports
 
       - name: Publish Unit Test Results (Frontend)
         uses: dorny/test-reporter@v1
-        if: always() && files_exists('frontend-swing/target/surefire-reports')
+        if: always()
         continue-on-error: true
         with:
           name: Unit Tests (Frontend)
           path: frontend-swing/target/surefire-reports
           reporter: java-junit
           fail-on-error: false
+          only-if: frontend-swing/target/surefire-reports
 
   # ==========================================
   # JOB 3: Integration Tests
@@ -148,7 +150,6 @@ jobs:
           path: backend-api/target/surefire-reports
           reporter: java-junit
           fail-on-error: false
-          only-if: backend-api/target/surefire-reports
 
   # ==========================================
   # JOB 4: Code Coverage (JaCoCo)
