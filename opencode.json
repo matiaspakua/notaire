@@ -1,12 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": [
-    ".agents/skills/AGENTS.md",
-    "docs/development/programming.md",
-    "docs/development/refactoring.md",
-    ".agents/skills/*/SKILL.md",
-    ".agents/skills/*/references/*.md",
-    ".opencode/skills/*/SKILL.md"
+    ".claude/agents/skills/AGENTS.md",
+    ".claude/rules/programming.md",
+    ".claude/rules/refactoring.md",
+    ".claude/skills/*/SKILL.md",
+    ".claude/skills/*/references/*.md"
   ],
   "mcp": {
     "filesystem": {
