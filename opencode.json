@@ -1,12 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": [
-    ".agents/skills/AGENTS.md",
-    "docs/development/programming.md",
-    "docs/development/refactoring.md",
-    ".agents/skills/*/SKILL.md",
-    ".agents/skills/*/references/*.md",
-    ".opencode/skills/*/SKILL.md"
+    "CLAUDE.md",
+    ".claude/rules/code-quality.md",
+    ".claude/rules/programming.md",
+    ".claude/rules/refactoring.md",
+    ".claude/skills/*/SKILL.md",
+    ".claude/skills/*/references/*.md"
   ],
   "mcp": {
     "filesystem": {
@@ -14,36 +14,20 @@
       "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/Users/matiasmiguez/workspace/notaire"],
       "enabled": true
     },
-    "git": {
-      "type": "local", 
-      "command": ["npx", "-y", "@modelcontextprotocol/server-git"],
-      "enabled": true
-    },
-    "github": {
-      "type": "remote",
-      "url": "https://mcp.github.com",
-      "enabled": true
-    },
     "drawio": {
       "type": "local",
       "command": ["npx", "-y", "@drawio/mcp"],
-      "enabled": false
-    }
-  },
-  "tools": {
-    "github": true,
-    "filesystem": true,
-    "git": true
-  },
-  "lsp": {
-    "java": {
-      "command": "jdtls",
       "enabled": true
     }
   },
+  "tools": {
+    "github": false,
+    "filesystem": true,
+    "git": true
+  },
   "agent": {
     "build": {
-      "prompt": "{file:.agents/skills/AGENTS.md}",
+      "prompt": "{file:CLAUDE.md}",
       "temperature": 0.3
     },
     "plan": {

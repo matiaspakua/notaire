@@ -321,7 +321,7 @@ El proyecto cuenta con **7 skills** especializados en `.agents/skills/`:
 
 Archivo principal de configuración del agente.
 
-**Ubicación**: `./AGENTS.md`
+**Ubicación**: `.agents/AGENTS.md`
 
 Contiene:
 - Comandos de build y ejecución
