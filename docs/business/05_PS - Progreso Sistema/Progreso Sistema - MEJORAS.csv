@@ -1,56 +1,71 @@
-Módulo,Sub-Modulo,Pantalla,"Mejora, característica, corrección etc.",Estado
-Sistema,n/a,n/a,Anañir Log4J al proyecto para reemplazar todos los catch(exception) y redireccionarlos a un archivo de log.,Sin Comenzar
-Sistema,n/a,n/a,Añadir el archivo config.properties para condifurar los datos de conexión de la aplicación y las rutas predeterminadas.,Sin Comenzar
-Sistema,n/a,n/a,Añadir la pantalla ACERCA DE..,Sin Comenzar
-Sistema,n/a,n/a,"hacer el link hacia el manual del usuario (necesita una ruta predefinida, usando el archivo config.properties)",Sin Comenzar
-Sistema,n/a,n/a,Controlar el JavaDoc,Sin Comenzar
-Sistema,n/a,n/a,"Implementar la función de cerrar sesión (o en su defecto, sacar esta función)",Sin Comenzar
-Sistema,n/a,n/a,Controlar que la base de datos este documentada (tablas y atributos),Sin Comenzar
-Sistema,n/a,n/a,Agregar una barra de Cargando el sistema luego del login,Sin Comenzar
-Administracion,Administracion de folios,Dar alta / Modificar / Eliminar,La grilla debería tener un boton para REFRESCAR,No existe mas
-Administracion,Administracion de folios,Dar alta / Modificar / Eliminar,Elimina la pantalla del medio que sólo tiene un boton. No Sirve para nada.,No existe mas
-Administracion,Estados de Gestion,Modificar Estado de Gestion,El campo observaciones deberia tener un ajuste de linea o algo por el estilo,Sin Comenzar
-todos,Ventanas,n/a,Arreglar el tamaño cuando se abren,Sin Comenzar
-todos,Ventanas,n/a,"En la barra de menú, agregar al menu Ventanas, las ventanas que falten cuando se abren",Sin Comenzar
-Administracion,Estados de Gestion,Eliminar Estado de Gestion,"Deberia haber un deshabilitar o eliminar estado de gestion, Consultar",Sin Comenzar
-Administracion,Tramites,Ingresar Tipo de Tramite,El formulario no debe cerrarse al dar de alta un tipo de tramite,Terminado
-Cliente,n/a,Buscar Personas clientes,Poder seleccionar una persona y ver sus datos,Terminado
-Administracion,Folios,Eliminar Tipo de Folio,"Deberia preguntar, ""esta seguro que desea eliminar""",Sin Comenzar
-Reportes,Todos,n/a,Encontrar la forma de llamar al .jasper dentro del proyecto!,Sin Comenzar
-Administracion,Estados de Gestion,n/a,Debería haber una lista con todos los estado de gestion registrados.,Sin Comenzar
-Protocolo,DDJJ,n/a,"Dejar solamente en  la grilla DDJJ-Rentas: Numero de escrtitura, Proporcion Parte Indivisa, Precio de la Operación, Nomenclatura Catatastral, Valuacion Fiscal, Impuesto, Pago Contado. (8 columnas)",Sin Comenzar
-Protocolo,DDJJ,n/a,"En DDJJ-Comun, Cambiar texto ""Acto de escritura"" por ""Tipo de Tramite"" ",Sin Comenzar
-Protocolo,Generar Indice,n/a,Poder Ordenar Alfabeticamente,Sin Comenzar
-Gestiones,Gestion,Archivar Gestion ,"Cambiar ""Numero de carpeta"" por ""Numero de Archivo""",Sin Comenzar
-Testimonios,,,Tiene que haber un boton para poder conocer TODOS los testimonios por peridodo,Sin Comenzar
-TODOS,Todos,Todos,Mejorar los campos cuando no pueden ser editados que se vean bien,Sin Comenzar
-HACER LOG IN!,,,,Terminado
-Administracion -> Registrar Suplencia,,,Hacer una lista de suplencias registradas.,Sin Comenzar
-Protocolo,,,"Agregar un submodulo que muestre, por escribano y año, todos los folios disponibles (a modo de consulta)",Sin Comenzar
-Administracion -> Crear tipo de tramite,,,limpiar la grilla una vez que se ha creado un nuevo tipo de tramite.,Terminado
-Folios -> ingresar folios,,,"en los campos ""desde"" y ""hasta"" deberias indicarte cual es el último folio registrado.",Sin Comenzar
-Reporte de presupuesto,,,Deberían aparecer las observaciones,Sin Comenzar
-Retirar Testimonio,,,deberia haber una grilla que muestre todos.,Sin Comenzar
-Buscar Escrituras,,,"deberia tener en cuenta el anio, para filtrarlas",Sin Comenzar
-Preparar / Modificar escritura,,,Verificar que los folios utilizados sean correlativos,Sin Comenzar
-Gestiones,Gestion,Iniciar Gestion / Modificar,Sacar combo numero gestion.,Sin Comenzar
-Gestiones,Gestion,Iniciar Gestion / Modificar,Formatear la fecha de la forma correcta,Sin Comenzar
-Gestiones,Gestion,Iniciar Gestion / Modificar,Una gestion debería poder tener varios presupuestos asociados,Sin Comenzar
-Sistema,,,"hacer en opciones un formulario para configurar algunas cosas de la aplicación, como por ejemplo, la URL hacia el servidor de base de datos, la ruta hacia los reportes, etc.",Sin Comenzar
-Buscar Gestion,,,Deberia poder buscar por numero de gestion,Sin Comenzar
-Administración,Estados de Gestion,Modificar estado gestion,Boton eliminar deberia desabilitar el estado para nuevas gestiones.,Sin Comenzar
-Clientes,Clientes,Buscar gestiones cliente,Hacer un boton de aceso directo para retirar los testimonios de una gestion,Sin Comenzar
-TODOS,Todos,Todos,Habilitar los ENTER's en todos lados,Sin Comenzar
-Gestiones,Testimonios,Todos,"Tienen dias límites para ser ingresados y reingresados, desde la fecha de ingreso (actualmente, son 45 días para ingresarlo, desde la fecha de firma de la escritura, y 180 días desde la fecha del primer ingreso, para reingresarlo)",Sin Comenzar
-Gestiones,Documentacion,Registrar documentacion entidades externas,"Una gestion puede liberar deudas, aunque este archivada",Sin Comenzar
-Gestiones,,,Ver nomenclaturas (todas) de una personas.,Sin Comenzar
-Gestiones,Gestion,Buscar Gestion.,"Agregar buscar gestiones, por número de gestion (carpeta)",Sin Comenzar
-Administración,Escribanos,Registrar Suplencia,Permitir modificar los datos de una suplencias.,Sin Comenzar
-Presupuestos,crear/modificar presupuesto,Todos,El domicilio del inmueble no es obligatorio,Sin Comenzar
-todos,Todos,Todos,"Cuando le dan clic al aceptar, poner en el cursor del mouse, el reloj de arena que esta cargando.",Sin Comenzar
-Presupuesto,Modificar Presupuesto,,"dentro del codigo de modificar presupuesto, hay un metodo que dice “Dar de alta Pago”, que no esta bien documentado.",Sin Comenzar
-Gestiones,Documentación,consultar deudas documentos,"Distinguir los documentos que pueden presentar deudas de los que no, y mostrar solo los que podrían presentar deudas.",Sin Comenzar
-Clientes,Dar alta cliente,,"No es obligatorio poner todos los datos del clientes para poder darlo de alta, con el simple ACEPTAR ya bastaría ( o sea, solo cambiar el estado de persona a ES CLIENTE, sacar las validaciones de Campo vacio)",Sin Comenzar
-Gestiones,Escrituras,Preparar escritura,"No se puede preparar una escritura, hasta que no se tengan saldadas todas las deudas de todos los documentos",Sin Comenzar
-Clientes,TODOS,Todos,"Hacer algun tipo de validacion de caracteres raros como !@#$%^&*()_-=+;:[]{}? Para los campos como nombre y apellido, nacionalidad, que estamos seguros que no llevan esa clase de caracteres",Sin Comenzar
-Protocolo,Folios,Modificar Folio,"Hacer bien un chequeo de cuando se modifica un Folio (a otro estado: errose), verificar si está asociado a una escritura y en tal caso, desasociarlo y comprobar que quede bien la integridad de los datos.",Sin Comenzar
+Módulo,Sub-Modulo,Pantalla,"Mejora, característica, corrección etc.",Estado,Prioridad
+Sistema,n/a,n/a,Añadir Log4J al proyecto para reemplazar todos los catch(exception) y redireccionarlos a un archivo de log.,Sin Comenzar,Baja
+Sistema,n/a,n/a,Añadir el archivo config.properties para configurar los datos de conexión de la aplicación y las rutas predeterminadas.,Sin Comenzar,Baja
+Sistema,n/a,n/a,Añadir la pantalla ACERCA DE..,Sin Comenzar,Baja
+Sistema,n/a,n/a,"Hacer el link hacia el manual del usuario (necesita una ruta predefinida, usando el archivo config.properties)",Sin Comenzar,Baja
+Sistema,n/a,n/a,Controlar el JavaDoc,Sin Comenzar,Baja
+Sistema,n/a,n/a,"Implementar la función de cerrar sesión (o en su defecto, sacar esta función)",Sin Comenzar,Baja
+Sistema,n/a,n/a,Controlar que la base de datos este documentada (tablas y atributos),Sin Comenzar,Baja
+Sistema,n/a,n/a,Agregar una barra de Cargando el sistema luego del login,Sin Comenzar,Media
+Administracion,Estados de Gestion,Modificar Estado de Gestion,El campo observaciones debería tener un ajuste de línea o algo por el estilo,Sin Comenzar,Baja
+todos,Ventanas,n/a,Arreglar el tamaño cuando se abren,Sin Comenzar,Baja
+todos,Ventanas,n/a,"En la barra de menú, agregar al menu Ventanas, las ventanas que falten cuando se abren",Sin Comenzar,Baja
+Administracion,Estados de Gestion,Eliminar Estado de Gestion,"Debería haber un deshabilitar o eliminar estado de gestión, Consultar",Sin Comenzar,Baja
+Administracion,Tramites,Ingresar Tipo de Tramite,El formulario no debe cerrarse al dar de alta un tipo de tramite,Terminado,-
+Cliente,n/a,Buscar Personas clientes,Poder seleccionar una persona y ver sus datos,Terminado,-
+Administracion,Folios,Eliminar Tipo de Folio,"Debería preguntar, ""esta seguro que desea eliminar""",Sin Comenzar,Baja
+Reportes,Todos,n/a,Encontrar la forma de llamar al .jasper dentro del proyecto!,Sin Comenzar,Media
+Administracion,Estados de Gestion,n/a,Debería haber una lista con todos los estado de gestión registrados.,Sin Comenzar,Baja
+Protocolo,DDJJ,n/a,"Dejar solamente en  la grilla DDJJ-Rentas: Numero de escritura, Proporcion Parte Indivisa, Precio de la Operación, Nomenclatura Catastral, Valuacion Fiscal, Impuesto, Pago Contado. (8 columnas)",Sin Comenzar,Baja
+Protocolo,DDJJ,n/a,"En DDJJ-Comun, Cambiar texto ""Acto de escritura"" por ""Tipo de Tramite"" ",Sin Comenzar,Baja
+Protocolo,Generar Indice,n/a,Poder Ordenar Alfabéticamente,Sin Comenzar,Baja
+Gestiones,Gestion,Archivar Gestion ,"Cambiar ""Numero de carpeta"" por ""Numero de Archivo""",Sin Comenzar,Baja
+Testimonios,,,Tiene que haber un botón para poder conocer TODOS los testimonios por período,Sin Comenzar,Baja
+TODOS,Todos,Todos,Mejorar los campos cuando no pueden ser editados que se vean bien,Sin Comenzar,Baja
+HACER LOG IN!,,,,Terminado,-
+Administracion -> Registrar Suplencia,,,Hacer una lista de suplencias registradas.,Sin Comenzar,Baja
+Protocolo,,,"Agregar un submódulo que muestre, por escribano y año, todos los folios disponibles (a modo de consulta)",Sin Comenzar,Baja
+Administracion -> Crear tipo de tramite,,,Limpiar la grilla una vez que se ha creado un nuevo tipo de tramite.,Terminado,-
+Folios -> ingresar folios,,,"en los campos ""desde"" y ""hasta"" debería indicarte cual es el último folio registrado.",Sin Comenzar,Baja
+Reporte de presupuesto,,,Deberían aparecer las observaciones,Sin Comenzar,Baja
+Retirar Testimonio,,,Debería haber una grilla que muestre todos.,Sin Comenzar,Baja
+Buscar Escrituras,,,"Debería tener en cuenta el año, para filtrarlas",Sin Comenzar,Baja
+Preparar / Modificar escritura,,,Verificar que los folios utilizados sean correlativos,Sin Comenzar,Baja
+Gestiones,Gestion,Iniciar Gestion / Modificar,Sacar combo numero gestion.,Sin Comenzar,Baja
+Gestiones,Gestion,Iniciar Gestion / Modificar,Formatear la fecha de la forma correcta,Sin Comenzar,Baja
+Gestiones,Gestion,Iniciar Gestion / Modificar,Una gestión debería poder tener varios presupuestos asociados,Sin Comenzar,Media
+Sistema,,,"Hacer en opciones un formulario para configurar algunas cosas de la aplicación, como por ejemplo, la URL hacia el servidor de base de datos, la ruta hacia los reportes, etc.",Sin Comenzar,Media
+Buscar Gestion,,,Debería poder buscar por numero de gestion,Sin Comenzar,Baja
+Administración,Estados de Gestion,Modificar estado gestion,Boton eliminar debería deshabilitar el estado para nuevas gestione.,Sin Comenzar,Baja
+Clientes,Clientes,Buscar gestiones cliente,Hacer un botón de acceso directo para retirar los testimonios de una gestión,Sin Comenzar,Baja
+TODOS,Todos,Todos,Habilitar los ENTER's en todos lados,Sin Comenzar,Baja
+Gestiones,Testimonios,Todos,"Tienen días límites para ser ingresados y reingresados, desde la fecha de ingreso (actualmente, son 45 días para ingresarlo, desde la fecha de firma de la escritura, y 180 días desde la fecha del primer ingreso, para reingresarlo)",Sin Comenzar,Media
+Gestiones,Documentacion,Registrar documentacion entidades externas,"Una gestión puede liberar deudas, aunque esté archivada",Sin Comenzar,Baja
+Gestiones,,,Ver nomenclaturas (todas) de una persona.,Sin Comenzar,Baja
+Gestiones,Gestion,Buscar Gestion.,"Agregar buscar gestiones, por número de gestión (carpeta)",Sin Comenzar,Baja
+Administración,Escribanos,Registrar Suplencia,Permitir modificar los datos de una suplencia.,Sin Comenzar,Baja
+Presupuestos,crear/modificar presupuesto,Todos,El domicilio del inmueble no es obligatorio,Sin Comenzar,Baja
+todos,Todos,Todos,"Cuando le dan clic al aceptar, poner en el cursor del mouse, el reloj de arena que está cargando.",Sin Comenzar,Baja
+Presupuesto,Modificar Presupuesto,,"Dentro del código de modificar presupuesto, hay un metodo que dice ""Dar de alta Pago"", que no está bien documentado.",Sin Comenzar,Baja
+Gestiones,Documentación,consultar deudas documentos,"Distinguir los documentos que pueden presentar deudas de los que no, y mostrar solo los que podrían presentar deudas.",Sin Comenzar,Baja
+Clientes,Dar alta cliente,,"No es obligatorio poner todos los datos del cliente para poder darlo de alta, con el simple ACEPTAR ya bastaría ( o sea, solo cambiar el estado de persona a ES CLIENTE, sacar las validaciones de Campo vacío)",Sin Comenzar,Baja
+Gestiones,Escrituras,Preparar escritura,"No se puede preparar una escritura, hasta que no se tengan saldadas todas las deudas de todos los documentos",Sin Comenzar,Alta
+Clientes,TODOS,Todos,"Hacer algún tipo de validación de caracteres raros como !@#$%^&*()_-=+;:[]{}? Para los campos como nombre y apellido, nacionalidad, que estamos seguros que no llevan esa clase de caracteres",Sin Comenzar,Media
+Protocolo,Folios,Modificar Folio,"Hacer bien un chequeo de cuando se modifica un Folio (a otro estado: error), verificar si está asociado a una escritura y en tal caso, desasociarlo y comprobar que quede bien la integridad de los datos.",Sin Comenzar,Baja
+Backend,Autenticación,n/a,Implementar autenticación JWT/OAuth2,Sin Comenzar,Alta
+Backend,APIs REST,n/a,Completar el 5% de APIs restantes,Sin Comenzar,Alta
+Backend,Paginación,n/a,Agregar paginación a todos los endpoints,Sin Comenzar,Alta
+Testing,E2E,n/a,Tests E2E automatizados,Sin Comenzar,Media
+Backend,Logs,n/a,Logs en formato Prometheus,Sin Comenzar,Media
+DevOps,Monitoreo,n/a,Visualización con Grafana,Sin Comenzar,Media
+Testing,Unitarios,n/a,Tests unitarios con tags a requerimientos,Sin Comenzar,Media
+Backend,Base de Datos,n/a,Flyway para migración y versionado de base de datos,Sin Comenzar,Media
+DevOps,Despliegue,n/a,Configurar Kubernetes (K8s),Sin Comenzar,Baja
+DevOps,Seguridad,n/a,Configurar HTTPS/TLS,Sin Comenzar,Baja
+DevOps,Monitoreo,n/a,Setup monitoreo Prometheus/Grafana,Sin Comenzar,Baja
+DevOps,Backup,n/a,Backup automatizado PostgreSQL,Sin Comenzar,Baja
+Documentación,Swagger,n/a,Documentar todos los endpoints en Swagger,Sin Comenzar,Baja
+Documentación,Markdown,n/a,Migrar documentación original a Markdown,Sin Comenzar,Baja
+Documentación,Instalación,n/a,Crear guía de instalación para producción,Sin Comenzar,Baja
+Documentación,Arquitectura,n/a,Documentar arquitectura del sistema,Sin Comenzar,Baja
+Documentación,Usuario,n/a,Crear manual de usuario,Sin Comenzar,Baja

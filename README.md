@@ -655,6 +655,59 @@ REGISTRY: ghcr.io
 
 ---
 
+## Cómo Editar la Wiki
+
+La wiki del proyecto está alojada en el repositorio separado del proyecto principal. Para editar o agregar contenido:
+
+### Método 1: Clonar el repositorio de wiki
+
+```bash
+# Clonar el repositorio de wiki
+git clone https://github.com/matiaspakua/notaire.wiki.git
+
+# Agregar o editar archivos markdown
+cdmaire.wiki
+
+# Los archivos .md se convierten en páginas de wiki
+# Ejemplo: Home.md -> página "Home"
+
+# Commit y push
+git add .
+git commit -m "Agregar nueva página"
+git push
+```
+
+### Método 2: Desde la interfaz de GitHub
+
+1. Ir a https://github.com/matiaspakua/notaire/wiki
+2. Click en "New Page" o editar una página existente
+3. Escribir el contenido en Markdown
+4. Guardar la página
+
+### Estructura de archivos en `docs/wiki/`
+
+Los archivos Markdown en esta carpeta están sincronizados con la wiki:
+
+| Archivo | Página en Wiki |
+|---------|----------------|
+| `Home.md` | Página principal |
+| `Business-Documentation.md` | Documentación de negocio |
+| `Refactoring-Plan.md` | Plan de refactoring |
+| `Development-Setup.md` | Configuración de desarrollo |
+| `DevSecOps-Pipeline.md` | Pipeline CI/CD |
+| `SECURITY.md` | Seguridad |
+| `CONTRIBUTING.md` | Contribución |
+| `PLAN.md` | Plan general |
+| `PLANO_REFACTORING.md` | Plan de refactoring |
+
+### Agregar nueva página a la wiki
+
+1. Crear archivo `.md` en `docs/wiki/`
+2. Agregar enlace en `SIDEBAR.md`
+3. Following los métodos anteriores para sincronizar con GitHub
+
+---
+
 ## Recursos
 
 | Recurso | URL |
