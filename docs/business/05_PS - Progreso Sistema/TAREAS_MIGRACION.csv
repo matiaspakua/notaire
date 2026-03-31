@@ -1,0 +1,23 @@
+ID,Tarea,Modulo,Prioridad,Estado,Descripcion
+1,Completar migración de formularios restantes,Frontend Swing,Alta,Pendiente,M migrar el 30% de formularios restantes del monolito a la nueva arquitectura REST
+2,Validar formularios con API REST,Frontend Swing,Alta,Pendiente,Validar que todos los formularios funcionen correctamente con los endpoints REST
+3,Probar flujos completos de negocio,Testing,Alta,Pendiente,Probar flujos completos: cliente → gestión → presupuesto → pago
+4,Verificar generación de reportes PDF,Backend,Alta,Pendiente,Verificar que los 10 endpoints de JasperReports funcionen correctamente
+5,Testing manual de casos edge,Testing,Alta,Pendiente,Realizar testing manual de casos extremos y edge cases
+6,Implementar autenticación JWT/OAuth2,Backend,Alta,Pendiente,Implementar sistema de autenticación JWT u OAuth2
+7,Completar el 5% de APIs restantes,Backend,Alta,Pendiente,Completar los endpoints REST restantes (~5% pendiente)
+8,Agregar paginación a endpoints,Backend,Alta,Pendiente,Agregar paginación a todos los endpoints REST
+9,Tests E2E automatizados,Testing,Media,Pendiente,Implementar tests E2E automatizados
+10,Logs en formato Prometheus,Backend,Media,Pendiente,Configurar logs en formato Prometheus
+11,Visualización con Grafana,DevOps,Media,Pendiente,Configurar Dashboard de Grafana para monitoreo
+12,Tests unitarios con tags a requerimientos,Testing,Media,Pendiente,Mapear tests unitarios a requerimientos funcionales
+13,Flyway para base de datos,Backend,Media,Pendiente,Implementar Flyway para migración y versionado de base de datos
+14,Configurar Kubernetes,DevOps,Baja,Pendiente,Configurar despliegue en Kubernetes (K8s)
+15,Configurar HTTPS/TLS,DevOps,Baja,Pendiente,Configurar HTTPS/TLS para producción
+16,Setup monitoreo Prometheus/Grafana,DevOps,Baja,Pendiente,Completar setup de monitoreo con Prometheus y Grafana
+17,Backup automatizado PostgreSQL,DevOps,Baja,Pendiente,Configurar backup automatizado de PostgreSQL
+18,Documentar endpoints en Swagger,Documentación,Baja,Pendiente,Completar documentación de todos los endpoints en Swagger/OpenAPI
+19,Migrar documentación a Markdown,Documentación,Baja,Pendiente,Migrar documentación original a formato Markdown
+20,Crear guía de instalación producción,Documentación,Baja,Pendiente,Crear guía de instalación para entorno de producción
+21,Documentar arquitectura del sistema,Documentación,Baja,Pendiente,Documentar arquitectura completa del sistema
+22,Crear manual de usuario,Documentación,Baja,Pendiente,Crear manual de usuario para usuarios finales
