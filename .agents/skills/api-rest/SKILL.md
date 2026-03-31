@@ -1,3 +1,8 @@
+---
+name: api-rest
+description: Generate Bruno API test collections from project API definitions. Use when creating API tests, exporting collections, or testing REST endpoints.
+---
+
 # API-to-Bruno Collection Generator Skill
 
 ## Descripción

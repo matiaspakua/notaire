@@ -1,4 +1,70 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["AGENTS.md", "docs/development/programming.md","docs/development/refactoring.md", ".agents/skills/*/*.md"]
+  "instructions": [
+    ".agents/skills/AGENTS.md",
+    "docs/development/programming.md",
+    "docs/development/refactoring.md",
+    ".agents/skills/*/SKILL.md",
+    ".agents/skills/*/references/*.md",
+    ".opencode/skills/*/SKILL.md"
+  ],
+  "mcp": {
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/Users/matiasmiguez/workspace/notaire"],
+      "enabled": true
+    },
+    "git": {
+      "type": "local", 
+      "command": ["npx", "-y", "@modelcontextprotocol/server-git"],
+      "enabled": true
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://mcp.github.com",
+      "enabled": true
+    },
+    "drawio": {
+      "type": "local",
+      "command": ["npx", "-y", "@drawio/mcp"],
+      "enabled": false
+    }
+  },
+  "tools": {
+    "github": true,
+    "filesystem": true,
+    "git": true
+  },
+  "lsp": {
+    "java": {
+      "command": "jdtls",
+      "enabled": true
+    }
+  },
+  "agent": {
+    "build": {
+      "prompt": "{file:.agents/skills/AGENTS.md}",
+      "temperature": 0.3
+    },
+    "plan": {
+      "temperature": 0.1,
+      "permission": {
+        "edit": "ask",
+        "bash": "ask"
+      }
+    },
+    "code-reviewer": {
+      "mode": "subagent",
+      "description": "Code review agent focused on security, performance and best practices"
+    },
+    "security-auditor": {
+      "mode": "subagent", 
+      "description": "Security expert focused on identifying vulnerabilities and security issues"
+    }
+  },
+  "permission": {
+    "skill": {
+      "*": "allow"
+    }
+  }
 }
