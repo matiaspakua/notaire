@@ -107,15 +107,15 @@ jobs:
           path: .
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          body_path: CHANGELOG.md
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ==========================================
   # Update Docker Hub Description
@@ -130,9 +130,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update Container Registry Description
+        if: vars.DOCKERHUB_USERNAME != ''
         uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ghcr.io/${{ github.repository }}/backend
-          short_description: "Notaire Backend API - Spring Boot REST API"
+          short-description: "Notaire Backend API - Spring Boot REST API"
