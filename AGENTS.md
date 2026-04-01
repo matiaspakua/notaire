@@ -161,7 +161,45 @@ cd backend-api && mvn spring-boot:run
 1. Ensure branch is clean before editing
 2. Create feature branch: `git checkout -b <TASK-ID>/[feat/fix/add]/<short-task-name>`
 3. Never commit directly to main/master
-4. Use conventional commits: `<TASK-ID>/feat: ...`, `<TASK-ID>/fix: ...`
+4. Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
+   - Format: `[#<ISSUE-NUMBER>] <type>: <description>`
+   - Examples: `223/feat: add CI/CD reports`, `223/fix: resolve workflow errors`
 5. Run test suite and static analysis before committing
 6. Verify build succeeds: `mvn test` or `mvn package`
-7. Create PR with descriptive message referencing issue (e.g., TASK-123)
+7. Create PR with title: `[#<ISSUE-NUMBER>] <type>: <description>` and description: "Fixes #ISSUE-NUMBER"
+
+## Issue-PR Traceability Rules
+
+When creating or updating issues and PRs, always maintain traceability:
+
+### PR Title Format (Conventional Commits)
+- Use standard conventional commit format: `<type>: <description>`
+- Example: `feat: add CI/CD markdown reports`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+- Note: Issue reference goes in PR description (e.g., "Fixes #223"), not in title
+
+### PR Description
+- Always reference the associated issue in the first line: "Fixes #ISSUE-NUMBER" or "Implements #ISSUE-NUMBER"
+- Add section with labels used and their purpose
+
+### Issue Labels for Traceability
+- Add appropriate type labels: `MEJORAS`, `BUG`, `DOCUMENTACION`, etc.
+- Add component labels: `BACKEND`, `FRONTEND`, `DEVOPS`, `DB`, etc.
+- Add status labels: `in-progress`, `ready-for-dev`, `blocked`, etc.
+
+### Git Commits
+- Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
+- Example: `223/feat: add CI/CD reports to GitHub Pages`
+
+### Workflow Changes
+- When modifying GitHub Actions workflows, ensure:
+  - Jobs use `continue-on-error: true` for non-critical steps
+  - Test reporters have `only-if` conditions checking for report files
+  - All jobs complete successfully without failing the workflow
+
+## Best Practices for CI/CD
+
+1. **Never skip tests** - Use test patterns with `-DfailIfNoTests=false` when filtering
+2. **Handle missing reports** - Use `only-if` for test reporters and conditional steps
+3. **External services** - Avoid dependence on GitHub Code Scanning, use local reports
+4. **Report format** - Generate Markdown reports and publish to GitHub Pages
