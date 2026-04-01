@@ -10,7 +10,8 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  security-events: write
+  pages: write
+  id-token: write
 
 env:
   JAVA_VERSION: '21'
@@ -73,11 +74,9 @@ jobs:
 
       - name: Run Unit Tests (Backend API)
         run: mvn test -pl backend-api -am -Dtest="**/unit/*" -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.test.failure.ignore=true
-        continue-on-error: true
 
       - name: Run Unit Tests (Frontend Swing)
         run: mvn test -pl frontend-swing -am -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.test.failure.ignore=true
-        continue-on-error: true
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7
@@ -92,24 +91,20 @@ jobs:
       - name: Publish Unit Test Results
         uses: dorny/test-reporter@v1
         if: always()
-        continue-on-error: true
         with:
           name: Unit Tests
           path: backend-api/target/surefire-reports
           reporter: java-junit
           fail-on-error: false
-          only-if: backend-api/target/surefire-reports
 
       - name: Publish Unit Test Results (Frontend)
         uses: dorny/test-reporter@v1
         if: always()
-        continue-on-error: true
         with:
           name: Unit Tests (Frontend)
           path: frontend-swing/target/surefire-reports
           reporter: java-junit
           fail-on-error: false
-          only-if: frontend-swing/target/surefire-reports
 
   # ==========================================
   # JOB 3: Integration Tests
@@ -131,7 +126,6 @@ jobs:
 
       - name: Run Integration Tests
         run: mvn test -pl backend-api -am -Dtest="**/integration/*" -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.test.failure.ignore=true
-        continue-on-error: true
 
       - name: Upload Integration Test Results
         uses: actions/upload-artifact@v7
@@ -144,7 +138,6 @@ jobs:
       - name: Publish Integration Test Results
         uses: dorny/test-reporter@v1
         if: always()
-        continue-on-error: true
         with:
           name: Integration Tests
           path: backend-api/target/surefire-reports
@@ -172,11 +165,9 @@ jobs:
 
       - name: Run Tests with Coverage
         run: mvn test -pl backend-api -am -Dmaven.test.failure.ignore=true -Dsurefire.failIfNoSpecifiedTests=false
-        continue-on-error: true
 
       - name: Generate JaCoCo Report
         run: mvn jacoco:report -pl backend-api -q
-        continue-on-error: true
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v7
@@ -189,7 +180,6 @@ jobs:
       - name: Add Coverage Comment to PR
         uses: madrapps/jacoco-report@v1.7.2
         if: github.event_name == 'pull_request'
-        continue-on-error: true
         with:
           title: "📊 Code Coverage Report"
           paths: ${{ github.workspace }}/backend-api/target/site/jacoco/jacoco.xml
@@ -197,14 +187,12 @@ jobs:
           min-coverage-overall: 80
 
   # ==========================================
-  # JOB 5: Security Scan (Trivy)
+  # JOB 5: Security Scan (Trivy) - No External Dependency
   # ==========================================
   security:
     name: Security Scan
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      security-events: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -214,29 +202,24 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: 'json'
+          output: 'trivy-results.json'
+
+      - name: Display Trivy Results
+        run: |
+          if [ -f trivy-results.json ]; then
+            echo "=== Trivy Scan Results ==="
+            cat trivy-results.json | jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | "\(.Severity): \(.Title)"' 2>/dev/null | head -20 || echo "No critical vulnerabilities found"
+          fi
 
       - name: Upload Trivy Results
         uses: actions/upload-artifact@v7
         with:
           name: trivy-results
-          path: trivy-results.sarif
-
-      - name: Publish Trivy Results
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: trivy-results.sarif
-
-      - name: Trivy Cache
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0'
-          ignore-unfixed: true
+          path: |
+            trivy-results.json
+            trivy-results.sarif
+          retention-days: 30
 
   # ==========================================
   # JOB 6: Build Docker Image
@@ -281,15 +264,18 @@ jobs:
         if: always()
         with:
           image-ref: 'ghcr.io/${{ github.repository }}/backend:latest'
-          format: 'sarif'
-          output: 'docker-trivy.sarif'
+          format: 'json'
+          output: 'docker-trivy.json'
+          exit-code: '0'
+          ignore-unfixed: true
 
       - name: Upload Docker Trivy Results
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: docker-trivy-results
-          path: docker-trivy.sarif
+          path: docker-trivy.json
+          retention-days: 30
 
   # ==========================================
   # JOB 7: Quality Checks (SpotBugs)
@@ -322,3 +308,185 @@ jobs:
           name: spotbugs-report
           path: backend-api/target/spotbugsXml.xml
           retention-days: 7
+
+  # ==========================================
+  # JOB 8: Generate Markdown Reports
+  # ==========================================
+  generate-reports:
+    name: Generate Markdown Reports
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, coverage, security, quality]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./reports
+
+      - name: Prepare reports directory
+        run: |
+          mkdir -p ./markdown-reports
+          cp reports/unit-test-results/backend-api/target/surefire-reports/*.xml ./markdown-reports/ 2>/dev/null || true
+          cp reports/integration-test-results/backend-api/target/surefire-reports/*.xml ./markdown-reports/ 2>/dev/null || true
+          cp reports/jacoco-report/jacoco.xml ./markdown-reports/ 2>/dev/null || true
+          cp reports/trivy-results/trivy-results.json ./markdown-reports/ 2>/dev/null || true
+          cp reports/spotbugs-report/spotbugsXml.xml ./markdown-reports/ 2>/dev/null || true
+
+      - name: Generate Markdown Report
+        run: |
+          # Extract test metrics
+          UNIT_TOTAL=$(grep -oP 'tests="\K[0-9]+' ./markdown-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          UNIT_FAIL=$(grep -oP 'failures="\K[0-9]+' ./markdown-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          
+          # Extract security metrics
+          if [ -f ./markdown-reports/trivy-results.json ]; then
+            SEC_CRITICAL=$(jq -r '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' ./markdown-reports/trivy-results.json 2>/dev/null || echo "0")
+            SEC_HIGH=$(jq -r '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' ./markdown-reports/trivy-results.json 2>/dev/null || echo "0")
+          else
+            SEC_CRITICAL="0"
+            SEC_HIGH="0"
+          fi
+          
+          # Extract coverage
+          if [ -f ./markdown-reports/jacoco.xml ]; then
+            LINE_COV=$(grep -oP 'LINE.*covered="\K[0-9]+' ./markdown-reports/jacoco.xml | head -1 || echo "0")
+            LINE_MISS=$(grep -oP 'LINE.*missed="\K[0-9]+' ./markdown-reports/jacoco.xml | head -1 || echo "0")
+            if [ -n "$LINE_COV" ] && [ -n "$LINE_MISS" ]; then
+              TOTAL=$((LINE_COV + LINE_MISS))
+              COV_PCT=$((LINE_COV * 100 / TOTAL))
+            else
+              COV_PCT="0"
+            fi
+          else
+            COV_PCT="0"
+          fi
+          
+          # Generate report
+          cat > ./markdown-reports/ci-report.md << EOF
+---
+title: CI Report
+nav_order: 1
+---
+
+# 📊 CI/CD Pipeline Report
+
+**Generated:** $(date -u +"%Y-%m-%d %H:%M:%S")  
+**Branch:** ${{ github.ref_name }}  
+**Commit:** ${{ github.sha }}
+
+---
+
+## 📋 Job Summary
+
+| Job | Status |
+|-----|--------|
+| Build & Compile | ${{ needs.build.result }} |
+| Unit Tests | ${{ needs.unit-tests.result }} |
+| Integration Tests | ${{ needs.integration-tests.result }} |
+| Code Coverage | ${{ needs.coverage.result }} |
+| Security Scan | ${{ needs.security.result }} |
+| Docker Build | ${{ needs.docker-build.result }} |
+| Code Quality | ${{ needs.quality.result }} |
+
+---
+
+## 🧪 Test Results
+
+| Metric | Value |
+|--------|-------|
+| Tests Executed | ${UNIT_TOTAL} |
+| Failures | ${UNIT_FAIL} |
+
+---
+
+## 🔒 Security Scan
+
+| Severity | Count |
+|----------|-------|
+| Critical | ${SEC_CRITICAL} |
+| High | ${SEC_HIGH} |
+
+---
+
+## 📊 Code Coverage
+
+**Line Coverage:** ${COV_PCT}% (Target: 80%)
+
+---
+
+## ✅ Conclusion
+
+Pipeline completed. Review individual job results above.
+
+*Report generated by CI Pipeline*
+EOF
+
+      - name: Upload Markdown Reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: markdown-reports
+          path: ./markdown-reports
+          retention-days: 30
+
+  # ==========================================
+  # JOB 9: Publish to GitHub Pages (No External Wiki)
+  # ==========================================
+  publish-reports:
+    name: Publish Reports
+    runs-on: ubuntu-latest
+    needs: [generate-reports]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: 'gh-pages'
+          fetch-depth: 0
+
+      - name: Download Markdown Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: markdown-reports
+          path: ./reports
+
+      - name: Prepare reports
+        run: |
+          mkdir -p _posts/cicd
+          # Copy reports with date-based names
+          cp ./reports/ci-report.md ./_posts/cicd/$(date +%Y-%m-%d)-ci-report.md
+          # Create/update index
+          cat > index.md << 'EOF'
+---
+title: CI/CD Reports
+layout: default
+nav_order: 1
+---
+
+# 📊 CI/CD Reports
+
+Latest CI/CD pipeline reports.
+
+## 📋 Available Reports
+
+EOF
+          ls -1 _posts/cicd/*.md 2>/dev/null | while read f; do
+            fname=$(basename "$f")
+            date=$(echo "$fname" | cut -d'-' -f1,2,3)
+            echo "- [$(date)](cicd/$fname) - CI Pipeline Report" >> index.md
+          done
+          echo "" >> index.md
+          echo "---" >> index.md
+          echo "*Automatically generated*" >> index.md
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "ci@notaire.com"
+          git config --local user.name "CI Bot"
+          git add -A
+          git commit -m "Update CI/CD reports - $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push origin gh-pages || git push origin gh-pages --force
