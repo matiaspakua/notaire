@@ -161,18 +161,21 @@ cd backend-api && mvn spring-boot:run
 1. Ensure branch is clean before editing
 2. Create feature branch: `git checkout -b <TASK-ID>/[feat/fix/add]/<short-task-name>`
 3. Never commit directly to main/master
-4. Use conventional commits: `<TASK-ID>/feat: ...`, `<TASK-ID>/fix: ...`
+4. Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
+   - Format: `[#<ISSUE-NUMBER>] <type>: <description>`
+   - Examples: `223/feat: add CI/CD reports`, `223/fix: resolve workflow errors`
 5. Run test suite and static analysis before committing
 6. Verify build succeeds: `mvn test` or `mvn package`
-7. Create PR with descriptive message referencing issue (e.g., TASK-123)
+7. Create PR with title: `[#<ISSUE-NUMBER>] <type>: <description>` and description: "Fixes #ISSUE-NUMBER"
 
 ## Issue-PR Traceability Rules
 
 When creating or updating issues and PRs, always maintain traceability:
 
-### PR Title Format
-- Include issue reference: `[#ISSUE-NUMBER] <description>`
-- Example: `[#223] docs: add CI/CD markdown reports`
+### PR Title Format (Conventional Commits + Issue Reference)
+- Include issue reference: `[#<ISSUE-NUMBER>] <type>: <description>`
+- Example: `[#223] feat: add CI/CD markdown reports`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 
 ### PR Description
 - Always reference the associated issue in the first line: "Fixes #ISSUE-NUMBER" or "Implements #ISSUE-NUMBER"
