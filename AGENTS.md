@@ -172,10 +172,11 @@ cd backend-api && mvn spring-boot:run
 
 When creating or updating issues and PRs, always maintain traceability:
 
-### PR Title Format (Conventional Commits + Issue Reference)
-- Include issue reference: `[#<ISSUE-NUMBER>] <type>: <description>`
-- Example: `[#223] feat: add CI/CD markdown reports`
+### PR Title Format (Conventional Commits)
+- Use standard conventional commit format: `<type>: <description>`
+- Example: `feat: add CI/CD markdown reports`
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+- Note: Issue reference goes in PR description (e.g., "Fixes #223"), not in title
 
 ### PR Description
 - Always reference the associated issue in the first line: "Fixes #ISSUE-NUMBER" or "Implements #ISSUE-NUMBER"
