@@ -289,7 +289,7 @@ EOFMARKDOWN
             })
 
   # ==========================================
-  # JOB 8: Publish to GitHub Wiki
+  # JOB 8: Publish Reports to docs/wiki/
   # ==========================================
   publish-report:
     name: Publish to Wiki
@@ -302,6 +302,9 @@ EOFMARKDOWN
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Download Report
         uses: actions/download-artifact@v4
@@ -309,13 +312,66 @@ EOFMARKDOWN
           name: pr-validation-report
           path: ./reports
 
-      - name: Publish to Wiki
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+      - name: Generate PR Report for Wiki
         run: |
-          python3 .github/scripts/publish_wiki_reports.py \
-            --token "$GH_TOKEN" \
-            --repo "$REPO" \
-            --report-dir ./reports \
-            --workflow pr
+          mkdir -p docs/wiki/cicd-reports
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          DATE=$(date +%Y-%m-%d)
+          
+          # Generate PR Validation Report
+          cat > docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md << EOF
+---
+title: PR #$PR_NUMBER Validation Report
+---
+
+# PR Validation Report
+
+**PR:** #$PR_NUMBER  
+**Branch:** ${{ github.head_ref }}  
+**Date:** $DATE
+
+## Validation Results
+
+| Check | Status |
+|-------|--------|
+| PR Title & Description | ${{ needs.validate-pr.result }} |
+| Quick Build | ${{ needs.quick-build.result }} |
+| Dependency Analysis | ${{ needs.dependency-analysis.result }} |
+| Code Lint | ${{ needs.lint.result }} |
+| Branch Protection | ${{ needs.branch-protection.result }} |
+
+## PR Details
+
+- **Title:** ${{ github.event.pull_request.title }}
+- **Author:** ${{ github.event.pull_request.user.login }}
+- **Changes:** ${{ github.event.pull_request.changed_files }} files
+
+## Status
+
+EOF
+          
+          if [ "${{ needs.validate-pr.result }}" == "success" ] && [ "${{ needs.quick-build.result }}" == "success" ]; then
+            echo "✅ **PR Ready** - Validation passed, ready for CI pipeline" >> docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md
+          else
+            echo "⚠️ **Review Required** - Some checks failed" >> docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md
+          fi
+          
+          echo "" >> docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md
+          echo "---" >> docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md
+          echo "*Report generated on $DATE*" >> docs/wiki/cicd-reports/pr-validation-$PR_NUMBER.md
+          
+          echo "PR Validation Report generated"
+
+      - name: Commit and Push Reports
+        run: |
+          git config --local user.email "ci@notaire.com"
+          git config --local user.name "CI Bot"
+          
+          git add docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports to add"
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: add PR validation report for PR #${{ github.event.pull_request.number }}" || echo "No changes to commit"
+            git push origin ${{ github.head_ref }} || git push origin ${{ github.head_ref }} --force
+          fi

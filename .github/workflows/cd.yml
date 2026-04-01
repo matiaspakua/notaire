@@ -220,7 +220,7 @@ EOFMARKDOWN
           retention-days: 30
 
   # ==========================================
-  # Publish to GitHub Wiki
+  # Publish Reports to docs/wiki/
   # ==========================================
   publish-report:
     name: Publish to Wiki
@@ -233,6 +233,9 @@ EOFMARKDOWN
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
       - name: Download Report
         uses: actions/download-artifact@v4
@@ -240,13 +243,65 @@ EOFMARKDOWN
           name: cd-report
           path: ./reports
 
-      - name: Publish to Wiki
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+      - name: Generate CD Report for Wiki
         run: |
-          python3 .github/scripts/publish_wiki_reports.py \
-            --token "$GH_TOKEN" \
-            --repo "$REPO" \
-            --report-dir ./reports \
-            --workflow cd
+          mkdir -p docs/wiki/cicd-reports
+          DATE=$(date +%Y-%m-%d)
+          
+          # Generate CD Report
+          cat > docs/wiki/cicd-reports/cd-report.md << EOF
+---
+title: CD Report - $DATE
+---
+
+# CD Pipeline Report
+
+**Date:** $DATE  
+**Branch:** ${{ github.ref_name }}  
+**Tag:** ${{ github.ref_name }}
+
+## Job Results
+
+| Job | Status |
+|-----|--------|
+| Build & Publish | ${{ needs.build-and-publish.result }} |
+| Create Release | ${{ needs.release.result }} |
+| Update Description | ${{ needs.update-description.result }} |
+
+## Docker Image
+
+| Property | Value |
+|----------|-------|
+| Registry | ghcr.io |
+| Repository | ${{ github.repository }}/backend |
+| Tag | ${{ github.ref_name }} |
+
+## Status
+
+EOF
+          
+          if [ "${{ needs.build-and-publish.result }}" == "success" ]; then
+            echo "✅ **SUCCESS** - Image built and published" >> docs/wiki/cicd-reports/cd-report.md
+          else
+            echo "❌ **FAILED** - Check the logs for details" >> docs/wiki/cicd-reports/cd-report.md
+          fi
+          
+          echo "" >> docs/wiki/cicd-reports/cd-report.md
+          echo "---" >> docs/wiki/cicd-reports/cd-report.md
+          echo "*Report generated on $DATE*" >> docs/wiki/cicd-reports/cd-report.md
+          
+          echo "CD Report generated"
+
+      - name: Commit and Push Reports
+        run: |
+          git config --local user.email "ci@notaire.com"
+          git config --local user.name "CI Bot"
+          
+          git add docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports to add"
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: add CD report for $(date +%Y-%m-%d)" || echo "No changes to commit"
+            git push origin ${{ github.ref_name }} || git push origin ${{ github.ref_name }} --force
+          fi

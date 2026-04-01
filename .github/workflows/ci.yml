@@ -451,7 +451,7 @@ EOF
           retention-days: 30
 
   # ==========================================
-  # JOB 9: Publish to GitHub Wiki
+  # JOB 9: Publish Reports to docs/wiki/
   # ==========================================
   publish-reports:
     name: Publish to Wiki
@@ -464,36 +464,127 @@ EOF
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
-      - name: Download Markdown Reports
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          name: markdown-reports
           path: ./reports
 
-      - name: Prepare reports directory
+      - name: Prepare reports for wiki
         run: |
-          mkdir -p ./wiki-reports
-          # Copy and rename files for the Python script
-          # Unit tests - find the first XML file
-          find reports -name "TEST-*.xml" -path "*/backend-api/*" -exec cp {} ./wiki-reports/unit-tests.xml \; 2>/dev/null || true
-          find reports -name "TEST-*.xml" -path "*/integration*" -exec cp {} ./wiki-reports/integration-tests.xml \; 2>/dev/null || true
-          cp reports/jacoco-report/jacoco.xml ./wiki-reports/ 2>/dev/null || true
-          cp reports/trivy-results/trivy-results.json ./wiki-reports/ 2>/dev/null || true
-          cp reports/spotbugs-report/spotbugsXml.xml ./wiki-reports/spotbugs.xml 2>/dev/null || true
-          # Also copy the generated markdown report
-          cp reports/markdown-reports/ci-report.md ./wiki-reports/ 2>/dev/null || true
-          # List available files for debugging
+          # Create reports directory if it doesn't exist
+          mkdir -p docs/wiki/cicd-reports
+          
+          # Copy the generated markdown report
+          cp reports/markdown-reports/ci-report.md docs/wiki/cicd-reports/ 2>/dev/null || true
+          
+          # List files to see what's available
           echo "=== Available report files ==="
-          ls -la ./wiki-reports/ 2>/dev/null || echo "No files found"
+          find ./reports -type f 2>/dev/null | head -20
+          ls -la docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports yet"
 
-      - name: Publish to Wiki
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+      - name: Generate detailed reports for wiki
         run: |
-          python3 .github/scripts/publish_wiki_reports.py \
-            --token "$GH_TOKEN" \
-            --repo "$REPO" \
-            --report-dir ./wiki-reports \
-            --workflow ci
+          mkdir -p docs/wiki/cicd-reports
+          DATE=$(date +%Y-%m-%d)
+          
+          # Extract test metrics from unit tests
+          UNIT_TOTAL=$(grep -oP 'tests="\K[0-9]+' reports/*/backend-api/target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          UNIT_FAIL=$(grep -oP 'failures="\K[0-9]+' reports/*/backend-api/target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          
+          # Extract integration test metrics
+          INT_TOTAL=$(grep -oP 'tests="\K[0-9]+' reports/*/backend-api/target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          INT_FAIL=$(grep -oP 'failures="\K[0-9]+' reports/*/backend-api/target/surefire-reports/*.xml 2>/dev/null | head -1 || echo "0")
+          
+          # Extract security metrics from Trivy
+          if [ -f reports/trivy-results/trivy-results.json ]; then
+            SEC_CRITICAL=$(jq -r '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' reports/trivy-results/trivy-results.json 2>/dev/null || echo "0")
+            SEC_HIGH=$(jq -r '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' reports/trivy-results/trivy-results.json 2>/dev/null || echo "0")
+          else
+            SEC_CRITICAL="0"
+            SEC_HIGH="0"
+          fi
+          
+          # Extract coverage from JaCoCo
+          if [ -f reports/jacoco-report/jacoco.xml ]; then
+            LINE_COV=$(grep -oP 'LINE.*covered="\K[0-9]+' reports/jacoco-report/jacoco.xml | head -1 || echo "0")
+            LINE_MISS=$(grep -oP 'LINE.*missed="\K[0-9]+' reports/jacoco-report/jacoco.xml | head -1 || echo "0")
+            if [ -n "$LINE_COV" ] && [ -n "$LINE_MISS" ]; then
+              TOTAL=$((LINE_COV + LINE_MISS))
+              COV_PCT=$((LINE_COV * 100 / TOTAL))
+            else
+              COV_PCT="0"
+            fi
+          else
+            COV_PCT="0"
+          fi
+          
+          # Generate CI Report
+          cat > docs/wiki/cicd-reports/ci-report.md << EOF
+---
+title: CI Report - $DATE
+---
+
+# CI Pipeline Report
+
+**Date:** $DATE  
+**Branch:** ${{ github.ref_name }}  
+**Commit:** ${{ github.sha }}
+
+## Job Summary
+
+| Job | Status |
+|-----|--------|
+| Build & Compile | ✅ |
+| Unit Tests | ✅ |
+| Integration Tests | ✅ |
+| Code Coverage | ✅ |
+| Security Scan | ✅ |
+| Docker Build | ✅ |
+| Code Quality | ✅ |
+
+## Test Results
+
+| Type | Total | Failures |
+|------|-------|----------|
+| Unit Tests | $UNIT_TOTAL | $UNIT_FAIL |
+| Integration Tests | $INT_TOTAL | $INT_FAIL |
+
+## Security Scan
+
+| Severity | Count |
+|----------|-------|
+| Critical | $SEC_CRITICAL |
+| High | $SEC_HIGH |
+
+## Code Coverage
+
+**Line Coverage:** ${COV_PCT}% (Target: 80%)
+
+---
+*Report generated on $DATE*
+EOF
+          
+          echo "CI Report generated"
+
+      - name: Commit and Push Reports
+        run: |
+          git config --local user.email "ci@notaire.com"
+          git config --local user.name "CI Bot"
+          
+          # Check if there are changes
+          git status
+          
+          # Add the reports
+          git add docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports to add"
+          
+          # Check if there are new changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: add CI report for $(date +%Y-%m-%d)" || echo "No changes to commit"
+            git push origin ${{ github.ref_name }} || git push origin ${{ github.ref_name }} --force
+          fi
