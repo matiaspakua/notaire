@@ -27,6 +27,10 @@
 <tr class="even">
 <td><strong>Referencias Cruzadas:</strong></td>
 <td>RF 5.1, CU62, CU19</td>
+<tr class="odd">
+<td><strong>GitHub_ID:</strong></td>
+<td><a href="https://github.com/matiaspakua/notaire/issues/203">#203</a></td>
+</tr>
 </tr>
 </tbody>
 </table>

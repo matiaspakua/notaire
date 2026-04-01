@@ -27,6 +27,10 @@
 <tr class="even">
 <td><strong>Referencias Cruzadas:</strong></td>
 <td>RF 1.2.1, RF 1.2.2, RF 1.2.3, RF 1.3.2, CU60</td>
+<tr class="odd">
+<td><strong>GitHub_ID:</strong></td>
+<td><a href="https://github.com/matiaspakua/notaire/issues/155">#155</a></td>
+</tr>
 </tr>
 </tbody>
 </table>
