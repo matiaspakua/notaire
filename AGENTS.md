@@ -165,3 +165,37 @@ cd backend-api && mvn spring-boot:run
 5. Run test suite and static analysis before committing
 6. Verify build succeeds: `mvn test` or `mvn package`
 7. Create PR with descriptive message referencing issue (e.g., TASK-123)
+
+## Issue-PR Traceability Rules
+
+When creating or updating issues and PRs, always maintain traceability:
+
+### PR Title Format
+- Include issue reference: `[#ISSUE-NUMBER] <description>`
+- Example: `[#223] docs: add CI/CD markdown reports`
+
+### PR Description
+- Always reference the associated issue in the first line: "Fixes #ISSUE-NUMBER" or "Implements #ISSUE-NUMBER"
+- Add section with labels used and their purpose
+
+### Issue Labels for Traceability
+- Add appropriate type labels: `MEJORAS`, `BUG`, `DOCUMENTACION`, etc.
+- Add component labels: `BACKEND`, `FRONTEND`, `DEVOPS`, `DB`, etc.
+- Add status labels: `in-progress`, `ready-for-dev`, `blocked`, etc.
+
+### Git Commits
+- Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
+- Example: `223/feat: add CI/CD reports to GitHub Pages`
+
+### Workflow Changes
+- When modifying GitHub Actions workflows, ensure:
+  - Jobs use `continue-on-error: true` for non-critical steps
+  - Test reporters have `only-if` conditions checking for report files
+  - All jobs complete successfully without failing the workflow
+
+## Best Practices for CI/CD
+
+1. **Never skip tests** - Use test patterns with `-DfailIfNoTests=false` when filtering
+2. **Handle missing reports** - Use `only-if` for test reporters and conditional steps
+3. **External services** - Avoid dependence on GitHub Code Scanning, use local reports
+4. **Report format** - Generate Markdown reports and publish to GitHub Pages
