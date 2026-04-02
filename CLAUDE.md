@@ -101,9 +101,13 @@ Package root: `com.licensis.notaire`
 
 ## Git Workflow
 
-- Branch: `<TASK-ID>/[feat|fix|add]/<short-name>`
+- Branch: `<ISSUE-ID>/[feat|fix|docs|refactor|ci|chore]/<short-name>` (e.g. `226/fix/claude-config`)
 - Never commit directly to `main`
-- Conventional commits: `<TASK-ID>/feat: ...`, `<TASK-ID>/fix: ...`
+- **Commit & PR titles follow [Conventional Commits](https://www.conventionalcommits.org/):**
+  - Format: `<type>[(scope)]: <description>` — NO issue-ID prefix in the title
+  - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+  - Examples: `fix(config): correct checkout action version`, `feat(api): add endpoint for escrituras`
+  - Issue reference goes in the commit **body**: `Closes #<ISSUE-ID>`
 - Run `mvn test -pl backend-api` before committing
 
 ## Prohibited
