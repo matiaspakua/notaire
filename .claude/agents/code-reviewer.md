@@ -1,10 +1,9 @@
 ---
 description: Code review agent focused on security, performance and best practices
-mode: subagent
 tools:
-  write: false
-  edit: false
-  bash: false
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Code Review Agent
