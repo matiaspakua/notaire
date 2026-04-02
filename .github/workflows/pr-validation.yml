@@ -135,7 +135,7 @@ jobs:
         run: mvn checkstyle:check -pl backend-api -q || true
 
       - name: Upload Checkstyle Results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: checkstyle-report
@@ -155,12 +155,14 @@ jobs:
           branch_name="${{ github.head_ref }}"
           echo "Branch: $branch_name"
           
-          # Allowed prefixes
-          allowed_prefixes="^(main|develop|feature/|bugfix/|hotfix/|release/)"
-          
+          # Allowed patterns:
+          #   Standard:   feature/*, bugfix/*, hotfix/*, release/*, main, develop
+          #   Issue-based: <ISSUE-ID>/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/*
+          allowed_prefixes="^(main|develop|feature/|bugfix/|hotfix/|release/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/)"
+
           if [[ ! "$branch_name" =~ $allowed_prefixes ]]; then
             echo "⚠️  Warning: Branch name doesn't follow conventional naming"
-            echo "Expected: feature/*, bugfix/*, hotfix/*, release/*, main, develop"
+            echo "Expected: feature/*, bugfix/*, hotfix/*, release/*, or <ISSUE-ID>/type/name"
           else
             echo "✅ Branch name follows conventions"
           fi
@@ -238,7 +240,7 @@ EOFMARKDOWN
           echo "PR validation report generated"
 
       - name: Upload Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: pr-validation-report
           path: reports
