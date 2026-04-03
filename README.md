@@ -332,10 +332,20 @@ Contiene:
 
 ### Documentación de Desarrollo
 
-| Archivo | Descripción |
-|---------|-------------|
-| `docs/development/programming.md` | Mejores prácticas de Java fundamentales |
-| `docs/development/refactoring.md` | Reglas para migrar monolito a microservicios |
+Ver la Wiki del proyecto: https://github.com/matiaspakua/notaire/wiki
+
+Documentación disponible en la wiki:
+- **Development Setup** — Configuración del ambiente
+- **Refactoring Plan** — Plan de migración arquitectónica
+- **Plan de Acción** — Decisiones y roadmap actual
+- **Plan Técnico JPA** — Detalles de migración a Spring Data
+- **DevSecOps Pipeline** — CI/CD y seguridad
+- **Contributing** — Guía de contribución
+- **Security Policy** — Políticas de seguridad
+
+Mejores prácticas de programación definidas en [[CLAUDE.md|.claude/rules/]]:
+- `programming.md` — Convenciones y patrones Java
+- `code-quality.md` — Herramientas de calidad (JaCoCo, Checkstyle, SpotBugs)
 
 ### Configuración de MCPs
 
@@ -686,25 +696,41 @@ git push
 
 ### Estructura de archivos en `docs/wiki/`
 
-Los archivos Markdown en esta carpeta están sincronizados con la wiki:
+Los archivos Markdown en esta carpeta son el espejo de la wiki. La wiki es la fuente de verdad. Cambios en `docs/wiki/` se sincronizan manualmente a la wiki:
 
-| Archivo | Página en Wiki |
-|---------|----------------|
-| `Home.md` | Página principal |
-| `Business-Documentation.md` | Documentación de negocio |
-| `Refactoring-Plan.md` | Plan de refactoring |
-| `Development-Setup.md` | Configuración de desarrollo |
-| `DevSecOps-Pipeline.md` | Pipeline CI/CD |
-| `SECURITY.md` | Seguridad |
-| `CONTRIBUTING.md` | Contribución |
-| `PLAN.md` | Plan general |
-| `PLANO_REFACTORING.md` | Plan de refactoring |
+#### Documentación del Negocio (en wiki)
+| Archivo | Página en Wiki | Descripción |
+|---------|----------------|-------------|
+| `Business-Documentation.md` | Documentación de Negocio | Índice general de todas las secciones |
+| (08 secciones en subdirs) | 00-09 Sectores SDLC | Cronograma, Requerimientos, Actores, Casos, Datos, Progreso, Manuales, EA, App, Templates |
 
-### Agregar nueva página a la wiki
+#### Documentación del Desarrollo (migrada a wiki)
+| Archivo | Página en Wiki | Descripción |
+|---------|----------------|-------------|
+| `Home.md` | Home | Página principal y descripción del proyecto |
+| `Development-Setup.md` | Development Setup | Configuración del ambiente de desarrollo |
+| `Refactoring-Plan.md` | Refactoring Plan | Plan de migración a microservicios |
+| `PLAN.md` | Plan de Acción | Acciones pendientes (Marzo 2026) |
+| `PLANO_REFACTORING.md` | Plan Técnico JPA | Detalles de migración JpaControllers → Spring Data |
+| `DevSecOps-Pipeline.md` | DevSecOps Pipeline | CI/CD, seguridad, workflows |
+| `SECURITY.md` | Security Policy | Políticas de seguridad |
+| `CONTRIBUTING.md` | Contributing | Guía de contribución |
+| (Agent-Sessions.md) | Agent Sessions | Logs de sesiones de IA (links a repo principal) |
 
-1. Crear archivo `.md` en `docs/wiki/`
-2. Agregar enlace en `SIDEBAR.md`
-3. Following los métodos anteriores para sincronizar con GitHub
+### Estructura de la Wiki Actualizada (Marzo 2026)
+
+**Estado:** Wiki completamente migrada desde `docs/` (vea issue #228)
+- ✅ 9 documentos de desarrollo (Home, Setup, Plans, Security, Contributing)
+- ✅ 10 secciones de documentación de negocio (Cronograma, Requerimientos, Actores, Casos, Datos, Progreso, Manuales, EA, App, Templates)
+- ✅ 68 casos de uso individuales
+- ✅ 29 imágenes y diagramas
+- ✅ 5 archivos de tracking de progreso (CSV)
+
+**Notas importantes:**
+- La **wiki es la fuente de verdad** para documentación
+- Ediciones se hacen directamente en el repositorio wiki (`matiaspakua/notaire.wiki`)
+- Los archivos en `docs/wiki/` del repo principal son un espejo para referencia local
+- Para cambios significativos, usar GitHub web UI o clonar `notaire.wiki.git`
 
 ---
 
