@@ -14,8 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@ActiveProfiles("test")
-class ApiIntegrationTest extends BaseIntegrationTest {
+@ActiveProfiles("test-h2")
+class ApiIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
