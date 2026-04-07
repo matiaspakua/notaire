@@ -38,9 +38,11 @@ target/
 *.log
 /scripts/doc2md/venv/
 .obsidian/
+.DS_Store
 .DS_Store/*
 docs/.DS_Store/*
 docs/business/.DS_Store/*
+.claude/worktrees/*
 
 # E2E Swing tests
 integration-test/e2e-swing/.venv/

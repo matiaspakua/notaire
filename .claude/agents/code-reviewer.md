@@ -1,4 +1,5 @@
 ---
+name: Code Reviewers
 description: Code review agent focused on security, performance and best practices
 tools:
   - Read
