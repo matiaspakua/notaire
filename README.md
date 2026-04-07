@@ -255,6 +255,15 @@ mvn test -Dtest="*ServiceTest"
 
 # Tests de integración HTTP
 bash scripts/test.sh
+
+# Run tests with coverage
+mvn test -pl backend-api
+
+# Generate HTML report
+mvn jacoco:report -pl backend-api
+
+# View report
+open backend-api/target/site/jacoco/index.html
 ```
 
 ### Acceder a la Aplicación
@@ -284,12 +293,13 @@ El proceso de migración fue asistido por diferentes herramientas de IA que evol
 
 ### Evolución de Herramientas
 
-| Herramienta | Período | Uso Principal |
-|------------|---------|----------------|
-| **Google Antigravity** | Inicio | Búsqueda de patrones, entender código existente |
-| **VS Code + Copilot** | Medio | Autocompletado, refactoring inline, tests |
-| **Cursor** | Medio-Avanzado | Edit multi-archivo, búsqueda semántica, reglas personalizadas |
-| **OpenCode** | Actual | Herramientas nativas, MCPs, control total |
+| Herramienta            | Período | Uso Principal                                                 |
+|------------------------|---------|---------------------------------------------------------------|
+| **Google Antigravity** | Inicio | Búsqueda de patrones, entender código existente               |
+| **VS Code + Copilot**  | Medio | Autocompletado, refactoring inline, tests                     |
+| **Cursor**             | Medio-Avanzado | Edit multi-archivo, búsqueda semántica, reglas personalizadas |
+| **OpenCode**           | Actual | Herramientas nativas, MCPs, control total                     |
+| **Claude Code**        | Actual | Como complemento a OpenCode                                   |
 
 ### ¿Por qué OpenCode?
 
@@ -490,50 +500,60 @@ notaire/
 
 ## 9. Tareas Pendientes
 
-### Prioridad Alta - Validación Funcional
+Todas las tareas pendientes han sido trasladadas a **GitHub Issues** para mejor seguimiento y colaboración. Consulta el proyecto de GitHub para ver el estado actual:
 
-- [ ] Completar migración del 30% de formularios restantes
-- [ ] Validar que todos los formularios funcionen con la API REST
-- [ ] Probar flujos completos de negocio (cliente → gestión → presupuesto → pago)
-- [ ] Verificar generación de reportes PDF
-- [ ] Testing manual de casos edge
+**[Ver todas las tareas en GitHub Issues →](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3ATAREA)**
 
-### Prioridad Alta - Backend
+### Resumen de Tareas Creadas
 
-- [ ] Implementar autenticación JWT/OAuth2
-- [ ] Completar el 5% de APIs restantes
-- [ ] Agregar paginación a todos los endpoints
+| Prioridad | Cantidad | Issues |
+|-----------|----------|--------|
+| **Alta** | 8 | #240-247 |
+| **Media** | 5 | #248-252 |
+| **Baja** | 9 | #253-261 |
+| **Total** | **22** | Ver listado completo arriba |
 
-### Prioridad Media - Testing y Calidad
+### Categorías por Área
 
-- [x] Coverage de tests al 80% mínimo (JaCoCo)
-- [x] Tests de integración con Testcontainers
-- [ ] Tests E2E automatizados
-- [x] Configurar pipeline CI/CD (GitHub Actions)
-- [x] Análisis estático de código (SpotBugs)
-- [ ] Logs en formato Prometheus
-- [ ] Visualización con Grafana
-- [ ] Tests unitarios con tags a requerimientos
+**Validación Funcional & Frontend** (5 issues)
+- #240: Completar migración de formularios
+- #241: Validar formularios con API REST
+- #242: Probar flujos de negocio E2E
+- #243: Verificar generación de reportes PDF
+- #244: Testing de casos edge
 
-### Prioridad Media - Base de Datos
+**Backend & API** (3 issues)
+- #245: Implementar JWT/OAuth2
+- #246: Completar APIs pendientes
+- #247: Agregar paginación
 
-- [ ] Flyway para migración y versionado de base de datos
+**Testing & Calidad** (2 issues)
+- #248: Tests E2E automatizados
+- #251: Tests unitarios con tags de requerimientos
 
-### Prioridad Baja - Despliegue
+**DevOps & Monitoreo** (6 issues)
+- #249: Logs en formato Prometheus
+- #250: Dashboard Grafana
+- #253: Kubernetes
+- #254: HTTPS/TLS
+- #255: Monitoreo producción
+- #256: Backups PostgreSQL
 
-- [ ] Configurar Kubernetes (K8s)
-- [x] Implementar Docker multi-stage build
-- [ ] Configurar HTTPS/TLS
-- [ ] Setup de monitoreo (Prometheus, Grafana)
-- [ ] Backup automatizado de PostgreSQL
+**Base de Datos** (1 issue)
+- #252: Flyway para migraciones
 
-### Prioridad Baja - Documentación
+**Documentación** (5 issues)
+- #257: Swagger/OpenAPI completo
+- #258: Migrar a Markdown
+- #259: Guía de instalación producción
+- #260: Documentar arquitectura
+- #261: Manual de usuario
 
-- [ ] Documentar todos los endpoints en Swagger
-- [ ] Migrar documentación original a Markdown
-- [ ] Crear guía de instalación para producción
-- [ ] Documentar arquitectura del sistema
-- [ ] Crear manual de usuario
+### Filtrar por Prioridad
+
+- [Alta](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Ahigh"+label%3ATAREA)
+- [Media](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Amedium"+label%3ATAREA)
+- [Baja](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Alow"+label%3ATAREA)
 
 ---
 
