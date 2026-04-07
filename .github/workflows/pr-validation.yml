@@ -135,7 +135,7 @@ jobs:
         run: mvn checkstyle:check -pl backend-api -q || true
 
       - name: Upload Checkstyle Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: checkstyle-report
@@ -240,7 +240,7 @@ EOFMARKDOWN
           echo "PR validation report generated"
 
       - name: Upload Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pr-validation-report
           path: reports
