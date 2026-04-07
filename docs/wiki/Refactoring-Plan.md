@@ -81,9 +81,18 @@ Package: com.licensis.notaire.gui
 
 ## Estado Actual
 
-### Issues Creadas
-- 95 Requerimientos Funcionales (GitHub Issues #3-#95)
-- 25 Requerimientos No Funcionales (Issues #70-#93, #121)
+### Tracking de Issues
+
+All issues are now tracked exclusively in GitHub for better visibility and project management:
+
+- **68 Use Cases**: GitHub Issues #154-#221
+- **22 Migration Tasks**: GitHub Issues #240-#261
+- **48 Improvements/Enhancements**: GitHub Issues #262-#309
+  - Critical Security & Config: #262-#271
+  - High Priority Backend & DevOps: #272-#289
+  - Medium Priority Documentation & Infrastructure: #290-#309
+
+See [GITHUB_ISSUES_TRACEABILITY.md](../../business/05_PS%20-%20Progreso%20Sistema/GITHUB_ISSUES_TRACEABILITY.md) for complete index.
 
 ### Servicios Implementados
 - ✅ `PersonaService`
@@ -95,6 +104,7 @@ Package: com.licensis.notaire.gui
 
 ## Recursos
 
-- [Requerimientos](https://github.com/matiaspakua/notaire/labels/requerimiento-funcional)
+- [GitHub Issues - All Tracked Work](https://github.com/matiaspakua/notaire/issues)
+- [Traceability Index](../../business/05_PS%20-%20Progreso%20Sistema/GITHUB_ISSUES_TRACEABILITY.md)
 - [Backend API](https://github.com/matiaspakua/notaire/labels/BACKEND)
 - [Frontend](https://github.com/matiaspakua/notaire/labels/FRONTEND)

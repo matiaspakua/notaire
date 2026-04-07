@@ -1,4 +1,5 @@
 ---
+name: Security Auditors
 description: Security expert focused on identifying vulnerabilities and security issues
 mode: subagent
 permission:
