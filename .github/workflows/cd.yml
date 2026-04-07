@@ -29,7 +29,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -98,7 +98,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download SBOM
         uses: actions/download-artifact@v8
@@ -127,7 +127,7 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Update Container Registry Description
         if: vars.DOCKERHUB_USERNAME != ''
@@ -148,7 +148,7 @@ jobs:
     if: always()
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -232,7 +232,7 @@ EOFMARKDOWN
     continue-on-error: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
