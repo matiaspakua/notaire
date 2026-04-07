@@ -95,7 +95,7 @@ jobs:
           retention-days: 30
 
       - name: Publish Unit Test Results
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         continue-on-error: true
         with:
@@ -106,7 +106,7 @@ jobs:
           only-if: backend-api/target/surefire-reports
 
       - name: Publish Unit Test Results (Frontend)
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         continue-on-error: true
         with:
@@ -149,7 +149,7 @@ jobs:
           retention-days: 30
 
       - name: Publish Integration Test Results
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         continue-on-error: true
         with:
