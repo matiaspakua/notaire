@@ -344,18 +344,7 @@ Contiene:
 
 Ver la Wiki del proyecto: https://github.com/matiaspakua/notaire/wiki
 
-Documentación disponible en la wiki:
-- **Development Setup** — Configuración del ambiente
-- **Refactoring Plan** — Plan de migración arquitectónica
-- **Plan de Acción** — Decisiones y roadmap actual
-- **Plan Técnico JPA** — Detalles de migración a Spring Data
-- **DevSecOps Pipeline** — CI/CD y seguridad
-- **Contributing** — Guía de contribución
-- **Security Policy** — Políticas de seguridad
 
-Mejores prácticas de programación definidas en [[CLAUDE.md|.claude/rules/]]:
-- `programming.md` — Convenciones y patrones Java
-- `code-quality.md` — Herramientas de calidad (JaCoCo, Checkstyle, SpotBugs)
 
 ### Configuración de MCPs
 
@@ -413,34 +402,7 @@ Para agregar controles custom antes y despues de cada acción a ejecutar por los
 https://opencode.ai/docs/agents/
 
 
----
 
-## 7. Documentación del Proyecto
-
-### Estructura de Documentación
-
-```
-notaire/
-├── AGENTS.md                    # Configuración del agente IA
-├── .agents/skills/              # Skills de OpenCode
-│   ├── java/
-│   ├── backend/
-│   ├── testing/
-│   ├── devops/
-│   ├── product-owner/
-│   └── analyst/
-├── docs/
-│   ├── business/                # Documentación de negocio
-│   ├── development/             # Guías de desarrollo
-│   └── ...
-├── init-db/
-│   ├── 01-schema.sql           # Esquema PostgreSQL
-│   └── 02-data.sql             # Datos iniciales
-└── scripts/
-    ├── start.sh                # Iniciar aplicación
-    ├── stop.sh                 # Detener aplicación
-    └── test.sh                 # Tests de integración
-```
 
 ### Migración de Base de Datos
 
@@ -486,7 +448,7 @@ notaire/
 | 2026-02-21 | Batch migration - Clientes |
 | 2026-02-24 | Mejoras en AGENTS.md |
 
-### Estado Actual (Febrero 2026)
+### Estado Actual (Febrero 2026...)
 
 | Componente | Estado | Detalle |
 |------------|--------|---------|
@@ -496,66 +458,6 @@ notaire/
 | **Docker Compose** | ✅ | postgres + backend + pgadmin |
 | **Tests E2E** | 🔄 | Shell tests, JUnit domain tests |
 
----
-
-## 9. Tareas Pendientes
-
-Todas las tareas pendientes han sido trasladadas a **GitHub Issues** para mejor seguimiento y colaboración. Consulta el proyecto de GitHub para ver el estado actual:
-
-**[Ver todas las tareas en GitHub Issues →](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3ATAREA)**
-
-### Resumen de Tareas Creadas
-
-| Prioridad | Cantidad | Issues |
-|-----------|----------|--------|
-| **Alta** | 8 | #240-247 |
-| **Media** | 5 | #248-252 |
-| **Baja** | 9 | #253-261 |
-| **Total** | **22** | Ver listado completo arriba |
-
-### Categorías por Área
-
-**Validación Funcional & Frontend** (5 issues)
-- #240: Completar migración de formularios
-- #241: Validar formularios con API REST
-- #242: Probar flujos de negocio E2E
-- #243: Verificar generación de reportes PDF
-- #244: Testing de casos edge
-
-**Backend & API** (3 issues)
-- #245: Implementar JWT/OAuth2
-- #246: Completar APIs pendientes
-- #247: Agregar paginación
-
-**Testing & Calidad** (2 issues)
-- #248: Tests E2E automatizados
-- #251: Tests unitarios con tags de requerimientos
-
-**DevOps & Monitoreo** (6 issues)
-- #249: Logs en formato Prometheus
-- #250: Dashboard Grafana
-- #253: Kubernetes
-- #254: HTTPS/TLS
-- #255: Monitoreo producción
-- #256: Backups PostgreSQL
-
-**Base de Datos** (1 issue)
-- #252: Flyway para migraciones
-
-**Documentación** (5 issues)
-- #257: Swagger/OpenAPI completo
-- #258: Migrar a Markdown
-- #259: Guía de instalación producción
-- #260: Documentar arquitectura
-- #261: Manual de usuario
-
-### Filtrar por Prioridad
-
-- [Alta](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Ahigh"+label%3ATAREA)
-- [Media](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Amedium"+label%3ATAREA)
-- [Baja](https://github.com/matiaspakua/notaire/issues?q=is%3Aissue+is%3Aopen+label%3A"priority%3Alow"+label%3ATAREA)
-
----
 
 ## Screenshots
 
