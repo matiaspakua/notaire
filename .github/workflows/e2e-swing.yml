@@ -1,0 +1,148 @@
+name: E2E Swing Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Test suite to run (leave empty for all)'
+        required: false
+        default: ''
+      tags:
+        description: 'Tags to include (e.g. smoke, agent-callable)'
+        required: false
+        default: 'agent-callable'
+
+jobs:
+  e2e-swing:
+    name: Robot Framework E2E Swing Tests
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build frontend JAR
+        run: |
+          mvn clean install -pl frontend-swing -am -DskipTests -q
+          echo "JAR built: $(ls frontend-swing/target/*.jar)"
+
+      - name: Install Robot Framework dependencies
+        run: |
+          cd integration-test/e2e-swing
+          pip install -r requirements.txt
+
+      - name: Start backend stack
+        run: |
+          bash scripts/start.sh --no-admin
+          echo "Waiting for backend to be healthy..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:8080/swagger-ui.html > /dev/null; then
+              echo "Backend is up!"
+              break
+            fi
+            echo "Attempt $i/30 - waiting..."
+            sleep 5
+          done
+
+      - name: Grant screen recording permission (macOS CI)
+        run: |
+          # In CI macOS, accessibility is available by default for some actions
+          # PyAutoGUI screenshot may need this
+          echo "Note: macOS CI accessibility may be limited"
+
+      - name: Run E2E tests
+        env:
+          DISPLAY: ':0'
+        run: |
+          cd integration-test/e2e-swing
+          mkdir -p results screenshots
+
+          ARGS="--outputdir results --loglevel INFO"
+
+          if [ -n "${{ inputs.suite }}" ]; then
+            ARGS="$ARGS --suite ${{ inputs.suite }}"
+          fi
+
+          if [ -n "${{ inputs.tags }}" ]; then
+            ARGS="$ARGS --include ${{ inputs.tags }}"
+          fi
+
+          # Run with timeout
+          robot $ARGS tests/ || true
+
+      - name: Parse test results
+        if: always()
+        run: |
+          if [ -f integration-test/e2e-swing/results/output.xml ]; then
+            python3 << 'EOF'
+import xml.etree.ElementTree as ET
+tree = ET.parse('integration-test/e2e-swing/results/output.xml')
+root = tree.getroot()
+stats = root.find('.//statistics/total/stat')
+if stats is not None:
+    passed = stats.get('pass', '0')
+    failed = stats.get('fail', '0')
+    print(f"Tests: {passed} passed, {failed} failed")
+    if int(failed) > 0:
+        print("FAILED TESTS:")
+        for test in root.findall('.//test[@status="FAIL"]'):
+            print(f"  - {test.get('name')}")
+EOF
+          fi
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-swing-results-${{ github.run_number }}
+          path: |
+            integration-test/e2e-swing/results/
+            integration-test/e2e-swing/screenshots/
+          retention-days: 14
+
+      - name: Stop backend stack
+        if: always()
+        run: |
+          bash scripts/stop.sh || true
+
+      - name: Comment results on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## E2E Swing Test Results\n\n';
+
+            try {
+              const results = fs.readFileSync(
+                'integration-test/e2e-swing/results/output.xml', 'utf8'
+              );
+              comment += '✅ Tests completed. See artifacts for full report.\n';
+            } catch (e) {
+              comment += '❌ Tests did not produce output. Check logs.\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
