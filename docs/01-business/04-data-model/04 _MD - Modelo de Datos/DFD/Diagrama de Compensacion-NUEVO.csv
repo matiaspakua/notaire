@@ -1,0 +1,165 @@
+Id,Name,Shape Library,Page ID,Contained By,Group,Line Source,Line Destination,Source Arrow,Destination Arrow,Status,Text Area 1,Comments
+1,Document,,,,,,,,,Draft,Diagrama de Compensacion-NUEVO,
+2,Page,,,,,,,,,,Página-1,
+3,Imported Shape,,2,,,,,,,,Tipos de Documentos,
+4,Imported Shape,,2,,,,,,,,Historial,
+5,Imported Shape,,2,,,,,,,,Gestiones de Escrituras,
+6,Imported Shape,,2,,,,,,,,Folios,
+7,Imported Shape,,2,,,,,,,,Tipos de Trámite,
+8,Imported Shape,,2,,,,,,,,Conceptos,
+9,Imported Shape,,2,,,,,,,,Estados,
+10,Imported Shape,,2,,,,,,,,Presupuestos,
+11,Imported Shape,,2,,,,,,,,Identificaciones,
+12,Imported Shape,,2,,,,,,,,Testimonios,
+13,Imported Shape,,2,,,,,,,,Copias,
+14,Imported Shape,,2,,,,,,,,Pagos,
+15,Imported Shape,,2,,,,,,,,Ítems,
+16,Imported Shape,,2,,,,,,,,Documentos Presentados,
+17,Imported Shape,,2,,,,,,,,Plantillas Trámites,
+18,Imported Shape,,2,,,,,,,,Plantillas Presupuestos,
+19,Imported Shape,,2,,,,,,,,Suplencias,
+20,Imported Shape,,2,,,,,,,,Personas,
+21,Imported Shape,,2,,,,,,,,Escrituras,
+22,Imported Shape,,2,,,,,,,,Usuarios,
+23,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+24,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+25,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+26,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+27,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+28,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+29,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+30,Imported Shape,,2,,,,,,,,"El protocolo auxiliar, puede no tener una gestión",
+31,Imported Shape,,2,,,,,,,,No existen pagos si no existe un presupuesto asociado,
+32,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+33,Imported Shape,,2,,,,,,,,"I:   Null
+M: I
+B:  I",
+34,Imported Shape,,2,,,,,,,,"Un folio en ""errose/no paso"" no tiene una escritura asociada",
+35,Imported Shape,,2,,,,,,,,Se puede eliminar una copia que nunca se imprimió,
+36,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+37,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+38,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+39,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+40,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+41,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+42,Imported Shape,,2,,,,,,,,"I:   I 
+M: I
+B:  I",
+43,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B: I",
+44,Imported Shape,,2,,,,,,,,"I:   I  
+M: I
+B: I",
+45,Imported Shape,,2,,,,,,,,"I:   I 
+M: I
+B:  I",
+46,Imported Shape,,2,,,,,,,,Trámites,
+47,Imported Shape,,2,,,,,,,,"I:   I 
+M: I
+B:  I",
+48,Imported Shape,,2,,,,,,,,"I:   Null
+M: I
+B:  I",
+49,Imported Shape,,2,,,,,,,,"I:   Null
+M: I
+B:  I",
+50,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+51,Imported Shape,,2,,,,,,,,Inmuebles,
+52,Imported Shape,,2,,,,,,,,"I:   Null
+M: I
+B:  I",
+53,Imported Shape,,2,,,,,,,,"I:   I 
+M: I
+B:  I",
+54,Imported Shape,,2,,,,,,,,TiposFolio,
+55,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+56,Imported Shape,,2,,,,,,,,FoliosCopias,
+57,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+58,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+59,Imported Shape,,2,,,,,,,,Movimientos Testimonio,
+60,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+61,Imported Shape,,2,,,,,,,,Registro Auditoria,
+62,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+63,Imported Shape,,2,,,,,,,,TramitesPersonas,
+64,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+65,Imported Shape,,2,,,,,,,,"I:   I
+M: I
+B:  I",
+66,Line,,2,,,,5,Arrow,None,,Id_persona_escribano,
+67,Line,,2,,,6,21,None,Arrow,,Id_escritura,
+68,Line,,2,,,6,20,None,Arrow,,Id_persona_escribano,
+69,Line,,2,,,12,21,None,Arrow,,Id_escritura,
+70,Line,,2,,,4,5,None,Arrow,,Id_gestión,
+71,Line,,2,,,4,9,None,Arrow,,Id_estado,
+72,Line,,2,,,14,10,None,Arrow,,Id_presupuesto,
+73,Line,,2,,,15,10,None,Arrow,,Id_presupuesto,
+74,Line,,2,,,13,12,None,Arrow,,Id_testimonio,
+75,Line,,2,,,13,20,None,Arrow,,Id_persona,
+76,Line,,2,,,11,,None,Arrow,,Id_persona,
+77,Line,,2,,,19,,None,Arrow,,Id_persona_suplantado,
+78,Line,,2,,,19,20,None,Arrow,,Id_persona_suplente,
+79,Line,,2,,,22,,None,Arrow,,Id_persona,
+80,Line,,2,,,18,7,None,Arrow,,Id_Tipos_trámite,
+81,Line,,2,,,18,8,None,Arrow,,Id_concepto,
+82,Line,,2,,,17,7,None,Arrow,,Id_Tipos_trámite,
+83,Line,,2,,,17,3,None,Arrow,,Id_documento,
+84,Line,,2,,100,,,None,None,,,
+85,Line,,2,,100,20,,Arrow,None,,,
+86,Line,,2,,100,,,None,None,,Id_persona,
+87,Line,,2,,,46,7,None,Arrow,,Id_Tipos_trámite,
+88,Line,,2,,,46,5,None,Arrow,,Id_gestion,
+89,Line,,2,,,46,21,None,Arrow,,Id_escritura,
+90,Line,,2,,,,,Arrow,Arrow,,Id_presupuesto,
+91,Line,,2,,,,51,None,Arrow,,Id_inmueble,
+92,Line,,2,,,16,46,None,Arrow,,Id_tramite,
+93,Line,,2,,,6,54,None,Arrow,,Id_tipos_folio,
+94,Line,,2,,,56,,None,Arrow,,Id_copias,
+95,Line,,2,,,,6,None,Arrow,,Id_folios,
+96,Line,,2,,,59,12,None,Arrow,,Id_testimonio,
+97,Line,,2,,,61,22,None,Arrow,,Id_usuario,
+98,Line,,2,,,63,46,None,Arrow,,Id_tramite,
+99,Line,,2,,,63,,None,Arrow,,Id_persona_cliente,
+100,Group 1,,2,,,,,,,,,

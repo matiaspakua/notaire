@@ -1,0 +1,121 @@
+GitHub_ID,Titulo,Tipo,Descripción
+#3,Gestionar Trámites,Requerimientos Funcionales,Conjunto de requerimientos asociados a la gestion de los trámites
+#4,Preparar Presupuestos,Requerimientos Funcionales,conjunto de requerimientos asociados a la gestión de presupuestos
+#5,Procesar solicitud de presupuestos:,Requerimientos Funcionales,"Tomar datos esenciales de la persona que solicita un presupuesto, así como: nombre, apellido, tipo y número de identificación, teléfono y correo electrónico. Generar un número de presupuesto para permitir ser identificado posteriormente, en caso de que el cliente decida aceptarlo y comenzar un trámite."
+#6,Editar plantillas de presupuestos,Requerimientos Funcionales,"Permitir a los usuarios personalizar la plantilla, detallando en las mismas los conceptos a ser presupuestados, los valores de los mismos y el total del presupuesto.  Se detallan gastos fijos y variables (impuestos, sellos, etc.)."
+#7,Imprimir presupuestos:,Requerimientos Funcionales,Provee la capacidad de imprimir los presupuestos existentes en papel.
+#8,Modificar presupuestos:,Requerimientos Funcionales,Permitir al usuario modificar los conceptos y valores de los presupuestos.
+#9,Agregar ítems adicionales a los presupuestos ya realizados.,Requerimientos Funcionales,Agregar ítems adicionales a los presupuestos ya realizados.
+#10,Iniciar trámites.,Requerimientos Funcionales,Requerimientos asociados al inicio de un trámite
+#11,Verificar Prepuestos.,Requerimientos Funcionales,"Para iniciar cualquier trámite, debe existir si o si un presupuesto, ya que el mismo es asociado al trámite. Si no existe uno, se deberá crearlo en el momento en que se desee iniciar cualquier tipo de trámite."
+#12,Verificar Clientes,Requerimientos Funcionales,"Para iniciar cualquier tipo de trámite, la persona interesada deberá estar registrada como cliente de la escribanía, si no es así, se deberá dar de alta a la persona como cliente. Ver RF 2."
+#13,Registrar Inicio de gestión de trámites,Requerimientos Funcionales,"Se deberá registra la fecha en que se inició un determinado trámite. El tipo de trámite y cómo está compuesto, o sea, qué documentos y certificados son necesarios para poder llevarlo a cabo, y el escribano a cargo de realizar la gestión."
+#14,Administrar  Certificados y Documentos,Requerimientos Funcionales,Requerimientos asociados con la gestión de la documentación necesaria para los trámites
+#15,Determinar los documentos necesarios para cada trámite.,Requerimientos Funcionales,Identificar aquellos que posean vencimientos o impuestos a pagar y presentar estos datos al usuario.
+#16,Generar solicitudes de certificados y documentos.,Requerimientos Funcionales,Permite obtener una lista de todos los documentos y certificados que deben ser presentados para la gestion de un determinado trámite
+#17,Imprimir solicitudes.,Requerimientos Funcionales,Se debe permitir la impresión (en papel o PDF) de la lista de documentos necesarios para un determinado trámite.
+#18,Informar cuáles y cuándo fueron preparados los documentos,Requerimientos Funcionales,Permitir llevar registro de los documentos que deben ser preparados para entregar por las entidades externas.
+#19,Informar cuales y cuando fueron presentados/recibidos los documentos (seguimiento),Requerimientos Funcionales,"permitir realizar el seguimiento de los documentos a través de la presentación de los mismos, deudas, impuestos y vencimientos de los documentos necesarios para las gestiones. Se deberá informar a los usuarios de estos eventos mediante algún tipo de aviso automático. Los avisos deberán ser disparados por aquellos documentos próximos a vencer, a fin de evitar demoras en los trámites. Se deberá poder informar si fueron canceladas las deudas y liberados los documentos, y en caso contrario, listar cuales documentos están pendientes de pago y/o liberación."
+#20,Abonar trámite.,Requerimientos Funcionales,Requerimientos asociados con los pagos de los trámites
+#21,"Registrar quien abona el trámite (comprador, vendedor, etc.)",Requerimientos Funcionales,"permitir identificar al cliente y al trámite a ser abonado, la fecha en que fue abonado y el saldo restante. Todo trámite se debe asociar a un presupuesto. Por lo tanto, el costo y saldo del trámite se calcula en base al mismo."
+#22,Abonar presupuestos,Requerimientos Funcionales,"Los presupuestos se pueden abonar por completo o pueden ser abonados en cuotas, las cuales no son fijas, esto quiere decir que los clientes pueden pagar el costo del trámite en cualquier cantidad de cuotas, sin importar el monto. Se debe advertir de cualquier deuda que presente una gestión, al momento de finalizar la misma."
+#23,Generar e imprimir recibos de pagos,Requerimientos Funcionales,"Para cada pago realizado se deberá generar e imprimir un recibo común en donde se detalle: el cliente que abona el trámite, la fecha de pago, el concepto que se esta abonando y el total abonado."
+#24,Consultar estado e historial de los trámites.,Requerimientos Funcionales,"Requerimientos asociados a consultar el estado actual de un tramite, y el historial (cambios de estado) del mismo"
+#25,Saber el estado de un trámite en un determinado momento.,Requerimientos Funcionales,Saber el estado de un trámite en un determinado momento.
+#26,Informar el historial de un trámite,Requerimientos Funcionales,"Permitir visualizar la cronología del trámite, indicando todos los cambios de estados, las fechas en que se realizaron y las observaciones para cada etapa de la gestión del trámite. Este registro deberá informar todos los documentos / certificados solicitados para un determinado trámite. El registro incluirá: fecha de solicitud, fecha de entrega, documentos/certificados pendientes, si están liberados, etc."
+#27,Generar Escrituras,Requerimientos Funcionales,"Requerimientos asociados con la creación, modificación y cambios de estado de las escrituras"
+#28,Preparar escrituras,Requerimientos Funcionales,"Permitir registrar en la gestión de los trámites, nuevas escrituras. Se deberá registrar: número de escritura, fecha, números de folio utilizados (de una lista de folios disponibles), trámites involucrados, cuerpo de escritura, rol de cada cliente involucrado"
+#29,Firmar Escrituras,Requerimientos Funcionales,Todas las escrituras para poder ser aprobadas deben estar firmadas por el escribano y por el o los clientes intervinientes.
+#30,Informar que escritura/s conforman un trámite,Requerimientos Funcionales,"Número de escritura, folios que la componen, fecha de la escritura y registro al cual pertenece"
+#31,Modificar Escritura,Requerimientos Funcionales,Permitir modificar alguno de los datos un escritura previamente generada.
+#32,Administrar Inscripciones,Requerimientos Funcionales,Requerimientos asociados con la inscripción de los trámites.
+#33,Generar y registrar testimonios de escrituras,Requerimientos Funcionales,"Se deberá registrar los folios utilizados, la fecha en que se creo el testimonio, el número de testimonio, copias generadas, cuando se presentó para inscribir si corresponde, y se deberá indicar si fueron liberadas todas las deudas."
+#34,Registrar los testimonios inscriptos,Requerimientos Funcionales,"indicando la fecha de inscripción, si tuvo observaciones, el número de inscripción, cuando fue recibido en la escribanía y en los casos donde se debió reenviar para inscribir causa de observaciones o algún otro evento, registrar la fecha de reingreso."
+#35,Registrar retiro de testimonio.,Requerimientos Funcionales,Registrar cuando y por quién fue retirado un testimonio.
+#36,Archivar Trámites.,Requerimientos Funcionales,Requerimientos asociados con el proceso de archivas trámites de gestión.
+#37,Archivar tramite,Requerimientos Funcionales,"Una vez inscripto, el legajo del trámite debe ser archivado informando si quedaron deudas sin cancelar. Asignar un número de archivo y registrar los siguientes datos: fecha de archivo, número de bibliorato, número de carpeta y observaciones."
+#38,Administrar Clientes,Requerimientos Funcionales,Requerimientos asociados con la administración de clientes
+#39,Registrar nuevos clientes,Requerimientos Funcionales,"Registrar nuevos clientes de la escribanía con los siguientes datos: Nombre y Apellido completos, Nacionalidad, Tipo y Número de identificación, CUIT / CUIL, Estado civil / Número de nupcias., Ocupación., Domicilio, Teléfono / Correo Electrónico"
+#40,Modificación de clientes,Requerimientos Funcionales,Permitir a los usuarios modificar cualquier dato de los clientes.
+#41,Buscar y ver detalle de clientes,Requerimientos Funcionales,Permitir la posibilidad de buscar cliente y ver todos los datos personales del mismo. Ver trámites y carpetas asociados a ese cliente. Ver si posee trámites inconclusos o deudas.
+#42,Buscar gestiones de cliente,Requerimientos Funcionales,Busca y presenta la lista de gestiones asociadas a un cliente.
+#43,Administrar Usuarios,Requerimientos Funcionales,Requerimientos asociados con la gestión de usuarios del sistema
+#44,Crear nuevos usuarios.,Requerimientos Funcionales,"Creación y Modificación de usuario del sistema, y asociación de permisos asignados"
+#45,Definir nuevos usuarios,Requerimientos Funcionales,Definir nuevos usuarios del sistema y determinar el conjunto de funciones a las cuales ese usuario tiene acceso (permisos).
+#46,Registro de Auditoria,Requerimientos Funcionales,"Ver registro de eventos en el sistema, lo cual incluye ver el estado de los usuarios, cuando ingresaron al sistema, que cambios realizados y sobre que elementos."
+#47,Permitir modificar los dados de los usuarios,Requerimientos Funcionales,Permitir modificar los dados de los usuarios así como cambiar las funciones a las cuales tienen acceso (permisos).
+#48,Generar Índices.,Requerimientos Funcionales,Requerimientos asociados con la generación del libro de incices.
+#49,Ver índices de trámites,Requerimientos Funcionales,"Los índices se generan para cada protocolo. Se deberá indicar el año, registro de escribano, número de escritura, el nombre del trámite, fecha de escritura, clientes (partes involucradas), número del primer folio, tipo de protocolo."
+#50,Permitir editar e imprimir los índices.,Requerimientos Funcionales,Permitir editar e imprimir los índices.
+#51,Generar las Declaraciones Juradas (DDJJ),Requerimientos Funcionales,Requerimientos asociados con la generación de DDJJ
+#52,Generar DDJJ a partir de las escrituras realizadas en el mes.,Requerimientos Funcionales,"Se genera una DDJJ por cada Protocolo y por cada Registro de escribano. Se debe indicar en el encabezado: Mes y Año, Tipo de protocolo, Registro y titular del mismo/suplentes. En la descripción: número de escritura, número de folio en el que comienza la escritura, día del mes en que se otorgó, tipo de trámite, personas involucradas, impuestos a pagar. Si se trata del Protocolo Principal, y existen trámites relacionados con inmuebles, además hay que detallar: Nomenclatura Catastral, Valuación Fiscal y Precio de la misma."
+#53,Generar DDJJ para Rentas de las escrituras realizadas en el mes,Requerimientos Funcionales,Se genera una DDJJ por cada Protocolo y por cada Registro de escribano (RF 5.1) para ser presentada ante RENTAS
+#54,Imprimir declaraciones juradas.,Requerimientos Funcionales,Permitir imprimir ( en papel o PDF) el reporte de las DDJJ
+#55,Administrar Tablas base,Requerimientos Funcionales,Requerimientos asociados con los ABM del sistema (todas las tablas base)
+#56,Ingresar Nuevos Trámites,Requerimientos Funcionales,Proveer la capacidad de definir nuevos trámites.
+#57,Ingresar Nuevos Documentos,Requerimientos Funcionales,Proveer la capacidad de definir nuevos documentos.
+#58,Ingresar Nuevos Folios.,Requerimientos Funcionales,Proveer la capacidad de cargar en los sistemas nuevos folios.
+#59,Ingresar Nuevos Estados.,Requerimientos Funcionales,Proveer la capacidad de definir nuevos estados par ale gestión de los trámites.
+#60,Ingresar Nuevos Conceptos.,Requerimientos Funcionales,"Proveer la capacidad de definir nuevos conceptos, los cuales se incluyen en los presupuestos."
+#61,Administrar las plantillas,Requerimientos Funcionales,Requerimientos asociados con la administracion de las plantillas de presupuestos y trámites
+#62,Plantilla de Trámites.,Requerimientos Funcionales,"Permitir Crear, Modificar y Eliminar plantillas de trámites."
+#63,Crear nuevas plantillas de trámites,Requerimientos Funcionales,"De acuerdo a un trámite, se deberá poder seleccionar los documentos/certificados necesarios para ese trámite, según una lista predefinida de documentos disponibles."
+#64,Modificar plantillas de trámites.,Requerimientos Funcionales,"Según plantillas existentes, se deberá poder acceder a cualquiera de ella y modifica la composición de documentos/certificados asociados."
+#65,Eliminar Plantilla de trámites,Requerimientos Funcionales,"Según plantillas existentes, se deberá poder eliminar/deshabilitar para su uso, determinadas plantilla para trámites."
+#66,Plantillas de Presupuestos.,Requerimientos Funcionales,"Permitir Crear, Modificar y Eliminar plantillas de presupuestos"
+#67,Crear nuevas plantillas de Presupuestos.,Requerimientos Funcionales,"De acuerdo a un trámite, se deberá poder seleccionar los conceptos necesarios para esa plantilla de Presupuestos, según una lista predefinida de conceptos disponibles."
+#68,Modificar plantillas de Presupuestos.,Requerimientos Funcionales,"Según plantillas existentes, se deberá poder acceder a cualquiera de ella y modifica la composición de conceptos asociados."
+#69,Eliminar Plantilla de Presupuestos.,Requerimientos Funcionales,"Según plantillas existentes, se deberá poder eliminar/deshabilitar para su uso, determinadas plantilla para Presupuestos."
+#70,Uso de Memoria RAM,Requerimientos de Rendimiento y Sistema,"El sistema no deberá consumir mas de 300MB de memoria RAM, debido a que superado este límite se puede provocar que la computadora de ralentice."
+#71,Uso de CPU,Requerimientos de Rendimiento y Sistema,"No se deberá utilizar más del 50% del uso del procesador, por el mismo motivo que el punto anterior."
+#72,Tiempo de respuesta,Requerimientos de Rendimiento y Sistema,"Ninguna operación puede demorar más de 10 segundos en completarse, puesto que un tiempo de demora así puede provocar desagrado a los usuarios."
+#73,Multiples Usuarios,Requerimientos de Rendimiento y Sistema,El sistema deberá soportar múltiples usuarios conectados simultáneamente.
+#74,Aspecto Visual,Requerimientos de Interfaz,"Requerimientos asociados con la implementaciòn de los aspectos visuales y diseño de ventanas, carteles, etc."
+#75,Diseño de ventanas,Requerimientos de Interfaz,"El software deberá posee una interfaz grafica capaz de visualizar todos los formularios de manera secuencial, en cuanto a como se deben completar los campos que los componen. La navegación de los campos se deberá poder realizar, haciendo un clic con el puntero del ratón o a través de la tecla de tabulación."
+#76,Diseño de campos y combos,Requerimientos de Interfaz,"Todos los campos en donde existan valores predefinidos, se deberán presentar como listas desplegables o cajas de verificación según sea el caso."
+#77,Especificación de campos a completar,Requerimientos de Interfaz,"Los nombres de los campos a completar, deberán ser lo suficientemente significativos, de manera tal que no se generen confusiones o ambigüedades."
+#78,Uso de colores en la GUI,Requerimientos de Interfaz,No se deberán utilizar colores que dificulten la correcta visualización de los datos.
+#79,Seguimiento del trabajo sobre ventanas,Requerimientos de Interfaz,"En cada pantalla, se deberá identificar el proceso que se esta realizando, y el estado actual del mismo. El usuario deberá poder visualizar en donde se encuentra en todo momento."
+#80,Identificación de Sesion,Requerimientos de Interfaz,En todo momento se debe conocer el nombre del usuario que está trabajando en la sesión actual.
+#81,Seguridad y privacidad,Requerimientos de Seguridad y Privacidad.,Requerimientos asociados a elementos de seguridad que deben ser implementados.
+#82,Acceso de usuarios,Requerimientos de Seguridad y Privacidad.,El acceso al sistema se deberá realizar mediante el ingreso de un nombre de usuario y contraseña.
+#83,Cifrado de contraseña,Requerimientos de Seguridad y Privacidad.,Los datos de usuario y contraseña deberán estar cifrados.
+#84,Transporte de información por red,Requerimientos de Seguridad y Privacidad.,"Se deberán tener en cuenta todas las políticas de seguridad requeridas para cualquier tipo de aplicación estándar. Esto incluye, la encriptación en la transferencia de datos en la comunicación cliente-servidor y la validación de acceso de los usuarios."
+#85,Acceso a la base de datos,Requerimientos de Seguridad y Privacidad.,"El acceso a la base de datos sólo se podrá realizar por el administrador del sistema, para lo cual se requiere de un Usuario y Contraseña. De está manera, ningún otro usuario puede acceder directamente a la base de datos y es total responsabilidad del Administrador, la manipulación de la misma."
+#86,Java VM,Requerimientos de software para el sistema.,"Debido a que el producto de software será una aplicación Java, se deberá tener instalado el entorno de ejecución de Java, JRE 1.7 o superior."
+#87,Sistema operativo,Requerimientos de software para el sistema.,Sistema operativo independiente.
+#88,PC escritorio,Requerimientos de Hardware para el sistema.,Requisitos mínimos de PC de escritorio:
+#89,Notebook,Requerimientos de Hardware para el sistema.,Requisitos mínimos de Notebook:
+#90,Metodología de desarrollo,Requerimientos para el desarrollo.,Se utilizará la metodología del Paradigma de Orientación a Objetos.
+#91,Modelo de Desarrollo,Requerimientos para el desarrollo.,"Se utilizará un modelo de desarrollo incremental, utilizando iteraciones. Cada iteración constará de la entrega de una Máquina virtual, con todo el ambiende de ejecuciòn preparado, y una versión funcional de la aplicación. Cada versión deberá tener implementados un conjunto de CU (definidos por el grupo de desarrollo), junto con la documentación utilizada en el desarrollo de dichos casos de uso."
+#92,Lenguaje de programación,Requerimientos para el desarrollo.,"Se utilizará el lenguaje de programación Java en su última versión estable, debido a que es uno de los lenguajes más utilizados para el desarrollo de aplicación Orientada a Objetos. Además, es un lenguaje de uso libre que no requiere el pago de ningún tipo de licencias de uso."
+#92,Lenguaje de programación,Requerimientos para el desarrollo.,"Se utilizará el lenguaje de programación Java en su última versión estable, debido a que es uno de los lenguajes más utilizados para el desarrollo de aplicación Orientada a Objetos. Además, es un lenguaje de uso libre que no requiere el pago de ningún tipo de licencias de uso."
+#93,Motor de Base de datos,Requerimientos para el desarrollo.,"Se utilizara el motor de base de datos libre MySQL en su última versión estable, debido a la gran compatibilidad y cantidad de información disponible de su uso junto con el lenguaje Java."
+#94,Administrar Folios,Requerimientos Funcionales,Requerimientos asociados con la gestión de folios del protocolo
+#95,Cargar folios del Colegio Notarial,Requerimientos Funcionales,"Permitir cargar los folios provistos por el Colegio Notarial, asignando numeración propia"
+#96,Control de numeración correlativa de folios,Requerimientos Funcionales,"Controlar que la numeración de los folios sea correlativa y no falten folios"
+#97,Manejo de folios dañados (errose),Requerimientos Funcionales,"Permitir registrar folios dañados durante la impresión y etiquetarlos como errose"
+#98,Manejo de folios no usados (no pasó),Requerimientos Funcionales,"Permitir registrar folios impresos pero no usados y etiquetarlos como no pasó"
+#99,Seguimiento de disponibilidad de folios,Requerimientos Funcionales,"Permitir conocer qué folios están disponibles, usados, dañados o no usados"
+#100,Administrar Cuadernos,Requerimientos Funcionales,Requerimientos asociados con la organización de folios en cuadernos
+#101,Generar cuadernos,Requerimientos Funcionales,"Los folios se agrupan de a diez en carpetas llamadas cuadernos"
+#102,Numerar cuadernos,Requerimientos Funcionales,"A los cuadernos se les asigna una numeración correlativa (de 1 a N)"
+#103,Generar carátula de cuaderno,Requerimientos Funcionales,"Los cuadernos tienen carátula con: Año, Registro, número de cuaderno y descripción"
+#104,Administrar Carpetas de Trámite,Requerimientos Funcionales,Requerimientos asociados con la gestión de carpetas de trámite
+#105,Generar carpeta de trámite,Requerimientos Funcionales,"Cuando un cliente solicita un trámite, se genera una carpeta con número único"
+#106,Estados de carpeta,Requerimientos Funcionales,"Gestionar estados de carpeta: activa, espera, archivada"
+#107,Estados y Transiciones del Trámite,Requerimientos Funcionales,"Requerimientos asociados con la gestión de estados y transiciones del trámite"
+#108,Definir estados del trámite,Requerimientos Funcionales,"Definir los estados que puede tener un trámite a lo largo de su ciclo de vida"
+#109,Definir transiciones válidas de estado,Requerimientos Funcionales,"Definir qué transiciones de estado son válidas para cada tipo de trámite"
+#110,Registrar historial de cambios de estado,Requerimientos Funcionales,"Registrar cada cambio de estado con fecha, usuario y observaciones"
+#111,Protocolo Auxiliar,Requerimientos Funcionales,"Requerimientos específicos para trámites del Protocolo Auxiliar (no se generan carpetas)"
+#112,Flujo de Trámite Protocolo Auxiliar,Requerimientos Funcionales,"Gestionar el flujo simplificado de 5 pasos del Protocolo Auxiliar"
+#113,Administrar Suplencias,Requerimientos Funcionales,Requerimientos asociados con la gestión de suplencias de escribanos
+#114,Registrar suplentes del escribano,Requerimientos Funcionales,"Registrar los escribanos suplentes que pueden actuar en representación del titular"
+#115,Asignar suplente a una gestión,Requerimientos Funcionales,"Permitir asignar un escribano suplente a una gestión específica"
+#116,Historial de suplencias,Requerimientos Funcionales,"Mantener un historial completo de las suplencias de cada escribano"
+#117,Generar Minuta de Inscripción,Requerimientos Funcionales,"Generar el certificado minuta de inscripción para operaciones con inmuebles"
+#118,Seguimiento de Presentación para Inscripción,Requerimientos Funcionales,"Registrar presentación, devolución e inscripción del testimonio"
+#119,Diferencias entre Protocolo Principal y Auxiliar,Requerimientos Funcionales,"Definir y gestionar las diferencias entre Protocolo Principal y Auxiliar"
+#120,Impresión de Testimonios,Requerimientos Funcionales,"Impresión del testimonio en hojas especiales firmado por el escribano"
+#121,Control de Numeración de Escrituras,Requerimientos Funcionales,"La numeración de las escrituras debe ser única y correlativa"
