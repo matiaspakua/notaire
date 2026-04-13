@@ -1,0 +1,349 @@
+@startuml ERD_Escribania_Actualizado
+!theme plain
+skinparam linetype ortho
+
+' ==================== ENTIDADES ====================
+
+entity "Personas" as personas {
+  * id_persona : INT <<PK>>
+  --
+  * nombre : TEXT
+  * apellido : TEXT
+  nacionalidad : TEXT
+  sexo : TEXT
+  fecha_nacimiento : DATE
+  estado_civil : TEXT
+  nro_nupcias : INT
+  ocupacion : TEXT
+  domicilio : TEXT
+  telefono : TEXT
+  email : TEXT
+  registro_escribano : INT
+  cuit : TEXT
+  * es_cliente : BOOLEAN
+}
+
+entity "Usuarios" as usuarios {
+  * id_usuario : INT <<PK>>
+  --
+  * nombre : TEXT
+  * contraseña : TEXT
+  * estado : BOOLEAN
+  * tipo : TEXT
+  * fk_id_persona : INT <<FK>>
+}
+
+entity "Tipos de Identificación" as tipos_identificacion {
+  * id_tipo_identificacion : INT <<PK>>
+  --
+  * nombre : TEXT
+}
+
+entity "Identificaciones" as identificaciones {
+  * fk_id_tipo_identificacion : INT <<PK,FK>>
+  * fk_id_persona : INT <<PK,FK>>
+  --
+  * numero : TEXT
+}
+
+entity "Trámites" as tramites {
+  * id_tramite : INT <<PK>>
+  --
+  observaciones : TEXT
+  * fk_id_tipo_tramite : INT <<FK>>
+  fk_id_gestion : INT <<FK>>
+  fk_id_escritura : INT <<FK>>
+  * fk_id_presupuesto : INT <<FK>>
+  fk_id_inmueble : INT <<FK>>
+}
+
+entity "Tipos de Trámite" as tipos_tramite {
+  * id_tipo_tramite : INT <<PK>>
+  --
+  * nombre : TEXT
+  se_archiva : BOOLEAN
+  se_inscribe : BOOLEAN
+  asocia_inmuebles : BOOLEAN
+  observaciones : TEXT
+}
+
+entity "Tipos de Documentos" as tipos_documentos {
+  * id_tipo_documento : INT <<PK>>
+  --
+  * nombre : TEXT
+  * vence : BOOLEAN
+  dias_vencimiento : INT
+  quien_entrega : TEXT
+}
+
+entity "Documentos Presentados" as documentos_presentados {
+  * id_presentado : INT <<PK>>
+  --
+  * nombre : TEXT
+  numero_carton : INT
+  * fecha_ingreso : DATE
+  fecha_salida : DATE
+  * preparado : BOOLEAN
+  vence : BOOLEAN
+  fecha_vencimiento : DATE
+  dias_vencimiento : INT
+  importe_a_pagar : REAL
+  fecha_pago : DATE
+  liberado : BOOLEAN
+  fecha_liberado : DATE
+  observado : BOOLEAN
+  observaciones : TEXT
+  * fk_id_tramite : INT <<FK>>
+}
+
+entity "Gestiones de Escrituras" as gestiones_escrituras {
+  * id_gestion : INT <<PK>>
+  --
+  numero_gestion : INT
+  * fecha_inicio : DATE
+  encabezado : TEXT
+  observaciones : TEXT
+  numero_bibliorato : INT
+  numero_archivo : INT
+  * fk_id_persona_escribano : INT <<FK>>
+}
+
+entity "Escrituras" as escrituras {
+  * id_escritura : INT <<PK>>
+  --
+  numero : INT
+  fecha_escrituracion : DATE
+  cuerpo : TEXT
+  estado : TEXT
+  matricula_inscripcion : TEXT
+  fecha_inscripcion : DATE
+  observaciones : TEXT
+}
+
+entity "Testimonios" as testimonios {
+  * id_testimonio : INT <<PK>>
+  --
+  * numero : INT
+  observado : BOOLEAN
+  observaciones : TEXT
+  * fk_id_escritura : INT <<FK>>
+}
+
+entity "Folios" as folios {
+  * id_folio : INT <<PK>>
+  --
+  * numero : INT
+  * anio : INT
+  estado : TEXT
+  observaciones : TEXT
+  * fk_id_persona_escribano : INT <<FK>>
+  fk_id_tipos_folio : INT <<FK>>
+  fk_id_escritura : INT <<FK>>
+}
+
+entity "Tipos de Folio" as tipos_folio {
+  * id_tipo_folio : INT <<PK>>
+  --
+  nombre : TEXT
+  observaciones : TEXT
+}
+
+entity "Movimientos Testimonio" as movimientos_testimonio {
+  * id_movimiento : INT <<PK>>
+  --
+  fecha_ingreso : DATE
+  fecha_salida : DATE
+  fecha_inscripcion : DATE
+  inscripta : BOOLEAN
+  numero_carton : INT
+  observaciones : TEXT
+  fk_id_testimonio : INT <<FK>>
+}
+
+entity "Copias" as copias {
+  * id_copia : INT <<PK>>
+  --
+  * numero : INT
+  * fecha_impresion : DATE
+  fecha_retiro : DATE
+  observaciones : TEXT
+  * fk_id_testimonio : INT <<FK>>
+  * fk_id_persona : INT <<FK>>
+}
+
+entity "Presupuestos" as presupuestos {
+  * id_presupuesto : INT <<PK>>
+  --
+  * fecha : DATE
+  * total : REAL
+  * saldo : REAL
+  observaciones : TEXT
+  fk_id_tramite : INT <<FK>>
+  * fk_id_persona : INT <<FK>>
+}
+
+entity "Conceptos" as conceptos {
+  * id_concepto : INT <<PK>>
+  --
+  * nombre : TEXT
+  * valor : REAL
+  porcentaje : REAL
+}
+
+entity "Items" as items {
+  * id_item : INT <<PK>>
+  --
+  * nombre : TEXT
+  * valor : REAL
+  porcentaje : REAL
+  observaciones : TEXT
+  * fk_id_presupuesto : INT <<FK>>
+}
+
+entity "Pagos" as pagos {
+  * id_pago : INT <<PK>>
+  --
+  * monto : REAL
+  * fecha : DATE
+  observaciones : TEXT
+  * fk_id_presupuesto : INT <<FK>>
+}
+
+entity "Inmuebles" as inmuebles {
+  * id_inmueble : INT <<PK>>
+  --
+  * nomenclatura_catastral : TEXT
+  valuacion_fiscal : TEXT
+  * domicilio : TEXT
+  * tipo_inmueble : TEXT
+  observaciones : TEXT
+}
+
+entity "Historial" as historial {
+  * id_historial : INT <<PK>>
+  --
+  * fk_id_gestion : INT <<FK>>
+  * fk_id_estado : INT <<FK>>
+  * fecha : DATE
+  observaciones : TEXT
+}
+
+entity "Estados" as estados {
+  * id_estado : INT <<PK>>
+  --
+  * nombre : TEXT
+  observaciones : TEXT
+}
+
+entity "Suplencias" as suplencias {
+  * id_suplencia : INT <<PK>>
+  --
+  * fk_id_persona_suplantado : INT <<FK>>
+  * fk_id_persona_suplente : INT <<FK>>
+  * fecha_inicio : DATE
+  * fecha_fin : DATE
+  observaciones : TEXT
+}
+
+entity "Registros de Auditoría" as registros_auditoria {
+  * id_auditoria : INT <<PK>>
+  --
+  * fk_id_usuario : INT <<FK>>
+  * detalle_operacion : TEXT
+  * fecha : DATETIME
+}
+
+entity "Plantillas Trámites" as plantillas_tramites {
+  * fk_id_tipo_tramite : INT <<PK,FK>>
+  * fk_id_tipo_de_documento : INT <<PK,FK>>
+  --
+  observaciones : TEXT
+}
+
+entity "Plantillas Presupuestos" as plantillas_presupuestos {
+  * fk_id_tipo_tramite : INT <<PK,FK>>
+  * fk_id_concepto : INT <<PK,FK>>
+  --
+  observaciones : TEXT
+}
+
+entity "Trámites-Personas" as tramites_personas {
+  * fk_id_tramite : INT <<PK,FK>>
+  * fk_id_persona_cliente : INT <<PK,FK>>
+  --
+  observaciones : TEXT
+}
+
+entity "Folios-Copias" as folios_copias {
+  * fk_id_folio : INT <<PK,FK>>
+  * fk_id_copia : INT <<PK,FK>>
+}
+
+' ==================== RELACIONES ====================
+
+' Personas y Usuarios
+personas ||--o{ usuarios : "tiene"
+
+' Personas e Identificaciones
+personas ||--o{ identificaciones : "tiene"
+tipos_identificacion ||--o{ identificaciones : "define"
+
+' Trámites
+tipos_tramite ||--o{ tramites : "define"
+gestiones_escrituras ||--o{ tramites : "contiene"
+escrituras ||--o{ tramites : "genera"
+presupuestos ||--o{ tramites : "asociado a"
+inmuebles ||--o{ tramites : "relacionado"
+
+' Trámites y Personas (M:N)
+tramites ||--o{ tramites_personas : ""
+personas ||--o{ tramites_personas : ""
+
+' Documentos
+tipos_documentos ||--o{ plantillas_tramites : "requiere"
+tipos_tramite ||--o{ plantillas_tramites : "necesita"
+tramites ||--o{ documentos_presentados : "presenta"
+
+' Gestiones y Estados
+gestiones_escrituras ||--o{ historial : "tiene"
+estados ||--o{ historial : "registra"
+
+' Personas escribanos
+personas ||--o{ gestiones_escrituras : "escrib_gestiona"
+personas ||--o{ folios : "escrib_asigna"
+
+' Escrituras y Testimonios
+escrituras ||--o{ testimonios : "genera"
+
+' Folios
+tipos_folio ||--o{ folios : "clasifica"
+escrituras ||--o| folios : "utiliza"
+
+' Testimonios y Copias
+testimonios ||--o{ copias : "produce"
+personas ||--o{ copias : "recibe"
+
+' Folios y Copias (M:N)
+folios ||--o{ folios_copias : ""
+copias ||--o{ folios_copias : ""
+
+' Movimientos Testimonio
+testimonios ||--o{ movimientos_testimonio : "registra"
+
+' Suplencias
+personas ||--o{ suplencias : "suplantado"
+personas ||--o{ suplencias : "suplente"
+
+' Presupuestos
+personas ||--o{ presupuestos : "cliente_presup"
+presupuestos ||--o{ pagos : "recibe"
+presupuestos ||--o{ items : "compuesto por"
+
+' Conceptos y Plantillas
+conceptos ||--o{ plantillas_presupuestos : "incluido"
+tipos_tramite ||--o{ plantillas_presupuestos : "usa"
+
+' Auditoría
+usuarios ||--o{ registros_auditoria : "realiza"
+
+@enduml
