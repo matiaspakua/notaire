@@ -6,23 +6,15 @@ This skill provides guidance for implementing and managing database schema migra
 
 ## When to Use This Skill
 
-Invoke this skill when:
-- Creating new database tables or columns
-- Modifying existing database schema
-- Adding indexes or constraints
-- Inserting reference data that needs versioning
-- Creating rollback scripts
-- Reviewing database changes in PRs
+Invoke this skill when creating new database tables, modifying existing database schema, adding indexes or constraints, inserting reference data that needs versioning, creating rollback scripts, or reviewing database changes in PRs.
 
 ## Core Workflow
 
 ### 1. Before Creating a Migration
 
-1. **Check existing migrations**: Review `backend-api/src/main/resources/db/migration/`
-2. **Identify the next version**: Get the highest version number (e.g., V3, V4)
-3. **Determine migration type**:
-   - `V` prefix: Forward migration (applied once)
-   - `R` prefix: Rollback migration (optional)
+1. Check existing migrations: Review `backend-api/src/main/resources/db/migration/`
+2. Identify the next version: Get the highest version number (e.g., V3, V4)
+3. Determine migration type: `V` prefix for forward migration, `R` prefix for rollback
 
 ### 2. Creating a Migration
 
@@ -83,13 +75,13 @@ DROP INDEX IF EXISTS idx_users_email;
 
 | Practice | Reason |
 |----------|--------|
-| **Idempotent SQL** | Can be run multiple times safely |
-| **Use IF EXISTS** | Prevents errors on re-run |
-| **Use IF NOT EXISTS** | Prevents errors on re-run |
-| **Comment your SQL** | Future developers understand intent |
-| **Small, focused migrations** | Easier to review and rollback |
-| **One logical change per migration** | Clear audit trail |
-| **Test rollback locally** | Ensure recovery is possible |
+| Idempotent SQL | Can be run multiple times safely |
+| Use IF EXISTS | Prevents errors on re-run |
+| Use IF NOT EXISTS | Prevents errors on re-run |
+| Comment your SQL | Future developers understand intent |
+| Small, focused migrations | Easier to review and rollback |
+| One logical change per migration | Clear audit trail |
+| Test rollback locally | Ensure recovery is possible |
 
 ### 6. Reference Data Migrations
 
@@ -109,22 +101,7 @@ WHERE NOT EXISTS (
 SELECT setval('conceptos_id_concepto_seq', COALESCE(MAX(id_concepto), 1)) FROM conceptos;
 ```
 
-### 7. Adding to pom.xml (If First Time)
-
-The project already has Flyway configured. If starting fresh:
-
-```xml
-<dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-core</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.flywaydb</groupId>
-    <artifactId>flyway-database-postgresql</artifactId>
-</dependency>
-```
-
-### 8. Configuration Reference
+### 7. Configuration Reference
 
 **application.properties:**
 ```properties
@@ -138,7 +115,7 @@ spring.flyway.validate-on-migrate=true
 spring.flyway.clean-disabled=true
 ```
 
-### 9. Command Reference
+### 8. Command Reference
 
 ```bash
 # Validate migrations
@@ -157,23 +134,23 @@ mvn flyway:baseline
 mvn flyway:repair
 ```
 
-### 10. Common Pitfalls to Avoid
+### 9. Common Pitfalls to Avoid
 
 | Pitfall | Solution |
 |---------|----------|
 | Drop table without backup | Create rollback script first |
-| Not using transactions | Wrap in `BEGIN...COMMIT` for critical changes |
+| Not using transactions | Wrap in BEGIN...COMMIT for critical changes |
 | Modifying old migrations | Create new migration instead |
 | Large migration files | Split into smaller, focused migrations |
-| Missing `setval` after INSERT | Always reset sequences after manual inserts |
+| Missing setval after INSERT | Always reset sequences after manual inserts |
 
 ## Project-Specific Notes
 
-- **Migration Location**: `backend-api/src/main/resources/db/migration/`
-- **Current Versions**: V1 (schema), V2 (data)
-- **Baseline**: Set at version 0 for existing databases
-- **Docker Integration**: Flyway runs automatically with Spring Boot
-- **Test Configuration**: Tests use Testcontainers with init scripts (Flyway disabled)
+- Migration Location: `backend-api/src/main/resources/db/migration/`
+- Current Versions: V1 (schema), V2 (data)
+- Baseline: Set at version 0 for existing databases
+- Docker Integration: Flyway runs automatically with Spring Boot
+- Test Configuration: Tests use Testcontainers with init scripts (Flyway disabled)
 
 ## Related Documentation
 

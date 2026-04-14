@@ -1,96 +1,60 @@
-# SAR-007: Implementación de Flyway para Control de Versiones de Schema
+# SAR-007: Flyway Implementation for Database Schema Versioning
 
-**Fecha:** 2026-04-14
-**Estado:** En Progreso
-**Autor:** Matías Miguez
+**Date:** 2026-04-14
+**Status:** Implemented
+**Author:** Matias Miguez
 **Issue:** #252
 
 ---
 
-## 1. Resumen Ejecutivo
+## 1. Executive Summary
 
-Este documento detalla la implementación de Flyway como sistema de control de versiones para el esquema de base de datos PostgreSQL del proyecto Notaire.
+This document details the implementation of Flyway as a schema version control system for the Notaire project's PostgreSQL database.
 
-### 1.1 Objetivo
+### 1.1 Objective
 
-Reemplazar los scripts SQL estáticos en `init-db/` con migraciones versionadas de Flyway para permitir:
-- Control de versiones del schema
-- Rollbacks seguros
-- Integración con CI/CD
-- Reproducibilidad en todos los ambientes
+Replace static SQL scripts in `init-db/` with versioned Flyway migrations to enable:
+- Schema version control
+- Safe rollbacks
+- CI/CD integration
+- Reproducibility across environments
 
-### 1.2 Impacto
+### 1.2 Impact
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| Versionado schema | No | Sí (Flyway) |
-| Rollback | Manual | SQL nativo |
-| Deploy schema | Scripts manuales | Automatizado |
+| Aspect | Before | After |
+|--------|--------|--------|
+| Schema versioning | No | Yes (Flyway) |
+| Rollback | Manual | Native SQL |
+| Schema deploy | Manual scripts | Automated |
 | Testing | Ad-hoc | Reproducible |
 
 ---
 
-## 2. Análisis Técnico
+## 2. Technical Analysis
 
-### 2.1 Estado Actual
+### 2.1 Current State
 
-**Estructura de archivos:**
+**File structure:**
 ```
 init-db/
-├── 01-schema.sql      # 371 líneas - Creación completa del schema
-├── 02-data.sql        # 94 líneas - Datos iniciales (tipos, persona, usuario)
-├── migrate.load       # 135 líneas - Documentación histórica
-└── README.md         # Documentación
+├── 01-schema.sql      # 371 lines - Complete schema
+├── 02-data.sql        # 94 lines - Initial data
+├── migrate.load        # Historical documentation
+└── README.md          # Documentation
 ```
 
-**Ejecución actual:**
-- Docker Compose monta `./init-db` en `/docker-entrypoint-initdb.d/`
-- Scripts se ejecutan SOLO en primera creación del contenedor
-- Sin control de cambios posteriores
+**Current execution:**
+- Docker Compose mounts `./init-db` to `/docker-entrypoint-initdb.d/`
+- Scripts run ONLY on first container creation
+- No control over subsequent changes
 
-### 2.2 Análisis de Scripts Existentes
+### 2.2 Migration to Flyway
 
-#### 01-schema.sql
-
-**Estructura:**
-- 24 tablas
-- 4 tablas de referencia (conceptos, estados, tipos)
-- 20 tablas de negocio
-- Relaciones FK completas
-- Sin índices explícitos
-
-**Dependencias:**
-```sql
--- Orden de creación (sin circular)
-1. tablas de referencia (sin FK)
-2. personas, inmuebles, escrituras
-3. gestiones_de_escrituras
-4. presupuestos, tramites
-5. tablas dependientes (documentos, testimonios, folios, copias)
-6. tablas finales (usuarios, auditoria, junction tables)
-```
-
-#### 02-data.sql
-
-**Datos:**
-- 4 conceptos (IVA, Honorarios, Documentación, Protocolo)
-- 10 estados de gestión
-- 5 tipos de identificación
-- 3 tipos de folio
-- 5 tipos de trámite
-- 4 tipos de documento
-- 1 persona (escribano)
-- 1 usuario (admin)
-
-### 2.3 Decisiones de Diseño
-
-#### Migración a Flyway
-
-**Estrategia:** Conversión directa
+**Strategy:** Direct conversion
 - `01-schema.sql` → `V1__initial_schema.sql`
 - `02-data.sql` → `V2__initial_data.sql`
 
-**Baseline:** Requerido para bases existentes
+**Baseline:** Required for existing databases
 ```sql
 INSERT INTO flyway_schema_history (version, description, type, installed_on)
 VALUES (0, '<< BASELINE >>', 'BASELINE', NOW());
@@ -98,22 +62,22 @@ VALUES (0, '<< BASELINE >>', 'BASELINE', NOW());
 
 ---
 
-## 3. Diseño de Solución
+## 3. Solution Design
 
-### 3.1 Arquitectura de Migraciones
+### 3.1 Migration Architecture
 
 ```
 backend-api/src/main/resources/db/migration/
-├── V1__initial_schema.sql     # Schema completo
-├── V2__initial_data.sql       # Datos iniciales
-├── V3__add_indexes.sql        # Índices de performance (futuro)
-└── R2__rollback_data.sql     # Rollback de datos (opcional)
+├── V1__initial_schema.sql     # Complete schema
+├── V2__initial_data.sql       # Initial data
+├── V3__add_indexes.sql        # Future performance indexes
+└── R2__rollback_data.sql     # Optional rollback
 ```
 
-### 3.2 Configuración Spring Boot
+### 3.2 Spring Boot Configuration
 
 ```properties
-# application.properties
+# Flyway Configuration
 spring.flyway.enabled=true
 spring.flyway.baseline-on-migrate=true
 spring.flyway.baseline-version=0
@@ -123,24 +87,7 @@ spring.flyway.validate-on-migrate=true
 spring.flyway.clean-disabled=true
 ```
 
-### 3.3 Docker Compose
-
-**Antes:**
-```yaml
-volumes:
-  - ./init-db:/docker-entrypoint-initdb.d:ro
-```
-
-**Después:**
-```yaml
-# No más mount de init-db
-# Flyway se ejecuta automáticamente con Spring Boot
-environment:
-  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notaire
-  # Flyway habilitado por defecto
-```
-
-### 3.4 Dependencias Maven
+### 3.3 Maven Dependencies
 
 ```xml
 <dependency>
@@ -155,164 +102,37 @@ environment:
 
 ---
 
-## 4. Plan de Implementación
+## 4. AI Agent Guidelines
 
-### 4.1 Fase 1: Setup (Día 1)
+### 4.1 Configuration Files
 
-- [ ] Crear directorio `db/migration/`
-- [ ] Agregar dependencias a `pom.xml`
-- [ ] Crear `V1__initial_schema.sql`
-- [ ] Crear `V2__initial_data.sql`
-- [ ] Configurar `application.properties`
+The project includes the following files for AI agents to understand Flyway conventions:
 
-### 4.2 Fase 2: Testing (Día 1)
+| File | Description |
+|------|-------------|
+| `.claude/skills/flyway/SKILL.md` | Complete Flyway skill with examples |
+| `.claude/rules/database-migrations.md` | Mandatory rules for migrations |
 
-- [ ] Probar migraciones en ambiente local
-- [ ] Verificar baseline en DB existente
-- [ ] Probar rollback de V2
+### 4.2 Mandatory Rules for Agents
 
-### 4.3 Fase 3: Docker (Día 2)
+1. **NEVER modify existing migrations** - Always create new migrations
+2. **Always use versioning** - Format `V{n}__{description}.sql`
+3. **Mandatory location** - `backend-api/src/main/resources/db/migration/`
+4. **Idempotent SQL** - Use `IF EXISTS` / `IF NOT EXISTS`
+5. **Sequences** - Include `setval` after INSERT
 
-- [ ] Actualizar `docker-compose.yml`
-- [ ] Remover mount de `init-db`
-- [ ] Test de deploy completo
-
-### 4.4 Fase 4: CI/CD (Día 2)
-
-- [ ] Agregar validación en GitHub Actions
-- [ ] Documentar procedimientos
-
-### 4.5 Fase 5: Documentación (Día 2)
-
-- [ ] Actualizar README de BD
-- [ ] Crear CHANGELOG.md
-- [ ] Agregar ADR-007
-
----
-
-## 5. Riesgos y Mitigaciones
-
-| Riesgo | Probabilidad | Impacto | Mitigación |
-|--------|-------------|---------|------------|
-| Pérdida de datos | Baja | Alto | Backup antes de migración |
-| Migración incompleta | Baja | Alto | Testing exhaustivo |
-| Conflicto con JPA | Media | Medio | `ddl-auto=none` con Flyway |
-| Rollback fallido | Baja | Alto | SQL manual verificado |
-
----
-
-## 6. Testing Strategy
-
-### 6.1 Tests de Integración
-
-```java
-@SpringBootTest
-@FlywayTest
-class DatabaseMigrationIntegrationTest {
-
-    @Test
-    void shouldApplyAllMigrations() {
-        // Verificar que todas las migraciones se aplicaron
-    }
-
-    @Test
-    void shouldHaveCorrectSchema() {
-        // Verificar tablas existen
-    }
-
-    @Test
-    void shouldHaveInitialData() {
-        // Verificar datos iniciales
-    }
-}
-```
-
-### 6.2 Tests con Testcontainers
-
-```java
-@Testcontainers
-class FlywayTestcontainersTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-        .withDatabaseName("notaire")
-        .withUsername("admin")
-        .withPassword("admin");
-
-    @Test
-    void shouldMigrateSuccessfully() {
-        // Test completo de migración
-    }
-}
-```
-
----
-
-## 7. Métricas de Éxito
-
-| Métrica | Target | Método de medición |
-|---------|--------|-------------------|
-| Migrations aplicadas | 100% | `flyway:info` |
-| Tiempo de migración | < 5s | Logs de startup |
-| Rollback funcional | 100% | Test manual |
-| Cobertura de tests | > 80% | JaCoCo |
-
----
-
-## 8. Timeline
+### 4.3 Workflow for Agents
 
 ```
-Día 1:
-├── Mañana: Setup y migración de scripts
-└── Tarde: Testing local
-
-Día 2:
-├── Mañana: Docker y CI/CD
-└── Tarde: Documentación y PR
+1. Analyze required schema change
+2. Verify current version: ls db/migration/
+3. Create new migration: V{n+1}__{description}.sql
+4. Include template with header and comments
+5. Validate with: mvn flyway:validate
+6. Commit with descriptive message referencing issue
 ```
 
----
-
-## 9. Referencias
-
-- ADR-007: Control de Versiones de Schema con Flyway
-- ADR-004: Database Migration MySQL → PostgreSQL
-- [Flyway Documentation](https://flywaydb.org/documentation/)
-- [Flyway + Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.flyway)
-
----
-
-## 10. Directrices para Agentes de AI
-
-### 10.1 Archivos de Configuración
-
-El proyecto incluye los siguientes archivos para que los agentes de AI conozcan las convenciones de Flyway:
-
-| Archivo | Descripción |
-|---------|-------------|
-| `.claude/skills/flyway/SKILL.md` | Skill completo de Flyway con ejemplos |
-| `.claude/rules/database-migrations.md` | Reglas obligatorias para migraciones |
-
-### 10.2 Reglas Obligatorias para Agentes
-
-1. **NUNCA modificar migraciones existentes** - Siempre crear nuevas migraciones
-2. **Siempre usar versionado** - Formato `V{n}__{description}.sql`
-3. **Ubicación obligatoria** - `backend-api/src/main/resources/db/migration/`
-4. **SQL idempotente** - Usar `IF EXISTS` / `IF NOT EXISTS`
-5. **Secuencias** - Incluir `setval` después de INSERT
-
-### 10.3 Workflow para Agentes
-
-```
-1. Analizar cambio de schema requerido
-2. Verificar versión actual: ls db/migration/
-3. Crear nueva migración: V{n+1}__{description}.sql
-4. Incluir template con header y comentarios
-5. Validar con: mvn flyway:validate
-6. Commit con mensaje descriptivo referencing issue
-```
-
-### 10.4 Template de Migración para Agentes
+### 4.4 Migration Template for Agents
 
 ```sql
 -- =============================================================================
@@ -336,19 +156,28 @@ El proyecto incluye los siguientes archivos para que los agentes de AI conozcan 
 -- SELECT COUNT(*) FROM table_name;
 ```
 
-### 10.5 Verificación de Convenciones
+### 4.5 Convention Verification
 
-Antes de commit, verificar:
-- [ ] Nombre de archivo sigue formato `V{n}__{description}.sql`
-- [ ] Migration ubicada en `db/migration/`
-- [ ] Header completo con Author, Date, Description
-- [ ] SQL es idempotente (IF EXISTS/NOT EXISTS)
-- [ ] Secuencias actualizadas después de INSERT
-- [ ] Tests unitarios incluyen validación de scripts
+Before committing, verify:
+- [ ] Filename follows `V{n}__{description}.sql` format
+- [ ] Migration located in `db/migration/`
+- [ ] Complete header with Author, Date, Description
+- [ ] SQL is idempotent (IF EXISTS/NOT EXISTS)
+- [ ] Sequences updated after INSERT
+- [ ] Unit tests include script validation
 
-### 10.6 Recursos Adicionales
+### 4.6 Additional Resources
 
-Para más información, consultar:
+For more information, see:
 - **Skill**: `.claude/skills/flyway/SKILL.md`
-- **Reglas**: `.claude/rules/database-migrations.md`
+- **Rules**: `.claude/rules/database-migrations.md`
 - **ADR**: `docs/02-architecture/01-adr/ADR-007-database-schema-versioning-flyway.md`
+
+---
+
+## 5. References
+
+- ADR-007: Database Schema Versioning with Flyway
+- ADR-004: Database Migration MySQL → PostgreSQL
+- [Flyway Documentation](https://flywaydb.org/documentation/)
+- [Flyway + Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.flyway)
