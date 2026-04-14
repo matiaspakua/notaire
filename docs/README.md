@@ -2,6 +2,8 @@
 
 Bienvenido a la documentación completa del proyecto Notaire. Esta guía proporciona toda la información necesaria para entender, desarrollar, y operar el sistema.
 
+> Nota: la documentación principal del sistema está centralizada en `/docs`. Los servicios también tienen README propios en `backend-api/README.md`, `frontend-swing/README.md` e `init-db/README.md`.
+
 ## 📖 Documentation Structure
 
 Nuestra documentación está organizada según el SDLC (Software Development Lifecycle):

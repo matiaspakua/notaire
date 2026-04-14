@@ -1,0 +1,114 @@
+-- =============================================================================
+-- V2__initial_data.sql
+-- =============================================================================
+-- Initial data for Notaire application
+-- Insert reference data and default users
+-- =============================================================================
+
+-- =============================================================================
+-- Reference Data: Conceptos
+-- =============================================================================
+
+INSERT INTO conceptos (version, id_concepto, nombre, valor, porcentaje, habilitado, concepto_fijo) VALUES
+(1, 1, 'IVA', 0, 20, true, false),
+(1, 2, 'Honorarios', 0, 5, true, false),
+(1, 3, 'Documentacion', 500, 0, true, true),
+(1, 4, 'Protocolo', 150, 0, true, true);
+
+SELECT setval('conceptos_id_concepto_seq', (SELECT MAX(id_concepto) FROM conceptos));
+
+-- =============================================================================
+-- Reference Data: Estados de Gestion
+-- =============================================================================
+
+INSERT INTO estados_de_gestion (version, id_estado_gestion, nombre, observaciones) VALUES
+(0, 1, 'Iniciada', 'Inicio Gestion'),
+(0, 2, 'En Tramite', ''),
+(0, 3, 'Documentacion Completa', ''),
+(0, 4, 'Archivada', ''),
+(0, 5, 'Gestion Modificada', ''),
+(0, 6, 'Gestion con Escritura Firmada', ''),
+(0, 7, 'Gestion con Escritura Sin Firmar', ''),
+(0, 8, 'Gestion con Escritura Anulada', ''),
+(0, 9, 'Gestion con Escritura No Paso', ''),
+(0, 10, 'Gestion con Escritura Inscripta', '');
+
+SELECT setval('estados_de_gestion_id_estado_gestion_seq', (SELECT MAX(id_estado_gestion) FROM estados_de_gestion));
+
+-- =============================================================================
+-- Reference Data: Tipos de Identificacion
+-- =============================================================================
+
+INSERT INTO tipos_identificacion (version, id_tipo_identificacion, nombre, caracteres) VALUES
+(0, 1, 'DNI', '8'),
+(0, 2, 'LE', '8'),
+(0, 3, 'LC', '8'),
+(0, 4, 'Pasaporte', '12'),
+(0, 5, 'CUIT', '11');
+
+SELECT setval('tipos_identificacion_id_tipo_identificacion_seq', (SELECT MAX(id_tipo_identificacion) FROM tipos_identificacion));
+
+-- =============================================================================
+-- Reference Data: Tipos de Folio
+-- =============================================================================
+
+INSERT INTO tipos_de_folio (version, id_tipo_folio, nombre) VALUES
+(0, 1, 'De documento'),
+(0, 2, 'De actuacion'),
+(0, 3, 'De certificacion');
+
+SELECT setval('tipos_de_folio_id_tipo_folio_seq', (SELECT MAX(id_tipo_folio) FROM tipos_de_folio));
+
+-- =============================================================================
+-- Reference Data: Tipos de Tramite
+-- =============================================================================
+
+INSERT INTO tipos_de_tramite (version, id_tipo_tramite, nombre, observaciones, habilitado, se_archiva, se_inscribe, asocia_inmuebles) VALUES
+(0, 1, 'Compraventa', 'Tramite de compraventa de inmuebles', true, true, true, true),
+(0, 2, 'Donacion', 'Tramite de donacion', true, true, true, true),
+(0, 3, 'Hipoteca', 'Tramite de hipoteca', true, true, true, true),
+(0, 4, 'Sucesion', 'Tramite de sucesion', true, true, false, false),
+(0, 5, 'Poder', 'Otorgamiento de poderes', true, false, false, false);
+
+SELECT setval('tipos_de_tramite_id_tipo_tramite_seq', (SELECT MAX(id_tipo_tramite) FROM tipos_de_tramite));
+
+-- =============================================================================
+-- Reference Data: Tipos de Documento
+-- =============================================================================
+
+INSERT INTO tipos_de_documento (version, id_tipo_documento, nombre, devuelto, vence, dias_vencimiento, importe_a_pagar, habilitado, quien_entrega) VALUES
+(0, 1, 'Libre Deuda Municipal', true, true, 30, 0, true, 'Entidad'),
+(0, 2, 'Informe de Dominio', true, true, 60, 150, true, 'Entidad'),
+(0, 3, 'Certificado Catastral', true, true, 90, 100, true, 'Entidad'),
+(0, 4, 'Fotocopia DNI', false, false, NULL, 0, true, 'Cliente');
+
+SELECT setval('tipos_de_documento_id_tipo_documento_seq', (SELECT MAX(id_tipo_documento) FROM tipos_de_documento));
+
+-- =============================================================================
+-- Initial Data: Persona (Escribano)
+-- =============================================================================
+
+INSERT INTO personas (
+    version, id_persona, apellido, nombre, numero_identificacion, cuit, sexo, fecha_nacimiento,
+    estado_civil, numero_nupcias, ocupacion, domicilio, e_mail, registro_escribano, es_cliente,
+    localidad, provincia, telefono, celular, email, nacionalidad, profesion, observaciones,
+    fk_id_tipo_identificacion, es_escribano
+) VALUES (
+    0, 1, 'Garcia', 'Juan Carlos', '20123456', '20-20123456-3', 'M', '1980-01-15',
+    'Casado', 1, 'Escribano', 'Av. Principal 123', 'jcgarcia@notaria.com', 1001, false,
+    'Buenos Aires', 'Buenos Aires', '011-4555-1234', '011-15-5555-1234', 'jcgarcia@notaria.com',
+    'Argentina', 'Escribano', NULL, 1, true
+);
+
+SELECT setval('personas_id_persona_seq', (SELECT MAX(id_persona) FROM personas));
+
+-- =============================================================================
+-- Initial Data: Usuario (Administrador)
+-- =============================================================================
+
+-- Password: admin (almacenado como hash MD5)
+-- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
+INSERT INTO usuarios (version, id_usuario, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
+(0, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
+
+SELECT setval('usuarios_id_usuario_seq', (SELECT MAX(id_usuario) FROM usuarios));

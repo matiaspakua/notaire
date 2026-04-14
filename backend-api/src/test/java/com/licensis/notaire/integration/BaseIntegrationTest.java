@@ -25,6 +25,9 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
         registry.add("spring.datasource.driver-class-name", POSTGRESQL_CONTAINER::getDriverClassName);
+        // Hibernate validates schema (created by init scripts)
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+        // Disable Flyway in tests (scripts run via Testcontainers)
+        registry.add("spring.flyway.enabled", () -> "false");
     }
 }

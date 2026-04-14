@@ -1,0 +1,30 @@
+@startuml
+title Target Notaire Architecture (Microservices + Modern Frontend)
+left to right direction
+actor User as "Usuario final"
+node "Cliente Web (Next.js)" {
+  [React UI] as WebUI
+  [API Client / Auth] as WebClient
+}
+node "Cliente de Migración (Swing)" {
+  [Swing UI] as SwingUI
+  [REST Client] as SwingClient
+}
+node "Backend API" {
+  [REST Controllers] as API
+  [Business Services] as Service
+  [Repositories] as Repo
+  [Domain Entities] as Domain
+}
+database "PostgreSQL 16" as Postgres
+cloud "Shared Contracts" as Shared
+User --> WebUI : UI requests
+WebUI --> WebClient : API calls
+SwingUI --> SwingClient : API calls
+WebClient --> API : HTTP/JSON
+SwingClient --> API : HTTP/JSON
+API --> Service : Request processing
+Service --> Repo : Persistence operations
+Repo --> Postgres : SQL / JPA
+API --> Shared : DTO contracts
+@enduml
