@@ -201,6 +201,17 @@ Modificar Tipo Tramite Form Should Be Accessible
     Take Named Screenshot    ${MODULE}    14_modificar_tipo_tramite_form
     Log    CU31: Modificar Tipo de Trámite form opened
 
+Eliminar Tipo Tramite Form Should Be Accessible
+    [Documentation]    CU57 – Eliminar tipo de trámite: Form opens (soft-delete via habilitado=false).
+    [Tags]    administracion    tramites    CU57    smoke    agent-callable
+    Navigate To Administracion
+    Open Administracion Sub Module    Trámites
+    Bring Java App To Front
+    Click Button By Name    Eliminar Tipo Tramite
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    15_eliminar_tipo_tramite_form
+    Log    CU57: Eliminar Tipo de Trámite form opened
+
 # ─────────────────────────────────────────────────────────────────────────────
 # CU27, CU32, CU38 – Documentos
 # ─────────────────────────────────────────────────────────────────────────────
