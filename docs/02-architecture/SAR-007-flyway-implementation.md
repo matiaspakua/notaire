@@ -279,3 +279,76 @@ Día 2:
 - ADR-004: Database Migration MySQL → PostgreSQL
 - [Flyway Documentation](https://flywaydb.org/documentation/)
 - [Flyway + Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.flyway)
+
+---
+
+## 10. Directrices para Agentes de AI
+
+### 10.1 Archivos de Configuración
+
+El proyecto incluye los siguientes archivos para que los agentes de AI conozcan las convenciones de Flyway:
+
+| Archivo | Descripción |
+|---------|-------------|
+| `.claude/skills/flyway/SKILL.md` | Skill completo de Flyway con ejemplos |
+| `.claude/rules/database-migrations.md` | Reglas obligatorias para migraciones |
+
+### 10.2 Reglas Obligatorias para Agentes
+
+1. **NUNCA modificar migraciones existentes** - Siempre crear nuevas migraciones
+2. **Siempre usar versionado** - Formato `V{n}__{description}.sql`
+3. **Ubicación obligatoria** - `backend-api/src/main/resources/db/migration/`
+4. **SQL idempotente** - Usar `IF EXISTS` / `IF NOT EXISTS`
+5. **Secuencias** - Incluir `setval` después de INSERT
+
+### 10.3 Workflow para Agentes
+
+```
+1. Analizar cambio de schema requerido
+2. Verificar versión actual: ls db/migration/
+3. Crear nueva migración: V{n+1}__{description}.sql
+4. Incluir template con header y comentarios
+5. Validar con: mvn flyway:validate
+6. Commit con mensaje descriptivo referencing issue
+```
+
+### 10.4 Template de Migración para Agentes
+
+```sql
+-- =============================================================================
+-- V{version}__{description}.sql
+-- =============================================================================
+-- Author: AI Agent
+-- Date: {current_date}
+-- Issue: #{issue_number}
+-- Description: {what this migration does}
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- UP Migration
+-- -----------------------------------------------------------------------------
+
+-- Your SQL here
+
+-- -----------------------------------------------------------------------------
+-- Verification
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) FROM table_name;
+```
+
+### 10.5 Verificación de Convenciones
+
+Antes de commit, verificar:
+- [ ] Nombre de archivo sigue formato `V{n}__{description}.sql`
+- [ ] Migration ubicada en `db/migration/`
+- [ ] Header completo con Author, Date, Description
+- [ ] SQL es idempotente (IF EXISTS/NOT EXISTS)
+- [ ] Secuencias actualizadas después de INSERT
+- [ ] Tests unitarios incluyen validación de scripts
+
+### 10.6 Recursos Adicionales
+
+Para más información, consultar:
+- **Skill**: `.claude/skills/flyway/SKILL.md`
+- **Reglas**: `.claude/rules/database-migrations.md`
+- **ADR**: `docs/02-architecture/01-adr/ADR-007-database-schema-versioning-flyway.md`
