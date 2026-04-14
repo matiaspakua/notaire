@@ -16,6 +16,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **SAR-007**: Flyway Implementation Solution Architecture Report
   - Detailed technical analysis and implementation plan
   - Testing strategy for database migrations
+  - AI Agent Guidelines section
+
+- **Flyway Skill for AI Agents**: `.claude/skills/flyway/SKILL.md`
+  - Comprehensive guide for implementing Flyway migrations
+  - Examples, best practices, and common patterns
+  - Project-specific conventions and templates
+
+- **Database Migrations Rules**: `.claude/rules/database-migrations.md`
+  - Mandatory rules for all database changes
+  - Anti-patterns to avoid
+  - Rollback strategies and emergency procedures
+
+- **Database Migrations README**: `backend-api/src/main/resources/db/migration/README.md`
+  - Quick reference for developers
+  - Common patterns and templates
+  - Testing and validation commands
 
 ### Changed
 
