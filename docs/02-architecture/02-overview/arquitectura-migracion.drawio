@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-14T00:00:00.000Z" agent="Mozilla/5.0" etag="" version="20.1.9" type="device">
+  <diagram name="Migración">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Arquitectura de Migración - Notaire" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#333333" vertex="1" parent="1">
+          <mxGeometry x="180" y="20" width="840" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="legacy-box" value="Legacy Monolito" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd6d6;strokeColor=#d32f2f;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="360" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="legacy-label" value="Java Swing + JDBC + MySQL" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#800000" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="backend-box" value="Backend API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaff;strokeColor=#1565c0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="360" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="backend-label" value="Spring Boot 4 + PostgreSQL" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#0d47a1" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="future-box" value="Target Frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="100" width="360" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="future-label" value="Next.js + TypeScript" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1b5e20" vertex="1" parent="1">
+          <mxGeometry x="840" y="100" width="360" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#555555;endArrow=block;" edge="1" parent="1" source="legacy-box" target="backend-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#555555;endArrow=block;" edge="1" parent="1" source="backend-box" target="future-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Arquitectura Final">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title2" value="Arquitectura Final - Notaire" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#333333" vertex="1" parent="1">
+          <mxGeometry x="180" y="20" width="840" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="client-box" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#2e7d32;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="api-box" value="Backend API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6eaff;strokeColor=#1565c0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="420" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="db-box2" value="Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="client-text" value="Next.js / React\nJava Swing (transicional)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#1b5e20" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="api-text" value="Spring Boot 4\nREST Controllers\nBusiness Services\nRepositories" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#0d47a1" vertex="1" parent="1">
+          <mxGeometry x="420" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="db-text" value="PostgreSQL 16\nHikariCP\nDB Init Scripts" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#e65100" vertex="1" parent="1">
+          <mxGeometry x="800" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#555555;endArrow=block;" edge="1" parent="1" source="client-box" target="api-box">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#555555;endArrow=block;" edge="1" parent="1" source="api-box" target="db-box2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

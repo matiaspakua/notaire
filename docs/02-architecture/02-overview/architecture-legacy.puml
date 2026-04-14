@@ -1,0 +1,19 @@
+@startuml
+title Legacy Notaire Architecture (Monolithic Swing)
+left to right direction
+actor User as "Usuario de escritorio"
+package "Cliente Java Swing" {
+  [GUI Views] as GUI
+  [Event Handlers] as Events
+  [Presentation + Business Logic] as Business
+}
+package "Persistencia Local" {
+  [DAO / JDBC] as DAO
+}
+database "MySQL 5.7" as DB
+User --> GUI : Interacción de usuario
+GUI --> Events : Eventos de interfaz
+Events --> Business : Lógica de presentación
+Business --> DAO : Persistencia directa
+DAO --> DB : SQL directo
+@enduml

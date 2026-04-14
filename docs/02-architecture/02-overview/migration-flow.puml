@@ -1,0 +1,24 @@
+@startuml
+title Notaire Migration Strategy
+left to right direction
+actor Stakeholder as "Producto / Operaciones"
+rectangle "Legacy Monolito" {
+  [Java Swing GUI]
+  [Business Logic + JDBC]
+  [MySQL Database]
+}
+rectangle "Intermediate State" {
+  [Angular/Next.js prototype]
+  [Spring Boot REST API]
+  [PostgreSQL DB]
+}
+rectangle "Target Architecture" {
+  [React / Next.js Frontend]
+  [Spring Boot Backend API]
+  [PostgreSQL 16]
+  [API Contract via OpenAPI]
+}
+Stakeholder --> "Legacy Monolito" : Operación actual
+"Legacy Monolito" --> "Intermediate State" : Migración gradual
+"Intermediate State" --> "Target Architecture" : Completar modernización
+@enduml
