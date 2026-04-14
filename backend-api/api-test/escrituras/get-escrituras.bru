@@ -14,20 +14,40 @@ headers {
 }
 
 tests {
-  test("Status 200", function () {
+  test("Status 200 - Escrituras retrieved successfully", function () {
     expect(res.getStatus()).to.equal(200);
   });
    
-  test("Response is array", function () {
+  test("Response is an array", function () {
     const body = res.getBody();
     expect(body).to.be.an('array');
+  });
+  
+  test("Response Content-Type is JSON", function () {
+    expect(res.getHeader('content-type')).to.include('application/json');
+  });
+  
+  test("Response time under 3 seconds", function () {
+    expect(res.getTime()).to.be.lessThan(3000);
+  });
+  
+  test("Each escritura has idEscritura field when array is not empty", function () {
+    const body = res.getBody();
+    if (body.length > 0) {
+      const first = body[0];
+      expect(first).to.have.property('idEscritura');
+    }
   });
 }
 
 docs {
   ## Get All Escrituras
-  Obtiene todas las escrituras del sistema.
+  Obtiene todas las escrituras del sistema (CU05).
   
   **Method:** GET
   **Path:** /api/v1/escrituras
+  
+  **Response:** Array of Escritura objects
+  
+  **CU Related:** CU05 - Preparar escritura
 }

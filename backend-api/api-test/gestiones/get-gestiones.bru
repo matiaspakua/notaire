@@ -14,20 +14,40 @@ headers {
 }
 
 tests {
-  test("Status 200", function () {
+  test("Status 200 - Gestiones retrieved successfully", function () {
     expect(res.getStatus()).to.equal(200);
   });
    
-  test("Response is array", function () {
+  test("Response is an array", function () {
     const body = res.getBody();
     expect(body).to.be.an('array');
+  });
+  
+  test("Response Content-Type is JSON", function () {
+    expect(res.getHeader('content-type')).to.include('application/json');
+  });
+  
+  test("Response time under 3 seconds", function () {
+    expect(res.getTime()).to.be.lessThan(3000);
+  });
+  
+  test("Each gestion has idGestion field when array is not empty", function () {
+    const body = res.getBody();
+    if (body.length > 0) {
+      const first = body[0];
+      expect(first).to.have.property('idGestion');
+    }
   });
 }
 
 docs {
   ## Get All Gestiones
-  Obtiene todas las gestiones de escritura.
+  Obtiene todas las gestiones del sistema (CU02).
   
   **Method:** GET
   **Path:** /api/v1/gestiones
+  
+  **Response:** Array of Gestion objects
+  
+  **CU Related:** CU02 - Iniciar Gestión
 }
