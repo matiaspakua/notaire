@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +112,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     @Operation(summary = "Autenticar usuario")
-    public ResponseEntity<DtoUsuario> login(@RequestBody DtoUsuario loginRequest) {
+    public ResponseEntity<?> login(@RequestBody DtoUsuario loginRequest) {
         try {
             List<Usuario> usuarios = getJpaController().buscarUsuarios();
 
@@ -145,7 +147,24 @@ public class UsuarioController {
                                 dtoUsuario.setPersonas(dtoPersona);
                             }
                             dtoUsuario.setValido(true);
-                            return ResponseEntity.ok(dtoUsuario);
+                            log.debug("DTO Usuario creado - valido: {}, estado: {}", dtoUsuario.isValido(), dtoUsuario.isEstado());
+                            
+                            // Create a map response to ensure 'valido' field is included
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("valido", true);
+                            response.put("idUsuario", dtoUsuario.getIdUsuario());
+                            response.put("nombre", dtoUsuario.getNombre());
+                            response.put("estado", dtoUsuario.isEstado());
+                            response.put("tipo", dtoUsuario.getTipo());
+                            response.put("version", dtoUsuario.getVersion());
+                            if (dtoUsuario.getPersonas() != null) {
+                                Map<String, Object> personaMap = new HashMap<>();
+                                personaMap.put("idPersona", dtoUsuario.getPersonas().getIdPersona());
+                                personaMap.put("nombre", dtoUsuario.getPersonas().getNombre());
+                                personaMap.put("apellido", dtoUsuario.getPersonas().getApellido());
+                                response.put("personas", personaMap);
+                            }
+                            return ResponseEntity.ok(response);
                         } else {
                             log.warn("Login fallido para '{}': usuario inactivo", usuario.getNombre());
                         }
@@ -157,13 +176,13 @@ public class UsuarioController {
 
             log.warn("Login fallido: usuario '{}' no encontrado en {} usuarios cargados.", loginRequest.getNombre(),
                     usuarios.size());
-            DtoUsuario errorResponse = new DtoUsuario();
-            errorResponse.setValido(false);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("valido", false);
             return ResponseEntity.ok(errorResponse);
 
         } catch (Exception e) {
-            DtoUsuario errorResponse = new DtoUsuario();
-            errorResponse.setValido(false);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("valido", false);
             return ResponseEntity.ok(errorResponse);
         }
     }

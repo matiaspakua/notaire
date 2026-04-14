@@ -85,8 +85,10 @@ INSERT INTO personas (
 SELECT setval('personas_id_persona_seq', (SELECT MAX(id_persona) FROM personas));
 
 -- Sample usuario (nombre/contrasenia for login; tipo: Escribano/Empleado; estado: habilitado)
+-- Password: admin (almacenado como hash MD5)
+-- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
 INSERT INTO usuarios (version, id_usuario, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
-(0, 1, 'admin', 'admin', 'Escribano', true, 1);
+(0, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
 
 -- Reset sequence  
 SELECT setval('usuarios_id_usuario_seq', (SELECT MAX(id_usuario) FROM usuarios));

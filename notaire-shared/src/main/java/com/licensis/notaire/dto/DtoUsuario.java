@@ -16,7 +16,7 @@ public class DtoUsuario
     private String tipo;
     private String registroAuditoria;
     private Integer version;
-    private boolean valido;
+    private boolean valido = false;
 
     public boolean isValido()
     {
