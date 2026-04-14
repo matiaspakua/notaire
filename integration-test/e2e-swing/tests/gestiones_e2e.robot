@@ -120,6 +120,16 @@ Archivar Gestion Should Be Accessible
     Take Named Screenshot    ${MODULE}    07_archivar_gestion_form
     Log    CU16: Archivar Gestión form opened
 
+Modificar Gestion Should Be Accessible
+    [Documentation]    CU53 – Modificar Gestión: Edit existing gestión form.
+    [Tags]    gestiones    gestion    CU53    smoke    agent-callable
+    Open Gestiones Sub Form    Gestion
+    Bring Java App To Front
+    Click Button By Name    Modificar Gestión
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    08_modificar_gestion_form
+    Log    CU53: Modificar Gestión form opened
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Documentación sub-module (CU03, CU04, CU09, CU10, CU43)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -169,6 +179,36 @@ Registrar Movimientos Documentacion Should Be Accessible
     Sleep    2s
     Take Named Screenshot    ${MODULE}    12_registrar_movimientos_form
     Log    CU10: Registrar Movimientos de Documentación form opened
+
+Consultar Vencimientos Documentos Should Be Accessible
+    [Documentation]    Consultar Vencimientos Documentos: Display-only list of documents expiring within 30 days.
+    [Tags]    gestiones    documentacion    smoke    agent-callable
+    Open Gestiones Sub Form    Documentación
+    Bring Java App To Front
+    Click Button By Name    Consultar Vencimientos
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    13_consultar_vencimientos_form
+    Log    Consultar Vencimientos Documentos form opened
+
+Registrar Entrega Documentos Should Be Accessible
+    [Documentation]    Registrar Entrega de Documentos: Form opens for entering delivered documents.
+    [Tags]    gestiones    documentacion    smoke    agent-callable
+    Open Gestiones Sub Form    Documentación
+    Bring Java App To Front
+    Click Button By Name    Registrar Entrega
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    14_registrar_entrega_documentos_form
+    Log    Registrar Entrega de Documentos form opened
+
+Reingresar Documentos Should Be Accessible
+    [Documentation]    CU43 – Reingresar documentación: Form opens for re-entering external documents.
+    [Tags]    gestiones    documentacion    CU43    smoke    agent-callable
+    Open Gestiones Sub Form    Documentación
+    Bring Java App To Front
+    Click Button By Name    Reingresar Documentos
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    15_reingresar_documentos_form
+    Log    CU43: Reingresar Documentos form opened
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Escrituras sub-module (CU05, CU52, CU62)
@@ -290,3 +330,13 @@ Registrar Inscripcion Should Be Accessible
     Sleep    2s
     Take Named Screenshot    ${MODULE}    24_registrar_inscripcion_form
     Log    CU56: Registrar Inscripción form opened
+
+Registrar Reingreso Should Be Accessible
+    [Documentation]    CU44 – Registrar Reingreso: Opens BuscarEscritura with REGISTRAR_REINGRESO mode.
+    [Tags]    gestiones    inscripciones    CU44    smoke    agent-callable
+    Open Gestiones Sub Form    Inscripciones
+    Bring Java App To Front
+    Click Button By Name    Registrar Reingreso
+    Sleep    2s
+    Take Named Screenshot    ${MODULE}    25_registrar_reingreso_form
+    Log    CU44: Registrar Reingreso (via BuscarEscritura) form opened
