@@ -2,6 +2,8 @@
 
 Documentación para desarrolladores: setup, build, testing, y contribución.
 
+> Nota: la documentación de ejecución de pruebas y test automation está consolidada en `docs/03-development/03-testing/`.
+
 ## Quick Start
 
 ### 1. Setup Local Environment
