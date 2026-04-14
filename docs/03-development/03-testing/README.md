@@ -1,190 +1,453 @@
-# Testing Documentation
+# Notaire Integration Tests & Test Automation
 
-Esta carpeta contiene toda la documentación relacionada con las estrategias de testing, configuración de pruebas y guías para el proyecto Notaire.
+Centralized testing framework for the Notaire project, covering unit tests, integration tests, API testing, and end-to-end (E2E) GUI testing.
 
-## Contenido
+## Quick Start
 
-- `TEST_STRATEGY.md` - Estrategia general de testing
-- `INDEX.md` - Índice de documentos de testing
-- `http-testing-README.md` - Información sobre testing HTTP
-- `API_TESTING_GUIDE.md` - Guía para testing de APIs
-- `INSTRUCTIONS.md` - Instrucciones para testing E2E con Swing
-- `DELIVERABLES.md` - Entregables de testing
-- `EXAMPLE_REPORT.md` - Ejemplo de reportes de testing
-- `EXECUTIVE_SUMMARY.md` - Resumen ejecutivo de testing
+### Run All Tests in 3 Steps
 
-## Tipos de Testing
+```bash
+# 1. Navigate to integration-test directory
+cd integration-test
 
-### Unit Tests
-- Tests unitarios con JUnit 5
-- Cobertura mínima del 80% (JaCoCo)
-- Tests de servicios, repositorios y utilidades
+# 2. Execute centralized test runner
+bash run-all-tests.sh
+
+# 3. View comprehensive report
+cat reports/test-report-*.md
+```
+
+**Expected Output:**
+- Test counts per type
+- Pass/fail status
+- Execution times
+- Coverage metrics
+- Links to detailed logs
+
+---
+
+## Test Types
+
+### 1. **Unit Tests** (Java/JUnit5)
+- **Location:** `backend-api/src/test/java/.../unit/`
+- **Count:** 8+ test classes
+- **Duration:** ~5 seconds
+- **Command:** `mvn test -pl backend-api -Dtest="**/unit/*"`
+
+### 2. **Integration Tests** (Spring Boot/TestContainers)
+- **Location:** `backend-api/src/test/java/.../integration/`
+- **Count:** ~40 test cases
+- **Duration:** ~30 seconds
+- **Command:** `mvn test -pl backend-api -Dtest="**/integration/*"`
+- **Databases:** H2 (fast) + PostgreSQL (production-like)
+
+### 3. **Client Tests** (REST API Client)
+- **Location:** `frontend-swing/src/test/java/.../api/client/`
+- **Count:** 2 test classes
+- **Duration:** ~2 seconds
+- **Command:** `mvn test -pl frontend-swing`
+
+### 4. **HTTP Integration Tests** (cURL/Bash)
+- **Location:** `http/` directory
+- **Scripts:** 8 endpoint test scripts
+- **Duration:** ~15 seconds
+- **Command:** `bash http/test-all-endpoints-v2.sh`
+- **Prerequisites:** Backend running on `http://localhost:8080`
+
+### 5. **E2E Tests** (Robot Framework/Swing)
+- **Location:** `e2e-swing/tests/` directory
+- **Suites:** 7 Robot test files (~30-40 test cases)
+- **Duration:** ~5-10 minutes
+- **Command:** `cd e2e-swing && robot tests/`
+- **Prerequisites:** Backend running, Swing JAR built, Python venv
+
+---
+
+## Detailed Usage
+
+### All Tests (Complete Suite)
+
+```bash
+bash run-all-tests.sh
+```
+
+**Options:**
+- `--unit-only` — Run only unit tests (fastest)
+- `--skip-robot` — Skip slow E2E tests
+- `--skip-http` — Skip HTTP tests
+- `--coverage` — Generate detailed coverage report
+
+### Unit Tests Only (5 seconds)
+
+```bash
+# Run all unit tests
+mvn test -pl backend-api -Dtest="**/unit/*"
+
+# Run specific test class
+mvn test -pl backend-api -Dtest=PresupuestoEntityTest
+
+# Run specific test method
+mvn test -pl backend-api -Dtest=PresupuestoEntityTest#shouldCreatePresupuestoWithRequiredFields
+```
+
+### Integration Tests (30 seconds)
+
+```bash
+# Run all integration tests (H2 + PostgreSQL)
+mvn test -pl backend-api -Dtest="**/integration/*"
+
+# Run only H2 tests (no Docker needed)
+mvn test -pl backend-api -Dtest=ApiH2IntegrationTest
+
+# Run with coverage
+mvn test -pl backend-api jacoco:report
+```
+
+### API Client Tests
+
+```bash
+# Frontend Swing client tests
+mvn test -pl frontend-swing
+```
+
+### HTTP Integration Tests
+
+```bash
+cd integration-test/http
+
+# Requires backend running on localhost:8080
+bash test-all-endpoints-v2.sh
+
+# Or run individual endpoint tests
+bash 01-auth.sh
+bash 02-usuarios.sh
+bash 03-conceptos.sh
+```
+
+### E2E Tests (5-10 minutes)
+
+```bash
+cd integration-test/e2e-swing
+
+# Setup (one time)
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Run all tests
+robot tests/
+
+# Run specific suite
+robot tests/login_e2e.robot
+
+# Run with tags
+robot --include smoke tests/
+
+# View results
+open results/report.html
+```
+
+---
+
+## Prerequisites
+
+### All Tests
+- Java 21+
+- Maven 3.8+
+- Git
 
 ### Integration Tests
-- Tests de integración con base de datos
-- Tests de API endpoints
-- Tests de componentes Spring Boot
+- Docker (for TestContainers PostgreSQL)
+- Or local PostgreSQL on port 5432
 
 ### E2E Tests
-- Tests end-to-end con interfaz Swing
-- Tests de flujos completos de usuario
-- Tests automatizados con scripts
+- Python 3.8+
+- Swing JAR built: `mvn package -pl frontend-swing`
+- Backend running: `bash scripts/start.sh`
 
-### API Testing
-- Tests de endpoints REST
-- Validación de contratos de API
-- Tests de performance básicos
+### HTTP Tests
+- curl (usually pre-installed)
+- Backend running: `bash scripts/start.sh` or `mvn spring-boot:run -pl backend-api`
 
-## Ejecución de Tests
+---
 
+## Test Counts & Coverage
+
+| Type | Count | Coverage | Duration |
+|------|-------|----------|----------|
+| Unit | 8+ classes | Service logic | ~5s |
+| Integration | ~40 cases | APIs, database | ~30s |
+| Client | 2 classes | REST client | ~2s |
+| HTTP | 8 scripts | REST endpoints | ~15s |
+| E2E | ~30-40 cases | GUI workflows | ~10m |
+| **Total** | **100+** | **Full stack** | **~15m** |
+
+**Coverage Requirement:** Minimum 80% line + branch coverage (enforced by JaCoCo)
+
+---
+
+## Reports & Outputs
+
+After running tests, find reports at:
+
+```
+integration-test/
+├── reports/
+│   ├── test-report-*.md           ← Consolidated markdown report
+│   ├── coverage-report.md         ← Code coverage analysis
+│   ├── coverage.txt               ← Coverage percentage
+│   └── logs/
+│       ├── unit-tests.log
+│       ├── integration-tests.log
+│       ├── client-tests.log
+│       ├── http-tests.log
+│       ├── e2e-tests.log
+│       └── robot-output/          ← Robot Framework HTML report
+│           ├── report.html
+│           ├── log.html
+│           └── output.xml
+```
+
+**View coverage in browser:**
 ```bash
-# Todos los tests
-mvn test
+open backend-api/target/site/jacoco/index.html
+```
 
-# Tests de un módulo específico
+---
+
+## Test Organization
+
+### By Domain
+- **Presupuesto (Budget):** CU01, items, workflows
+- **Escritura (Document):** CRUD, state management
+- **Persona (Client):** Person entities, relationships
+- **Usuario (User):** Authentication, roles, permissions
+- **Tramite (Process):** Workflow orchestration
+
+### By Test Type
+- **Unit:** Entity creation, DTO mapping, security hashing
+- **Integration:** API contracts, database transactions, workflows
+- **HTTP:** REST endpoint validation, error handling
+- **E2E:** User workflows, GUI interaction, full stack
+
+### By Naming
+- Test methods: `shouldXxxYyy` format
+- Test classes: `*Test` or `*IntegrationTest` suffix
+- E2E: `*_e2e.robot` files
+
+---
+
+## Common Tasks
+
+### Run Tests Before Committing
+```bash
+# Fast smoke test (~10s)
 mvn test -pl backend-api
 
-# Tests con cobertura
-mvn test jacoco:report
+# Include integration tests (~45s)
+mvn verify -pl backend-api
 
-# Tests de integración HTTP
-bash scripts/test.sh
+# Full pipeline with coverage
+mvn clean test jacoco:report -pl backend-api
 ```
 
-## Reportes
-
-Los reportes de testing se generan automáticamente en el pipeline CI/CD y están disponibles en:
-
-- `backend-api/target/site/jacoco/index.html` - Reporte de cobertura
-- `integration-test/reports/` - Reportes de testing E2E# Notaire API - HTTP Tests
-
-Este directorio contiene scripts para probar todos los endpoints de la API REST de Notaire.
-
-## Estructura
-
-- `test-all-endpoints.sh` - Script master que ejecuta todos los tests
-- `01-auth.sh` - Tests de autenticación
-- `02-usuarios.sh` - Tests de usuarios
-- `03-conceptos.sh` - Tests de conceptos
-- `04-personas.sh` - Tests de personas
-- `05-tramites.sh` - Tests de trámites
-- `06-escrituras.sh` - Tests de escrituras
-- `07-presupuestos.sh` - Tests de presupuestos
-
-## Requisitos
-
-- `curl` instalado
-- Backend ejecutándose en `http://localhost:8080`
-- Base de datos PostgreSQL levantada con Docker Compose
-
-## Uso
-
-### Opción 1: Ejecutar todos los tests
-
+### Check Code Coverage
 ```bash
-chmod +x test-all-endpoints.sh
-./test-all-endpoints.sh
+# Generate report
+mvn clean test jacoco:report -pl backend-api
+
+# View HTML
+open backend-api/target/site/jacoco/index.html
+
+# Check minimum (80%)
+mvn jacoco:check -pl backend-api
 ```
 
-### Opción 2: Ejecutar tests individuales
-
+### Debug Failing Test
 ```bash
-chmod +x 01-auth.sh
-./01-auth.sh
+# Run with full output
+mvn test -pl backend-api -X -e
 
-chmod +x 02-usuarios.sh
-./02-usuarios.sh
+# View logs
+tail -f integration-test/reports/logs/*.log
 
-# etc...
+# Check screenshots (E2E)
+open integration-test/reports/logs/robot-output/FAIL_*.png
 ```
 
-### Opción 3: Tests manuales con curl
-
+### View Test Summary
 ```bash
-# Obtener todos los conceptos
-curl -X GET "http://localhost:8080/api/v1/conceptos" \
-  -H "Content-Type: application/json"
+# Markdown report
+cat integration-test/reports/test-report-*.md
 
-# Crear un nuevo concepto
-curl -X POST "http://localhost:8080/api/v1/conceptos" \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Test", "monto": 100}'
+# HTML report (E2E)
+open integration-test/reports/logs/robot-output/report.html
 
-# Obtener concepto por ID
-curl -X GET "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json"
-
-# Actualizar concepto
-curl -X PUT "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Updated", "monto": 150}'
-
-# Eliminar concepto
-curl -X DELETE "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json"
+# Last line of output
+grep -E "PASSED|FAILED" integration-test/reports/logs/*.log
 ```
 
-## Endpoints Disponibles
+---
 
-### Authentication
-- `POST /api/v1/auth/login` - Login con usuario y contraseña
+## Architecture Diagram
 
-### Usuarios
-- `GET /api/v1/usuarios` - Obtener todos los usuarios
-- `GET /api/v1/usuarios/{id}` - Obtener usuario por ID
+```
+┌─────────────────────────────────────────────────┐
+│            E2E Tests (Robot Framework)           │
+│        - Login, Navigation, Workflows            │
+│     ✓ Validates full GUI + API integration      │
+└──────────┬──────────────────────────────────────┘
+           │
+      ┌────▼─────┐
+      │  Swing   │
+      │   GUI    │
+      └────┬─────┘
+           │ HTTP
+      ┌────▼────────────────────────┐
+      │   HTTP API Tests (cURL)     │
+      │ ✓ Endpoint validation        │
+      │ ✓ Error handling             │
+      └────┬──────────────────┬──────┘
+           │                  │
+    ┌──────▼────────┐    ┌────▼──────────────┐
+    │ Integration   │    │  Client Tests     │
+    │ Tests (Spring)│    │  (REST Client)    │
+    │ ✓ API impl    │    │ ✓ Mocked server   │
+    │ ✓ Database    │    │ ✓ Config & errors │
+    │ ✓ Workflows   │    │                   │
+    └──────┬────────┘    └───────────────────┘
+           │
+    ┌──────▼──────────────┐
+    │   Unit Tests        │
+    │   (JUnit5)          │
+    │ ✓ Entity logic      │
+    │ ✓ DTO mapping       │
+    │ ✓ Security hashing  │
+    └─────────────────────┘
+           ▲
+           │
+    ┌──────┴──────────────┐
+    │  Backend API        │
+    │  (Spring Boot)      │
+    │  Services/Repos     │
+    └─────────────────────┘
+```
 
-### Conceptos
-- `GET /api/v1/conceptos` - Obtener todos los conceptos
-- `GET /api/v1/conceptos/{id}` - Obtener concepto por ID
-- `POST /api/v1/conceptos` - Crear nuevo concepto
-- `PUT /api/v1/conceptos/{id}` - Actualizar concepto
-- `DELETE /api/v1/conceptos/{id}` - Eliminar concepto
+---
 
-### Personas
-- `GET /api/v1/personas` - Obtener todas las personas
-- `GET /api/v1/personas/{id}` - Obtener persona por ID
-- `POST /api/v1/personas` - Crear nueva persona
-- `PUT /api/v1/personas/{id}` - Actualizar persona
-- `DELETE /api/v1/personas/{id}` - Eliminar persona
+## CI/CD Integration
 
-### Trámites
-- `GET /api/v1/tramites` - Obtener todos los trámites
-- `GET /api/v1/tramites/{id}` - Obtener trámite por ID
-- `POST /api/v1/tramites` - Crear nuevo trámite
-- `PUT /api/v1/tramites/{id}` - Actualizar trámite
-- `DELETE /api/v1/tramites/{id}` - Eliminar trámite
+Tests run automatically in GitHub Actions:
 
-### Escrituras
-- `GET /api/v1/escrituras` - Obtener todas las escrituras
-- `GET /api/v1/escrituras/{id}` - Obtener escritura por ID
-- `POST /api/v1/escrituras` - Crear nueva escritura
-- `PUT /api/v1/escrituras/{id}` - Actualizar escritura
-- `DELETE /api/v1/escrituras/{id}` - Eliminar escritura
+**On Pull Request:**
+- Unit tests (5s)
+- Integration tests with H2 (30s)
+- Code style (Checkstyle)
+- Bug detection (SpotBugs)
 
-### Presupuestos
-- `GET /api/v1/presupuestos` - Obtener todos los presupuestos
-- `GET /api/v1/presupuestos/{id}` - Obtener presupuesto por ID
-- `POST /api/v1/presupuestos` - Crear nuevo presupuesto
-- `PUT /api/v1/presupuestos/{id}` - Actualizar presupuesto
-- `DELETE /api/v1/presupuestos/{id}` - Eliminar presupuesto
+**On Merge to Main:**
+- All unit + integration tests
+- Coverage report (80% minimum)
+- Security scan (Trivy)
 
-## Documentación Swagger
+**On Release:**
+- Full test suite including E2E
+- Docker image scan
+- Artifact generation
 
-Una vez que la aplicación esté ejecutándose, accede a:
+---
 
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **API Docs (JSON)**: `http://localhost:8080/v3/api-docs`
+## Documentation
+
+For detailed information, see:
+
+- `TEST_STRATEGY.md` — Comprehensive testing guide
+- `API_TESTING_GUIDE.md` — HTTP API testing details
+- `backend-api/pom.xml` — Maven test configuration
+- `frontend-swing/pom.xml` — Client test configuration
+- `e2e-swing/README.md` — E2E setup instructions
+
+---
+
+## Scripts in This Directory
+
+| Script | Purpose |
+|--------|---------|
+| `run-all-tests.sh` | Execute all test suites and generate report |
+| `generate-coverage-report.sh` | Analyze code coverage by package |
+| `http/test-all-endpoints-v2.sh` | Comprehensive HTTP endpoint testing |
+| `e2e-swing/` | Robot Framework E2E tests |
+| `integration/` | Integration test helpers |
+
+---
+
+## Quick Links
+
+- **Coverage Report:** `open backend-api/target/site/jacoco/index.html`
+- **E2E Report:** `open integration-test/reports/logs/robot-output/report.html`
+- **API Guide:** `integration-test/http/API_TESTING_GUIDE.md`
+- **CLAUDE.md:** `../.claude.md` (project testing guidelines)
+
+---
 
 ## Troubleshooting
 
-### Error: Connection refused
-- Verificar que el backend está ejecutándose en puerto 8080
-- Verificar que Docker Compose está levantado: `docker-compose ps`
+### Tests Won't Run
+```bash
+# Check Java version
+java -version  # Should be 21+
 
-### Error: Database connection
-- Verificar PostgreSQL está corriendo: `docker-compose logs postgres`
-- Verificar credenciales en `application.properties`
+# Check Maven
+mvn --version  # Should be 3.8+
 
-### Error: 404 Not Found
-- Verificar que el endpoint existe en los controladores
-- Verificar que el servicio Tomcat está completamente iniciado
+# Clean and rebuild
+mvn clean
+```
+
+### PostgreSQL Connection Error
+```bash
+# Start Docker services
+bash scripts/start.sh
+
+# Or verify port 5432
+lsof -i :5432
+```
+
+### E2E Tests Failing
+```bash
+# Rebuild Swing JAR
+mvn package -pl frontend-swing -DskipTests
+
+# Ensure backend is running
+curl http://localhost:8080/swagger-ui.html
+
+# Check Python environment
+source e2e-swing/.venv/bin/activate
+python -c "import robot; print(robot.__version__)"
+```
+
+### Coverage Below 80%
+```bash
+# View detailed coverage
+open backend-api/target/site/jacoco/index.html
+
+# Add tests for red lines
+# Commit and re-run
+mvn jacoco:check -pl backend-api
+```
+
+---
+
+## Getting Help
+
+1. Check `TEST_STRATEGY.md` for detailed guidance
+2. Review test logs: `integration-test/reports/logs/`
+3. Search for similar tests in existing test files
+4. Check GitHub Issues for known problems
+5. Run with verbose flags: `-X`, `-v`, `--debug`
+
+---
+
+**Last Updated:** 2026-04-14  
+**Maintained By:** Development Team  
+**Version:** 1.0
