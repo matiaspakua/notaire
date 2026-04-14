@@ -1,0 +1,57 @@
+# RTK Configuration for Notaire Project
+# This file configures OpenCode (RTK) for AI agent workflow automation
+
+[workflow]
+# Enable mandatory workflow checks
+require_issue = true
+require_branch = true
+require_tests = true
+auto_close_issue = true
+min_coverage = 80
+
+# Branch naming pattern
+branch_pattern = "^(feat|fix|refactor|test|docs|chore|ci|add)/[0-9]+_.+$"
+
+# Commit message validation
+validate_commit_format = true
+require_issue_reference = true
+
+[issue]
+# Default labels for new issues
+default_labels = ["feature"]
+
+# Issue title prefix mapping
+title_prefixes = {
+    "feat" = "feat:",
+    "fix" = "fix:",
+    "refactor" = "refactor:",
+    "test" = "test:",
+    "docs" = "docs:",
+    "chore" = "chore:",
+    "ci" = "ci:"
+}
+
+[pr]
+# PR template
+auto_create_pr = true
+require_description = true
+min_description_length = 20
+
+[hooks]
+# Pre-commit hooks (validated by AI agent before commit)
+pre_commit = [
+    "run_tests",
+    "check_coverage"
+]
+
+[testing]
+# Test requirements by change type
+test_requirements = {
+    "feat" = ["unit", "integration"],
+    "fix" = ["unit"],
+    "refactor" = ["unit"],
+    "test" = ["unit"],
+    "docs" = [],
+    "chore" = [],
+    "ci" = []
+}

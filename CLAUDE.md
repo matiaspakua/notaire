@@ -2,12 +2,46 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ MANDATORY WORKFLOW
+
+**Before ANY code change, READ and FOLLOW the AI Agent Development Workflow:**
+
+```
+@.claude/rules/ai-agent-workflow.md
+@.claude/skills/ai-agent-workflow/SKILL.md
+```
+
+### Quick Workflow Summary
+
+```
+1. Check/create GitHub issue
+2. Create branch: <type>/<#>-<description>
+3. Implement changes
+4. Write & run tests (MANDATORY)
+5. Commit (Conventional Commits)
+6. Push to remote
+7. Create PR + Close Issue
+```
+
+### Full Workflow Details
+
+See `.claude/rules/ai-agent-workflow.md` for complete workflow with:
+- Step-by-step instructions
+- Branch naming conventions
+- Test requirements
+- Commit message format
+- PR creation
+- Quality gates
+
+---
+
 ## Rules & Standards (always enforced)
 
 @.claude/rules/general.md
 @.claude/rules/programming.md
 @.claude/rules/code-quality.md
 @.claude/rules/refactoring.md
+@.claude/rules/ai-agent-workflow.md
 
 ## Project Overview
 
@@ -101,14 +135,33 @@ Package root: `com.licensis.notaire`
 
 ## Git Workflow
 
-- Branch: `<ISSUE-ID>/[feat|fix|docs|refactor|ci|chore]/<short-name>` (e.g. `226/fix/claude-config`)
-- Never commit directly to `main`
-- **Commit & PR titles follow [Conventional Commits](https://www.conventionalcommits.org/):**
-  - Format: `<type>[(scope)]: <description>` — NO issue-ID prefix in the title
-  - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
-  - Examples: `fix(config): correct checkout action version`, `feat(api): add endpoint for escrituras`
-  - Issue reference goes in the commit **body**: `Closes #<ISSUE-ID>`
-- Run `mvn test -pl backend-api` before committing
+### Branch Naming: `<type>/<issue-number>_<description>`
+
+| Type | When to Use | Example |
+|------|-------------|---------|
+| `feat` | New feature | `feat/253_user_auth` |
+| `fix` | Bug fix | `fix/254_login_timeout` |
+| `refactor` | Code refactor | `refactor/255_cleanup` |
+| `test` | Tests only | `test/256_new_tests` |
+| `docs` | Documentation | `docs/257_readme` |
+| `chore` | Maintenance | `chore/258_deps` |
+| `ci` | CI/CD | `ci/259_workflow` |
+
+### Commit Format: [Conventional Commits](https://www.conventionalcommits.org/)
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+Closes #<issue-number>
+```
+
+### Never
+- ❌ Commit directly to `main`
+- ❌ Skip tests
+- ❌ Leave failing tests
+- ❌ Hardcode credentials
 
 ## Prohibited
 
