@@ -1,0 +1,71 @@
+CU_ID,CU_Nombre,Modulo,Grado,Entidad,Operacion,Controller,HTTP_Method,Endpoint,Bruno_Test,Endpoint_Status,Bruno_Status,Notas,GitHub_Issue
+CU01,Preparar Presupuesto,Presupuestos,Esencial,Presupuesto,Create,PresupuestoController,POST,/api/v1/presupuestos,presupuestos/post-presupuesto.bru,OK,OK,,#154
+CU01,Preparar Presupuesto (reporte),Presupuestos,Esencial,Presupuesto,Report,ReporteController,GET,/api/v1/reportes/presupuesto/{id},reportes/get-reporte-presupuesto.bru,OK,OK,Requiere ID existente,#154
+CU02,Iniciar Gestión,Gestiones,Esencial,GestionDeEscritura,Create,GestionController,POST,/api/v1/gestiones,gestiones/post-gestion.bru,OK,OK,,#155
+CU03,Lista documentos y certificados necesarios,Gestiones,Esencial,PlantillaTramite,Read,PlantillaTramiteController,GET,/api/v1/plantilla-tramite/tipo-tramite/{id},MISSING,OK,NO-TEST,Sin test Bruno,#156
+CU04,Registrar documentación cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,gestiones/post-documento-presentado.bru,OK,OK,,#157
+CU05,Preparar escritura,Gestiones,Esencial,Escritura,Create,EscrituraController,POST,/api/v1/escrituras,escrituras/post-escritura.bru,OK,OK,,#158
+CU06,Firmar escritura,Gestiones,Esencial,Escritura,Update,EscrituraController,PUT,/api/v1/escrituras/{id},escrituras/put-escritura.bru,OK,OK,Actualiza estado firma,#159
+CU07,Generar testimonio,Gestiones,Esencial,Testimonio,Create,TestimonioController,POST,/api/v1/testimonio,escrituras/post-testimonio.bru,500-ERROR,FAIL,GET devuelve 500,#160
+CU08,Verificar Testimonio,Gestiones,Necesario,Testimonio,Read,TestimonioController,GET,/api/v1/testimonio/{id},escrituras/get-testimonios.bru,500-ERROR,FAIL,GET /testimonio devuelve 500,#161
+CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,gestiones/post-documento-presentado.bru,OK,OK,Flag deuda en documento,#162
+CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,MovimientoTestimonio,Create,MovimientoTestimonioController,POST,/api/v1/movimiento-testimonio,MISSING,500-ERROR,NO-TEST,GET devuelve 500 / sin test POST,#163
+CU11,Ingresar para inscripción,Gestiones,Esencial,Historial,Create,HistorialController,POST,/api/v1/historial,gestiones/post-historial.bru,OK,OK,Estado inscripcion,#164
+CU12,Retirar testimonio,Gestiones,Necesario,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#165
+CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},gestiones/get-historial-by-gestion.bru,OK,OK,,#166
+CU14,Consultar estado gestión,Gestiones,Necesario,GestionDeEscritura,Read,GestionController,GET,/api/v1/gestiones/{id}/estado-actual,gestiones/get-estado-actual.bru,OK,OK,Reemplazado por Ver Detalle,#167
+CU15,Procesar pago,Pagos,Estaría Bueno,Pago,Business-Op,PagoController,POST,/api/v1/pagos,pagos/post-pago.bru,OK,OK,0% doc - lógica de negocio incompleta,#168
+CU16,Archivar Gestión,Gestiones,Necesario,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},gestiones/put-gestion.bru,OK,OK,Actualiza estado a archivado,#169
+CU17,Dar Alta persona,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/post-persona.bru,OK,OK,,#170
+CU18,Dar Alta Cliente,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/post-persona.bru,OK,OK,esCliente=true,#171
+CU19,Buscar gestiones de un Cliente,Clientes,Necesario,GestionDeEscritura,Search,GestionController,GET,/api/v1/gestiones/cliente/{idPersona},gestiones/get-gestiones-by-cliente.bru,OK,OK,,#172
+CU20,Dar alta usuario,Administracion,Esencial,Usuario,Create,UsuarioController,POST,/api/v1/usuarios,usuarios/post-usuario.bru,OK,OK,,#173
+CU21,Modificar Usuario,Administracion,Esencial,Usuario,Update,UsuarioController,PUT,/api/v1/usuarios/{id},usuarios/put-usuario.bru,OK,FAIL,PUT 404 - ID inexistente en test,#174
+CU22,Registrar Suplencia,Administracion,Esencial,Suplencia,Create,SuplenciaController,POST,/api/v1/suplencia,MISSING,OK,NO-TEST,Solo test GET existe,#175
+CU23,Ver registro de actividades de usuario,Administracion,Necesario,RegistroAuditoria,Read,RegistroAuditoriaController,GET,/api/v1/registro-auditoria/usuario/{id},auditoria/get-registros-auditoria.bru,OK,OK,Test cubre GET all no by-user,#176
+CU24,Generar libro de índices,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/libro-indice,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#177
+CU25,Generar Declaración Jurada del mes,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/declaracion-jurada-mensual,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#178
+CU26,Ingresar nuevo tipo de trámite,Administracion,Esencial,TipoDeTramite,Create,TipoDeTramiteController,POST,/api/v1/tipo-tramite,catalogos/post-tipo-tramite.bru,OK,OK,,#179
+CU27,Ingresar nuevo tipo de documento,Administracion,Esencial,TipoDeDocumento,Create,TipoDeDocumentoController,POST,/api/v1/tipo-de-documento,catalogos/post-tipo-documento.bru,500-ERROR,FAIL,GET /tipo-de-documento devuelve 500,#180
+CU28,Ingresar nuevos folios,Protocolos,Esencial,Folio,Create,FolioController,POST,/api/v1/folio,catalogos/post-folio.bru,OK,OK,,#181
+CU29,Ingresar nuevo concepto,Administracion,Esencial,Concepto,Create,ConceptoController,POST,/api/v1/conceptos,conceptos/post-concepto.bru,OK,OK,,#182
+CU30,Ingresar nuevo estado de Gestión,Administracion,Esencial,EstadoDeGestion,Create,EstadoDeGestionController,POST,/api/v1/estado-gestion,catalogos/post-estado-gestion.bru,500-ERROR,FAIL,GET /estado-gestion devuelve 500,#183
+CU31,Modificar tipo de trámite,Administracion,Esencial,TipoDeTramite,Update,TipoDeTramiteController,PUT,/api/v1/tipo-tramite/{id},tramites/put-tramite.bru,OK,OK,,#184
+CU32,Modificar tipo de documento,Administracion,Esencial,TipoDeDocumento,Update,TipoDeDocumentoController,PUT,/api/v1/tipo-de-documento/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#185
+CU33,Modificar folio,Protocolos,Esencial,Folio,Update,FolioController,PUT,/api/v1/folio/{id},MISSING,OK,NO-TEST,Sin test PUT,#186
+CU34,Modificar concepto,Administracion,Esencial,Concepto,Update,ConceptoController,PUT,/api/v1/conceptos/{id},conceptos/put-concepto.bru,OK,OK,,#187
+CU35,Modificar estado de Gestión,Administracion,Esencial,EstadoDeGestion,Update,EstadoDeGestionController,PUT,/api/v1/estado-gestion/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#188
+CU36,Ingresar tipos de folio,Administracion,Esencial,TipoDeFolio,Create,TipoDeFolioController,POST,/api/v1/tipo-folio,catalogos/post-tipo-folio.bru,500-ERROR,FAIL,GET /tipo-folio devuelve 500,#189
+CU37,Eliminar concepto,Administracion,Esencial,Concepto,Delete,ConceptoController,DELETE,/api/v1/conceptos/{id},conceptos/delete-concepto.bru,OK,OK,,#190
+CU38,Eliminar tipo de documento,Administracion,Esencial,TipoDeDocumento,Delete,TipoDeDocumentoController,DELETE,/api/v1/tipo-de-documento/{id},catalogos/delete-tipo-documento.bru,500-ERROR,FAIL,FK constraint o GET base 500,#191
+CU39,Crear Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Create,PlantillaPresupuestoController,POST,/api/v1/plantilla-presupuestos,MISSING,OK,NO-TEST,ERROR en concurrencia - sin test POST,#192
+CU40,Modificar Tipo de folio,Administracion,Esencial,TipoDeFolio,Update,TipoDeFolioController,PUT,/api/v1/tipo-folio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#193
+CU41,Modificar Cliente,Clientes,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/put-persona.bru,OK,FAIL,PUT 404 - ID inexistente en test,#194
+CU42,Informar próximos vencimientos,Gestiones,Necesario,DocumentoPresentado,Read,DocumentoPresentadoController,GET,/api/v1/documento-presentado,gestiones/get-documentos-presentados.bru,OK,OK,Sin filtro vencimiento específico,#195
+CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Update,DocumentoPresentadoController,PUT,/api/v1/documento-presentado/{id},MISSING,OK,NO-TEST,Sin test PUT,#196
+CU44,Reingresar testimonio,Gestiones,Esencial,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#197
+CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,PresupuestoController,PUT,/api/v1/presupuestos/{id},presupuestos/put-presupuesto.bru,OK,OK,,#198
+CU46,Ver detalle cliente,Clientes,Esencial,Persona,Read,PersonaController,GET,/api/v1/personas/{id},personas/get-persona-by-id.bru,OK,FAIL,GET 404 - ID inexistente en test,#199
+CU47,Consultar Pago,Pagos,Estaría Bueno,Pago,Read,PagoController,GET,/api/v1/pagos/{id},pagos/get-pagos.bru,OK,OK,0% doc - endpoint existe,#200
+CU48,Dar alta escribano,Administracion,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/post-persona.bru,OK,OK,registroEscribano != null en body,#201
+CU48,Dar alta escribano (disponibles),Administracion,Esencial,Escritura,Read,EscrituraController,GET,/api/v1/escrituras/escribanos-disponibles,escrituras/get-escribanos-disponibles.bru,500-ERROR,FAIL,GET devuelve 500,#201
+CU49,Eliminar Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Delete,PlantillaPresupuestoController,DELETE,/api/v1/plantilla-presupuestos/tipo-tramite/{t}/concepto/{c},MISSING,OK,NO-TEST,ERROR en concurrencia - sin test DELETE,#202
+CU50,Generar Declaración Jurada de Rentas,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/declaracion-jurada-rentas,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#203
+CU51,Modificar escribano,Administracion,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/put-persona.bru,OK,FAIL,Mismo endpoint que Modificar Persona / PUT 404,#204
+CU52,Modificar Escritura,Gestiones,Esencial,Escritura,Update,EscrituraController,PUT,/api/v1/escrituras/{id},escrituras/put-escritura.bru,OK,OK,ERROR de concurrencia reportado,#205
+CU53,Modificar Gestión,Gestiones,Esencial,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},gestiones/put-gestion.bru,OK,OK,,#206
+CU54,Modificar Persona,Clientes,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/put-persona.bru,OK,FAIL,PUT 404 - ID inexistente en test,#207
+CU55,Modificar Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Update,PlantillaPresupuestoController,PUT,/api/v1/plantilla-presupuestos/tipo-tramite/{t}/concepto/{c},MISSING,OK,NO-TEST,ERROR de concurrencia - sin test PUT,#208
+CU56,Registrar inscripción,Gestiones,Esencial,GestionDeEscritura,Business-Op,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,Actualiza estado a inscripto,#209
+CU57,Eliminar tipo de trámite,Administracion,Esencial,TipoDeTramite,Delete,TipoDeTramiteController,DELETE,/api/v1/tipo-tramite/{id},catalogos/delete-tipo-tramite.bru,OK,FAIL,FK constraint - 500 si tiene referencias,#210
+CU58,Eliminar Tipo de folio,Administracion,Esencial,TipoDeFolio,Delete,TipoDeFolioController,DELETE,/api/v1/tipo-folio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#211
+CU59,Consultar Suplencias,Administracion,Necesario,Suplencia,Read,SuplenciaController,GET,/api/v1/suplencia,escrituras/get-suplencias.bru,OK,OK,Test en carpeta escrituras (mover),#212
+CU60,Buscar Presupuesto,Presupuestos,Necesario,Presupuesto,Search,PresupuestoController,GET,/api/v1/presupuestos/persona/{idPersona},presupuestos/get-presupuestos-by-persona.bru,OK,OK,,#213
+CU61,Buscar persona o cliente,Clientes,Necesario,Persona,Search,PersonaController,GET,/api/v1/personas/buscar,personas/buscar-personas.bru,OK,OK,,#214
+CU62,Buscar Escritura,Gestiones,Necesario,Escritura,Search,EscrituraController,GET,/api/v1/escrituras/buscar,MISSING,OK,NO-TEST,Sin test Bruno,#215
+CU63,Buscar Folios,Protocolos,Necesario,Folio,Search,FolioController,GET,/api/v1/folio,catalogos/get-folios.bru,OK,OK,Sin query params de filtro,#216
+CU64,Buscar Tipo de tramite,Administracion,Necesario,TipoDeTramite,Search,TipoDeTramiteController,GET,/api/v1/tipo-tramite,tramites/get-tramites.bru,OK,OK,,#217
+CU65,Buscar Tipos de documentos,Administracion,Necesario,TipoDeDocumento,Search,TipoDeDocumentoController,GET,/api/v1/tipo-de-documento,catalogos/get-tipos-documento.bru,500-ERROR,FAIL,GET devuelve 500,#218
+CU66,Buscar Conceptos,Administracion,Necesario,Concepto,Search,ConceptoController,GET,/api/v1/conceptos,conceptos/get-conceptos.bru,OK,OK,,#219
+CU67,Buscar Estados de Gestión,Administracion,Necesario,EstadoDeGestion,Search,EstadoDeGestionController,GET,/api/v1/estado-gestion,catalogos/get-estados-gestion.bru,500-ERROR,FAIL,GET devuelve 500,#220
+CU68,Buscar tipos de folios,Administracion,Necesario,TipoDeFolio,Search,TipoDeFolioController,GET,/api/v1/tipo-folio,catalogos/get-tipos-folio.bru,500-ERROR,FAIL,GET devuelve 500,#221
