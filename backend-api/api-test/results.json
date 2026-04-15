@@ -1,0 +1,3870 @@
+[
+  {
+    "iterationIndex": 0,
+    "results": [
+      {
+        "test": {
+          "filename": "auditoria/get-registros-auditoria.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/registro-auditoria",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/registro-auditoria",
+          "responseTime": 20
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "4s7g7e4cXe7sneH6glcy1"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "qHt-Pwg1a46jBFR0PjMNt"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.0866725,
+        "name": "Get All Registros de Auditoria",
+        "path": "auditoria/get-registros-auditoria",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "auth/login.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/usuarios/login",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: admin\ncontrasenia: admin"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.236Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/usuarios/login"
+          },
+          "url": "http://localhost/api/v1/usuarios/login",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Response has valido field",
+            "status": "fail",
+            "error": "expected { …(4) } to have property 'valido'",
+            "uid": "zOVSMIoEc010Q_Usfhx9c"
+          },
+          {
+            "description": "valido field is boolean",
+            "status": "fail",
+            "error": "expected undefined to be a boolean",
+            "uid": "ADnzlp508JcRUSPrYuRTE"
+          },
+          {
+            "description": "Response time under 2 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "8oPbq-bT46K8sQHfbCaE2"
+          },
+          {
+            "description": "Status is 200 or 400",
+            "status": "pass",
+            "uid": "EpmZqs4bEQf9U86uErRgV"
+          },
+          {
+            "description": "If login successful, response has required fields",
+            "status": "pass",
+            "uid": "458BsDdfETFLEIkmIoCFv"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.030656417,
+        "name": "Login",
+        "path": "auth/login",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/delete-tipo-documento.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/tipo-de-documento/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tipo-de-documento/1",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "iDji1N5M40zn2AjVHdAdz"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.028945125,
+        "name": "Delete Tipo Documento",
+        "path": "catalogos/delete-tipo-documento",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/delete-tipo-tramite.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/tipo-tramite/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tipo-tramite/1",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "3Beki1pyyNB0HqX1t5Q9w"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029264292,
+        "name": "Delete Tipo Tramite",
+        "path": "catalogos/delete-tipo-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-estados-gestion.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/estado-gestion",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.335Z",
+            "status": 500,
+            "error": "Internal Server Error",
+            "path": "/api/v1/estado-gestion"
+          },
+          "url": "http://localhost/api/v1/estado-gestion",
+          "responseTime": 15
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "_FJlmsMz4Blen6xrU5ssB"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "kgjcSlC1YVeuJmTc9ekKt"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.047477917,
+        "name": "Get All Estados de Gestion",
+        "path": "catalogos/get-estados-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-folios.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/folio",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/folio",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "LcH-dj4HHxs62qAD48Vhl"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "9hxN1C4Hxn2kTUE5hd6Ms"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.0275505,
+        "name": "Get All Folios",
+        "path": "catalogos/get-folios",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-plantillas-presupuesto.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/plantilla-presupuestos",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/plantilla-presupuestos",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "G5b-CwRt1xaFmm6XPDovE"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "gCbCVd8TrcBXa2oI44yQB"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.027824791,
+        "name": "Get All Plantillas Presupuesto",
+        "path": "catalogos/get-plantillas-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-plantillas-tramite.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/plantilla-tramite",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/plantilla-tramite",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "mhY9Pgv-cYxE3uWAXUy46"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "nL76UmtLwmsu-D1_VYQd_"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029377125,
+        "name": "Get All Plantillas Tramite",
+        "path": "catalogos/get-plantillas-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-tipos-documento.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/tipo-de-documento",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.462Z",
+            "status": 500,
+            "error": "Internal Server Error",
+            "path": "/api/v1/tipo-de-documento"
+          },
+          "url": "http://localhost/api/v1/tipo-de-documento",
+          "responseTime": 10
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "B91E5gTTrgQznl6oibzm1"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "xRaEWNQfkYIXdlZcLhJeV"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.041055208,
+        "name": "Get All Tipos de Documento",
+        "path": "catalogos/get-tipos-documento",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-tipos-folio.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/tipo-folio",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tipo-folio",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "l7jGxaO3cEKXxEifgFD4R"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "HhVskySuY3zOolyQ1RsBy"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029731166,
+        "name": "Get All Tipos de Folio",
+        "path": "catalogos/get-tipos-folio",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-tipos-identificacion.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/tipo-identificacion",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [
+            {
+              "dto": {
+                "caracteres": null,
+                "idTipoIdentificacion": 1,
+                "nombre": "DNI",
+                "valido": true,
+                "version": null
+              },
+              "idTipoIdentificacion": 1,
+              "nombre": "DNI",
+              "version": 0
+            },
+            {
+              "dto": {
+                "caracteres": null,
+                "idTipoIdentificacion": 2,
+                "nombre": "LE",
+                "valido": true,
+                "version": null
+              },
+              "idTipoIdentificacion": 2,
+              "nombre": "LE",
+              "version": 0
+            },
+            {
+              "dto": {
+                "caracteres": null,
+                "idTipoIdentificacion": 3,
+                "nombre": "LC",
+                "valido": true,
+                "version": null
+              },
+              "idTipoIdentificacion": 3,
+              "nombre": "LC",
+              "version": 0
+            },
+            {
+              "dto": {
+                "caracteres": null,
+                "idTipoIdentificacion": 4,
+                "nombre": "Pasaporte",
+                "valido": true,
+                "version": null
+              },
+              "idTipoIdentificacion": 4,
+              "nombre": "Pasaporte",
+              "version": 0
+            },
+            {
+              "dto": {
+                "caracteres": null,
+                "idTipoIdentificacion": 5,
+                "nombre": "CUIT",
+                "valido": true,
+                "version": null
+              },
+              "idTipoIdentificacion": 5,
+              "nombre": "CUIT",
+              "version": 0
+            }
+          ],
+          "url": "http://localhost/api/v1/tipo-identificacion",
+          "responseTime": 9
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "heJUoM6DW9TZ1I-XuFe9U"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "K0_llAI4OM9hunLZk98Mb"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.03522175,
+        "name": "Get All Tipos de Identificacion",
+        "path": "catalogos/get-tipos-identificacion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/get-tipos-tramite.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/tipo-tramite",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/tipo-tramite",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "B-xMx8SH7JSsqCH4bbFiO"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "AOu7OvANbwBOd5YIMemmh"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035922417,
+        "name": "Get All Tipos de Tramite",
+        "path": "catalogos/get-tipos-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/post-estado-gestion.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/estado-gestion",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Estado de gestión de prueba\"\ndescripcion: \"Descripción del estado de gestión\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.600Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/estado-gestion"
+          },
+          "url": "http://localhost/api/v1/estado-gestion",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "g9CW8AieR-fDuXPrKRQ3F"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.028162208,
+        "name": "Create Estado Gestion",
+        "path": "catalogos/post-estado-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/post-folio.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/folio",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1\nanno: 2025"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.630Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/folio"
+          },
+          "url": "http://localhost/api/v1/folio",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "bf22wXFXySFMc1inJDgIB"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.037219,
+        "name": "Create Folio",
+        "path": "catalogos/post-folio",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/post-tipo-documento.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/tipo-de-documento",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Tipo de documento de prueba\"\ndescripcion: \"Descripción del tipo de documento\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.667Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/tipo-de-documento"
+          },
+          "url": "http://localhost/api/v1/tipo-de-documento",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "1wJsyPyKy43CTJI9Bg0TD"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.02939025,
+        "name": "Create Tipo Documento",
+        "path": "catalogos/post-tipo-documento",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/post-tipo-folio.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/tipo-folio",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Tipo de folio de prueba\"\ndescripcion: \"Descripción del tipo de folio\""
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tipo-folio",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 500",
+            "uid": "a7LjFTcFkNOMsZ5tIGYDl"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.036737,
+        "name": "Create Tipo Folio",
+        "path": "catalogos/post-tipo-folio",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "catalogos/post-tipo-tramite.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/tipo-tramite",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Tipo de trámite de prueba\"\ndescripcion: \"Descripción del tipo de trámite\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.733Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/tipo-tramite"
+          },
+          "url": "http://localhost/api/v1/tipo-tramite",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "C3Oft_DhrP-UlQ6KirG9e"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029354083,
+        "name": "Create Tipo Tramite",
+        "path": "catalogos/post-tipo-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "conceptos/delete-concepto.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/conceptos/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/conceptos/1",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "DRDFxbLCC33koqDr0OHKr"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.034937166,
+        "name": "Delete Concepto",
+        "path": "conceptos/delete-concepto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "conceptos/get-conceptos.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/conceptos",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [
+            {
+              "fijo": false,
+              "habilitado": true,
+              "idConcepto": 2,
+              "nombre": "Honorarios",
+              "plantillaPresupuestoses": null,
+              "porcentaje": 5,
+              "valido": false,
+              "valor": 0,
+              "version": 1
+            },
+            {
+              "fijo": true,
+              "habilitado": true,
+              "idConcepto": 3,
+              "nombre": "Documentacion",
+              "plantillaPresupuestoses": null,
+              "porcentaje": 0,
+              "valido": false,
+              "valor": 500,
+              "version": 2
+            },
+            {
+              "fijo": true,
+              "habilitado": true,
+              "idConcepto": 4,
+              "nombre": "Protocolo",
+              "plantillaPresupuestoses": null,
+              "porcentaje": 0,
+              "valido": false,
+              "valor": 150,
+              "version": 1
+            }
+          ],
+          "url": "http://localhost/api/v1/conceptos",
+          "responseTime": 11
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Response time under 2 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "3Gznoo0atR6Sw2dfHx3m2"
+          },
+          {
+            "description": "Status 200 - Conceptos retrieved successfully",
+            "status": "pass",
+            "uid": "91mtEBGKa0E-U5fIMSADb"
+          },
+          {
+            "description": "Response is an array",
+            "status": "pass",
+            "uid": "LcMSDAQNASMpUH-2fey4_"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "pass",
+            "uid": "2yq4pm_VqFotHOZ-Q7S_U"
+          },
+          {
+            "description": "Each concepto has required fields when array is not empty",
+            "status": "pass",
+            "uid": "Xh_22CmisTlCg3UjJaQod"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.040804541,
+        "name": "Get All Conceptos",
+        "path": "conceptos/get-conceptos",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "conceptos/post-concepto.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/conceptos",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Concepto de prueba\"\ndescripcion: \"Descripción del concepto\"\nvalor: 100.00"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.838Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/conceptos"
+          },
+          "url": "http://localhost/api/v1/conceptos",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "zYNA8h4xLe17Q0InxxExk"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.03589425,
+        "name": "Create Concepto",
+        "path": "conceptos/post-concepto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "conceptos/put-concepto.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/conceptos/1",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Concepto actualizado\"\ndescripcion: \"Descripción actualizada\"\nvalor: 200.00"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.874Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/conceptos/1"
+          },
+          "url": "http://localhost/api/v1/conceptos/1",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 400 to equal 200",
+            "uid": "ZMl53I9P5brjlnyQGnn-9"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.036789791,
+        "name": "Update Concepto",
+        "path": "conceptos/put-concepto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/delete-escritura.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/escrituras/",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.912Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/escrituras/"
+          },
+          "url": "http://localhost/api/v1/escrituras/",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "BtOqwTLObCsSLE_jHyh1R"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.036975,
+        "name": "Delete Escritura",
+        "path": "escrituras/delete-escritura",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-copias.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/copia",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/copia",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "fsVpFpYDgWEUhcO0P7kt9"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "lahdHLj0REIpVsnfJeA3B"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035039542,
+        "name": "Get All Copias",
+        "path": "escrituras/get-copias",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-escribanos-disponibles.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/escrituras/escribanos-disponibles",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:30 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:30.989Z",
+            "status": 500,
+            "error": "Internal Server Error",
+            "path": "/api/v1/escrituras/escribanos-disponibles"
+          },
+          "url": "http://localhost/api/v1/escrituras/escribanos-disponibles",
+          "responseTime": 12
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "EGFoMGij9Pgy7wePagHNT"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "OPFriCiYZIjuXp0Dbq_Hu"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.041882042,
+        "name": "Get Escribanos Disponibles",
+        "path": "escrituras/get-escribanos-disponibles",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-escrituras.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/escrituras",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/escrituras",
+          "responseTime": 9
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Response time under 3 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "UONw-xRnnlLblfLSjOMI4"
+          },
+          {
+            "description": "Status 200 - Escrituras retrieved successfully",
+            "status": "pass",
+            "uid": "RiAUpWuDvRwWpHTQ7jpjG"
+          },
+          {
+            "description": "Response is an array",
+            "status": "pass",
+            "uid": "allEASfo40WicyRZv4CLn"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "pass",
+            "uid": "elux4gyd3NwbyEroBj3MV"
+          },
+          {
+            "description": "Each escritura has idEscritura field when array is not empty",
+            "status": "pass",
+            "uid": "PtFhnyDnNr0toMHMI3mrg"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035493334,
+        "name": "Get All Escrituras",
+        "path": "escrituras/get-escrituras",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-inmuebles.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/inmueble",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/inmueble",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "8_xHdw2P9g3LdD-iSheeL"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "kzOSAFlsUz0OstGAHTnaa"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.034460875,
+        "name": "Get All Inmuebles",
+        "path": "escrituras/get-inmuebles",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-movimientos-testimonio.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/movimiento-testimonio",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/movimiento-testimonio",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "l7YAxJDu7kkrfN9KKjYal"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "8voK3mOzfumSyG21OmU2j"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035591167,
+        "name": "Get All Movimiento Testimonio",
+        "path": "escrituras/get-movimientos-testimonio",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-suplencias.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/suplencia",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/suplencia",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "jgHnE12LNUHzzj0sZchVp"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "H8GsrdeWrrp_85IsKzDw_"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035645417,
+        "name": "Get All Suplencias",
+        "path": "escrituras/get-suplencias",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/get-testimonios.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/testimonio",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/testimonio",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "fhSI6wtyFVOOMjzotGnku"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "piXjzsXXvOrlc-n3vXA-I"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.037514334,
+        "name": "Get All Testimonios",
+        "path": "escrituras/get-testimonios",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/post-escritura.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/escrituras",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1001\nfecha: \"2025-01-15\"\ntipo: \"escritura\"\nestado: \"pendiente\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.203Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/escrituras"
+          },
+          "url": "http://localhost/api/v1/escrituras",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "NgWDPgiJ6d2K2rovvYZek"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035277208,
+        "name": "Create Escritura",
+        "path": "escrituras/post-escritura",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/post-testimonio.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/testimonio",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1001\nfecha: \"2025-01-15\"\nestado: \"pendiente\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.238Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/testimonio"
+          },
+          "url": "http://localhost/api/v1/testimonio",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "vjIw8YkxzdnB7Z35EDVY9"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.037601,
+        "name": "Create Testimonio",
+        "path": "escrituras/post-testimonio",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "escrituras/put-escritura.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/escrituras/",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1002\nfecha: \"2025-02-01\"\ntipo: \"escritura\"\nestado: \"completada\""
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.274Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/escrituras/"
+          },
+          "url": "http://localhost/api/v1/escrituras/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "H7EyJp5_1mlI-Xh-LOxno"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031482208,
+        "name": "Update Escritura",
+        "path": "escrituras/put-escritura",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/delete-gestion.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/gestiones/",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.305Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/gestiones/"
+          },
+          "url": "http://localhost/api/v1/gestiones/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "Qj6VET4GmQb-ZKQ7-t-tf"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029533375,
+        "name": "Delete Gestion",
+        "path": "gestiones/delete-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-documentos-presentados.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/documento-presentado",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/documento-presentado",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "p9C08ysT11RVew33l5kXz"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "ZAlCGzIGmdq8zKAb6bgov"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029148708,
+        "name": "Get All Documentos Presentados",
+        "path": "gestiones/get-documentos-presentados",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-estado-actual.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/gestiones//estado-actual",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.364Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/gestiones//estado-actual"
+          },
+          "url": "http://localhost/api/v1/gestiones//estado-actual",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status is 200 or 404",
+            "status": "pass",
+            "uid": "1LQLNPQX9ZgW33BB_U9c-"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.030791167,
+        "name": "Get Estado Actual de Gestion",
+        "path": "gestiones/get-estado-actual",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-gestiones-by-cliente.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/gestiones/cliente/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.394Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/gestiones/cliente/"
+          },
+          "url": "http://localhost/api/v1/gestiones/cliente/",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "Lep-R2ir5nMEmi3eAgEAD"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "G1NwSWrMgQbydYzibeQv7"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.025634125,
+        "name": "Get Gestiones By Cliente",
+        "path": "gestiones/get-gestiones-by-cliente",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-gestiones.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/gestiones",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/gestiones",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Response time under 3 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "3rt8L7SCbny_fN77Fb0AN"
+          },
+          {
+            "description": "Status 200 - Gestiones retrieved successfully",
+            "status": "pass",
+            "uid": "Z1W2yMEZg2vrOkkWww4Wx"
+          },
+          {
+            "description": "Response is an array",
+            "status": "pass",
+            "uid": "vZ0s-SOpsyOpEzv8JIVJL"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "pass",
+            "uid": "3e4792IQT2odShpkSN372"
+          },
+          {
+            "description": "Each gestion has idGestion field when array is not empty",
+            "status": "pass",
+            "uid": "f9xMUmI18klox_bNdDUqC"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.030174417,
+        "name": "Get All Gestiones",
+        "path": "gestiones/get-gestiones",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-historial-by-gestion.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/historial/gestion/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.452Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/historial/gestion/"
+          },
+          "url": "http://localhost/api/v1/historial/gestion/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "RtzALcYa49rxTLD9p1uYG"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "9e9R8GNEI_omdCwCdR8rq"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.033885166,
+        "name": "Get Historial By Gestion",
+        "path": "gestiones/get-historial-by-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/get-historiales.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/historial",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": [],
+          "url": "http://localhost/api/v1/historial",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "_0uVAGkUxK300_QvbV2J_"
+          },
+          {
+            "description": "Response is array",
+            "status": "pass",
+            "uid": "LZ3C5BPoJikyBUmTZKWUZ"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.027235125,
+        "name": "Get All Historial",
+        "path": "gestiones/get-historiales",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/post-documento-presentado.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/documento-presentado",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Documento de prueba\"\ndescripcion: \"Descripción del documento\"\nfechaPresentacion: \"2025-01-15\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.513Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/documento-presentado"
+          },
+          "url": "http://localhost/api/v1/documento-presentado",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "rJM5qX9EHTj8eE_xIHx8N"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031336958,
+        "name": "Create Documento Presentado",
+        "path": "gestiones/post-documento-presentado",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/post-gestion.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/gestiones",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1001\nfechaInicio: \"2025-01-15\"\ndetalle: \"Gestión de prueba\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.545Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/gestiones"
+          },
+          "url": "http://localhost/api/v1/gestiones",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "aKf9oJXJT2Yvd-Xyydzvl"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.037546208,
+        "name": "Create Gestion",
+        "path": "gestiones/post-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/post-historial.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/historial",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "fecha: \"2025-01-15\"\ndescripcion: \"Historial de prueba\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.581Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/historial"
+          },
+          "url": "http://localhost/api/v1/historial",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "0Is4Ra7J70Vp7Z7YJncoN"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.026478208,
+        "name": "Create Historial",
+        "path": "gestiones/post-historial",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "gestiones/put-gestion.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/gestiones/",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1002\nfechaInicio: \"2025-02-01\"\ndetalle: \"Gestión actualizada\""
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.607Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/gestiones/"
+          },
+          "url": "http://localhost/api/v1/gestiones/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "zGSlco5b7M_mN2H1FVE11"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.032921208,
+        "name": "Update Gestion",
+        "path": "gestiones/put-gestion",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "items/delete-item.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/items/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/items/1",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "uPskLR73UzUuGi2OgbUlH"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.033743958,
+        "name": "Delete Item",
+        "path": "items/delete-item",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "items/get-items-by-presupuesto.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/items/presupuesto/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:46:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:46:31.675Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/items/presupuesto/"
+          },
+          "url": "http://localhost/api/v1/items/presupuesto/",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "l7F2aWLlWAHA8cCVZc3MZ"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "Qy1l-ZoJCChEZgH_VoG8q"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.034551208,
+        "name": "Get Items By Presupuesto",
+        "path": "items/get-items-by-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "items/get-items.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/items",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:47:01 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/items",
+          "responseTime": 30007
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "bU9PZjOPtmw4m_U7hoxaj"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "RGcDORkBdon3JM0t_kd2p"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.049410083,
+        "name": "Get All Items",
+        "path": "items/get-items",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "items/post-item.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/items",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Item de prueba\"\nvalor: 1000.00\nporcentaje: 0"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:47:01 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:47:01.760Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/items"
+          },
+          "url": "http://localhost/api/v1/items",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "mLRJn6txAb0HGzfFHYxzC"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035509167,
+        "name": "Create Item",
+        "path": "items/post-item",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "items/put-item.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/items/1",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Item actualizado\"\nvalor: 2000.00\nporcentaje: 10"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:47:01 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:47:01.794Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/items/1"
+          },
+          "url": "http://localhost/api/v1/items/1",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 400 to equal 200",
+            "uid": "X8L_IEcBEasn-fIEuf0yD"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.030571334,
+        "name": "Update Item",
+        "path": "items/put-item",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "pagos/delete-pago.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/pagos/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:47:31 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/pagos/1",
+          "responseTime": 30006
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "vafvhd_CMAv8o4W8ABCj2"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.053486959,
+        "name": "Delete Pago",
+        "path": "pagos/delete-pago",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "pagos/get-pagos-by-presupuesto.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/pagos/presupuesto/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:47:31 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:47:31.878Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/pagos/presupuesto/"
+          },
+          "url": "http://localhost/api/v1/pagos/presupuesto/",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "sza5MNommajrvxiCY8ua7"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "ItnbLKrSMilIgUBOyRJXP"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.038121166,
+        "name": "Get Pagos By Presupuesto",
+        "path": "pagos/get-pagos-by-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "pagos/get-pagos.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/pagos",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:48:01 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/pagos",
+          "responseTime": 30012
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "HfT2GsMgSErTiQeW8uz5i"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "2z8U6XxdEM5K6Nj3UhwhD"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.055884916,
+        "name": "Get All Pagos",
+        "path": "pagos/get-pagos",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "pagos/post-pago.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/pagos",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "monto: 1000.00\nfecha: \"2025-01-15\"\nformaPago: \"efectivo\"\nestado: \"pendiente\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:48:01 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:48:01.976Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/pagos"
+          },
+          "url": "http://localhost/api/v1/pagos",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "bW___Agz6x0FqXvhW-5X1"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.039287958,
+        "name": "Create Pago",
+        "path": "pagos/post-pago",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "pagos/put-pago.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/pagos/1",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "monto: 2000.00\nfecha: \"2025-02-01\"\nformaPago: \"transferencia\"\nestado: \"pagado\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:48:02 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:48:02.011Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/pagos/1"
+          },
+          "url": "http://localhost/api/v1/pagos/1",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 400 to equal 200",
+            "uid": "przEhOhnR5pbS_jWHxVuG"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.035371959,
+        "name": "Update Pago",
+        "path": "pagos/put-pago",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/buscar-personas.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/personas/buscar",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:48:32 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:48:32.062Z",
+            "status": 500,
+            "error": "Internal Server Error",
+            "path": "/api/v1/personas/buscar"
+          },
+          "url": "http://localhost/api/v1/personas/buscar",
+          "responseTime": 30019
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "MZ0_WRWn1QyXLCrGVxVRY"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "GjAIQAyAOXsym1OlKel0H"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.061541583,
+        "name": "Buscar Personas",
+        "path": "personas/buscar-personas",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/delete-persona.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/personas/",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:48:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:48:32.112Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/personas/"
+          },
+          "url": "http://localhost/api/v1/personas/",
+          "responseTime": 8
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "nxRC7dyugElixPrpzt-s7"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.039527125,
+        "name": "Delete Persona",
+        "path": "personas/delete-persona",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/get-persona-by-id.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/personas/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:48:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:48:32.148Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/personas/"
+          },
+          "url": "http://localhost/api/v1/personas/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status is 200 or 404",
+            "status": "pass",
+            "uid": "6IqrUyfzdGIF6o2mqupa2"
+          },
+          {
+            "description": "Response time under 1000ms",
+            "status": "pass",
+            "uid": "wGGhnEJeh_th4rolPc_FL"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031835541,
+        "name": "Get Persona By ID",
+        "path": "personas/get-persona-by-id",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/get-personas.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/personas",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:02 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:02.186Z",
+            "status": 500,
+            "error": "Internal Server Error",
+            "path": "/api/v1/personas"
+          },
+          "url": "http://localhost/api/v1/personas",
+          "responseTime": 30010
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200 - Personas retrieved successfully",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "unwra6y0zHQu1j1fwKR7s"
+          },
+          {
+            "description": "Response is an array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "NrXiL9PTHYVZHupkKy7Fj"
+          },
+          {
+            "description": "Response time under 2 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "nIS33ODb3je4ZXb8yKq8a"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "pass",
+            "uid": "GENC41sbr31HTrz4WieF-"
+          },
+          {
+            "description": "Each persona has required fields when array is not empty",
+            "status": "pass",
+            "uid": "yOjdqgZPzjxyByett-sDg"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.052619167,
+        "name": "Get All Personas",
+        "path": "personas/get-personas",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/post-persona.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/personas",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: Juan\napellido: Perez\nnumeroIdentificacion: \"12345678\"\nesCliente: false\nesActivo: true"
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:02 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:02.235Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/personas"
+          },
+          "url": "http://localhost/api/v1/personas",
+          "responseTime": 6
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "5BoSO1gNpBEZS-d-VW7or"
+          },
+          {
+            "description": "Response has id",
+            "status": "fail",
+            "error": "expected { …(4) } to have property 'idPersona'",
+            "uid": "eO8Cf8sfl_8bpnAL3XlLy"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.036489125,
+        "name": "Create Persona",
+        "path": "personas/post-persona",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "personas/put-persona.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/personas/",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Juan Actualizado\"\napellido: \"Perez Actualizado\"\nnumeroIdentificacion: \"87654321\"\nesCliente: true\nesActivo: true"
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:02 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:02.269Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/personas/"
+          },
+          "url": "http://localhost/api/v1/personas/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "AFTQSXHsg3qCLc1i2IjYM"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031381875,
+        "name": "Update Persona",
+        "path": "personas/put-persona",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "presupuestos/delete-presupuesto.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/presupuestos/",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:02 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:02.300Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/presupuestos/"
+          },
+          "url": "http://localhost/api/v1/presupuestos/",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "OVDc4V2g1gHrvVBo8j1lE"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.033025125,
+        "name": "Delete Presupuesto",
+        "path": "presupuestos/delete-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "presupuestos/get-presupuestos-by-persona.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/presupuestos/persona/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:02 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:02.335Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/presupuestos/persona/"
+          },
+          "url": "http://localhost/api/v1/presupuestos/persona/",
+          "responseTime": 5
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "hCQCeIrkrwrKradTCpqfC"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { …(4) } to be an array",
+            "uid": "7K9zsRYYokG6q0j3z6rmY"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031053583,
+        "name": "Get Presupuestos By Persona",
+        "path": "presupuestos/get-presupuestos-by-persona",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "presupuestos/get-presupuestos.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/presupuestos",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:49:32 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/presupuestos",
+          "responseTime": 30009
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200 - Presupuestos retrieved successfully",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "KTFkvEa9b38M14Ci415Mv"
+          },
+          {
+            "description": "Response is an array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "5JDK-gKUBke-_eTwx5_ik"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "fail",
+            "error": "the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string",
+            "uid": "KkeBxRaesqTMSEWDdKVwh"
+          },
+          {
+            "description": "Response time under 3 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "P2-3rdch9Q-1Nqcy2trqD"
+          },
+          {
+            "description": "Each presupuesto has idPresupuesto field when array is not empty",
+            "status": "pass",
+            "uid": "Aici2e_Eqyyze9-G1ho5c"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.051783959,
+        "name": "Get All Presupuestos",
+        "path": "presupuestos/get-presupuestos",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "presupuestos/post-presupuesto.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/presupuestos",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1001\nfecha: \"2025-01-15\"\nestado: \"pendiente\"\nobservaciones: \"Presupuesto de prueba\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:32 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:32.417Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/presupuestos"
+          },
+          "url": "http://localhost/api/v1/presupuestos",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "2vE2KY4-hbiWtFTRVw_-i"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.038881083,
+        "name": "Create Presupuesto",
+        "path": "presupuestos/post-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "presupuestos/put-presupuesto.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/presupuestos/",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "numero: 1002\nfecha: \"2025-02-01\"\nestado: \"aprobado\"\nobservaciones: \"Presupuesto actualizado\""
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:49:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:49:32.455Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/presupuestos/"
+          },
+          "url": "http://localhost/api/v1/presupuestos/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "4v5Os8Je6c6E14nmVnIr1"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.030721792,
+        "name": "Update Presupuesto",
+        "path": "presupuestos/put-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "reportes/get-reporte-presupuesto.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/reportes/presupuesto/",
+          "headers": {
+            "Accept": "application/pdf",
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:49:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/reportes/presupuesto/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status is 200 or 500",
+            "status": "fail",
+            "error": "expected [ 200, 500 ] to include 404",
+            "uid": "XMmCE7O0Y72t3IvCiYX9f"
+          },
+          {
+            "description": "Content-Type is PDF",
+            "status": "pass",
+            "uid": "I34GWkkalJMs3h4_7Bw7M"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.029605791,
+        "name": "Get Reporte Presupuesto PDF",
+        "path": "reportes/get-reporte-presupuesto",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "tramites/delete-tramite.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/tramites/1",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:50:02 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tramites/1",
+          "responseTime": 30008
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "2VJ3wAAZIiInscxuinIhT"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.048472125,
+        "name": "Delete Tramite",
+        "path": "tramites/delete-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "tramites/get-tramites.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/tramites",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:50:32 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/tramites",
+          "responseTime": 30011
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "L4Sq2S2MQL4-J_Xg-GlE1"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "bGvYkqQeWUL4a99VH3V0L"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.057036709,
+        "name": "Get All Tramites",
+        "path": "tramites/get-tramites",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "tramites/post-tramite.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/tramites",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Trámite de prueba\"\ndescripcion: \"Descripción del trámite\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:50:32 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:50:32.624Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/tramites"
+          },
+          "url": "http://localhost/api/v1/tramites",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "JdUs7R0zjKQJxfaQgKhk5"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.038461958,
+        "name": "Create Tramite",
+        "path": "tramites/post-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "tramites/put-tramite.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/tramites/1",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"Trámite actualizado\"\ndescripcion: \"Descripción actualizada\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:50:32 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:50:32.662Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/tramites/1"
+          },
+          "url": "http://localhost/api/v1/tramites/1",
+          "responseTime": 7
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 400 to equal 200",
+            "uid": "E5YUWRBB0ybPT-WYNmAky"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.0404065,
+        "name": "Update Tramite",
+        "path": "tramites/put-tramite",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "usuarios/delete-usuario.bru"
+        },
+        "request": {
+          "method": "DELETE",
+          "url": "http://localhost:8080/api/v1/usuarios/",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:50:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:50:32.700Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/usuarios/"
+          },
+          "url": "http://localhost/api/v1/usuarios/",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "0IywwpT87R9N0fG3lpScz"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.033175125,
+        "name": "Delete Usuario",
+        "path": "usuarios/delete-usuario",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "usuarios/get-usuario-by-id.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/usuarios/",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:50:32 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:50:32.733Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/usuarios/"
+          },
+          "url": "http://localhost/api/v1/usuarios/",
+          "responseTime": 3
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status is 200 or 404",
+            "status": "pass",
+            "uid": "_fCuvLtGds1-R15P5cA4Q"
+          },
+          {
+            "description": "Response time under 1000ms",
+            "status": "pass",
+            "uid": "neIOtKqHsHdLcGmAJh7fb"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.028891125,
+        "name": "Get Usuario By ID",
+        "path": "usuarios/get-usuario-by-id",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "usuarios/get-usuarios.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/usuarios",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "response": {
+          "status": 500,
+          "statusText": "",
+          "headers": {
+            "content-length": "0",
+            "date": "Tue, 14 Apr 2026 20:51:02 GMT",
+            "connection": "close"
+          },
+          "data": "",
+          "url": "http://localhost/api/v1/usuarios",
+          "responseTime": 30011
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200 - Usuarios retrieved successfully",
+            "status": "fail",
+            "error": "expected 500 to equal 200",
+            "uid": "dL6IoHC5MdqqKS3YOLQXz"
+          },
+          {
+            "description": "Response is an array",
+            "status": "fail",
+            "error": "expected '' to be an array",
+            "uid": "8oJw_wzlkKMCHZa4HZ7Jm"
+          },
+          {
+            "description": "Response Content-Type is JSON",
+            "status": "fail",
+            "error": "the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string",
+            "uid": "3jNpXsHjOH1bHbKwrMzbu"
+          },
+          {
+            "description": "Response time under 2 seconds",
+            "status": "fail",
+            "error": "not a function",
+            "uid": "BE6cj7dD-g0wSJiQmnJJi"
+          },
+          {
+            "description": "Each usuario has required fields when array is not empty",
+            "status": "pass",
+            "uid": "OgXZSmqqBdQgEbxoiAsgp"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 30.058445417,
+        "name": "Get All Usuarios",
+        "path": "usuarios/get-usuarios",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "usuarios/post-usuario.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/usuarios",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"nuevousuario\"\ncontrasenia: \"password123\"\nestado: true\ntipo: \"gestor\""
+        },
+        "response": {
+          "status": 400,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:51:02 GMT",
+            "connection": "close"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:51:02.821Z",
+            "status": 400,
+            "error": "Bad Request",
+            "path": "/api/v1/usuarios"
+          },
+          "url": "http://localhost/api/v1/usuarios",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 201 or 200",
+            "status": "fail",
+            "error": "expected [ 200, 201 ] to include 400",
+            "uid": "48JDBuu6bX1ZQ6GmLo-7c"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.038491667,
+        "name": "Create Usuario",
+        "path": "usuarios/post-usuario",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "usuarios/put-usuario.bru"
+        },
+        "request": {
+          "method": "PUT",
+          "url": "http://localhost:8080/api/v1/usuarios/",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "data": "nombre: \"usuarioactualizado\"\ncontrasenia: \"newpassword123\"\nestado: true\ntipo: \"admin\""
+        },
+        "response": {
+          "status": 404,
+          "statusText": "",
+          "headers": {
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Tue, 14 Apr 2026 20:51:02 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-04-14T20:51:02.860Z",
+            "status": 404,
+            "error": "Not Found",
+            "path": "/api/v1/usuarios/"
+          },
+          "url": "http://localhost/api/v1/usuarios/",
+          "responseTime": 4
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 404 to equal 200",
+            "uid": "KIsmFZIDK8RDFDzIJt-Du"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.031549125,
+        "name": "Update Usuario",
+        "path": "usuarios/put-usuario",
+        "iterationIndex": 0
+      }
+    ],
+    "summary": {
+      "totalRequests": 74,
+      "passedRequests": 14,
+      "failedRequests": 60,
+      "errorRequests": 0,
+      "skippedRequests": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 132,
+      "passedTests": 46,
+      "failedTests": 86,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    }
+  }
+]

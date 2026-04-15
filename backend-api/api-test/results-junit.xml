@@ -1,0 +1,455 @@
+<?xml version="1.0"?>
+<testsuites>
+  <testsuite name="Get All Registros de Auditoria" file="auditoria/get-registros-auditoria.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.087">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/registro-auditoria" time="0.043"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/registro-auditoria" time="0.043"/>
+  </testsuite>
+  <testsuite name="Login" file="auth/login.bru" errors="0" failures="3" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Response has valido field" status="fail" classname="http://localhost:8080/api/v1/usuarios/login" time="0.006">
+      <failure type="failure" message="expected { …(4) } to have property 'valido'"/>
+    </testcase>
+    <testcase name="valido field is boolean" status="fail" classname="http://localhost:8080/api/v1/usuarios/login" time="0.006">
+      <failure type="failure" message="expected undefined to be a boolean"/>
+    </testcase>
+    <testcase name="Response time under 2 seconds" status="fail" classname="http://localhost:8080/api/v1/usuarios/login" time="0.006">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Status is 200 or 400" status="pass" classname="http://localhost:8080/api/v1/usuarios/login" time="0.006"/>
+    <testcase name="If login successful, response has required fields" status="pass" classname="http://localhost:8080/api/v1/usuarios/login" time="0.006"/>
+  </testsuite>
+  <testsuite name="Delete Tipo Documento" file="catalogos/delete-tipo-documento.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tipo-de-documento/1" time="0.029">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Tipo Tramite" file="catalogos/delete-tipo-tramite.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tipo-tramite/1" time="0.029">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Estados de Gestion" file="catalogos/get-estados-gestion.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.047">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/estado-gestion" time="0.024">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/estado-gestion" time="0.024">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Folios" file="catalogos/get-folios.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.028">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/folio" time="0.014"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/folio" time="0.014"/>
+  </testsuite>
+  <testsuite name="Get All Plantillas Presupuesto" file="catalogos/get-plantillas-presupuesto.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.028">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/plantilla-presupuestos" time="0.014"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/plantilla-presupuestos" time="0.014"/>
+  </testsuite>
+  <testsuite name="Get All Plantillas Tramite" file="catalogos/get-plantillas-tramite.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/plantilla-tramite" time="0.015"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/plantilla-tramite" time="0.015"/>
+  </testsuite>
+  <testsuite name="Get All Tipos de Documento" file="catalogos/get-tipos-documento.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.041">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tipo-de-documento" time="0.021">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/tipo-de-documento" time="0.021">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Tipos de Folio" file="catalogos/get-tipos-folio.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.030">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tipo-folio" time="0.015">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/tipo-folio" time="0.015">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Tipos de Identificacion" file="catalogos/get-tipos-identificacion.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/tipo-identificacion" time="0.018"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/tipo-identificacion" time="0.018"/>
+  </testsuite>
+  <testsuite name="Get All Tipos de Tramite" file="catalogos/get-tipos-tramite.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/tipo-tramite" time="0.018"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/tipo-tramite" time="0.018"/>
+  </testsuite>
+  <testsuite name="Create Estado Gestion" file="catalogos/post-estado-gestion.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.028">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/estado-gestion" time="0.028">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Folio" file="catalogos/post-folio.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.037">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/folio" time="0.037">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Tipo Documento" file="catalogos/post-tipo-documento.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/tipo-de-documento" time="0.029">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Tipo Folio" file="catalogos/post-tipo-folio.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.037">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/tipo-folio" time="0.037">
+      <failure type="failure" message="expected [ 200, 201 ] to include 500"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Tipo Tramite" file="catalogos/post-tipo-tramite.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/tipo-tramite" time="0.029">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Concepto" file="conceptos/delete-concepto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/conceptos/1" time="0.035">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Conceptos" file="conceptos/get-conceptos.bru" errors="0" failures="1" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.041">
+    <testcase name="Response time under 2 seconds" status="fail" classname="http://localhost:8080/api/v1/conceptos" time="0.008">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Status 200 - Conceptos retrieved successfully" status="pass" classname="http://localhost:8080/api/v1/conceptos" time="0.008"/>
+    <testcase name="Response is an array" status="pass" classname="http://localhost:8080/api/v1/conceptos" time="0.008"/>
+    <testcase name="Response Content-Type is JSON" status="pass" classname="http://localhost:8080/api/v1/conceptos" time="0.008"/>
+    <testcase name="Each concepto has required fields when array is not empty" status="pass" classname="http://localhost:8080/api/v1/conceptos" time="0.008"/>
+  </testsuite>
+  <testsuite name="Create Concepto" file="conceptos/post-concepto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/conceptos" time="0.036">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Concepto" file="conceptos/put-concepto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.037">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/conceptos/1" time="0.037">
+      <failure type="failure" message="expected 400 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Escritura" file="escrituras/delete-escritura.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.037">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/escrituras/" time="0.037">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Copias" file="escrituras/get-copias.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/copia" time="0.018"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/copia" time="0.018"/>
+  </testsuite>
+  <testsuite name="Get Escribanos Disponibles" file="escrituras/get-escribanos-disponibles.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.042">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/escrituras/escribanos-disponibles" time="0.021">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/escrituras/escribanos-disponibles" time="0.021">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Escrituras" file="escrituras/get-escrituras.bru" errors="0" failures="1" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Response time under 3 seconds" status="fail" classname="http://localhost:8080/api/v1/escrituras" time="0.007">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Status 200 - Escrituras retrieved successfully" status="pass" classname="http://localhost:8080/api/v1/escrituras" time="0.007"/>
+    <testcase name="Response is an array" status="pass" classname="http://localhost:8080/api/v1/escrituras" time="0.007"/>
+    <testcase name="Response Content-Type is JSON" status="pass" classname="http://localhost:8080/api/v1/escrituras" time="0.007"/>
+    <testcase name="Each escritura has idEscritura field when array is not empty" status="pass" classname="http://localhost:8080/api/v1/escrituras" time="0.007"/>
+  </testsuite>
+  <testsuite name="Get All Inmuebles" file="escrituras/get-inmuebles.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.034">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/inmueble" time="0.017"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/inmueble" time="0.017"/>
+  </testsuite>
+  <testsuite name="Get All Movimiento Testimonio" file="escrituras/get-movimientos-testimonio.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/movimiento-testimonio" time="0.018">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/movimiento-testimonio" time="0.018">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Suplencias" file="escrituras/get-suplencias.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/suplencia" time="0.018"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/suplencia" time="0.018"/>
+  </testsuite>
+  <testsuite name="Get All Testimonios" file="escrituras/get-testimonios.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/testimonio" time="0.019">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/testimonio" time="0.019">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Escritura" file="escrituras/post-escritura.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/escrituras" time="0.035">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Testimonio" file="escrituras/post-testimonio.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/testimonio" time="0.038">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Escritura" file="escrituras/put-escritura.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/escrituras/" time="0.031">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Gestion" file="gestiones/delete-gestion.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.030">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/gestiones/" time="0.030">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Documentos Presentados" file="gestiones/get-documentos-presentados.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/documento-presentado" time="0.015"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/documento-presentado" time="0.015"/>
+  </testsuite>
+  <testsuite name="Get Estado Actual de Gestion" file="gestiones/get-estado-actual.bru" errors="0" failures="0" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status is 200 or 404" status="pass" classname="http://localhost:8080/api/v1/gestiones//estado-actual" time="0.031"/>
+  </testsuite>
+  <testsuite name="Get Gestiones By Cliente" file="gestiones/get-gestiones-by-cliente.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.026">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/gestiones/cliente/" time="0.013">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/gestiones/cliente/" time="0.013">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Gestiones" file="gestiones/get-gestiones.bru" errors="0" failures="1" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.030">
+    <testcase name="Response time under 3 seconds" status="fail" classname="http://localhost:8080/api/v1/gestiones" time="0.006">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Status 200 - Gestiones retrieved successfully" status="pass" classname="http://localhost:8080/api/v1/gestiones" time="0.006"/>
+    <testcase name="Response is an array" status="pass" classname="http://localhost:8080/api/v1/gestiones" time="0.006"/>
+    <testcase name="Response Content-Type is JSON" status="pass" classname="http://localhost:8080/api/v1/gestiones" time="0.006"/>
+    <testcase name="Each gestion has idGestion field when array is not empty" status="pass" classname="http://localhost:8080/api/v1/gestiones" time="0.006"/>
+  </testsuite>
+  <testsuite name="Get Historial By Gestion" file="gestiones/get-historial-by-gestion.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.034">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/historial/gestion/" time="0.017">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/historial/gestion/" time="0.017">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Historial" file="gestiones/get-historiales.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.027">
+    <testcase name="Status 200" status="pass" classname="http://localhost:8080/api/v1/historial" time="0.014"/>
+    <testcase name="Response is array" status="pass" classname="http://localhost:8080/api/v1/historial" time="0.014"/>
+  </testsuite>
+  <testsuite name="Create Documento Presentado" file="gestiones/post-documento-presentado.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/documento-presentado" time="0.031">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Gestion" file="gestiones/post-gestion.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/gestiones" time="0.038">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Historial" file="gestiones/post-historial.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.026">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/historial" time="0.026">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Gestion" file="gestiones/put-gestion.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.033">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/gestiones/" time="0.033">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Item" file="items/delete-item.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.034">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/items/1" time="0.034">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Items By Presupuesto" file="items/get-items-by-presupuesto.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/items/presupuesto/" time="0.017">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/items/presupuesto/" time="0.017">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Items" file="items/get-items.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.049">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/items" time="15.025">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/items" time="15.025">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Item" file="items/post-item.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/items" time="0.036">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Item" file="items/put-item.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/items/1" time="0.031">
+      <failure type="failure" message="expected 400 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Pago" file="pagos/delete-pago.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.053">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/pagos/1" time="30.053">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Pagos By Presupuesto" file="pagos/get-pagos-by-presupuesto.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/pagos/presupuesto/" time="0.019">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/pagos/presupuesto/" time="0.019">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Pagos" file="pagos/get-pagos.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.056">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/pagos" time="15.028">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/pagos" time="15.028">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Pago" file="pagos/post-pago.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.039">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/pagos" time="0.039">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Pago" file="pagos/put-pago.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.035">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/pagos/1" time="0.035">
+      <failure type="failure" message="expected 400 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Buscar Personas" file="personas/buscar-personas.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.062">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/personas/buscar" time="15.031">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/personas/buscar" time="15.031">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Persona" file="personas/delete-persona.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.040">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/personas/" time="0.040">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Persona By ID" file="personas/get-persona-by-id.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.032">
+    <testcase name="Status is 200 or 404" status="pass" classname="http://localhost:8080/api/v1/personas/" time="0.016"/>
+    <testcase name="Response time under 1000ms" status="pass" classname="http://localhost:8080/api/v1/personas/" time="0.016"/>
+  </testsuite>
+  <testsuite name="Get All Personas" file="personas/get-personas.bru" errors="0" failures="3" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.053">
+    <testcase name="Status 200 - Personas retrieved successfully" status="fail" classname="http://localhost:8080/api/v1/personas" time="6.011">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is an array" status="fail" classname="http://localhost:8080/api/v1/personas" time="6.011">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+    <testcase name="Response time under 2 seconds" status="fail" classname="http://localhost:8080/api/v1/personas" time="6.011">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Response Content-Type is JSON" status="pass" classname="http://localhost:8080/api/v1/personas" time="6.011"/>
+    <testcase name="Each persona has required fields when array is not empty" status="pass" classname="http://localhost:8080/api/v1/personas" time="6.011"/>
+  </testsuite>
+  <testsuite name="Create Persona" file="personas/post-persona.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.036">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/personas" time="0.018">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+    <testcase name="Response has id" status="fail" classname="http://localhost:8080/api/v1/personas" time="0.018">
+      <failure type="failure" message="expected { …(4) } to have property 'idPersona'"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Persona" file="personas/put-persona.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/personas/" time="0.031">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Presupuesto" file="presupuestos/delete-presupuesto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.033">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/presupuestos/" time="0.033">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Presupuestos By Persona" file="presupuestos/get-presupuestos-by-persona.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/presupuestos/persona/" time="0.016">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/presupuestos/persona/" time="0.016">
+      <failure type="failure" message="expected { …(4) } to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Presupuestos" file="presupuestos/get-presupuestos.bru" errors="0" failures="4" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.052">
+    <testcase name="Status 200 - Presupuestos retrieved successfully" status="fail" classname="http://localhost:8080/api/v1/presupuestos" time="6.010">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is an array" status="fail" classname="http://localhost:8080/api/v1/presupuestos" time="6.010">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+    <testcase name="Response Content-Type is JSON" status="fail" classname="http://localhost:8080/api/v1/presupuestos" time="6.010">
+      <failure type="failure" message="the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string"/>
+    </testcase>
+    <testcase name="Response time under 3 seconds" status="fail" classname="http://localhost:8080/api/v1/presupuestos" time="6.010">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Each presupuesto has idPresupuesto field when array is not empty" status="pass" classname="http://localhost:8080/api/v1/presupuestos" time="6.010"/>
+  </testsuite>
+  <testsuite name="Create Presupuesto" file="presupuestos/post-presupuesto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.039">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/presupuestos" time="0.039">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Presupuesto" file="presupuestos/put-presupuesto.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.031">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/presupuestos/" time="0.031">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Reporte Presupuesto PDF" file="reportes/get-reporte-presupuesto.bru" errors="0" failures="1" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.030">
+    <testcase name="Status is 200 or 500" status="fail" classname="http://localhost:8080/api/v1/reportes/presupuesto/" time="0.015">
+      <failure type="failure" message="expected [ 200, 500 ] to include 404"/>
+    </testcase>
+    <testcase name="Content-Type is PDF" status="pass" classname="http://localhost:8080/api/v1/reportes/presupuesto/" time="0.015"/>
+  </testsuite>
+  <testsuite name="Delete Tramite" file="tramites/delete-tramite.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.048">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tramites/1" time="30.048">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get All Tramites" file="tramites/get-tramites.bru" errors="0" failures="2" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.057">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tramites" time="15.029">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is array" status="fail" classname="http://localhost:8080/api/v1/tramites" time="15.029">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Create Tramite" file="tramites/post-tramite.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/tramites" time="0.038">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Tramite" file="tramites/put-tramite.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.040">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/tramites/1" time="0.040">
+      <failure type="failure" message="expected 400 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Delete Usuario" file="usuarios/delete-usuario.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.033">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/usuarios/" time="0.033">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Get Usuario By ID" file="usuarios/get-usuario-by-id.bru" errors="0" failures="0" skipped="0" tests="2" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.029">
+    <testcase name="Status is 200 or 404" status="pass" classname="http://localhost:8080/api/v1/usuarios/" time="0.014"/>
+    <testcase name="Response time under 1000ms" status="pass" classname="http://localhost:8080/api/v1/usuarios/" time="0.014"/>
+  </testsuite>
+  <testsuite name="Get All Usuarios" file="usuarios/get-usuarios.bru" errors="0" failures="4" skipped="0" tests="5" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="30.058">
+    <testcase name="Status 200 - Usuarios retrieved successfully" status="fail" classname="http://localhost:8080/api/v1/usuarios" time="6.012">
+      <failure type="failure" message="expected 500 to equal 200"/>
+    </testcase>
+    <testcase name="Response is an array" status="fail" classname="http://localhost:8080/api/v1/usuarios" time="6.012">
+      <failure type="failure" message="expected '' to be an array"/>
+    </testcase>
+    <testcase name="Response Content-Type is JSON" status="fail" classname="http://localhost:8080/api/v1/usuarios" time="6.012">
+      <failure type="failure" message="the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string"/>
+    </testcase>
+    <testcase name="Response time under 2 seconds" status="fail" classname="http://localhost:8080/api/v1/usuarios" time="6.012">
+      <failure type="failure" message="not a function"/>
+    </testcase>
+    <testcase name="Each usuario has required fields when array is not empty" status="pass" classname="http://localhost:8080/api/v1/usuarios" time="6.012"/>
+  </testsuite>
+  <testsuite name="Create Usuario" file="usuarios/post-usuario.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.038">
+    <testcase name="Status 201 or 200" status="fail" classname="http://localhost:8080/api/v1/usuarios" time="0.038">
+      <failure type="failure" message="expected [ 200, 201 ] to include 400"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="Update Usuario" file="usuarios/put-usuario.bru" errors="0" failures="1" skipped="0" tests="1" timestamp="2026-04-14T20:51:02.895" hostname="MacBook-Pro-de-Matias.local" time="0.032">
+    <testcase name="Status 200" status="fail" classname="http://localhost:8080/api/v1/usuarios/" time="0.032">
+      <failure type="failure" message="expected 404 to equal 200"/>
+    </testcase>
+  </testsuite>
+</testsuites>
