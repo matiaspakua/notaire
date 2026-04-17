@@ -1,0 +1,34 @@
+meta {
+  name: Update Suplencia
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/suplencia/{{suplencia_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  fechaInicio: "2025-02-01"
+  fechaFin: "2025-06-30"
+  observaciones: "Test suplencia updated"
+}
+
+tests {
+  test("Status 200 - Suplencia updated", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  ## Update Suplencia
+  Actualiza una suplencia existente.
+
+  **Method:** PUT
+  **Path:** /api/v1/suplencia/{id}
+}

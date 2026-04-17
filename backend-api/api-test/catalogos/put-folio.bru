@@ -1,0 +1,35 @@
+meta {
+  name: Update Folio
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/folio/{{folio_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  numero: 2
+  anio: 2025
+  estado: "utilizado"
+  observaciones: "Test folio updated"
+}
+
+tests {
+  test("Status 200 - Folio updated", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  ## Update Folio
+  Actualiza un folio existente.
+
+  **Method:** PUT
+  **Path:** /api/v1/folio/{id}
+}

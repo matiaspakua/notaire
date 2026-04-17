@@ -1,0 +1,43 @@
+meta {
+  name: Create Suplencia
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/suplencia
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  fechaInicio: "2025-01-01"
+  fechaFin: "2025-12-31"
+  observaciones: "Test suplencia"
+}
+
+tests {
+  test("Status 201 or 200 - Suplencia created", function () {
+    expect([200, 201]).to.include(res.getStatus());
+  });
+   
+  test("Capture suplencia_id for subsequent tests", function() {
+    if (res.getStatus() === 200 || res.getStatus() === 201) {
+      const body = res.getBody();
+      if (body && body.idSuplencia) {
+        bru.setVar("suplencia_id", body.idSuplencia.toString());
+      }
+    }
+  });
+}
+
+docs {
+  ## Create Suplencia
+  Crea una nueva suplencia en el sistema.
+
+  **Method:** POST
+  **Path:** /api/v1/suplencia
+}
