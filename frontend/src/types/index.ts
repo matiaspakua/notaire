@@ -1,0 +1,163 @@
+// ──────────────────────────────────────────────
+// Core domain types — mirrors backend JPA entities
+// ──────────────────────────────────────────────
+
+export interface DtoUsuario {
+  idUsuario?: number;
+  nombre: string;
+  contrasenia?: string;
+  tipo?: string;
+  valido?: boolean;
+  idPersona?: number;
+}
+
+export interface Persona {
+  idPersona?: number;
+  nombre?: string;
+  apellido?: string;
+  dni?: string;
+  cuil?: string;
+  email?: string;
+  telefono?: string;
+  domicilio?: string;
+  esCliente?: boolean;
+}
+
+export interface Usuario {
+  idUsuario?: number;
+  nombre?: string;
+  contrasenia?: string;
+  tipo?: string;
+  activo?: boolean;
+  persona?: Persona;
+}
+
+export interface TipoDeTramite {
+  idTipoDeTramite?: number;
+  nombre?: string;
+  descripcion?: string;
+}
+
+export interface TipoDeDocumento {
+  idTipoDeDocumento?: number;
+  nombre?: string;
+}
+
+export interface TipoDeFolio {
+  idTipoDeFolio?: number;
+  nombre?: string;
+}
+
+export interface EstadoDeGestion {
+  idEstadoDeGestion?: number;
+  nombre?: string;
+  descripcion?: string;
+}
+
+export interface Concepto {
+  idConcepto?: number;
+  nombre?: string;
+  descripcion?: string;
+  valor?: number;
+}
+
+export interface Folio {
+  idFolio?: number;
+  numero?: number;
+  tipoDeFolio?: TipoDeFolio;
+  disponible?: boolean;
+}
+
+export interface Tramite {
+  idTramite?: number;
+  tipo?: TipoDeTramite;
+  personaList?: Persona[];
+  documentosPresentados?: DocumentoPresentado[];
+}
+
+export interface DocumentoPresentado {
+  idDocumentoPresentado?: number;
+  tipo?: TipoDeDocumento;
+  entregado?: boolean;
+  fecha?: string;
+}
+
+export interface Historial {
+  idHistorial?: number;
+  estado?: EstadoDeGestion;
+  fecha?: string;
+  observaciones?: string;
+}
+
+export interface GestionDeEscritura {
+  idGestion?: number;
+  numero?: number;
+  tramiteList?: Tramite[];
+  historialList?: Historial[];
+}
+
+export interface Item {
+  idItem?: number;
+  concepto?: Concepto;
+  cantidad?: number;
+  precio?: number;
+}
+
+export interface PlantillaPresupuesto {
+  idPlantillaPresupuesto?: number;
+  nombre?: string;
+  itemList?: Item[];
+}
+
+export interface Presupuesto {
+  idPresupuesto?: number;
+  fecha?: string;
+  monto?: number;
+  estado?: string;
+  persona?: Persona;
+  plantilla?: PlantillaPresupuesto;
+  itemList?: Item[];
+}
+
+export interface Escritura {
+  idEscritura?: number;
+  numero?: number;
+  fecha?: string;
+  folio?: Folio;
+  gestion?: GestionDeEscritura;
+}
+
+export interface Pago {
+  idPago?: number;
+  monto?: number;
+  fecha?: string;
+  metodoPago?: string;
+  presupuesto?: Presupuesto;
+}
+
+export interface Suplencia {
+  idSuplencia?: number;
+  escribano?: Persona;
+  suplente?: Persona;
+  desde?: string;
+  hasta?: string;
+}
+
+export interface RegistroAuditoria {
+  idRegistro?: number;
+  usuario?: string;
+  accion?: string;
+  entidad?: string;
+  fecha?: string;
+}
+
+// ──────────────────────────────────────────────
+// UI / Navigation types
+// ──────────────────────────────────────────────
+
+export interface NavItem {
+  label: string;
+  href: string;
+  icon?: string;
+  adminOnly?: boolean;
+}

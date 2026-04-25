@@ -1,0 +1,251 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  usePersonas,
+  useCreatePersona,
+  useUpdatePersona,
+  useDeletePersona,
+} from "@/hooks/usePersonas";
+import { fullName } from "@/lib/utils";
+import type { Persona } from "@/types";
+
+const EMPTY: Partial<Persona> = {
+  nombre: "",
+  apellido: "",
+  dni: "",
+  email: "",
+  telefono: "",
+  domicilio: "",
+  esCliente: false,
+};
+
+export default function PersonasPage() {
+  const { data: personas = [], isLoading } = usePersonas();
+  const createMutation = useCreatePersona();
+  const updateMutation = useUpdatePersona();
+  const deleteMutation = useDeletePersona();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<Partial<Persona>>(EMPTY);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setModalOpen(true);
+  }
+
+  function openEdit(p: Persona) {
+    setEditing(p);
+    setIsEditMode(true);
+    setModalOpen(true);
+  }
+
+  async function handleSave() {
+    try {
+      if (isEditMode && editing.idPersona) {
+        await updateMutation.mutateAsync({ id: editing.idPersona, data: editing });
+        toast.success("Persona actualizada");
+      } else {
+        await createMutation.mutateAsync(editing);
+        toast.success("Persona creada");
+      }
+      setModalOpen(false);
+    } catch {
+      toast.error("Error al guardar la persona");
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      toast.success("Persona eliminada");
+    } catch {
+      toast.error("Error al eliminar la persona");
+    } finally {
+      setDeleteId(null);
+    }
+  }
+
+  const columns: Column<Persona>[] = [
+    {
+      key: "id",
+      header: "ID",
+      render: (p) => <span className="text-xs text-muted-foreground">{p.idPersona}</span>,
+      className: "w-12",
+    },
+    {
+      key: "nombre",
+      header: "Nombre",
+      render: (p) => <span className="font-medium">{fullName(p)}</span>,
+    },
+    {
+      key: "dni",
+      header: "DNI / CUIL",
+      render: (p) => p.dni ?? p.cuil ?? "—",
+    },
+    {
+      key: "email",
+      header: "Email",
+      render: (p) => p.email ?? "—",
+    },
+    {
+      key: "cliente",
+      header: "Tipo",
+      render: (p) =>
+        p.esCliente ? (
+          <Badge variant="success">Cliente</Badge>
+        ) : (
+          <Badge variant="secondary">Persona</Badge>
+        ),
+    },
+    {
+      key: "actions",
+      header: "",
+      render: (p) => (
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteId(p.idPersona!)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+      className: "w-24",
+    },
+  ];
+
+  return (
+    <div>
+      <AppHeader
+        title="Personas y Clientes"
+        description="CU17, CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61"
+        actions={
+          <Button onClick={openCreate} data-testid="btn-nueva-persona">
+            <Plus className="h-4 w-4" />
+            Nueva persona
+          </Button>
+        }
+      />
+
+      <DataTable
+        data={personas}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(p) => p.idPersona!}
+        emptyMessage="No hay personas registradas"
+      />
+
+      {/* Form Modal */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{isEditMode ? "Editar persona" : "Nueva persona"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Nombre</Label>
+                <Input
+                  value={editing.nombre ?? ""}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  data-testid="input-nombre"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Apellido</Label>
+                <Input
+                  value={editing.apellido ?? ""}
+                  onChange={(e) => setEditing({ ...editing, apellido: e.target.value })}
+                  data-testid="input-apellido"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>DNI</Label>
+                <Input
+                  value={editing.dni ?? ""}
+                  onChange={(e) => setEditing({ ...editing, dni: e.target.value })}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>CUIL</Label>
+                <Input
+                  value={editing.cuil ?? ""}
+                  onChange={(e) => setEditing({ ...editing, cuil: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={editing.email ?? ""}
+                onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>Teléfono</Label>
+              <Input
+                value={editing.telefono ?? ""}
+                onChange={(e) => setEditing({ ...editing, telefono: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>Domicilio</Label>
+              <Input
+                value={editing.domicilio ?? ""}
+                onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="esCliente"
+                checked={editing.esCliente ?? false}
+                onChange={(e) => setEditing({ ...editing, esCliente: e.target.checked })}
+                className="rounded"
+              />
+              <Label htmlFor="esCliente">Es cliente</Label>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+                {isEditMode ? "Actualizar" : "Crear"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(v) => !v && setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isPending}
+      />
+    </div>
+  );
+}
