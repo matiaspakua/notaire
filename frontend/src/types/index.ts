@@ -106,6 +106,8 @@ export interface Item {
   concepto?: Concepto;
   cantidad?: number;
   precio?: number;
+  /** Backend: fkIdPresupuesto relationship */
+  presupuesto?: { idPresupuesto?: number };
 }
 
 /**

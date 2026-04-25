@@ -10,6 +10,7 @@ import {
   ListChecks,
   LayoutTemplate,
   ShieldCheck,
+  Receipt,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -56,6 +57,12 @@ const adminModules = [
     href: "/dashboard/administracion/plantillas",
     icon: LayoutTemplate,
     description: "CU39, CU49, CU55 — Conceptos por tipo de trámite",
+  },
+  {
+    label: "Ítems de Presupuesto",
+    href: "/dashboard/administracion/items",
+    icon: Receipt,
+    description: "CU01, CU39 — Gestión de ítems en presupuestos",
   },
   {
     label: "Auditoría",
