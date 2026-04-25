@@ -1,15 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, X } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   usePresupuestos,
   useCreatePresupuesto,
@@ -19,7 +32,35 @@ import {
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
 
-const EMPTY: Partial<Presupuesto> = { fecha: "", monto: undefined, estado: "BORRADOR" };
+const ESTADOS = ["BORRADOR", "APROBADO", "RECHAZADO", "VENCIDO"] as const;
+type Estado = (typeof ESTADOS)[number];
+
+function estadoBadge(estado?: string) {
+  switch (estado?.toUpperCase()) {
+    case "APROBADO":
+      return (
+        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+          Aprobado
+        </Badge>
+      );
+    case "RECHAZADO":
+      return <Badge variant="destructive">Rechazado</Badge>;
+    case "VENCIDO":
+      return (
+        <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+          Vencido
+        </Badge>
+      );
+    default:
+      return <Badge variant="outline">{estado ?? "Borrador"}</Badge>;
+  }
+}
+
+const EMPTY: Partial<Presupuesto> = {
+  fecha: "",
+  monto: undefined,
+  estado: "BORRADOR",
+};
 
 export default function PresupuestosPage() {
   const { data: presupuestos = [], isLoading } = usePresupuestos();
@@ -31,6 +72,28 @@ export default function PresupuestosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Presupuesto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Filter state (CU60 — Buscar Presupuesto)
+  const [filterEstado, setFilterEstado] = useState<string>("TODOS");
+  const [searchId, setSearchId] = useState("");
+
+  const filtered = useMemo(() => {
+    return presupuestos.filter((p) => {
+      const matchEstado =
+        filterEstado === "TODOS" ||
+        p.estado?.toUpperCase() === filterEstado;
+      const matchId =
+        !searchId || p.idPresupuesto?.toString().includes(searchId);
+      return matchEstado && matchId;
+    });
+  }, [presupuestos, filterEstado, searchId]);
+
+  const hasFilter = filterEstado !== "TODOS" || searchId;
+
+  function clearFilters() {
+    setFilterEstado("TODOS");
+    setSearchId("");
+  }
 
   function openCreate() {
     setEditing(EMPTY);
@@ -47,7 +110,10 @@ export default function PresupuestosPage() {
   async function handleSave() {
     try {
       if (isEditMode && editing.idPresupuesto) {
-        await updateMutation.mutateAsync({ id: editing.idPresupuesto, data: editing });
+        await updateMutation.mutateAsync({
+          id: editing.idPresupuesto,
+          data: editing,
+        });
         toast.success("Presupuesto actualizado");
       } else {
         await createMutation.mutateAsync(editing);
@@ -75,7 +141,9 @@ export default function PresupuestosPage() {
     {
       key: "id",
       header: "ID",
-      render: (p) => <span className="text-xs text-muted-foreground">{p.idPresupuesto}</span>,
+      render: (p) => (
+        <span className="text-xs text-muted-foreground">{p.idPresupuesto}</span>
+      ),
       className: "w-12",
     },
     {
@@ -86,16 +154,36 @@ export default function PresupuestosPage() {
     {
       key: "monto",
       header: "Monto",
-      render: (p) => <span className="font-medium">{formatCurrency(p.monto)}</span>,
+      render: (p) => (
+        <span className="font-medium">{formatCurrency(p.monto)}</span>
+      ),
     },
     {
       key: "estado",
       header: "Estado",
-      render: (p) => p.estado ?? "—",
+      render: (p) => estadoBadge(p.estado),
+    },
+    {
+      key: "persona",
+      header: "Cliente",
+      render: (p) =>
+        p.persona
+          ? [p.persona.nombre, p.persona.apellido].filter(Boolean).join(" ")
+          : "—",
+    },
+    {
+      key: "items",
+      header: "Ítems",
+      render: (p) => (
+        <span className="text-muted-foreground">
+          {p.itemList?.length ?? 0}
+        </span>
+      ),
     },
     {
       key: "actions",
       header: "",
+      className: "w-24",
       render: (p) => (
         <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
@@ -111,7 +199,6 @@ export default function PresupuestosPage() {
           </Button>
         </div>
       ),
-      className: "w-24",
     },
   ];
 
@@ -128,8 +215,53 @@ export default function PresupuestosPage() {
         }
       />
 
+      {/* Filter bar — CU60 */}
+      <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b bg-muted/30">
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Search className="h-4 w-4" />
+          <span>Filtrar:</span>
+        </div>
+        <Input
+          placeholder="ID presupuesto"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          className="h-8 w-36"
+          data-testid="input-search-presupuesto"
+        />
+        <Select
+          value={filterEstado}
+          onValueChange={setFilterEstado}
+        >
+          <SelectTrigger className="h-8 w-40" data-testid="select-estado">
+            <SelectValue placeholder="Estado" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="TODOS">Todos los estados</SelectItem>
+            {ESTADOS.map((e) => (
+              <SelectItem key={e} value={e}>
+                {e.charAt(0) + e.slice(1).toLowerCase()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {hasFilter && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={clearFilters}
+            className="h-8 text-muted-foreground"
+          >
+            <X className="h-3 w-3 mr-1" />
+            Limpiar
+          </Button>
+        )}
+        <span className="text-xs text-muted-foreground ml-auto">
+          {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+
       <DataTable
-        data={presupuestos}
+        data={filtered}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(p) => p.idPresupuesto!}
@@ -139,7 +271,9 @@ export default function PresupuestosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{isEditMode ? "Editar presupuesto" : "Nuevo presupuesto"}</DialogTitle>
+            <DialogTitle>
+              {isEditMode ? "Editar presupuesto" : "Nuevo presupuesto"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 pt-2">
             <div className="space-y-1">
@@ -147,7 +281,9 @@ export default function PresupuestosPage() {
               <Input
                 type="date"
                 value={editing.fecha ?? ""}
-                onChange={(e) => setEditing({ ...editing, fecha: e.target.value })}
+                onChange={(e) =>
+                  setEditing({ ...editing, fecha: e.target.value })
+                }
               />
             </div>
             <div className="space-y-1">
@@ -156,23 +292,40 @@ export default function PresupuestosPage() {
                 type="number"
                 step="0.01"
                 value={editing.monto ?? ""}
-                onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setEditing({ ...editing, monto: parseFloat(e.target.value) })
+                }
                 data-testid="input-monto"
               />
             </div>
             <div className="space-y-1">
               <Label>Estado</Label>
-              <Input
-                value={editing.estado ?? ""}
-                onChange={(e) => setEditing({ ...editing, estado: e.target.value })}
-                placeholder="BORRADOR, APROBADO, etc."
-              />
+              <Select
+                value={editing.estado ?? "BORRADOR"}
+                onValueChange={(v) => setEditing({ ...editing, estado: v })}
+              >
+                <SelectTrigger data-testid="select-estado-form">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ESTADOS.map((e) => (
+                    <SelectItem key={e} value={e}>
+                      {e.charAt(0) + e.slice(1).toLowerCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={
+                  createMutation.isPending || updateMutation.isPending
+                }
+              >
                 {isEditMode ? "Actualizar" : "Crear"}
               </Button>
             </div>

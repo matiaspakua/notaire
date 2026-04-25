@@ -46,3 +46,24 @@ export function useDeletePersona() {
     onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
   });
 }
+
+/** CU61 — Buscar personas por nombre/apellido/DNI/tipo */
+export function useSearchPersonas(params: {
+  nombre?: string;
+  apellido?: string;
+  numeroIdentificacion?: string;
+  esCliente?: boolean;
+}) {
+  const qs = new URLSearchParams();
+  if (params.nombre) qs.set("nombre", params.nombre);
+  if (params.apellido) qs.set("apellido", params.apellido);
+  if (params.numeroIdentificacion) qs.set("numeroIdentificacion", params.numeroIdentificacion);
+  if (params.esCliente !== undefined) qs.set("esCliente", String(params.esCliente));
+
+  const enabled = Object.values(params).some((v) => v !== undefined && v !== "");
+  return useQuery({
+    queryKey: ["personas", "buscar", params],
+    queryFn: () => apiGet<Persona[]>(`/personas/buscar?${qs.toString()}`),
+    enabled,
+  });
+}
