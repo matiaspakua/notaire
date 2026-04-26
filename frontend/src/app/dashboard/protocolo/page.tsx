@@ -3,53 +3,25 @@
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
-import { useFolios } from "@/hooks/useFolios";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import type { Folio } from "@/types";
 
-/** CU24, CU28, CU63 — Protocolo / Gestión de folios */
 export default function ProtocoloPage() {
-  const { data: folios = [], isLoading } = useFolios();
-
-  const estadoVariant = (estado?: string): "default" | "secondary" | "outline" => {
-    if (estado === "DISPONIBLE") return "default";
-    if (estado === "USADO") return "secondary";
-    return "outline";
-  };
+  const { data: folios = [], isLoading } = useQuery({
+    queryKey: ["folios"],
+    queryFn: () => apiGet<Folio[]>("/folios"),
+  });
 
   const columns: Column<Folio>[] = [
+    { key: "id", header: "ID", render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
+    { key: "numero", header: "Número de folio", render: (f) => <span className="font-medium">{f.numero ?? "—"}</span> },
+    { key: "tipo", header: "Tipo", render: (f) => f.tipoDeFolio?.nombre ?? "—" },
     {
-      key: "id",
-      header: "ID",
-      render: (f) => (
-        <span className="text-xs text-muted-foreground">{f.idFolio}</span>
-      ),
-      className: "w-12",
-    },
-    {
-      key: "numero",
-      header: "Número de folio",
-      render: (f) => (
-        <span className="font-mono font-medium">{f.numero ?? "—"}</span>
-      ),
-    },
-    {
-      key: "anio",
-      header: "Año",
-      render: (f) => f.anio ?? "—",
-    },
-    {
-      key: "tipo",
-      header: "Tipo",
-      render: (f) => f.tipoDeFolio?.nombre ?? "—",
-    },
-    {
-      key: "estado",
+      key: "disponible",
       header: "Estado",
-      render: (f) => (
-        <Badge variant={estadoVariant(f.estado)}>
-          {f.estado ?? "—"}
-        </Badge>
-      ),
+      render: (f) =>
+        f.disponible ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge>,
     },
   ];
 
@@ -57,7 +29,7 @@ export default function ProtocoloPage() {
     <div>
       <AppHeader
         title="Protocolo / Folios"
-        description="CU24, CU28, CU63 — Gestionar folios e índices del protocolo notarial"
+        description="CU24, CU28, CU63 — Gestionar folios e índices"
       />
       <DataTable
         data={folios}

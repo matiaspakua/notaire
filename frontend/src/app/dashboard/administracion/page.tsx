@@ -1,78 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Users,
-  Tag,
-  FileCheck,
-  BookOpen,
-  AlignLeft,
-  ListChecks,
-  LayoutTemplate,
-  ShieldCheck,
-} from "lucide-react";
+import { Users, Tag, FileCheck, BookOpen, AlignLeft, ListChecks, LayoutTemplate } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppHeader } from "@/components/layout/AppHeader";
 
 const adminModules = [
-  {
-    label: "Usuarios",
-    href: "/dashboard/administracion/usuarios",
-    icon: Users,
-    description: "CU20, CU21, CU23 — Gestionar cuentas de usuario",
-  },
-  {
-    label: "Conceptos",
-    href: "/dashboard/administracion/conceptos",
-    icon: Tag,
-    description: "CU29, CU66 — Catálogo de conceptos de cobro",
-  },
-  {
-    label: "Tipos de Documento",
-    href: "/dashboard/administracion/documentos",
-    icon: FileCheck,
-    description: "CU27, CU65 — Tipos de documentos presentados",
-  },
-  {
-    label: "Folios",
-    href: "/dashboard/administracion/folios",
-    icon: BookOpen,
-    description: "CU28, CU40, CU58, CU68 — Gestión del protocolo de folios",
-  },
-  {
-    label: "Tipos de Trámite",
-    href: "/dashboard/administracion/tramites",
-    icon: AlignLeft,
-    description: "CU26, CU57, CU64 — Catálogo de tipos de trámite",
-  },
-  {
-    label: "Estados de Gestión",
-    href: "/dashboard/administracion/estados-gestion",
-    icon: ListChecks,
-    description: "CU67 — Ciclo de vida de las gestiones",
-  },
-  {
-    label: "Plantillas Presupuesto",
-    href: "/dashboard/administracion/plantillas",
-    icon: LayoutTemplate,
-    description: "CU39, CU49, CU55 — Conceptos por tipo de trámite",
-  },
-  {
-    label: "Auditoría",
-    href: "/dashboard/administracion/auditoria",
-    icon: ShieldCheck,
-    description: "Registro de acciones del sistema",
-  },
+  { label: "Usuarios", href: "/dashboard/administracion/usuarios", icon: Users, description: "CU20, CU21, CU23" },
+  { label: "Conceptos", href: "/dashboard/administracion/conceptos", icon: Tag, description: "CU29, CU66" },
+  { label: "Tipos de Documento", href: "/dashboard/administracion/documentos", icon: FileCheck, description: "CU27, CU65" },
+  { label: "Folios", href: "/dashboard/administracion/folios", icon: BookOpen, description: "CU28, CU40, CU58, CU63, CU68" },
+  { label: "Tipos de Trámite", href: "/dashboard/administracion/tramites", icon: AlignLeft, description: "CU26, CU57, CU64" },
+  { label: "Estados de Gestión", href: "/dashboard/administracion/estados-gestion", icon: ListChecks, description: "CU67" },
+  { label: "Plantillas Presupuesto", href: "/dashboard/administracion/plantillas", icon: LayoutTemplate, description: "CU39, CU49, CU55" },
 ];
 
 export default function AdministracionPage() {
   return (
     <div>
-      <AppHeader
-        title="Administración"
-        description="Catálogos y configuración del sistema — acceso exclusivo para administradores"
-      />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <AppHeader title="Administración" description="Catálogos y configuración del sistema" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {adminModules.map((mod) => {
           const Icon = mod.icon;
           return (
@@ -85,9 +32,7 @@ export default function AdministracionPage() {
                   <CardTitle className="text-sm">{mod.label}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-xs text-muted-foreground">
-                    {mod.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{mod.description}</p>
                 </CardContent>
               </Card>
             </Link>
