@@ -1,19 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, X, History, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,61 +16,18 @@ import {
   useUpdateGestion,
   useDeleteGestion,
 } from "@/hooks/useGestiones";
-import { useEstadosGestion } from "@/hooks/useEstadosGestion";
-import { useReporteHistorialGestion } from "@/hooks/useReportes";
-import { formatDate } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
-
-/** CU13 — Get latest estado from historialList */
-function getEstadoActual(g: GestionDeEscritura): string | undefined {
-  if (!g.historialList || g.historialList.length === 0) return undefined;
-  const sorted = [...g.historialList].sort((a, b) => {
-    const da = a.fecha ? new Date(a.fecha).getTime() : 0;
-    const db = b.fecha ? new Date(b.fecha).getTime() : 0;
-    return db - da;
-  });
-  return sorted[0]?.estado?.nombre;
-}
-
-function estadoBadge(estado?: string) {
-  if (!estado) return <Badge variant="outline">Sin estado</Badge>;
-  const lower = estado.toLowerCase();
-  if (lower.includes("activ") || lower.includes("abiert"))
-    return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{estado}</Badge>;
-  if (lower.includes("cerr") || lower.includes("finaliz"))
-    return <Badge variant="secondary">{estado}</Badge>;
-  if (lower.includes("cancel") || lower.includes("archiv"))
-    return <Badge variant="destructive">{estado}</Badge>;
-  return <Badge variant="outline">{estado}</Badge>;
-}
 
 export default function GestionesPage() {
   const { data: gestiones = [], isLoading } = useGestiones();
-  const { data: estadosGestion = [] } = useEstadosGestion();
   const createMutation = useCreateGestion();
   const updateMutation = useUpdateGestion();
   const deleteMutation = useDeleteGestion();
-  const reporteHistorial = useReporteHistorialGestion();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
-
-  // Search/filter — CU02, CU53
-  const [searchNumero, setSearchNumero] = useState("");
-  const [searchEstado, setSearchEstado] = useState("");
-
-  const filtered = useMemo(() => {
-    return gestiones.filter((g) => {
-      const matchNumero =
-        !searchNumero || g.numero?.toString().includes(searchNumero);
-      const matchEstado =
-        !searchEstado ||
-        getEstadoActual(g)?.toLowerCase().includes(searchEstado.toLowerCase());
-      return matchNumero && matchEstado;
-    });
-  }, [gestiones, searchNumero, searchEstado]);
 
   function openCreate() {
     setEditing(null);
@@ -120,76 +71,29 @@ export default function GestionesPage() {
     }
   }
 
-  async function handleDownloadHistorial(g: GestionDeEscritura) {
-    try {
-      await reporteHistorial.download(g.idGestion!);
-      toast.success("Historial descargado");
-    } catch {
-      toast.error("Error al descargar historial (backend requerido)");
-    }
-  }
-
   const columns: Column<GestionDeEscritura>[] = [
     {
       key: "id",
       header: "ID",
-      render: (g) => (
-        <span className="text-muted-foreground text-xs">{g.idGestion}</span>
-      ),
+      render: (g) => <span className="text-muted-foreground text-xs">{g.idGestion}</span>,
       className: "w-16",
     },
     {
       key: "numero",
       header: "Número",
-      render: (g) => (
-        <span className="font-medium">{g.numero ?? "—"}</span>
-      ),
-    },
-    {
-      key: "estado",
-      header: "Estado actual",
-      render: (g) => estadoBadge(getEstadoActual(g)),
+      render: (g) => <span className="font-medium">{g.numero ?? "—"}</span>,
     },
     {
       key: "tramites",
       header: "Trámites",
-      render: (g) => (
-        <div className="flex items-center gap-1 text-sm">
-          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-          {g.tramiteList?.length ?? 0}
-        </div>
-      ),
-    },
-    {
-      key: "historial",
-      header: "Historial",
-      render: (g) => (
-        <div className="flex items-center gap-1 text-sm">
-          <History className="h-3.5 w-3.5 text-muted-foreground" />
-          {g.historialList?.length ?? 0} entradas
-        </div>
-      ),
+      render: (g) => g.tramiteList?.length ?? 0,
     },
     {
       key: "actions",
       header: "",
       render: (g) => (
-        <div className="flex gap-1 justify-end">
-          <Button
-            size="sm"
-            variant="ghost"
-            title="Descargar historial PDF"
-            onClick={() => handleDownloadHistorial(g)}
-            aria-label="Historial PDF"
-          >
-            <History className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => openEdit(g)}
-            aria-label="Editar"
-          >
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label="Editar">
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -203,7 +107,7 @@ export default function GestionesPage() {
           </Button>
         </div>
       ),
-      className: "w-32",
+      className: "w-24",
     },
   ];
 
@@ -220,44 +124,8 @@ export default function GestionesPage() {
         }
       />
 
-      {/* Search / filter bar */}
-      <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b bg-muted/30">
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-          <Search className="h-4 w-4" />
-          <span>Filtrar:</span>
-        </div>
-        <Input
-          placeholder="Número de gestión"
-          value={searchNumero}
-          onChange={(e) => setSearchNumero(e.target.value)}
-          className="h-8 w-44"
-          data-testid="input-search-numero"
-        />
-        <Input
-          placeholder="Estado"
-          value={searchEstado}
-          onChange={(e) => setSearchEstado(e.target.value)}
-          className="h-8 w-36"
-          data-testid="input-search-estado"
-        />
-        {(searchNumero || searchEstado) && (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => { setSearchNumero(""); setSearchEstado(""); }}
-            className="h-8 text-muted-foreground"
-          >
-            <X className="h-3 w-3 mr-1" />
-            Limpiar
-          </Button>
-        )}
-        <span className="text-xs text-muted-foreground ml-auto">
-          {filtered.length} gestión{filtered.length !== 1 ? "es" : ""}
-        </span>
-      </div>
-
       <DataTable
-        data={filtered}
+        data={gestiones}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(g) => g.idGestion!}
@@ -268,9 +136,7 @@ export default function GestionesPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editing ? "Editar gestión" : "Nueva gestión"}
-            </DialogTitle>
+            <DialogTitle>{editing ? "Editar gestión" : "Nueva gestión"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-1.5">
@@ -283,13 +149,6 @@ export default function GestionesPage() {
                 data-testid="input-numero-gestion"
               />
             </div>
-            {estadosGestion.length > 0 && (
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">
-                  Estados de gestión disponibles: {estadosGestion.map((e) => e.nombre).join(", ")}
-                </Label>
-              </div>
-            )}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setModalOpen(false)}>
                 Cancelar
@@ -306,6 +165,7 @@ export default function GestionesPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Delete Confirm */}
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(v) => !v && setDeleteId(null)}

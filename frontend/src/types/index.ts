@@ -1,6 +1,5 @@
 // ──────────────────────────────────────────────
 // Core domain types — mirrors backend JPA entities
-// Field names match backend JSON serialization (camelCase from getter names)
 // ──────────────────────────────────────────────
 
 export interface DtoUsuario {
@@ -33,13 +32,10 @@ export interface Usuario {
   persona?: Persona;
 }
 
-/** Backend field: idTipoTramite (NOT idTipoDeTramite) */
 export interface TipoDeTramite {
-  idTipoTramite?: number;
+  idTipoDeTramite?: number;
   nombre?: string;
   descripcion?: string;
-  seArchiva?: boolean;
-  seInscribe?: boolean;
 }
 
 export interface TipoDeDocumento {
@@ -52,10 +48,10 @@ export interface TipoDeFolio {
   nombre?: string;
 }
 
-/** Backend field: idEstadoGestion (NOT idEstadoDeGestion) */
 export interface EstadoDeGestion {
-  idEstadoGestion?: number;
+  idEstadoDeGestion?: number;
   nombre?: string;
+  descripcion?: string;
 }
 
 export interface Concepto {
@@ -68,9 +64,8 @@ export interface Concepto {
 export interface Folio {
   idFolio?: number;
   numero?: number;
-  anio?: number;
-  estado?: string;
   tipoDeFolio?: TipoDeFolio;
+  disponible?: boolean;
 }
 
 export interface Tramite {
@@ -106,24 +101,12 @@ export interface Item {
   concepto?: Concepto;
   cantidad?: number;
   precio?: number;
-  /** Backend: fkIdPresupuesto relationship */
-  presupuesto?: { idPresupuesto?: number };
-}
-
-/**
- * PlantillaPresupuesto — uses composite PK (fkIdTipoTramite + fkIdConcepto).
- * Backend: plantillaPresupuestoPK embedded object.
- */
-export interface PlantillaPresupuestoPK {
-  fkIdTipoTramite: number;
-  fkIdConcepto: number;
 }
 
 export interface PlantillaPresupuesto {
-  plantillaPresupuestoPK?: PlantillaPresupuestoPK;
-  observaciones?: string;
-  tipoDeTramite?: TipoDeTramite;
-  concepto?: Concepto;
+  idPlantillaPresupuesto?: number;
+  nombre?: string;
+  itemList?: Item[];
 }
 
 export interface Presupuesto {
@@ -132,6 +115,7 @@ export interface Presupuesto {
   monto?: number;
   estado?: string;
   persona?: Persona;
+  plantilla?: PlantillaPresupuesto;
   itemList?: Item[];
 }
 
@@ -159,13 +143,12 @@ export interface Suplencia {
   hasta?: string;
 }
 
-/** Backend: RegistroAuditoria with fields idRegistroAuditoria, detalleOperacion, modulo, fecha */
 export interface RegistroAuditoria {
-  idRegistroAuditoria?: number;
-  detalleOperacion?: string;
-  modulo?: string;
+  idRegistro?: number;
+  usuario?: string;
+  accion?: string;
+  entidad?: string;
   fecha?: string;
-  fkIdUsuario?: Usuario;
 }
 
 // ──────────────────────────────────────────────

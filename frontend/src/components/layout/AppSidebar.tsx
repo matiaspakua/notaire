@@ -12,8 +12,6 @@ import {
   Settings,
   LogOut,
   Scale,
-  UserCheck,
-  BarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
@@ -32,8 +30,6 @@ const navItems: NavItem[] = [
   { label: "Escrituras", href: "/dashboard/escrituras", icon: FileText },
   { label: "Pagos", href: "/dashboard/pagos", icon: CreditCard },
   { label: "Protocolo", href: "/dashboard/protocolo", icon: BookOpen },
-  { label: "Suplencias", href: "/dashboard/suplencias", icon: UserCheck },
-  { label: "Reportes", href: "/dashboard/reportes", icon: BarChart2 },
   {
     label: "Administración",
     href: "/dashboard/administracion",
