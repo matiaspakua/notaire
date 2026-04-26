@@ -4,10 +4,12 @@ import com.licensis.notaire.jpa.PresupuestoJpaController;
 import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.negocio.Presupuesto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/presupuestos")
@@ -17,7 +19,6 @@ public class PresupuestoController {
     private PresupuestoJpaController getJpaController() {
         return new PresupuestoJpaController(null, JpaControllerProvider.getEntityManagerFactory());
     }
-    // JpaController instantiated dynamically
 
     @GetMapping
     @Operation(summary = "Obtener todos los presupuestos")
@@ -33,7 +34,8 @@ public class PresupuestoController {
     @Operation(summary = "Obtener presupuesto por ID")
     public ResponseEntity<Presupuesto> getById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(getJpaController().findPresupuesto(id));
+            Presupuesto p = getJpaController().findPresupuesto(id);
+            return p != null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -45,6 +47,24 @@ public class PresupuestoController {
         try {
             List<Presupuesto> list = getJpaController().findPresupuestosPersona(idPersona);
             return ResponseEntity.ok(list != null ? list : List.of());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/buscar")
+    @Operation(summary = "Buscar presupuestos por estado (CU60)")
+    public ResponseEntity<List<Presupuesto>> buscar(
+            @Parameter(description = "Estado del presupuesto") @RequestParam(required = false) String estado) {
+        try {
+            List<Presupuesto> all = getJpaController().findPresupuestoEntities();
+            if (estado == null || estado.isBlank()) {
+                return ResponseEntity.ok(all);
+            }
+            List<Presupuesto> filtered = all.stream()
+                    .filter(p -> estado.equalsIgnoreCase(p.getEstado()))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(filtered);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
