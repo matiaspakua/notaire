@@ -3,19 +3,37 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
+import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import com.licensis.notaire.negocio.PlantillaPresupuestoPK;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.OptimisticLockException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * REST controller for PlantillaPresupuesto (Budget Templates).
+ *
+ * Fix for issue #340: Added proper OptimisticLockException handling to return
+ * HTTP 409 Conflict instead of 500 on concurrent modification. Also added
+ * version-aware update that fetches current entity state before merging to
+ * prevent stale-data overwrites.
+ *
+ * Covers use cases: CU39, CU49, CU55 (Plantilla de presupuesto management).
+ */
 @RestController
 @RequestMapping("/api/v1/plantilla-presupuestos")
 @Tag(name = "PlantillaPresupuesto", description = "API para gestionar plantillas de presupuesto")
 public class PlantillaPresupuestoController {
+
+    private static final Logger LOG = Logger.getLogger(PlantillaPresupuestoController.class.getName());
 
     private PlantillaPresupuestoJpaController getJpaController() {
         return new PlantillaPresupuestoJpaController(null, JpaControllerProvider.getEntityManagerFactory());
@@ -27,6 +45,7 @@ public class PlantillaPresupuestoController {
         try {
             return ResponseEntity.ok(getJpaController().findPlantillaPresupuestoEntities());
         } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error al obtener plantillas de presupuesto", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -37,49 +56,104 @@ public class PlantillaPresupuestoController {
         try {
             return ResponseEntity.ok(getJpaController().findPlantillasDePresupuesto(idTipoTramite));
         } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error al obtener plantillas por tipo de tramite " + idTipoTramite, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @PostMapping
     @Operation(summary = "Crear nueva plantilla de presupuesto")
-    public ResponseEntity<Void> create(@RequestBody PlantillaPresupuesto entity) {
+    public ResponseEntity<?> create(@RequestBody PlantillaPresupuesto entity) {
         try {
             getJpaController().create(entity);
             return ResponseEntity.ok().build();
+        } catch (PreexistingEntityException e) {
+            LOG.log(Level.WARNING, "Plantilla de presupuesto ya existe", e);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "La plantilla de presupuesto ya existe para ese tipo de trámite y concepto"));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            LOG.log(Level.SEVERE, "Error al crear plantilla de presupuesto", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error interno al crear la plantilla"));
         }
     }
 
+    /**
+     * Update a PlantillaPresupuesto.
+     *
+     * To prevent OptimisticLockException (issue #340), we first retrieve the current
+     * persisted entity and copy the client's changes onto it. This ensures the
+     * @Version field is always current, avoiding stale-data conflicts when the
+     * caller does not send the version field.
+     */
     @PutMapping("/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}")
     @Operation(summary = "Actualizar plantilla de presupuesto")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<?> update(
             @PathVariable Integer idTipoTramite,
             @PathVariable Integer idConcepto,
             @RequestBody PlantillaPresupuesto entity
     ) {
         try {
-            entity.setPlantillaPresupuestoPK(new PlantillaPresupuestoPK(idTipoTramite, idConcepto));
-            getJpaController().edit(entity);
+            PlantillaPresupuestoPK pk = new PlantillaPresupuestoPK(idTipoTramite, idConcepto);
+
+            // Fetch current state to carry the correct @Version value
+            PlantillaPresupuesto current = getJpaController().findPlantillaPresupuesto(pk);
+            if (current == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Apply incoming changes (only mutable fields — PK and version come from DB)
+            entity.setPlantillaPresupuestoPK(pk);
+            if (entity.getObservaciones() != null) {
+                current.setObservaciones(entity.getObservaciones());
+            }
+            // Propagate related entities if provided
+            if (entity.getConcepto() != null) {
+                current.setConcepto(entity.getConcepto());
+            }
+            if (entity.getTipoDeTramite() != null) {
+                current.setTipoDeTramite(entity.getTipoDeTramite());
+            }
+
+            getJpaController().edit(current);
             return ResponseEntity.ok().build();
+
+        } catch (OptimisticLockException e) {
+            // Concurrent modification detected — client should re-fetch and retry
+            LOG.log(Level.WARNING, "Conflicto de concurrencia al actualizar plantilla de presupuesto", e);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Conflicto de concurrencia: la plantilla fue modificada por otro usuario. Recargue y vuelva a intentarlo."));
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            // Check if the root cause is an OptimisticLockException (can be wrapped in RollbackException)
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof OptimisticLockException) {
+                    LOG.log(Level.WARNING, "Conflicto de concurrencia (wrapped) al actualizar plantilla", cause);
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(Map.of("error", "Conflicto de concurrencia: la plantilla fue modificada por otro usuario."));
+                }
+                cause = cause.getCause();
+            }
+            LOG.log(Level.SEVERE, "Error al actualizar plantilla de presupuesto", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error interno al actualizar la plantilla"));
         }
     }
 
     @DeleteMapping("/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}")
     @Operation(summary = "Eliminar plantilla de presupuesto")
-    public ResponseEntity<Void> delete(@PathVariable Integer idTipoTramite, @PathVariable Integer idConcepto) {
+    public ResponseEntity<?> delete(@PathVariable Integer idTipoTramite, @PathVariable Integer idConcepto) {
         try {
             getJpaController().destroy(new PlantillaPresupuestoPK(idTipoTramite, idConcepto));
             return ResponseEntity.ok().build();
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            LOG.log(Level.SEVERE, "Error al eliminar plantilla de presupuesto", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error interno al eliminar la plantilla"));
         }
     }
 }
