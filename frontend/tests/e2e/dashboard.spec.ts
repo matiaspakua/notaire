@@ -2,10 +2,10 @@
  * E2E tests — Dashboard navigation and module access
  * CU: Principal navigation, role-based access
  */
-import { test, expect } from "@playwright/test";
+import { type Page, test, expect } from "@playwright/test";
 
 // Helper: authenticate before navigating to protected pages
-async function loginAs(page: ReturnType<typeof test.info>["project"]["use"] extends infer T ? T extends { page: infer P } ? P : never : never, role: "admin" | "empleado" = "admin") {
+async function loginAs(page: Page, role: "admin" | "empleado" = "admin") {
   await page.goto("/login");
   await page.getByTestId("input-usuario").fill(role === "admin" ? "admin" : "empleado");
   await page.getByTestId("input-contrasenia").fill(role === "admin" ? "admin" : "admin");

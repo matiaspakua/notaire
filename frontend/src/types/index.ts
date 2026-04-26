@@ -101,6 +101,7 @@ export interface Item {
   concepto?: Concepto;
   cantidad?: number;
   precio?: number;
+  presupuesto?: Presupuesto;
 }
 
 export interface PlantillaPresupuesto {
@@ -144,11 +145,11 @@ export interface Suplencia {
 }
 
 export interface RegistroAuditoria {
-  idRegistro?: number;
-  usuario?: string;
-  accion?: string;
-  entidad?: string;
+  idRegistroAuditoria?: number;
+  usuarios?: { nombre?: string };
+  detalleOperacion?: string;
   fecha?: string;
+  modulo?: string;
 }
 
 // ──────────────────────────────────────────────
