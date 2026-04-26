@@ -115,7 +115,7 @@ describe("Historial type shape (CU13, CU53)", () => {
   });
 
   it("empty historialList returns undefined estado", () => {
-    const gestion = { historialList: [] };
+    const gestion: { historialList: Array<{ estado?: { nombre?: string } }> } = { historialList: [] };
     const estado = gestion.historialList.length > 0
       ? gestion.historialList[0].estado
       : undefined;

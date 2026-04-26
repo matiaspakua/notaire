@@ -34,7 +34,7 @@ export default function AuditoriaPage() {
       key: "usuario",
       header: "Usuario",
       render: (r) => (
-        <span className="font-medium">{r.fkIdUsuario?.nombre ?? "—"}</span>
+        <span className="font-medium">{r.usuarios?.nombre ?? "—"}</span>
       ),
       className: "w-32",
     },

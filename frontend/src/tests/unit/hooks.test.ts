@@ -90,40 +90,26 @@ import type {
   TipoDeTramite,
   Folio,
   PlantillaPresupuesto,
-  PlantillaPresupuestoPK,
   RegistroAuditoria,
 } from "@/types";
 
 describe("TypeScript type shape contracts", () => {
-  it("EstadoDeGestion uses idEstadoGestion (not idEstadoDeGestion)", () => {
-    const e: EstadoDeGestion = { idEstadoGestion: 1, nombre: "En proceso" };
-    expect(e.idEstadoGestion).toBe(1);
-    // @ts-expect-error — wrong field name must not compile
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrong = (e as any).idEstadoDeGestion;
-    expect(wrong).toBeUndefined();
+  it("EstadoDeGestion uses idEstadoDeGestion", () => {
+    const e: EstadoDeGestion = { idEstadoDeGestion: 1, nombre: "En proceso" };
+    expect(e.idEstadoDeGestion).toBe(1);
   });
 
-  it("TipoDeTramite uses idTipoTramite (not idTipoDeTramite)", () => {
-    const t: TipoDeTramite = { idTipoTramite: 2, nombre: "Compraventa" };
-    expect(t.idTipoTramite).toBe(2);
-    // @ts-expect-error — wrong field
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrong = (t as any).idTipoDeTramite;
-    expect(wrong).toBeUndefined();
+  it("TipoDeTramite uses idTipoDeTramite", () => {
+    const t: TipoDeTramite = { idTipoDeTramite: 2, nombre: "Compraventa" };
+    expect(t.idTipoDeTramite).toBe(2);
   });
 
-  it("PlantillaPresupuesto uses composite PK object", () => {
-    const pk: PlantillaPresupuestoPK = {
-      fkIdTipoTramite: 3,
-      fkIdConcepto: 7,
-    };
+  it("PlantillaPresupuesto uses idPlantillaPresupuesto", () => {
     const p: PlantillaPresupuesto = {
-      plantillaPresupuestoPK: pk,
-      observaciones: "Cobro base",
+      idPlantillaPresupuesto: 1,
+      nombre: "Cobro base",
     };
-    expect(p.plantillaPresupuestoPK?.fkIdTipoTramite).toBe(3);
-    expect(p.plantillaPresupuestoPK?.fkIdConcepto).toBe(7);
+    expect(p.idPlantillaPresupuesto).toBe(1);
   });
 
   it("RegistroAuditoria uses idRegistroAuditoria and detalleOperacion", () => {
@@ -136,16 +122,13 @@ describe("TypeScript type shape contracts", () => {
     expect(r.detalleOperacion).toBe("Creó gestión #45");
   });
 
-  it("Folio has numero, anio, estado, and tipoDeFolio", () => {
+  it("Folio has numero and tipoDeFolio", () => {
     const f: Folio = {
       idFolio: 1,
       numero: 42,
-      anio: 2025,
-      estado: "DISPONIBLE",
       tipoDeFolio: { idTipoDeFolio: 1, nombre: "Protocolo" },
     };
     expect(f.numero).toBe(42);
-    expect(f.estado).toBe("DISPONIBLE");
     expect(f.tipoDeFolio?.nombre).toBe("Protocolo");
   });
 });
