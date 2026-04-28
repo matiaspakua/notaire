@@ -27,6 +27,9 @@ RUN mvn package -pl backend-api -am -DskipTests -B -q
 # =============================================
 FROM eclipse-temurin:21-jre-alpine AS runner
 
+# Install wget for healthcheck
+RUN apk add --no-cache wget
+
 WORKDIR /app
 
 # Create non-root user for security
