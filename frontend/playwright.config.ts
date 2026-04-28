@@ -10,16 +10,9 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
+    // Use system Chrome if CHROME_BIN is set
+    ...(process.env.CHROME_BIN ? { channel: "chrome" } : {}),
   },
-  projects: [
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-  ],
-  webServer: {
-    command: "npm run build && npm run start",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-  },
+  // Skip webServer since we're using Docker
+  // Tests expect backend on :8080 and frontend on :3000
 });
