@@ -64,8 +64,8 @@
 </tbody>
 </table>
 
-|                 |             |
-|-----------------|-------------|
-| **Excepciones** |             |
-| **Actor**       | **Sistema** |
-|                 |             |
+|                 |                                               |
+|-----------------|-----------------------------------------------|
+| **Excepciones** |                                               |
+| **Actor**       | **Sistema**                                   |
+|                 | 4.1. No existen escrituras para el año y registro indicados. |

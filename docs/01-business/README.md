@@ -12,7 +12,7 @@ Documentación de negocio, requisitos funcionales, y especificación del sistema
 - **Templates** - Plantillas para nuevos requerimientos
 
 ### [02. Use Cases](02-use-cases/)
-**54 Casos de uso del sistema**
+**73 Casos de uso del sistema**
 
 Todos los casos de uso del sistema Notaire documentados en formato estándar.
 
@@ -52,14 +52,15 @@ Usuarios y sistemas que interactúan con Notaire.
 
 ## 📚 Use Case Summary
 
-El sistema Notaire implementa **54 casos de uso** agrupados en:
+El sistema Notaire implementa **73 casos de uso** agrupados en:
 
-- **Presupuestos** (CU01, CU39, CU45, CU49, CU55, CU60)
-- **Gestión de Trámites** (CU02, CU13-CU16, CU19, CU53)
+- **Presupuestos** (CU01, CU39, CU45, CU49, CU55, CU60, CU71)
+- **Gestión de Trámites** (CU02, CU13-CU16, CU19, CU53, CU72)
 - **Documentación** (CU03-CU04, CU09-CU10, CU43-CU44)
-- **Escrituras** (CU05-CU08, CU52, CU62)
+- **Escrituras** (CU05-CU08, CU52, CU62, CU70)
 - **Personas & Clientes** (CU17-CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61)
-- **Configuración** (CU20, CU22-CU38, CU42, CU50)
+- **Configuración** (CU20, CU22-CU38, CU42, CU50, CU73)
+- **Inmuebles** (CU69)
 
 ## 📖 Navigation
 

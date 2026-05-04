@@ -33,8 +33,8 @@
 |------|-------|--------|
 | Documentation | Consolidate docs to SDLC structure | #258, #260, #261 |
 | Documentation | Migrate all docs to Markdown | #258 |
-| Use Cases | Document all 68 CUs with GitHub issues | #154-#221 |
-| Architecture | Create ADRs for key decisions | #291 |
+| Use Cases | Document all 73 CUs with GitHub issues | #154-#221 |
+| Architecture | Create ADRs for key decisions (ADR-001 to ADR-010) | #291 |
 | Code Standards | Inline documentation & Javadoc | #297 |
 | CI/CD | Code review process & checklist | #279 |
 | Testing | Tag unit tests with requirement IDs | #251 |
@@ -42,10 +42,10 @@
 | Docs | Production installation guide | #259 |
 
 **Definition of Done:**
-- [ ] Toda la documentación en `/docs` con estructura SDLC
+- [x] Toda la documentación en `/docs` con estructura SDLC (73 CUs)
 - [ ] CI pipeline verde con: build + tests + coverage + checkstyle
 - [ ] 80% coverage en backend-api
-- [ ] ADRs para las 4 decisiones arquitectónicas principales
+- [x] ADRs para las 10 decisiones arquitectónicas principales
 
 ---
 
@@ -67,6 +67,8 @@
 | Database | Flyway for schema migration | #252 |
 | Database | DB schema documentation & ER diagrams | #292 |
 | Database | Data migration guide (MySQL → PostgreSQL) | #264 |
+| Documentation | Full Use Case documentation (73 CUs) | #313 |
+| Architecture | Complete ADRs and Diagrams | #314 |
 | Testing | Spring Boot testing best practices | #276 |
 | Testing | Integration test isolation strategy | #296 |
 | Testing | Test data management & fixtures | #295 |
@@ -276,5 +278,5 @@ Cada issue debe tener:
 
 ---
 
-*Last updated: 2026-04-13*
+*Last updated: 2026-04-28*
 *Maintainer: Matías Miguez*

@@ -11,7 +11,7 @@ Nuestra documentación está organizada según el SDLC (Software Development Lif
 ### [01. Business Documentation](01-business/)
 **Entender el negocio y los requisitos**
 
-- Requirements & Use Cases - Especificación funcional completa (54 casos de uso)
+- Requirements & Use Cases - Especificación funcional completa (73 casos de uso)
 - Actors & Stakeholders - Identificación de actores del sistema
 - Data Model - Diccionario de datos y modelo entidad-relación
 - User Manuals - Guías de usuario y administrador
@@ -29,6 +29,10 @@ Nuestra documentación está organizada según el SDLC (Software Development Lif
   - ADR-002: Module Structure (Maven)
   - ADR-003: REST API Versioning
   - ADR-004: Database Migration (MySQL → PostgreSQL)
+  - ADR-005: Modern Frontend Migration
+  - ADR-006: Testing Strategy
+  - ADR-007: Database Schema Versioning (Flyway)
+  - ADR-008: Security & Authentication
 
 - **Architecture Overview** - Visión general del sistema
 - **Diagrams** - Diagramas de arquitectura y flujos

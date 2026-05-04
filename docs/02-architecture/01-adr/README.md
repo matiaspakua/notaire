@@ -10,10 +10,12 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [002](ADR-002-module-structure.md) | Module Structure | Accepted | 2024-03-20 | Code organization |
 | [003](ADR-003-rest-api-versioning.md) | REST API Versioning | Accepted | 2024-03-20 | API evolution |
 | [004](ADR-004-database-migration.md) | Database Migration | Accepted | 2024-03-20 | Data persistence |
-| *005* | Testing Strategy | *Pending* | - | QA & validation |
-| *006* | Security & Authentication | *Pending* | - | Security |
-| *007* | Logging & Monitoring | *Pending* | - | Observability |
-| *008* | Error Handling | *Pending* | - | Resilience |
+| [005](ADR-005-modern-frontend-migration.md) | Modern Frontend Migration | Accepted | 2024-04-10 | Frontend architecture |
+| [006](ADR-006-testing-strategy.md) | Testing Strategy | Accepted | 2024-04-12 | QA & validation |
+| [007](ADR-007-database-schema-versioning-flyway.md) | Database Schema Versioning (Flyway) | Accepted | 2024-04-13 | Data persistence |
+| [008](ADR-008-security-authentication.md) | Security & Authentication | Accepted | 2024-04-28 | Security |
+| [009](ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | 2024-04-28 | Observability |
+| [010](ADR-010-error-handling.md) | Error Handling | Accepted | 2024-04-28 | Resilience |
 
 ## ADR Status Legend
 
@@ -44,8 +46,9 @@ Cada ADR sigue esta estructura:
 
 ## Decision Categories
 
-### System Architecture (1 ADR)
+### System Architecture (2 ADRs)
 - **ADR-001**: Migración de monolito a microservicios con 3 capas
+- **ADR-005**: Migración a Next.js para el nuevo frontend web
 
 ### Code Organization (1 ADR)
 - **ADR-002**: Estructura Maven multi-módulo
@@ -53,14 +56,17 @@ Cada ADR sigue esta estructura:
 ### API Design (1 ADR)
 - **ADR-003**: REST API versioning con URL path versioning
 
-### Data Persistence (1 ADR)
+### Data Persistence (2 ADRs)
 - **ADR-004**: Migración MySQL → PostgreSQL 16
+- **ADR-007**: Gestión de versiones de esquema con Flyway
 
-### Quality & Reliability (Pending)
-- **ADR-005**: Testing strategy (unit, integration, e2e)
-- **ADR-006**: Security & authentication (JWT, RBAC)
-- **ADR-007**: Logging & monitoring (structure, centralization)
-- **ADR-008**: Error handling (exceptions, recovery)
+### Quality & Reliability (3 ADRs)
+- **ADR-006**: Estrategia de testing (unitario, integración, E2E)
+- **ADR-008**: Seguridad y autenticación (JWT, RBAC)
+- **ADR-010**: Manejo de errores global
+
+### Observability (1 ADR)
+- **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
 
 ## Key Architectural Principles
 
