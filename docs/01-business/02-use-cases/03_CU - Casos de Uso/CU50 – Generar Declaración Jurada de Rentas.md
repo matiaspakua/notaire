@@ -76,8 +76,8 @@
 </tbody>
 </table>
 
-|                 |             |
-|-----------------|-------------|
-| **Excepciones** |             |
-| **Actor**       | **Sistema** |
-|                 |             |
+|                 |                                               |
+|-----------------|-----------------------------------------------|
+| **Excepciones** |                                               |
+| **Actor**       | **Sistema**                                   |
+|                 | 4.1. No existen trámites que generen DDJJ para el período indicado. |

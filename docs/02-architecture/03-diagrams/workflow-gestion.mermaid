@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant User as Escribano/Gestor
+    participant Client as Frontend (Swing/Web)
+    participant API as REST API
+    participant DB as PostgreSQL
+
+    User->>Client: Iniciar nueva gestión
+    Client->>API: POST /api/v1/gestion
+    API->>API: Validar token JWT
+    API->>API: Validar datos negocio
+    API->>DB: INSERT INTO gestion
+    DB-->>API: OK (ID)
+    API->>DB: INSERT INTO registro_auditoria
+    API-->>Client: 201 Created (GestionDTO)
+    Client-->>User: Mostrar éxito y número de gestión

@@ -64,6 +64,7 @@ Los ADRs documentan las decisiones arquitectónicas importantes del proyecto. Ca
 │                              │  - Personas      │            │
 │                              │  - Escrituras    │            │
 │                              │  - Gestiones     │            │
+│                              │  - Inmuebles     │            │
 │                              │  - Audit Log     │            │
 │                              └──────────────────┘            │
 │                                                             │
@@ -222,10 +223,12 @@ Frontend (Swing)
 | ADR-002 | Module Structure | Accepted | 2024-03-20 |
 | ADR-003 | REST API Versioning | Accepted | 2024-03-20 |
 | ADR-004 | Database Migration | Accepted | 2024-03-20 |
-| ADR-005 | Testing Strategy | *Pending* | - |
-| ADR-006 | Security & Authentication | *Pending* | - |
-| ADR-007 | Logging & Monitoring | *Pending* | - |
-| ADR-008 | Error Handling | *Pending* | - |
+| ADR-005 | Modern Frontend Migration | Accepted | 2024-04-10 |
+| ADR-006 | Testing Strategy | Accepted | 2024-04-12 |
+| ADR-007 | Database Schema Versioning (Flyway) | Accepted | 2024-04-13 |
+| ADR-008 | Security & Authentication | Accepted | 2024-04-28 |
+| ADR-009 | Logging & Monitoring | Accepted | 2024-04-28 |
+| ADR-010 | Error Handling | Accepted | 2024-04-28 |
 
 ## Glossary
 

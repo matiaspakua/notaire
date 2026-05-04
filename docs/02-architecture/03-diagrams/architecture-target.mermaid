@@ -1,0 +1,28 @@
+graph TD
+    subgraph "Frontend Layer"
+        Swing[Java Swing Client]
+        Web[Next.js Web Client]
+    end
+
+    subgraph "API Layer (Spring Boot)"
+        Ctrl[REST Controllers]
+        Sec[Spring Security / JWT]
+        Svc[Business Services]
+        Repo[Spring Data JPA Repositories]
+    end
+
+    subgraph "Data Layer"
+        DB[(PostgreSQL 16)]
+        Aud[Audit Trail]
+    end
+
+    Swing -- HTTP/JSON --> Sec
+    Web -- HTTP/JSON --> Sec
+    Sec --> Ctrl
+    Ctrl --> Svc
+    Svc --> Repo
+    Repo --> DB
+    Repo --> Aud
+
+    style Web fill:#0f0,stroke:#333,stroke-width:2px
+    style DB fill:#00f,stroke:#333,stroke-width:2px,color:#fff

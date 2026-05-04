@@ -67,3 +67,8 @@ CU65 – Buscar Tipos de documentos,Administracion,Necesario,Terminado,100,Termi
 CU66 – Buscar Conceptos,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#219
 CU67 – Buscar Estados de Gestión,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#220
 CU68 – Buscar tipos de folios,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#221
+CU69 – Gestión de Inmuebles,Inmuebles,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#292
+CU70 – Gestión de Copias,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#243
+CU71 – Gestión de Items,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#300
+CU72 – Gestión de Documentos Presentados,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#163
+CU73 – Registro de Auditoría,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#309

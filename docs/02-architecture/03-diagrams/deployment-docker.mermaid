@@ -1,0 +1,19 @@
+graph LR
+    subgraph "Local Development / Production"
+        subgraph "Docker Host"
+            Proxy[Nginx Ingress / Reverse Proxy]
+            API[notaire-backend Container]
+            DB[(notaire-postgres Container)]
+            Mon[Monitoring Stack: Prometheus/Grafana]
+        end
+    end
+
+    Client([Users / Browser]) -- HTTPS --> Proxy
+    Proxy --> API
+    API --> DB
+    Mon -. Scrape .-> API
+    Mon -. Query .-> DB
+
+    style Proxy fill:#ccc,stroke:#333
+    style API fill:#dfd,stroke:#333
+    style DB fill:#ddf,stroke:#333

@@ -2,13 +2,34 @@
  * Unit tests for auth-store (Zustand)
  * CU: Login / Authentication flow
  */
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useAuthStore } from "@/store/auth-store";
 import type { DtoUsuario } from "@/types";
+
+// Mock localStorage for Zustand persist middleware
+const localStorageMock = {
+  getItem: vi.fn(() => null),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+  key: vi.fn(() => null),
+  length: 0,
+};
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
+// Mock the persist middleware to avoid storage issues
+vi.mock('zustand/middleware', () => ({
+  persist: vi.fn((config) => config),
+}));
 
 // Reset store state between tests
 beforeEach(() => {
   useAuthStore.setState({ user: null, isAuthenticated: false });
+  vi.clearAllMocks();
 });
 
 const adminUser: DtoUsuario = {
