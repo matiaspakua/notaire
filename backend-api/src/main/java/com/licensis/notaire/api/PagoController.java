@@ -93,28 +93,8 @@ public class PagoController {
     }
 
     @PostMapping
-    @Operation(summary = "CU15 - Procesar pago")
-    public ResponseEntity<Pago> procesarPago(
-            @Parameter(description = "ID del presupuesto") @RequestParam Integer idPresupuesto,
-            @Parameter(description = "Monto del pago") @RequestParam Float monto,
-            @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
-            @Parameter(description = "Observaciones") @RequestParam(required = false) String observaciones) {
-        try {
-            Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pago);
-        } catch (IllegalArgumentException e) {
-            log.warn("Error de validación al procesar pago: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("Error al procesar pago", e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PostMapping("/json")
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
-    public ResponseEntity<Pago> procesarPagoJson(@RequestBody PagoRequest request) {
+    public ResponseEntity<Pago> procesarPago(@RequestBody PagoRequest request) {
         try {
             Pago pago = pagoService.procesarPago(
                     request.idPresupuesto(),
@@ -132,13 +112,34 @@ public class PagoController {
         }
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Actualizar pago")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Pago entity) {
+    @PostMapping("/params")
+    @Operation(summary = "CU15 - Procesar pago (query params)")
+    public ResponseEntity<Pago> procesarPagoParams(
+            @Parameter(description = "ID del presupuesto") @RequestParam Integer idPresupuesto,
+            @Parameter(description = "Monto del pago") @RequestParam Float monto,
+            @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
+            @Parameter(description = "Observaciones") @RequestParam(required = false) String observaciones) {
         try {
-            entity.setIdPago(id);
-            // Note: For full update support, add edit method to PagoService
-            return ResponseEntity.ok().build();
+            Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones);
+            return ResponseEntity.status(HttpStatus.CREATED).body(pago);
+        } catch (IllegalArgumentException e) {
+            log.warn("Error de validación al procesar pago: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("Error al procesar pago", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Editar pago")
+    public ResponseEntity<Pago> update(@PathVariable Integer id, @RequestBody Pago entity) {
+        try {
+            Pago updated = pagoService.editarPago(id, entity.getMonto(), entity.getFecha(), entity.getObservaciones());
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error("Error al actualizar pago ID={}", id, e);
             return ResponseEntity.internalServerError().build();

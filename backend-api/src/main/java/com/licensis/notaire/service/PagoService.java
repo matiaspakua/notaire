@@ -141,4 +141,31 @@ public class PagoService {
         pagoRepository.deleteById(idPago);
         log.info("Pago eliminado exitosamente: ID={}", idPago);
     }
+
+    /**
+     * Edita un pago existente.
+     */
+    @Transactional
+    public Pago editarPago(Integer idPago, Float monto, Date fecha, String observaciones) {
+        log.info("Editando pago con ID: {}", idPago);
+        Pago pago = pagoRepository.findById(idPago)
+                .orElseThrow(() -> new IllegalArgumentException("Pago no encontrado con ID: " + idPago));
+
+        if (monto != null) {
+            if (monto <= 0) {
+                throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
+            }
+            pago.setMonto(monto);
+        }
+        if (fecha != null) {
+            pago.setFecha(fecha);
+        }
+        if (observaciones != null) {
+            pago.setObservaciones(observaciones);
+        }
+
+        Pago savedPago = pagoRepository.save(pago);
+        log.info("Pago editado exitosamente: ID={}", savedPago.getIdPago());
+        return savedPago;
+    }
 }
