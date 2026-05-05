@@ -14,8 +14,8 @@ public abstract class BaseIntegrationTest {
     protected static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = 
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("notaire_test")
-            .withUsername("notaire")
-            .withPassword("notaire_password")
+            .withUsername("admin")
+            .withPassword("admin")
             .withInitScript("init-db/01-schema.sql")
             .withInitScript("init-db/02-data.sql");
 
