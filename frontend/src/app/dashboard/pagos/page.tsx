@@ -14,7 +14,7 @@ import { usePagos, useCreatePago, useUpdatePago, useDeletePago } from "@/hooks/u
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
 
-const EMPTY: Partial<Pago> = { monto: undefined, fecha: "", metodoPago: "" };
+const EMPTY: Partial<Pago> = { idPresupuesto: undefined, monto: undefined, fecha: "", metodoPago: "", observaciones: "" };
 
 export default function PagosPage() {
   const { data: pagos = [], isLoading } = usePagos();
@@ -54,6 +54,7 @@ export default function PagosPage() {
 
   const columns: Column<Pago>[] = [
     { key: "id", header: "ID", render: (p) => <span className="text-xs text-muted-foreground">{p.idPago}</span>, className: "w-12" },
+    { key: "presupuesto", header: "Presupuesto", render: (p) => <span className="text-xs text-muted-foreground">#{p.idPresupuesto ?? p.presupuesto?.idPresupuesto ?? "—"}</span>, className: "w-20" },
     { key: "fecha", header: "Fecha", render: (p) => formatDate(p.fecha) },
     { key: "monto", header: "Monto", render: (p) => <span className="font-medium">{formatCurrency(p.monto)}</span> },
     { key: "metodo", header: "Método", render: (p) => p.metodoPago ?? "—" },
@@ -81,9 +82,11 @@ export default function PagosPage() {
         <DialogContent>
           <DialogHeader><DialogTitle>{isEditMode ? "Editar pago" : "Registrar pago"}</DialogTitle></DialogHeader>
           <div className="space-y-3 pt-2">
+            <div className="space-y-1"><Label>Presupuesto ID</Label><Input type="number" value={editing.idPresupuesto ?? ""} onChange={(e) => setEditing({ ...editing, idPresupuesto: parseInt(e.target.value) })} placeholder="ID del presupuesto" /></div>
             <div className="space-y-1"><Label>Fecha</Label><Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} /></div>
             <div className="space-y-1"><Label>Monto ($)</Label><Input type="number" step="0.01" value={editing.monto ?? ""} onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })} /></div>
             <div className="space-y-1"><Label>Método de pago</Label><Input value={editing.metodoPago ?? ""} onChange={(e) => setEditing({ ...editing, metodoPago: e.target.value })} placeholder="Efectivo, transferencia, etc." /></div>
+            <div className="space-y-1"><Label>Observaciones</Label><Input value={editing.observaciones ?? ""} onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })} placeholder="Notas opcionales" /></div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setModalOpen(false)}>Cancelar</Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{isEditMode ? "Actualizar" : "Registrar"}</Button>
