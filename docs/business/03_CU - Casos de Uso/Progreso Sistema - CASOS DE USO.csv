@@ -13,7 +13,7 @@ CU11 – Ingresar para inscripción,Gestiones,Esencial,Terminado,100,Terminado,1
 CU12 – Retirar testimonio,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,,,#165
 CU13 – Ver historial de gestión,Gestiones,Estaría Bueno,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#166
 CU14 – Consultar estado gestión,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,"Este CU quedó eliminado/reemplazado por Ver Detalle Gestion, debido a que en esta pantalla ya se muestra el estado actual de la gestión",#167
-CU15 – Procesar pago,Pagos,Estaria Bueno,,0,,,,,,,#168
+CU15 – Procesar pago,Pagos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#168
 CU16 – Archivar Gestión,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#169
 CU17 – Dar Alta persona,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#170
 CU18 – Dar Alta Cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#171
@@ -45,7 +45,7 @@ CU43 – Reingresar documentación,Gestiones,Esencial,Terminado,100,Terminado,10
 CU44 – Reingresar testimonio,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#197
 CU45 – Modificar presupuesto,Presupuestos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#198
 CU46 – Ver detalle cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#199
-CU47 – Consultar Pago,Pagos,Estaria Bueno,,0,,,,,No Aplicable,No Aplicable,,#200
+CU47 – Consultar Pago,Pagos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#200
 CU48 – Dar alta escribano,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#201
 CU49 – Eliminar Plantilla Presupuesto,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#202
 CU50 – Generar Declaración Jurada de Rentas,Protocolos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#203
