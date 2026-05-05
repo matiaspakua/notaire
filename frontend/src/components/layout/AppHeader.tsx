@@ -8,12 +8,14 @@ interface AppHeaderProps {
 
 export function AppHeader({ title, description, actions }: AppHeaderProps) {
   return (
-    <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+    <header className="sticky top-0 z-10 glass border-b border-border/50 px-6 lg:px-8 py-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">{title}</h1>
+          {description && <p className="text-sm text-muted-foreground mt-0.5">{description}</p>}
+        </div>
+        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
-    </div>
+    </header>
   );
 }

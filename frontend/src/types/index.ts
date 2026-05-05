@@ -156,6 +156,24 @@ export interface RegistroAuditoria {
 // UI / Navigation types
 // ──────────────────────────────────────────────
 
+export interface Inmueble {
+  idInmueble?: number;
+  nomenclaturaCatastral?: string;
+  valuacionFiscal?: string;
+  domicilio?: string;
+  observaciones?: string;
+}
+
+export interface Copia {
+  idCopia?: number;
+  numero?: number;
+  fechaImpresion?: string;
+  fechaRetiro?: string;
+  observaciones?: string;
+  testimonio?: { idTestimonio?: number; numero?: number };
+  persona?: Persona;
+}
+
 export interface NavItem {
   label: string;
   href: string;

@@ -28,16 +28,19 @@ export function DataTable<T>({
   data,
   columns,
   isLoading,
-  emptyMessage = "Sin datos",
+  emptyMessage = "Sin datos disponibles",
   keyExtractor,
 }: DataTableProps<T>) {
   return (
-    <div className="rounded-lg border overflow-hidden">
+    <div className="rounded-2xl border border-border/50 overflow-hidden bg-card apple-shadow">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50">
+          <TableRow className="bg-muted/30 border-b border-border/50">
             {columns.map((col) => (
-              <TableHead key={col.key} className={col.className}>
+              <TableHead
+                key={col.key}
+                className={cn("font-semibold text-sm text-muted-foreground py-3", col.className)}
+              >
                 {col.header}
               </TableHead>
             ))}
@@ -48,8 +51,8 @@ export function DataTable<T>({
             Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
                 {columns.map((col) => (
-                  <TableCell key={col.key}>
-                    <div className="h-4 bg-muted animate-pulse rounded" />
+                  <TableCell key={col.key} className="py-3">
+                    <div className="h-4 bg-muted/60 animate-pulse rounded-lg" />
                   </TableCell>
                 ))}
               </TableRow>
@@ -58,16 +61,21 @@ export function DataTable<T>({
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className="h-24 text-center text-muted-foreground"
+                className="h-32 text-center text-muted-foreground"
               >
-                {emptyMessage}
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-base">{emptyMessage}</p>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
             data.map((row) => (
-              <TableRow key={keyExtractor(row)}>
+              <TableRow
+                key={keyExtractor(row)}
+                className="border-b border-border/30 last:border-0 hover:bg-muted/20 transition-colors"
+              >
                 {columns.map((col) => (
-                  <TableCell key={col.key} className={col.className}>
+                  <TableCell key={col.key} className={cn("py-3", col.className)}>
                     {col.render(row)}
                   </TableCell>
                 ))}
@@ -78,4 +86,8 @@ export function DataTable<T>({
       </Table>
     </div>
   );
+}
+
+function cn(...classes: (string | undefined | false)[]) {
+  return classes.filter(Boolean).join(" ");
 }
