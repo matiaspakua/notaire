@@ -16,6 +16,7 @@ public class MetricsUtil {
 
     private final MeterRegistry meterRegistry;
     private static final String APP_NAMESPACE = "notaire";
+    private final java.util.Map<String, java.util.concurrent.atomic.AtomicInteger> activeOperationsGauges = new java.util.concurrent.ConcurrentHashMap<>();
 
     public MetricsUtil(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
@@ -89,10 +90,12 @@ public class MetricsUtil {
      * Gauge for active operations
      */
     public void setActiveOperations(String operation, int count) {
-        meterRegistry.gauge(
-            APP_NAMESPACE + "_active_operations",
-            count,
-            measurement -> measurement.tag("operation", operation)
-        );
+        activeOperationsGauges.computeIfAbsent(operation, op -> {
+            java.util.concurrent.atomic.AtomicInteger value = new java.util.concurrent.atomic.AtomicInteger(0);
+            io.micrometer.core.instrument.Gauge.builder(APP_NAMESPACE + "_active_operations", value, java.util.concurrent.atomic.AtomicInteger::get)
+                .tag("operation", op)
+                .register(meterRegistry);
+            return value;
+        }).set(count);
     }
 }
