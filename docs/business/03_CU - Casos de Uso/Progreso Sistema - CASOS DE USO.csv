@@ -22,8 +22,8 @@ CU20 – Dar alta usuario,Administracion,Esencial,Terminado,100,Terminado,100,Te
 CU21 – Modificar Usuario,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#174
 CU22 – Registrar Suplencia,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#175
 CU23 – Ver registro de actividades de usuario,Administracion,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#176
-CU24 – Generar libro de índices,Protocolos,Estaria Bueno,,0,,,,,No Aplicable,No Aplicable,,#177
-CU25 – Generar Declaración Jurada del mes,Protocolos,Estaria Bueno,,0,,,,,No Aplicable,No Aplicable,,#178
+CU24 – Generar libro de índices,Protocolos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#177
+CU25 – Generar Declaración Jurada del mes,Protocolos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#178
 CU26 – Ingresar nuevo tipo de trámite,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#179
 CU27 – Ingresar nuevo tipo de documento,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#180
 CU28 – Ingresar nuevos folios,Protocolos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#181
@@ -48,7 +48,7 @@ CU46 – Ver detalle cliente,Clientes,Esencial,Terminado,100,Terminado,100,Termi
 CU47 – Consultar Pago,Pagos,Estaria Bueno,,0,,,,,No Aplicable,No Aplicable,,#200
 CU48 – Dar alta escribano,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#201
 CU49 – Eliminar Plantilla Presupuesto,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#202
-CU50 – Generar Declaración Jurada de Rentas,Protocolos,Estaria Bueno,,0,,,,,No Aplicable,No Aplicable,,#203
+CU50 – Generar Declaración Jurada de Rentas,Protocolos,Estaria Bueno,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#203
 CU51 – Modificar escribano,Administracion,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#204
 CU52 - Modificar Escritura,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#205
 CU53 - Modificar Gestión,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#206
