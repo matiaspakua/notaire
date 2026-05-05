@@ -65,10 +65,14 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
-        <!-- Observability: Spring Cloud Sleuth for distributed tracing -->
+        <!-- Observability: Micrometer Tracing (Successor to Sleuth in Spring Boot 3+) -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
         <!-- Logging: SLF4J + Logback (already in Spring Boot) + JSON logging -->
         <dependency>
