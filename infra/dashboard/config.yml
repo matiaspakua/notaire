@@ -1,0 +1,74 @@
+# Homer Configuration
+# See https://github.com/bastienwirtz/homer/blob/main/docs/configuration.md
+
+title: "Notaire DevSecOps Hub"
+subtitle: "Infrastructure Control Center"
+logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/images/logoRojoLetraMediano.png"
+
+header: true
+footer: '<p>Built with ❤️ for Notaire S-SDLC</p>'
+
+columns: "3"
+
+connectivity_test: true
+
+links:
+  - name: "Project Repo"
+    icon: "fab fa-github"
+    url: "https://github.com/matiaspakua/notaire"
+  - name: "Documentation"
+    icon: "fas fa-book"
+    url: "../docs/README.md"
+
+services:
+  - name: "Security & Quality"
+    icon: "fas fa-shield-alt"
+    items:
+      - name: "SonarQube"
+        logo: "https://www.sonarqube.org/favicon.ico"
+        subtitle: "SAST & Code Quality"
+        tag: "Static"
+        url: "http://localhost:9000"
+      - name: "Dependency-Track"
+        logo: "https://dependencytrack.org/favicon.ico"
+        subtitle: "SCA & SBOM Mgmt"
+        tag: "Library"
+        url: "http://localhost:8085"
+      - name: "DefectDojo"
+        logo: "https://www.defectdojo.org/favicon.ico"
+        subtitle: "Vulnerability Hub"
+        tag: "Security"
+        url: "http://localhost:8084"
+
+  - name: "Orchestration & Artifacts"
+    icon: "fas fa-cogs"
+    items:
+      - name: "Jenkins"
+        logo: "https://www.jenkins.io/favicon.ico"
+        subtitle: "CI/CD Pipelines"
+        tag: "Automation"
+        url: "http://localhost:8082"
+      - name: "Nexus"
+        logo: "https://www.sonatype.com/favicon.ico"
+        subtitle: "Maven & Docker Repo"
+        tag: "Artifacts"
+        url: "http://localhost:8081"
+
+  - name: "Observability"
+    icon: "fas fa-chart-line"
+    items:
+      - name: "Grafana"
+        logo: "https://grafana.com/favicon.ico"
+        subtitle: "Dashboards & Logs"
+        tag: "Metrics"
+        url: "http://localhost:3001"
+      - name: "Prometheus"
+        logo: "https://prometheus.io/favicon.ico"
+        subtitle: "Metrics Scraper"
+        tag: "Database"
+        url: "http://localhost:9090"
+      - name: "Loki"
+        logo: "https://grafana.com/static/img/logos/loki_icon.svg"
+        subtitle: "Log Aggregator"
+        tag: "Logs"
+        url: "http://localhost:3100"
