@@ -1,0 +1,32 @@
+info:
+  name: Get Usuario By ID
+  type: http
+  description: |-
+      ## Get Usuario By ID
+      Obtiene un usuario por su ID.
+      
+      **Method:** GET
+      **Path:** /api/v1/usuarios/{id}
+      
+      **Path Parameters:**
+      - id: ID del usuario
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios/{{user_id}}"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status is 200 or 404", function () {
+            const status = res.getStatus();
+            expect([200, 404]).to.include(status);
+          });
+           
+          test("Response time under 1000ms", function () {
+            expect(res.getResponseTime()).to.be.lessThan(1000);
+          });
+

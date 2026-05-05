@@ -1,0 +1,22 @@
+info:
+  name: Delete Tipo Documento
+  type: http
+  description: |-
+      ## Delete Tipo Documento
+      Elimina un tipo de documento del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/tipo-de-documento/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/tipo-de-documento/1"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

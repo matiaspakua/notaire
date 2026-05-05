@@ -1,0 +1,29 @@
+info:
+  name: Create Tipo Documento
+  type: http
+  description: |-
+      ## Create Tipo Documento
+      Crea un nuevo tipo de documento en el sistema.
+      
+      **Method:** POST
+      **Path:** /api/v1/tipo-de-documento
+
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-de-documento"
+  body:
+    type: json
+    data: |-
+        nombre: "Tipo de documento de prueba"
+        descripcion: "Descripción del tipo de documento"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 or 200", function () {
+            expect([200, 201]).to.include(res.getStatus());
+          });
+

@@ -1,0 +1,30 @@
+info:
+  name: Create Concepto
+  type: http
+  description: |-
+      ## Create Concepto
+      Crea un nuevo concepto en el sistema.
+      
+      **Method:** POST
+      **Path:** /api/v1/conceptos
+
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/conceptos"
+  body:
+    type: json
+    data: |-
+        nombre: "Concepto de prueba"
+        descripcion: "Descripción del concepto"
+        valor: 100.00
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 or 200", function () {
+            expect([200, 201]).to.include(res.getStatus());
+          });
+

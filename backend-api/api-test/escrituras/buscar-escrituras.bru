@@ -1,0 +1,33 @@
+meta {
+  name: Buscar Escrituras
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/escrituras/buscar?numero=1
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200 - Buscar escrituras", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("Response is an array", function () {
+    const body = res.getBody();
+    expect(body).to.be.an('array');
+  });
+}
+
+docs {
+  ## Buscar Escrituras
+  Busca escrituras por numero (CU62).
+
+  **Method:** GET
+  **Path:** /api/v1/escrituras/buscar?numero={numero}
+}

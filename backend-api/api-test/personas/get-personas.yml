@@ -1,0 +1,51 @@
+info:
+  name: Get All Personas
+  type: http
+  description: |-
+      ## Get All Personas
+      Obtiene todas las personas del sistema (CU17, CU18).
+      
+      **Method:** GET
+      **Path:** /api/v1/personas
+      
+      **Response:** Array of Persona objects
+      
+      **CU Related:** CU17 - Dar Alta persona, CU18 - Dar Alta Cliente
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/personas"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 - Personas retrieved successfully", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is an array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+          
+          test("Response Content-Type is JSON", function () {
+            expect(res.getHeader('content-type')).to.include('application/json');
+          });
+          
+          test("Response time under 2 seconds", function () {
+            expect(res.getTime()).to.be.lessThan(2000);
+          });
+          
+          test("Each persona has required fields when array is not empty", function () {
+            const body = res.getBody();
+            if (body.length > 0) {
+              const first = body[0];
+              expect(first).to.have.property('idPersona');
+              expect(first).to.have.property('nombre');
+              expect(first).to.have.property('apellido');
+            }
+          });
+

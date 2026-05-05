@@ -1,0 +1,22 @@
+info:
+  name: Delete Presupuesto
+  type: http
+  description: |-
+      ## Delete Presupuesto
+      Elimina un presupuesto del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/presupuestos/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/presupuestos/{{presupuesto_id}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

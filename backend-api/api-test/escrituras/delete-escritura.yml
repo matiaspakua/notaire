@@ -1,0 +1,22 @@
+info:
+  name: Delete Escritura
+  type: http
+  description: |-
+      ## Delete Escritura
+      Elimina una escritura del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/escrituras/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/escrituras/{{escritura_id}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

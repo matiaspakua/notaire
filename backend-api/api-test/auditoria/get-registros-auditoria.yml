@@ -1,0 +1,29 @@
+info:
+  name: Get All Registros de Auditoria
+  type: http
+  description: |-
+      ## Get All Registros de Auditoria
+      Obtiene todos los registros de auditoría.
+      
+      **Method:** GET
+      **Path:** /api/v1/registro-auditoria
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/registro-auditoria"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

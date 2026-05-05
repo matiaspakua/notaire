@@ -1,0 +1,29 @@
+info:
+  name: Get All Tipos de Tramite
+  type: http
+  description: |-
+      ## Get All Tipos de Tramite
+      Obtiene todos los tipos de trámite.
+      
+      **Method:** GET
+      **Path:** /api/v1/tipo-tramite
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

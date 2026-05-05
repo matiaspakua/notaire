@@ -1,0 +1,22 @@
+info:
+  name: Delete Tipo Tramite
+  type: http
+  description: |-
+      ## Delete Tipo Tramite
+      Elimina un tipo de trámite del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/tipo-tramite/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/tipo-tramite/1"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

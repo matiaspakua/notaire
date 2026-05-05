@@ -1,0 +1,30 @@
+info:
+  name: Update Gestion
+  type: http
+  description: |-
+      ## Update Gestion
+      Actualiza una gestión existente en el sistema.
+      
+      **Method:** PUT
+      **Path:** /api/v1/gestiones/{id}
+
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/gestiones/{{gestion_id}}"
+  body:
+    type: json
+    data: |-
+        numero: 1002
+        fechaInicio: "2025-02-01"
+        detalle: "Gestión actualizada"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

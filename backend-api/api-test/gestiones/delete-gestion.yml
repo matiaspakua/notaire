@@ -1,0 +1,22 @@
+info:
+  name: Delete Gestion
+  type: http
+  description: |-
+      ## Delete Gestion
+      Elimina una gestión del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/gestiones/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/gestiones/{{gestion_id}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+
