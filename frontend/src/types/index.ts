@@ -130,9 +130,11 @@ export interface Escritura {
 
 export interface Pago {
   idPago?: number;
+  idPresupuesto?: number;
   monto?: number;
   fecha?: string;
   metodoPago?: string;
+  observaciones?: string;
   presupuesto?: Presupuesto;
 }
 
