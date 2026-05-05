@@ -1,0 +1,29 @@
+info:
+  name: Get All Tipos de Documento
+  type: http
+  description: |-
+      ## Get All Tipos de Documento
+      Obtiene todos los tipos de documento.
+      
+      **Method:** GET
+      **Path:** /api/v1/tipo-de-documento
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-de-documento"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

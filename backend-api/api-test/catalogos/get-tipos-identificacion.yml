@@ -1,0 +1,29 @@
+info:
+  name: Get All Tipos de Identificacion
+  type: http
+  description: |-
+      ## Get All Tipos de Identificacion
+      Obtiene todos los tipos de identificación.
+      
+      **Method:** GET
+      **Path:** /api/v1/tipo-identificacion
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-identificacion"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

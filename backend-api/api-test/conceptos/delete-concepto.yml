@@ -1,0 +1,22 @@
+info:
+  name: Delete Concepto
+  type: http
+  description: |-
+      ## Delete Concepto
+      Elimina un concepto del sistema.
+      
+      **Method:** DELETE
+      **Path:** /api/v1/conceptos/{id}
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/conceptos/1"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+

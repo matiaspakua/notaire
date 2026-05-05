@@ -1,0 +1,29 @@
+info:
+  name: Get Presupuestos By Persona
+  type: http
+  description: |-
+      ## Get Presupuestos By Persona
+      Obtiene los presupuestos de una persona (CU60).
+      
+      **Method:** GET
+      **Path:** /api/v1/presupuestos/persona/{idPersona}
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos/persona/{{persona_id}}"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

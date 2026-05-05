@@ -1,0 +1,25 @@
+info:
+  name: Get Estado Actual de Gestion
+  type: http
+  description: |-
+      ## Get Estado Actual de Gestion
+      Obtiene el estado actual de una gestión.
+      
+      **Method:** GET
+      **Path:** /api/v1/gestiones/{id}/estado-actual
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/gestiones/{{gestion_id}}/estado-actual"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status is 200 or 404", function () {
+            const status = res.getStatus();
+            expect([200, 404]).to.include(status);
+          });
+

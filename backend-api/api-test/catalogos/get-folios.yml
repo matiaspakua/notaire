@@ -1,0 +1,29 @@
+info:
+  name: Get All Folios
+  type: http
+  description: |-
+      ## Get All Folios
+      Obtiene todos los folios del sistema.
+      
+      **Method:** GET
+      **Path:** /api/v1/folio
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/folio"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+           
+          test("Response is array", function () {
+            const body = res.getBody();
+            expect(body).to.be.an('array');
+          });
+

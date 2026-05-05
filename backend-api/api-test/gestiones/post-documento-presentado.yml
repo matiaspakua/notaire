@@ -1,0 +1,30 @@
+info:
+  name: Create Documento Presentado
+  type: http
+  description: |-
+      ## Create Documento Presentado
+      Crea un nuevo documento presentado en el sistema.
+      
+      **Method:** POST
+      **Path:** /api/v1/documento-presentado
+
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/documento-presentado"
+  body:
+    type: json
+    data: |-
+        nombre: "Documento de prueba"
+        descripcion: "Descripción del documento"
+        fechaPresentacion: "2025-01-15"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 or 200", function () {
+            expect([200, 201]).to.include(res.getStatus());
+          });
+

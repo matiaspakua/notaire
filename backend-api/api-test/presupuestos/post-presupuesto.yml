@@ -1,0 +1,31 @@
+info:
+  name: Create Presupuesto
+  type: http
+  description: |-
+      ## Create Presupuesto
+      Crea un nuevo presupuesto en el sistema.
+      
+      **Method:** POST
+      **Path:** /api/v1/presupuestos
+
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        numero: 1001
+        fecha: "2025-01-15"
+        estado: "pendiente"
+        observaciones: "Presupuesto de prueba"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 or 200", function () {
+            expect([200, 201]).to.include(res.getStatus());
+          });
+
