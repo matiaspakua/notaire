@@ -1,7 +1,7 @@
 "use client";
 
 interface AppHeaderProps {
-  title: string;
+  title?: string;
   description?: string;
   actions?: React.ReactNode;
 }
