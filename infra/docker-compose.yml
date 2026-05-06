@@ -155,7 +155,7 @@ networks:
   devsecops-network:
     driver: bridge
   notary-network:
-    external: true # Connects to the application's network
+    driver: bridge
 
 volumes:
   sonarqube_data:

@@ -6,6 +6,8 @@ import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.service.EscrituraService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.List;
 @RequestMapping("/api/v1/escrituras")
 @Tag(name = "Escrituras", description = "API para gestionar escrituras")
 public class EscrituraController {
+
+    private static final Logger log = LoggerFactory.getLogger(EscrituraController.class);
 
     private final EscrituraService escrituraService;
 
@@ -43,8 +47,14 @@ public class EscrituraController {
     @PostMapping
     @Operation(summary = "Crear nueva escritura")
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
-        Escritura saved = escrituraService.save(entity);
-        return ResponseEntity.ok(saved);
+        try {
+            Escritura saved = escrituraService.save(entity);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            log.error("Failed to create escritura", e);
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/{id}")

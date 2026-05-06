@@ -49,59 +49,83 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-4">
-      <Card className="w-full max-w-sm shadow-2xl">
-        <CardHeader className="text-center pb-2">
-          <div className="flex justify-center mb-3">
-            <div className="bg-amber-400 p-3 rounded-full">
-              <Scale className="h-8 w-8 text-slate-900" />
+    <div className="min-h-screen flex items-center justify-center bg-[#FBFBFD] p-6">
+      <div className="w-full max-w-[400px] space-y-8 animate-in fade-in duration-700">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="bg-primary/10 p-4 rounded-[22px] shadow-sm">
+              <Scale className="h-10 w-10 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Notaire</CardTitle>
-          <CardDescription>Sistema de Gestión de Escribanía</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="nombre">Usuario</Label>
-              <Input
-                id="nombre"
-                data-testid="input-usuario"
-                placeholder="nombre de usuario"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                autoComplete="username"
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="contrasenia">Contraseña</Label>
-              <Input
-                id="contrasenia"
-                data-testid="input-contrasenia"
-                type="password"
-                placeholder="••••••••"
-                value={contrasenia}
-                onChange={(e) => setContrasenia(e.target.value)}
-                autoComplete="current-password"
-                disabled={loading}
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-              data-testid="btn-ingresar"
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? "Iniciando sesión..." : "Ingresar"}
-            </Button>
-          </form>
-          <p className="text-xs text-muted-foreground text-center mt-4">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">Notaire</h1>
+            <p className="text-lg text-[#86868b] font-medium">Sistema de Gestión de Escribanía</p>
+          </div>
+        </div>
+
+        <Card className="border-none shadow-none bg-transparent">
+          <CardContent className="p-0">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nombre" className="text-xs font-semibold uppercase tracking-wider text-[#86868b] ml-1">Usuario</Label>
+                  <Input
+                    id="nombre"
+                    data-testid="input-usuario"
+                    placeholder="nombre de usuario"
+                    className="h-12 rounded-[12px] bg-white border-[#d2d2d7] text-lg focus:border-primary apple-focus"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    autoComplete="username"
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contrasenia" className="text-xs font-semibold uppercase tracking-wider text-[#86868b] ml-1">Contraseña</Label>
+                  <Input
+                    id="contrasenia"
+                    data-testid="input-contrasenia"
+                    type="password"
+                    placeholder="••••••••"
+                    className="h-12 rounded-[12px] bg-white border-[#d2d2d7] text-lg focus:border-primary apple-focus"
+                    value={contrasenia}
+                    onChange={(e) => setContrasenia(e.target.value)}
+                    autoComplete="current-password"
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <Button
+                  type="submit"
+                  size="lg"
+                  variant="apple"
+                  className="w-full h-12 text-lg font-semibold rounded-[12px]"
+                  disabled={loading}
+                  data-testid="btn-ingresar"
+                >
+                  {loading && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
+                  {loading ? "Iniciando sesión..." : "Ingresar"}
+                </Button>
+                
+                <p className="text-sm text-[#86868b] text-center font-medium">
+                  ¿Olvidó su contraseña? Contacte al administrador.
+                </p>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        <div className="pt-12 text-center border-t border-[#d2d2d7]">
+          <p className="text-xs font-semibold text-[#86868b] uppercase tracking-widest">
+            Infraestructura Segura
+          </p>
+          <p className="text-[10px] text-[#a1a1a6] mt-1">
             Backend: {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1"}
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

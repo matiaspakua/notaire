@@ -15,6 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -81,9 +82,12 @@ class BusinessWorkflowIntegrationTest {
                                     {
                                       "nombre": "test_workflow_user",
                                       "contrasenia": "test123",
-                                      "tipo": "EMPLEADO"
+                                      "tipo": "EMPLEADO",
+                                      "estado": true,
+                                      "fkIdPersona": {"idPersona": 1}
                                     }
                                     """))
+                    .andDo(print())
                     .andExpect(status().isOk());
         }
     }
@@ -101,6 +105,7 @@ class BusinessWorkflowIntegrationTest {
         @DisplayName("GET /api/v1/personas returns array")
         void getAllPersonasReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/personas"))
+                    .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
         }
@@ -116,8 +121,10 @@ class BusinessWorkflowIntegrationTest {
                                       "nombre": "Juan",
                                       "apellido": "García",
                                       "dni": "20123456",
+                                      "numeroIdentificacion": "20123456",
                                       "email": "juan.garcia@example.com",
-                                      "esCliente": true
+                                      "esCliente": true,
+                                      "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}
                                     }
                                     """))
                     .andExpect(status().isOk());
@@ -157,7 +164,10 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 20250001
+                                      "numero": 20250001,
+                                      "encabezado": "Gestión de prueba",
+                                      "fechaInicio": "2025-01-15",
+                                      "fkIdPersonaEscribano": {"idPersona": 1}
                                     }
                                     """))
                     .andExpect(status().isOk());
@@ -207,6 +217,9 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
+                                      "numero": 20250001,
+                                      "fecha": "2025-01-15",
+                                      "encabezado": "Presupuesto de prueba",
                                       "monto": 15000.00,
                                       "estado": "PENDIENTE"
                                     }
@@ -267,11 +280,13 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
+                                      "idPresupuesto": 1,
                                       "monto": 5000.00,
-                                      "metodoPago": "Efectivo"
+                                      "fecha": "2025-01-15",
+                                      "observaciones": "Test payment"
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
 
         @Test
@@ -309,7 +324,10 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 2025001
+                                      "numero": 2025001,
+                                      "cuerpo": "Cuerpo de la escritura de prueba",
+                                      "estado": "BORRADOR",
+                                      "fechaEscrituracion": "2025-01-15"
                                     }
                                     """))
                     .andExpect(status().isOk());
@@ -367,7 +385,10 @@ class BusinessWorkflowIntegrationTest {
                             .content("""
                                     {
                                       "numero": 9001,
-                                      "anio": 2025
+                                      "anio": 2025,
+                                      "estado": "ACTIVO",
+                                      "fkIdPersonaEscribano": {"idPersona": 1},
+                                      "fkIdTipoFolio": {"idTipoFolio": 1}
                                     }
                                     """))
                     .andExpect(status().isOk());

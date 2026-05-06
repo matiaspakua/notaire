@@ -5,6 +5,8 @@ import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.negocio.Folio;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
 @RequestMapping("/api/v1/folio")
 @Tag(name = "Folio", description = "API para gestionar folio")
 public class FolioController {
+
+    private static final Logger log = LoggerFactory.getLogger(FolioController.class);
 
     private FolioJpaController getJpaController() {
         return new FolioJpaController(null, JpaControllerProvider.getEntityManagerFactory());
@@ -46,6 +50,8 @@ public class FolioController {
             getJpaController().create(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to create folio", e);
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

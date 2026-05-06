@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,6 +130,7 @@ public class Presupuesto implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public java.util.Set<Pago> getPagoList() {
         return pagoList;
     }
@@ -154,6 +156,7 @@ public class Presupuesto implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Tramite> getTramiteList() {
         return tramiteList;
     }
@@ -163,6 +166,7 @@ public class Presupuesto implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Item> getItemList() {
         return itemList;
     }

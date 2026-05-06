@@ -32,14 +32,14 @@ export function DataTable<T>({
   keyExtractor,
 }: DataTableProps<T>) {
   return (
-    <div className="rounded-2xl border border-border/50 overflow-hidden bg-card apple-shadow">
+    <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in duration-500">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/30 border-b border-border/50">
+          <TableRow className="bg-[#F5F5F7]/50 border-b border-border/40 hover:bg-[#F5F5F7]/50">
             {columns.map((col) => (
               <TableHead
                 key={col.key}
-                className={cn("font-semibold text-sm text-muted-foreground py-3", col.className)}
+                className={cn("font-bold text-[13px] uppercase tracking-wider text-[#86868b] py-5 px-6", col.className)}
               >
                 {col.header}
               </TableHead>
@@ -49,10 +49,10 @@ export function DataTable<T>({
         <TableBody>
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
+              <TableRow key={i} className="border-b border-border/20 last:border-0">
                 {columns.map((col) => (
-                  <TableCell key={col.key} className="py-3">
-                    <div className="h-4 bg-muted/60 animate-pulse rounded-lg" />
+                  <TableCell key={col.key} className="py-6 px-6">
+                    <div className="h-5 bg-[#F5F5F7] animate-pulse rounded-full w-full" />
                   </TableCell>
                 ))}
               </TableRow>
@@ -61,10 +61,13 @@ export function DataTable<T>({
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className="h-32 text-center text-muted-foreground"
+                className="h-64 text-center"
               >
-                <div className="flex flex-col items-center gap-2">
-                  <p className="text-base">{emptyMessage}</p>
+                <div className="flex flex-col items-center justify-center gap-3 text-[#86868b]">
+                  <div className="bg-[#F5F5F7] p-4 rounded-full">
+                    <TableIcon className="h-8 w-8 opacity-20" />
+                  </div>
+                  <p className="text-lg font-medium">{emptyMessage}</p>
                 </div>
               </TableCell>
             </TableRow>
@@ -72,10 +75,10 @@ export function DataTable<T>({
             data.map((row) => (
               <TableRow
                 key={keyExtractor(row)}
-                className="border-b border-border/30 last:border-0 hover:bg-muted/20 transition-colors"
+                className="border-b border-border/20 last:border-0 hover:bg-[#F5F5F7]/30 transition-colors duration-200 group"
               >
                 {columns.map((col) => (
-                  <TableCell key={col.key} className={cn("py-3", col.className)}>
+                  <TableCell key={col.key} className={cn("py-5 px-6 text-[#1d1d1f] font-medium", col.className)}>
                     {col.render(row)}
                   </TableCell>
                 ))}
@@ -87,6 +90,8 @@ export function DataTable<T>({
     </div>
   );
 }
+
+import { Table as TableIcon } from "lucide-react";
 
 function cn(...classes: (string | undefined | false)[]) {
   return classes.filter(Boolean).join(" ");
