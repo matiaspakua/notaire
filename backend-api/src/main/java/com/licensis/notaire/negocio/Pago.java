@@ -5,6 +5,7 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoPago;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Basic;
@@ -62,6 +63,7 @@ public class Pago implements Serializable
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
+    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Presupuesto fkIdPresupuesto;
 
@@ -101,6 +103,7 @@ public class Pago implements Serializable
         this.observaciones = observaciones;
     }
 
+    @JsonIgnore
     public Presupuesto getPresupuesto()
     {
         return fkIdPresupuesto;

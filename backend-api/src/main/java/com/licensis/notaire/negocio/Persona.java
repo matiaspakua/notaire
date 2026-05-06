@@ -15,6 +15,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.hibernate.LazyInitializationException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Clase que representa a la entidad persona (general).
@@ -51,6 +52,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "personas")
 @XmlRootElement
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQueries({
         @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
         @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
@@ -293,6 +295,7 @@ public class Persona implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Tramite> getTramiteList() {
         return tramiteList;
     }
@@ -310,62 +313,69 @@ public class Persona implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Presupuesto> getPresupuestoList() {
         return presupuestoList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<GestionDeEscritura> getGestionDeEscrituraList() {
+        return GestionDeEscrituraList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Folio> getFolioList() {
+        return folioList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Suplencia> getSuplenciaList() {
+        return suplenciaList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Suplencia> getSuplenciaList1() {
+        return suplenciaList1;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Usuario> getUsuariosList() {
+        return usuariosList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Copia> getCopiaList() {
+        return copiaList;
     }
 
     public void setPresupuestoList(List<Presupuesto> presupuestoList) {
         this.presupuestoList = presupuestoList;
     }
 
-    @XmlTransient
-    public List<GestionDeEscritura> getGestionDeEscrituraList() {
-        return GestionDeEscrituraList;
-    }
-
     public void setGestionDeEscrituraList(List<GestionDeEscritura> GestionDeEscrituraList) {
         this.GestionDeEscrituraList = GestionDeEscrituraList;
-    }
-
-    @XmlTransient
-    public List<Folio> getFolioList() {
-        return folioList;
     }
 
     public void setFolioList(List<Folio> folioList) {
         this.folioList = folioList;
     }
 
-    @XmlTransient
-    public List<Suplencia> getSuplenciaList() {
-        return suplenciaList;
-    }
-
     public void setSuplenciaList(List<Suplencia> suplenciaList) {
         this.suplenciaList = suplenciaList;
-    }
-
-    @XmlTransient
-    public List<Suplencia> getSuplenciaList1() {
-        return suplenciaList1;
     }
 
     public void setSuplenciaList1(List<Suplencia> suplenciaList1) {
         this.suplenciaList1 = suplenciaList1;
     }
 
-    @XmlTransient
-    public List<Usuario> getUsuariosList() {
-        return usuariosList;
-    }
-
     public void setUsuariosList(List<Usuario> usuariosList) {
         this.usuariosList = usuariosList;
-    }
-
-    @XmlTransient
-    public List<Copia> getCopiaList() {
-        return copiaList;
     }
 
     public void setCopiaList(List<Copia> copiaList) {
@@ -400,6 +410,7 @@ public class Persona implements Serializable {
                 + "[ apellido=" + apellido + " ]";
     }
 
+    @JsonIgnore
     public DtoPersona getDto() {
 
         DtoPersona dtoPersona = new DtoPersona();
@@ -531,6 +542,7 @@ public class Persona implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<TramitesPersonas> getTramitesPersonasList() {
         return tramitesPersonasList;
     }

@@ -86,6 +86,7 @@ public class TipoIdentificacion implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Persona> getPersonaList() {
         return personaList;
     }

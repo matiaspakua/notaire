@@ -7,6 +7,8 @@ import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,8 @@ import java.util.List;
 @RequestMapping("/api/v1/gestiones")
 @Tag(name = "Gestiones", description = "API para gestionar gestiones de escritura")
 public class GestionController {
+
+    private static final Logger log = LoggerFactory.getLogger(GestionController.class);
 
     private GestionDeEscrituraJpaController getJpaController() {
         return new GestionDeEscrituraJpaController(null, JpaControllerProvider.getEntityManagerFactory());
@@ -112,6 +116,8 @@ public class GestionController {
             getJpaController().create(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to create gestion", e);
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

@@ -18,6 +18,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/auth-store";
 import { useGestiones } from "@/hooks/useGestiones";
 import { usePersonas } from "@/hooks/usePersonas";
@@ -143,79 +144,91 @@ export default function DashboardPage() {
   const visibleModules = modules.filter((m) => !m.adminOnly || isAdmin());
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-[1600px] mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       {/* Welcome Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Buenos días, {user?.nombre?.split(" ")[0]}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="space-y-1.5">
+          <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">
+            Hola, {user?.nombre?.split(" ")[0]}
           </h1>
-          <p className="text-muted-foreground mt-1 text-base">
-            Sistema de Gestión de Escribanía — Panel principal
+          <p className="text-xl text-[#86868b] font-medium">
+            Resumen de actividad para hoy
           </p>
         </div>
-        <div className="text-right text-sm text-muted-foreground">
-          <p>{new Date().toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+        <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5 shadow-sm">
+          <p className="text-sm font-semibold text-[#424245]">
+            {new Date().toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+          </p>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="apple-shadow">
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="bg-blue-50 p-3 rounded-xl">
-              <ClipboardList className="h-5 w-5 text-blue-600" />
+      {/* Stats - Apple Bento Grid style */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
+          <CardContent className="p-8 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Gestiones</p>
+              <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{gestiones?.length ?? "0"}</p>
             </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight">{gestiones?.length ?? "—"}</p>
-              <p className="text-sm text-muted-foreground">Gestiones activas</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="apple-shadow">
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="bg-violet-50 p-3 rounded-xl">
-              <Users className="h-5 w-5 text-violet-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight">{personas?.length ?? "—"}</p>
-              <p className="text-sm text-muted-foreground">Personas registradas</p>
+            <div className="bg-blue-500/10 p-5 rounded-3xl text-blue-600">
+              <ClipboardList className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
-        <Card className="apple-shadow">
-          <CardContent className="flex items-center gap-4 pt-6">
-            <div className="bg-emerald-50 p-3 rounded-xl">
-              <TrendingUp className="h-5 w-5 text-emerald-600" />
+        
+        <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
+          <CardContent className="p-8 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Personas</p>
+              <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{personas?.length ?? "0"}</p>
             </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight">{presupuestos?.length ?? "—"}</p>
-              <p className="text-sm text-muted-foreground">Presupuestos</p>
+            <div className="bg-violet-500/10 p-5 rounded-3xl text-violet-600">
+              <Users className="h-8 w-8" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
+          <CardContent className="p-8 flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Presupuestos</p>
+              <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{presupuestos?.length ?? "0"}</p>
+            </div>
+            <div className="bg-emerald-500/10 p-5 rounded-3xl text-emerald-600">
+              <TrendingUp className="h-8 w-8" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Module grid */}
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight mb-4">Módulos del sistema</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Módulos disponibles</h2>
+          <Button variant="link" className="text-[#0071e3] font-semibold text-sm group">
+            Ver todos los servicios <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {visibleModules.map((mod) => {
             const Icon = mod.icon;
             return (
-              <Link key={mod.href} href={mod.href}>
-                <Card className="hover:apple-shadow-lg transition-all duration-300 cursor-pointer h-full group border-border/50 hover:border-border">
-                  <CardHeader className="pb-3">
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${mod.gradient} text-white shadow-sm`}>
-                      <Icon className="h-5 w-5" />
+              <Link key={mod.href} href={mod.href} className="group">
+                <Card className="h-full bg-white border-none apple-shadow rounded-[28px] hover:apple-shadow-lg transition-all duration-500 relative overflow-hidden">
+                  <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${mod.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <CardHeader className="pb-4 p-8">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${mod.gradient} text-white shadow-lg shadow-blue-500/10 transition-transform duration-500 group-hover:scale-110`}>
+                      <Icon className="h-7 w-7" />
                     </div>
-                    <CardTitle className="text-base flex items-center justify-between">
+                    <CardTitle className="text-xl font-semibold text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors duration-300">
                       {mod.label}
-                      <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <CardDescription>{mod.description}</CardDescription>
+                  <CardContent className="px-8 pb-8 pt-0">
+                    <CardDescription className="text-base text-[#86868b] leading-relaxed">
+                      {mod.description}
+                    </CardDescription>
                   </CardContent>
                 </Card>
               </Link>

@@ -36,6 +36,7 @@ public class UsuarioController {
             List<Usuario> usuarios = getJpaController().buscarUsuarios();
             return ResponseEntity.ok(usuarios);
         } catch (Exception e) {
+            log.error("Failed to fetch all usuarios", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -47,6 +48,7 @@ public class UsuarioController {
             Usuario usuario = getJpaController().findUsuarioByPersona(idPersona);
             return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
         } catch (Exception e) {
+            log.error("Failed to fetch usuario for persona id {}", idPersona, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -78,6 +80,8 @@ public class UsuarioController {
             getJpaController().create(usuario);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to create usuario", e);
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -95,6 +99,7 @@ public class UsuarioController {
             getJpaController().edit(usuario);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to update usuario id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -106,6 +111,7 @@ public class UsuarioController {
             getJpaController().destroy(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to delete usuario id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -181,6 +187,7 @@ public class UsuarioController {
             return ResponseEntity.ok(errorResponse);
 
         } catch (Exception e) {
+            log.error("Failed to process login for {}", loginRequest.getNombre(), e);
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("valido", false);
             return ResponseEntity.ok(errorResponse);

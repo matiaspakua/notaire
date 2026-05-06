@@ -26,7 +26,7 @@ for entry in "${SERVICES[@]}"; do
     
     echo -n "Checking $NAME... "
     
-    if curl -s --head --request GET "$URL" | grep "200 OK" > /dev/null || curl -s "$URL" | grep -E "(UP|OK|ready)" > /dev/null; then
+    if curl -s -m 5 -w '%{http_code}' -o /dev/null "$URL" 2>/dev/null | grep -q '^200$'; then
         echo -e "${GREEN}PASSED${NC}"
     else
         echo -e "${RED}FAILED${NC} (Check logs with: docker logs devsecops-${NAME,,})"
