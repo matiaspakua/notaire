@@ -3,8 +3,9 @@
  * All API calls go through these helpers — never use fetch() directly in components.
  */
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+// Use relative path so requests are proxied by the Next.js server (rewrites in next.config.ts).
+// This ensures the browser never needs to resolve internal Docker hostnames like "backend".
+const BASE_URL = "/api/v1";
 
 async function handleResponse<T>(res: Response, path: string): Promise<T> {
   if (!res.ok) {

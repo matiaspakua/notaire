@@ -5,10 +5,11 @@ const PUBLIC_PATHS = ["/login"];
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Skip Next.js internals and static files
+  // Skip Next.js internals, static files, and API proxy routes
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
+    pathname.startsWith("/api/") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
