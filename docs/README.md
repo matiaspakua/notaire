@@ -189,13 +189,33 @@ Documentación por Rol:
 │   - Services (business logic)               │
 │   - Repositories (data access)              │
 │   - Entities (domain model)                 │
-└────────────────┬────────────────────────────┘
-                 │ SQL
-                 ↓
+│   - Observability (metrics, logs, health)   │
+├────────────────┬────────────────────────────┤
+│   Actuator     │   Micrometer               │
+│   /actuator/*  │   Prometheus metrics       │
+└────────┬───────┴───────────┬────────────────┘
+         │                   │
+         ▼                   ▼
 ┌─────────────────────────────────────────────┐
 │   Database (PostgreSQL 16)                  │
 │   - Tables, indexes, constraints            │
 │   - Audit logging                           │
+│   - pg_stat_queries                         │
+└────────────────┬────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│       Monitoring Infrastructure              │
+│   ┌──────────┐  ┌──────────┐               │
+│   │Prometheus│  │  Grafana │               │
+│   │  :9090   │  │  :3001   │               │
+│   └─────┬────┘  └────┬─────┘               │
+│         │             │                     │
+│   ┌─────┴────┐  ┌────┴─────┐               │
+│   │   Loki    │  │postgres- │               │
+│   │  :3100    │  │exporter  │               │
+│   └──────────┘  │  :9187   │               │
+│                 └──────────┘               │
 └─────────────────────────────────────────────┘
 ```
 
@@ -214,6 +234,10 @@ Documentación por Rol:
 | API Docs | OpenAPI 3.0 |
 | Testing | JUnit 5, Mockito, AssertJ |
 | Code Quality | JaCoCo, Checkstyle, SpotBugs |
+| **Metrics** | **Prometheus + Micrometer** |
+| **Dashboards** | **Grafana** |
+| **Log Aggregation** | **Loki + Promtail** |
+| **CI/CD** | **Jenkins + GitHub Actions** |
 
 ## 📚 Key Documents
 
@@ -227,6 +251,9 @@ Documentación por Rol:
 | [Development Setup](03-development/01-setup/) | Local environment | Developers |
 | [Code Standards](03-development/04-code-standards/) | Naming, formatting rules | Developers |
 | [Testing Guide](03-development/03-testing/) | Unit & integration tests | QA, Developers |
+| [Monitoring Guide](04-operations/04-monitoring/) | Prometheus, Grafana, Loki setup | DevOps, SRE |
+| [Deployment Guide](04-operations/02-deployment/) | Full deployment instructions | DevOps, Developers |
+| [Infra README](../infra/README.md) | Infrastructure services setup | DevOps |
 
 ## 🤝 Contributing
 
@@ -256,6 +283,8 @@ Para mejorar documentación:
 | ¿Cuáles son los estándares de código? | [Code Standards](03-development/04-code-standards/) |
 | ¿Cómo escribo tests? | [Testing Guide](03-development/03-testing/) |
 | ¿Cómo deployar? | [Deployment Guide](04-operations/02-deployment/) |
+| ¿Cómo monitorear el sistema? | [Monitoring Guide](04-operations/04-monitoring/) |
+| ¿Dónde están las credenciales? | [Infra README](../infra/README.md#credentials) |
 | ¿Qué hace cada caso de uso? | [Use Cases](01-business/02-use-cases/) |
 | ¿Cuál es el modelo de datos? | [Data Model](01-business/04-data-model/) |
 
@@ -266,7 +295,7 @@ Para mejorar documentación:
 | Business (Requirements, Use Cases) | ✅ Complete | 2024-04-13 |
 | Architecture (ADRs 001-004) | ✅ Complete | 2024-04-13 |
 | Development (Setup, Build, Testing) | ✅ Complete | 2024-04-13 |
-| Operations | 🟡 In Progress | - |
+| Operations (Deployment, Monitoring, Security) | ✅ Complete | 2026-05-07 |
 | API Reference | 🟡 In Progress | - |
 | Learning Resources | 🟡 In Progress | - |
 
@@ -279,7 +308,7 @@ Documentación sigue el mismo versionado que el código:
 - **Nuevas secciones**: v1.2.0 (guides, ADRs)
 - **Reestructuración mayor**: v2.0.0 (reorganización completa)
 
-Último actualizado: **2024-04-13**
+Último actualizado: **2026-05-07**
 
 ## 📖 Navigation
 

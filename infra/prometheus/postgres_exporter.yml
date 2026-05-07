@@ -1,0 +1,100 @@
+# PostgreSQL Exporter Configuration
+# Queries to collect metrics from the Notaire PostgreSQL database
+
+pg_settings: true
+pg_stat_user_tables: true
+pg_stat_user_indexes: true
+pg_stat_database: true
+pg_stat_statements: true
+pg_stat_replication: true
+pg_stat_bgwriter: true
+pg_statio_user_tables: true
+pg_statio_user_indexes: true
+pg_statio_user_sequences: true
+
+# Custom queries specific to Notaire business metrics
+custom_queries:
+  # Total escrituras by status
+  - query: |
+      SELECT e.id_estado, ed.nombre as estado_nombre, COUNT(*) as total
+      FROM escritura e
+      LEFT JOIN estado_de_gestion ed ON e.id_estado = ed.id_estado
+      GROUP BY e.id_estado, ed.nombre
+    metrics:
+      - escrituras_total:
+          usage: "COUNTER"
+          description: "Total number of escrituras by status"
+      - estado_id:
+          usage: "LABEL"
+          description: "Estado de gestion ID"
+      - estado_nombre:
+          usage: "LABEL"
+          description: "Estado de gestion name"
+
+  # Total presupuestos by state
+  - query: |
+      SELECT COUNT(*) as total FROM presupuesto
+    metrics:
+      - presupuestos_total:
+          usage: "COUNTER"
+          description: "Total number of presupuestos"
+
+  # Active usuarios count
+  - query: |
+      SELECT COUNT(*) as total FROM usuario
+    metrics:
+      - usuarios_total:
+          usage: "COUNTER"
+          description: "Total number of usuarios"
+
+  # Personas count
+  - query: |
+      SELECT COUNT(*) as total FROM persona
+    metrics:
+      - personas_total:
+          usage: "COUNTER"
+          description: "Total number of personas"
+
+  # Database size
+  - query: |
+      SELECT pg_database_size(current_database()) as bytes
+    metrics:
+      - database_size_bytes:
+          usage: "GAUGE"
+          description: "Database size in bytes"
+
+  # Connection count by state
+  - query: |
+      SELECT state, COUNT(*) as total
+      FROM pg_stat_activity
+      WHERE datname = current_database()
+      GROUP BY state
+    metrics:
+      - pg_connections_total:
+          usage: "GAUGE"
+          description: "Number of connections by state"
+      - state:
+          usage: "LABEL"
+          description: "Connection state"
+
+  # Transaction metrics
+  - query: |
+      SELECT datname, xact_commit, xact_rollback, blks_read, blks_hit
+      FROM pg_stat_database
+      WHERE datname = current_database()
+    metrics:
+      - transactions_committed:
+          usage: "COUNTER"
+          description: "Total transactions committed"
+      - transactions_rolled_back:
+          usage: "COUNTER"
+          description: "Total transactions rolled back"
+      - blocks_read:
+          usage: "COUNTER"
+          description: "Total blocks read"
+      - blocks_hit:
+          usage: "COUNTER"
+          description: "Total blocks hit (cache)"
+      - datname:
+          usage: "LABEL"
+          description: "Database name"
