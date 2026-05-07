@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Building2 } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useInmuebles,
   useCreateInmueble,
@@ -147,57 +147,46 @@ export default function InmueblesPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              {editing ? "Editar inmueble" : "Nuevo inmueble"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label>Nomenclatura Catastral</Label>
-              <Input
-                value={form.nomenclaturaCatastral}
-                onChange={(e) => setForm({ ...form, nomenclaturaCatastral: e.target.value })}
-                placeholder="Ej: 01-02-03-04-05"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Domicilio</Label>
-              <Input
-                value={form.domicilio}
-                onChange={(e) => setForm({ ...form, domicilio: e.target.value })}
-                placeholder="Calle, número, localidad"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Valuación Fiscal</Label>
-              <Input
-                value={form.valuacionFiscal}
-                onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
-                placeholder="Valor fiscal del inmueble"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Observaciones</Label>
-              <Input
-                value={form.observaciones}
-                onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
-                placeholder="Notas adicionales"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <FormContainer>
+            <FormSection title={editing ? "Editar inmueble" : "Nuevo inmueble"}>
+              <FormField label="Nomenclatura Catastral" required>
+                <Input
+                  value={form.nomenclaturaCatastral}
+                  onChange={(e) => setForm({ ...form, nomenclaturaCatastral: e.target.value })}
+                  placeholder="Ej: 01-02-03-04-05"
+                />
+              </FormField>
+              <FormField label="Domicilio">
+                <Input
+                  value={form.domicilio}
+                  onChange={(e) => setForm({ ...form, domicilio: e.target.value })}
+                  placeholder="Calle, número, localidad"
+                />
+              </FormField>
+              <FormField label="Valuación Fiscal">
+                <Input
+                  value={form.valuacionFiscal}
+                  onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
+                  placeholder="Valor fiscal del inmueble"
+                />
+              </FormField>
+              <FormField label="Observaciones">
+                <Input
+                  value={form.observaciones}
+                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                  placeholder="Notas adicionales"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button
-                onClick={handleSave}
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {editing ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 
