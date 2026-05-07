@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, FileCheck, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
   useDocumentosPresentados,
   useCreateDocumentoPresentado,
@@ -168,58 +168,44 @@ export default function DocumentosPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <FileCheck className="h-5 w-5 text-primary" />
-              {editing ? "Editar documento" : "Nuevo documento"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label>Tipo de Documento</Label>
-              <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tiposDoc.map((t) => (
-                    <SelectItem key={t.idTipoDeDocumento} value={t.idTipoDeDocumento!.toString()}>
-                      {t.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Fecha</Label>
-              <Input
-                type="date"
-                value={form.fecha}
-                onChange={(e) => setForm({ ...form, fecha: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="entregado"
+          <FormContainer>
+            <FormSection title={editing ? "Editar documento" : "Nuevo documento"}>
+              <FormField label="Tipo de Documento">
+                <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tiposDoc.map((t) => (
+                      <SelectItem key={t.idTipoDeDocumento} value={t.idTipoDeDocumento!.toString()}>
+                        {t.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label="Fecha">
+                <Input
+                  type="date"
+                  value={form.fecha}
+                  onChange={(e) => setForm({ ...form, fecha: e.target.value })}
+                />
+              </FormField>
+              <CheckboxField
+                label="Documento entregado"
                 checked={form.entregado}
-                onChange={(e) => setForm({ ...form, entregado: e.target.checked })}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                onChange={(v) => setForm({ ...form, entregado: v })}
               />
-              <Label htmlFor="entregado" className="cursor-pointer">Documento entregado</Label>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button
-                onClick={handleSave}
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {editing ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

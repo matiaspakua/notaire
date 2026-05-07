@@ -7,14 +7,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useSuplencias,
   useCreateSuplencia,
@@ -45,7 +40,6 @@ export default function SuplenciasPage() {
   const [editing, setEditing] = useState<Partial<Suplencia>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // IDs for relationship fields
   const [escribanoId, setEscribanoId] = useState("");
   const [suplenteId, setSuplenteId] = useState("");
 
@@ -101,9 +95,7 @@ export default function SuplenciasPage() {
     {
       key: "id",
       header: "ID",
-      render: (s) => (
-        <span className="text-xs text-muted-foreground">{s.idSuplencia}</span>
-      ),
+      render: (s) => <span className="text-xs text-muted-foreground">{s.idSuplencia}</span>,
       className: "w-12",
     },
     {
@@ -137,12 +129,7 @@ export default function SuplenciasPage() {
       className: "w-24",
       render: (s) => (
         <div className="flex gap-2 justify-end">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => openEdit(s)}
-            aria-label="Editar"
-          >
+          <Button size="sm" variant="ghost" onClick={() => openEdit(s)} aria-label="Editar">
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -182,65 +169,60 @@ export default function SuplenciasPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isEditMode ? "Editar suplencia" : "Nueva suplencia"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1">
-              <Label>ID Escribano (Persona)</Label>
-              <Input
-                type="number"
-                value={escribanoId}
-                onChange={(e) => setEscribanoId(e.target.value)}
-                placeholder="ID del escribano titular"
-                data-testid="input-escribano-id"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>ID Suplente (Persona)</Label>
-              <Input
-                type="number"
-                value={suplenteId}
-                onChange={(e) => setSuplenteId(e.target.value)}
-                placeholder="ID del suplente"
-                data-testid="input-suplente-id"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Desde</Label>
-              <Input
-                type="date"
-                value={editing.desde ?? ""}
-                onChange={(e) => setEditing({ ...editing, desde: e.target.value })}
-                data-testid="input-desde"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Hasta</Label>
-              <Input
-                type="date"
-                value={editing.hasta ?? ""}
-                onChange={(e) => setEditing({ ...editing, hasta: e.target.value })}
-                data-testid="input-hasta"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <FormContainer>
+            <FormSection title={isEditMode ? "Editar suplencia" : "Nueva suplencia"}>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="ID Escribano" helperText="ID de la persona">
+                  <Input
+                    type="number"
+                    value={escribanoId}
+                    onChange={(e) => setEscribanoId(e.target.value)}
+                    placeholder="ID del escribano"
+                    data-testid="input-escribano-id"
+                  />
+                </FormField>
+                <FormField label="ID Suplente" helperText="ID de la persona">
+                  <Input
+                    type="number"
+                    value={suplenteId}
+                    onChange={(e) => setSuplenteId(e.target.value)}
+                    placeholder="ID del suplente"
+                    data-testid="input-suplente-id"
+                  />
+                </FormField>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="Desde">
+                  <Input
+                    type="date"
+                    value={editing.desde ?? ""}
+                    onChange={(e) => setEditing({ ...editing, desde: e.target.value })}
+                    data-testid="input-desde"
+                  />
+                </FormField>
+                <FormField label="Hasta">
+                  <Input
+                    type="date"
+                    value={editing.hasta ?? ""}
+                    onChange={(e) => setEditing({ ...editing, hasta: e.target.value })}
+                    data-testid="input-hasta"
+                  />
+                </FormField>
+              </div>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={
-                  createMutation.isPending || updateMutation.isPending
-                }
+                disabled={createMutation.isPending || updateMutation.isPending}
                 data-testid="btn-guardar-suplencia"
               >
                 {isEditMode ? "Actualizar" : "Registrar"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

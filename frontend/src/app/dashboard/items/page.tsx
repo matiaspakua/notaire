@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, ListTodo } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useItems,
   useCreateItem,
@@ -169,60 +169,50 @@ export default function ItemsPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ListTodo className="h-5 w-5 text-primary" />
-              {editing ? "Editar item" : "Nuevo item"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label>Concepto</Label>
-              <Select value={form.conceptoId} onValueChange={(v) => setForm({ ...form, conceptoId: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar concepto" />
-                </SelectTrigger>
-                <SelectContent>
-                  {conceptos.map((c) => (
-                    <SelectItem key={c.idConcepto} value={c.idConcepto!.toString()}>
-                      {c.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label>Cantidad</Label>
-                <Input
-                  type="number"
-                  value={form.cantidad}
-                  onChange={(e) => setForm({ ...form, cantidad: e.target.value })}
-                  placeholder="1"
-                />
+          <FormContainer>
+            <FormSection title={editing ? "Editar item" : "Nuevo item"}>
+              <FormField label="Concepto">
+                <Select value={form.conceptoId} onValueChange={(v) => setForm({ ...form, conceptoId: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar concepto" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {conceptos.map((c) => (
+                      <SelectItem key={c.idConcepto} value={c.idConcepto!.toString()}>
+                        {c.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="Cantidad">
+                  <Input
+                    type="number"
+                    value={form.cantidad}
+                    onChange={(e) => setForm({ ...form, cantidad: e.target.value })}
+                    placeholder="1"
+                  />
+                </FormField>
+                <FormField label="Precio ($)">
+                  <Input
+                    type="number"
+                    value={form.precio}
+                    onChange={(e) => setForm({ ...form, precio: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </FormField>
               </div>
-              <div className="space-y-1.5">
-                <Label>Precio</Label>
-                <Input
-                  type="number"
-                  value={form.precio}
-                  onChange={(e) => setForm({ ...form, precio: e.target.value })}
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button
-                onClick={handleSave}
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {editing ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 
