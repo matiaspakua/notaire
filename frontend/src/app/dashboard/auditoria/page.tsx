@@ -5,9 +5,9 @@ import { Shield, Search, Filter } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuditoria } from "@/hooks/useAuditoria";
+import { theme } from "@/theme/tokens";
 import type { RegistroAuditoria } from "@/types";
 
 export default function AuditoriaPage() {
@@ -80,21 +80,43 @@ export default function AuditoriaPage() {
       />
 
       {/* Filters */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[3], marginBottom: theme.spacing[4] }}>
+        <div style={{ position: "relative", flex: 1, maxWidth: "360px" }}>
+          <Search
+            style={{
+              position: "absolute",
+              left: theme.spacing[3],
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: "16px",
+              height: "16px",
+              color: theme.colors.neutral[500],
+              pointerEvents: "none",
+            }}
+          />
           <Input
-            className="pl-9"
+            style={{ paddingLeft: "2.5rem" }}
             placeholder="Buscar por usuario u operación..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         {modulos.length > 0 && (
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
+          <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+            <Filter style={{ width: "16px", height: "16px", color: theme.colors.neutral[500], flexShrink: 0 }} />
             <select
-              className="h-11 rounded-xl border border-input bg-background px-4 py-2 text-sm apple-focus"
+              style={{
+                height: theme.sizes.input.height,
+                borderRadius: theme.borderRadius.lg,
+                border: `1px solid ${theme.semantic.form.inputBorder}`,
+                backgroundColor: theme.semantic.form.inputBg,
+                padding: `0 ${theme.spacing[4]}`,
+                fontSize: theme.typography.fontSize.sm,
+                color: theme.semantic.form.inputText,
+                fontFamily: theme.typography.fontFamily.body,
+                outline: "none",
+                cursor: "pointer",
+              }}
               value={moduloFilter}
               onChange={(e) => setModuloFilter(e.target.value)}
             >
@@ -118,14 +140,53 @@ export default function AuditoriaPage() {
       />
 
       {/* Info card */}
-      <div className="mt-6 rounded-2xl border border-border/50 bg-card apple-shadow p-6">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10">
-            <Shield className="h-5 w-5 text-primary" />
+      <div
+        style={{
+          marginTop: theme.spacing[6],
+          borderRadius: theme.borderRadius["2xl"],
+          border: `1px solid ${theme.colors.neutral[200]}`,
+          backgroundColor: theme.semantic.card.bg,
+          boxShadow: theme.shadows.sm,
+          padding: theme.spacing[6],
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: theme.spacing[3] }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "40px",
+              borderRadius: theme.borderRadius.lg,
+              backgroundColor: `${theme.colors.primary[600]}1a`,
+              flexShrink: 0,
+            }}
+          >
+            <Shield style={{ width: "20px", height: "20px", color: theme.colors.primary[600] }} />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">Registro de Auditoría</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h3
+              style={{
+                fontSize: theme.typography.fontSize.sm,
+                fontWeight: theme.typography.fontWeight.semibold,
+                color: theme.colors.neutral[900],
+                fontFamily: theme.typography.fontFamily.body,
+                margin: 0,
+                marginBottom: theme.spacing[1],
+              }}
+            >
+              Registro de Auditoría
+            </h3>
+            <p
+              style={{
+                fontSize: theme.typography.fontSize.sm,
+                color: theme.colors.neutral[600],
+                fontFamily: theme.typography.fontFamily.body,
+                margin: 0,
+                lineHeight: theme.typography.lineHeight.relaxed,
+              }}
+            >
               Este módulo muestra todas las operaciones realizadas en el sistema. Los registros son
               de solo lectura y se generan automáticamente al crear, modificar o eliminar datos.
             </p>

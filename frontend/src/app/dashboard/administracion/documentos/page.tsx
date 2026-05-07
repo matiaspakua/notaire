@@ -16,7 +16,7 @@ export default function DocumentosPage() {
   ];
   return (
     <div>
-      <AppHeader title="Tipos de Documento" description="CU27, CU65" />
+      <AppHeader title="Tipos de Documento" description="CU27, CU65 — Catálogo de tipos de documento notarial" />
       <DataTable data={tipos} columns={columns} isLoading={isLoading} keyExtractor={(t) => t.idTipoDeDocumento!} emptyMessage="No hay tipos de documento" />
     </div>
   );

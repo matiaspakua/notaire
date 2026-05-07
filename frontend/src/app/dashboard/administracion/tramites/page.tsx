@@ -17,7 +17,7 @@ export default function TramitesPage() {
   ];
   return (
     <div>
-      <AppHeader title="Tipos de Trámite" description="CU26, CU57, CU64" />
+      <AppHeader title="Tipos de Trámite" description="CU26, CU57, CU64 — Catálogo de tipos de trámite disponibles" />
       <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(t) => t.idTipoDeTramite!} emptyMessage="No hay tipos de trámite" />
     </div>
   );

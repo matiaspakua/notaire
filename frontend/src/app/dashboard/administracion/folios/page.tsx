@@ -19,7 +19,7 @@ export default function FoliosAdminPage() {
   ];
   return (
     <div>
-      <AppHeader title="Folios" description="CU28, CU40, CU58, CU63, CU68" />
+      <AppHeader title="Folios" description="CU28, CU40, CU58, CU63, CU68 — Gestión de folios notariales y su disponibilidad" />
       <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(f) => f.idFolio!} emptyMessage="No hay folios" />
     </div>
   );

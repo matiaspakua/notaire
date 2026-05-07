@@ -17,7 +17,7 @@ export default function EstadosGestionPage() {
   ];
   return (
     <div>
-      <AppHeader title="Estados de Gestión" description="CU67" />
+      <AppHeader title="Estados de Gestión" description="CU67 — Estados del ciclo de vida de las gestiones notariales" />
       <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoDeGestion!} emptyMessage="No hay estados de gestión" />
     </div>
   );
