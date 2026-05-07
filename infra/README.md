@@ -9,7 +9,7 @@ This directory contains the infrastructure necessary to support the Secure Softw
 ### 🛡️ Security & Quality (DevSecOps)
 | Tool | Category | Description | Port | Credentials |
 |------|----------|-------------|------|-------------|
-| **SonarQube (CE)** | SAST | Static analysis for code quality and security vulnerabilities. | 9000 | admin/admin |
+| **SonarQube (CE)** | SAST | Static analysis for code quality and security vulnerabilities. | 9000 | admin/Admin@123456 |
 | **Dependency-Track** | SCA | Analysis of third-party library vulnerabilities (SBOM). | 8085 | - |
 | **DefectDojo** | Vulnerability Mgmt | Aggregates findings from various tools into a single dashboard. | 8084 | - |
 | **OWASP ZAP** | DAST | Dynamic analysis of the running application. | - | - |
@@ -150,7 +150,7 @@ Loki aggregates logs from all Docker containers. Use Grafana Explore with the Lo
 |---------|-----|----------|----------|
 | Grafana | http://localhost:3001 | `admin` | `admin` |
 | Jenkins | http://localhost:8082 | `admin` | `admin` |
-| SonarQube | http://localhost:9000 | `admin` | `admin` |
+| SonarQube | http://localhost:9000 | `admin` | `Admin@123456` |
 | Nexus | http://localhost:8081 | `admin` | `admin123` |
 | Backend (Actuator) | http://localhost:8080 | `admin` | `admin` |
 | PostgreSQL | localhost:5432 | `admin` | `admin` |
