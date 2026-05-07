@@ -48,12 +48,12 @@ INSERT INTO tipos_de_folio (version, id_tipo_folio, nombre) VALUES
 SELECT setval('tipos_de_folio_id_tipo_folio_seq', (SELECT MAX(id_tipo_folio) FROM tipos_de_folio));
 
 -- tipos_de_tramite (sample records)
-INSERT INTO tipos_de_tramite (version, id_tipo_tramite, nombre, observaciones, habilitado) VALUES
-(0, 1, 'Compraventa', 'Tramite de compraventa de inmuebles', true),
-(0, 2, 'Donacion', 'Tramite de donacion', true),
-(0, 3, 'Hipoteca', 'Tramite de hipoteca', true),
-(0, 4, 'Sucesion', 'Tramite de sucesion', true),
-(0, 5, 'Poder', 'Otorgamiento de poderes', true);
+INSERT INTO tipos_de_tramite (version, id_tipo_tramite, nombre, observaciones, habilitado, se_archiva, se_inscribe, asocia_inmuebles) VALUES
+(0, 1, 'Compraventa', 'Tramite de compraventa de inmuebles', true, true, true, true),
+(0, 2, 'Donacion', 'Tramite de donacion', true, true, true, true),
+(0, 3, 'Hipoteca', 'Tramite de hipoteca', true, true, true, true),
+(0, 4, 'Sucesion', 'Tramite de sucesion', true, false, false, true),
+(0, 5, 'Poder', 'Otorgamiento de poderes', true, true, false, false);
 
 -- Reset sequence
 SELECT setval('tipos_de_tramite_id_tipo_tramite_seq', (SELECT MAX(id_tipo_tramite) FROM tipos_de_tramite));

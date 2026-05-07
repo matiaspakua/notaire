@@ -7,8 +7,11 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -40,6 +43,21 @@ public class SecurityAndCorsConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
+    }
+
+    /**
+     * User details service for actuator and admin users.
+     * Stores password as BCrypt hash for the admin user.
+     * This overrides Spring Boot auto-configuration from spring.security.user.* properties.
+     */
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        var admin = User.builder()
+            .username("admin")
+            .password(passwordEncoder.encode("admin"))
+            .roles("ACTUATOR", "ADMIN")
+            .build();
+        return new InMemoryUserDetailsManager(admin);
     }
 
     /**
