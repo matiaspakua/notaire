@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
-
-const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Notaire — Sistema de Escribanía",
@@ -16,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es">
-      <body className={geist.className}>
+      <body className="antialiased">
         <Providers>
           {children}
           <Toaster richColors position="top-right" />

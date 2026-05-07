@@ -61,27 +61,27 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="flex flex-col w-72 min-h-screen bg-[#F5F5F7]/80 backdrop-blur-xl border-r border-border/40">
+    <aside className="flex flex-col w-72 min-h-screen bg-[hsl(var(--sidebar))] backdrop-blur-xl border-r border-[hsl(var(--sidebar-border))]">
       {/* Logo */}
       <div className="flex items-center gap-3 px-7 py-8">
-        <div className="flex items-center justify-center w-10 h-10 rounded-[12px] bg-[#0071e3] text-white shadow-sm">
+        <div className="flex items-center justify-center w-10 h-10 rounded-[12px] bg-primary text-primary-foreground shadow-sm">
           <Scale className="h-6 w-6" />
         </div>
         <div>
-          <p className="font-semibold text-lg leading-tight text-[#1d1d1f]">Notaire</p>
-          <p className="text-[11px] text-[#86868b] font-bold uppercase tracking-wider">Escribanía</p>
+          <p className="font-semibold text-lg leading-tight text-[hsl(var(--sidebar-foreground))]">Notaire</p>
+          <p className="text-[11px] text-[hsl(var(--sidebar-muted))] font-bold uppercase tracking-wider">Escribanía</p>
         </div>
       </div>
 
       {/* User info */}
-      <div className="mx-4 mb-6 p-4 rounded-2xl bg-white/50 border border-white/20 apple-shadow-sm">
+      <div className="mx-4 mb-6 p-4 rounded-[16px] bg-white/50 border border-white/20 apple-shadow">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white text-sm font-bold">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 text-primary-foreground text-sm font-bold">
             {user?.nombre?.charAt(0).toUpperCase() ?? "U"}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-[#1d1d1f] truncate">{user?.nombre ?? "—"}</p>
-            <p className="text-[11px] text-[#86868b] font-medium capitalize">{user?.tipo?.toLowerCase() ?? ""}</p>
+            <p className="text-sm font-semibold text-[hsl(var(--sidebar-foreground))] truncate">{user?.nombre ?? "—"}</p>
+            <p className="text-[11px] text-[hsl(var(--sidebar-muted))] font-medium capitalize">{user?.tipo?.toLowerCase() ?? ""}</p>
           </div>
         </div>
       </div>
@@ -98,13 +98,13 @@ export function AppSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all duration-300",
+                  "flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
                   active
-                    ? "bg-[#0071e3] text-white shadow-md shadow-blue-500/20"
-                    : "text-[#424245] hover:bg-black/5 hover:text-[#1d1d1f]"
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : "text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-foreground))]"
                 )}
               >
-                <Icon className={cn("h-4 w-4 shrink-0", active ? "text-white" : "text-[#86868b]")} />
+                <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
                 {item.label}
               </Link>
             );
@@ -112,10 +112,10 @@ export function AppSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-4 py-6 border-t border-border/40">
+      <div className="px-4 py-6 border-t border-[hsl(var(--sidebar-border))]">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[#424245] hover:bg-red-50 hover:text-red-600 transition-all duration-300"
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >
           <LogOut className="h-4 w-4" />
           Cerrar sesión

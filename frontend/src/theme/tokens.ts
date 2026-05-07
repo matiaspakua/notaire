@@ -217,7 +217,7 @@ export const sizes = {
   input: {
     height: "3rem",        // 48px
     padding: "0 1rem",     // 0 16px
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.md,
     fontSize: typography.fontSize.base,
     borderColor: colors.neutral[400],
     borderWidth: "1px",
