@@ -6,7 +6,7 @@ subtitle: "Infrastructure Control Center"
 logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/images/logoRojoLetraMediano.png"
 
 header: true
-footer: '<p>Built with ❤️ for Notaire S-SDLC</p>'
+footer: '<p>Built with ❤️ for Notaire S-SDLC | <b>admin/admin</b> for all services</p>'
 
 columns: "3"
 
@@ -19,14 +19,37 @@ links:
   - name: "Documentation"
     icon: "fas fa-book"
     url: "../docs/README.md"
+  - name: "Monitoring Guide"
+    icon: "fas fa-chart-line"
+    url: "../docs/04-operations/04-monitoring/README.md"
 
 services:
+  - name: "Notaire Application"
+    icon: "fas fa-file-signature"
+    items:
+      - name: "Backend API"
+        logo: "https://spring.io/favicon.ico"
+        subtitle: "Spring Boot REST API"
+        tag: "API"
+        url: "http://localhost:8080/swagger-ui.html"
+        type: "swagger"
+      - name: "PostgreSQL Database"
+        logo: "https://www.postgresql.org/favicon.ico"
+        subtitle: "Notaire Database"
+        tag: "DB"
+        url: "http://localhost:5050"
+      - name: "pgAdmin"
+        logo: "https://www.pgadmin.org/favicon.ico"
+        subtitle: "Database Management"
+        tag: "Admin"
+        url: "http://localhost:5050"
+
   - name: "Security & Quality"
     icon: "fas fa-shield-alt"
     items:
       - name: "SonarQube"
         logo: "https://www.sonarqube.org/favicon.ico"
-        subtitle: "SAST & Code Quality"
+        subtitle: "SAST & Code Quality (admin/admin)"
         tag: "Static"
         url: "http://localhost:9000"
       - name: "Dependency-Track"
@@ -45,12 +68,12 @@ services:
     items:
       - name: "Jenkins"
         logo: "https://www.jenkins.io/favicon.ico"
-        subtitle: "CI/CD Pipelines"
+        subtitle: "CI/CD Pipelines (admin/admin)"
         tag: "Automation"
         url: "http://localhost:8082"
       - name: "Nexus"
         logo: "https://www.sonatype.com/favicon.ico"
-        subtitle: "Maven & Docker Repo"
+        subtitle: "Maven & Docker Repo (admin/admin123)"
         tag: "Artifacts"
         url: "http://localhost:8081"
 
@@ -59,7 +82,7 @@ services:
     items:
       - name: "Grafana"
         logo: "https://grafana.com/favicon.ico"
-        subtitle: "Dashboards & Logs"
+        subtitle: "Dashboards & Logs (admin/admin)"
         tag: "Metrics"
         url: "http://localhost:3001"
       - name: "Prometheus"
@@ -72,3 +95,22 @@ services:
         subtitle: "Log Aggregator"
         tag: "Logs"
         url: "http://localhost:3100"
+
+  - name: "Notaire Monitoring"
+    icon: "fas fa-heartbeat"
+    items:
+      - name: "Backend Dashboard"
+        logo: "https://grafana.com/favicon.ico"
+        subtitle: "Spring Boot Metrics"
+        tag: "Grafana"
+        url: "http://localhost:3001/d/notaire-backend"
+      - name: "DB Dashboard"
+        logo: "https://grafana.com/favicon.ico"
+        subtitle: "PostgreSQL Metrics"
+        tag: "Grafana"
+        url: "http://localhost:3001/d/notaire-postgres"
+      - name: "Health Check"
+        logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/images/logoRojoLetraMediano.png"
+        subtitle: "System Health Status"
+        tag: "Status"
+        url: "http://localhost:8080/actuator/health"

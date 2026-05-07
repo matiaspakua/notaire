@@ -1,0 +1,194 @@
+{
+  "title": "Notaire Backend API - Spring Boot",
+  "version": 1,
+  "uid": "notaire-backend",
+  "description": "Monitoring dashboard for Notaire Backend API",
+  "tags": ["notaire", "spring-boot", "backend"],
+  "schemaVersion": 36,
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "API Request Rate",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{application='notaire-backend'}[1m])",
+          "legendFormat": "{{method}} {{uri}}",
+          "interval": "15s"
+        }
+      ],
+      "description": "HTTP request rate by endpoint and method"
+    },
+    {
+      "title": "API Response Time (P95)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{application='notaire-backend'}[1m])) by (le, uri, method))",
+          "legendFormat": "{{method}} {{uri}}",
+          "interval": "15s"
+        }
+      ],
+      "description": "95th percentile response time by endpoint"
+    },
+    {
+      "title": "JVM Memory Usage",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{application='notaire-backend', area='heap'}",
+          "legendFormat": "Heap - {{id}}"
+        },
+        {
+          "expr": "jvm_memory_used_bytes{application='notaire-backend', area='nonheap'}",
+          "legendFormat": "Non-Heap - {{id}}"
+        },
+        {
+          "expr": "jvm_memory_max_bytes{application='notaire-backend', area='heap'}",
+          "legendFormat": "Heap Max"
+        }
+      ],
+      "description": "JVM memory usage breakdown"
+    },
+    {
+      "title": "JVM Garbage Collection",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{application='notaire-backend'}[1m])",
+          "legendFormat": "{{gc}} pause time"
+        },
+        {
+          "expr": "rate(jvm_gc_pause_seconds_count{application='notaire-backend'}[1m])",
+          "legendFormat": "{{gc}} count"
+        }
+      ],
+      "description": "GC pause time and frequency"
+    },
+    {
+      "title": "Active Threads",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads{application='notaire-backend'}",
+          "legendFormat": "Live threads"
+        },
+        {
+          "expr": "jvm_threads_daemon_threads{application='notaire-backend'}",
+          "legendFormat": "Daemon threads"
+        }
+      ],
+      "description": "JVM thread count"
+    },
+    {
+      "title": "Database Connection Pool",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{application='notaire-backend'}",
+          "legendFormat": "Active"
+        },
+        {
+          "expr": "hikaricp_connections_idle{application='notaire-backend'}",
+          "legendFormat": "Idle"
+        },
+        {
+          "expr": "hikaricp_connections_pending{application='notaire-backend'}",
+          "legendFormat": "Pending"
+        },
+        {
+          "expr": "hikaricp_connections_max{application='notaire-backend'}",
+          "legendFormat": "Max"
+        }
+      ],
+      "description": "HikariCP connection pool status"
+    },
+    {
+      "title": "HTTP Error Rate",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{application='notaire-backend', status=~'4..|5..'}[1m])",
+          "legendFormat": "{{status}} {{method}} {{uri}}"
+        }
+      ],
+      "description": "HTTP error responses by status code"
+    },
+    {
+      "title": "Application Health Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 24 },
+      "targets": [
+        {
+          "expr": "probe_success{job='notaire-backend'}",
+          "legendFormat": "Health"
+        }
+      ],
+      "description": "Application health check status"
+    },
+    {
+      "title": "Uptime",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 24 },
+      "targets": [
+        {
+          "expr": "process_uptime_seconds{application='notaire-backend'}",
+          "legendFormat": "Uptime"
+        }
+      ],
+      "description": "Application uptime in seconds"
+    },
+    {
+      "title": "CPU Usage",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 24 },
+      "targets": [
+        {
+          "expr": "system_cpu_usage{application='notaire-backend'}",
+          "legendFormat": "System CPU"
+        },
+        {
+          "expr": "process_cpu_usage{application='notaire-backend'}",
+          "legendFormat": "Process CPU"
+        }
+      ],
+      "description": "CPU utilization"
+    },
+    {
+      "title": "Log Rate (by level)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "expr": "rate(logback_events_total{application='notaire-backend'}[1m])",
+          "legendFormat": "{{level}}"
+        }
+      ],
+      "description": "Log event rate by severity level"
+    },
+    {
+      "title": "Custom Business Metrics",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
+      "targets": [
+        {
+          "expr": "notaire_operation_total{application='notaire-backend'}",
+          "legendFormat": "{{operation}} - {{status}}"
+        },
+        {
+          "expr": "rate(notaire_operation_duration_sum{application='notaire-backend'}[1m])",
+          "legendFormat": "{{operation}} duration"
+        }
+      ],
+      "description": "Notaire custom business operation metrics"
+    }
+  ]
+}
