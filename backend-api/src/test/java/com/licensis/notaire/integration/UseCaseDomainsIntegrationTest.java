@@ -1,10 +1,11 @@
 package com.licensis.notaire.integration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
+@Sql(scripts = "classpath:cleanup-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
 class UseCaseDomainsIntegrationTest {
 
     @Autowired
@@ -52,7 +54,6 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    @Disabled("Pending fix for lazy loading in JSON serialization")
     void clientesPersonasDomain() throws Exception {
         mockMvc.perform(get("/api/v1/personas")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/personas/buscar")).andExpect(status().isOk());
