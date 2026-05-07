@@ -7,9 +7,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useGestiones,
   useCreateGestion,
@@ -132,25 +132,22 @@ export default function GestionesPage() {
         emptyMessage="No hay gestiones registradas"
       />
 
-      {/* Create / Edit Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editing ? "Editar gestión" : "Nueva gestión"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label>Número de gestión</Label>
-              <Input
-                type="number"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
-                placeholder="Ej: 1001"
-                data-testid="input-numero-gestion"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <FormContainer>
+            <FormSection title={editing ? "Editar gestión" : "Nueva gestión"}>
+              <FormField label="Número de gestión" required>
+                <Input
+                  type="number"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  placeholder="Ej: 1001"
+                  data-testid="input-numero-gestion"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
               <Button
@@ -160,12 +157,11 @@ export default function GestionesPage() {
               >
                 {editing ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirm */}
       <ConfirmDialog
         open={!!deleteId}
         onOpenChange={(v) => !v && setDeleteId(null)}

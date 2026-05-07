@@ -7,10 +7,10 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
   usePersonas,
   useCreatePersona,
@@ -155,88 +155,74 @@ export default function PersonasPage() {
         emptyMessage="No hay personas registradas"
       />
 
-      {/* Form Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{isEditMode ? "Editar persona" : "Nueva persona"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label>Nombre</Label>
-                <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
-                  data-testid="input-nombre"
-                />
+          <FormContainer>
+            <FormSection title={isEditMode ? "Editar persona" : "Nueva persona"}>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="Nombre" required>
+                  <Input
+                    value={editing.nombre ?? ""}
+                    onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                    data-testid="input-nombre"
+                  />
+                </FormField>
+                <FormField label="Apellido" required>
+                  <Input
+                    value={editing.apellido ?? ""}
+                    onChange={(e) => setEditing({ ...editing, apellido: e.target.value })}
+                    data-testid="input-apellido"
+                  />
+                </FormField>
               </div>
-              <div className="space-y-1">
-                <Label>Apellido</Label>
-                <Input
-                  value={editing.apellido ?? ""}
-                  onChange={(e) => setEditing({ ...editing, apellido: e.target.value })}
-                  data-testid="input-apellido"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="DNI">
+                  <Input
+                    value={editing.dni ?? ""}
+                    onChange={(e) => setEditing({ ...editing, dni: e.target.value })}
+                  />
+                </FormField>
+                <FormField label="CUIL">
+                  <Input
+                    value={editing.cuil ?? ""}
+                    onChange={(e) => setEditing({ ...editing, cuil: e.target.value })}
+                  />
+                </FormField>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label>DNI</Label>
+              <FormField label="Email">
                 <Input
-                  value={editing.dni ?? ""}
-                  onChange={(e) => setEditing({ ...editing, dni: e.target.value })}
+                  type="email"
+                  value={editing.email ?? ""}
+                  onChange={(e) => setEditing({ ...editing, email: e.target.value })}
                 />
-              </div>
-              <div className="space-y-1">
-                <Label>CUIL</Label>
+              </FormField>
+              <FormField label="Teléfono">
                 <Input
-                  value={editing.cuil ?? ""}
-                  onChange={(e) => setEditing({ ...editing, cuil: e.target.value })}
+                  value={editing.telefono ?? ""}
+                  onChange={(e) => setEditing({ ...editing, telefono: e.target.value })}
                 />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <Label>Email</Label>
-              <Input
-                type="email"
-                value={editing.email ?? ""}
-                onChange={(e) => setEditing({ ...editing, email: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Teléfono</Label>
-              <Input
-                value={editing.telefono ?? ""}
-                onChange={(e) => setEditing({ ...editing, telefono: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Domicilio</Label>
-              <Input
-                value={editing.domicilio ?? ""}
-                onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="esCliente"
+              </FormField>
+              <FormField label="Domicilio">
+                <Input
+                  value={editing.domicilio ?? ""}
+                  onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
+                />
+              </FormField>
+              <CheckboxField
+                label="Es cliente"
                 checked={editing.esCliente ?? false}
-                onChange={(e) => setEditing({ ...editing, esCliente: e.target.checked })}
-                className="rounded"
+                onChange={(checked) => setEditing({ ...editing, esCliente: checked })}
               />
-              <Label htmlFor="esCliente">Es cliente</Label>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {isEditMode ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

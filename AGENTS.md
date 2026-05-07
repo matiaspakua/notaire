@@ -151,9 +151,109 @@ cd backend-api && mvn spring-boot:run
 - **ORM**: Spring Data JPA with EclipseLink
 - **Entities**: Implement `equals()`/`hashCode()` based on ID
 
+## Frontend Design System (Next.js/React)
+
+**MANDATORY**: All frontend forms must follow the centralized Apple-inspired design system.
+
+### Design System Files
+
+- `frontend/src/theme/tokens.ts` — Single source of truth for colors, spacing, typography, shadows
+- `frontend/src/theme/index.ts` — Theme utilities and hooks
+- `frontend/src/theme/form-patterns.tsx` — Reusable form component patterns
+- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Complete design system documentation
+
+### Form Component Pattern
+
+Every form must follow this structure:
+
+```tsx
+import { 
+  FormContainer, 
+  FormField, 
+  FormSection, 
+  FormActions,
+  FormHeader 
+} from "@/theme/form-patterns";
+
+export function MyForm() {
+  return (
+    <FormContainer>
+      <FormHeader title="Title" description="Description" />
+      
+      <FormSection title="Section 1">
+        <FormField label="Label" required>
+          <Input placeholder="..." />
+        </FormField>
+      </FormSection>
+
+      <FormActions align="right">
+        <Button variant="secondary">Cancel</Button>
+        <Button variant="default">Submit</Button>
+      </FormActions>
+    </FormContainer>
+  );
+}
+```
+
+### Theme Token Usage
+
+Always use theme tokens, never hardcode values:
+
+```typescript
+import { theme } from "@/theme/tokens";
+
+// Colors
+theme.colors.primary[600]           // Apple blue
+theme.colors.neutral[900]           // Dark gray (text)
+theme.semantic.form.inputBorder     // Form input border
+
+// Spacing
+theme.spacing[4]                    // 16px (form field gap)
+theme.spacing[8]                    // 32px (card padding)
+
+// Typography
+theme.typography.fontSize.base      // 16px
+theme.typography.fontWeight.semibold // 600
+theme.borderRadius.lg               // 16px
+
+// Shadows
+theme.shadows.sm                    // Subtle shadow
+theme.shadows.md                    // Card shadow
+```
+
+### UI Component Standards
+
+| Component | Height | Border Radius | Spacing |
+|-----------|--------|---------------|---------|
+| Input | 48px | 12px | 16px padding |
+| Button | 40px (md) / 48px (lg) | 12px | 12-20px padding |
+| Card | Auto | 28px | 32px padding |
+| Form Section Gap | N/A | N/A | 24px between sections |
+
+### Key Rules
+
+- ✅ Use semantic colors: `theme.semantic.form.*`, `theme.semantic.button.*`
+- ✅ All inputs must have labels (above, not placeholder)
+- ✅ Form fields must be grouped in `FormSection` components
+- ✅ Button actions must be in `FormActions` with proper alignment
+- ✅ Show validation errors below inputs with red color
+- ✅ Disable button during submission to prevent duplicates
+- ✅ Test responsive: 320px (mobile), 768px (tablet), 1024px (desktop)
+- ✅ Verify color contrast (4.5:1 minimum) and keyboard navigation
+- ❌ Never hardcode colors, spacing, or dimensions
+- ❌ Never use placeholder as form label
+- ❌ Never mix component patterns
+- ❌ Don't add custom styling; use theme tokens
+
+### References
+
+- **UI/UX Rules**: `@.claude/rules/ui-ux-design.md`
+- **Frontend Design Skill**: `@.claude/skills/frontend-design/SKILL.md`
+- **Design System Doc**: `docs/02-architecture/03-design/DESIGN-SYSTEM.md`
+
 ## Prohibited Patterns
 - Backend: Swing dependencies, direct database access from controllers
-- Frontend: Direct JDBC connections, SQL queries, business logic in event handlers
+- Frontend: Direct JDBC connections, SQL queries, business logic in event handlers, hardcoded colors/spacing
 - General: Hardcoded credentials, ignored exceptions, wildcard imports
 
 ## Git Workflow

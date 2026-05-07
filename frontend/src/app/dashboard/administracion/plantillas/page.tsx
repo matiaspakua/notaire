@@ -17,7 +17,7 @@ export default function PlantillasPage() {
   ];
   return (
     <div>
-      <AppHeader title="Plantillas de Presupuesto" description="CU39, CU49, CU55" />
+      <AppHeader title="Plantillas de Presupuesto" description="CU39, CU49, CU55 — Plantillas reutilizables para armar presupuestos" />
       <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPlantillaPresupuesto!} emptyMessage="No hay plantillas" />
     </div>
   );

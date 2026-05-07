@@ -42,7 +42,7 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
       type="button"
       onClick={() => setOpen(!open)}
       className={cn(
-        "flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-12 w-full items-center justify-between rounded-[12px] border border-[hsl(var(--border))] bg-white px-4 py-2.5 text-base shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring apple-focus disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -72,7 +72,7 @@ function SelectContent({ children, className }: SelectContentProps) {
       <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
       <div
         className={cn(
-          "absolute z-50 mt-1 min-w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+          "absolute z-50 mt-1 min-w-full overflow-hidden rounded-[16px] border border-[hsl(var(--border))] bg-white text-foreground apple-shadow",
           className
         )}
       >
@@ -99,7 +99,7 @@ function SelectItem({ value, children, className, ...props }: SelectItemProps) {
         setOpen(false);
       }}
       className={cn(
-        "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+        "relative flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2 text-sm outline-none transition-colors duration-150 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "bg-accent font-medium",
         className
       )}

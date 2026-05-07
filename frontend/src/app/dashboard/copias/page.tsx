@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useCopias,
   useCreateCopia,
@@ -158,58 +158,49 @@ export default function CopiasPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Copy className="h-5 w-5 text-primary" />
-              {editing ? "Editar copia" : "Nueva copia"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label>Número</Label>
-              <Input
-                type="number"
-                value={form.numero}
-                onChange={(e) => setForm({ ...form, numero: e.target.value })}
-                placeholder="Ej: 1"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Fecha de Impresión</Label>
-              <Input
-                type="date"
-                value={form.fechaImpresion}
-                onChange={(e) => setForm({ ...form, fechaImpresion: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Fecha de Retiro</Label>
-              <Input
-                type="date"
-                value={form.fechaRetiro}
-                onChange={(e) => setForm({ ...form, fechaRetiro: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Observaciones</Label>
-              <Input
-                value={form.observaciones}
-                onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
-                placeholder="Notas adicionales"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <FormContainer>
+            <FormSection title={editing ? "Editar copia" : "Nueva copia"}>
+              <FormField label="Número" required>
+                <Input
+                  type="number"
+                  value={form.numero}
+                  onChange={(e) => setForm({ ...form, numero: e.target.value })}
+                  placeholder="Ej: 1"
+                />
+              </FormField>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label="Fecha de Impresión">
+                  <Input
+                    type="date"
+                    value={form.fechaImpresion}
+                    onChange={(e) => setForm({ ...form, fechaImpresion: e.target.value })}
+                  />
+                </FormField>
+                <FormField label="Fecha de Retiro">
+                  <Input
+                    type="date"
+                    value={form.fechaRetiro}
+                    onChange={(e) => setForm({ ...form, fechaRetiro: e.target.value })}
+                  />
+                </FormField>
+              </div>
+              <FormField label="Observaciones">
+                <Input
+                  value={form.observaciones}
+                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                  placeholder="Notas adicionales"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button
-                onClick={handleSave}
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {editing ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

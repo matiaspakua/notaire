@@ -42,6 +42,7 @@ See `.claude/rules/ai-agent-workflow.md` for complete workflow with:
 @.claude/rules/code-quality.md
 @.claude/rules/refactoring.md
 @.claude/rules/ai-agent-workflow.md
+@.claude/rules/ui-ux-design.md
 
 ## Project Overview
 
@@ -133,6 +134,67 @@ Package root: `com.licensis.notaire`
 - No wildcard imports; import order: java → javax → third-party → own packages
 - Line limit 120 chars, 4-space indent
 
+## Frontend Architecture (`frontend`)
+
+**Stack:** Next.js 15, React 19, TypeScript, Tailwind CSS
+
+**Key Directories:**
+- `src/components/ui/` — Base UI components (Button, Input, Card, etc.)
+- `src/theme/` — **Centralized design system** (tokens, utilities, form patterns)
+- `src/app/` — Page components and routes
+- `src/store/` — Zustand stores (auth, UI state)
+- `src/hooks/` — Custom React hooks
+- `src/lib/` — Utilities (API client, formatters, validators)
+
+### Design System & Form Development
+
+**MANDATORY**: All forms must use the centralized design system.
+
+When working on frontend forms:
+1. **Use the theme system**: `@/theme/tokens.ts` — single source of truth for all colors, spacing, typography
+2. **Follow form patterns**: Use `FormContainer`, `FormSection`, `FormField`, `FormActions` from `@/theme/form-patterns.tsx`
+3. **Reference the rules**: `@.claude/rules/ui-ux-design.md` — Apple design language standards
+4. **Use the skill**: `@.claude/skills/frontend-design/SKILL.md` — Implementation patterns and examples
+
+**Key Theme Files:**
+- `src/theme/tokens.ts` — Design tokens (colors, spacing, typography, shadows, etc.)
+- `src/theme/index.ts` — Utilities and hooks for using tokens
+- `src/theme/form-patterns.tsx` — Reusable form component patterns
+- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Full design system documentation
+
+**Form Development Pattern:**
+```tsx
+import { FormContainer, FormField, FormSection, FormActions, FormHeader } from "@/theme/form-patterns";
+import { theme } from "@/theme/tokens";
+
+export function MyForm() {
+  return (
+    <FormContainer>
+      <FormHeader title="Form Title" description="Description" />
+      
+      <FormSection title="Section 1">
+        <FormField label="Field" required>
+          <Input placeholder="..." />
+        </FormField>
+      </FormSection>
+
+      <FormActions align="right">
+        <Button variant="secondary">Cancel</Button>
+        <Button variant="default">Submit</Button>
+      </FormActions>
+    </FormContainer>
+  );
+}
+```
+
+**Conventions:**
+- No hardcoded colors, spacing, or dimensions — use theme tokens exclusively
+- All forms follow `FormContainer` → `FormSection` → `FormField` structure
+- Buttons: use `variant="default"` (primary), `variant="secondary"` (cancel), `variant="destructive"` (dangerous)
+- Inputs: always include labels (not placeholders), helper text for complex fields
+- Responsive: mobile-first, test on 320px (mobile), 768px (tablet), 1024px (desktop)
+- Accessibility: color contrast ≥4.5:1, keyboard navigation, focus indicators
+
 ## Git Workflow
 
 ### Branch Naming: `<type>/<issue-number>_<description>`
@@ -146,6 +208,7 @@ Package root: `com.licensis.notaire`
 | `docs` | Documentation | `docs/257_readme` |
 | `chore` | Maintenance | `chore/258_deps` |
 | `ci` | CI/CD | `ci/259_workflow` |
+| `design` | Design/UI updates | `design/260_theme_updates` |
 
 ### Commit Format: [Conventional Commits](https://www.conventionalcommits.org/)
 

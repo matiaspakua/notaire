@@ -7,9 +7,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   usePresupuestos,
   useCreatePresupuesto,
@@ -138,45 +138,41 @@ export default function PresupuestosPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{isEditMode ? "Editar presupuesto" : "Nuevo presupuesto"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1">
-              <Label>Fecha</Label>
-              <Input
-                type="date"
-                value={editing.fecha ?? ""}
-                onChange={(e) => setEditing({ ...editing, fecha: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Monto ($)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                value={editing.monto ?? ""}
-                onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })}
-                data-testid="input-monto"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Estado</Label>
-              <Input
-                value={editing.estado ?? ""}
-                onChange={(e) => setEditing({ ...editing, estado: e.target.value })}
-                placeholder="BORRADOR, APROBADO, etc."
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+          <FormContainer>
+            <FormSection title={isEditMode ? "Editar presupuesto" : "Nuevo presupuesto"}>
+              <FormField label="Fecha" required>
+                <Input
+                  type="date"
+                  value={editing.fecha ?? ""}
+                  onChange={(e) => setEditing({ ...editing, fecha: e.target.value })}
+                />
+              </FormField>
+              <FormField label="Monto ($)" required>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={editing.monto ?? ""}
+                  onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })}
+                  data-testid="input-monto"
+                />
+              </FormField>
+              <FormField label="Estado" helperText="Ej: BORRADOR, APROBADO">
+                <Input
+                  value={editing.estado ?? ""}
+                  onChange={(e) => setEditing({ ...editing, estado: e.target.value })}
+                  placeholder="BORRADOR"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 Cancelar
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {isEditMode ? "Actualizar" : "Crear"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

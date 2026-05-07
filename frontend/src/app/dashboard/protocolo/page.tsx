@@ -6,9 +6,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetBytes } from "@/lib/api-client";
 import type { Folio } from "@/types";
@@ -56,6 +56,12 @@ export default function ProtocoloPage() {
     }
   }
 
+  const reportTitle = {
+    "libro-indice": "Generar Libro de Índices (CU24)",
+    "declaracion-jurada-mensual": "Generar Declaración Jurada Mensual (CU25)",
+    "declaracion-jurada-rentas": "Generar Declaración Jurada de Rentas (CU50)",
+  }[reportDialog ?? ""] ?? "";
+
   const columns: Column<Folio>[] = [
     { key: "id", header: "ID", render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
     { key: "numero", header: "Número de folio", render: (f) => <span className="font-medium">{f.numero ?? "—"}</span> },
@@ -97,31 +103,24 @@ export default function ProtocoloPage() {
 
       <Dialog open={!!reportDialog} onOpenChange={(v) => !v && setReportDialog(null)}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {reportDialog === "libro-indice" && "Generar Libro de Índices (CU24)"}
-              {reportDialog === "declaracion-jurada-mensual" && "Generar Declaración Jurada Mensual (CU25)"}
-              {reportDialog === "declaracion-jurada-rentas" && "Generar Declaración Jurada de Rentas (CU50)"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1">
-              <Label>Año</Label>
-              <Input type="number" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
-            </div>
-            {reportDialog !== "libro-indice" && (
-              <div className="space-y-1">
-                <Label>Mes</Label>
-                <Input type="number" min="1" max="12" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} />
-              </div>
-            )}
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setReportDialog(null)}>Cancelar</Button>
+          <FormContainer>
+            <FormSection title={reportTitle}>
+              <FormField label="Año" required>
+                <Input type="number" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
+              </FormField>
+              {reportDialog !== "libro-indice" && (
+                <FormField label="Mes" required helperText="1 – 12">
+                  <Input type="number" min="1" max="12" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} />
+                </FormField>
+              )}
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setReportDialog(null)}>Cancelar</Button>
               <Button onClick={handleDownloadReport} disabled={downloading}>
                 <Download className="h-4 w-4" />{downloading ? "Generando..." : "Descargar PDF"}
               </Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
     </div>

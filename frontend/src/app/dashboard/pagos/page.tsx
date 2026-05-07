@@ -7,9 +7,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { usePagos, useCreatePago, useUpdatePago, useDeletePago } from "@/hooks/usePagos";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
@@ -80,18 +80,29 @@ export default function PagosPage() {
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{isEditMode ? "Editar pago" : "Registrar pago"}</DialogTitle></DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1"><Label>Presupuesto ID</Label><Input type="number" value={editing.idPresupuesto ?? ""} onChange={(e) => setEditing({ ...editing, idPresupuesto: parseInt(e.target.value) })} placeholder="ID del presupuesto" /></div>
-            <div className="space-y-1"><Label>Fecha</Label><Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} /></div>
-            <div className="space-y-1"><Label>Monto ($)</Label><Input type="number" step="0.01" value={editing.monto ?? ""} onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })} /></div>
-            <div className="space-y-1"><Label>Método de pago</Label><Input value={editing.metodoPago ?? ""} onChange={(e) => setEditing({ ...editing, metodoPago: e.target.value })} placeholder="Efectivo, transferencia, etc." /></div>
-            <div className="space-y-1"><Label>Observaciones</Label><Input value={editing.observaciones ?? ""} onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })} placeholder="Notas opcionales" /></div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>Cancelar</Button>
+          <FormContainer>
+            <FormSection title={isEditMode ? "Editar pago" : "Registrar pago"}>
+              <FormField label="Presupuesto ID" required>
+                <Input type="number" value={editing.idPresupuesto ?? ""} onChange={(e) => setEditing({ ...editing, idPresupuesto: parseInt(e.target.value) })} placeholder="ID del presupuesto" />
+              </FormField>
+              <FormField label="Fecha" required>
+                <Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} />
+              </FormField>
+              <FormField label="Monto ($)" required>
+                <Input type="number" step="0.01" value={editing.monto ?? ""} onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })} />
+              </FormField>
+              <FormField label="Método de pago" helperText="Efectivo, transferencia, etc.">
+                <Input value={editing.metodoPago ?? ""} onChange={(e) => setEditing({ ...editing, metodoPago: e.target.value })} placeholder="Efectivo" />
+              </FormField>
+              <FormField label="Observaciones">
+                <Input value={editing.observaciones ?? ""} onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })} placeholder="Notas opcionales" />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{isEditMode ? "Actualizar" : "Registrar"}</Button>
-            </div>
-          </div>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

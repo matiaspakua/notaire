@@ -26,8 +26,8 @@ export default function AdministracionPage() {
             <Link key={mod.href} href={mod.href}>
               <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                 <CardHeader className="pb-2">
-                  <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center mb-2">
-                    <Icon className="h-4 w-4 text-slate-600" />
+                  <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                    <Icon className="h-4 w-4 text-primary" />
                   </div>
                   <CardTitle className="text-sm">{mod.label}</CardTitle>
                 </CardHeader>

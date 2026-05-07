@@ -6,8 +6,8 @@ import { FileDown, FileText, Book, ClipboardList, AlertCircle } from "lucide-rea
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormField } from "@/theme/form-patterns";
+import { theme } from "@/theme/tokens";
 import {
   useReportePresupuesto,
   useReportePresupuestoInmuebles,
@@ -17,6 +17,39 @@ import {
   useReporteLibroIndice,
   useReporteDeudaDocumentos,
 } from "@/hooks/useReportes";
+
+const cardStyle: React.CSSProperties = {
+  backgroundColor: theme.semantic.card.bg,
+  borderRadius: theme.borderRadius["2xl"],
+  border: `1px solid ${theme.semantic.card.border}`,
+  boxShadow: theme.shadows.sm,
+  padding: theme.spacing[6],
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing[4],
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  fontSize: theme.typography.fontSize.base,
+  fontWeight: theme.typography.fontWeight.semibold,
+  color: theme.colors.neutral[900],
+  fontFamily: theme.typography.fontFamily.display,
+  margin: 0,
+};
+
+const cardDescStyle: React.CSSProperties = {
+  fontSize: theme.typography.fontSize.sm,
+  color: theme.colors.neutral[600],
+  fontFamily: theme.typography.fontFamily.body,
+  margin: 0,
+};
+
+const iconWrapStyle: React.CSSProperties = {
+  color: theme.colors.primary[600],
+  width: "20px",
+  height: "20px",
+  flexShrink: 0,
+};
 
 export default function ReportesPage() {
   const rPresupuesto = useReportePresupuesto();
@@ -53,267 +86,235 @@ export default function ReportesPage() {
         description="CU03, CU13, CU24, CU25, CU50 — Generación de reportes PDF"
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-4">
-
+      <div
+        style={{
+          display: "grid",
+          gap: theme.spacing[4],
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          padding: theme.spacing[4],
+        }}
+      >
         {/* Presupuesto */}
-        <Card data-testid="card-reporte-presupuesto">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="h-5 w-5" />
-              Reporte Presupuesto
-            </CardTitle>
-            <CardDescription>CU01, CU39 — PDF del presupuesto</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              <Label>ID Presupuesto</Label>
-              <Input
-                type="number"
-                value={idPresupuesto}
-                onChange={(e) => setIdPresupuesto(e.target.value)}
-                placeholder="Ej: 1"
-                data-testid="input-id-presupuesto"
-              />
+        <div style={cardStyle} data-testid="card-reporte-presupuesto">
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <FileText style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>Reporte Presupuesto</h3>
             </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              disabled={!idPresupuesto}
-              onClick={() =>
-                handle(() => rPresupuesto.download(Number(idPresupuesto)))
-              }
-              data-testid="btn-descargar-presupuesto"
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
+            <p style={cardDescStyle}>CU01, CU39 — PDF del presupuesto</p>
+          </div>
+          <FormField label="ID Presupuesto" required>
+            <Input
+              type="number"
+              value={idPresupuesto}
+              onChange={(e) => setIdPresupuesto(e.target.value)}
+              placeholder="Ej: 1"
+              data-testid="input-id-presupuesto"
+            />
+          </FormField>
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={!idPresupuesto}
+            onClick={() => handle(() => rPresupuesto.download(Number(idPresupuesto)))}
+            data-testid="btn-descargar-presupuesto"
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
 
-        {/* Presupuesto con inmuebles */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="h-5 w-5" />
-              Presupuesto + Inmuebles
-            </CardTitle>
-            <CardDescription>CU08 — PDF con información de inmuebles</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              <Label>ID Presupuesto</Label>
-              <Input
-                type="number"
-                value={idPresupuestoInm}
-                onChange={(e) => setIdPresupuestoInm(e.target.value)}
-                placeholder="Ej: 1"
-              />
+        {/* Presupuesto + Inmuebles */}
+        <div style={cardStyle}>
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <FileText style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>Presupuesto + Inmuebles</h3>
             </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              disabled={!idPresupuestoInm}
-              onClick={() =>
-                handle(() => rPresupuestoInmuebles.download(Number(idPresupuestoInm)))
-              }
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
+            <p style={cardDescStyle}>CU08 — PDF con información de inmuebles</p>
+          </div>
+          <FormField label="ID Presupuesto" required>
+            <Input
+              type="number"
+              value={idPresupuestoInm}
+              onChange={(e) => setIdPresupuestoInm(e.target.value)}
+              placeholder="Ej: 1"
+            />
+          </FormField>
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={!idPresupuestoInm}
+            onClick={() => handle(() => rPresupuestoInmuebles.download(Number(idPresupuestoInm)))}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
 
         {/* Historial gestión */}
-        <Card data-testid="card-reporte-historial">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <ClipboardList className="h-5 w-5" />
-              Historial de Gestión
-            </CardTitle>
-            <CardDescription>CU13 — PDF del historial de una gestión</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              <Label>ID Gestión</Label>
-              <Input
-                type="number"
-                value={idGestion}
-                onChange={(e) => setIdGestion(e.target.value)}
-                placeholder="Ej: 1"
-                data-testid="input-id-gestion-historial"
-              />
+        <div style={cardStyle} data-testid="card-reporte-historial">
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <ClipboardList style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>Historial de Gestión</h3>
             </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              disabled={!idGestion}
-              onClick={() =>
-                handle(() => rHistorial.download(Number(idGestion)))
-              }
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
+            <p style={cardDescStyle}>CU13 — PDF del historial de una gestión</p>
+          </div>
+          <FormField label="ID Gestión" required>
+            <Input
+              type="number"
+              value={idGestion}
+              onChange={(e) => setIdGestion(e.target.value)}
+              placeholder="Ej: 1"
+              data-testid="input-id-gestion-historial"
+            />
+          </FormField>
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={!idGestion}
+            onClick={() => handle(() => rHistorial.download(Number(idGestion)))}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
 
         {/* DDJJ Mensual */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Book className="h-5 w-5" />
-              DDJJ Mensual
-            </CardTitle>
-            <CardDescription>CU25 — Declaración jurada mensual</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label>Año</Label>
-                <Input
-                  type="number"
-                  value={anioMensual}
-                  onChange={(e) => setAnioMensual(e.target.value)}
-                  min="2000"
-                  max="2099"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label>Mes</Label>
-                <Input
-                  type="number"
-                  value={mesMensual}
-                  onChange={(e) => setMesMensual(e.target.value)}
-                  min="1"
-                  max="12"
-                />
-              </div>
+        <div style={cardStyle}>
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <Book style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>DDJJ Mensual</h3>
             </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              onClick={() =>
-                handle(() => rDdjjMensual.download(Number(anioMensual), Number(mesMensual)))
-              }
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* DDJJ Rentas */}
-        <Card data-testid="card-reporte-ddjj-rentas">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Book className="h-5 w-5" />
-              DDJJ de Rentas
-            </CardTitle>
-            <CardDescription>CU50 — Declaración jurada de rentas</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label>Año</Label>
-                <Input
-                  type="number"
-                  value={anioRentas}
-                  onChange={(e) => setAnioRentas(e.target.value)}
-                  min="2000"
-                  max="2099"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label>Mes</Label>
-                <Input
-                  type="number"
-                  value={mesRentas}
-                  onChange={(e) => setMesRentas(e.target.value)}
-                  min="1"
-                  max="12"
-                />
-              </div>
-            </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              onClick={() =>
-                handle(() => rDdjjRentas.download(Number(anioRentas), Number(mesRentas)))
-              }
-              data-testid="btn-descargar-ddjj-rentas"
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Libro Índice */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Book className="h-5 w-5" />
-              Libro Índice
-            </CardTitle>
-            <CardDescription>CU24 — Libro índice anual</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              <Label>Año</Label>
+            <p style={cardDescStyle}>CU25 — Declaración jurada mensual</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
+            <FormField label="Año">
               <Input
                 type="number"
-                value={anioIndice}
-                onChange={(e) => setAnioIndice(e.target.value)}
+                value={anioMensual}
+                onChange={(e) => setAnioMensual(e.target.value)}
                 min="2000"
                 max="2099"
               />
-            </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              onClick={() =>
-                handle(() => rLibroIndice.download(Number(anioIndice)))
-              }
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Deuda documentos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertCircle className="h-5 w-5" />
-              Deuda de Documentos
-            </CardTitle>
-            <CardDescription>CU16 — Documentos pendientes por gestión</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-1">
-              <Label>Número de gestión</Label>
+            </FormField>
+            <FormField label="Mes">
               <Input
                 type="number"
-                value={numGestionDeuda}
-                onChange={(e) => setNumGestionDeuda(e.target.value)}
-                placeholder="Ej: 1001"
+                value={mesMensual}
+                onChange={(e) => setMesMensual(e.target.value)}
+                min="1"
+                max="12"
               />
-            </div>
-            <Button
-              className="w-full"
-              variant="outline"
-              disabled={!numGestionDeuda}
-              onClick={() =>
-                handle(() => rDeudaDocs.download(Number(numGestionDeuda)))
-              }
-            >
-              <FileDown className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </Button>
-          </CardContent>
-        </Card>
+            </FormField>
+          </div>
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={() => handle(() => rDdjjMensual.download(Number(anioMensual), Number(mesMensual)))}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
 
+        {/* DDJJ Rentas */}
+        <div style={cardStyle} data-testid="card-reporte-ddjj-rentas">
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <Book style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>DDJJ de Rentas</h3>
+            </div>
+            <p style={cardDescStyle}>CU50 — Declaración jurada de rentas</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
+            <FormField label="Año">
+              <Input
+                type="number"
+                value={anioRentas}
+                onChange={(e) => setAnioRentas(e.target.value)}
+                min="2000"
+                max="2099"
+              />
+            </FormField>
+            <FormField label="Mes">
+              <Input
+                type="number"
+                value={mesRentas}
+                onChange={(e) => setMesRentas(e.target.value)}
+                min="1"
+                max="12"
+              />
+            </FormField>
+          </div>
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={() => handle(() => rDdjjRentas.download(Number(anioRentas), Number(mesRentas)))}
+            data-testid="btn-descargar-ddjj-rentas"
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
+
+        {/* Libro Índice */}
+        <div style={cardStyle}>
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <Book style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>Libro Índice</h3>
+            </div>
+            <p style={cardDescStyle}>CU24 — Libro índice anual</p>
+          </div>
+          <FormField label="Año">
+            <Input
+              type="number"
+              value={anioIndice}
+              onChange={(e) => setAnioIndice(e.target.value)}
+              min="2000"
+              max="2099"
+            />
+          </FormField>
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={() => handle(() => rLibroIndice.download(Number(anioIndice)))}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
+
+        {/* Deuda documentos */}
+        <div style={cardStyle}>
+          <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
+            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
+              <AlertCircle style={iconWrapStyle} />
+              <h3 style={cardTitleStyle}>Deuda de Documentos</h3>
+            </div>
+            <p style={cardDescStyle}>CU16 — Documentos pendientes por gestión</p>
+          </div>
+          <FormField label="Número de gestión" required>
+            <Input
+              type="number"
+              value={numGestionDeuda}
+              onChange={(e) => setNumGestionDeuda(e.target.value)}
+              placeholder="Ej: 1001"
+            />
+          </FormField>
+          <Button
+            className="w-full"
+            variant="secondary"
+            disabled={!numGestionDeuda}
+            onClick={() => handle(() => rDeudaDocs.download(Number(numGestionDeuda)))}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Descargar PDF
+          </Button>
+        </div>
       </div>
     </div>
   );

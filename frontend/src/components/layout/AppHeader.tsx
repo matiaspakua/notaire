@@ -11,8 +11,8 @@ export function AppHeader({ title, description, actions }: AppHeaderProps) {
     <header className="sticky top-0 z-20 glass border-b border-border/40 px-6 lg:px-10 py-5">
       <div className="flex items-center justify-between max-w-[1600px] mx-auto">
         <div className="space-y-0.5">
-          <h1 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">{title}</h1>
-          {description && <p className="text-sm text-[#86868b] font-medium">{description}</p>}
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
+          {description && <p className="text-sm text-muted-foreground font-medium">{description}</p>}
         </div>
         {actions && <div className="flex items-center gap-3">{actions}</div>}
       </div>

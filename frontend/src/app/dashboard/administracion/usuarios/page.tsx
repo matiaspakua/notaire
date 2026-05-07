@@ -7,10 +7,17 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from "@/hooks/useUsuarios";
 import type { Usuario } from "@/types";
 
@@ -77,33 +84,58 @@ export default function UsuariosPage() {
 
   return (
     <div>
-      <AppHeader title="Usuarios" description="CU20, CU21, CU23 — Gestión de usuarios del sistema"
+      <AppHeader
+        title="Usuarios"
+        description="CU20, CU21, CU23 — Gestión de usuarios del sistema"
         actions={<Button onClick={openCreate} data-testid="btn-nuevo-usuario"><Plus className="h-4 w-4" />Nuevo usuario</Button>}
       />
       <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUsuario!} emptyMessage="No hay usuarios" />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{isEditMode ? "Editar usuario" : "Nuevo usuario"}</DialogTitle></DialogHeader>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1"><Label>Nombre de usuario *</Label><Input value={editing.nombre ?? ""} onChange={(e) => setEditing({ ...editing, nombre: e.target.value })} data-testid="input-nombre-usuario" /></div>
-            <div className="space-y-1">
-              <Label>{isEditMode ? "Nueva contraseña (dejar vacío para no cambiar)" : "Contraseña *"}</Label>
-              <Input type="password" value={editing.contrasenia ?? ""} onChange={(e) => setEditing({ ...editing, contrasenia: e.target.value })} />
-            </div>
-            <div className="space-y-1">
-              <Label>Tipo / Rol</Label>
-              <select className="w-full h-9 rounded-md border border-input px-3 text-sm" value={editing.tipo ?? "EMPLEADO"} onChange={(e) => setEditing({ ...editing, tipo: e.target.value })}>
-                <option value="EMPLEADO">EMPLEADO</option>
-                <option value="ADMIN">ADMIN</option>
-                <option value="ESCRIBANO">ESCRIBANO</option>
-              </select>
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>Cancelar</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{isEditMode ? "Actualizar" : "Crear"}</Button>
-            </div>
-          </div>
+          <FormContainer>
+            <FormSection title={isEditMode ? "Editar usuario" : "Nuevo usuario"}>
+              <FormField label="Nombre de usuario" required>
+                <Input
+                  value={editing.nombre ?? ""}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  data-testid="input-nombre-usuario"
+                />
+              </FormField>
+              <FormField
+                label={isEditMode ? "Nueva contraseña" : "Contraseña"}
+                required={!isEditMode}
+                helperText={isEditMode ? "Dejar vacío para no cambiar" : undefined}
+              >
+                <Input
+                  type="password"
+                  value={editing.contrasenia ?? ""}
+                  onChange={(e) => setEditing({ ...editing, contrasenia: e.target.value })}
+                />
+              </FormField>
+              <FormField label="Tipo / Rol">
+                <Select
+                  value={editing.tipo ?? "EMPLEADO"}
+                  onValueChange={(v) => setEditing({ ...editing, tipo: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EMPLEADO">EMPLEADO</SelectItem>
+                    <SelectItem value="ADMIN">ADMIN</SelectItem>
+                    <SelectItem value="ESCRIBANO">ESCRIBANO</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+                {isEditMode ? "Actualizar" : "Crear"}
+              </Button>
+            </FormActions>
+          </FormContainer>
         </DialogContent>
       </Dialog>
 

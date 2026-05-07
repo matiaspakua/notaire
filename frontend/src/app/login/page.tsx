@@ -7,7 +7,7 @@ import { Scale, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth-store";
 import { apiPost } from "@/lib/api-client";
 import type { DtoUsuario } from "@/types";
@@ -34,7 +34,6 @@ export default function LoginPage() {
 
       if (result.valido) {
         login(result);
-        // Set a cookie so middleware can detect auth on server
         document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
         toast.success(`Bienvenido, ${result.nombre}`);
         router.push("/dashboard");
@@ -49,7 +48,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FBFBFD] p-6">
+    <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <div className="w-full max-w-[400px] space-y-8 animate-in fade-in duration-700">
         <div className="text-center space-y-4">
           <div className="flex justify-center">
@@ -58,8 +57,8 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">Notaire</h1>
-            <p className="text-lg text-[#86868b] font-medium">Sistema de Gestión de Escribanía</p>
+            <h1 className="text-4xl font-semibold tracking-tight text-foreground">Notaire</h1>
+            <p className="text-lg text-muted-foreground font-medium">Sistema de Gestión de Escribanía</p>
           </div>
         </div>
 
@@ -68,12 +67,14 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nombre" className="text-xs font-semibold uppercase tracking-wider text-[#86868b] ml-1">Usuario</Label>
+                  <Label htmlFor="nombre" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+                    Usuario
+                  </Label>
                   <Input
                     id="nombre"
                     data-testid="input-usuario"
                     placeholder="nombre de usuario"
-                    className="h-12 rounded-[12px] bg-white border-[#d2d2d7] text-lg focus:border-primary apple-focus"
+                    className="h-12 rounded-[12px] bg-white text-lg apple-focus"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     autoComplete="username"
@@ -81,13 +82,15 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contrasenia" className="text-xs font-semibold uppercase tracking-wider text-[#86868b] ml-1">Contraseña</Label>
+                  <Label htmlFor="contrasenia" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+                    Contraseña
+                  </Label>
                   <Input
                     id="contrasenia"
                     data-testid="input-contrasenia"
                     type="password"
                     placeholder="••••••••"
-                    className="h-12 rounded-[12px] bg-white border-[#d2d2d7] text-lg focus:border-primary apple-focus"
+                    className="h-12 rounded-[12px] bg-white text-lg apple-focus"
                     value={contrasenia}
                     onChange={(e) => setContrasenia(e.target.value)}
                     autoComplete="current-password"
@@ -108,8 +111,8 @@ export default function LoginPage() {
                   {loading && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
                   {loading ? "Iniciando sesión..." : "Ingresar"}
                 </Button>
-                
-                <p className="text-sm text-[#86868b] text-center font-medium">
+
+                <p className="text-sm text-muted-foreground text-center font-medium">
                   ¿Olvidó su contraseña? Contacte al administrador.
                 </p>
               </div>
@@ -117,11 +120,11 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <div className="pt-12 text-center border-t border-[#d2d2d7]">
-          <p className="text-xs font-semibold text-[#86868b] uppercase tracking-widest">
+        <div className="pt-12 text-center border-t border-border">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             Infraestructura Segura
           </p>
-          <p className="text-[10px] text-[#a1a1a6] mt-1">
+          <p className="text-[10px] text-muted-foreground/60 mt-1">
             Backend: {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1"}
           </p>
         </div>
