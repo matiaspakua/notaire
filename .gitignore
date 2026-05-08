@@ -50,3 +50,5 @@ integration-test/e2e-swing/results/
 integration-test/e2e-swing/screenshots/
 **/__pycache__/
 docs/business/.DS_Store
+infra/tests/e2e/test-results/**
+infra/tests/e2e/node_modules/**
