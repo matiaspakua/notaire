@@ -105,7 +105,7 @@ export function AppSidebar() {
                     src={item.pngIcon}
                     alt={item.label}
                     size={20}
-                    className={cn("shrink-0", active ? "brightness-[100] invert" : "")}
+                    className={cn("shrink-0", active ? "brightness-0 invert" : "")}
                   />
                 ) : Icon ? (
                   <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />

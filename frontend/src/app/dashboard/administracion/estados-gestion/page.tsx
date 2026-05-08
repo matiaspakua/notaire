@@ -94,7 +94,7 @@ export default function EstadosGestionPage() {
                 Cancelar
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-[100] invert" />
+                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
                 Guardar
               </Button>
             </FormActions>

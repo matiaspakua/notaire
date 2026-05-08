@@ -30,9 +30,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-
-# Only copy public directory if it exists
-RUN test -d /app/public && cp -r /app/public ./public || true
+COPY --from=builder /app/public ./public
 
 USER nextjs
 

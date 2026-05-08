@@ -110,7 +110,7 @@ export default function ConceptosPage() {
                 Cancelar
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-[100] invert" />
+                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
                 {isEditMode ? "Actualizar" : "Guardar"}
               </Button>
             </FormActions>

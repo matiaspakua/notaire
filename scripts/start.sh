@@ -187,11 +187,28 @@ if [ "$WITH_ADMIN" = true ]; then
     done
 fi
 
+echo -e "\n${BLUE}Step $STEP: Verifying Frontend...${NC}"
+STEP=$((STEP + 1))
+for i in {1..30}; do
+    if curl -s http://localhost:3000 > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Frontend is ready${NC}"
+        break
+    fi
+    if [ $i -eq 30 ]; then
+        echo -e "${RED}✗ Frontend failed to start${NC}"
+        $DC_CMD logs frontend
+        exit 1
+    fi
+    echo "  Waiting for Frontend... ($i/30)"
+    sleep 2
+done
+
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}✓ All services are running!${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 echo -e "${BLUE}Available Services:${NC}"
+echo -e "  Frontend:     ${YELLOW}http://localhost:3000${NC}"
 echo -e "  API Swagger:  ${YELLOW}http://localhost:8080/swagger-ui.html${NC}"
 echo -e "  API Docs:     ${YELLOW}http://localhost:8080/v3/api-docs${NC}"
 if [ "$WITH_ADMIN" = true ]; then
@@ -207,6 +224,7 @@ echo -e "  Password:     ${YELLOW}admin${NC} (app login)"
 if [ "$WITH_ADMIN" = true ]; then
     echo -e "  PgAdmin:      ${YELLOW}admin@notaire.com / admin${NC}"
 fi
+echo ""
 echo ""
 
 # Start Frontend Swing application if requested
@@ -242,7 +260,7 @@ if [ "$START_FRONTEND" = true ]; then
 fi
 
 echo -e "${BLUE}Useful Commands:${NC}"
-echo -e "  View logs:        ${YELLOW}bash scripts/logs.sh [backend|postgres|pgadmin]${NC}"
+echo -e "  View logs:        ${YELLOW}bash scripts/logs.sh [backend|frontend|postgres|pgadmin]${NC}"
 echo -e "  Stop services:    ${YELLOW}bash scripts/stop.sh${NC}"
 echo -e "  Run tests:        ${YELLOW}cd test/http && bash test-all-endpoints-v2.sh${NC}"
 if [ "$WITH_ADMIN" = true ]; then

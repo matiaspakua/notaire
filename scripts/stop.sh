@@ -33,12 +33,13 @@ echo -e "${YELLOW}Stopping Docker Compose services...${NC}"
 echo -e "${BLUE}Current services:${NC}"
 $DC_CMD ps
 
-echo -e "\n${YELLOW}Shutting down all services (PostgreSQL, Backend API, pgAdmin)...${NC}"
+echo -e "\n${YELLOW}Shutting down all services (PostgreSQL, Backend API, Frontend, pgAdmin)...${NC}"
 
 if $DC_CMD down; then
     echo -e "${GREEN}✓ All services stopped successfully${NC}"
     echo -e "  - PostgreSQL (port 5432)"
-    echo -e "  - Backend API (port 8080)"  
+    echo -e "  - Backend API (port 8080)"
+    echo -e "  - Frontend (port 3000)"
     echo -e "  - pgAdmin (port 5050)"
 else
     echo -e "${RED}✗ Failed to stop services${NC}"
