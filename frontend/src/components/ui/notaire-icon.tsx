@@ -9,12 +9,16 @@ interface NotaireIconProps {
 }
 
 export function NotaireIcon({ src, alt, size = 24, className }: NotaireIconProps) {
+  if (!src) {
+    return null;
+  }
   return (
     <Image
       src={src}
       alt={alt}
       width={size}
       height={size}
+      unoptimized
       className={cn("object-contain", className)}
     />
   );

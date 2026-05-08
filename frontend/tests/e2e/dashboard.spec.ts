@@ -18,16 +18,71 @@ test.describe("Dashboard navigation", () => {
   test("authenticated admin sees all modules", async ({ page }) => {
     await loginAs(page);
 
-    await expect(page.getByRole("link", { name: "Gestiones", exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Presupuestos", exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Personas", exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Escrituras", exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Pagos", exact: true })).toBeVisible();
+    // Sidebar link accessible names include icon alt text + label text
+    // (e.g. "Gestiones Gestiones"), so use exact: false
+    for (const name of ["Gestiones", "Presupuestos", "Personas", "Escrituras", "Pagos"]) {
+      await expect(page.getByRole("link", { name }).first()).toBeVisible({ timeout: 5000 });
+    }
   });
 
   test("unauthenticated user is redirected to login", async ({ page }) => {
     await page.goto("/dashboard");
     await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
+  });
+
+  test("sidebar PNG icons render with correct alt text", async ({ page }) => {
+    await loginAs(page);
+
+    const iconAlts = [
+      "Gestiones",
+      "Presupuestos",
+      "Personas",
+      "Escrituras",
+      "Pagos",
+      "Protocolo",
+      "Documentos",
+      "Administración",
+      "Cerrar sesión",
+    ];
+
+    for (const alt of iconAlts) {
+      const img = page.locator(`aside img[alt="${alt}"]`);
+      await expect(img).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test("dashboard stat icons load correctly", async ({ page }) => {
+    await loginAs(page);
+
+    // Use .first() because stat cards and dashboard module grid both render Gestiones/Personas/Presupuestos icons
+    await expect(page.locator('main img[alt="Gestiones"]').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('main img[alt="Personas"]').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('main img[alt="Presupuestos"]').first()).toBeVisible({ timeout: 5000 });
+  });
+
+  test("all module card icons in dashboard grid are visible", async ({ page }) => {
+    await loginAs(page);
+
+    const moduleLabels = [
+      "Gestiones",
+      "Presupuestos",
+      "Personas",
+      "Escrituras",
+      "Pagos",
+      "Protocolo",
+      "Inmuebles",
+      "Copias",
+      "Items",
+      "Documentos",
+      "Auditoría",
+      "Administración",
+    ];
+
+    for (const label of moduleLabels) {
+      // Module cards use either lucide-react icons or NotaireIcon PNGs
+      const card = page.locator(`main a:has(h3:text-is("${label}"))`);
+      await expect(card).toBeVisible({ timeout: 5000 });
+    }
   });
 });
 
