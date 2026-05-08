@@ -10,6 +10,10 @@ const BACKEND_URL =
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Images from public/icons/ are small unoptimized PNGs — skip optimization
+  images: {
+    unoptimized: true,
+  },
   // Proxy all /api/v1 calls server-side so the browser never needs to reach
   // internal Docker hostnames (e.g. "backend").
   async rewrites() {

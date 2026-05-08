@@ -7,7 +7,7 @@
  * All form components should use these patterns.
  */
 
-import { ReactNode } from "react";
+import { ReactNode, useId } from "react";
 import { theme } from "./tokens";
 
 /**
@@ -276,6 +276,8 @@ export function CheckboxField({
   onChange: (checked: boolean) => void;
   disabled?: boolean;
 }) {
+  const inputId = useId();
+
   return (
     <div
       style={{
@@ -288,6 +290,7 @@ export function CheckboxField({
       onClick={() => !disabled && onChange(!checked)}
     >
       <input
+        id={inputId}
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
@@ -302,6 +305,7 @@ export function CheckboxField({
         }}
       />
       <label
+        htmlFor={inputId}
         style={{
           color: theme.colors.neutral[900],
           fontSize: theme.typography.fontSize.base,

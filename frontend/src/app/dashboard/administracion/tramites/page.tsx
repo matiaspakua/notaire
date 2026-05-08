@@ -7,7 +7,7 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost } from "@/lib/api-client";
 import type { TipoDeTramite } from "@/types";
@@ -91,24 +91,16 @@ export default function TramitesPage() {
                   aria-label="Descripción"
                 />
               </FormField>
-              <FormField label="Se archiva">
-                <input
-                  type="checkbox"
-                  id="se-archiva"
-                  checked={seArchiva}
-                  onChange={(e) => setSeArchiva(e.target.checked)}
-                  aria-label="Se archiva"
-                />
-              </FormField>
-              <FormField label="Se inscribe">
-                <input
-                  type="checkbox"
-                  id="se-inscribe"
-                  checked={seInscribe}
-                  onChange={(e) => setSeInscribe(e.target.checked)}
-                  aria-label="Se inscribe"
-                />
-              </FormField>
+              <CheckboxField
+                label="Se archiva"
+                checked={seArchiva}
+                onChange={(checked) => setSeArchiva(checked)}
+              />
+              <CheckboxField
+                label="Se inscribe"
+                checked={seInscribe}
+                onChange={(checked) => setSeInscribe(checked)}
+              />
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
