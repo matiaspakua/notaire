@@ -3,49 +3,45 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  FileText,
-  Users,
-  ClipboardList,
-  Calculator,
-  BookOpen,
-  CreditCard,
-  Settings,
-  LogOut,
-  Scale,
   Home,
   Building2,
   Copy,
   ListTodo,
-  FileCheck,
   Shield,
+  Scale,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
+import { NotaireIcon } from "@/components/ui/notaire-icon";
+
+type LucideIcon = React.ComponentType<{ className?: string }>;
 
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: LucideIcon;
+  pngIcon?: string;
   adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   { label: "Inicio", href: "/dashboard", icon: Home },
-  { label: "Gestiones", href: "/dashboard/gestiones", icon: ClipboardList },
-  { label: "Presupuestos", href: "/dashboard/presupuestos", icon: Calculator },
-  { label: "Personas", href: "/dashboard/personas", icon: Users },
-  { label: "Escrituras", href: "/dashboard/escrituras", icon: FileText },
-  { label: "Pagos", href: "/dashboard/pagos", icon: CreditCard },
-  { label: "Protocolo", href: "/dashboard/protocolo", icon: BookOpen },
+  { label: "Gestiones", href: "/dashboard/gestiones", pngIcon: "/icons/modulos/gestion.png" },
+  { label: "Presupuestos", href: "/dashboard/presupuestos", pngIcon: "/icons/modulos/presupuestos.png" },
+  { label: "Personas", href: "/dashboard/personas", pngIcon: "/icons/modulos/clientes.png" },
+  { label: "Escrituras", href: "/dashboard/escrituras", pngIcon: "/icons/modulos/escrituras.png" },
+  { label: "Pagos", href: "/dashboard/pagos", pngIcon: "/icons/modulos/pagos.png" },
+  { label: "Protocolo", href: "/dashboard/protocolo", pngIcon: "/icons/modulos/protocolo.png" },
   { label: "Inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
   { label: "Copias", href: "/dashboard/copias", icon: Copy },
   { label: "Items", href: "/dashboard/items", icon: ListTodo },
-  { label: "Documentos", href: "/dashboard/documentos", icon: FileCheck },
+  { label: "Documentos", href: "/dashboard/documentos", pngIcon: "/icons/admin/documentos.png" },
   { label: "Auditoría", href: "/dashboard/auditoria", icon: Shield },
   {
     label: "Administración",
     href: "/dashboard/administracion",
-    icon: Settings,
+    pngIcon: "/icons/modulos/admin.png",
     adminOnly: true,
   },
 ];
@@ -104,7 +100,16 @@ export function AppSidebar() {
                     : "text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-foreground))]"
                 )}
               >
-                <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
+                {item.pngIcon ? (
+                  <NotaireIcon
+                    src={item.pngIcon}
+                    alt={item.label}
+                    size={20}
+                    className={cn("shrink-0", active ? "brightness-[100] invert" : "")}
+                  />
+                ) : Icon ? (
+                  <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
+                ) : null}
                 {item.label}
               </Link>
             );
@@ -117,7 +122,7 @@ export function AppSidebar() {
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >
-          <LogOut className="h-4 w-4" />
+          <NotaireIcon src="/icons/modulos/salir.png" alt="Cerrar sesión" size={18} className="shrink-0" />
           Cerrar sesión
         </button>
       </div>

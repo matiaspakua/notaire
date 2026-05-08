@@ -2,33 +2,40 @@
 
 import Link from "next/link";
 import {
-  ClipboardList,
-  Calculator,
-  Users,
-  FileText,
-  CreditCard,
-  BookOpen,
-  Settings,
   TrendingUp,
   Building2,
   Copy,
   ListTodo,
-  FileCheck,
   Shield,
   ArrowRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { useAuthStore } from "@/store/auth-store";
 import { useGestiones } from "@/hooks/useGestiones";
 import { usePersonas } from "@/hooks/usePersonas";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
+import type { ComponentType } from "react";
 
-const modules = [
+type LucideIcon = ComponentType<{ className?: string }>;
+
+interface Module {
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  pngIcon?: string;
+  description: string;
+  gradient: string;
+  bgLight: string;
+  adminOnly: boolean;
+}
+
+const modules: Module[] = [
   {
     label: "Gestiones",
     href: "/dashboard/gestiones",
-    icon: ClipboardList,
+    pngIcon: "/icons/modulos/gestion.png",
     description: "Gestionar trámites y escrituras",
     gradient: "from-blue-500 to-blue-600",
     bgLight: "bg-blue-50",
@@ -37,7 +44,7 @@ const modules = [
   {
     label: "Presupuestos",
     href: "/dashboard/presupuestos",
-    icon: Calculator,
+    pngIcon: "/icons/modulos/presupuestos.png",
     description: "Crear y administrar presupuestos",
     gradient: "from-emerald-500 to-emerald-600",
     bgLight: "bg-emerald-50",
@@ -46,7 +53,7 @@ const modules = [
   {
     label: "Personas",
     href: "/dashboard/personas",
-    icon: Users,
+    pngIcon: "/icons/modulos/clientes.png",
     description: "Clientes y personas del sistema",
     gradient: "from-violet-500 to-violet-600",
     bgLight: "bg-violet-50",
@@ -55,7 +62,7 @@ const modules = [
   {
     label: "Escrituras",
     href: "/dashboard/escrituras",
-    icon: FileText,
+    pngIcon: "/icons/modulos/escrituras.png",
     description: "Protocolo de escrituras",
     gradient: "from-orange-500 to-orange-600",
     bgLight: "bg-orange-50",
@@ -64,7 +71,7 @@ const modules = [
   {
     label: "Pagos",
     href: "/dashboard/pagos",
-    icon: CreditCard,
+    pngIcon: "/icons/modulos/pagos.png",
     description: "Gestionar cobros y pagos",
     gradient: "from-pink-500 to-pink-600",
     bgLight: "bg-pink-50",
@@ -73,7 +80,7 @@ const modules = [
   {
     label: "Protocolo",
     href: "/dashboard/protocolo",
-    icon: BookOpen,
+    pngIcon: "/icons/modulos/protocolo.png",
     description: "Folios e índices",
     gradient: "from-teal-500 to-teal-600",
     bgLight: "bg-teal-50",
@@ -109,7 +116,7 @@ const modules = [
   {
     label: "Documentos",
     href: "/dashboard/documentos",
-    icon: FileCheck,
+    pngIcon: "/icons/admin/documentos.png",
     description: "Documentos presentados",
     gradient: "from-rose-500 to-rose-600",
     bgLight: "bg-rose-50",
@@ -127,7 +134,7 @@ const modules = [
   {
     label: "Administración",
     href: "/dashboard/administracion",
-    icon: Settings,
+    pngIcon: "/icons/modulos/admin.png",
     description: "Usuarios, conceptos y catálogos",
     gradient: "from-gray-500 to-gray-600",
     bgLight: "bg-gray-50",
@@ -170,20 +177,20 @@ export default function DashboardPage() {
               <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Gestiones</p>
               <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{gestiones?.length ?? "0"}</p>
             </div>
-            <div className="bg-blue-500/10 p-5 rounded-3xl text-blue-600">
-              <ClipboardList className="h-8 w-8" />
+            <div className="bg-blue-500/10 p-5 rounded-3xl">
+              <NotaireIcon src="/icons/modulos/gestion.png" alt="Gestiones" size={32} />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
           <CardContent className="p-8 flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Personas</p>
               <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{personas?.length ?? "0"}</p>
             </div>
-            <div className="bg-violet-500/10 p-5 rounded-3xl text-violet-600">
-              <Users className="h-8 w-8" />
+            <div className="bg-violet-500/10 p-5 rounded-3xl">
+              <NotaireIcon src="/icons/modulos/clientes.png" alt="Personas" size={32} />
             </div>
           </CardContent>
         </Card>
@@ -194,8 +201,8 @@ export default function DashboardPage() {
               <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">Presupuestos</p>
               <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{presupuestos?.length ?? "0"}</p>
             </div>
-            <div className="bg-emerald-500/10 p-5 rounded-3xl text-emerald-600">
-              <TrendingUp className="h-8 w-8" />
+            <div className="bg-emerald-500/10 p-5 rounded-3xl">
+              <NotaireIcon src="/icons/modulos/presupuestos.png" alt="Presupuestos" size={32} />
             </div>
           </CardContent>
         </Card>
@@ -219,7 +226,11 @@ export default function DashboardPage() {
                   <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${mod.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                   <CardHeader className="pb-4 p-8">
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${mod.gradient} text-white shadow-lg shadow-blue-500/10 transition-transform duration-500 group-hover:scale-110`}>
-                      <Icon className="h-7 w-7" />
+                      {mod.pngIcon ? (
+                        <NotaireIcon src={mod.pngIcon} alt={mod.label} size={36} className="brightness-[100] invert" />
+                      ) : Icon ? (
+                        <Icon className="h-7 w-7" />
+                      ) : null}
                     </div>
                     <CardTitle className="text-xl font-semibold text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors duration-300">
                       {mod.label}

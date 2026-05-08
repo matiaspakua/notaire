@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -62,8 +62,8 @@ export default function ConceptosPage() {
       key: "actions", header: "", className: "w-24",
       render: (c) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(c.idConcepto!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(c.idConcepto!)}><NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} /></Button>
         </div>
       ),
     },
@@ -74,7 +74,7 @@ export default function ConceptosPage() {
       <AppHeader
         title="Conceptos"
         description="CU29, CU66 — Catálogo de conceptos de presupuesto"
-        actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />Nuevo concepto</Button>}
+        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />Nuevo concepto</Button>}
       />
       <DataTable data={conceptos} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage="No hay conceptos" />
 
@@ -105,9 +105,13 @@ export default function ConceptosPage() {
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
+                Cancelar
+              </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {isEditMode ? "Actualizar" : "Crear"}
+                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-[100] invert" />
+                {isEditMode ? "Actualizar" : "Guardar"}
               </Button>
             </FormActions>
           </FormContainer>
