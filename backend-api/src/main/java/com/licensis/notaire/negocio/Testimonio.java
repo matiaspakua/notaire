@@ -195,6 +195,7 @@ public class Testimonio implements Serializable
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTestimonio getDto()
     {
         DtoTestimonio miDto = new DtoTestimonio();

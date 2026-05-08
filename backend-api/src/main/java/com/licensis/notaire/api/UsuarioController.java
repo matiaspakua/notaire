@@ -2,19 +2,20 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
-import com.licensis.notaire.jpa.UsuarioJpaController;
 import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,81 +27,45 @@ public class UsuarioController {
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
-    private UsuarioJpaController getJpaController() {
-        return UsuarioJpaController.getInstancia();
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioController(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios")
-    public ResponseEntity<List<Map<String, Object>>> getAllUsuarios() {
-        try {
-            List<Usuario> usuarios = getJpaController().buscarUsuarios();
-            List<Map<String, Object>> result = new ArrayList<>();
-            for (Usuario u : usuarios) {
-                Map<String, Object> m = new HashMap<>();
-                m.put("idUsuario", u.getIdUsuario());
-                m.put("nombre", u.getNombre());
-                m.put("contrasenia", u.getContrasenia());
-                m.put("estado", u.getEstado());
-                m.put("tipo", u.getTipo());
-                m.put("version", u.getVersion());
-                if (u.getFkIdPersona() != null) {
-                    Map<String, Object> pm = new HashMap<>();
-                    pm.put("idPersona", u.getFkIdPersona().getIdPersona());
-                    pm.put("nombre", u.getFkIdPersona().getNombre());
-                    pm.put("apellido", u.getFkIdPersona().getApellido());
-                    m.put("fkIdPersona", pm);
-                }
-                result.add(m);
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            log.error("Failed to fetch all usuarios", e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<List<Usuario>> getAllUsuarios() {
+        return ResponseEntity.ok(usuarioRepository.findAll());
     }
 
     @GetMapping("/persona/{idPersona}")
-    @Operation(summary = "Obtener usuario por id de persona asociada (Batch A)")
+    @Operation(summary = "Obtener usuario por id de persona asociada")
     public ResponseEntity<Usuario> getUsuarioByPersona(@PathVariable Integer idPersona) {
-        try {
-            Usuario usuario = getJpaController().findUsuarioByPersona(idPersona);
-            return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Failed to fetch usuario for persona id {}", idPersona, e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return usuarioRepository.findByFkIdPersonaIdPersona(idPersona)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Integer id) {
-        try {
-            Usuario usuario = getJpaController().findUsuarios(id);
-            if (usuario != null) {
-                return ResponseEntity.ok(usuario);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return usuarioRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo usuario")
     public ResponseEntity<Void> createUsuario(@RequestBody Usuario usuario) {
         try {
-            // Encriptar contraseña antes de guardar
             if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
-                String encryptedPassword = encriptaEnMD5(usuario.getContrasenia());
-                usuario.setContrasenia(encryptedPassword);
+                usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
             }
-            getJpaController().create(usuario);
-            return ResponseEntity.ok().build();
+            usuarioRepository.save(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             log.error("Failed to create usuario", e);
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -108,14 +73,16 @@ public class UsuarioController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
     public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
+        Optional<Usuario> existing = usuarioRepository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         try {
             usuario.setIdUsuario(id);
-            // Encriptar contraseña si se está actualizando
             if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
-                String encryptedPassword = encriptaEnMD5(usuario.getContrasenia());
-                usuario.setContrasenia(encryptedPassword);
+                usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
             }
-            getJpaController().edit(usuario);
+            usuarioRepository.save(usuario);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to update usuario id {}", id, e);
@@ -126,12 +93,15 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar usuario")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Integer id) {
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         try {
-            getJpaController().destroy(id);
+            usuarioRepository.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to delete usuario id {}", id, e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
@@ -139,7 +109,7 @@ public class UsuarioController {
     @Operation(summary = "Autenticar usuario")
     public ResponseEntity<?> login(@RequestBody DtoUsuario loginRequest) {
         try {
-            List<Usuario> usuarios = getJpaController().buscarUsuarios();
+            List<Usuario> usuarios = usuarioRepository.findAll();
 
             if (usuarios == null || usuarios.isEmpty()) {
                 log.warn("Login fallido: No hay usuarios en la base de datos.");

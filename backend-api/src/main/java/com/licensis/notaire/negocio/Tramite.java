@@ -270,6 +270,7 @@ public class Tramite implements Serializable {
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTramite getDto() {
         DtoTramite miDto = new DtoTramite();
 

@@ -74,7 +74,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(3)
-        @DisplayName("CU20 — Create new user returns 200")
+        @DisplayName("CU20 — Create new user returns 2xx")
         void createNewUser() throws Exception {
             mockMvc.perform(post("/api/v1/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -87,8 +87,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fkIdPersona": {"idPersona": 1}
                                     }
                                     """))
-                    .andDo(print())
-                    .andExpect(status().isOk());
+                    .andExpect(status().is2xxSuccessful());
         }
     }
 
@@ -170,7 +169,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fkIdPersonaEscribano": {"idPersona": 1}
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().is2xxSuccessful());
         }
 
         @Test

@@ -31,4 +31,6 @@ public interface GestionDeEscrituraRepository extends JpaRepository<GestionDeEsc
 
     @Query("SELECT g FROM GestionDeEscritura g WHERE g.observaciones LIKE %:keyword%")
     List<GestionDeEscritura> findByObservacionesContaining(@Param("keyword") String keyword);
+
+    java.util.Optional<GestionDeEscritura> findByNumero(int numero);
 }

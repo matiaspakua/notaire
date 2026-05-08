@@ -167,6 +167,7 @@ public class TipoDeFolio implements Serializable
                 + "[ nombre=" + nombre + " ]";
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTipoDeFolio getDto()
     {
         DtoTipoDeFolio miDtoTipoDeFolio = new DtoTipoDeFolio();

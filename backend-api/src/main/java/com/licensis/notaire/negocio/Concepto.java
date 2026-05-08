@@ -113,6 +113,7 @@ public class Concepto implements Serializable
      *
      * @return
      */
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoConcepto getDto()
     {
         DtoConcepto miDto = new DtoConcepto();

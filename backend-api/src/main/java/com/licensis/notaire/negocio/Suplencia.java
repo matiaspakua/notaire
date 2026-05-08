@@ -208,6 +208,7 @@ public class Suplencia implements Serializable
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoSuplencia getDto()
     {
         DtoSuplencia valoresSuplencia = new DtoSuplencia();

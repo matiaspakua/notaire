@@ -135,6 +135,7 @@ public class PlantillaPresupuesto implements Serializable
 
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPlantillaPresupuesto getDto()
     {
         DtoPlantillaPresupuesto miDto = new DtoPlantillaPresupuesto();

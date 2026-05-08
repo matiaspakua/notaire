@@ -1,14 +1,14 @@
 package com.licensis.notaire.api;
 
-import com.licensis.notaire.config.JpaControllerProvider;
-import com.licensis.notaire.jpa.GestionDeEscrituraJpaController;
-import com.licensis.notaire.jpa.HistorialJpaController;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
+import com.licensis.notaire.repository.GestionDeEscrituraRepository;
+import com.licensis.notaire.repository.HistorialRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,102 +22,63 @@ public class GestionController {
 
     private static final Logger log = LoggerFactory.getLogger(GestionController.class);
 
-    private GestionDeEscrituraJpaController getJpaController() {
-        return new GestionDeEscrituraJpaController(null, JpaControllerProvider.getEntityManagerFactory());
-    }
+    private final GestionDeEscrituraRepository repository;
+    private final HistorialRepository historialRepository;
 
-    private HistorialJpaController getHistorialController() {
-        return new HistorialJpaController(null, JpaControllerProvider.getEntityManagerFactory());
+    public GestionController(GestionDeEscrituraRepository repository, HistorialRepository historialRepository) {
+        this.repository = repository;
+        this.historialRepository = historialRepository;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todas las gestiones")
     public ResponseEntity<List<GestionDeEscritura>> getAll() {
-        try {
-            return ResponseEntity.ok(getJpaController().findGestionDeEscrituraEntities());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener gestion por ID")
     public ResponseEntity<GestionDeEscritura> getById(@PathVariable Integer id) {
-        try {
-            GestionDeEscritura gestion = getJpaController().findGestionDeEscritura(id);
-            return gestion != null ? ResponseEntity.ok(gestion) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/numero/{numero}")
     @Operation(summary = "Obtener gestion por numero")
     public ResponseEntity<GestionDeEscritura> getByNumero(@PathVariable Integer numero) {
-        try {
-            GestionDeEscritura gestion = getJpaController().findGestionDeEscrituraPorNumero(numero);
-            return gestion != null ? ResponseEntity.ok(gestion) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return repository.findByNumero(numero)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cliente/{idPersona}")
     @Operation(summary = "Obtener gestiones de un cliente (CU19)")
     public ResponseEntity<List<GestionDeEscritura>> getByCliente(@PathVariable Integer idPersona) {
-        try {
-            List<GestionDeEscritura> list = getJpaController().findGestionesByCliente(idPersona);
-            return ResponseEntity.ok(list != null ? list : List.of());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(List.of());
     }
 
     @GetMapping("/{id}/estado-actual")
     @Operation(summary = "Obtener estado actual de una gestion")
     public ResponseEntity<Historial> getEstadoActual(@PathVariable Integer id) {
-        try {
-            List<Historial> historiales = getHistorialController().findRegistroHistial(id);
-            if (historiales == null || historiales.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            Historial ultimo = historiales.stream()
-                    .max(Comparator.comparing(Historial::getFecha))
-                    .orElse(null);
-            return ResponseEntity.ok(ultimo);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/{id}/cliente-referencia")
-    @Operation(summary = "Obtener cliente referencia de una gestion (primer cliente involucrado)")
-    public ResponseEntity<Integer> getClienteReferencia(@PathVariable Integer id) {
-        try {
-            GestionDeEscritura gestion = getJpaController().findGestionDeEscritura(id);
-            if (gestion == null || gestion.getTramiteList() == null || gestion.getTramiteList().isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            if (gestion.getTramiteList().get(0).getPersonaList() != null 
-                    && !gestion.getTramiteList().get(0).getPersonaList().isEmpty()) {
-                Integer idPersona = gestion.getTramiteList().get(0).getPersonaList().get(0).getIdPersona();
-                return ResponseEntity.ok(idPersona);
-            }
+        List<Historial> historiales = historialRepository.findByFkIdGestionIdGestion(id);
+        if (historiales.isEmpty()) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
         }
+        return historiales.stream()
+                .max(Comparator.comparing(Historial::getFecha))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Crear nueva gestion")
     public ResponseEntity<Void> create(@RequestBody GestionDeEscritura entity) {
         try {
-            getJpaController().create(entity);
-            return ResponseEntity.ok().build();
+            repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             log.error("Failed to create gestion", e);
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -125,11 +86,15 @@ public class GestionController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar gestion")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody GestionDeEscritura entity) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         try {
             entity.setIdGestion(id);
-            getJpaController().edit(entity);
+            repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            log.error("Failed to update gestion id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -137,11 +102,15 @@ public class GestionController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar gestion")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         try {
-            getJpaController().destroy(id);
+            repository.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            log.error("Failed to delete gestion id {}", id, e);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 }

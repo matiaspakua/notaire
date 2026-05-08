@@ -197,6 +197,7 @@ public class Usuario implements Serializable {
 
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoUsuario getDto() {
         DtoUsuario miDto = new DtoUsuario();
         try {

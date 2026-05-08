@@ -147,6 +147,7 @@ public class EstadoDeGestion implements Serializable {
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoEstadoDeGestion getDto() throws NullPointerException {
         DtoEstadoDeGestion miDto = new DtoEstadoDeGestion();
 

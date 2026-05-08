@@ -126,6 +126,7 @@ public class RegistroAuditoria implements Serializable
         return "negocio.RegistroAuditoria[ idRegistroAuditoria=" + idRegistroAuditoria + " ]";
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoRegistroAuditoria getDto()
     {
 

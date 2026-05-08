@@ -253,6 +253,7 @@ public class Folio implements Serializable
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolio getDto()
     {
         DtoFolio miDtoFolio = new DtoFolio();
