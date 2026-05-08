@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +62,7 @@ export default function FoliosAdminPage() {
         description="CU28, CU40, CU58, CU63, CU68 — Gestión de folios notariales y su disponibilidad"
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-folio">
-            <Plus className="h-4 w-4" />
+            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
             Nuevo Folio
           </Button>
         }
@@ -94,10 +94,12 @@ export default function FoliosAdminPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
                 Cancelar
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                Crear
+                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-[100] invert" />
+                Guardar
               </Button>
             </FormActions>
           </FormContainer>
