@@ -1,9 +1,12 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.service.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +19,11 @@ import java.util.List;
 public class PersonaController {
 
     private final PersonaService personaService;
+    private final TipoIdentificacionRepository tipoIdentificacionRepository;
 
-    public PersonaController(PersonaService personaService) {
+    public PersonaController(PersonaService personaService, TipoIdentificacionRepository tipoIdentificacionRepository) {
         this.personaService = personaService;
+        this.tipoIdentificacionRepository = tipoIdentificacionRepository;
     }
 
     @GetMapping
@@ -40,9 +45,22 @@ public class PersonaController {
 
     @PostMapping
     @Operation(summary = "Crear nueva persona")
-    public ResponseEntity<Persona> createPersona(@RequestBody Persona persona) {
-        Persona saved = personaService.save(persona);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<Object> createPersona(@RequestBody Persona persona) {
+        try {
+            if (persona.getFkIdTipoIdentificacion() == null) {
+                TipoIdentificacion defaultTipo = tipoIdentificacionRepository.findById(1)
+                        .orElseGet(() -> {
+                            TipoIdentificacion ti = new TipoIdentificacion();
+                            ti.setNombre("DNI");
+                            return tipoIdentificacionRepository.save(ti);
+                        });
+                persona.setFkIdTipoIdentificacion(defaultTipo);
+            }
+            Persona saved = personaService.save(persona);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

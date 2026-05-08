@@ -78,6 +78,13 @@ public class PresupuestoController {
     @Operation(summary = "Crear nuevo presupuesto")
     public ResponseEntity<Void> create(@RequestBody Presupuesto entity) {
         try {
+            // Set defaults for fields not provided by frontend form
+            if (entity.getEncabezado() == null || entity.getEncabezado().isBlank()) {
+                entity.setEncabezado("Presupuesto");
+            }
+            if (entity.getNumero() == 0) {
+                entity.setNumero((int) (System.currentTimeMillis() % Integer.MAX_VALUE));
+            }
             getJpaController().create(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoPresupuesto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -288,10 +289,12 @@ public class Presupuesto implements Serializable {
         this.estado = estado;
     }
 
+    @JsonProperty("monto")
     public Float getMontoInmueble() {
         return montoInmueble;
     }
 
+    @JsonProperty("monto")
     public void setMontoInmueble(Float montoInmueble) {
         this.montoInmueble = montoInmueble;
     }
