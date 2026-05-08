@@ -246,6 +246,7 @@ public class GestionDeEscritura implements Serializable {
 
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoGestionDeEscritura getDto() {
         DtoGestionDeEscritura dtoGestion = new DtoGestionDeEscritura();
 

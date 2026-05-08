@@ -216,6 +216,7 @@ public class MovimientoTestimonio implements Serializable
         this.version = version;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoMovimientoTestimonio getDto()
     {
         DtoMovimientoTestimonio miDto = new DtoMovimientoTestimonio();

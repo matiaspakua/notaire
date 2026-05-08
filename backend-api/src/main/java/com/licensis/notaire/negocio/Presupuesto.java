@@ -176,6 +176,7 @@ public class Presupuesto implements Serializable {
         this.itemList = itemList;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPresupuesto getDto() {
         DtoPresupuesto miDto = new DtoPresupuesto();
 

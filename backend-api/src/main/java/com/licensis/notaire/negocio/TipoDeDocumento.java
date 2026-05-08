@@ -188,6 +188,7 @@ public class TipoDeDocumento implements Serializable
         habilitado = miDto.getHabilitado();
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTipoDeDocumento getDto()
     {
         DtoTipoDeDocumento miDto = new DtoTipoDeDocumento();

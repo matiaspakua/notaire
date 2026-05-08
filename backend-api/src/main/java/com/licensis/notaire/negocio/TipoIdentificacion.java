@@ -124,6 +124,7 @@ public class TipoIdentificacion implements Serializable {
                 + "[ nombre=" + nombre + " ]";
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTipoIdentificacion getDto() {
 
         DtoTipoIdentificacion miDto = new DtoTipoIdentificacion();

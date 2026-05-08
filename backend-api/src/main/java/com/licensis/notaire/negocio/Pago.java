@@ -114,6 +114,7 @@ public class Pago implements Serializable
         this.fkIdPresupuesto = fkIdPresupuesto;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPago getDto()
     {
         DtoPago miDtoPago = new DtoPago();

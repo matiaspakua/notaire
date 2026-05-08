@@ -163,6 +163,7 @@ public class Historial implements Serializable
         return "Historial[ idHistorial=" + getIdHistorial() + " ]";
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoHistorial getDto()
     {
         DtoHistorial dto = new DtoHistorial();

@@ -260,6 +260,7 @@ public class Escritura implements Serializable
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoEscritura getDto()
     {
         DtoEscritura miDtoEscritura = new DtoEscritura();

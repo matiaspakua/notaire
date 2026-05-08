@@ -1,6 +1,5 @@
 package com.licensis.notaire.api;
 
-import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.service.EscrituraService;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -83,13 +81,8 @@ public class EscrituraController {
     @GetMapping("/escribanos-disponibles")
     @Operation(summary = "Obtener lista de escribanos disponibles (con registro)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DtoPersona>> getEscribanosDisponibles() {
-        List<Persona> escribanos = escrituraService.findEscribanosDisponibles();
-        List<DtoPersona> result = new ArrayList<>();
-        for (Persona p : escribanos) {
-            result.add(p.getDto());
-        }
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<Persona>> getEscribanosDisponibles() {
+        return ResponseEntity.ok(escrituraService.findEscribanosDisponibles());
     }
 
     @GetMapping("/buscar")

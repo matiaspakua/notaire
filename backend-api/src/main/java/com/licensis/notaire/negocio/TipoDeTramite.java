@@ -183,6 +183,7 @@ public class TipoDeTramite implements Serializable {
         }
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTipoDeTramite getDto() {
         DtoTipoDeTramite miDto = new DtoTipoDeTramite();
 

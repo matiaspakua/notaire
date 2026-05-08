@@ -1,7 +1,9 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.UsuarioController;
+import com.licensis.notaire.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Method;
 
@@ -12,7 +14,7 @@ class UsuarioControllerHashTest {
 
     @Test
     void shouldGenerateMd5HashForPassword() throws Exception {
-        UsuarioController controller = new UsuarioController();
+        UsuarioController controller = new UsuarioController(Mockito.mock(UsuarioRepository.class));
         Method method = UsuarioController.class.getDeclaredMethod("encriptaEnMD5", String.class);
         method.setAccessible(true);
 

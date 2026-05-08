@@ -104,6 +104,7 @@ public class PlantillaTramite implements Serializable
         this.tipoDeDocumento = tipoDeDocumento;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPlantillaTramite getDto()
     {
         DtoPlantillaTramite miDto = new DtoPlantillaTramite();

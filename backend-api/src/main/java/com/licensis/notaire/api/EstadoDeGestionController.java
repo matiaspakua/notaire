@@ -1,51 +1,53 @@
 package com.licensis.notaire.api;
 
-import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
-import com.licensis.notaire.jpa.EstadoDeGestionJpaController;
 import com.licensis.notaire.negocio.EstadoDeGestion;
+import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/estado-gestion")
 @Tag(name = "Estado de Gestion", description = "API para estados de gestion")
 public class EstadoDeGestionController {
 
-    private EstadoDeGestionJpaController getJpaController() {
-        return new EstadoDeGestionJpaController(null, JpaControllerProvider.getEntityManagerFactory());
+    private final EstadoDeGestionRepository repository;
+
+    public EstadoDeGestionController(EstadoDeGestionRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los estados de gestion")
     public ResponseEntity<List<DtoEstadoDeGestion>> getAll() {
-        List<EstadoDeGestion> list = getJpaController().findEstadoDeGestionEntities();
-        List<DtoEstadoDeGestion> result = new ArrayList<>();
-        for (EstadoDeGestion e : list) {
-            result.add(e.getDto());
-        }
+        List<DtoEstadoDeGestion> result = repository.findAll().stream()
+                .map(EstadoDeGestion::getDto)
+                .toList();
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener estado de gestion por ID")
     public ResponseEntity<DtoEstadoDeGestion> getById(@PathVariable Integer id) {
-        EstadoDeGestion e = getJpaController().findEstadoDeGestion(id);
-        return e != null ? ResponseEntity.ok(e.getDto()) : ResponseEntity.notFound().build();
+        return repository.findById(id)
+                .map(e -> ResponseEntity.ok(e.getDto()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Crear estado de gestion")
-    public ResponseEntity<Object> create(@RequestBody EstadoDeGestion estadoDeGestion) {
+    public ResponseEntity<Object> create(@RequestBody DtoEstadoDeGestion dto) {
         try {
-            getJpaController().create(estadoDeGestion);
-            return ResponseEntity.ok().build();
+            EstadoDeGestion entity = new EstadoDeGestion();
+            entity.setAtributo(dto);
+            repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
@@ -53,10 +55,16 @@ public class EstadoDeGestionController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar estado de gestion")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody EstadoDeGestion estadoDeGestion) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoEstadoDeGestion dto) {
+        Optional<EstadoDeGestion> existing = repository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         try {
-            estadoDeGestion.setIdEstadoGestion(id);
-            getJpaController().edit(estadoDeGestion);
+            EstadoDeGestion entity = existing.get();
+            dto.setIdEstadoGestion(id);
+            entity.setAtributo(dto);
+            repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -66,8 +74,11 @@ public class EstadoDeGestionController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar estado de gestion")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         try {
-            getJpaController().destroy(id);
+            repository.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
