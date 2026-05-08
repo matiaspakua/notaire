@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +32,28 @@ public class UsuarioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios")
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
+    public ResponseEntity<List<Map<String, Object>>> getAllUsuarios() {
         try {
             List<Usuario> usuarios = getJpaController().buscarUsuarios();
-            return ResponseEntity.ok(usuarios);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Usuario u : usuarios) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("idUsuario", u.getIdUsuario());
+                m.put("nombre", u.getNombre());
+                m.put("contrasenia", u.getContrasenia());
+                m.put("estado", u.getEstado());
+                m.put("tipo", u.getTipo());
+                m.put("version", u.getVersion());
+                if (u.getFkIdPersona() != null) {
+                    Map<String, Object> pm = new HashMap<>();
+                    pm.put("idPersona", u.getFkIdPersona().getIdPersona());
+                    pm.put("nombre", u.getFkIdPersona().getNombre());
+                    pm.put("apellido", u.getFkIdPersona().getApellido());
+                    m.put("fkIdPersona", pm);
+                }
+                result.add(m);
+            }
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("Failed to fetch all usuarios", e);
             return ResponseEntity.internalServerError().build();

@@ -257,15 +257,13 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
     }
 
     public List<Usuario> buscarUsuarios() {
-        List<Usuario> listaUsuarios = null;
-
         EntityManager em = getEntityManager();
-
-        Query query = em.createNamedQuery("Usuario.findAll");
-
-        listaUsuarios = query.getResultList();
-
-        return listaUsuarios;
+        try {
+            Query query = em.createNamedQuery("Usuario.findAll");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     /**
@@ -295,38 +293,29 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManager em = getEntityManager();
 
-        Usuario persistenUsuario = em.find(Usuario.class, pUsuario.getIdUsuario()); // Cargo persona de db
+        try {
+            Usuario persistenUsuario = em.find(Usuario.class, pUsuario.getIdUsuario());
 
-        if (persistenUsuario != null) {
-            version = persistenUsuario.getVersion(); // Version del Objeto en db
-            oldVersion = pUsuario.getVersion(); // Version del Objeto en memoria
+            if (persistenUsuario != null) {
+                version = persistenUsuario.getVersion();
+                oldVersion = pUsuario.getVersion();
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
-            {
-                throw new ClassModifiedException("El usuario indicado ha sido modificado por otro usuario");
-
-            } else {
-                try {
-
-                    em.getTransaction().begin(); // Comienzo Transaccion
-
+                if (version != oldVersion) {
+                    throw new ClassModifiedException("El usuario indicado ha sido modificado por otro usuario");
+                } else {
+                    em.getTransaction().begin();
                     persistenUsuario.setNombre(pUsuario.getNombre());
                     persistenUsuario.setContrasenia(pUsuario.getContrasenia());
                     persistenUsuario.setEstado(pUsuario.getEstado());
                     persistenUsuario.setTipo(pUsuario.getTipo());
-
-                    // El valor de la version del objeto queda a cardo de Hibernate
                     em.getTransaction().commit();
                     flag = true;
-                    em.close();
-
-                } catch (Exception e) {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
                 }
+            } else {
+                throw new ClassEliminatedException("El cliente indicado ya ha sido eliminado con anterioridad");
             }
-        } else// Si fue eliminado se dispara una excepcion
-        {
-            throw new ClassEliminatedException("El cliente indicado ya ha sido eliminado con anterioridad");
+        } finally {
+            em.close();
         }
 
         return flag;
