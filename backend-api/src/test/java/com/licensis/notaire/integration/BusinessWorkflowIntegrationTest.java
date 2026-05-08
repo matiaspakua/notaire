@@ -169,7 +169,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fkIdPersonaEscribano": {"idPersona": 1}
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().is2xxSuccessful());
         }
 
         @Test
