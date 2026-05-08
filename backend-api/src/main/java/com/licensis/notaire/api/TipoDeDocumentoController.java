@@ -44,6 +44,11 @@ public class TipoDeDocumentoController {
     @Operation(summary = "Crear nuevo tipo-de-documento")
     public ResponseEntity<Object> create(@RequestBody TipoDeDocumento entity) {
         try {
+            if (entity.getQuienEntrega() == null) {
+                entity.setQuienEntrega("");
+            }
+            entity.setHabilitado(true);
+            entity.setDevuelto(false);
             getJpaController().create(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

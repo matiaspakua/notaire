@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
+import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
 import java.io.Serializable;
 import java.util.*;
@@ -14,6 +15,7 @@ import jakarta.persistence.*;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.hibernate.LazyInitializationException;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -207,6 +209,7 @@ public class Persona implements Serializable {
         return numeroIdentificacion;
     }
 
+    @JsonAlias("dni")
     public void setNumeroIdentificacion(String numeroIdentificacion) {
         this.numeroIdentificacion = numeroIdentificacion;
     }
@@ -215,6 +218,7 @@ public class Persona implements Serializable {
         return cuit;
     }
 
+    @JsonAlias("cuil")
     public void setCuit(String cuit) {
         this.cuit = cuit;
     }

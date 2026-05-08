@@ -69,6 +69,9 @@ public class TipoDeDocumento implements Serializable
     @Basic(optional = false)
     @Column(name = "quien_entrega")
     private String quienEntrega;
+    @Basic(optional = false)
+    @Column(name = "devuelto")
+    private boolean devuelto;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoDeDocumento", fetch = FetchType.EAGER)
     private List<PlantillaTramite> plantillaTramiteList = new ArrayList<>();
 
@@ -87,6 +90,7 @@ public class TipoDeDocumento implements Serializable
         this.nombre = nombre;
         this.vence = vence;
         this.quienEntrega = quienEntrega;
+        this.devuelto = false;
     }
 
     public Integer getIdTipoDocumento()
@@ -137,6 +141,16 @@ public class TipoDeDocumento implements Serializable
     public void setQuienEntrega(String quienEntrega)
     {
         this.quienEntrega = quienEntrega;
+    }
+
+    public boolean getDevuelto()
+    {
+        return devuelto;
+    }
+
+    public void setDevuelto(boolean devuelto)
+    {
+        this.devuelto = devuelto;
     }
 
     @XmlTransient
