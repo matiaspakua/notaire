@@ -48,59 +48,63 @@ export function FormField({
 }) {
   const isVertical = layout === "vertical";
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: isVertical ? "column" : "row",
-        gap: isVertical ? theme.spacing[2] : theme.spacing[4],
-        alignItems: isVertical ? "stretch" : "center",
-      }}
-    >
-      {label && (
-        <label
-          style={{
-            color: theme.semantic.form.labelText,
-            fontSize: theme.typography.fontSize.sm,
-            fontWeight: theme.typography.fontWeight.semibold,
-            fontFamily: theme.typography.fontFamily.body,
-            letterSpacing: theme.typography.letterSpacing.normal,
-            minWidth: !isVertical ? "120px" : "auto",
-          }}
-        >
+  const containerStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: isVertical ? "column" : "row",
+    gap: isVertical ? theme.spacing[2] : theme.spacing[4],
+    alignItems: isVertical ? "stretch" : "center",
+  };
+
+  const labelTextStyle: React.CSSProperties = {
+    color: theme.semantic.form.labelText,
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    fontFamily: theme.typography.fontFamily.body,
+    letterSpacing: theme.typography.letterSpacing.normal,
+    minWidth: !isVertical ? "120px" : "auto",
+  };
+
+  const contentStyle: React.CSSProperties = {
+    flex: isVertical ? 1 : "auto",
+    width: isVertical ? "100%" : "auto",
+  };
+
+  const errorStyle: React.CSSProperties = {
+    color: theme.colors.error[600],
+    fontSize: theme.typography.fontSize.xs,
+    marginTop: theme.spacing[1],
+    fontFamily: theme.typography.fontFamily.body,
+  };
+
+  const helperStyle: React.CSSProperties = {
+    color: theme.semantic.form.helperText,
+    fontSize: theme.typography.fontSize.xs,
+    marginTop: theme.spacing[1],
+    fontFamily: theme.typography.fontFamily.body,
+  };
+
+  const content = (
+    <>
+      {children}
+      {error && <div style={errorStyle}>⚠️ {error}</div>}
+      {helperText && !error && <div style={helperStyle}>{helperText}</div>}
+    </>
+  );
+
+  if (label) {
+    return (
+      <label style={containerStyle}>
+        <span style={labelTextStyle}>
           {label} {required && <span style={{ color: theme.colors.error[500] }}>*</span>}
-        </label>
-      )}
+        </span>
+        <span style={{ ...contentStyle, display: "block" }}>{content}</span>
+      </label>
+    );
+  }
 
-      <div style={{ flex: isVertical ? 1 : "auto", width: isVertical ? "100%" : "auto" }}>
-        {children}
-
-        {error && (
-          <div
-            style={{
-              color: theme.colors.error[600],
-              fontSize: theme.typography.fontSize.xs,
-              marginTop: theme.spacing[1],
-              fontFamily: theme.typography.fontFamily.body,
-            }}
-          >
-            ⚠️ {error}
-          </div>
-        )}
-
-        {helperText && !error && (
-          <div
-            style={{
-              color: theme.semantic.form.helperText,
-              fontSize: theme.typography.fontSize.xs,
-              marginTop: theme.spacing[1],
-              fontFamily: theme.typography.fontFamily.body,
-            }}
-          >
-            {helperText}
-          </div>
-        )}
-      </div>
+  return (
+    <div style={containerStyle}>
+      <div style={contentStyle}>{content}</div>
     </div>
   );
 }
