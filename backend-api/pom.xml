@@ -222,6 +222,12 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
+                                <exclude>com/licensis/notaire/jpa/exceptions/**/*</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>check</id>
