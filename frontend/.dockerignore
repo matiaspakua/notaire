@@ -1,0 +1,12 @@
+node_modules/
+.next/
+*.tsbuildinfo
+.git/
+.gitignore
+*.md
+.env.local
+.env.*.local
+test-results/
+playwright-report/
+playwright-results/
+coverage/

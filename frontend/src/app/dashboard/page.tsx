@@ -227,7 +227,7 @@ export default function DashboardPage() {
                   <CardHeader className="pb-4 p-8">
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${mod.gradient} text-white shadow-lg shadow-blue-500/10 transition-transform duration-500 group-hover:scale-110`}>
                       {mod.pngIcon ? (
-                        <NotaireIcon src={mod.pngIcon} alt={mod.label} size={36} className="brightness-[100] invert" />
+                        <NotaireIcon src={mod.pngIcon} alt={mod.label} size={36} className="brightness-0 invert" />
                       ) : Icon ? (
                         <Icon className="h-7 w-7" />
                       ) : null}
