@@ -8,6 +8,8 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import java.io.Serializable;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -63,8 +65,10 @@ public class Usuario implements Serializable {
     @Basic(optional = false)
     @Column(name = "tipo")
     private String tipo;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUsuario", fetch = FetchType.LAZY)
     private List<RegistroAuditoria> registroAuditoriaList;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
     @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Persona fkIdPersona;

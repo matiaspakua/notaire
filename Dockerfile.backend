@@ -45,8 +45,8 @@ RUN chown -R notary:notary /app
 # Switch to non-root user
 USER notary
 
-# JVM Optimization flags for containerized environments
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+PrintGCDetails -Xlog:gc"
+# JVM flags optimized for small containerized environments
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=70.0 -Xms128m -XX:+UseG1GC -XX:G1HeapRegionSize=4m"
 
 # Health check using Spring Boot Actuator (lighter than Swagger)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \

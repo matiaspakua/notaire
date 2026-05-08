@@ -52,7 +52,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "personas")
 @XmlRootElement
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({
+        "hibernateLazyInitializer", "handler",
+        "tramiteList", "tramitesPersonasList", "presupuestoList",
+        "GestionDeEscrituraList", "folioList", "suplenciaList", "suplenciaList1",
+        "usuariosList", "copiaList"
+})
 @NamedQueries({
         @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
         @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
