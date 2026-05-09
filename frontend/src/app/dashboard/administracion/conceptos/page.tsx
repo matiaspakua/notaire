@@ -73,7 +73,7 @@ export default function ConceptosPage() {
     <div>
       <AppHeader
         title="Conceptos"
-        description="CU29, CU66 — Catálogo de conceptos de presupuesto"
+        description="Catálogo de conceptos utilizados en presupuestos"
         actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />Nuevo concepto</Button>}
       />
       <DataTable data={conceptos} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage="No hay conceptos" />

@@ -19,6 +19,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -65,6 +66,7 @@ public class Item implements Serializable
     private String observaciones;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     private Presupuesto fkIdPresupuesto;
 
     /**

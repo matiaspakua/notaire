@@ -57,7 +57,7 @@ public class PersonaController {
                 persona.setFkIdTipoIdentificacion(defaultTipo);
             }
             Persona saved = personaService.save(persona);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
@@ -70,6 +70,9 @@ public class PersonaController {
                 .map(existing -> {
                     persona.setIdPersona(id);
                     persona.setVersion(existing.getVersion());
+                    if (persona.getFkIdTipoIdentificacion() == null) {
+                        persona.setFkIdTipoIdentificacion(existing.getFkIdTipoIdentificacion());
+                    }
                     Persona updated = personaService.save(persona);
                     return ResponseEntity.ok(updated);
                 })
@@ -81,7 +84,7 @@ public class PersonaController {
     public ResponseEntity<Void> deletePersona(@PathVariable Integer id) {
         if (personaService.findById(id).isPresent()) {
             personaService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }

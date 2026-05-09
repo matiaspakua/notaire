@@ -44,6 +44,9 @@ public class EstadoDeGestionController {
     @Operation(summary = "Crear estado de gestion")
     public ResponseEntity<Object> create(@RequestBody DtoEstadoDeGestion dto) {
         try {
+            if (dto.getVersion() == null) {
+                dto.setVersion(0);
+            }
             EstadoDeGestion entity = new EstadoDeGestion();
             entity.setAtributo(dto);
             repository.save(entity);
@@ -63,6 +66,9 @@ public class EstadoDeGestionController {
         try {
             EstadoDeGestion entity = existing.get();
             dto.setIdEstadoGestion(id);
+            if (dto.getVersion() == null) {
+                dto.setVersion(entity.getVersion());
+            }
             entity.setAtributo(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();

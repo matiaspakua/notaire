@@ -139,7 +139,7 @@ export default function CopiasPage() {
     <div>
       <AppHeader
         title="Copias"
-        description="Gestión de copias de testimonios (CU70)"
+        description="Gestión de copias de testimonios notariales"
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

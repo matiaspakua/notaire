@@ -274,16 +274,19 @@ export function CheckboxField({
   checked,
   onChange,
   disabled,
+  "data-testid": dataTestId,
 }: {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  "data-testid"?: string;
 }) {
   const inputId = useId();
 
   return (
     <div
+      data-testid={dataTestId}
       style={{
         display: "flex",
         alignItems: "center",

@@ -8,17 +8,32 @@ import { test, expect } from "@playwright/test";
  * Backend calls will fail gracefully (loading states expected).
  */
 
+const authSetup = async (page: import("@playwright/test").Page) => {
+  await page.context().addCookies([
+    {
+      name: "notaire-auth-status",
+      value: "authenticated",
+      domain: "localhost",
+      path: "/",
+    },
+  ]);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      "notaire-auth",
+      JSON.stringify({
+        state: {
+          user: { nombre: "admin", tipo: "ADMIN", valido: true },
+          isAuthenticated: true,
+        },
+        version: 0,
+      })
+    );
+  });
+};
+
 test.describe("Suplencias page", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock auth cookie so middleware lets us through
-    await page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
+    await authSetup(page);
   });
 
   test("renders suplencias page with title", async ({ page }) => {
@@ -83,14 +98,7 @@ test.describe("Suplencias page", () => {
 
 test.describe("Reportes page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
+    await authSetup(page);
   });
 
   test("renders reportes page with title", async ({ page }) => {
@@ -133,14 +141,7 @@ test.describe("Reportes page", () => {
 
 test.describe("Personas search (CU61)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
+    await authSetup(page);
   });
 
   test("renders search bar on personas page", async ({ page }) => {

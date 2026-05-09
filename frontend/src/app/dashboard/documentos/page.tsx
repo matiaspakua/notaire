@@ -149,7 +149,7 @@ export default function DocumentosPage() {
     <div>
       <AppHeader
         title="Documentos Presentados"
-        description="Registro de documentos entregados (CU72)"
+        description="Registro de documentos presentados en gestiones notariales"
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

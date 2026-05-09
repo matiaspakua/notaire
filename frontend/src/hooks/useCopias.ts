@@ -11,14 +11,14 @@ export const copiasKeys = {
 export function useCopias() {
   return useQuery({
     queryKey: copiasKeys.all,
-    queryFn: () => apiGet<Copia[]>("/copias"),
+    queryFn: () => apiGet<Copia[]>("/copia"),
   });
 }
 
 export function useCopiasByTestimonio(idTestimonio: number) {
   return useQuery({
     queryKey: copiasKeys.byTestimonio(idTestimonio),
-    queryFn: () => apiGet<Copia[]>(`/copias/testimonio/${idTestimonio}`),
+    queryFn: () => apiGet<Copia[]>(`/copia/testimonio/${idTestimonio}`),
     enabled: idTestimonio > 0,
   });
 }
@@ -26,7 +26,7 @@ export function useCopiasByTestimonio(idTestimonio: number) {
 export function useCreateCopia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Copia>) => apiPost<void>("/copias", data),
+    mutationFn: (data: Partial<Copia>) => apiPost<void>("/copia", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiasKeys.all }),
   });
 }
@@ -35,7 +35,7 @@ export function useUpdateCopia() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Copia> }) =>
-      apiPut<void>(`/copias/${id}`, data),
+      apiPut<void>(`/copia/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiasKeys.all }),
   });
 }
@@ -43,7 +43,7 @@ export function useUpdateCopia() {
 export function useDeleteCopia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/copias/${id}`),
+    mutationFn: (id: number) => apiDelete(`/copia/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: copiasKeys.all }),
   });
 }

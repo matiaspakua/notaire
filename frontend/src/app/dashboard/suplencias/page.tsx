@@ -150,7 +150,7 @@ export default function SuplenciasPage() {
     <div>
       <AppHeader
         title="Suplencias"
-        description="CU12, CU42, CU59 — Registrar y consultar suplencias de escribano"
+        description="Registrar y consultar suplencias de escribano"
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-suplencia">
             <Plus className="h-4 w-4" />

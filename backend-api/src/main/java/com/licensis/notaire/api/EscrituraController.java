@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +48,9 @@ public class EscrituraController {
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
         try {
             Escritura saved = escrituraService.save(entity);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             log.error("Failed to create escritura", e);
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -73,7 +73,7 @@ public class EscrituraController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (escrituraService.findById(id).isPresent()) {
             escrituraService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }

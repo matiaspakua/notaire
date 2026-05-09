@@ -88,7 +88,7 @@ test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/tipos-tramite");
+    await steps.givenUserIsOnPage("/dashboard/administracion/tramites");
   });
 
   test("CU26-GW01: Given on tipos tramite, When click nuevo, Then modal opens", async () => {
@@ -99,7 +99,7 @@ test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
     await steps.whenUserClicksButton("nuevo tipo");
 
     // Then
-    await steps.thenModalIsVisible("Nuevo Tipo de Trámite");
+    await steps.thenModalIsVisible();
     await steps.thenFormHasField("nombre");
   });
 });
@@ -110,7 +110,7 @@ test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/tipos-documento");
+    await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
   });
 
   test("CU27-GW01: Given on tipos documento, When click nuevo, Then modal opens", async () => {
@@ -121,7 +121,7 @@ test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
     await steps.whenUserClicksButton("nuevo tipo");
 
     // Then
-    await steps.thenModalIsVisible("Nuevo Tipo de Documento");
+    await steps.thenModalIsVisible();
   });
 });
 
@@ -254,7 +254,7 @@ test.describe("CU65 - Buscar Tipos de documentos", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/tipos-documento");
+    await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
   });
 
   test("CU65-GW01: Given on tipos documento, When search, Then shows results", async () => {

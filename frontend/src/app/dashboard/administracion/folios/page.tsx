@@ -59,7 +59,7 @@ export default function FoliosAdminPage() {
     <div>
       <AppHeader
         title="Folios"
-        description="CU28, CU40, CU58, CU63, CU68 — Gestión de folios notariales y su disponibilidad"
+        description="Gestión de folios notariales y su disponibilidad"
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-folio">
             <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />

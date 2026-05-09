@@ -111,7 +111,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU18 — Create persona returns 200")
+        @DisplayName("CU18 — Create persona returns 201")
         void createPersonaReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/personas")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -126,7 +126,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
 
         @Test
@@ -317,7 +317,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU05 — Create escritura returns 200")
+        @DisplayName("CU05 — Create escritura returns 201")
         void createEscrituraReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/escrituras")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -329,7 +329,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fechaEscrituracion": "2025-01-15"
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
 
         @Test

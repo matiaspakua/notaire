@@ -77,7 +77,7 @@ export default function EscriturasPage() {
     <div>
       <AppHeader
         title="Escrituras"
-        description="CU05, CU06, CU07, CU08, CU52, CU62 — Protocolo de escrituras"
+        description="Protocolo de escrituras notariales"
         actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />Nueva escritura</Button>}
       />
       <DataTable data={escrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage="No hay escrituras" />

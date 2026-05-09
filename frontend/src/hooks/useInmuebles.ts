@@ -10,14 +10,14 @@ export const inmueblesKeys = {
 export function useInmuebles() {
   return useQuery({
     queryKey: inmueblesKeys.all,
-    queryFn: () => apiGet<Inmueble[]>("/inmuebles"),
+    queryFn: () => apiGet<Inmueble[]>("/inmueble"),
   });
 }
 
 export function useCreateInmueble() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Inmueble>) => apiPost<void>("/inmuebles", data),
+    mutationFn: (data: Partial<Inmueble>) => apiPost<void>("/inmueble", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: inmueblesKeys.all }),
   });
 }
@@ -26,7 +26,7 @@ export function useUpdateInmueble() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Inmueble> }) =>
-      apiPut<void>(`/inmuebles/${id}`, data),
+      apiPut<void>(`/inmueble/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: inmueblesKeys.all }),
   });
 }
@@ -34,7 +34,7 @@ export function useUpdateInmueble() {
 export function useDeleteInmueble() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/inmuebles/${id}`),
+    mutationFn: (id: number) => apiDelete(`/inmueble/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: inmueblesKeys.all }),
   });
 }

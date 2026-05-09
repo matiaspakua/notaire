@@ -76,7 +76,7 @@ export default function AuditoriaPage() {
     <div>
       <AppHeader
         title="Auditoría"
-        description="Registro de actividades del sistema (CU73)"
+        description="Registro de actividades del sistema"
       />
 
       {/* Filters */}

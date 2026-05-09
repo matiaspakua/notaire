@@ -83,7 +83,7 @@ public class TipoDeDocumentoController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el tipo de documento está referenciado por otros registros.");

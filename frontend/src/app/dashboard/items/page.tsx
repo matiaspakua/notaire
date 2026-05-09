@@ -150,7 +150,7 @@ export default function ItemsPage() {
     <div>
       <AppHeader
         title="Items"
-        description="Gestión de items de presupuestos (CU71)"
+        description="Gestión de ítems de presupuestos"
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

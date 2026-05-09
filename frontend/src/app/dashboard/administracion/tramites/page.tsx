@@ -4,64 +4,94 @@ import { toast } from "sonner";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiPost } from "@/lib/api-client";
+import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite } from "@/hooks/useTiposTramite";
 import type { TipoDeTramite } from "@/types";
 
+const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
+
 export default function TramitesPage() {
-  const { data = [], isLoading, refetch } = useQuery({
-    queryKey: ["tipos-tramite"],
-    queryFn: () => apiGet<TipoDeTramite[]>("/catalogos/tipos-tramite"),
-  });
+  const { data = [], isLoading } = useTiposTramite();
+  const createMutation = useCreateTipoTramite();
+  const updateMutation = useUpdateTipoTramite();
+  const deleteMutation = useDeleteTipoTramite();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [seArchiva, setSeArchiva] = useState(false);
-  const [seInscribe, setSeInscribe] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<Partial<TipoDeTramite>>(EMPTY);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   function openCreate() {
-    setNombre("");
-    setDescripcion("");
-    setSeArchiva(false);
-    setSeInscribe(false);
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setModalOpen(true);
+  }
+
+  function openEdit(t: TipoDeTramite) {
+    setEditing(t);
+    setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (!nombre.trim()) {
+    if (!editing.nombre?.trim()) {
       toast.error("El nombre es requerido");
       return;
     }
-    setSaving(true);
     try {
-      await apiPost("/catalogos/tipos-tramite", { nombre: nombre.trim(), descripcion: descripcion.trim(), seArchiva, seInscribe });
-      toast.success("Tipo de trámite creado");
+      if (isEditMode && editing.idTipoDeTramite) {
+        await updateMutation.mutateAsync({ id: editing.idTipoDeTramite, data: editing });
+        toast.success("Tipo de trámite actualizado");
+      } else {
+        await createMutation.mutateAsync(editing);
+        toast.success("Tipo de trámite creado");
+      }
       setModalOpen(false);
-      refetch();
     } catch {
-      toast.error("Error al crear el tipo de trámite");
+      toast.error("Error al guardar el tipo de trámite");
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      toast.success("Tipo de trámite eliminado");
+    } catch {
+      toast.error("Error al eliminar");
     } finally {
-      setSaving(false);
+      setDeleteId(null);
     }
   }
 
   const columns: Column<TipoDeTramite>[] = [
-    { key: "id", header: "ID", render: (t) => t.idTipoDeTramite, className: "w-12" },
+    { key: "id", header: "ID", render: (t) => <span className="text-xs text-muted-foreground">{t.idTipoDeTramite}</span>, className: "w-12" },
     { key: "nombre", header: "Nombre", render: (t) => <span className="font-medium">{t.nombre}</span> },
     { key: "desc", header: "Descripción", render: (t) => t.descripcion ?? "—" },
+    {
+      key: "actions", header: "", className: "w-24",
+      render: (t) => (
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(t)}>
+            <NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} />
+          </Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(t.idTipoDeTramite!)}>
+            <NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
     <div>
       <AppHeader
         title="Tipos de Trámite"
-        description="CU26, CU57, CU64 — Catálogo de tipos de trámite disponibles"
+        description="Catálogo de tipos de trámite disponibles para gestiones notariales"
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-tipo-tramite">
             <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
@@ -69,37 +99,42 @@ export default function TramitesPage() {
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(t) => t.idTipoDeTramite!} emptyMessage="No hay tipos de trámite" />
+      <DataTable
+        data={data}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(t) => t.idTipoDeTramite!}
+        emptyMessage="No hay tipos de trámite registrados"
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title="Nuevo Tipo de Trámite">
+            <FormSection title={isEditMode ? "Editar tipo de trámite" : "Nuevo tipo de trámite"}>
               <FormField label="Nombre" required>
                 <Input
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
+                  value={editing.nombre ?? ""}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
                   placeholder="Ej: Compraventa"
-                  aria-label="Nombre"
+                  data-testid="input-nombre-tramite"
                 />
               </FormField>
               <FormField label="Descripción">
                 <Input
-                  value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
+                  value={editing.descripcion ?? ""}
+                  onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
                   placeholder="Descripción del tipo de trámite"
-                  aria-label="Descripción"
                 />
               </FormField>
               <CheckboxField
                 label="Se archiva"
-                checked={seArchiva}
-                onChange={(checked) => setSeArchiva(checked)}
+                checked={editing.seArchiva ?? false}
+                onChange={(v) => setEditing({ ...editing, seArchiva: v })}
               />
               <CheckboxField
                 label="Se inscribe"
-                checked={seInscribe}
-                onChange={(checked) => setSeInscribe(checked)}
+                checked={editing.seInscribe ?? false}
+                onChange={(v) => setEditing({ ...editing, seInscribe: v })}
               />
             </FormSection>
             <FormActions align="right">
@@ -107,14 +142,21 @@ export default function TramitesPage() {
                 <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
                 Cancelar
               </Button>
-              <Button onClick={handleSave} disabled={saving}>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                Guardar
+                {isEditMode ? "Actualizar" : "Guardar"}
               </Button>
             </FormActions>
           </FormContainer>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(v) => !v && setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isPending}
+      />
     </div>
   );
 }
