@@ -56,6 +56,13 @@ test.describe("Presupuestos module (CU01, CU39)", () => {
     await expect(dialog.getByLabel(/monto/i)).toBeVisible();
   });
 
+  test("CU01 — modal contiene selector de cliente (persona)", async ({ page }) => {
+    await page.getByRole("button", { name: /nuevo presupuesto/i }).click();
+    const dialog = page.getByRole("dialog");
+    // The persona selector must be present as the primary workflow dependency
+    await expect(dialog.getByTestId("select-persona")).toBeVisible();
+  });
+
   test("CU01 — tabla de presupuestos está presente", async ({ page }) => {
     const tableOrEmpty = page
       .getByRole("table")

@@ -126,6 +126,16 @@ export default function TramitesPage() {
                   placeholder="Descripción del tipo de trámite"
                 />
               </FormField>
+              <CheckboxField
+                label="Se archiva"
+                checked={editing.seArchiva ?? false}
+                onChange={(v) => setEditing({ ...editing, seArchiva: v })}
+              />
+              <CheckboxField
+                label="Se inscribe"
+                checked={editing.seInscribe ?? false}
+                onChange={(v) => setEditing({ ...editing, seInscribe: v })}
+              />
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>

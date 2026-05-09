@@ -36,6 +36,8 @@ export interface TipoDeTramite {
   idTipoDeTramite?: number;
   nombre?: string;
   descripcion?: string;
+  seArchiva?: boolean;
+  seInscribe?: boolean;
 }
 
 export interface TipoDeDocumento {
