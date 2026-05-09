@@ -70,6 +70,9 @@ public class PersonaController {
                 .map(existing -> {
                     persona.setIdPersona(id);
                     persona.setVersion(existing.getVersion());
+                    if (persona.getFkIdTipoIdentificacion() == null) {
+                        persona.setFkIdTipoIdentificacion(existing.getFkIdTipoIdentificacion());
+                    }
                     Persona updated = personaService.save(persona);
                     return ResponseEntity.ok(updated);
                 })

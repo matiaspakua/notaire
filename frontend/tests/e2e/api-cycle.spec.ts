@@ -178,21 +178,24 @@ test.describe("API — Personas endpoints", () => {
 
   test("PUT /api/v1/personas/{id} — update a persona", async ({ page }) => {
     await page.goto("/login");
-    if (!createdId) {
-      // Create one first if not already created
-      const create = await apiPost<ApiPersona>(page, "/personas", {
-        nombre: "Test PUT",
-        apellido: "Persona",
-        dni: "PUT" + Date.now(),
-        email: `put-${Date.now()}@test.com`,
-      });
-      expect(create.ok).toBe(true);
-      createdId = create.data?.idPersona ?? 0;
-    }
-    if (createdId) {
-      const result = await apiPut(page, `/personas/${createdId}`, {
+    // Create a fresh persona for this PUT test to avoid dependency on POST test state
+    const unique = Date.now();
+    const create = await apiPost<ApiPersona>(page, "/personas", {
+      nombre: "Test PUT",
+      apellido: "Persona",
+      numeroIdentificacion: "PUT" + unique,
+      email: `put-${unique}@test.com`,
+      esCliente: true,
+    });
+    expect(create.ok).toBe(true);
+    const putId = create.data?.idPersona ?? 0;
+    if (putId) {
+      const result = await apiPut(page, `/personas/${putId}`, {
         nombre: "Test Updated",
         apellido: "Persona Updated",
+        numeroIdentificacion: "PUT" + unique,
+        email: `put-${unique}@test.com`,
+        esCliente: true,
       });
       expect(result.ok).toBe(true);
     }
@@ -403,7 +406,7 @@ test.describe("API — Full CRUD cycle: Personas", () => {
     const createRes = await apiPost<ApiPersona>(page, "/personas", {
       nombre: "CRUD",
       apellido: "Test",
-      dni: `CRUD${unique}`,
+      numeroIdentificacion: `CRUD${unique}`,
       email: `crud-${unique}@test.com`,
       esCliente: true,
     });
@@ -416,10 +419,13 @@ test.describe("API — Full CRUD cycle: Personas", () => {
     expect(readRes.ok).toBe(true);
     expect(readRes.data?.nombre).toBe("CRUD");
 
-    // 3. UPDATE
+    // 3. UPDATE — must include all required fields to avoid NOT NULL constraint violations
     const updateRes = await apiPut(page, `/personas/${personaId}`, {
       nombre: "CRUD Updated",
       apellido: "Test Updated",
+      numeroIdentificacion: `CRUD${unique}`,
+      email: `crud-${unique}@test.com`,
+      esCliente: true,
     });
     expect(updateRes.ok).toBe(true);
 
