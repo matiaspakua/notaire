@@ -41,6 +41,20 @@ export default function PersonasPage() {
   const [editing, setEditing] = useState<Partial<Persona>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  // Search / filter state
+  const [searchNombre, setSearchNombre] = useState("");
+  const [searchApellido, setSearchApellido] = useState("");
+  const [searchDni, setSearchDni] = useState("");
+  const [filterClientes, setFilterClientes] = useState(false);
+
+  const filteredPersonas = personas.filter((p) => {
+    if (filterClientes && !p.esCliente) return false;
+    if (searchNombre && !p.nombre?.toLowerCase().includes(searchNombre.toLowerCase())) return false;
+    if (searchApellido && !p.apellido?.toLowerCase().includes(searchApellido.toLowerCase())) return false;
+    if (searchDni && !p.dni?.toLowerCase().includes(searchDni.toLowerCase())) return false;
+    return true;
+  });
+
   function openCreate() {
     setEditing(EMPTY);
     setIsEditMode(false);
@@ -147,8 +161,41 @@ export default function PersonasPage() {
         }
       />
 
+      {/* Search bar — CU61 */}
+      <div data-testid="search-bar" className="flex flex-wrap gap-3 px-4 pb-4">
+        <Input
+          placeholder="Nombre..."
+          value={searchNombre}
+          onChange={(e) => setSearchNombre(e.target.value)}
+          data-testid="input-search-nombre"
+          className="w-40"
+        />
+        <Input
+          placeholder="Apellido..."
+          value={searchApellido}
+          onChange={(e) => setSearchApellido(e.target.value)}
+          data-testid="input-search-apellido"
+          className="w-40"
+        />
+        <Input
+          placeholder="DNI..."
+          value={searchDni}
+          onChange={(e) => setSearchDni(e.target.value)}
+          data-testid="input-search-dni"
+          className="w-36"
+        />
+        <Button
+          variant={filterClientes ? "default" : "secondary"}
+          onClick={() => setFilterClientes((v) => !v)}
+          data-testid="btn-filter-clientes"
+          size="sm"
+        >
+          Solo clientes
+        </Button>
+      </div>
+
       <DataTable
-        data={personas}
+        data={filteredPersonas}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(p) => p.idPersona!}
@@ -212,6 +259,7 @@ export default function PersonasPage() {
                 label="Es cliente"
                 checked={editing.esCliente ?? false}
                 onChange={(checked) => setEditing({ ...editing, esCliente: checked })}
+                data-testid="check-es-cliente"
               />
             </FormSection>
             <FormActions align="right">

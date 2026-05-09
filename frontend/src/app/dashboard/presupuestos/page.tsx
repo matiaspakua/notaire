@@ -41,6 +41,21 @@ export default function PresupuestosPage() {
   const [editing, setEditing] = useState<Partial<Presupuesto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  // Search / filter state
+  const [searchPresupuesto, setSearchPresupuesto] = useState("");
+  const [filterEstado, setFilterEstado] = useState<string>("TODOS");
+
+  const filteredPresupuestos = presupuestos.filter((p) => {
+    if (filterEstado !== "TODOS" && p.estado !== filterEstado) return false;
+    if (searchPresupuesto) {
+      const q = searchPresupuesto.toLowerCase();
+      const matchId = p.idPresupuesto?.toString().includes(q);
+      const matchPersona = p.persona ? (p.persona.nombre + " " + p.persona.apellido).toLowerCase().includes(q) : false;
+      if (!matchId && !matchPersona) return false;
+    }
+    return true;
+  });
+
   function openCreate() {
     setEditing(EMPTY);
     setIsEditMode(false);
@@ -142,8 +157,31 @@ export default function PresupuestosPage() {
         }
       />
 
+      {/* Search / filter bar */}
+      <div className="flex flex-wrap gap-3 px-4 pb-4">
+        <Input
+          placeholder="Buscar por ID o cliente..."
+          value={searchPresupuesto}
+          onChange={(e) => setSearchPresupuesto(e.target.value)}
+          data-testid="input-search-presupuesto"
+          className="w-52"
+        />
+        <Select value={filterEstado} onValueChange={setFilterEstado}>
+          <SelectTrigger data-testid="select-estado" className="w-44">
+            <SelectValue placeholder="Estado..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="TODOS">Todos</SelectItem>
+            <SelectItem value="BORRADOR">Borrador</SelectItem>
+            <SelectItem value="APROBADO">Aprobado</SelectItem>
+            <SelectItem value="RECHAZADO">Rechazado</SelectItem>
+            <SelectItem value="FACTURADO">Facturado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <DataTable
-        data={presupuestos}
+        data={filteredPresupuestos}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(p) => p.idPresupuesto!}
