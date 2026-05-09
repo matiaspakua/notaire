@@ -4,8 +4,6 @@ import com.licensis.notaire.negocio.Identificacion;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

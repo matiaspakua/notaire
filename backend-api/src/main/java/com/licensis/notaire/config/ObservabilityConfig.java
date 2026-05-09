@@ -9,7 +9,6 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.core.instrument.binder.system.UptimeMetrics;
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics;
-import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 @Configuration
 public class ObservabilityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(ObservabilityConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObservabilityConfig.class);
 
     private final MeterRegistry meterRegistry;
 
@@ -35,7 +34,7 @@ public class ObservabilityConfig {
 
     @PostConstruct
     public void init() {
-        logger.info("Initializing observability metrics for Notaire Backend");
+        LOG.info("Initializing observability metrics for Notaire Backend");
     }
 
     /**
@@ -46,7 +45,7 @@ public class ObservabilityConfig {
     public JvmMemoryMetrics jvmMemoryMetrics() {
         JvmMemoryMetrics metrics = new JvmMemoryMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("JVM Memory metrics registered");
+        LOG.debug("JVM Memory metrics registered");
         return metrics;
     }
 
@@ -58,7 +57,7 @@ public class ObservabilityConfig {
     public JvmGcMetrics jvmGcMetrics() {
         JvmGcMetrics metrics = new JvmGcMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("JVM GC metrics registered");
+        LOG.debug("JVM GC metrics registered");
         return metrics;
     }
 
@@ -70,7 +69,7 @@ public class ObservabilityConfig {
     public JvmThreadMetrics jvmThreadMetrics() {
         JvmThreadMetrics metrics = new JvmThreadMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("JVM Thread metrics registered");
+        LOG.debug("JVM Thread metrics registered");
         return metrics;
     }
 
@@ -82,7 +81,7 @@ public class ObservabilityConfig {
     public ProcessorMetrics processorMetrics() {
         ProcessorMetrics metrics = new ProcessorMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("Processor metrics registered");
+        LOG.debug("Processor metrics registered");
         return metrics;
     }
 
@@ -94,7 +93,7 @@ public class ObservabilityConfig {
     public UptimeMetrics uptimeMetrics() {
         UptimeMetrics metrics = new UptimeMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("Uptime metrics registered");
+        LOG.debug("Uptime metrics registered");
         return metrics;
     }
 
@@ -106,7 +105,7 @@ public class ObservabilityConfig {
     public LogbackMetrics logbackMetrics() {
         LogbackMetrics metrics = new LogbackMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("Logback metrics registered");
+        LOG.debug("Logback metrics registered");
         return metrics;
     }
 
@@ -118,7 +117,7 @@ public class ObservabilityConfig {
     public ClassLoaderMetrics classLoaderMetrics() {
         ClassLoaderMetrics metrics = new ClassLoaderMetrics();
         metrics.bindTo(meterRegistry);
-        logger.debug("ClassLoader metrics registered");
+        LOG.debug("ClassLoader metrics registered");
         return metrics;
     }
 

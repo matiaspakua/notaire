@@ -210,7 +210,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU01 — Create presupuesto returns 200")
+        @DisplayName("CU01 — Create presupuesto returns 201")
         void createPresupuestoReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/presupuestos")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -223,7 +223,7 @@ class BusinessWorkflowIntegrationTest {
                                       "estado": "PENDIENTE"
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
 
         @Test
@@ -413,7 +413,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU29 — Create concepto returns 200")
+        @DisplayName("CU29 — Create concepto returns 201")
         void createConceptoReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/conceptos")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -424,7 +424,7 @@ class BusinessWorkflowIntegrationTest {
                                       "valor": 10000.00
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
     }
 
@@ -443,7 +443,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU26 — Create tipo tramite returns 200")
+        @DisplayName("CU26 — Create tipo tramite returns 201")
         void createTipoTramiteReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/tipo-tramite")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -452,10 +452,11 @@ class BusinessWorkflowIntegrationTest {
                                       "nombre": "Compraventa inmueble",
                                       "descripcion": "Operación de compraventa",
                                       "seArchiva": true,
-                                      "seInscribe": false
+                                      "seInscribe": false,
+                                      "asociaInmuebles": true
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
     }
 

@@ -1,17 +1,26 @@
 package com.licensis.notaire.api;
 
-import com.licensis.notaire.jpa.PresupuestoJpaController;
-import com.licensis.notaire.config.JpaControllerProvider;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.service.PresupuestoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/presupuestos")
@@ -20,89 +29,54 @@ public class PresupuestoController {
 
     private static final Logger log = LoggerFactory.getLogger(PresupuestoController.class);
 
-    private PresupuestoJpaController getJpaController() {
-        return new PresupuestoJpaController(null, JpaControllerProvider.getEntityManagerFactory());
+    private final PresupuestoService presupuestoService;
+
+    public PresupuestoController(PresupuestoService presupuestoService) {
+        this.presupuestoService = presupuestoService;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los presupuestos")
     public ResponseEntity<List<Presupuesto>> getAll() {
-        try {
-            return ResponseEntity.ok(getJpaController().findPresupuestoEntities());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(presupuestoService.findAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener presupuesto por ID")
     public ResponseEntity<Presupuesto> getById(@PathVariable Integer id) {
-        try {
-            Presupuesto p = getJpaController().findPresupuesto(id);
-            return p != null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        return presupuestoService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/persona/{idPersona}")
     @Operation(summary = "Obtener presupuestos de una persona (CU60)")
     public ResponseEntity<List<Presupuesto>> getByPersona(@PathVariable Integer idPersona) {
-        try {
-            List<Presupuesto> list = getJpaController().findPresupuestosPersona(idPersona);
-            return ResponseEntity.ok(list != null ? list : List.of());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(presupuestoService.findByPersona(idPersona));
     }
 
     @GetMapping("/buscar")
     @Operation(summary = "Buscar presupuestos por estado (CU60)")
     public ResponseEntity<List<Presupuesto>> buscar(
             @Parameter(description = "Estado del presupuesto") @RequestParam(required = false) String estado) {
-        try {
-            List<Presupuesto> all = getJpaController().findPresupuestoEntities();
-            if (estado == null || estado.isBlank()) {
-                return ResponseEntity.ok(all);
-            }
-            List<Presupuesto> filtered = all.stream()
-                    .filter(p -> estado.equalsIgnoreCase(p.getEstado()))
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(filtered);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(presupuestoService.findByEstado(estado));
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo presupuesto")
-    public ResponseEntity<Void> create(@RequestBody Presupuesto entity) {
-        try {
-            // Set defaults for fields not provided by frontend form
-            if (entity.getEncabezado() == null || entity.getEncabezado().isBlank()) {
-                entity.setEncabezado("Presupuesto");
-            }
-            if (entity.getNumero() == 0) {
-                entity.setNumero((int) (System.currentTimeMillis() % Integer.MAX_VALUE));
-            }
-            getJpaController().create(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Failed to create presupuesto", e);
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Presupuesto> create(@RequestBody Presupuesto entity) {
+        Presupuesto saved = presupuestoService.create(entity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar presupuesto")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Presupuesto entity) {
+    public ResponseEntity<Presupuesto> update(@PathVariable Integer id, @RequestBody Presupuesto entity) {
         try {
-            entity.setIdPresupuesto(id);
-            getJpaController().edit(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            Presupuesto updated = presupuestoService.update(id, entity);
+            return ResponseEntity.ok(updated);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -110,10 +84,10 @@ public class PresupuestoController {
     @Operation(summary = "Eliminar presupuesto")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
-            getJpaController().destroy(id);
+            presupuestoService.deleteById(id);
             return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
