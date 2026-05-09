@@ -128,7 +128,7 @@ export default function InmueblesPage() {
     <div>
       <AppHeader
         title="Inmuebles"
-        description="Gestión de propiedades (CU69)"
+        description="Gestión de inmuebles y propiedades"
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />

@@ -73,7 +73,7 @@ export default function PagosPage() {
     <div>
       <AppHeader
         title="Pagos"
-        description="CU15, CU47 — Procesar y consultar pagos"
+        description="Procesar y consultar pagos de presupuestos"
         actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />Registrar pago</Button>}
       />
       <DataTable data={pagos} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPago!} emptyMessage="No hay pagos registrados" />

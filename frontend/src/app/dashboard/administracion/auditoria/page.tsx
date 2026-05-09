@@ -59,7 +59,7 @@ export default function AuditoriaPage() {
     <div>
       <AppHeader
         title="Auditoría del Sistema"
-        description="Registro completo de operaciones realizadas por los usuarios (CU73)"
+        description="Registro completo de operaciones realizadas por los usuarios"
       />
       <DataTable
         data={registros}

@@ -57,7 +57,7 @@ export default function EstadosGestionPage() {
     <div>
       <AppHeader
         title="Estados de Gestión"
-        description="CU67 — Estados del ciclo de vida de las gestiones notariales"
+        description="Estados del ciclo de vida de las gestiones notariales"
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-estado">
             <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />

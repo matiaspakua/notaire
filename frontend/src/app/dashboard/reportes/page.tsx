@@ -83,7 +83,7 @@ export default function ReportesPage() {
     <div>
       <AppHeader
         title="Reportes"
-        description="CU03, CU13, CU24, CU25, CU50 — Generación de reportes PDF"
+        description="Generación de reportes y documentos PDF"
       />
 
       <div
@@ -101,7 +101,7 @@ export default function ReportesPage() {
               <FileText style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>Reporte Presupuesto</h3>
             </div>
-            <p style={cardDescStyle}>CU01, CU39 — PDF del presupuesto</p>
+            <p style={cardDescStyle}>PDF del presupuesto seleccionado</p>
           </div>
           <FormField label="ID Presupuesto" required>
             <Input
@@ -131,7 +131,7 @@ export default function ReportesPage() {
               <FileText style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>Presupuesto + Inmuebles</h3>
             </div>
-            <p style={cardDescStyle}>CU08 — PDF con información de inmuebles</p>
+            <p style={cardDescStyle}>PDF con información de inmuebles del presupuesto</p>
           </div>
           <FormField label="ID Presupuesto" required>
             <Input
@@ -159,7 +159,7 @@ export default function ReportesPage() {
               <ClipboardList style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>Historial de Gestión</h3>
             </div>
-            <p style={cardDescStyle}>CU13 — PDF del historial de una gestión</p>
+            <p style={cardDescStyle}>PDF del historial de una gestión notarial</p>
           </div>
           <FormField label="ID Gestión" required>
             <Input
@@ -188,7 +188,7 @@ export default function ReportesPage() {
               <Book style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>DDJJ Mensual</h3>
             </div>
-            <p style={cardDescStyle}>CU25 — Declaración jurada mensual</p>
+            <p style={cardDescStyle}>Declaración jurada mensual de escrituras</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
             <FormField label="Año">
@@ -227,7 +227,7 @@ export default function ReportesPage() {
               <Book style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>DDJJ de Rentas</h3>
             </div>
-            <p style={cardDescStyle}>CU50 — Declaración jurada de rentas</p>
+            <p style={cardDescStyle}>Declaración jurada de rentas anuales</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
             <FormField label="Año">
@@ -267,7 +267,7 @@ export default function ReportesPage() {
               <Book style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>Libro Índice</h3>
             </div>
-            <p style={cardDescStyle}>CU24 — Libro índice anual</p>
+            <p style={cardDescStyle}>Libro de índice anual de escrituras</p>
           </div>
           <FormField label="Año">
             <Input
@@ -295,7 +295,7 @@ export default function ReportesPage() {
               <AlertCircle style={iconWrapStyle} />
               <h3 style={cardTitleStyle}>Deuda de Documentos</h3>
             </div>
-            <p style={cardDescStyle}>CU16 — Documentos pendientes por gestión</p>
+            <p style={cardDescStyle}>Documentos pendientes de entrega por gestión</p>
           </div>
           <FormField label="Número de gestión" required>
             <Input

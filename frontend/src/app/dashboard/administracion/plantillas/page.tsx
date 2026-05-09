@@ -62,7 +62,7 @@ export default function PlantillasPage() {
     <div>
       <AppHeader
         title="Plantillas de Presupuesto"
-        description="CU39, CU49, CU55 — Plantillas reutilizables para armar presupuestos"
+        description="Plantillas reutilizables para armar presupuestos"
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-plantilla">
             <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />

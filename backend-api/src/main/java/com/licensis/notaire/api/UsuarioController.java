@@ -98,7 +98,7 @@ public class UsuarioController {
         }
         try {
             usuarioRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete usuario id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

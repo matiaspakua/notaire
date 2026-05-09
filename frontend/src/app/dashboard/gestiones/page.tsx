@@ -115,7 +115,7 @@ export default function GestionesPage() {
     <div>
       <AppHeader
         title="Gestiones"
-        description="Gestión de trámites y escrituras (CU02, CU13–CU16, CU19, CU53)"
+        description="Gestión de trámites y escrituras notariales"
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-gestion">
             <Plus className="h-4 w-4" />

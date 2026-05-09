@@ -57,9 +57,9 @@ export default function ProtocoloPage() {
   }
 
   const reportTitle = {
-    "libro-indice": "Generar Libro de Índices (CU24)",
-    "declaracion-jurada-mensual": "Generar Declaración Jurada Mensual (CU25)",
-    "declaracion-jurada-rentas": "Generar Declaración Jurada de Rentas (CU50)",
+    "libro-indice": "Generar Libro de Índices",
+    "declaracion-jurada-mensual": "Generar Declaración Jurada Mensual",
+    "declaracion-jurada-rentas": "Generar Declaración Jurada de Rentas",
   }[reportDialog ?? ""] ?? "";
 
   const columns: Column<Folio>[] = [
@@ -78,7 +78,7 @@ export default function ProtocoloPage() {
     <div>
       <AppHeader
         title="Protocolo"
-        description="CU24, CU25, CU28, CU50, CU63 — Folios, índices y declaraciones juradas"
+        description="Folios notariales, índices y declaraciones juradas"
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setReportDialog("libro-indice")}>

@@ -85,7 +85,7 @@ public class PresupuestoController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             presupuestoService.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

@@ -86,7 +86,7 @@ export default function UsuariosPage() {
     <div>
       <AppHeader
         title="Usuarios"
-        description="CU20, CU21, CU23 — Gestión de usuarios del sistema"
+        description="Gestión de usuarios y roles del sistema"
         actions={<Button onClick={openCreate} data-testid="btn-nuevo-usuario"><Plus className="h-4 w-4" />Nuevo usuario</Button>}
       />
       <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUsuario!} emptyMessage="No hay usuarios" />

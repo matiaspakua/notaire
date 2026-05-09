@@ -138,7 +138,7 @@ export default function PersonasPage() {
     <div>
       <AppHeader
         title="Personas y Clientes"
-        description="CU17, CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61"
+        description="Registrar y gestionar personas, clientes y escribanos del sistema"
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-persona">
             <Plus className="h-4 w-4" />
