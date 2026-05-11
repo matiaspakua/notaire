@@ -66,6 +66,19 @@ describe("useAuthStore — logout()", () => {
     expect(state.isAuthenticated).toBe(false);
     expect(state.user).toBeNull();
   });
+
+  it("clears the notaire-auth-status cookie on logout (issue #392)", () => {
+    // Simulate the cookie set by the login flow.
+    document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
+    expect(document.cookie).toContain("notaire-auth-status=1");
+
+    useAuthStore.setState({ user: adminUser, isAuthenticated: true });
+    useAuthStore.getState().logout();
+
+    // After logout, the middleware-facing cookie must be gone so that
+    // navigating to /login is not bounced back to /dashboard.
+    expect(document.cookie).not.toContain("notaire-auth-status=1");
+  });
 });
 
 describe("useAuthStore — isAdmin()", () => {

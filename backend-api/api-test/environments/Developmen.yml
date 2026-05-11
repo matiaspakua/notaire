@@ -1,14 +1,4 @@
-info:
-  name: Developmen
-  type: environment
-
-vars:
-  base_url: "http://localhost:8080"
-  token: ''
-  user_id: ''
-  persona_id: ''
-  escritura_id: ''
-  tramite_id: ''
-  presupuesto_id: ''
-  gestion_id: ''
-
+name: Developmen
+variables:
+  - name: base_url
+    value: http:\\localhost:3000
