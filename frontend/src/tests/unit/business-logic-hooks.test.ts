@@ -337,16 +337,16 @@ describe("Inmueble type shape (CU08)", () => {
 
 describe("TipoDeDocumento type shape (CU27, CU65)", () => {
   it("tipoDeDocumento has id and nombre", () => {
-    const tipo = { idTipoDeDocumento: 3, nombre: "DNI" };
-    expect(tipo.idTipoDeDocumento).toBe(3);
+    const tipo = { idTipoDocumento: 3, nombre: "DNI" };
+    expect(tipo.idTipoDocumento).toBe(3);
     expect(tipo.nombre).toBe("DNI");
   });
 
   it("filter tipos by partial name match", () => {
     const tipos = [
-      { idTipoDeDocumento: 1, nombre: "DNI" },
-      { idTipoDeDocumento: 2, nombre: "Pasaporte" },
-      { idTipoDeDocumento: 3, nombre: "CUIT" },
+      { idTipoDocumento: 1, nombre: "DNI" },
+      { idTipoDocumento: 2, nombre: "Pasaporte" },
+      { idTipoDocumento: 3, nombre: "CUIT" },
     ];
     const result = tipos.filter((t) => t.nombre.toLowerCase().includes("pas"));
     expect(result).toHaveLength(1);

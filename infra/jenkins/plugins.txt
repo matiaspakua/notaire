@@ -1,5 +1,5 @@
 configuration-as-code:latest
-configuration-as-code-secret-ssm:latest
+matrix-auth:latest
 pipeline-model-definition:latest
 pipeline-stage-view:latest
 git:latest
@@ -8,7 +8,6 @@ workflow-aggregator:latest
 maven-plugin:latest
 docker-plugin:latest
 docker-workflow:latest
-blueocean:latest
 sonar:latest
 htmlpublisher:latest
 junit:latest
@@ -17,7 +16,6 @@ timestamper:latest
 build-timeout:latest
 credentials-binding:latest
 email-ext:latest
-slack:latest
 ws-cleanup:latest
 parameterized-trigger:latest
 ssh-agent:latest

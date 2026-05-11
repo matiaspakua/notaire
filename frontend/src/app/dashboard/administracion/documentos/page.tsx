@@ -59,8 +59,8 @@ export default function DocumentosPage() {
       return;
     }
     try {
-      if (isEditMode && editing.idTipoDeDocumento) {
-        await updateMutation.mutateAsync({ id: editing.idTipoDeDocumento, data: editing });
+      if (isEditMode && editing.idTipoDocumento) {
+        await updateMutation.mutateAsync({ id: editing.idTipoDocumento, data: editing });
         toast.success("Tipo de documento actualizado");
       } else {
         await createMutation.mutateAsync(editing);
@@ -85,7 +85,7 @@ export default function DocumentosPage() {
   }
 
   const columns: Column<TipoDeDocumento>[] = [
-    { key: "id", header: "ID", render: (t) => <span className="text-xs text-muted-foreground">{t.idTipoDeDocumento}</span>, className: "w-12" },
+    { key: "id", header: "ID", render: (t) => <span className="text-xs text-muted-foreground">{t.idTipoDocumento}</span>, className: "w-12" },
     { key: "nombre", header: "Nombre", render: (t) => <span className="font-medium">{t.nombre}</span> },
     {
       key: "actions", header: "", className: "w-24",
@@ -94,7 +94,7 @@ export default function DocumentosPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(t)}>
             <NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(t.idTipoDeDocumento!)}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(t.idTipoDocumento!)}>
             <NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} />
           </Button>
         </div>
@@ -118,7 +118,7 @@ export default function DocumentosPage() {
         data={tipos}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(t) => t.idTipoDeDocumento!}
+        keyExtractor={(t) => t.idTipoDocumento!}
         emptyMessage="No hay tipos de documento registrados"
       />
 

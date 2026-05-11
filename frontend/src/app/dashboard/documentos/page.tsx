@@ -51,7 +51,7 @@ export default function DocumentosPage() {
   function openEdit(d: DocumentoPresentado) {
     setEditing(d);
     setForm({
-      tipoId: d.tipo?.idTipoDeDocumento?.toString() ?? "",
+      tipoId: d.tipo?.idTipoDocumento?.toString() ?? "",
       fecha: d.fecha?.split("T")[0] ?? "",
       entregado: d.entregado ?? false,
     });
@@ -60,7 +60,7 @@ export default function DocumentosPage() {
 
   async function handleSave() {
     const data: Partial<DocumentoPresentado> = {
-      tipo: form.tipoId ? { idTipoDeDocumento: Number(form.tipoId) } as TipoDeDocumento : undefined,
+      tipo: form.tipoId ? { idTipoDocumento: Number(form.tipoId) } as TipoDeDocumento : undefined,
       fecha: form.fecha || undefined,
       entregado: form.entregado,
     };
@@ -177,7 +177,7 @@ export default function DocumentosPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {tiposDoc.map((t) => (
-                      <SelectItem key={t.idTipoDeDocumento} value={t.idTipoDeDocumento!.toString()}>
+                      <SelectItem key={t.idTipoDocumento} value={t.idTipoDocumento!.toString()}>
                         {t.nombre}
                       </SelectItem>
                     ))}

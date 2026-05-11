@@ -16,83 +16,33 @@ jenkins:
           description: "Notaire Jenkins Administrator"
 
   authorizationStrategy:
-    globalMatrix:
-      permissions:
-        - "Overall/Administer:admin"
-        - "Overall/Read:authenticated"
-        - "Job/Build:authenticated"
-        - "Job/Read:authenticated"
-        - "Job/Workspace:authenticated"
-        - "Run/Update:authenticated"
-        - "View/Read:authenticated"
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
 
   # Global Environment Variables
   globalNodeProperties:
     - envVars:
         env:
           - key: "JAVA_HOME"
-            value: "/usr/local/openjdk-21"
-          - key: "MAVEN_HOME"
-            value: "/usr/share/maven"
+            value: "/opt/java/openjdk"
           - key: "SONAR_HOST_URL"
             value: "http://sonarqube:9000"
           - key: "NEXUS_URL"
             value: "http://nexus:8081"
           - key: "NOTAIRE_DB_URL"
-            value: "jdbc:postgresql://postgres:5432/notaire"
+            value: "jdbc:postgresql://notary-postgres:5432/notaire"
           - key: "NOTAIRE_DB_USER"
             value: "admin"
           - key: "NOTAIRE_DB_PASSWORD"
             value: "admin"
           - key: "BACKEND_API_URL"
-            value: "http://backend:8080"
+            value: "http://notary-backend:8080"
           - key: "PROMETHEUS_URL"
             value: "http://prometheus:9090"
           - key: "GRAFANA_URL"
             value: "http://grafana:3000"
           - key: "LOKI_URL"
             value: "http://loki:3100"
-
-  # Jobs
-  jobs:
-    - script: >
-        pipelineJob('notaire-ci-pipeline') {
-          definition {
-            cpsScm {
-              scm {
-                git {
-                  remote {
-                    url('https://github.com/matiaspakua/notaire.git')
-                    branch('*/main')
-                  }
-                  extensions {
-                    cleanBeforeCheckout()
-                    cloneOptions {
-                      depth(1)
-                      shallow(true)
-                    }
-                  }
-                }
-              }
-              lightweight(true)
-              scriptPath('Jenkinsfile')
-            }
-          }
-          triggers {
-            scm('H/5 * * * *')
-          }
-          parameters {
-            stringParam('BRANCH', 'main', 'Branch to build')
-            stringParam('MAVEN_OPTS', '-Xmx1024m', 'Maven options')
-            booleanParam('RUN_TESTS', true, 'Run tests')
-            booleanParam('RUN_SONAR', true, 'Run SonarQube analysis')
-            booleanParam('RUN_TRIVY', true, 'Run Trivy vulnerability scan')
-            booleanParam('BUILD_DOCKER', true, 'Build Docker image')
-          }
-          properties {
-            githubProjectUrl('https://github.com/matiaspakua/notaire')
-          }
-        }
 
   # Views
   views:
@@ -101,19 +51,9 @@ jenkins:
         description: "Notaire Project Pipelines"
         filterExecutors: true
         filterQueue: true
-        columns:
-          - "status"
-          - "weather"
-          - "job"
-          - "lastSuccess"
-          - "lastFailure"
-          - "lastDuration"
-          - "buildButton"
         includeRegex: "notaire-.*"
 
-  # Labels for agents
   slaveAgentPort: 50000
-  label: "notaire-master"
 
 tool:
   git:
@@ -122,12 +62,16 @@ tool:
         home: "/usr/bin/git"
   maven:
     installations:
-      - name: "Maven"
-        home: "/usr/share/maven"
+      - name: "Maven 3.9"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.9.9"
   jdk:
     installations:
       - name: "JDK21"
-        home: "/usr/local/openjdk-21"
+        home: "/opt/java/openjdk"
 
 credentials:
   system:
@@ -136,12 +80,12 @@ credentials:
           - string:
               scope: GLOBAL
               id: "sonar-token"
-              secret: "${SONAR_TOKEN}"
+              secret: "changeme-sonar-token"
               description: "SonarQube authentication token"
           - string:
               scope: GLOBAL
               id: "docker-hub-token"
-              secret: "${DOCKER_HUB_TOKEN}"
+              secret: "changeme-docker-hub-token"
               description: "Docker Hub access token"
           - usernamePassword:
               scope: GLOBAL
@@ -162,7 +106,3 @@ unclassified:
   buildDiscarders:
     configuredBuildDiscarders:
       - "jobBuildDiscarder"
-  globalTimeOut:
-    envVar: "BUILD_TIMEOUT"
-    failBuild: true
-    safeTime: 3600
