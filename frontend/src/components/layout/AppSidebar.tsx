@@ -52,8 +52,12 @@ export function AppSidebar() {
   const { user, logout, isAdmin } = useAuthStore();
 
   function handleLogout() {
+    // Clear Zustand store + auth cookie (handled inside logout()).
     logout();
-    router.push("/login");
+    // Use replace() so the dashboard is not in the browser history — pressing
+    // back after logout must not bring the user to a stale, unauthenticated
+    // dashboard (which would render an empty page).
+    router.replace("/login");
   }
 
   return (
