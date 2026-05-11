@@ -5,12 +5,12 @@ services:
     container_name: devsecops-dashboard
     restart: unless-stopped
     ports:
-      - "80:8080"
+      - "8888:8080"
     volumes:
       - ./dashboard/config.yml:/www/assets/config.yml
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   # --- SECURITY & QUALITY ---
   sonarqube:
@@ -24,6 +24,10 @@ services:
       - SONAR_JDBC_USERNAME=sonar
       - SONAR_JDBC_PASSWORD=sonar
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
@@ -89,7 +93,10 @@ services:
 
   # --- CI/CD & ARTIFACTS ---
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    image: devsecops-jenkins:local
     container_name: devsecops-jenkins
     restart: unless-stopped
     ports:
@@ -97,11 +104,9 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_data:/var/jenkins_home
-      - ./jenkins/jenkins.yaml:/usr/share/jenkins/ref/jenkins.yaml
-      - ./jenkins/plugins.txt:/usr/share/jenkins/ref/plugins.txt
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Djenkins.model.Jenkins.installState=NEW
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - CASC_JENKINS_CONFIG=/usr/share/jenkins/ref/jenkins.yaml
       - SONAR_TOKEN=
       - DOCKER_HUB_TOKEN=
@@ -111,7 +116,7 @@ services:
       app: "devsecops"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   nexus:
     image: sonatype/nexus3
@@ -132,9 +137,11 @@ services:
     image: prom/prometheus:latest
     container_name: devsecops-prometheus
     restart: unless-stopped
+    user: root
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9090:9090"
     command:
@@ -150,7 +157,7 @@ services:
       app: "monitoring"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   # --- PostgreSQL Exporter for Database Metrics ---
   postgres-exporter:
@@ -160,8 +167,7 @@ services:
     ports:
       - "9187:9187"
     environment:
-      DATA_SOURCE_NAME: "postgresql://admin:admin@postgres:5432/notaire?sslmode=disable"
-      PG_EXPORTER_AUTO_DISCOVER_DATABASES: "true"
+      DATA_SOURCE_NAME: "postgresql://admin:admin@notary-postgres:5432/notaire?sslmode=disable"
     volumes:
       - ./prometheus/postgres_exporter.yml:/etc/postgres_exporter/queries.yml
     labels:
@@ -169,7 +175,7 @@ services:
       app: "monitoring"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   grafana:
     image: grafana/grafana:latest
@@ -193,7 +199,7 @@ services:
       app: "monitoring"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   loki:
     image: grafana/loki:latest
@@ -203,13 +209,14 @@ services:
       - "3100:3100"
     volumes:
       - ./loki/local-config.yaml:/etc/loki/local-config.yaml
+      - loki_data:/loki
     command: -config.file=/etc/loki/local-config.yaml
     labels:
       service: "loki"
       app: "monitoring"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
   promtail:
     image: grafana/promtail:latest
@@ -218,7 +225,6 @@ services:
     volumes:
       - ./loki/promtail-config.yaml:/etc/promtail/config.yml
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/log:/var/log:ro
     depends_on:
       - loki
@@ -227,14 +233,14 @@ services:
       app: "monitoring"
     networks:
       - devsecops-network
-      - notary-network
+      - notaire-app-network
 
 networks:
   devsecops-network:
     driver: bridge
-  notary-network:
+  notaire-app-network:
     external: true
-    name: notary-network
+    name: notaire_notary-network
 
 volumes:
   sonarqube_data:
@@ -246,3 +252,4 @@ volumes:
   prometheus_data:
   grafana_data:
   dtrack_data:
+  loki_data:

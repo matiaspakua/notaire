@@ -41,7 +41,7 @@ export interface TipoDeTramite {
 }
 
 export interface TipoDeDocumento {
-  idTipoDeDocumento?: number;
+  idTipoDocumento?: number;
   nombre?: string;
 }
 

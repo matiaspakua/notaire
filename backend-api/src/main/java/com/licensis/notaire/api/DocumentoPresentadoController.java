@@ -2,6 +2,7 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
+import com.licensis.notaire.repository.TipoDeDocumentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
@@ -18,23 +20,54 @@ import java.util.List;
 public class DocumentoPresentadoController {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentoPresentadoController.class);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    record TipoDocInfo(Integer idTipoDocumento, String nombre) {}
+
+    record DocumentoPresentadoResponse(
+            Integer idDocumentoPresentado,
+            TipoDocInfo tipo,
+            String fecha,
+            Boolean entregado
+    ) {}
+
+    record DocumentoPresentadoRequest(Integer tipoId, String fecha, Boolean entregado) {}
 
     private final DocumentoPresentadoRepository repository;
+    private final TipoDeDocumentoRepository tipoRepository;
 
-    public DocumentoPresentadoController(DocumentoPresentadoRepository repository) {
+    public DocumentoPresentadoController(DocumentoPresentadoRepository repository,
+                                         TipoDeDocumentoRepository tipoRepository) {
         this.repository = repository;
+        this.tipoRepository = tipoRepository;
+    }
+
+    private DocumentoPresentadoResponse toResponse(DocumentoPresentado d) {
+        TipoDocInfo tipo = null;
+        try {
+            // getFkIdTipoDocumento() returns primitive int — NPEs when the DB column is NULL
+            int tipoId = d.getFkIdTipoDocumento();
+            tipo = tipoRepository.findById(tipoId)
+                    .map(t -> new TipoDocInfo(t.getIdTipoDocumento(), t.getNombre()))
+                    .orElse(null);
+        } catch (NullPointerException e) {
+            log.debug("fk_id_tipo_documento is NULL for documento {}", d.getIdDocumentoPresentado());
+        }
+        String fecha = d.getFechaIngreso() != null ? DATE_FORMAT.format(d.getFechaIngreso()) : null;
+        return new DocumentoPresentadoResponse(d.getIdDocumentoPresentado(), tipo, fecha, d.getEntregado());
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los documentos presentados")
-    public ResponseEntity<List<DocumentoPresentado>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<DocumentoPresentadoResponse>> getAll() {
+        return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener documento presentado por ID")
-    public ResponseEntity<DocumentoPresentado> getById(@PathVariable Integer id) {
+    public ResponseEntity<DocumentoPresentadoResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

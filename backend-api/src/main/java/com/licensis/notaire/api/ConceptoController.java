@@ -5,6 +5,7 @@ import com.licensis.notaire.negocio.Concepto;
 import com.licensis.notaire.repository.ConceptoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
