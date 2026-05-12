@@ -1,0 +1,204 @@
+{
+  "title": "Notaire — Application Logs",
+  "version": 1,
+  "uid": "notaire-logs",
+  "description": "Centralized application logs (backend + frontend) shipped to Loki via Promtail.",
+  "tags": ["notaire", "logs", "loki"],
+  "schemaVersion": 36,
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "level",
+        "label": "Log Level",
+        "type": "custom",
+        "query": "All,DEBUG,INFO,WARN,ERROR",
+        "current": { "text": "All", "value": "All" },
+        "includeAll": false,
+        "multi": false,
+        "options": [
+          { "text": "All", "value": "All", "selected": true },
+          { "text": "DEBUG", "value": "DEBUG", "selected": false },
+          { "text": "INFO", "value": "INFO", "selected": false },
+          { "text": "WARN", "value": "WARN", "selected": false },
+          { "text": "ERROR", "value": "ERROR", "selected": false }
+        ]
+      },
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "custom",
+        "query": "All,notaire-backend,notaire-frontend",
+        "current": { "text": "All", "value": "All" },
+        "includeAll": false,
+        "multi": false,
+        "options": [
+          { "text": "All", "value": "All", "selected": true },
+          { "text": "notaire-backend", "value": "notaire-backend", "selected": false },
+          { "text": "notaire-frontend", "value": "notaire-frontend", "selected": false }
+        ]
+      },
+      {
+        "name": "container",
+        "label": "Container",
+        "type": "custom",
+        "query": "All,notary-backend,notaire-frontend,notaire-grafana,notaire-prometheus",
+        "current": { "text": "All", "value": "All" },
+        "includeAll": false,
+        "multi": false,
+        "options": [
+          { "text": "All", "value": "All", "selected": true },
+          { "text": "notary-backend", "value": "notary-backend", "selected": false },
+          { "text": "notaire-frontend", "value": "notaire-frontend", "selected": false },
+          { "text": "notaire-grafana", "value": "notaire-grafana", "selected": false },
+          { "text": "notaire-prometheus", "value": "notaire-prometheus", "selected": false }
+        ]
+      }
+    ]
+  },
+  "panels": [
+    {
+      "title": "Log Volume by Level",
+      "type": "barchart",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "options": {
+        "stacking": { "mode": "normal" },
+        "legend": { "showLegend": true, "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (level) (count_over_time({container=~\"notaire.*|notary.*|devsecops.*\"} | json [$__interval]))",
+          "legendFormat": "{{level}}",
+          "refId": "A"
+        }
+      ],
+      "description": "Number of log lines grouped by level over time."
+    },
+    {
+      "title": "Error Rate (last 5m)",
+      "type": "stat",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 25 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({container=~\"notaire.*|notary.*|devsecops.*\"} | json | level=\"ERROR\" [5m]))",
+          "legendFormat": "errors",
+          "refId": "A"
+        }
+      ],
+      "description": "Total number of ERROR-level logs in the last 5 minutes."
+    },
+    {
+      "title": "Warning Rate (last 5m)",
+      "type": "stat",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "horizontal",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 10 },
+              { "color": "orange", "value": 50 }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum(count_over_time({container=~\"notaire.*|notary.*|devsecops.*\"} | json | level=\"WARN\" [5m]))",
+          "legendFormat": "warnings",
+          "refId": "A"
+        }
+      ],
+      "description": "Total number of WARN-level logs in the last 5 minutes."
+    },
+    {
+      "title": "Application Logs",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 18, "w": 24, "x": 0, "y": 8 },
+      "options": {
+        "showLabels": true,
+        "showTime": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{container=~\"notaire.*|notary.*|devsecops.*\"} | json | line_format \"{{.message}}\"",
+          "refId": "A"
+        }
+      ],
+      "description": "Live stream of all Notaire application logs (backend + frontend). Use the variables above to filter by level / service / container."
+    },
+    {
+      "title": "Error Logs Only",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 26 },
+      "options": {
+        "showLabels": true,
+        "showTime": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{container=~\"notaire.*|notary.*|devsecops.*\"} | json | level=\"ERROR\" | line_format \"{{.message}}\"",
+          "refId": "A"
+        }
+      ],
+      "description": "ERROR-level entries with full JSON details — useful for incident triage."
+    }
+  ]
+}

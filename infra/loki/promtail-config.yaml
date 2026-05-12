@@ -36,13 +36,33 @@ scrape_configs:
         regex: '/(.+)'
         replacement: '$1'
     pipeline_stages:
+      # Parse the JSON envelope emitted by Logback's LogstashEncoder
+      # (backend) and by the Next.js frontend logger. The structured fields
+      # are then promoted to Loki labels so they can be used in dashboards
+      # and queries.
       - json:
           expressions:
             level: level
             logger: logger
             message: message
+            service: service
+            environment: environment
+            traceId: traceId
+            spanId: spanId
+            path: path
       - labels:
           level:
+          service:
+          environment:
+      # Use the timestamp from the JSON envelope when present so log lines
+      # are stored with their original event time.
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+          fallback_formats:
+            - RFC3339
+          action_on_failure: skip
+      # Display the human-readable message in Grafana's logs panels.
       - output:
           source: message
 

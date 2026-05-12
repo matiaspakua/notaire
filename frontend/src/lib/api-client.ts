@@ -2,14 +2,21 @@
  * Centralized HTTP client for Notaire REST API.
  * All API calls go through these helpers — never use fetch() directly in components.
  */
+import { logger } from "@/lib/logger";
 
 // Use relative path so requests are proxied by the Next.js server (rewrites in next.config.ts).
 // This ensures the browser never needs to resolve internal Docker hostnames like "backend".
 const BASE_URL = "/api/v1";
 
-async function handleResponse<T>(res: Response, path: string): Promise<T> {
+async function handleResponse<T>(res: Response, path: string, method: string): Promise<T> {
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+    logger.error("api_call_failed", {
+      method,
+      path,
+      status: res.status,
+      body: text.slice(0, 500),
+    });
     throw new Error(`[${res.status}] ${path}: ${text}`);
   }
   const text = await res.text();
@@ -21,7 +28,7 @@ export async function apiGet<T>(path: string): Promise<T> {
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
   });
-  return handleResponse<T>(res, path);
+  return handleResponse<T>(res, path, "GET");
 }
 
 export async function apiPost<T = void>(
@@ -33,7 +40,7 @@ export async function apiPost<T = void>(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  return handleResponse<T>(res, path);
+  return handleResponse<T>(res, path, "POST");
 }
 
 export async function apiPut<T = void>(
@@ -45,7 +52,7 @@ export async function apiPut<T = void>(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  return handleResponse<T>(res, path);
+  return handleResponse<T>(res, path, "PUT");
 }
 
 export async function apiDelete(path: string): Promise<void> {
@@ -54,12 +61,21 @@ export async function apiDelete(path: string): Promise<void> {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+    logger.error("api_call_failed", {
+      method: "DELETE",
+      path,
+      status: res.status,
+      body: text.slice(0, 500),
+    });
     throw new Error(`[${res.status}] DELETE ${path}: ${text}`);
   }
 }
 
 export async function apiGetBytes(path: string): Promise<Blob> {
   const res = await fetch(`${BASE_URL}${path}`);
-  if (!res.ok) throw new Error(`[${res.status}] GET ${path}`);
+  if (!res.ok) {
+    logger.error("api_call_failed", { method: "GET", path, status: res.status });
+    throw new Error(`[${res.status}] GET ${path}`);
+  }
   return res.blob();
 }
