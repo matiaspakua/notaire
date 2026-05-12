@@ -6,8 +6,8 @@
     <!-- Define properties -->
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
-    <property name="JSON_LOG_PATTERN"
-              value="%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z'} %logger{36} %level %X{traceId} %X{spanId} %msg%n"/>
+    <property name="LOG_SERVICE" value="${LOG_SERVICE:-notaire-backend}"/>
+    <property name="LOG_ENV" value="${ENVIRONMENT:-development}"/>
 
     <!-- Spring profiles: dev, test, prod -->
     <springProfile name="dev">
@@ -29,39 +29,49 @@
     <property name="LOG_LEVEL_ROOT" value="INFO"/>
     <property name="LOG_LEVEL_APP" value="DEBUG"/>
 
-    <!-- Console Appender - Plain text for dev/test -->
-    <springProfile name="dev,test">
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${LOG_PATTERN}</pattern>
-                <charset>UTF-8</charset>
-            </encoder>
-        </appender>
-    </springProfile>
+    <!--
+       Console Appender — JSON in ALL profiles so Promtail / Loki can scrape
+       structured fields from Docker container stdout. The LogstashEncoder
+       emits one JSON object per line with timestamp, level, logger, message,
+       thread, traceId, spanId and the static `service`/`environment` labels.
+    -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timeZone>UTC</timeZone>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <level>level</level>
+                <logger>logger</logger>
+                <message>message</message>
+                <thread>thread</thread>
+                <version>[ignore]</version>
+            </fieldNames>
+            <customFields>{"service":"${LOG_SERVICE}","environment":"${LOG_ENV}"}</customFields>
+        </encoder>
+    </appender>
 
-    <!-- Console Appender - JSON for prod -->
-    <springProfile name="prod">
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <timeZone>UTC</timeZone>
-                <fieldNames>
-                    <timestamp>[timestamp]</timestamp>
-                    <level>[level]</level>
-                    <logger>[logger]</logger>
-                    <message>[message]</message>
-                    <threadName>[thread]</threadName>
-                </fieldNames>
-                <customFields>{"service":"notaire-backend","environment":"production"}</customFields>
-            </encoder>
-        </appender>
-    </springProfile>
+    <!--
+       Plain text console appender used only for local 'test-h2' / 'test' runs
+       so unit & integration test output remains human readable. Activated by
+       setting -Dlogback.plain.console=true.
+    -->
+    <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
 
-    <!-- File Appender - Rolling file for all environments -->
+    <!-- File Appender - Rolling JSON file for all environments -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}</file>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <timeZone>UTC</timeZone>
-            <customFields>{"service":"notaire-backend"}</customFields>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <customFields>{"service":"${LOG_SERVICE}","environment":"${LOG_ENV}"}</customFields>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- Roll daily and when file exceeds 100MB -->
@@ -102,7 +112,7 @@
         <logger name="org.springframework.security" level="DEBUG"/>
     </springProfile>
 
-    <springProfile name="test">
+    <springProfile name="test,test-h2">
         <root level="WARN">
             <appender-ref ref="CONSOLE"/>
         </root>
