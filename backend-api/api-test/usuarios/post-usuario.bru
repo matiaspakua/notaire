@@ -1,0 +1,32 @@
+meta {
+  name: Create Usuario
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/usuarios
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "nuevousuario"
+  contrasenia: "password123"
+  estado: true
+  tipo: "gestor"
+}
+
+tests {
+  test("Status 201 or 200", function () {
+    expect([200, 201]).to.include(res.getStatus());});
+}
+docs {
+  ## Create Usuario
+  Crea un nuevo usuario en el sistema.
+  **Method:** POST
+  **Path:** /api/v1/usuarios
+}

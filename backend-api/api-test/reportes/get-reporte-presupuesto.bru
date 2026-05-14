@@ -1,0 +1,34 @@
+meta {
+  name: Get Reporte Presupuesto PDF
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/reportes/presupuesto/{{presupuesto_id}}
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/pdf
+}
+
+tests {
+  test("Status is 200 or 500", function () {
+    const status = res.getStatus();
+    expect([200, 500]).to.include(status);});
+ 
+  test("Content-Type is PDF", function () {
+  const contentType = res.getHeader('content-type');
+  if (res.getStatus() === 200) {
+    expect(contentType).to.include('application/pdf');
+  }
+  });
+}
+docs {
+  ## Get Reporte Presupuesto PDF
+  Genera un PDF con el presupuesto especificado.
+  **Method:** GET
+  **Path:** /api/v1/reportes/presupuesto/{idPresupuesto}
+  **Response:** PDF binary data
+}

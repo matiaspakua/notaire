@@ -1,0 +1,31 @@
+meta {
+  name: Update Item
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/items/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "Item actualizado"
+  valor: 2000.00
+  porcentaje: 10
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);});
+}
+docs {
+  ## Update Item
+  Actualiza un item existente en el sistema.
+  **Method:** PUT
+  **Path:** /api/v1/items/{id}
+}

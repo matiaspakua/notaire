@@ -1,0 +1,30 @@
+meta {
+  name: Create Tipo Folio
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/tipo-folio
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "Tipo de folio de prueba"
+  descripcion: "Descripción del tipo de folio"
+}
+
+tests {
+  test("Status 201 or 200", function () {
+    expect([200, 201]).to.include(res.getStatus());});
+}
+docs {
+  ## Create Tipo Folio
+  Crea un nuevo tipo de folio en el sistema.
+  **Method:** POST
+  **Path:** /api/v1/tipo-folio
+}

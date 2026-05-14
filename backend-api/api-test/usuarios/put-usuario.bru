@@ -1,0 +1,32 @@
+meta {
+  name: Update Usuario
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/usuarios/{{user_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "usuarioactualizado"
+  contrasenia: "newpassword123"
+  estado: true
+  tipo: "admin"
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);});
+}
+docs {
+  ## Update Usuario
+  Actualiza un usuario existente en el sistema.
+  **Method:** PUT
+  **Path:** /api/v1/usuarios/{id}
+}
