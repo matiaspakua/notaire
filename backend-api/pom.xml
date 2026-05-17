@@ -231,6 +231,13 @@
                             <excludes>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
                                 <exclude>com/licensis/notaire/jpa/exceptions/**/*</exclude>
+                                <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

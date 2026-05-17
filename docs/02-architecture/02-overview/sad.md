@@ -96,27 +96,26 @@ El producto original era un sistema monolítico Java Swing que combinaba:
 3. Modernizar la base de datos a PostgreSQL 16.
 4. Crear un backend REST reusable para múltiples clientes.
 5. Mantener el sistema operativo durante la migración.
-6. Preservar el valor de los 54 casos de uso existentes.
+6. Preservar el valor de los 73 casos de uso existentes.
 
 ### Fases
 
 1. **Evaluación y análisis**: documentar arquitectura legacy, casos de uso y datos.
 2. **Módulo compartido**: crear `notaire-shared` para DTOs y contratos comunes.
 3. **Backend REST**: desarrollar `backend-api` con Spring Boot 4, JPA/Hibernate y PostgreSQL.
-4. **Frontend transicional**: refactorizar `frontend-swing` para consumir el nuevo backend REST.
-5. **Migración de datos**: implementar `init-db` con scripts de inicialización y migración.
-6. **Modernización del frontend**: preparar la transición hacia `frontend-nextjs` o una UI web moderna.
-7. **Deprecación**: eliminar el código legacy y estabilizar la arquitectura final.
+4. **Modernización del frontend**: desarrollar `frontend` con Next.js 15, TypeScript y Tailwind CSS.
+5. **Migración de datos**: implementar `init-db` con scripts de inicialización y Flyway para versionado.
+6. **Deprecación**: eliminar el código legacy y el frontend Swing transicional.
 
 ### Estado actual de la migración
 
 Actualmente el repositorio contiene:
 
 - `backend-api/`: API REST Spring Boot 4 con `api`, `service`, `repository`, `negocio`, `config` y soporte de Spring Data JPA.
-- `frontend-swing/`: aplicación Swing refactorizada que ahora usa `api/client` para consumir REST en lugar de acceder directamente a la BD.
+- `frontend/`: aplicación web moderna en Next.js 15 que consume la API REST.
 - `notaire-shared/`: módulo compartido con DTOs, excepciones y contratos comunes.
-- `init-db/`: scripts de PostgreSQL para esquema y datos semilla.
-- `docker-compose.yml`: orquesta `postgres`, backend y pgAdmin.
+- `init-db/`: scripts de PostgreSQL para esquema y datos semilla, gestionados por Flyway.
+- `docker-compose.yml`: orquesta `postgres`, backend, frontend y herramientas de soporte.
 
 > Ver diagrama de migración: `docs/02-architecture/02-overview/arquitectura-migracion.drawio` y `docs/02-architecture/02-overview/migration-flow.puml`
 

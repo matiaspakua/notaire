@@ -11,7 +11,8 @@ docker-workflow:latest
 sonar:latest
 htmlpublisher:latest
 junit:latest
-jacoco:latest
+coverage:latest
+job-dsl:latest
 timestamper:latest
 build-timeout:latest
 credentials-binding:latest

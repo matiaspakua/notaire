@@ -46,12 +46,12 @@ Los ADRs documentan las decisiones arquitectónicas importantes del proyecto. Ca
 │                                                             │
 │  ┌──────────────────┐         ┌──────────────────┐          │
 │  │   Frontend       │         │                  │          │
-│  │  (Swing GUI)     │────────>│  REST API        │          │
+│  │  (Next.js Web)   │────────>│  REST API        │          │
 │  │                  │  HTTP   │  (Spring Boot)   │          │
-│  │  - Presupuestos  │<────────│  - Controllers   │          │
-│  │  - Personas      │         │  - Services      │          │
+│  │  - Dashboard     │<────────│  - Controllers   │          │
+│  │  - Gestiones     │         │  - Services      │          │
 │  │  - Escrituras    │         │  - Repositories  │          │
-│  │  - Gestiones     │         │  - Entities      │          │
+│  │  - Presupuestos  │         │  - Entities      │          │
 │  └──────────────────┘         └────────┬─────────┘          │
 │                                        │                    │
 │                                        │ SQL                │
@@ -70,7 +70,7 @@ Los ADRs documentan las decisiones arquitectónicas importantes del proyecto. Ca
 │                                                             │
 ├─────────────────────────────────────────────────────────────┤
 │  Deployment:                                               │
-│  - Frontend: Standalone Java application                   │
+│  - Frontend: Docker container (Next.js)                    │
 │  - Backend: Docker container (Spring Boot)                 │
 │  - Database: Docker container (PostgreSQL)                 │
 └─────────────────────────────────────────────────────────────┘
@@ -118,26 +118,26 @@ com.licensis.notaire/
 
 ### Separation of Concerns
 
-**Frontend (GUI)**
-- Responsable: Interfaz de usuario, presentación
-- Prohibido: Lógica de negocio, acceso a BD
+**Frontend (Web)**
+- Responsable: Interfaz de usuario moderna, responsive
+- Prohibido: Lógica de negocio pesada, acceso directo a BD
 - Comunicación: Única vía REST API
 
 **Backend (API)**
-- Responsable: Lógica de negocio, persistencia, seguridad
-- Prohibido: Imports de Swing, código de GUI
+- Responsable: Lógica de negocio, persistencia, seguridad, reportes
+- Prohibido: Código de GUI o presentación web
 - Comunicación: REST + Base de datos
 
 **Database**
 - Responsable: Persistencia de datos
 - Acceso: Solo vía Backend (Hibernate/JPA)
-- Versioning: Liquibase para schema migrations
+- Versioning: Flyway para schema migrations
 
 ### Layered Architecture
 
 ```
 ┌──────────────────────┐
-│   Presentation       │  (Controllers, API endpoints)
+│   Presentation       │  (Next.js App, Controllers)
 ├──────────────────────┤
 │   Business Logic     │  (Services, domain rules)
 ├──────────────────────┤
@@ -151,18 +151,18 @@ com.licensis.notaire/
 
 | Aspecto | Objetivo | Implementación |
 |---------|----------|-----------------|
-| **Availability** | 99.5% uptime | Graceful shutdown, health checks |
-| **Performance** | <500ms avg response | Database indexing, caching |
-| **Scalability** | Horizontal scaling | Stateless backend, connection pooling |
+| **Availability** | 99.5% uptime | Docker orchestration, health checks |
+| **Performance** | <500ms avg response | Database indexing, efficient queries |
+| **Scalability** | Horizontal scaling | Stateless backend, containerization |
 | **Security** | Authentication + Authorization | JWT, RBAC, audit logging |
 | **Maintainability** | <6 month time-to-market | Clean code, comprehensive tests |
-| **Observability** | Full system visibility | Structured logging, metrics, tracing |
+| **Observability** | Full system visibility | Loki, Prometheus, Grafana |
 
 ## Technology Stack
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| **Frontend** | Java Swing | 21 LTS |
+| **Frontend** | Next.js (React) | 15.x |
 | **Backend** | Spring Boot | 4.0.4 |
 | **Runtime** | Java | 21 LTS |
 | **Database** | PostgreSQL | 16.x |
@@ -170,13 +170,14 @@ com.licensis.notaire/
 | **Container** | Docker | 24.x |
 | **ORM** | Hibernate | 6.x |
 | **API Docs** | OpenAPI 3.0 | Latest |
+| **Monitoring** | Loki, Prometheus, Grafana | Latest |
 
 ## Communication Patterns
 
 ### Request/Response Flow
 
 ```
-Frontend (Swing)
+Frontend (Next.js)
     │
     │ HTTP Request (JSON payload)
     ↓
@@ -205,7 +206,7 @@ REST Controller
     │
     │ HTTP Response (JSON)
     ↓
-Frontend (Swing)
+Frontend (Next.js)
 ```
 
 ## Related Documentation
