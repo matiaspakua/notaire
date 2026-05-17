@@ -1,0 +1,31 @@
+meta {
+  name: Create Testimonio
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/testimonio
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  numero: 1001
+  fecha: "2025-01-15"
+  estado: "pendiente"
+}
+
+tests {
+  test("Status 201 or 200", function () {
+    expect([200, 201]).to.include(res.getStatus());});
+}
+docs {
+  ## Create Testimonio
+  Crea un nuevo testimonio en el sistema.
+  **Method:** POST
+  **Path:** /api/v1/testimonio
+}

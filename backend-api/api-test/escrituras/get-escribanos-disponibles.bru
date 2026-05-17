@@ -1,0 +1,30 @@
+meta {
+  name: Get Escribanos Disponibles
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/escrituras/escribanos-disponibles
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);});
+ 
+  test("Response is array", function () {
+  const body = res.getBody();
+  expect(body).to.be.an('array');
+  });
+}
+docs {
+  ## Get Escribanos Disponibles
+  Obtiene lista de escribanos disponibles (con registro).
+  **Method:** GET
+  **Path:** /api/v1/escrituras/escribanos-disponibles
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Update Persona
+  type: http
+}
+
+put {
+  url: {{base_url}}/api/v1/personas/{{persona_id}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "Juan Actualizado"
+  apellido: "Perez Actualizado"
+  numeroIdentificacion: "87654321"
+  esCliente: true
+  esActivo: true
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);});
+}
+docs {
+  ## Update Persona
+  Actualiza una persona existente en el sistema.
+  **Method:** PUT
+  **Path:** /api/v1/personas/{id}
+}

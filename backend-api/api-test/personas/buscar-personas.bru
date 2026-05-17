@@ -1,0 +1,35 @@
+meta {
+  name: Buscar Personas
+  type: http
+}
+
+get {
+  url: {{base_url}}/api/v1/personas/buscar
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Status 200", function () {
+    expect(res.getStatus()).to.equal(200);});
+ 
+  test("Response is array", function () {
+  const body = res.getBody();
+  expect(body).to.be.an('array');
+  });
+}
+docs {
+  ## Buscar Personas
+  Busca personas por nombre, apellido, numero de identificación o tipo (CU61).
+  **Method:** GET
+  **Path:** /api/v1/personas/buscar
+  **Query Parameters:**
+  - nombre: Nombre de la persona (optional)
+  - apellido: Apellido de la persona (optional)
+  - numeroIdentificacion: Número de identificación (optional)
+  - esCliente: Filtrar por clientes (optional)
+}

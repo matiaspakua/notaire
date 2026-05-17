@@ -1,0 +1,31 @@
+meta {
+  name: Create Item
+  type: http
+}
+
+post {
+  url: {{base_url}}/api/v1/items
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  nombre: "Item de prueba"
+  valor: 1000.00
+  porcentaje: 0
+}
+
+tests {
+  test("Status 201 or 200", function () {
+    expect([200, 201]).to.include(res.getStatus());});
+}
+docs {
+  ## Create Item
+  Crea un nuevo item en el sistema.
+  **Method:** POST
+  **Path:** /api/v1/items
+}

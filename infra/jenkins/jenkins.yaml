@@ -100,6 +100,9 @@ credentials:
               password: "admin"
               description: "Notaire database credentials"
 
+jobs:
+  - file: /usr/share/jenkins/ref/jobs/notaire-ci-pipeline.groovy
+
 unclassified:
   location:
     url: "http://localhost:8082/"

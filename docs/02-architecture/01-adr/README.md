@@ -16,6 +16,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [008](ADR-008-security-authentication.md) | Security & Authentication | Accepted | 2024-04-28 | Security |
 | [009](ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | 2024-04-28 | Observability |
 | [010](ADR-010-error-handling.md) | Error Handling | Accepted | 2024-04-28 | Resilience |
+| [011](ADR-011-centralized-design-system.md) | Centralized Design System | Accepted | 2026-05-12 | UI/UX |
 
 ## ADR Status Legend
 

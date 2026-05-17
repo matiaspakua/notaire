@@ -32,15 +32,18 @@ Migrar a una arquitectura de tres capas con separación clara:
    - Gestiona persistencia de datos
    - Implementa auditoría y seguridad
 
-2. **Frontend Swing Cliente** (Java Swing moderno)
-   - Sólo interfaz de usuario (presentación)
-   - Comunica exclusivamente vía REST
-   - Sin lógica de negocio
-   - Sin acceso directo a BD
+2. **Frontend Web (Next.js)** (TECNOLOGÍA TARGET - ver ADR-005)
+   - Interfaz de usuario moderna basada en web
+   - Reemplaza gradualmente al cliente Swing
+   - Utiliza sistema de diseño centralizado (ver ADR-011)
 
-3. **Módulo Compartido** (DTOs y código común)
-   - Deficiones comunes entre backend y frontend
-   - Evita duplicación de código
+3. **Frontend Swing Cliente** (Mantenimiento / Transición)
+   - Refactorizado para consumir API REST
+   - Siendo deprecado en favor de la versión web
+   - Sin lógica de negocio ni acceso directo a BD
+
+4. **Módulo Compartido** (DTOs y código común)
+   - Definiciones comunes entre backend y frontend (Swing/Java)
    - Facilita versionado de contratos
 
 **Tecnologías elegidas:**
