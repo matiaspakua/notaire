@@ -128,74 +128,105 @@ El sistema original era un **monolito Java 1.6 con Swing** que había servido fi
 
 ### Diagrama de Alto Nivel
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                                                              │
-│   ┌──────────────┐        ┌──────────────────────────────────────────────┐  │
-│   │   USUARIO    │        │              CLIENTES                        │  │
-│   │  (Frontend)  │        │                                              │  │
-│   └──────┬───────┘        │  ┌─────────────────┐  ┌───────────────────┐  │  │
-│          │                │  │   Next.js 16     │  │  Swing (Legacy)   │  │  │
-│          │                │  │   React 19       │  │  REST Client      │  │  │
-│          │                │  │   Tailwind CSS 4 │  │   (Transicional)  │  │  │
-│          │                │  └────────┬─────────┘  └────────┬──────────┘  │  │
-│          ▼                └───────────┼──────────────────────┼─────────────┘  │
-│   ┌──────────────┐                    │                      │                │
-│   │   Navegador  │                    │      Proxy Rewrite   │                │
-│   │   :3000      │                    └──────────┬───────────┘                │
-│   └──────┬───────┘                               │                            │
-│          │                                       │                            │
-│          │         ${BACKEND_URL}/api/v1/:path*   │                            │
-│          └─────────────────────┬──────────────────┘                            │
-│                                │                                               │
-│                                ▼                                               │
-│   ┌────────────────────────────────────────────────────────────────────────┐  │
-│   │                   BACKEND API — Spring Boot 4.0.6                      │  │
-│   │                   Java 21 + HikariCP + Flyway                          │  │
-│   │                   :8080                                                │  │
-│   ├────────────────────────────────────────────────────────────────────────┤  │
-│   │                                                                        │  │
-│   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │  │
-│   │  │  API Layer   │  │   Services   │  │ Repositories │  │  JPA      │ │  │
-│   │  │  26 REST     │  │   Business   │  │  27 Spring   │  │  Entities │ │  │
-│   │  │  Controllers │──▶│   Logic     │──▶│   Data JPA   │──▶│  30 JPA   │ │  │
-│   │  │  /api/v1/*   │  │  5 Services  │  │  Interfaces  │  │  Entidades│ │  │
-│   │  └──────────────┘  └──────────────┘  └──────────────┘  └───────────┘ │  │
-│   │                                                                        │  │
-│   │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────────┐  │  │
-│   │  │   Security   │  │ Observability │  │   Exception Handling         │  │  │
-│   │  │  BCrypt +    │  │  Micrometer   │  │   Global @ControllerAdvice   │  │  │
-│   │  │  CORS + Auth │  │  Prometheus   │  │   + Custom Exceptions        │  │  │
-│   │  └──────────────┘  └──────────────┘  └──────────────────────────────┘  │  │
-│   │                                                                        │  │
-│   │  ┌──────────────────────────────────────────────────────────────────┐  │  │
-│   │  │   Legacy Bridge: 26 JpaControllers (migración progresiva)       │  │  │
-│   │  │   AuditoriaAspect (AOP) — auditoría transversal                 │  │  │
-│   │  │   Flyway Migrations — V1 (schema) + V2 (data)                   │  │  │
-│   │  └──────────────────────────────────────────────────────────────────┘  │  │
-│   └───────────────────────────┬────────────────────────────────────────────┘  │
-│                               │                                               │
-│                               ▼                                               │
-│   ┌────────────────────────────────────────────────────────────────────────┐  │
-│   │                   POSTGRESQL 16                                       │  │
-│   │                   HikariCP Pool (min:5, max:20)                       │  │
-│   │                   Flyway migrations + init-db scripts                 │  │
-│   └────────────────────────────────────────────────────────────────────────┘  │
-│                                                                              │
-│   ┌────────────────────────────────────────────────────────────────────────┐  │
-│   │                   INFRAESTRUCTURA                                      │  │
-│   │   ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐            │  │
-│   │   │ Docker    │ │ GitHub    │ │ Jenkins   │ │ pgAdmin   │            │  │
-│   │   │ Compose   │ │ Actions   │ │ Pipeline  │ │ :5050     │            │  │
-│   │   └───────────┘ └───────────┘ └───────────┘ └───────────┘            │  │
-│   │                                                                        │  │
-│   │   ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────────────┐    │  │
-│   │   │ Trivy    │ │ Prometheus │ │ Loki /    │ │ Playwright E2E   │    │  │
-│   │   │ Security │ │ Metrics    │ │ Grafana   │ │ Tests             │    │  │
-│   │   └───────────┘ └───────────┘ └───────────┘ └───────────────────┘    │  │
-│   └────────────────────────────────────────────────────────────────────────┘  │
-│                                                                              │
-└──────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  %% ── STYLE DEFINITIONS ──
+  classDef client fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b
+  classDef backend fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100
+  classDef data fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+  classDef infra fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+  classDef security fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+  classDef observ fill:#e8eaf6,stroke:#3949ab,stroke-width:2px,color:#1a237e
+
+  %% ── USER / CLIENTS ──
+  subgraph CLIENTES ["📱 Clientes"]
+    direction LR
+    NEXT["Next.js 16<br/>React 19 · Tailwind CSS 4<br/>TypeScript 5.7"]:::client
+    SWING["Swing (Legacy)<br/>REST Client<br/>Transicional"]:::client
+  end
+
+  BROWSER["🌐 Navegador / Usuario<br/>:3000"]:::client
+
+  %% ── BACKEND ──
+  subgraph BACKEND ["⚙️ Backend API — Spring Boot 4.0.6 · Java 21 · :8080"]
+    direction TB
+
+    subgraph API ["API Layer"]
+      CTRL["26 REST Controllers<br/>/api/v1/*"]:::backend
+    end
+
+    subgraph SERVICE ["Business Logic"]
+      SVC["5 Services<br/>Escritura · Persona · Pago<br/>Presupuesto · Auditoría"]:::backend
+    end
+
+    subgraph REPO ["Data Access"]
+      REPOS["27 Spring Data JPA<br/>Repositories"]:::backend
+      JPACTL["26 Legacy JpaControllers<br/>(Puente de migración)"]:::backend
+    end
+
+    subgraph ENT ["Domain Model"]
+      ENTITIES["30 JPA Entities<br/>Negocio package"]:::backend
+    end
+
+    subgraph CROSS ["🔄 Cross-Cutting"]
+      SEC["Security<br/>BCrypt · CORS · Auth"]:::backend
+      OBS["Observability<br/>Micrometer · Prometheus<br/>Tracing · Structured Logging"]:::observ
+      EXC["Exception Handling<br/>@ControllerAdvice<br/>ErrorResponse"]:::security
+      AUDIT["Auditoría AOP<br/>AuditoriaAspect<br/>(AspectJ)"]:::backend
+      FLYWAY["Flyway Migrations<br/>V1 · V2"]:::backend
+      JASPER["JasperReports<br/>PDF Generation"]:::backend
+    end
+  end
+
+  %% ── DATABASE ──
+  subgraph DB ["🗄️ Base de Datos"]
+    PG["PostgreSQL 16<br/>HikariCP Pool (min:5, max:20)<br/>init-db + Flyway"]:::data
+  end
+
+  %% ── INFRASTRUCTURE ──
+  subgraph INFRA ["☁️ Infraestructura"]
+    DOCKER["Docker Compose<br/>Multi-stage builds"]:::infra
+    GHACT["GitHub Actions<br/>9 workflows"]:::infra
+    JENKINS["Jenkins Pipeline"]:::infra
+    PGADMIN["pgAdmin 4<br/>:5050"]:::infra
+    TRIVY["Trivy Security<br/>Vulnerability Scanner"]:::infra
+    PROM["Prometheus<br/>Metrics"]:::infra
+    GRAFANA["Loki / Grafana<br/>Logs & Dashboards"]:::infra
+    PLAYWRIGHT["Playwright E2E<br/>Multi-browser Tests"]:::infra
+    BRUNO["Bruno API Tests<br/>Colecciones HTTP"]:::infra
+  end
+
+  %% ── EDGES ──
+  BROWSER -->|"HTTP :3000"| NEXT
+  BROWSER -.->|"Legacy Access"| SWING
+  NEXT -->|"Proxy Rewrite<br/>${BACKEND_URL}/api/v1/*"| CTRL
+  SWING -.->|"REST Calls"| CTRL
+  CTRL --> SVC
+  SVC --> REPOS
+  SVC -.->|"Legacy Bridge"| JPACTL
+  REPOS --> ENTITIES
+  JPACTL --> ENTITIES
+  ENTITIES --> PG
+
+  %% Cross-cutting connections
+  SEC -.-> CTRL
+  OBS -.-> CTRL
+  OBS -.-> SVC
+  EXC -.-> CTRL
+  AUDIT -.-> SVC
+
+  %% Infra connections
+  DOCKER --> PG
+  DOCKER --> CTRL
+  DOCKER --> NEXT
+  GHACT -.->|"CI/CD Orchestration"| DOCKER
+  JENKINS -.->|"Alternative Pipeline"| DOCKER
+  PGADMIN --> PG
+  TRIVY -.-> DOCKER
+  PROM -.->|"Scrape :8080/metrics"| OBS
+  GRAFANA -.-> PROM
+  PLAYWRIGHT -.->|"E2E against :3000"| NEXT
+  BRUNO -.->|"HTTP against :8080"| CTRL
 ```
 
 ### Estructura del Repositorio
