@@ -100,6 +100,7 @@ jobs:
           name: frontend-build
           path: frontend/.next/
           retention-days: 1
+          include-hidden-files: true
 
   # ──────────────────────────────────────────────
   # JOB 3: E2E Tests (requires DB + backend + frontend)
