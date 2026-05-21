@@ -49,6 +49,10 @@
   "dashboard": {
     "title": "Panel de Control",
     "welcome": "Bienvenido",
+    "hello": "Hola",
+    "today": "Resumen de actividad para hoy",
+    "availableModules": "Módulos disponibles",
+    "viewAll": "Ver todos los servicios",
     "gestiones": {
       "label": "Gestiones",
       "description": "Gestionar trámites y escrituras"

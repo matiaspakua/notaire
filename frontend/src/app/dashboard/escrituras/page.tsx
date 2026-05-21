@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -22,6 +23,9 @@ import type { Escritura } from "@/types";
 const EMPTY: Partial<Escritura> = { numero: undefined, fecha: "" };
 
 export default function EscriturasPage() {
+  const t = useTranslations("escrituras");
+  const tc = useTranslations("common");
+
   const { data: escrituras = [], isLoading } = useEscrituras();
   const createMutation = useCreateEscritura();
   const updateMutation = useUpdateEscritura();
@@ -39,29 +43,29 @@ export default function EscriturasPage() {
     try {
       if (isEditMode && editing.idEscritura) {
         await updateMutation.mutateAsync({ id: editing.idEscritura, data: editing });
-        toast.success("Escritura actualizada");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Escritura creada");
+        toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error("Error al guardar"); }
+    } catch { toast.error(t("errorSave")); }
   }
 
   async function handleDelete() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Escritura eliminada");
-    } catch { toast.error("Error al eliminar"); }
+      toast.success(t("deleted"));
+    } catch { toast.error(t("errorDelete")); }
     finally { setDeleteId(null); }
   }
 
   const columns: Column<Escritura>[] = [
-    { key: "id", header: "ID", render: (e) => <span className="text-xs text-muted-foreground">{e.idEscritura}</span>, className: "w-12" },
-    { key: "numero", header: "Número", render: (e) => <span className="font-medium">{e.numero ?? "—"}</span> },
-    { key: "fecha", header: "Fecha", render: (e) => formatDate(e.fecha) },
-    { key: "folio", header: "Folio", render: (e) => e.folio?.numero ?? "—" },
+    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEscritura}</span>, className: "w-12" },
+    { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.numero ?? "—"}</span> },
+    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fecha) },
+    { key: "folio", header: t("fields.folio"), render: (e) => e.folio?.numero ?? "—" },
     {
       key: "actions", header: "", className: "w-24",
       render: (e) => (
@@ -76,26 +80,25 @@ export default function EscriturasPage() {
   return (
     <div>
       <AppHeader
-        title="Escrituras"
-        description="Protocolo de escrituras notariales"
-        actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />Nueva escritura</Button>}
+        title={t("title")}
+        actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
       />
-      <DataTable data={escrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage="No hay escrituras" />
+      <DataTable data={escrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar escritura" : "Nueva escritura"}>
-              <FormField label="Número" required>
+            <FormSection title={isEditMode ? t("editEscritura") : t("newEscritura")}>
+              <FormField label={t("fields.numero")} required>
                 <Input type="number" value={editing.numero ?? ""} onChange={(e) => setEditing({ ...editing, numero: Number(e.target.value) })} />
               </FormField>
-              <FormField label="Fecha" required>
+              <FormField label={tc("date")} required>
                 <Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} />
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{isEditMode ? "Actualizar" : "Crear"}</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{isEditMode ? tc("update") : tc("create")}</Button>
             </FormActions>
           </FormContainer>
         </DialogContent>

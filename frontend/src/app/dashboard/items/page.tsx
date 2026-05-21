@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -27,6 +28,9 @@ import { useConceptos } from "@/hooks/useConceptos";
 import type { Item, Concepto } from "@/types";
 
 export default function ItemsPage() {
+  const t = useTranslations("items");
+  const tc = useTranslations("common");
+
   const { data: items = [], isLoading } = useItems();
   const { data: conceptos = [] } = useConceptos();
   const createMutation = useCreateItem();
@@ -36,11 +40,7 @@ export default function ItemsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Item | null>(null);
-  const [form, setForm] = useState({
-    conceptoId: "",
-    cantidad: "",
-    precio: "",
-  });
+  const [form, setForm] = useState({ conceptoId: "", cantidad: "", precio: "" });
 
   function openCreate() {
     setEditing(null);
@@ -67,14 +67,14 @@ export default function ItemsPage() {
     try {
       if (editing?.idItem) {
         await updateMutation.mutateAsync({ id: editing.idItem, data });
-        toast.success("Item actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(data);
-        toast.success("Item creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el item");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -82,9 +82,9 @@ export default function ItemsPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Item eliminado");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar el item");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -93,24 +93,24 @@ export default function ItemsPage() {
   const columns: Column<Item>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (i) => <span className="text-muted-foreground text-xs">{i.idItem}</span>,
       className: "w-16",
     },
     {
       key: "concepto",
-      header: "Concepto",
+      header: t("fields.concepto"),
       render: (i) => <span className="font-medium">{i.concepto?.nombre ?? "—"}</span>,
     },
     {
       key: "cantidad",
-      header: "Cantidad",
+      header: t("fields.cantidad"),
       render: (i) => i.cantidad ?? "—",
       className: "w-24",
     },
     {
       key: "precio",
-      header: "Precio",
+      header: t("fields.precio"),
       render: (i) => i.precio ? `$${i.precio.toLocaleString("es-AR")}` : "—",
       className: "w-32",
     },
@@ -128,7 +128,7 @@ export default function ItemsPage() {
       header: "",
       render: (i) => (
         <div className="flex gap-1 justify-end">
-          <Button size="icon" variant="ghost" onClick={() => openEdit(i)} aria-label="Editar">
+          <Button size="icon" variant="ghost" onClick={() => openEdit(i)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -136,7 +136,7 @@ export default function ItemsPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(i.idItem!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -149,12 +149,11 @@ export default function ItemsPage() {
   return (
     <div>
       <AppHeader
-        title="Items"
-        description="Gestión de ítems de presupuestos"
+        title={t("title")}
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />
-            Nuevo item
+            {t("newItem")}
           </Button>
         }
       />
@@ -164,14 +163,14 @@ export default function ItemsPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(i) => i.idItem!}
-        emptyMessage="No hay items registrados"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? "Editar item" : "Nuevo item"}>
-              <FormField label="Concepto">
+            <FormSection title={editing ? t("editItem") : t("newItem")}>
+              <FormField label={t("fields.concepto")}>
                 <Select value={form.conceptoId} onValueChange={(v) => setForm({ ...form, conceptoId: v })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar concepto" />
@@ -186,7 +185,7 @@ export default function ItemsPage() {
                 </Select>
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Cantidad">
+                <FormField label={t("fields.cantidad")}>
                   <Input
                     type="number"
                     value={form.cantidad}
@@ -194,7 +193,7 @@ export default function ItemsPage() {
                     placeholder="1"
                   />
                 </FormField>
-                <FormField label="Precio ($)">
+                <FormField label={`${t("fields.precio")} ($)`}>
                   <Input
                     type="number"
                     value={form.precio}
@@ -206,10 +205,10 @@ export default function ItemsPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {editing ? "Actualizar" : "Crear"}
+                {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

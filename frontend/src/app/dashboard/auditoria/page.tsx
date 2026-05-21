@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Shield, Search, Filter } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,9 @@ import { theme } from "@/theme/tokens";
 import type { RegistroAuditoria } from "@/types";
 
 export default function AuditoriaPage() {
+  const t = useTranslations("auditoria");
+  const tc = useTranslations("common");
+
   const { data: registros = [], isLoading } = useAuditoria();
   const [search, setSearch] = useState("");
   const [moduloFilter, setModuloFilter] = useState<string>("all");
@@ -29,13 +33,13 @@ export default function AuditoriaPage() {
   const columns: Column<RegistroAuditoria>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (r) => <span className="text-muted-foreground text-xs">{r.idRegistroAuditoria}</span>,
       className: "w-16",
     },
     {
       key: "fecha",
-      header: "Fecha",
+      header: t("fields.fecha"),
       render: (r) => (
         <span className="text-sm">
           {r.fecha ? new Date(r.fecha).toLocaleString("es-AR") : "—"}
@@ -45,12 +49,12 @@ export default function AuditoriaPage() {
     },
     {
       key: "usuario",
-      header: "Usuario",
+      header: t("fields.usuario"),
       render: (r) => <span className="font-medium">{r.usuarios?.nombre ?? "—"}</span>,
     },
     {
       key: "modulo",
-      header: "Módulo",
+      header: t("fields.modulo"),
       render: (r) =>
         r.modulo ? (
           <Badge variant="secondary" className="text-xs font-medium">
@@ -63,7 +67,7 @@ export default function AuditoriaPage() {
     },
     {
       key: "detalle",
-      header: "Operación",
+      header: t("fields.operacion"),
       render: (r) => (
         <span className="text-sm text-muted-foreground max-w-md truncate block" title={r.detalleOperacion}>
           {r.detalleOperacion ?? "—"}
@@ -75,11 +79,10 @@ export default function AuditoriaPage() {
   return (
     <div>
       <AppHeader
-        title="Auditoría"
-        description="Registro de actividades del sistema"
+        title={t("title")}
+        description={t("description")}
       />
 
-      {/* Filters */}
       <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[3], marginBottom: theme.spacing[4] }}>
         <div style={{ position: "relative", flex: 1, maxWidth: "360px" }}>
           <Search
@@ -96,7 +99,7 @@ export default function AuditoriaPage() {
           />
           <Input
             style={{ paddingLeft: "2.5rem" }}
-            placeholder="Buscar por usuario u operación..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -136,10 +139,9 @@ export default function AuditoriaPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(r) => r.idRegistroAuditoria!}
-        emptyMessage="No hay registros de auditoría"
+        emptyMessage={t("noData")}
       />
 
-      {/* Info card */}
       <div
         style={{
           marginTop: theme.spacing[6],
@@ -176,7 +178,7 @@ export default function AuditoriaPage() {
                 marginBottom: theme.spacing[1],
               }}
             >
-              Registro de Auditoría
+              {t("title")}
             </h3>
             <p
               style={{
@@ -187,8 +189,7 @@ export default function AuditoriaPage() {
                 lineHeight: theme.typography.lineHeight.relaxed,
               }}
             >
-              Este módulo muestra todas las operaciones realizadas en el sistema. Los registros son
-              de solo lectura y se generan automáticamente al crear, modificar o eliminar datos.
+              {t("description")}
             </p>
           </div>
         </div>

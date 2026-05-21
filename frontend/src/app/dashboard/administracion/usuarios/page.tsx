@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -24,6 +25,9 @@ import type { Usuario } from "@/types";
 const EMPTY: Partial<Usuario> = { nombre: "", contrasenia: "", tipo: "EMPLEADO", activo: true };
 
 export default function UsuariosPage() {
+  const t = useTranslations("administracion.usuarios");
+  const tc = useTranslations("common");
+
   const { data: usuarios = [], isLoading } = useUsuarios();
   const createMutation = useCreateUsuario();
   const updateMutation = useUpdateUsuario();
@@ -38,39 +42,39 @@ export default function UsuariosPage() {
   function openEdit(u: Usuario) { setEditing({ ...u, contrasenia: "" }); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!editing.nombre?.trim()) { toast.error(t("fields.nombre") + " " + tc("required")); return; }
     try {
       if (isEditMode && editing.idUsuario) {
         await updateMutation.mutateAsync({ id: editing.idUsuario, data: editing });
-        toast.success("Usuario actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Usuario creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error("Error al guardar el usuario"); }
+    } catch { toast.error(t("errorSave")); }
   }
 
   async function handleDelete() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Usuario eliminado");
-    } catch { toast.error("Error al eliminar"); }
+      toast.success(t("deleted"));
+    } catch { toast.error(t("errorDelete")); }
     finally { setDeleteId(null); }
   }
 
   const tipoVariant = (tipo?: string) => {
-    const t = tipo?.toUpperCase();
-    if (t === "ADMIN" || t === "ADMINISTRADOR" || t === "ESCRIBANO") return "default" as const;
+    const role = tipo?.toUpperCase();
+    if (role === "ADMIN" || role === "ADMINISTRADOR" || role === "ESCRIBANO") return "default" as const;
     return "secondary" as const;
   };
 
   const columns: Column<Usuario>[] = [
-    { key: "id", header: "ID", render: (u) => <span className="text-xs text-muted-foreground">{u.idUsuario}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre de usuario", render: (u) => <span className="font-medium">{u.nombre}</span> },
-    { key: "tipo", header: "Rol", render: (u) => <Badge variant={tipoVariant(u.tipo)}>{u.tipo ?? "—"}</Badge> },
-    { key: "activo", header: "Estado", render: (u) => u.activo ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
+    { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUsuario}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.nombre}</span> },
+    { key: "tipo", header: t("fields.tipo"), render: (u) => <Badge variant={tipoVariant(u.tipo)}>{u.tipo ?? "—"}</Badge> },
+    { key: "activo", header: tc("status"), render: (u) => u.activo ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (u) => (
@@ -85,17 +89,16 @@ export default function UsuariosPage() {
   return (
     <div>
       <AppHeader
-        title="Usuarios"
-        description="Gestión de usuarios y roles del sistema"
-        actions={<Button onClick={openCreate} data-testid="btn-nuevo-usuario"><Plus className="h-4 w-4" />Nuevo usuario</Button>}
+        title={t("title")}
+        actions={<Button onClick={openCreate} data-testid="btn-nuevo-usuario"><Plus className="h-4 w-4" />{t("newUsuario")}</Button>}
       />
-      <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUsuario!} emptyMessage="No hay usuarios" />
+      <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUsuario!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar usuario" : "Nuevo usuario"}>
-              <FormField label="Nombre de usuario" required>
+            <FormSection title={isEditMode ? t("editUsuario") : t("newUsuario")}>
+              <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.nombre ?? ""}
                   onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
@@ -103,9 +106,9 @@ export default function UsuariosPage() {
                 />
               </FormField>
               <FormField
-                label={isEditMode ? "Nueva contraseña" : "Contraseña"}
+                label={isEditMode ? "Nueva contraseña" : t("fields.contrasenia")}
                 required={!isEditMode}
-                helperText={isEditMode ? "Dejar vacío para no cambiar" : undefined}
+                helperText={isEditMode ? t("fields.contraseniaHint") : undefined}
               >
                 <Input
                   type="password"
@@ -113,7 +116,7 @@ export default function UsuariosPage() {
                   onChange={(e) => setEditing({ ...editing, contrasenia: e.target.value })}
                 />
               </FormField>
-              <FormField label="Tipo / Rol">
+              <FormField label={t("fields.tipo")}>
                 <Select
                   value={editing.tipo ?? "EMPLEADO"}
                   onValueChange={(v) => setEditing({ ...editing, tipo: v })}
@@ -122,17 +125,17 @@ export default function UsuariosPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="EMPLEADO">EMPLEADO</SelectItem>
-                    <SelectItem value="ADMIN">ADMIN</SelectItem>
-                    <SelectItem value="ESCRIBANO">ESCRIBANO</SelectItem>
+                    <SelectItem value="EMPLEADO">{t("roles.empleado")}</SelectItem>
+                    <SelectItem value="ADMIN">{t("roles.admin")}</SelectItem>
+                    <SelectItem value="ESCRIBANO">{t("roles.escribano")}</SelectItem>
                   </SelectContent>
                 </Select>
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

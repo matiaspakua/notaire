@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -14,6 +15,9 @@ import { apiGet, apiPost } from "@/lib/api-client";
 import type { Folio } from "@/types";
 
 export default function FoliosAdminPage() {
+  const t = useTranslations("administracion.folios");
+  const tc = useTranslations("common");
+
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folios"),
@@ -32,74 +36,73 @@ export default function FoliosAdminPage() {
 
   async function handleSave() {
     if (!numero.trim()) {
-      toast.error("El número es requerido");
+      toast.error(t("numberRequired"));
       return;
     }
     setSaving(true);
     try {
       await apiPost("/folios", { numero: Number(numero), anio: Number(anio), disponible: true });
-      toast.success("Folio creado");
+      toast.success(t("created"));
       setModalOpen(false);
       refetch();
     } catch {
-      toast.error("Error al crear el folio");
+      toast.error(t("errorCreate"));
     } finally {
       setSaving(false);
     }
   }
 
   const columns: Column<Folio>[] = [
-    { key: "id", header: "ID", render: (f) => f.idFolio, className: "w-12" },
-    { key: "numero", header: "Número", render: (f) => <span className="font-medium">{f.numero}</span> },
-    { key: "tipo", header: "Tipo", render: (f) => f.tipoDeFolio?.nombre ?? "—" },
-    { key: "estado", header: "Estado", render: (f) => f.disponible ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge> },
+    { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
+    { key: "numero", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.numero}</span> },
+    { key: "tipo", header: t("fields.tipo"), render: (f) => f.tipoDeFolio?.nombre ?? "—" },
+    { key: "estado", header: t("fields.estado"), render: (f) => f.disponible ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge> },
   ];
 
   return (
     <div>
       <AppHeader
-        title="Folios"
-        description="Gestión de folios notariales y su disponibilidad"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-folio">
-            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
-            Nuevo Folio
+            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newFolio")}
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(f) => f.idFolio!} emptyMessage="No hay folios" />
+      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(f) => f.idFolio!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title="Nuevo Folio">
-              <FormField label="Número" required>
+            <FormSection title={t("newFolio")}>
+              <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
                   placeholder="Ej: 1001"
-                  aria-label="Número"
+                  data-testid="input-numero-folio"
                 />
               </FormField>
-              <FormField label="Año" required>
+              <FormField label={t("fields.year")} required>
                 <Input
                   type="number"
                   value={anio}
                   onChange={(e) => setAnio(e.target.value)}
                   placeholder={new Date().getFullYear().toString()}
-                  aria-label="Año"
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                Guardar
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {tc("save")}
               </Button>
             </FormActions>
           </FormContainer>

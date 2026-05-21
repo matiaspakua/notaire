@@ -49,6 +49,10 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome",
+    "hello": "Hello",
+    "today": "Today's activity summary",
+    "availableModules": "Available modules",
+    "viewAll": "View all services",
     "gestiones": {
       "label": "Cases",
       "description": "Manage cases and deeds"

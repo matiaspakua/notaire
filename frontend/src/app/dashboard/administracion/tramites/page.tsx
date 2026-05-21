@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -15,6 +16,9 @@ import type { TipoDeTramite } from "@/types";
 const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
 
 export default function TramitesPage() {
+  const t = useTranslations("administracion.tramites");
+  const tc = useTranslations("common");
+
   const { data = [], isLoading } = useTiposTramite();
   const createMutation = useCreateTipoTramite();
   const updateMutation = useUpdateTipoTramite();
@@ -25,34 +29,22 @@ export default function TramitesPage() {
   const [editing, setEditing] = useState<Partial<TipoDeTramite>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  function openCreate() {
-    setEditing(EMPTY);
-    setIsEditMode(false);
-    setModalOpen(true);
-  }
-
-  function openEdit(t: TipoDeTramite) {
-    setEditing(t);
-    setIsEditMode(true);
-    setModalOpen(true);
-  }
+  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
+  function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) {
-      toast.error("El nombre es requerido");
-      return;
-    }
+    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
     try {
       if (isEditMode && editing.idTipoDeTramite) {
         await updateMutation.mutateAsync({ id: editing.idTipoDeTramite, data: editing });
-        toast.success("Tipo de trámite actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Tipo de trámite creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el tipo de trámite");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -60,27 +52,27 @@ export default function TramitesPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Tipo de trámite eliminado");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
   }
 
   const columns: Column<TipoDeTramite>[] = [
-    { key: "id", header: "ID", render: (t) => <span className="text-xs text-muted-foreground">{t.idTipoDeTramite}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (t) => <span className="font-medium">{t.nombre}</span> },
-    { key: "desc", header: "Descripción", render: (t) => t.descripcion ?? "—" },
+    { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idTipoDeTramite}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.nombre}</span> },
+    { key: "desc", header: t("fields.descripcion"), render: (item) => item.descripcion ?? "—" },
     {
       key: "actions", header: "", className: "w-24",
-      render: (t) => (
+      render: (item) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(t)}>
-            <NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} />
+          <Button size="sm" variant="ghost" onClick={() => openEdit(item)}>
+            <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(t.idTipoDeTramite!)}>
-            <NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} />
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(item.idTipoDeTramite!)}>
+            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
       ),
@@ -90,12 +82,12 @@ export default function TramitesPage() {
   return (
     <div>
       <AppHeader
-        title="Tipos de Trámite"
-        description="Catálogo de tipos de trámite disponibles para gestiones notariales"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-tipo-tramite">
-            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
-            Nuevo Tipo
+            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newTramite")}
           </Button>
         }
       />
@@ -103,27 +95,27 @@ export default function TramitesPage() {
         data={data}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(t) => t.idTipoDeTramite!}
-        emptyMessage="No hay tipos de trámite registrados"
+        keyExtractor={(item) => item.idTipoDeTramite!}
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar tipo de trámite" : "Nuevo tipo de trámite"}>
-              <FormField label="Nombre" required>
+            <FormSection title={isEditMode ? t("editTramite") : t("newTramite")}>
+              <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.nombre ?? ""}
                   onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
-                  placeholder="Ej: Compraventa"
+                  placeholder={t("fields.namePlaceholder")}
                   data-testid="input-nombre-tramite"
                 />
               </FormField>
-              <FormField label="Descripción">
+              <FormField label={t("fields.descripcion")}>
                 <Input
                   value={editing.descripcion ?? ""}
                   onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
-                  placeholder="Descripción del tipo de trámite"
+                  placeholder={t("fields.descripcionPlaceholder")}
                 />
               </FormField>
               <CheckboxField
@@ -139,12 +131,12 @@ export default function TramitesPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                {isEditMode ? "Actualizar" : "Guardar"}
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
           </FormContainer>
