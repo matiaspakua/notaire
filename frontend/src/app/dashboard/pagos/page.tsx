@@ -77,7 +77,7 @@ export default function PagosPage() {
     <div>
       <AppHeader
         title={t("title")}
-        actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />{t("newPago")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-nuevo-pago"><Plus className="h-4 w-4" />{t("newPago")}</Button>}
       />
       <DataTable data={pagos} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPago!} emptyMessage={t("noData")} />
 

@@ -6,15 +6,19 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: 1,
-  reporter: "html",
+  reporter: [["html"], ["list"]],
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    // Use system Chrome if CHROME_BIN is set
-    ...(process.env.CHROME_BIN ? { channel: "chrome" } : {}),
   },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
   // Skip webServer since we're using Docker
   // Tests expect backend on :8080 and frontend on :3000
 });

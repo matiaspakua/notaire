@@ -19,6 +19,24 @@ vi.mock("@/lib/api-client", () => ({
   apiPost: vi.fn(),
 }));
 
+// Mock next-intl so LoginPage doesn't need NextIntlClientProvider
+vi.mock("next-intl", () => ({
+  useTranslations: (ns: string) => (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      login: {
+        title: "Iniciar sesión",
+        subtitle: "Sistema de Gestión de Escribanía",
+        username: "Usuario",
+        password: "Contraseña",
+        submit: "Ingresar",
+        error: "Usuario o contraseña incorrectos",
+      },
+    };
+    return translations[ns]?.[key] ?? key;
+  },
+  useLocale: () => "es",
+}));
+
 import LoginPage from "@/app/login/page";
 import { apiPost } from "@/lib/api-client";
 
