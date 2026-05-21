@@ -9,16 +9,17 @@ import {
   ListTodo,
   Shield,
   Scale,
-  LogOut,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 type LucideIcon = React.ComponentType<{ className?: string }>;
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   href: string;
   icon?: LucideIcon;
   pngIcon?: string;
@@ -26,20 +27,20 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Inicio", href: "/dashboard", icon: Home },
-  { label: "Gestiones", href: "/dashboard/gestiones", pngIcon: "/icons/modulos/gestion.png" },
-  { label: "Presupuestos", href: "/dashboard/presupuestos", pngIcon: "/icons/modulos/presupuestos.png" },
-  { label: "Personas", href: "/dashboard/personas", pngIcon: "/icons/modulos/clientes.png" },
-  { label: "Escrituras", href: "/dashboard/escrituras", pngIcon: "/icons/modulos/escrituras.png" },
-  { label: "Pagos", href: "/dashboard/pagos", pngIcon: "/icons/modulos/pagos.png" },
-  { label: "Protocolo", href: "/dashboard/protocolo", pngIcon: "/icons/modulos/protocolo.png" },
-  { label: "Inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
-  { label: "Copias", href: "/dashboard/copias", icon: Copy },
-  { label: "Items", href: "/dashboard/items", icon: ListTodo },
-  { label: "Documentos", href: "/dashboard/documentos", pngIcon: "/icons/admin/documentos.png" },
-  { label: "Auditoría", href: "/dashboard/auditoria", icon: Shield },
+  { labelKey: "home", href: "/dashboard", icon: Home },
+  { labelKey: "gestiones", href: "/dashboard/gestiones", pngIcon: "/icons/modulos/gestion.png" },
+  { labelKey: "presupuestos", href: "/dashboard/presupuestos", pngIcon: "/icons/modulos/presupuestos.png" },
+  { labelKey: "personas", href: "/dashboard/personas", pngIcon: "/icons/modulos/clientes.png" },
+  { labelKey: "escrituras", href: "/dashboard/escrituras", pngIcon: "/icons/modulos/escrituras.png" },
+  { labelKey: "pagos", href: "/dashboard/pagos", pngIcon: "/icons/modulos/pagos.png" },
+  { labelKey: "protocolo", href: "/dashboard/protocolo", pngIcon: "/icons/modulos/protocolo.png" },
+  { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
+  { labelKey: "copias", href: "/dashboard/copias", icon: Copy },
+  { labelKey: "items", href: "/dashboard/items", icon: ListTodo },
+  { labelKey: "documentos", href: "/dashboard/documentos", pngIcon: "/icons/admin/documentos.png" },
+  { labelKey: "auditoria", href: "/dashboard/auditoria", icon: Shield },
   {
-    label: "Administración",
+    labelKey: "administracion",
     href: "/dashboard/administracion",
     pngIcon: "/icons/modulos/admin.png",
     adminOnly: true,
@@ -50,13 +51,10 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, isAdmin } = useAuthStore();
+  const t = useTranslations("navigation");
 
   function handleLogout() {
-    // Clear Zustand store + auth cookie (handled inside logout()).
     logout();
-    // Use replace() so the dashboard is not in the browser history — pressing
-    // back after logout must not bring the user to a stale, unauthenticated
-    // dashboard (which would render an empty page).
     router.replace("/login");
   }
 
@@ -68,8 +66,8 @@ export function AppSidebar() {
           <Scale className="h-6 w-6" />
         </div>
         <div>
-          <p className="font-semibold text-lg leading-tight text-[hsl(var(--sidebar-foreground))]">Notaire</p>
-          <p className="text-[11px] text-[hsl(var(--sidebar-muted))] font-bold uppercase tracking-wider">Escribanía</p>
+          <p className="font-semibold text-lg leading-tight text-[hsl(var(--sidebar-foreground))]">{t("brand")}</p>
+          <p className="text-[11px] text-[hsl(var(--sidebar-muted))] font-bold uppercase tracking-wider">{t("brandSubtitle")}</p>
         </div>
       </div>
 
@@ -93,10 +91,12 @@ export function AppSidebar() {
           .map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            const label = t(item.labelKey as Parameters<typeof t>[0]);
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={label}
                 className={cn(
                   "flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
                   active
@@ -107,27 +107,28 @@ export function AppSidebar() {
                 {item.pngIcon ? (
                   <NotaireIcon
                     src={item.pngIcon}
-                    alt={item.label}
+                    alt={label}
                     size={20}
                     className={cn("shrink-0", active ? "brightness-0 invert" : "")}
                   />
                 ) : Icon ? (
                   <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
                 ) : null}
-                {item.label}
+                {label}
               </Link>
             );
           })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-4 py-6 border-t border-[hsl(var(--sidebar-border))]">
+      {/* Language switcher + Logout */}
+      <div className="px-4 py-6 border-t border-[hsl(var(--sidebar-border))] space-y-3">
+        <LanguageSwitcher />
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >
-          <NotaireIcon src="/icons/modulos/salir.png" alt="Cerrar sesión" size={18} className="shrink-0" />
-          Cerrar sesión
+          <NotaireIcon src="/icons/modulos/salir.png" alt={t("logout")} size={18} className="shrink-0" />
+          {t("logout")}
         </button>
       </div>
     </aside>

@@ -1,0 +1,456 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "gestiones": "Gestiones",
+    "presupuestos": "Presupuestos",
+    "personas": "Personas",
+    "escrituras": "Escrituras",
+    "pagos": "Pagos",
+    "protocolo": "Protocolo",
+    "inmuebles": "Inmuebles",
+    "copias": "Copias",
+    "items": "Items",
+    "documentos": "Documentos",
+    "auditoria": "Auditoría",
+    "administracion": "Administración",
+    "logout": "Cerrar sesión",
+    "brand": "Notaire",
+    "brandSubtitle": "Escribanía"
+  },
+  "common": {
+    "create": "Crear",
+    "update": "Actualizar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "generating": "Generando...",
+    "id": "ID",
+    "name": "Nombre",
+    "description": "Descripción",
+    "actions": "Acciones",
+    "type": "Tipo",
+    "status": "Estado",
+    "date": "Fecha",
+    "year": "Año",
+    "month": "Mes",
+    "number": "Número",
+    "amount": "Monto",
+    "observations": "Observaciones",
+    "downloadPdf": "Descargar PDF",
+    "noData": "Sin datos",
+    "required": "requerido",
+    "optional": "opcional",
+    "language": "Idioma"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido",
+    "gestiones": {
+      "label": "Gestiones",
+      "description": "Gestionar trámites y escrituras"
+    },
+    "presupuestos": {
+      "label": "Presupuestos",
+      "description": "Crear y administrar presupuestos"
+    },
+    "personas": {
+      "label": "Personas",
+      "description": "Clientes y personas del sistema"
+    },
+    "escrituras": {
+      "label": "Escrituras",
+      "description": "Escrituras y documentos notariales"
+    },
+    "pagos": {
+      "label": "Pagos",
+      "description": "Registro de pagos"
+    },
+    "protocolo": {
+      "label": "Protocolo",
+      "description": "Folios notariales e índices"
+    },
+    "inmuebles": {
+      "label": "Inmuebles",
+      "description": "Registro de inmuebles"
+    },
+    "copias": {
+      "label": "Copias",
+      "description": "Copias de escrituras"
+    },
+    "items": {
+      "label": "Items",
+      "description": "Ítems de presupuesto"
+    },
+    "documentos": {
+      "label": "Documentos",
+      "description": "Documentos presentados"
+    },
+    "auditoria": {
+      "label": "Auditoría",
+      "description": "Registro de actividades"
+    },
+    "administracion": {
+      "label": "Administración",
+      "description": "Catálogos y configuración del sistema"
+    }
+  },
+  "personas": {
+    "title": "Personas y Clientes",
+    "newPersona": "Nueva persona",
+    "editPersona": "Editar persona",
+    "created": "Persona creada",
+    "updated": "Persona actualizada",
+    "deleted": "Persona eliminada",
+    "errorSave": "Error al guardar la persona",
+    "errorDelete": "Error al eliminar la persona",
+    "noData": "No hay personas registradas",
+    "filterClients": "Solo clientes",
+    "fields": {
+      "nombre": "Nombre",
+      "apellido": "Apellido",
+      "dni": "DNI",
+      "cuil": "CUIL",
+      "email": "Email",
+      "telefono": "Teléfono",
+      "domicilio": "Domicilio",
+      "esCliente": "Es cliente"
+    },
+    "badges": {
+      "client": "Cliente",
+      "person": "Persona"
+    },
+    "searchPlaceholders": {
+      "nombre": "Buscar por nombre...",
+      "apellido": "Buscar por apellido...",
+      "dni": "Buscar por DNI..."
+    }
+  },
+  "gestiones": {
+    "title": "Gestiones",
+    "newGestion": "Nueva gestión",
+    "editGestion": "Editar gestión",
+    "created": "Gestión creada",
+    "updated": "Gestión actualizada",
+    "deleted": "Gestión eliminada",
+    "errorSave": "Error al guardar la gestión",
+    "errorDelete": "Error al eliminar la gestión",
+    "noData": "No hay gestiones registradas",
+    "fields": {
+      "numero": "Número",
+      "tipo": "Tipo de Trámite",
+      "estado": "Estado",
+      "fecha": "Fecha",
+      "escribano": "Escribano",
+      "persona": "Persona",
+      "folio": "Folio",
+      "observaciones": "Observaciones"
+    }
+  },
+  "escrituras": {
+    "title": "Escrituras",
+    "newEscritura": "Nueva escritura",
+    "editEscritura": "Editar escritura",
+    "created": "Escritura creada",
+    "updated": "Escritura actualizada",
+    "deleted": "Escritura eliminada",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay escrituras registradas",
+    "fields": {
+      "numero": "Número",
+      "fecha": "Fecha",
+      "tipo": "Tipo",
+      "folio": "Folio",
+      "observaciones": "Observaciones"
+    }
+  },
+  "pagos": {
+    "title": "Pagos",
+    "newPago": "Nuevo pago",
+    "editPago": "Editar pago",
+    "created": "Pago creado",
+    "updated": "Pago actualizado",
+    "deleted": "Pago eliminado",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay pagos registrados",
+    "fields": {
+      "fecha": "Fecha",
+      "monto": "Monto",
+      "metodoPago": "Método de Pago",
+      "observaciones": "Observaciones",
+      "metodoPlaceholder": "Efectivo, transferencia, etc."
+    },
+    "methods": {
+      "efectivo": "Efectivo"
+    }
+  },
+  "protocolo": {
+    "title": "Protocolo",
+    "description": "Folios notariales, índices y declaraciones juradas",
+    "noData": "No hay folios registrados",
+    "errorReport": "Error al generar el reporte",
+    "fields": {
+      "year": "Año",
+      "month": "Mes",
+      "status": "Estado"
+    }
+  },
+  "inmuebles": {
+    "title": "Inmuebles",
+    "newInmueble": "Nuevo inmueble",
+    "editInmueble": "Editar inmueble",
+    "created": "Inmueble creado",
+    "updated": "Inmueble actualizado",
+    "deleted": "Inmueble eliminado",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay inmuebles registrados",
+    "fields": {
+      "domicilio": "Domicilio",
+      "domicilioPlaceholder": "Calle, número, localidad",
+      "valuacionFiscal": "Valuación Fiscal",
+      "observaciones": "Observaciones"
+    }
+  },
+  "copias": {
+    "title": "Copias",
+    "newCopia": "Nueva copia",
+    "editCopia": "Editar copia",
+    "created": "Copia creada",
+    "updated": "Copia actualizada",
+    "deleted": "Copia eliminada",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay copias registradas"
+  },
+  "items": {
+    "title": "Items",
+    "newItem": "Nuevo item",
+    "editItem": "Editar item",
+    "created": "Item creado",
+    "updated": "Item actualizado",
+    "deleted": "Item eliminado",
+    "errorSave": "Error al guardar el item",
+    "errorDelete": "Error al eliminar el item",
+    "noData": "No hay items registrados",
+    "fields": {
+      "concepto": "Concepto",
+      "cantidad": "Cantidad",
+      "precio": "Precio"
+    }
+  },
+  "documentos": {
+    "title": "Documentos Presentados",
+    "newDocumento": "Nuevo documento",
+    "editDocumento": "Editar documento",
+    "registered": "Documento registrado",
+    "updated": "Documento actualizado",
+    "delivered": "Documento entregado",
+    "deleted": "Documento eliminado",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay documentos registrados"
+  },
+  "presupuestos": {
+    "title": "Presupuestos",
+    "newPresupuesto": "Nuevo presupuesto",
+    "editPresupuesto": "Editar presupuesto",
+    "created": "Presupuesto creado",
+    "updated": "Presupuesto actualizado",
+    "deleted": "Presupuesto eliminado",
+    "approved": "Presupuesto aprobado",
+    "errorSave": "Error al guardar",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay presupuestos registrados",
+    "searchPlaceholder": "Buscar por ID o cliente...",
+    "fields": {
+      "cliente": "Cliente",
+      "fecha": "Fecha",
+      "monto": "Monto",
+      "estado": "Estado"
+    },
+    "states": {
+      "borrador": "BORRADOR",
+      "aprobado": "APROBADO",
+      "rechazado": "RECHAZADO"
+    }
+  },
+  "auditoria": {
+    "title": "Auditoría",
+    "description": "Registro de actividades del sistema",
+    "noData": "No hay registros de auditoría",
+    "searchPlaceholder": "Buscar por usuario u operación...",
+    "fields": {
+      "fecha": "Fecha",
+      "usuario": "Usuario",
+      "operacion": "Operación",
+      "modulo": "Módulo"
+    }
+  },
+  "administracion": {
+    "title": "Administración",
+    "description": "Catálogos y configuración del sistema",
+    "modules": {
+      "usuarios": {
+        "label": "Usuarios",
+        "description": "Gestión de usuarios y roles del sistema"
+      },
+      "conceptos": {
+        "label": "Conceptos",
+        "description": "Catálogo de conceptos de presupuesto"
+      },
+      "documentos": {
+        "label": "Tipos de Documento",
+        "description": "Catálogo de tipos de documento notarial"
+      },
+      "folios": {
+        "label": "Folios",
+        "description": "Gestión de folios notariales"
+      },
+      "tramites": {
+        "label": "Tipos de Trámite",
+        "description": "Catálogo de tipos de trámite disponibles"
+      },
+      "estadosGestion": {
+        "label": "Estados de Gestión",
+        "description": "Estados del ciclo de vida de las gestiones"
+      },
+      "plantillas": {
+        "label": "Plantillas Presupuesto",
+        "description": "Plantillas reutilizables para presupuestos"
+      }
+    },
+    "usuarios": {
+      "title": "Usuarios",
+      "newUsuario": "Nuevo usuario",
+      "editUsuario": "Editar usuario",
+      "created": "Usuario creado",
+      "updated": "Usuario actualizado",
+      "deleted": "Usuario eliminado",
+      "errorSave": "Error al guardar el usuario",
+      "errorDelete": "Error al eliminar",
+      "noData": "No hay usuarios registrados",
+      "fields": {
+        "nombre": "Nombre",
+        "contrasenia": "Contraseña",
+        "contraseniaHint": "Dejar vacío para no cambiar",
+        "tipo": "Tipo"
+      },
+      "roles": {
+        "admin": "ADMINISTRADOR",
+        "empleado": "EMPLEADO",
+        "escribano": "ESCRIBANO"
+      }
+    },
+    "conceptos": {
+      "title": "Conceptos",
+      "description": "Catálogo de conceptos utilizados en presupuestos",
+      "newConcepto": "Nuevo concepto",
+      "editConcepto": "Editar concepto",
+      "created": "Concepto creado",
+      "updated": "Concepto actualizado",
+      "deleted": "Concepto eliminado",
+      "errorSave": "Error al guardar el concepto",
+      "errorDelete": "Error al eliminar",
+      "noData": "No hay conceptos registrados",
+      "nameRequired": "El nombre es obligatorio",
+      "fields": {
+        "nombre": "Nombre",
+        "descripcion": "Descripción"
+      }
+    },
+    "documentos": {
+      "title": "Tipos de Documento",
+      "description": "Catálogo de tipos de documento notarial",
+      "newDoc": "Nuevo tipo de documento",
+      "editDoc": "Editar tipo de documento",
+      "errorSave": "Error al guardar el tipo de documento",
+      "errorDelete": "No se puede eliminar: el tipo de documento está referenciado por otros registros.",
+      "noData": "No hay tipos de documento registrados",
+      "nameRequired": "El nombre es requerido",
+      "namePlaceholder": "Ej: DNI, Escritura"
+    },
+    "estadosGestion": {
+      "title": "Estados de Gestión",
+      "description": "Estados del ciclo de vida de las gestiones notariales",
+      "newEstado": "Nuevo Estado de Gestión",
+      "created": "Estado creado",
+      "errorCreate": "Error al crear el estado",
+      "noData": "No hay estados de gestión",
+      "nameRequired": "El nombre es requerido",
+      "fields": {
+        "nombre": "Nombre",
+        "namePlaceholder": "Ej: En trámite",
+        "descripcion": "Descripción",
+        "descripcionPlaceholder": "Descripción opcional"
+      }
+    },
+    "folios": {
+      "title": "Folios",
+      "description": "Gestión de folios notariales y su disponibilidad",
+      "newFolio": "Nuevo Folio",
+      "created": "Folio creado",
+      "errorCreate": "Error al crear el folio",
+      "noData": "No hay folios",
+      "numberRequired": "El número es requerido",
+      "fields": {
+        "numero": "Número",
+        "tipo": "Tipo",
+        "estado": "Estado",
+        "year": "Año"
+      }
+    },
+    "tramites": {
+      "title": "Tipos de Trámite",
+      "description": "Catálogo de tipos de trámite disponibles para gestiones notariales",
+      "newTramite": "Nuevo tipo de trámite",
+      "editTramite": "Editar tipo de trámite",
+      "created": "Tipo de trámite creado",
+      "updated": "Tipo de trámite actualizado",
+      "deleted": "Tipo de trámite eliminado",
+      "errorSave": "Error al guardar el tipo de trámite",
+      "errorDelete": "Error al eliminar",
+      "noData": "No hay tipos de trámite registrados",
+      "nameRequired": "El nombre es requerido",
+      "fields": {
+        "nombre": "Nombre",
+        "namePlaceholder": "Ej: Compraventa",
+        "descripcion": "Descripción",
+        "descripcionPlaceholder": "Descripción del tipo de trámite"
+      }
+    },
+    "plantillas": {
+      "title": "Plantillas de Presupuesto",
+      "description": "Plantillas reutilizables para armar presupuestos",
+      "newPlantilla": "Nueva Plantilla de Presupuesto",
+      "created": "Plantilla creada",
+      "errorCreate": "Error al crear la plantilla",
+      "noData": "No hay plantillas",
+      "nameRequired": "El nombre es requerido",
+      "fields": {
+        "nombre": "Nombre",
+        "namePlaceholder": "Ej: Compraventa estándar",
+        "tipoTramite": "Tipo de Trámite",
+        "items": "Items"
+      }
+    }
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Ingresar",
+    "error": "Usuario o contraseña incorrectos"
+  },
+  "confirmDialog": {
+    "title": "¿Confirmar eliminación?",
+    "description": "Esta acción no se puede deshacer.",
+    "confirm": "Eliminar",
+    "cancel": "Cancelar"
+  }
+}
