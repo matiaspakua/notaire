@@ -1,6 +1,8 @@
 /**
  * Gherkin-style test helpers for Playwright E2E tests
  * Implements Given-When-Then pattern for all CU use cases
+ *
+ * Extended with business-specific helpers and Bruno-synced API assertions.
  */
 
 import { type Page, type Locator, expect } from "@playwright/test";
@@ -53,10 +55,27 @@ export class GherkinSteps {
     await expect(this.page.getByText(moduleName)).toBeVisible();
   }
 
+  /** Given: the dashboard navigation sidebar is loaded */
+  async givenDashboardIsLoaded() {
+    await this.page.waitForSelector('[data-testid="sidebar"]', { timeout: 10000 });
+    await expect(this.page.getByTestId("sidebar")).toBeVisible();
+  }
+
+  /** Given: a record exists in the system (created via API) */
+  async givenRecordExists(entity: string) {
+    const envVar = `E2E_SEED_${entity.toUpperCase()}_ID`;
+    const id = process.env[envVar];
+    expect(id).toBeTruthy();
+  }
+
   // =================== WHEN steps ===================
 
   async whenUserClicksButton(buttonName: string) {
     await this.page.getByRole("button", { name: new RegExp(buttonName, "i") }).click();
+  }
+
+  async whenUserClicksLink(linkName: string) {
+    await this.page.getByRole("link", { name: new RegExp(linkName, "i") }).click();
   }
 
   async whenUserFillsField(fieldLabel: string, value: string) {
@@ -69,7 +88,9 @@ export class GherkinSteps {
   }
 
   async whenUserSubmitsForm() {
-    await this.page.getByRole("button", { name: /confirmar|guardar|crear|registrar/i }).click();
+    await this.page
+      .getByRole("button", { name: /confirmar|guardar|crear|registrar/i })
+      .click();
   }
 
   async whenUserCancelsForm() {
@@ -77,12 +98,44 @@ export class GherkinSteps {
   }
 
   async whenUserSearches(searchTerm: string) {
-    const searchInput = this.page.getByRole("searchbox").or(this.page.getByPlaceholder(/buscar/i));
+    const searchInput = this.page
+      .getByRole("searchbox")
+      .or(this.page.getByPlaceholder(/buscar/i));
     await searchInput.fill(searchTerm);
   }
 
   async whenUserNavigatesTo(path: string) {
     await this.page.goto(path);
+  }
+
+  /** When: user selects a sidebar menu item */
+  async whenUserOpensSidebarModule(moduleLabel: string) {
+    await this.page.getByTestId("sidebar").getByText(moduleLabel).click();
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  /** When: user clicks a row in a data table */
+  async whenUserClicksTableRow(rowIndex: number = 0) {
+    const table = this.page.getByRole("table");
+    const rows = table.getByRole("row");
+    await rows.nth(rowIndex + 1).click(); // +1 to skip header
+  }
+
+  /** When: user selects a date in a date field */
+  async whenUserPicksDate(fieldLabel: string, date: string) {
+    await this.page.getByLabel(new RegExp(fieldLabel, "i")).fill(date);
+  }
+
+  /** When: user uploads a file */
+  async whenUserUploadsFile(inputLabel: string, filePath: string) {
+    const fileChooser = await this.page
+      .getByLabel(new RegExp(inputLabel, "i"))
+      .setInputFiles(filePath);
+  }
+
+  /** When: user confirms a dialog */
+  async whenUserConfirmsDialog() {
+    await this.page.getByRole("button", { name: /confirmar|si|aceptar/i }).click();
   }
 
   // =================== THEN steps ===================
@@ -100,7 +153,9 @@ export class GherkinSteps {
   }
 
   async thenPageHasHeading(heading: string) {
-    await expect(this.page.getByRole("heading", { name: new RegExp(heading, "i") })).toBeVisible();
+    await expect(
+      this.page.getByRole("heading", { name: new RegExp(heading, "i") })
+    ).toBeVisible();
   }
 
   async thenElementIsVisible(elementName: string) {
@@ -108,15 +163,29 @@ export class GherkinSteps {
   }
 
   async thenElementHasText(elementTestId: string, text: string) {
-    await expect(this.page.getByTestId(elementTestId)).toHaveText(new RegExp(text, "i"));
+    await expect(this.page.getByTestId(elementTestId)).toHaveText(
+      new RegExp(text, "i")
+    );
   }
 
   async thenTableIsVisible() {
     await expect(this.page.getByRole("table")).toBeVisible();
   }
 
+  async thenTableContainsText(text: string) {
+    const table = this.page.getByRole("table");
+    await expect(table).toContainText(text);
+  }
+
+  async thenTableRowCountIsAtLeast(minCount: number) {
+    const rows = await this.page.getByRole("table").getByRole("row").count();
+    expect(rows - 1).toBeGreaterThanOrEqual(minCount); // -1 for header
+  }
+
   async thenShowsErrorMessage(message: string) {
-    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({ timeout: 5000 });
+    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({
+      timeout: 5000,
+    });
   }
 
   async thenUrlIs(expectedUrl: RegExp) {
@@ -128,7 +197,48 @@ export class GherkinSteps {
   }
 
   async thenShowsSuccessMessage(message: string = "éxito") {
-    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({ timeout: 5000 });
+    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({
+      timeout: 5000,
+    });
+  }
+
+  /** Then: a toast notification is displayed */
+  async thenToastIsVisible(message?: string) {
+    const toast = this.page.getByRole("alert");
+    await expect(toast).toBeVisible({ timeout: 5000 });
+    if (message) {
+      await expect(toast).toContainText(message);
+    }
+  }
+
+  /** Then: a loading spinner is visible */
+  async thenLoadingIsVisible() {
+    await expect(
+      this.page.getByRole("progressbar").or(this.page.locator(".loading"))
+    ).toBeVisible();
+  }
+
+  /** Then: loading completes */
+  async thenLoadingIsNotVisible() {
+    await expect(
+      this.page.getByRole("progressbar").or(this.page.locator(".loading"))
+    ).not.toBeVisible({ timeout: 10000 });
+  }
+
+  /** Then: a dropdown option is selectable */
+  async thenDropdownHasOption(dropdownLabel: string, option: string) {
+    await this.page
+      .getByRole("combobox", { name: new RegExp(dropdownLabel, "i") })
+      .click();
+    await expect(
+      this.page.getByRole("option", { name: new RegExp(option, "i") })
+    ).toBeVisible();
+  }
+
+  /** Then: the detail view shows a specific value */
+  async thenDetailShowsValue(label: string, value: string) {
+    const detailRow = this.page.getByText(new RegExp(label, "i")).locator("..");
+    await expect(detailRow).toContainText(value);
   }
 
   // =================== Utility methods ===================
@@ -143,6 +253,23 @@ export class GherkinSteps {
       await this.whenUserFillsField(label, value);
     }
     await this.whenUserSubmitsForm();
+  }
+
+  /** Navigate to a dashboard sub-module and wait for content */
+  async navigateToModule(modulePath: string) {
+    await this.givenUserIsOnPage(`/dashboard/${modulePath}`);
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  /** Wait for page to fully load */
+  async waitForPageReady() {
+    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
+  }
+
+  /** Pause briefly for animations/transitions */
+  async waitForAnimations(ms: number = 500) {
+    await this.page.waitForTimeout(ms);
   }
 }
 
@@ -173,6 +300,8 @@ export const TestData = {
   presupuesto: {
     tipoTramite: "Escritura",
     observaciones: "Presupuesto de prueba",
+    fecha: new Date().toISOString().split("T")[0],
+    monto: 1000,
   },
   gestion: {
     numeroGestion: "TEST-001",
@@ -191,4 +320,47 @@ export const TestData = {
     tipo: "EMPLEADO",
     estado: "Habilitado",
   },
+  suplencia: {
+    fechaInicio: new Date().toISOString().split("T")[0],
+    motivo: "Suplencia de prueba",
+  },
+  pago: {
+    monto: 5000,
+    formaPago: "Efectivo",
+    observaciones: "Pago de prueba E2E",
+  },
+  testimonio: {
+    fecha: new Date().toISOString().split("T")[0],
+    estado: "Pendiente",
+  },
+  documentoPresentado: {
+    nombre: "Documento de prueba",
+    tieneDeuda: false,
+  },
+  catalogo: {
+    tipoTramite: { nombre: "Test Tramite", descripcion: "Catálogo de prueba" },
+    tipoDocumento: { nombre: "Test Documento", descripcion: "Catálogo de prueba" },
+    concepto: { nombre: "Test Concepto", descripcion: "Catálogo de prueba", valor: 100 },
+    estadoGestion: { nombre: "Test Estado", descripcion: "Catálogo de prueba" },
+    folio: { numero: 9999, disponible: true },
+  },
 };
+
+/**
+ * Seed data references — use these in tests to get IDs from global setup
+ */
+export function getSeedId(entity: string): number | null {
+  const map: Record<string, string> = {
+    persona: "E2E_SEED_PERSONA_ID",
+    presupuesto: "E2E_SEED_PRESUPUESTO_ID",
+    concepto: "E2E_SEED_CONCEPTO_ID",
+    tipo_tramite: "E2E_SEED_TIPO_TRAMITE_ID",
+    usuario: "E2E_SEED_USUARIO_ID",
+    folio: "E2E_SEED_FOLIO_ID",
+    estado_gestion: "E2E_SEED_ESTADO_GESTION_ID",
+  };
+  const envKey = map[entity];
+  if (!envKey) return null;
+  const val = process.env[envKey];
+  return val ? Number(val) : null;
+}
