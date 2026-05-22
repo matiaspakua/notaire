@@ -33,7 +33,7 @@ test.describe("CU01 - Preparar Presupuesto", () => {
     await steps.thenModalIsVisible();
 
     // When
-    await steps.whenUserFillsField("fecha", TestData.presupuesto.observaciones);
+    await steps.whenUserFillsField("fecha", TestData.presupuesto.fecha);
     await steps.whenUserSelectsFromDropdown("tipo tramite", TestData.presupuesto.tipoTramite);
     await steps.whenUserFillsField("observaciones", TestData.presupuesto.observaciones);
     await steps.whenUserSubmitsForm();

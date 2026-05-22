@@ -22,7 +22,7 @@ test.describe("CU02 - Iniciar Gestión", () => {
     await steps.givenModuleIsVisible("Gestiones");
 
     // When
-    await steps.whenUserClicksButton("nueva gestion");
+    await steps.whenUserClicksButton("nueva gestión");
 
     // Then
     await steps.thenModalIsVisible("Nueva Gestión");
@@ -32,7 +32,7 @@ test.describe("CU02 - Iniciar Gestión", () => {
 
   test("CU02-GW02: Given form open, When fill and submit, Then gestion created", async () => {
     // Given
-    await steps.whenUserClicksButton("nueva gestion");
+    await steps.whenUserClicksButton("nueva gestión");
     await steps.thenModalIsVisible();
 
     // When

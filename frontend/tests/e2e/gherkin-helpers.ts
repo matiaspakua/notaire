@@ -52,7 +52,7 @@ export class GherkinSteps {
   }
 
   async givenModuleIsVisible(moduleName: string) {
-    await expect(this.page.getByText(moduleName)).toBeVisible();
+    await expect(this.page.getByRole("heading", { name: new RegExp(moduleName, "i") })).toBeVisible();
   }
 
   /** Given: the dashboard navigation sidebar is loaded */
