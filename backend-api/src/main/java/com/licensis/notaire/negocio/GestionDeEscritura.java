@@ -313,6 +313,7 @@ public class GestionDeEscritura implements Serializable {
         return dtoGestion;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPersona getDtoEscribano() {
 
         DtoPersona dtoPersona = new DtoPersona();

@@ -125,7 +125,9 @@ export interface Presupuesto {
 export interface Escritura {
   idEscritura?: number;
   numero?: number;
-  fecha?: string;
+  fechaEscrituracion?: string;
+  cuerpo?: string;
+  estado?: string;
   folio?: Folio;
   gestion?: GestionDeEscritura;
 }
@@ -142,10 +144,10 @@ export interface Pago {
 
 export interface Suplencia {
   idSuplencia?: number;
-  escribano?: Persona;
-  suplente?: Persona;
-  desde?: string;
-  hasta?: string;
+  fkIdSuplantado?: Persona;
+  fkIdSuplente?: Persona;
+  fechaInicio?: string;
+  fechaFin?: string;
 }
 
 export interface RegistroAuditoria {
