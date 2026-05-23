@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const isHeaded = !process.env.CI && process.env.HEADED === "1";
+const slowMo = isHeaded ? Number(process.env.SLOW_MO ?? 600) : 0;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
@@ -21,6 +24,7 @@ export default defineConfig({
     video: "retain-on-failure",
     actionTimeout: 15000,
     navigationTimeout: 30000,
+    launchOptions: { slowMo },
   },
   projects: [
     {
