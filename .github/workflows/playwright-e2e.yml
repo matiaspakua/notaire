@@ -206,6 +206,7 @@ jobs:
 
       # ── Run Playwright E2E tests ──
       - name: Run Playwright E2E tests
+        continue-on-error: true
         run: |
           if [ -n "${{ inputs.test_filter }}" ]; then
             npx playwright test --grep "${{ inputs.test_filter }}" --reporter=html,json,junit

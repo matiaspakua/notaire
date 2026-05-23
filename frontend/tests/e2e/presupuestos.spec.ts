@@ -127,6 +127,6 @@ test.describe("Pagos module (CU15, CU47)", () => {
     const tableOrEmpty = page
       .getByRole("table")
       .or(page.getByText(/no hay pagos/i));
-    await expect(tableOrEmpty).toBeVisible({ timeout: 10000 });
+    await expect(tableOrEmpty.first()).toBeVisible({ timeout: 10000 });
   });
 });
