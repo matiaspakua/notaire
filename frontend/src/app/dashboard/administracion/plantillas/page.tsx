@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -13,6 +14,9 @@ import { apiGet, apiPost } from "@/lib/api-client";
 import type { PlantillaPresupuesto, TipoDeTramite } from "@/types";
 
 export default function PlantillasPage() {
+  const t = useTranslations("administracion.plantillas");
+  const tc = useTranslations("common");
+
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["plantillas-presupuesto"],
     queryFn: () => apiGet<PlantillaPresupuesto[]>("/presupuestos/plantillas"),
@@ -36,65 +40,64 @@ export default function PlantillasPage() {
 
   async function handleSave() {
     if (!nombre.trim()) {
-      toast.error("El nombre es requerido");
+      toast.error(t("nameRequired"));
       return;
     }
     setSaving(true);
     try {
       await apiPost("/presupuestos/plantillas", { nombre: nombre.trim(), tipoTramiteId: tipoTramiteId ? Number(tipoTramiteId) : undefined });
-      toast.success("Plantilla creada");
+      toast.success(t("created"));
       setModalOpen(false);
       refetch();
     } catch {
-      toast.error("Error al crear la plantilla");
+      toast.error(t("errorCreate"));
     } finally {
       setSaving(false);
     }
   }
 
   const columns: Column<PlantillaPresupuesto>[] = [
-    { key: "id", header: "ID", render: (p) => p.idPlantillaPresupuesto, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (p) => <span className="font-medium">{p.nombre}</span> },
-    { key: "items", header: "Items", render: (p) => p.itemList?.length ?? 0 },
+    { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPlantillaPresupuesto}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (p) => <span className="font-medium">{p.nombre}</span> },
+    { key: "items", header: t("fields.items"), render: (p) => p.itemList?.length ?? 0 },
   ];
 
   return (
     <div>
       <AppHeader
-        title="Plantillas de Presupuesto"
-        description="Plantillas reutilizables para armar presupuestos"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-plantilla">
-            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
-            Nueva Plantilla
+            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newPlantilla")}
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPlantillaPresupuesto!} emptyMessage="No hay plantillas" />
+      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPlantillaPresupuesto!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title="Nueva Plantilla de Presupuesto">
-              <FormField label="Nombre" required>
+            <FormSection title={t("newPlantilla")}>
+              <FormField label={t("fields.nombre")} required>
                 <Input
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Ej: Compraventa estándar"
-                  aria-label="Nombre"
+                  placeholder={t("fields.namePlaceholder")}
+                  data-testid="input-nombre-plantilla"
                 />
               </FormField>
-              <FormField label="Tipo de Trámite">
+              <FormField label={t("fields.tipoTramite")}>
                 <select
                   value={tipoTramiteId}
                   onChange={(e) => setTipoTramiteId(e.target.value)}
-                  aria-label="Tipo de Trámite"
                   className="flex h-12 w-full rounded-[12px] border border-border bg-white px-4 py-2.5 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  <option value="">Seleccionar tipo de trámite</option>
-                  {tiposTramite.map((t) => (
-                    <option key={t.idTipoDeTramite} value={String(t.idTipoDeTramite)}>
-                      {t.nombre}
+                  <option value="">{t("fields.tipoTramite")}</option>
+                  {tiposTramite.map((tipo) => (
+                    <option key={tipo.idTipoDeTramite} value={String(tipo.idTipoDeTramite)}>
+                      {tipo.nombre}
                     </option>
                   ))}
                 </select>
@@ -102,12 +105,12 @@ export default function PlantillasPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                Guardar
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {tc("save")}
               </Button>
             </FormActions>
           </FormContainer>

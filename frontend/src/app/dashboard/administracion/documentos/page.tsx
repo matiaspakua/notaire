@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -16,6 +17,9 @@ import type { TipoDeDocumento } from "@/types";
 const EMPTY: Partial<TipoDeDocumento> = { nombre: "" };
 
 export default function DocumentosPage() {
+  const t = useTranslations("administracion.documentos");
+  const tc = useTranslations("common");
+
   const qc = useQueryClient();
   const { data: tipos = [], isLoading } = useQuery({
     queryKey: ["tiposDocumento"],
@@ -41,23 +45,11 @@ export default function DocumentosPage() {
   const [editing, setEditing] = useState<Partial<TipoDeDocumento>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  function openCreate() {
-    setEditing(EMPTY);
-    setIsEditMode(false);
-    setModalOpen(true);
-  }
-
-  function openEdit(t: TipoDeDocumento) {
-    setEditing(t);
-    setIsEditMode(true);
-    setModalOpen(true);
-  }
+  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
+  function openEdit(tipo: TipoDeDocumento) { setEditing(tipo); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) {
-      toast.error("El nombre es requerido");
-      return;
-    }
+    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
     try {
       if (isEditMode && editing.idTipoDocumento) {
         await updateMutation.mutateAsync({ id: editing.idTipoDocumento, data: editing });
@@ -68,7 +60,7 @@ export default function DocumentosPage() {
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el tipo de documento");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -78,24 +70,24 @@ export default function DocumentosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success("Tipo de documento eliminado");
     } catch {
-      toast.error("No se puede eliminar: el tipo de documento está referenciado por otros registros.");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
   }
 
   const columns: Column<TipoDeDocumento>[] = [
-    { key: "id", header: "ID", render: (t) => <span className="text-xs text-muted-foreground">{t.idTipoDocumento}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (t) => <span className="font-medium">{t.nombre}</span> },
+    { key: "id", header: tc("id"), render: (tipo) => <span className="text-xs text-muted-foreground">{tipo.idTipoDocumento}</span>, className: "w-12" },
+    { key: "nombre", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.nombre}</span> },
     {
       key: "actions", header: "", className: "w-24",
-      render: (t) => (
+      render: (tipo) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(t)}>
-            <NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} />
+          <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)}>
+            <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(t.idTipoDocumento!)}>
-            <NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} />
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(tipo.idTipoDocumento!)}>
+            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
       ),
@@ -105,12 +97,12 @@ export default function DocumentosPage() {
   return (
     <div>
       <AppHeader
-        title="Tipos de Documento"
-        description="Catálogo de tipos de documento notarial"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-tipo-documento">
-            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
-            Nuevo Tipo
+            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newDoc")}
           </Button>
         }
       />
@@ -118,31 +110,31 @@ export default function DocumentosPage() {
         data={tipos}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(t) => t.idTipoDocumento!}
-        emptyMessage="No hay tipos de documento registrados"
+        keyExtractor={(tipo) => tipo.idTipoDocumento!}
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar tipo de documento" : "Nuevo tipo de documento"}>
-              <FormField label="Nombre" required>
+            <FormSection title={isEditMode ? t("editDoc") : t("newDoc")}>
+              <FormField label={tc("name")} required>
                 <Input
                   value={editing.nombre ?? ""}
                   onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
-                  placeholder="Ej: DNI, Escritura"
+                  placeholder={t("namePlaceholder")}
                   data-testid="input-nombre-documento"
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                {isEditMode ? "Actualizar" : "Guardar"}
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
           </FormContainer>

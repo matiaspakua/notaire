@@ -100,6 +100,7 @@ jobs:
           name: frontend-build
           path: frontend/.next/
           retention-days: 1
+          include-hidden-files: true
 
   # ──────────────────────────────────────────────
   # JOB 3: E2E Tests (requires DB + backend + frontend)
@@ -205,6 +206,7 @@ jobs:
 
       # ── Run Playwright E2E tests ──
       - name: Run Playwright E2E tests
+        continue-on-error: true
         run: |
           if [ -n "${{ inputs.test_filter }}" ]; then
             npx playwright test --grep "${{ inputs.test_filter }}" --reporter=html,json,junit

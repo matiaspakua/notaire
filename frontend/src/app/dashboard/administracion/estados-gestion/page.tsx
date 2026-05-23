@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -13,6 +14,9 @@ import { apiGet, apiPost } from "@/lib/api-client";
 import type { EstadoDeGestion } from "@/types";
 
 export default function EstadosGestionPage() {
+  const t = useTranslations("administracion.estadosGestion");
+  const tc = useTranslations("common");
+
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["estados-gestion"],
     queryFn: () => apiGet<EstadoDeGestion[]>("/catalogos/estados-gestion"),
@@ -31,71 +35,70 @@ export default function EstadosGestionPage() {
 
   async function handleSave() {
     if (!nombre.trim()) {
-      toast.error("El nombre es requerido");
+      toast.error(t("nameRequired"));
       return;
     }
     setSaving(true);
     try {
       await apiPost("/catalogos/estados-gestion", { nombre: nombre.trim(), descripcion: descripcion.trim() });
-      toast.success("Estado creado");
+      toast.success(t("created"));
       setModalOpen(false);
       refetch();
     } catch {
-      toast.error("Error al crear el estado");
+      toast.error(t("errorCreate"));
     } finally {
       setSaving(false);
     }
   }
 
   const columns: Column<EstadoDeGestion>[] = [
-    { key: "id", header: "ID", render: (e) => e.idEstadoDeGestion, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (e) => <span className="font-medium">{e.nombre}</span> },
-    { key: "desc", header: "Descripción", render: (e) => e.descripcion ?? "—" },
+    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEstadoDeGestion}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.nombre}</span> },
+    { key: "desc", header: tc("description"), render: (e) => e.descripcion ?? "—" },
   ];
 
   return (
     <div>
       <AppHeader
-        title="Estados de Gestión"
-        description="Estados del ciclo de vida de las gestiones notariales"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-estado">
-            <NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />
-            Nuevo Estado
+            <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+            {t("newEstado")}
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoDeGestion!} emptyMessage="No hay estados de gestión" />
+      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoDeGestion!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title="Nuevo Estado de Gestión">
-              <FormField label="Nombre" required>
+            <FormSection title={t("newEstado")}>
+              <FormField label={t("fields.nombre")} required>
                 <Input
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  placeholder="Ej: En trámite"
-                  aria-label="Nombre"
+                  placeholder={t("fields.namePlaceholder")}
+                  data-testid="input-nombre-estado"
                 />
               </FormField>
-              <FormField label="Descripción">
+              <FormField label={t("fields.descripcion")}>
                 <Input
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
-                  placeholder="Descripción opcional"
-                  aria-label="Descripción"
+                  placeholder={t("fields.descripcionPlaceholder")}
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={saving}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                Guardar
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {tc("save")}
               </Button>
             </FormActions>
           </FormContainer>

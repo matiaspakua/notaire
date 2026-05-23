@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslations } from "next-intl";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -23,22 +24,24 @@ interface ConfirmDialogProps {
 export function ConfirmDialog({
   open,
   onOpenChange,
-  title = "¿Confirmar eliminación?",
-  description = "Esta acción no se puede deshacer.",
+  title,
+  description,
   onConfirm,
   loading,
 }: ConfirmDialogProps) {
+  const t = useTranslations("confirmDialog");
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>{title ?? t("title")}</AlertDialogTitle>
+          <AlertDialogDescription>{description ?? t("description")}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={loading}>
-            {loading ? "Eliminando..." : "Eliminar"}
+            {t("confirm")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

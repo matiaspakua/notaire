@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -19,6 +20,8 @@ import {
 import type { GestionDeEscritura } from "@/types";
 
 export default function GestionesPage() {
+  const t = useTranslations("gestiones");
+  const tc = useTranslations("common");
   const { data: gestiones = [], isLoading } = useGestiones();
   const createMutation = useCreateGestion();
   const updateMutation = useUpdateGestion();
@@ -48,14 +51,14 @@ export default function GestionesPage() {
     try {
       if (editing?.idGestion) {
         await updateMutation.mutateAsync({ id: editing.idGestion, data });
-        toast.success("Gestión actualizada");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(data);
-        toast.success("Gestión creada");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar la gestión");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -63,9 +66,9 @@ export default function GestionesPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Gestión eliminada");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar la gestión");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -74,18 +77,18 @@ export default function GestionesPage() {
   const columns: Column<GestionDeEscritura>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (g) => <span className="text-muted-foreground text-xs">{g.idGestion}</span>,
       className: "w-16",
     },
     {
       key: "numero",
-      header: "Número",
+      header: t("fields.numero"),
       render: (g) => <span className="font-medium">{g.numero ?? "—"}</span>,
     },
     {
       key: "tramites",
-      header: "Trámites",
+      header: t("fields.tipo"),
       render: (g) => g.tramiteList?.length ?? 0,
     },
     {
@@ -93,7 +96,7 @@ export default function GestionesPage() {
       header: "",
       render: (g) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label="Editar">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -101,7 +104,7 @@ export default function GestionesPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(g.idGestion!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -114,12 +117,11 @@ export default function GestionesPage() {
   return (
     <div>
       <AppHeader
-        title="Gestiones"
-        description="Gestión de trámites y escrituras notariales"
+        title={t("title")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-gestion">
             <Plus className="h-4 w-4" />
-            Nueva gestión
+            {t("newGestion")}
           </Button>
         }
       />
@@ -129,14 +131,14 @@ export default function GestionesPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(g) => g.idGestion!}
-        emptyMessage="No hay gestiones registradas"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? "Editar gestión" : "Nueva gestión"}>
-              <FormField label="Número de gestión" required>
+            <FormSection title={editing ? t("editGestion") : t("newGestion")}>
+              <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
                   value={numero}
@@ -148,14 +150,14 @@ export default function GestionesPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
                 data-testid="btn-guardar-gestion"
               >
-                {editing ? "Actualizar" : "Crear"}
+                {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

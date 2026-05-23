@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // BACKEND_URL is the internal server-side URL (never exposed to browser).
 // In Docker it resolves via internal DNS: http://backend:8080/api/v1
@@ -26,4 +29,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

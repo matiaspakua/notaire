@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Scale, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import { apiPost } from "@/lib/api-client";
 import type { DtoUsuario } from "@/types";
 
 export default function LoginPage() {
+  const t = useTranslations("login");
   const router = useRouter();
   const { login } = useAuthStore();
   const [nombre, setNombre] = useState("");
@@ -38,7 +40,7 @@ export default function LoginPage() {
         toast.success(`Bienvenido, ${result.nombre}`);
         router.push("/dashboard");
       } else {
-        toast.error("Usuario o contraseña incorrectos");
+        toast.error(t("error"));
       }
     } catch {
       toast.error("No se pudo conectar al servidor. Verifique que el backend esté en ejecución.");
@@ -58,7 +60,8 @@ export default function LoginPage() {
           </div>
           <div className="space-y-2">
             <h1 className="text-4xl font-semibold tracking-tight text-foreground">Notaire</h1>
-            <p className="text-lg text-muted-foreground font-medium">Sistema de Gestión de Escribanía</p>
+            <p className="text-lg text-muted-foreground font-medium">{t("subtitle")}</p>
+            <p className="text-sm text-muted-foreground">{t("title")}</p>
           </div>
         </div>
 
@@ -68,12 +71,12 @@ export default function LoginPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="nombre" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-                    Usuario
+                    {t("username")}
                   </Label>
                   <Input
                     id="nombre"
                     data-testid="input-usuario"
-                    placeholder="nombre de usuario"
+                    placeholder={t("username").toLowerCase()}
                     className="h-12 rounded-[12px] bg-white text-lg apple-focus"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
@@ -83,7 +86,7 @@ export default function LoginPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="contrasenia" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-                    Contraseña
+                    {t("password")}
                   </Label>
                   <Input
                     id="contrasenia"
@@ -109,7 +112,7 @@ export default function LoginPage() {
                   data-testid="btn-ingresar"
                 >
                   {loading && <Loader2 className="h-5 w-5 animate-spin mr-2" />}
-                  {loading ? "Iniciando sesión..." : "Ingresar"}
+                  {loading ? "..." : t("submit")}
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center font-medium">

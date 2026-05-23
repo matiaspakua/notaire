@@ -107,16 +107,14 @@ test.describe("Pagos module (CU15, CU47)", () => {
     await expect(page.getByText(/under construction|en construcción/i)).not.toBeVisible();
   });
 
-  test("CU15 — botón registrar pago está visible", async ({ page }) => {
-    await expect(
-      page.getByRole("button", { name: /registrar pago/i })
-    ).toBeVisible();
+  test("CU15 — botón nuevo pago está visible", async ({ page }) => {
+    await expect(page.getByTestId("btn-nuevo-pago")).toBeVisible({ timeout: 10000 });
   });
 
   test("CU15 — modal de nuevo pago tiene campos de fecha, monto y método", async ({
     page,
   }) => {
-    await page.getByRole("button", { name: /registrar pago/i }).click();
+    await page.getByTestId("btn-nuevo-pago").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel(/fecha/i)).toBeVisible();
     await expect(dialog.getByLabel(/monto/i)).toBeVisible();
@@ -129,6 +127,6 @@ test.describe("Pagos module (CU15, CU47)", () => {
     const tableOrEmpty = page
       .getByRole("table")
       .or(page.getByText(/no hay pagos/i));
-    await expect(tableOrEmpty).toBeVisible({ timeout: 10000 });
+    await expect(tableOrEmpty.first()).toBeVisible({ timeout: 10000 });
   });
 });

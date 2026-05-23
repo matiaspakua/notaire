@@ -21,8 +21,6 @@ export default defineConfig({
     video: "retain-on-failure",
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    // Use system Chrome if CHROME_BIN is set
-    ...(process.env.CHROME_BIN ? { channel: "chrome" } : {}),
   },
   projects: [
     {

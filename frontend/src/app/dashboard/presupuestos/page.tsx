@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -30,6 +31,9 @@ import type { Presupuesto } from "@/types";
 const EMPTY: Partial<Presupuesto> = { fecha: "", monto: undefined, estado: "BORRADOR" };
 
 export default function PresupuestosPage() {
+  const t = useTranslations("presupuestos");
+  const tc = useTranslations("common");
+
   const { data: presupuestos = [], isLoading } = usePresupuestos();
   const { data: personas = [] } = usePersonas();
   const createMutation = useCreatePresupuesto();
@@ -41,7 +45,6 @@ export default function PresupuestosPage() {
   const [editing, setEditing] = useState<Partial<Presupuesto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Search / filter state
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
 
@@ -56,30 +59,21 @@ export default function PresupuestosPage() {
     return true;
   });
 
-  function openCreate() {
-    setEditing(EMPTY);
-    setIsEditMode(false);
-    setModalOpen(true);
-  }
-
-  function openEdit(p: Presupuesto) {
-    setEditing(p);
-    setIsEditMode(true);
-    setModalOpen(true);
-  }
+  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
+  function openEdit(p: Presupuesto) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
     try {
       if (isEditMode && editing.idPresupuesto) {
         await updateMutation.mutateAsync({ id: editing.idPresupuesto, data: editing });
-        toast.success("Presupuesto actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Presupuesto creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el presupuesto");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -87,9 +81,9 @@ export default function PresupuestosPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Presupuesto eliminado");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -98,28 +92,28 @@ export default function PresupuestosPage() {
   const columns: Column<Presupuesto>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (p) => <span className="text-xs text-muted-foreground">{p.idPresupuesto}</span>,
       className: "w-12",
     },
     {
       key: "fecha",
-      header: "Fecha",
+      header: tc("date"),
       render: (p) => formatDate(p.fecha),
     },
     {
       key: "persona",
-      header: "Cliente",
+      header: t("fields.cliente"),
       render: (p) => p.persona ? fullName(p.persona) : <span className="text-muted-foreground">—</span>,
     },
     {
       key: "monto",
-      header: "Monto",
+      header: tc("amount"),
       render: (p) => <span className="font-medium">{formatCurrency(p.monto)}</span>,
     },
     {
       key: "estado",
-      header: "Estado",
+      header: tc("status"),
       render: (p) => p.estado ?? "—",
     },
     {
@@ -147,20 +141,18 @@ export default function PresupuestosPage() {
   return (
     <div>
       <AppHeader
-        title="Presupuestos"
-        description="Preparar y gestionar presupuestos para clientes"
+        title={t("title")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-presupuesto">
             <Plus className="h-4 w-4" />
-            Nuevo presupuesto
+            {t("newPresupuesto")}
           </Button>
         }
       />
 
-      {/* Search / filter bar */}
       <div className="flex flex-wrap gap-3 px-4 pb-4">
         <Input
-          placeholder="Buscar por ID o cliente..."
+          placeholder={t("searchPlaceholder")}
           value={searchPresupuesto}
           onChange={(e) => setSearchPresupuesto(e.target.value)}
           data-testid="input-search-presupuesto"
@@ -168,7 +160,7 @@ export default function PresupuestosPage() {
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
           <SelectTrigger data-testid="select-estado" className="w-44">
-            <SelectValue placeholder="Estado..." />
+            <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="TODOS">Todos</SelectItem>
@@ -185,15 +177,15 @@ export default function PresupuestosPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(p) => p.idPresupuesto!}
-        emptyMessage="No hay presupuestos"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar presupuesto" : "Nuevo presupuesto"}>
+            <FormSection title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
               <FormField
-                label="Cliente"
+                label={t("fields.cliente")}
                 required
                 helperText={personas.length === 0 ? "No hay personas registradas. Primero registre una persona." : undefined}
               >
@@ -216,14 +208,14 @@ export default function PresupuestosPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label="Fecha" required>
+              <FormField label={tc("date")} required>
                 <Input
                   type="date"
                   value={editing.fecha ?? ""}
                   onChange={(e) => setEditing({ ...editing, fecha: e.target.value })}
                 />
               </FormField>
-              <FormField label="Monto ($)" required>
+              <FormField label={`${tc("amount")} ($)`} required>
                 <Input
                   type="number"
                   step="0.01"
@@ -232,7 +224,7 @@ export default function PresupuestosPage() {
                   data-testid="input-monto"
                 />
               </FormField>
-              <FormField label="Estado">
+              <FormField label={tc("status")}>
                 <Select
                   value={editing.estado ?? "BORRADOR"}
                   onValueChange={(v) => setEditing({ ...editing, estado: v })}
@@ -251,10 +243,10 @@ export default function PresupuestosPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

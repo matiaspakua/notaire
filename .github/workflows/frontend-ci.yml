@@ -115,6 +115,7 @@ jobs:
           path: |
             frontend/.next/
           retention-days: 7
+          include-hidden-files: true
 
   # ──────────────────────────────────────────────
   # JOB 4: E2E tests (only on main or PRs)

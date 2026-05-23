@@ -7,19 +7,29 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Gestiones CRUD", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/login");
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
-    await page.waitForURL(/\/dashboard/);
+    await page.context().addCookies([
+      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+    ]);
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "notaire-auth",
+        JSON.stringify({
+          state: { user: { nombre: "admin", tipo: "ADMIN", valido: true }, isAuthenticated: true },
+          version: 0,
+        })
+      );
+    });
     await page.goto("/dashboard/gestiones");
+    await page.waitForLoadState("domcontentloaded");
   });
 
   test("can open create modal and cancel", async ({ page }) => {
     await page.getByTestId("btn-nueva-gestion").click();
-    await expect(page.getByText("Nueva gestión")).toBeVisible();
-    await page.getByRole("button", { name: "Cancelar" }).click();
-    await expect(page.getByText("Nueva gestión")).not.toBeVisible();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+    await expect(dialog.getByTestId("input-numero-gestion")).toBeVisible();
+    await dialog.getByRole("button", { name: /cancelar|cancel/i }).click();
+    await expect(dialog).not.toBeVisible();
   });
 
   test("create form has number input", async ({ page }) => {

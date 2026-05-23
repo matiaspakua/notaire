@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -17,6 +18,9 @@ import type { Concepto } from "@/types";
 const EMPTY: Partial<Concepto> = { nombre: "", descripcion: "", valor: undefined };
 
 export default function ConceptosPage() {
+  const t = useTranslations("administracion.conceptos");
+  const tc = useTranslations("common");
+
   const { data: conceptos = [], isLoading } = useConceptos();
   const createMutation = useCreateConcepto();
   const updateMutation = useUpdateConcepto();
@@ -31,39 +35,39 @@ export default function ConceptosPage() {
   function openEdit(c: Concepto) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
     try {
       if (isEditMode && editing.idConcepto) {
         await updateMutation.mutateAsync({ id: editing.idConcepto, data: editing });
-        toast.success("Concepto actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Concepto creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error("Error al guardar"); }
+    } catch { toast.error(t("errorSave")); }
   }
 
   async function handleDelete() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Concepto eliminado");
-    } catch { toast.error("Error al eliminar"); }
+      toast.success(t("deleted"));
+    } catch { toast.error(t("errorDelete")); }
     finally { setDeleteId(null); }
   }
 
   const columns: Column<Concepto>[] = [
-    { key: "id", header: "ID", render: (c) => <span className="text-xs text-muted-foreground">{c.idConcepto}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (c) => <span className="font-medium">{c.nombre}</span> },
-    { key: "descripcion", header: "Descripción", render: (c) => c.descripcion ?? "—" },
+    { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcepto}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.nombre}</span> },
+    { key: "descripcion", header: t("fields.descripcion"), render: (c) => c.descripcion ?? "—" },
     { key: "valor", header: "Valor base", render: (c) => formatCurrency(c.valor) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><NotaireIcon src="/icons/actions/generar.png" alt="Editar" size={16} /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(c.idConcepto!)}><NotaireIcon src="/icons/actions/borrar.png" alt="Eliminar" size={16} /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(c.idConcepto!)}><NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} /></Button>
         </div>
       ),
     },
@@ -72,24 +76,24 @@ export default function ConceptosPage() {
   return (
     <div>
       <AppHeader
-        title="Conceptos"
-        description="Catálogo de conceptos utilizados en presupuestos"
-        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt="Agregar" size={16} className="mr-1" />Nuevo concepto</Button>}
+        title={t("title")}
+        description={t("description")}
+        actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />{t("newConcepto")}</Button>}
       />
-      <DataTable data={conceptos} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage="No hay conceptos" />
+      <DataTable data={conceptos} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar concepto" : "Nuevo concepto"}>
-              <FormField label="Nombre" required>
+            <FormSection title={isEditMode ? t("editConcepto") : t("newConcepto")}>
+              <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.nombre ?? ""}
                   onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
                   data-testid="input-nombre-concepto"
                 />
               </FormField>
-              <FormField label="Descripción">
+              <FormField label={t("fields.descripcion")}>
                 <Input
                   value={editing.descripcion ?? ""}
                   onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
@@ -106,12 +110,12 @@ export default function ConceptosPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                <NotaireIcon src="/icons/actions/cerrar.png" alt="Cancelar" size={16} className="mr-1" />
-                Cancelar
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                <NotaireIcon src="/icons/actions/guardar.png" alt="Guardar" size={16} className="mr-1 brightness-0 invert" />
-                {isEditMode ? "Actualizar" : "Guardar"}
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
           </FormContainer>

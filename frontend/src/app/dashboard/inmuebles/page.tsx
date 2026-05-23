@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -19,6 +20,9 @@ import {
 import type { Inmueble } from "@/types";
 
 export default function InmueblesPage() {
+  const t = useTranslations("inmuebles");
+  const tc = useTranslations("common");
+
   const { data: inmuebles = [], isLoading } = useInmuebles();
   const createMutation = useCreateInmueble();
   const updateMutation = useUpdateInmueble();
@@ -55,14 +59,14 @@ export default function InmueblesPage() {
     try {
       if (editing?.idInmueble) {
         await updateMutation.mutateAsync({ id: editing.idInmueble, data: form });
-        toast.success("Inmueble actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(form);
-        toast.success("Inmueble creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el inmueble");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -70,9 +74,9 @@ export default function InmueblesPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Inmueble eliminado");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar el inmueble");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -81,7 +85,7 @@ export default function InmueblesPage() {
   const columns: Column<Inmueble>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (i) => <span className="text-muted-foreground text-xs">{i.idInmueble}</span>,
       className: "w-16",
     },
@@ -92,12 +96,12 @@ export default function InmueblesPage() {
     },
     {
       key: "domicilio",
-      header: "Domicilio",
+      header: t("fields.domicilio"),
       render: (i) => i.domicilio ?? "—",
     },
     {
       key: "valuacion",
-      header: "Valuación Fiscal",
+      header: t("fields.valuacionFiscal"),
       render: (i) => i.valuacionFiscal ?? "—",
       className: "w-40",
     },
@@ -106,7 +110,7 @@ export default function InmueblesPage() {
       header: "",
       render: (i) => (
         <div className="flex gap-1 justify-end">
-          <Button size="icon" variant="ghost" onClick={() => openEdit(i)} aria-label="Editar">
+          <Button size="icon" variant="ghost" onClick={() => openEdit(i)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -114,7 +118,7 @@ export default function InmueblesPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(i.idInmueble!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -127,12 +131,11 @@ export default function InmueblesPage() {
   return (
     <div>
       <AppHeader
-        title="Inmuebles"
-        description="Gestión de inmuebles y propiedades"
+        title={t("title")}
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />
-            Nuevo inmueble
+            {t("newInmueble")}
           </Button>
         }
       />
@@ -142,13 +145,13 @@ export default function InmueblesPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(i) => i.idInmueble!}
-        emptyMessage="No hay inmuebles registrados"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? "Editar inmueble" : "Nuevo inmueble"}>
+            <FormSection title={editing ? t("editInmueble") : t("newInmueble")}>
               <FormField label="Nomenclatura Catastral" required>
                 <Input
                   value={form.nomenclaturaCatastral}
@@ -156,34 +159,32 @@ export default function InmueblesPage() {
                   placeholder="Ej: 01-02-03-04-05"
                 />
               </FormField>
-              <FormField label="Domicilio">
+              <FormField label={t("fields.domicilio")}>
                 <Input
                   value={form.domicilio}
                   onChange={(e) => setForm({ ...form, domicilio: e.target.value })}
-                  placeholder="Calle, número, localidad"
+                  placeholder={t("fields.domicilioPlaceholder")}
                 />
               </FormField>
-              <FormField label="Valuación Fiscal">
+              <FormField label={t("fields.valuacionFiscal")}>
                 <Input
                   value={form.valuacionFiscal}
                   onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
-                  placeholder="Valor fiscal del inmueble"
                 />
               </FormField>
-              <FormField label="Observaciones">
+              <FormField label={tc("observations")}>
                 <Input
                   value={form.observaciones}
                   onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
-                  placeholder="Notas adicionales"
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {editing ? "Actualizar" : "Crear"}
+                {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

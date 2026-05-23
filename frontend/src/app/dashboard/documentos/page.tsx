@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -27,6 +28,9 @@ import { useTiposDocumento } from "@/hooks/useDocumentos";
 import type { DocumentoPresentado, TipoDeDocumento } from "@/types";
 
 export default function DocumentosPage() {
+  const t = useTranslations("documentos");
+  const tc = useTranslations("common");
+
   const { data: documentos = [], isLoading } = useDocumentosPresentados();
   const { data: tiposDoc = [] } = useTiposDocumento();
   const createMutation = useCreateDocumentoPresentado();
@@ -36,11 +40,7 @@ export default function DocumentosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<DocumentoPresentado | null>(null);
-  const [form, setForm] = useState({
-    tipoId: "",
-    fecha: "",
-    entregado: false,
-  });
+  const [form, setForm] = useState({ tipoId: "", fecha: "", entregado: false });
 
   function openCreate() {
     setEditing(null);
@@ -67,14 +67,14 @@ export default function DocumentosPage() {
     try {
       if (editing?.idDocumentoPresentado) {
         await updateMutation.mutateAsync({ id: editing.idDocumentoPresentado, data });
-        toast.success("Documento actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(data);
-        toast.success("Documento registrado");
+        toast.success(t("registered"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar el documento");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -82,9 +82,9 @@ export default function DocumentosPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Documento eliminado");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar el documento");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -93,23 +93,23 @@ export default function DocumentosPage() {
   const columns: Column<DocumentoPresentado>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (d) => <span className="text-muted-foreground text-xs">{d.idDocumentoPresentado}</span>,
       className: "w-16",
     },
     {
       key: "tipo",
-      header: "Tipo de Documento",
+      header: tc("type"),
       render: (d) => <span className="font-medium">{d.tipo?.nombre ?? "—"}</span>,
     },
     {
       key: "fecha",
-      header: "Fecha",
+      header: tc("date"),
       render: (d) => d.fecha ? new Date(d.fecha).toLocaleDateString("es-AR") : "—",
     },
     {
       key: "entregado",
-      header: "Entregado",
+      header: t("delivered"),
       render: (d) => (
         <span className="flex items-center gap-1.5">
           {d.entregado ? (
@@ -127,7 +127,7 @@ export default function DocumentosPage() {
       header: "",
       render: (d) => (
         <div className="flex gap-1 justify-end">
-          <Button size="icon" variant="ghost" onClick={() => openEdit(d)} aria-label="Editar">
+          <Button size="icon" variant="ghost" onClick={() => openEdit(d)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -135,7 +135,7 @@ export default function DocumentosPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(d.idDocumentoPresentado!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -148,12 +148,11 @@ export default function DocumentosPage() {
   return (
     <div>
       <AppHeader
-        title="Documentos Presentados"
-        description="Registro de documentos presentados en gestiones notariales"
+        title={t("title")}
         actions={
           <Button onClick={openCreate}>
             <Plus className="h-4 w-4" />
-            Nuevo documento
+            {t("newDocumento")}
           </Button>
         }
       />
@@ -163,28 +162,28 @@ export default function DocumentosPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(d) => d.idDocumentoPresentado!}
-        emptyMessage="No hay documentos registrados"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? "Editar documento" : "Nuevo documento"}>
-              <FormField label="Tipo de Documento">
+            <FormSection title={editing ? t("editDocumento") : t("newDocumento")}>
+              <FormField label={tc("type")}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposDoc.map((t) => (
-                      <SelectItem key={t.idTipoDocumento} value={t.idTipoDocumento!.toString()}>
-                        {t.nombre}
+                    {tiposDoc.map((tipo) => (
+                      <SelectItem key={tipo.idTipoDocumento} value={tipo.idTipoDocumento!.toString()}>
+                        {tipo.nombre}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label="Fecha">
+              <FormField label={tc("date")}>
                 <Input
                   type="date"
                   value={form.fecha}
@@ -192,17 +191,17 @@ export default function DocumentosPage() {
                 />
               </FormField>
               <CheckboxField
-                label="Documento entregado"
+                label={t("delivered")}
                 checked={form.entregado}
                 onChange={(v) => setForm({ ...form, entregado: v })}
               />
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {editing ? "Actualizar" : "Crear"}
+                {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

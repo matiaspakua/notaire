@@ -1,0 +1,461 @@
+{
+  "navigation": {
+    "home": "Home",
+    "gestiones": "Cases",
+    "presupuestos": "Quotes",
+    "personas": "People",
+    "escrituras": "Deeds",
+    "pagos": "Payments",
+    "protocolo": "Protocol",
+    "inmuebles": "Properties",
+    "copias": "Copies",
+    "items": "Items",
+    "documentos": "Documents",
+    "auditoria": "Audit",
+    "administracion": "Administration",
+    "logout": "Logout",
+    "brand": "Notaire",
+    "brandSubtitle": "Notary Office"
+  },
+  "common": {
+    "create": "Create",
+    "update": "Update",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "generating": "Generating...",
+    "id": "ID",
+    "name": "Name",
+    "description": "Description",
+    "actions": "Actions",
+    "type": "Type",
+    "status": "Status",
+    "date": "Date",
+    "year": "Year",
+    "month": "Month",
+    "number": "Number",
+    "amount": "Amount",
+    "observations": "Observations",
+    "downloadPdf": "Download PDF",
+    "noData": "No data",
+    "required": "required",
+    "optional": "optional",
+    "language": "Language"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "hello": "Hello",
+    "today": "Today's activity summary",
+    "availableModules": "Available modules",
+    "viewAll": "View all services",
+    "gestiones": {
+      "label": "Cases",
+      "description": "Manage cases and deeds"
+    },
+    "presupuestos": {
+      "label": "Quotes",
+      "description": "Create and manage quotes"
+    },
+    "personas": {
+      "label": "People",
+      "description": "Clients and people in the system"
+    },
+    "escrituras": {
+      "label": "Deeds",
+      "description": "Notarial deeds and documents"
+    },
+    "pagos": {
+      "label": "Payments",
+      "description": "Payment records"
+    },
+    "protocolo": {
+      "label": "Protocol",
+      "description": "Notarial folios and indexes"
+    },
+    "inmuebles": {
+      "label": "Properties",
+      "description": "Property registry"
+    },
+    "copias": {
+      "label": "Copies",
+      "description": "Deed copies"
+    },
+    "items": {
+      "label": "Items",
+      "description": "Quote items"
+    },
+    "documentos": {
+      "label": "Documents",
+      "description": "Submitted documents"
+    },
+    "auditoria": {
+      "label": "Audit",
+      "description": "Activity log"
+    },
+    "administracion": {
+      "label": "Administration",
+      "description": "Catalogs and system configuration"
+    }
+  },
+  "personas": {
+    "title": "People & Clients",
+    "newPersona": "New person",
+    "editPersona": "Edit person",
+    "created": "Person created",
+    "updated": "Person updated",
+    "deleted": "Person deleted",
+    "errorSave": "Error saving person",
+    "errorDelete": "Error deleting person",
+    "noData": "No people registered",
+    "filterClients": "Clients only",
+    "fields": {
+      "nombre": "First name",
+      "apellido": "Last name",
+      "dni": "ID Number",
+      "cuil": "Tax ID",
+      "email": "Email",
+      "telefono": "Phone",
+      "domicilio": "Address",
+      "esCliente": "Is client"
+    },
+    "badges": {
+      "client": "Client",
+      "person": "Person"
+    },
+    "searchPlaceholders": {
+      "nombre": "Search by first name...",
+      "apellido": "Search by last name...",
+      "dni": "Search by ID..."
+    }
+  },
+  "gestiones": {
+    "title": "Cases",
+    "newGestion": "New case",
+    "editGestion": "Edit case",
+    "created": "Case created",
+    "updated": "Case updated",
+    "deleted": "Case deleted",
+    "errorSave": "Error saving case",
+    "errorDelete": "Error deleting case",
+    "noData": "No cases registered",
+    "fields": {
+      "numero": "Number",
+      "tipo": "Case type",
+      "estado": "Status",
+      "fecha": "Date",
+      "escribano": "Notary",
+      "persona": "Person",
+      "folio": "Folio",
+      "observaciones": "Observations"
+    }
+  },
+  "escrituras": {
+    "title": "Deeds",
+    "newEscritura": "New deed",
+    "editEscritura": "Edit deed",
+    "created": "Deed created",
+    "updated": "Deed updated",
+    "deleted": "Deed deleted",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No deeds registered",
+    "fields": {
+      "numero": "Number",
+      "fecha": "Date",
+      "tipo": "Type",
+      "folio": "Folio",
+      "observaciones": "Observations"
+    }
+  },
+  "pagos": {
+    "title": "Payments",
+    "newPago": "New payment",
+    "editPago": "Edit payment",
+    "created": "Payment created",
+    "updated": "Payment updated",
+    "deleted": "Payment deleted",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No payments registered",
+    "fields": {
+      "fecha": "Date",
+      "monto": "Amount",
+      "metodoPago": "Payment method",
+      "observaciones": "Observations",
+      "metodoPlaceholder": "Cash, transfer, etc."
+    },
+    "methods": {
+      "efectivo": "Cash"
+    }
+  },
+  "protocolo": {
+    "title": "Protocol",
+    "description": "Notarial folios, indexes and affidavits",
+    "noData": "No folios registered",
+    "errorReport": "Error generating report",
+    "fields": {
+      "year": "Year",
+      "month": "Month",
+      "status": "Status"
+    }
+  },
+  "inmuebles": {
+    "title": "Properties",
+    "newInmueble": "New property",
+    "editInmueble": "Edit property",
+    "created": "Property created",
+    "updated": "Property updated",
+    "deleted": "Property deleted",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No properties registered",
+    "fields": {
+      "domicilio": "Address",
+      "domicilioPlaceholder": "Street, number, city",
+      "valuacionFiscal": "Tax Assessment",
+      "observaciones": "Observations"
+    }
+  },
+  "copias": {
+    "title": "Copies",
+    "newCopia": "New copy",
+    "editCopia": "Edit copy",
+    "created": "Copy created",
+    "updated": "Copy updated",
+    "deleted": "Copy deleted",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No copies registered"
+  },
+  "items": {
+    "title": "Items",
+    "newItem": "New item",
+    "editItem": "Edit item",
+    "created": "Item created",
+    "updated": "Item updated",
+    "deleted": "Item deleted",
+    "errorSave": "Error saving item",
+    "errorDelete": "Error deleting item",
+    "noData": "No items registered",
+    "fields": {
+      "concepto": "Concept",
+      "cantidad": "Quantity",
+      "precio": "Price"
+    }
+  },
+  "documentos": {
+    "title": "Submitted Documents",
+    "newDocumento": "New document",
+    "editDocumento": "Edit document",
+    "registered": "Document registered",
+    "updated": "Document updated",
+    "delivered": "Document delivered",
+    "deleted": "Document deleted",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No documents registered"
+  },
+  "presupuestos": {
+    "title": "Quotes",
+    "newPresupuesto": "New quote",
+    "editPresupuesto": "Edit quote",
+    "created": "Quote created",
+    "updated": "Quote updated",
+    "deleted": "Quote deleted",
+    "approved": "Quote approved",
+    "errorSave": "Error saving",
+    "errorDelete": "Error deleting",
+    "noData": "No quotes registered",
+    "searchPlaceholder": "Search by ID or client...",
+    "fields": {
+      "cliente": "Client",
+      "fecha": "Date",
+      "monto": "Amount",
+      "estado": "Status"
+    },
+    "states": {
+      "borrador": "DRAFT",
+      "aprobado": "APPROVED",
+      "rechazado": "REJECTED"
+    }
+  },
+  "auditoria": {
+    "title": "Audit",
+    "description": "System activity log",
+    "noData": "No audit records",
+    "searchPlaceholder": "Search by user or operation...",
+    "fields": {
+      "fecha": "Date",
+      "usuario": "User",
+      "operacion": "Operation",
+      "modulo": "Module"
+    }
+  },
+  "administracion": {
+    "title": "Administration",
+    "description": "Catalogs and system configuration",
+    "modules": {
+      "usuarios": {
+        "label": "Users",
+        "description": "System users and roles management"
+      },
+      "conceptos": {
+        "label": "Concepts",
+        "description": "Quote concepts catalog"
+      },
+      "documentos": {
+        "label": "Document Types",
+        "description": "Notarial document types catalog"
+      },
+      "folios": {
+        "label": "Folios",
+        "description": "Notarial folios management"
+      },
+      "tramites": {
+        "label": "Case Types",
+        "description": "Available case types catalog"
+      },
+      "estadosGestion": {
+        "label": "Case Statuses",
+        "description": "Case lifecycle statuses"
+      },
+      "plantillas": {
+        "label": "Quote Templates",
+        "description": "Reusable quote templates"
+      }
+    },
+    "usuarios": {
+      "title": "Users",
+      "newUsuario": "New user",
+      "editUsuario": "Edit user",
+      "created": "User created",
+      "updated": "User updated",
+      "deleted": "User deleted",
+      "errorSave": "Error saving user",
+      "errorDelete": "Error deleting",
+      "noData": "No users registered",
+      "fields": {
+        "nombre": "Name",
+        "contrasenia": "Password",
+        "contraseniaHint": "Leave empty to keep current",
+        "tipo": "Type"
+      },
+      "roles": {
+        "admin": "ADMINISTRATOR",
+        "empleado": "EMPLOYEE",
+        "escribano": "NOTARY"
+      }
+    },
+    "conceptos": {
+      "title": "Concepts",
+      "description": "Catalog of concepts used in quotes",
+      "newConcepto": "New concept",
+      "editConcepto": "Edit concept",
+      "created": "Concept created",
+      "updated": "Concept updated",
+      "deleted": "Concept deleted",
+      "errorSave": "Error saving concept",
+      "errorDelete": "Error deleting",
+      "noData": "No concepts registered",
+      "nameRequired": "Name is required",
+      "fields": {
+        "nombre": "Name",
+        "descripcion": "Description"
+      }
+    },
+    "documentos": {
+      "title": "Document Types",
+      "description": "Notarial document types catalog",
+      "newDoc": "New document type",
+      "editDoc": "Edit document type",
+      "errorSave": "Error saving document type",
+      "errorDelete": "Cannot delete: document type is referenced by other records.",
+      "noData": "No document types registered",
+      "nameRequired": "Name is required",
+      "namePlaceholder": "E.g.: ID Card, Deed"
+    },
+    "estadosGestion": {
+      "title": "Case Statuses",
+      "description": "Case lifecycle statuses",
+      "newEstado": "New Case Status",
+      "created": "Status created",
+      "errorCreate": "Error creating status",
+      "noData": "No case statuses",
+      "nameRequired": "Name is required",
+      "fields": {
+        "nombre": "Name",
+        "namePlaceholder": "E.g.: In Progress",
+        "descripcion": "Description",
+        "descripcionPlaceholder": "Optional description"
+      }
+    },
+    "folios": {
+      "title": "Folios",
+      "description": "Notarial folios management and availability",
+      "newFolio": "New Folio",
+      "created": "Folio created",
+      "errorCreate": "Error creating folio",
+      "noData": "No folios",
+      "numberRequired": "Number is required",
+      "fields": {
+        "numero": "Number",
+        "tipo": "Type",
+        "estado": "Status",
+        "year": "Year"
+      }
+    },
+    "tramites": {
+      "title": "Case Types",
+      "description": "Catalog of available case types for notarial proceedings",
+      "newTramite": "New case type",
+      "editTramite": "Edit case type",
+      "created": "Case type created",
+      "updated": "Case type updated",
+      "deleted": "Case type deleted",
+      "errorSave": "Error saving case type",
+      "errorDelete": "Error deleting",
+      "noData": "No case types registered",
+      "nameRequired": "Name is required",
+      "fields": {
+        "nombre": "Name",
+        "namePlaceholder": "E.g.: Sale",
+        "descripcion": "Description",
+        "descripcionPlaceholder": "Case type description"
+      }
+    },
+    "plantillas": {
+      "title": "Quote Templates",
+      "description": "Reusable templates for building quotes",
+      "newPlantilla": "New Quote Template",
+      "created": "Template created",
+      "errorCreate": "Error creating template",
+      "noData": "No templates",
+      "nameRequired": "Name is required",
+      "fields": {
+        "nombre": "Name",
+        "namePlaceholder": "E.g.: Standard Sale",
+        "tipoTramite": "Case Type",
+        "items": "Items"
+      }
+    }
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Notarial Management System",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Invalid username or password"
+  },
+  "confirmDialog": {
+    "title": "Confirm deletion?",
+    "description": "This action cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  }
+}

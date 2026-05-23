@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -31,6 +32,9 @@ const EMPTY: Partial<Persona> = {
 };
 
 export default function PersonasPage() {
+  const t = useTranslations("personas");
+  const tc = useTranslations("common");
+
   const { data: personas = [], isLoading } = usePersonas();
   const createMutation = useCreatePersona();
   const updateMutation = useUpdatePersona();
@@ -41,7 +45,6 @@ export default function PersonasPage() {
   const [editing, setEditing] = useState<Partial<Persona>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Search / filter state
   const [searchNombre, setSearchNombre] = useState("");
   const [searchApellido, setSearchApellido] = useState("");
   const [searchDni, setSearchDni] = useState("");
@@ -71,14 +74,14 @@ export default function PersonasPage() {
     try {
       if (isEditMode && editing.idPersona) {
         await updateMutation.mutateAsync({ id: editing.idPersona, data: editing });
-        toast.success("Persona actualizada");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Persona creada");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch {
-      toast.error("Error al guardar la persona");
+      toast.error(t("errorSave"));
     }
   }
 
@@ -86,9 +89,9 @@ export default function PersonasPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Persona eliminada");
+      toast.success(t("deleted"));
     } catch {
-      toast.error("Error al eliminar la persona");
+      toast.error(t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -97,33 +100,33 @@ export default function PersonasPage() {
   const columns: Column<Persona>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (p) => <span className="text-xs text-muted-foreground">{p.idPersona}</span>,
       className: "w-12",
     },
     {
       key: "nombre",
-      header: "Nombre",
+      header: t("fields.nombre"),
       render: (p) => <span className="font-medium">{fullName(p)}</span>,
     },
     {
       key: "dni",
-      header: "DNI / CUIL",
+      header: `${t("fields.dni")} / ${t("fields.cuil")}`,
       render: (p) => p.dni ?? p.cuil ?? "—",
     },
     {
       key: "email",
-      header: "Email",
+      header: t("fields.email"),
       render: (p) => p.email ?? "—",
     },
     {
       key: "cliente",
-      header: "Tipo",
+      header: tc("type"),
       render: (p) =>
         p.esCliente ? (
-          <Badge variant="success">Cliente</Badge>
+          <Badge variant="success">{t("badges.client")}</Badge>
         ) : (
-          <Badge variant="secondary">Persona</Badge>
+          <Badge variant="secondary">{t("badges.person")}</Badge>
         ),
     },
     {
@@ -151,34 +154,32 @@ export default function PersonasPage() {
   return (
     <div>
       <AppHeader
-        title="Personas y Clientes"
-        description="Registrar y gestionar personas, clientes y escribanos del sistema"
+        title={t("title")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-persona">
             <Plus className="h-4 w-4" />
-            Nueva persona
+            {t("newPersona")}
           </Button>
         }
       />
 
-      {/* Search bar — CU61 */}
       <div data-testid="search-bar" className="flex flex-wrap gap-3 px-4 pb-4">
         <Input
-          placeholder="Nombre..."
+          placeholder={t("searchPlaceholders.nombre")}
           value={searchNombre}
           onChange={(e) => setSearchNombre(e.target.value)}
           data-testid="input-search-nombre"
           className="w-40"
         />
         <Input
-          placeholder="Apellido..."
+          placeholder={t("searchPlaceholders.apellido")}
           value={searchApellido}
           onChange={(e) => setSearchApellido(e.target.value)}
           data-testid="input-search-apellido"
           className="w-40"
         />
         <Input
-          placeholder="DNI..."
+          placeholder={t("searchPlaceholders.dni")}
           value={searchDni}
           onChange={(e) => setSearchDni(e.target.value)}
           data-testid="input-search-dni"
@@ -190,7 +191,7 @@ export default function PersonasPage() {
           data-testid="btn-filter-clientes"
           size="sm"
         >
-          Solo clientes
+          {t("filterClients")}
         </Button>
       </div>
 
@@ -199,22 +200,22 @@ export default function PersonasPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(p) => p.idPersona!}
-        emptyMessage="No hay personas registradas"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md">
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar persona" : "Nueva persona"}>
+            <FormSection title={isEditMode ? t("editPersona") : t("newPersona")}>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Nombre" required>
+                <FormField label={t("fields.nombre")} required>
                   <Input
                     value={editing.nombre ?? ""}
                     onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
                     data-testid="input-nombre"
                   />
                 </FormField>
-                <FormField label="Apellido" required>
+                <FormField label={t("fields.apellido")} required>
                   <Input
                     value={editing.apellido ?? ""}
                     onChange={(e) => setEditing({ ...editing, apellido: e.target.value })}
@@ -223,40 +224,40 @@ export default function PersonasPage() {
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="DNI">
+                <FormField label={t("fields.dni")}>
                   <Input
                     value={editing.dni ?? ""}
                     onChange={(e) => setEditing({ ...editing, dni: e.target.value })}
                   />
                 </FormField>
-                <FormField label="CUIL">
+                <FormField label={t("fields.cuil")}>
                   <Input
                     value={editing.cuil ?? ""}
                     onChange={(e) => setEditing({ ...editing, cuil: e.target.value })}
                   />
                 </FormField>
               </div>
-              <FormField label="Email">
+              <FormField label={t("fields.email")}>
                 <Input
                   type="email"
                   value={editing.email ?? ""}
                   onChange={(e) => setEditing({ ...editing, email: e.target.value })}
                 />
               </FormField>
-              <FormField label="Teléfono">
+              <FormField label={t("fields.telefono")}>
                 <Input
                   value={editing.telefono ?? ""}
                   onChange={(e) => setEditing({ ...editing, telefono: e.target.value })}
                 />
               </FormField>
-              <FormField label="Domicilio">
+              <FormField label={t("fields.domicilio")}>
                 <Input
                   value={editing.domicilio ?? ""}
                   onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
                 />
               </FormField>
               <CheckboxField
-                label="Es cliente"
+                label={t("fields.esCliente")}
                 checked={editing.esCliente ?? false}
                 onChange={(checked) => setEditing({ ...editing, esCliente: checked })}
                 data-testid="check-es-cliente"
@@ -264,10 +265,10 @@ export default function PersonasPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>
