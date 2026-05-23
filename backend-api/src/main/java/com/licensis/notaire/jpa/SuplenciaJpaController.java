@@ -201,7 +201,8 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Suplencia as o");
+            Query q = em.createQuery(
+                "SELECT s FROM Suplencia s LEFT JOIN FETCH s.fkIdSuplantado LEFT JOIN FETCH s.fkIdSuplente");
             if (!all)
             {
                 q.setMaxResults(maxResults);

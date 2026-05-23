@@ -20,11 +20,11 @@ import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
 
 const EMPTY: Partial<Suplencia> = {
-  desde: "",
-  hasta: "",
+  fechaInicio: "",
+  fechaFin: "",
 };
 
-function personaName(p: Suplencia["escribano"]): string {
+function personaName(p: Suplencia["fkIdSuplantado"]): string {
   if (!p) return "—";
   return [p.nombre, p.apellido].filter(Boolean).join(" ") || `#${p.idPersona}`;
 }
@@ -53,17 +53,18 @@ export default function SuplenciasPage() {
 
   function openEdit(s: Suplencia) {
     setEditing(s);
-    setEscribanoId(s.escribano?.idPersona?.toString() ?? "");
-    setSuplenteId(s.suplente?.idPersona?.toString() ?? "");
+    setEscribanoId(s.fkIdSuplantado?.idPersona?.toString() ?? "");
+    setSuplenteId(s.fkIdSuplente?.idPersona?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
     const payload: Partial<Suplencia> = {
-      ...editing,
-      escribano: escribanoId ? { idPersona: Number(escribanoId) } : undefined,
-      suplente: suplenteId ? { idPersona: Number(suplenteId) } : undefined,
+      fechaInicio: editing.fechaInicio,
+      fechaFin: editing.fechaFin,
+      fkIdSuplantado: escribanoId ? { idPersona: Number(escribanoId) } : undefined,
+      fkIdSuplente: suplenteId ? { idPersona: Number(suplenteId) } : undefined,
     };
     try {
       if (isEditMode && editing.idSuplencia) {
@@ -104,24 +105,24 @@ export default function SuplenciasPage() {
       render: (s) => (
         <div className="flex items-center gap-2">
           <UserCheck className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{personaName(s.escribano)}</span>
+          <span className="font-medium">{personaName(s.fkIdSuplantado)}</span>
         </div>
       ),
     },
     {
       key: "suplente",
       header: "Suplente",
-      render: (s) => personaName(s.suplente),
+      render: (s) => personaName(s.fkIdSuplente),
     },
     {
       key: "desde",
       header: "Desde",
-      render: (s) => formatDate(s.desde),
+      render: (s) => formatDate(s.fechaInicio),
     },
     {
       key: "hasta",
       header: "Hasta",
-      render: (s) => formatDate(s.hasta),
+      render: (s) => formatDate(s.fechaFin),
     },
     {
       key: "actions",
@@ -195,16 +196,16 @@ export default function SuplenciasPage() {
                 <FormField label="Desde">
                   <Input
                     type="date"
-                    value={editing.desde ?? ""}
-                    onChange={(e) => setEditing({ ...editing, desde: e.target.value })}
+                    value={editing.fechaInicio ?? ""}
+                    onChange={(e) => setEditing({ ...editing, fechaInicio: e.target.value })}
                     data-testid="input-desde"
                   />
                 </FormField>
                 <FormField label="Hasta">
                   <Input
                     type="date"
-                    value={editing.hasta ?? ""}
-                    onChange={(e) => setEditing({ ...editing, hasta: e.target.value })}
+                    value={editing.fechaFin ?? ""}
+                    onChange={(e) => setEditing({ ...editing, fechaFin: e.target.value })}
                     data-testid="input-hasta"
                   />
                 </FormField>

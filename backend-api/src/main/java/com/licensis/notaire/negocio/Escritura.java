@@ -78,10 +78,13 @@ public class Escritura implements Serializable
     private String matriculaInscripcion;
     @Column(name = "observaciones")
     private String observaciones;
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     private List<Folio> folioList = null;
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList = null;
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     private List<Testimonio> testimonioList = null;
 

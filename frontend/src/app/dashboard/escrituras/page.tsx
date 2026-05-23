@@ -20,7 +20,7 @@ import {
 import { formatDate } from "@/lib/utils";
 import type { Escritura } from "@/types";
 
-const EMPTY: Partial<Escritura> = { numero: undefined, fecha: "" };
+const EMPTY: Partial<Escritura> = { numero: undefined, fechaEscrituracion: "", cuerpo: "", estado: "SIN_FIRMAR" };
 
 export default function EscriturasPage() {
   const t = useTranslations("escrituras");
@@ -64,7 +64,7 @@ export default function EscriturasPage() {
   const columns: Column<Escritura>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEscritura}</span>, className: "w-12" },
     { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.numero ?? "—"}</span> },
-    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fecha) },
+    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fechaEscrituracion) },
     { key: "folio", header: t("fields.folio"), render: (e) => e.folio?.numero ?? "—" },
     {
       key: "actions", header: "", className: "w-24",
@@ -93,7 +93,7 @@ export default function EscriturasPage() {
                 <Input type="number" value={editing.numero ?? ""} onChange={(e) => setEditing({ ...editing, numero: Number(e.target.value) })} />
               </FormField>
               <FormField label={tc("date")} required>
-                <Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} />
+                <Input type="date" value={editing.fechaEscrituracion ?? ""} onChange={(e) => setEditing({ ...editing, fechaEscrituracion: e.target.value })} />
               </FormField>
             </FormSection>
             <FormActions align="right">
