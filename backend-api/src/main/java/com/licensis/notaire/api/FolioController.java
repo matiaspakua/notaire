@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -45,10 +46,10 @@ public class FolioController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo folio")
-    public ResponseEntity<Void> create(@RequestBody Folio entity) {
+    public ResponseEntity<Object> create(@RequestBody Folio entity) {
         try {
             getJpaController().create(entity);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create folio", e);
             e.printStackTrace();

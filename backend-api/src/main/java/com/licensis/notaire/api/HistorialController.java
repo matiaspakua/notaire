@@ -47,10 +47,10 @@ public class HistorialController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo registro de historial")
-    public ResponseEntity<Void> create(@RequestBody Historial entity) {
+    public ResponseEntity<Object> create(@RequestBody Historial entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create historial", e);
             return ResponseEntity.internalServerError().build();

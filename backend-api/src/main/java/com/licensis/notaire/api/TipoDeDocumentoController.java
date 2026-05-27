@@ -50,8 +50,8 @@ public class TipoDeDocumentoController {
             dto.setHabilitado(true);
             TipoDeDocumento entity = new TipoDeDocumento();
             entity.setAtributos(dto);
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

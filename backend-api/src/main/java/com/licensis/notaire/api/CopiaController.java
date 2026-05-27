@@ -41,10 +41,10 @@ public class CopiaController {
 
     @PostMapping
     @Operation(summary = "Crear nueva copia")
-    public ResponseEntity<Void> create(@RequestBody Copia entity) {
+    public ResponseEntity<Object> create(@RequestBody Copia entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create copia", e);
             return ResponseEntity.internalServerError().build();

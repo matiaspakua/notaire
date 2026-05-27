@@ -41,10 +41,10 @@ public class TramiteController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo trámite")
-    public ResponseEntity<Void> create(@RequestBody Tramite entity) {
+    public ResponseEntity<Object> create(@RequestBody Tramite entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create tramite", e);
             return ResponseEntity.internalServerError().build();

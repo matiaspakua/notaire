@@ -65,11 +65,14 @@ public class Testimonio implements Serializable
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimonio", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<MovimientoTestimonio> movimientoTestimonioList = new ArrayList<>();
     @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Escritura fkIdEscritura;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimonio", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<Copia> copiaList = new ArrayList<>();
 
     public Testimonio()

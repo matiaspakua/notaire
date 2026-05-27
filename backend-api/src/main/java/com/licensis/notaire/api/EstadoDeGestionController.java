@@ -49,8 +49,8 @@ public class EstadoDeGestionController {
             }
             EstadoDeGestion entity = new EstadoDeGestion();
             entity.setAtributo(dto);
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

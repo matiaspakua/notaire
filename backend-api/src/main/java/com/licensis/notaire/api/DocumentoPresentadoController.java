@@ -74,10 +74,10 @@ public class DocumentoPresentadoController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo documento presentado")
-    public ResponseEntity<Void> create(@RequestBody DocumentoPresentado entity) {
+    public ResponseEntity<Object> create(@RequestBody DocumentoPresentado entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
             log.error("Failed to create documento presentado", e);
             return ResponseEntity.internalServerError().build();

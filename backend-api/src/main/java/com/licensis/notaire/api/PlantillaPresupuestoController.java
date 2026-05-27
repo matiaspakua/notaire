@@ -66,7 +66,7 @@ public class PlantillaPresupuestoController {
     public ResponseEntity<?> create(@RequestBody PlantillaPresupuesto entity) {
         try {
             getJpaController().create(entity);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (PreexistingEntityException e) {
             LOG.log(Level.WARNING, "Plantilla de presupuesto ya existe", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
