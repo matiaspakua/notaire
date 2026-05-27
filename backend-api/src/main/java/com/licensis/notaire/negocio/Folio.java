@@ -60,6 +60,7 @@ public class Folio implements Serializable
     @Version
     private int version = ConstantesPersistencia.VERSION_INICIAL;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "folio")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio", "copia"})
     private Collection<FoliosCopias> foliosCopiasCollection;
     private static final long serialVersionUID = 1L;
     @Id
@@ -86,15 +87,19 @@ public class Folio implements Serializable
         @JoinColumn(name = "fk_id_copia", referencedColumnName = "id_copia")
     })
     @ManyToMany(fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})
     private List<Copia> copiaList;
     @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id_persona")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Persona fkIdPersonaEscribano;
     @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id_tipo_folio")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private TipoDeFolio fkIdTipoFolio;
     @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
     @ManyToOne(fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Escritura fkIdEscritura;
 
     public Folio()

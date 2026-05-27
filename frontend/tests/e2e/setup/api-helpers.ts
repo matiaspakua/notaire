@@ -111,14 +111,11 @@ export interface PersonaPayload {
 }
 
 export interface PresupuestoPayload {
-  persona: { idPersona: number };
-  items: Array<{
-    idConcepto: number;
-    descripcion: string;
-    valor: number;
-  }>;
-  observaciones?: string;
+  fkIdPersona?: { idPersona: number };
   fecha?: string;
+  encabezado?: string;
+  estado?: string;
+  observaciones?: string;
 }
 
 export interface GestionPayload {
@@ -148,8 +145,8 @@ export interface UsuarioPayload {
   nombre: string;
   contrasenia: string;
   tipo: string;
-  estado?: string;
-  fechaAlta?: string;
+  estado?: boolean;
+  fkIdPersona?: { idPersona: number };
 }
 
 export interface PagoPayload {
@@ -239,18 +236,14 @@ export async function createPersona(
 export async function createPresupuesto(
   page: Page,
   personaId: number,
-  conceptoId: number,
+  _conceptoId?: number,
   overrides: Partial<PresupuestoPayload> = {},
 ): Promise<ApiResult<{ idPresupuesto: number }>> {
   return apiPost(page, "/presupuestos", {
-    persona: { idPersona: personaId },
-    items: [
-      {
-        idConcepto: conceptoId,
-        descripcion: `Item E2E ${uniqueId()}`,
-        valor: 1000,
-      },
-    ],
+    fkIdPersona: { idPersona: personaId },
+    fecha: new Date().toISOString().split("T")[0],
+    encabezado: `Presupuesto E2E ${uniqueId()}`,
+    estado: "Pendiente",
     observaciones: `Presupuesto E2E ${uniqueId()}`,
     ...overrides,
   });
@@ -301,6 +294,7 @@ export async function createEscritura(
  */
 export async function createUsuario(
   page: Page,
+  personaId?: number,
   overrides: Partial<UsuarioPayload> = {},
 ): Promise<ApiResult<{ idUsuario: number }>> {
   const id = uniqueId();
@@ -308,8 +302,8 @@ export async function createUsuario(
     nombre: `e2euser-${id}`,
     contrasenia: "Test1234!",
     tipo: "EMPLEADO",
-    estado: "Habilitado",
-    fechaAlta: new Date().toISOString().split("T")[0],
+    estado: true,
+    ...(personaId ? { fkIdPersona: { idPersona: personaId } } : {}),
     ...overrides,
   });
 }
@@ -336,11 +330,16 @@ export async function createPago(
  */
 export async function createFolio(
   page: Page,
-  overrides: { numero?: number; disponible?: boolean } = {},
+  personaId?: number,
+  overrides: { numero?: number; anio?: number; estado?: string; disponible?: boolean; fkIdPersonaEscribano?: { idPersona: number }; fkIdTipoFolio?: { idTipoFolio: number } } = {},
 ): Promise<ApiResult<{ idFolio: number }>> {
   return apiPost(page, "/folio", {
     numero: Math.floor(10000 + Math.random() * 90000),
+    anio: 2026,
+    estado: "Nuevo",
     disponible: true,
+    fkIdPersonaEscribano: { idPersona: personaId || 1 },
+    fkIdTipoFolio: { idTipoFolio: 1 },
     ...overrides,
   });
 }
@@ -378,7 +377,7 @@ export async function createConcepto(
 export async function createEstadoGestion(
   page: Page,
   overrides: { nombre?: string } = {},
-): Promise<ApiResult<{ idEstadoDeGestion: number }>> {
+): Promise<ApiResult<{ idEstadoGestion: number }>> {
   const id = uniqueId();
   return apiPost(page, "/estado-gestion", {
     nombre: `Estado E2E ${id}`,

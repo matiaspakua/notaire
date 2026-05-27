@@ -57,13 +57,13 @@ public class UsuarioController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo usuario")
-    public ResponseEntity<Void> createUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<Object> createUsuario(@RequestBody Usuario usuario) {
         try {
             if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
                 usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
             }
-            usuarioRepository.save(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            usuario = usuarioRepository.save(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
         } catch (Exception e) {
             log.error("Failed to create usuario", e);
             return ResponseEntity.internalServerError().build();

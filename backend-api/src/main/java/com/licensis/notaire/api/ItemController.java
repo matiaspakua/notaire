@@ -47,10 +47,10 @@ public class ItemController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo ítem")
-    public ResponseEntity<Void> create(@RequestBody Item entity) {
+    public ResponseEntity<Object> create(@RequestBody Item entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create item", e);
             return ResponseEntity.internalServerError().build();

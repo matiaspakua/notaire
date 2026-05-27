@@ -73,10 +73,10 @@ public class GestionController {
 
     @PostMapping
     @Operation(summary = "Crear nueva gestion")
-    public ResponseEntity<Void> create(@RequestBody GestionDeEscritura entity) {
+    public ResponseEntity<Object> create(@RequestBody GestionDeEscritura entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create gestion", e);
             return ResponseEntity.internalServerError().build();

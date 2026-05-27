@@ -66,7 +66,9 @@ CREATE TABLE tipos_de_documento (
 CREATE TABLE tipos_de_folio (
   version integer NOT NULL,
   id_tipo_folio SERIAL PRIMARY KEY,
-  nombre text NOT NULL
+  nombre text NOT NULL,
+  observaciones text,
+  habilitado boolean NOT NULL DEFAULT true
 );
 
 -- Table: tipos_de_tramite
@@ -256,6 +258,7 @@ CREATE TABLE testimonios (
   version integer NOT NULL,
   id_testimonio SERIAL PRIMARY KEY,
   numero integer NOT NULL,
+  observado boolean NOT NULL DEFAULT false,
   observaciones text,
   fecha_inscripcion date,
   fecha_retiro date,
@@ -316,6 +319,7 @@ CREATE TABLE items (
   valor real NOT NULL,
   porcentaje integer NOT NULL,
   concepto_fijo boolean NOT NULL,
+  observaciones text,
   fk_id_presupuesto integer REFERENCES presupuestos(id_presupuesto)
 );
 

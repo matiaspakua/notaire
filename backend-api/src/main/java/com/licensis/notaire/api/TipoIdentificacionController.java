@@ -41,10 +41,10 @@ public class TipoIdentificacionController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo tipo de identificacion")
-    public ResponseEntity<Void> create(@RequestBody TipoIdentificacion entity) {
+    public ResponseEntity<Object> create(@RequestBody TipoIdentificacion entity) {
         try {
-            repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create tipo de identificacion", e);
             return ResponseEntity.internalServerError().build();

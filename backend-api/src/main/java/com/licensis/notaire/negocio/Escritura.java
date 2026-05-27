@@ -80,12 +80,15 @@ public class Escritura implements Serializable
     private String observaciones;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Folio> folioList = null;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Tramite> tramiteList = null;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Testimonio> testimonioList = null;
 
     public Escritura()

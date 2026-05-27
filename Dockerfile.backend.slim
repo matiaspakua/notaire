@@ -1,0 +1,23 @@
+# Slim Dockerfile: copies pre-built JAR (no Maven build inside Docker)
+FROM eclipse-temurin:21-jre-alpine
+
+RUN apk add --no-cache wget
+
+WORKDIR /app
+
+COPY backend-api/target/backend-api-1.0-SNAPSHOT.jar app.jar
+
+RUN addgroup -g 1000 -S notary && \
+    adduser -u 1000 -S notary -G notary && \
+    chown -R notary:notary /app
+
+USER notary
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=70.0 -Xms128m -XX:+UseG1GC -XX:G1HeapRegionSize=4m"
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health/liveness || exit 1
+
+EXPOSE 8080
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

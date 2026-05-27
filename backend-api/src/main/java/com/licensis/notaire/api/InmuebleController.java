@@ -5,6 +5,7 @@ import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.negocio.Inmueble;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -41,10 +42,10 @@ public class InmuebleController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo inmueble")
-    public ResponseEntity<Void> create(@RequestBody Inmueble entity) {
+    public ResponseEntity<Object> create(@RequestBody Inmueble entity) {
         try {
             getJpaController().create(entity);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

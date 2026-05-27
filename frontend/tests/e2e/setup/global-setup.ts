@@ -148,14 +148,10 @@ async function seedCatalogData(page: Page): Promise<void> {
       page,
       "/presupuestos",
       {
-        persona: { idPersona: seedData.seedPersonaId },
-        items: [
-          {
-            idConcepto: seedData.seedConceptoId,
-            descripcion: "Item de prueba",
-            valor: 1000.0,
-          },
-        ],
+        fkIdPersona: { idPersona: seedData.seedPersonaId },
+        fecha: "2026-05-27",
+        encabezado: "Presupuesto E2E Seed",
+        estado: "Pendiente",
         observaciones: `Presupuesto semilla ${seedData.testId}`,
       }
     );
@@ -164,7 +160,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   }
 
-  // 5. Create a usuario
+  // 5. Create a usuario (fkIdPersona references existing persona id=1 or seedPersonaId)
   const usrResult = await apiPost<{ idUsuario: number }>(
     page,
     "/usuarios",
@@ -172,8 +168,8 @@ async function seedCatalogData(page: Page): Promise<void> {
       nombre: `testuser-${seedData.testId}`,
       contrasenia: "Test1234!",
       tipo: "EMPLEADO",
-      estado: "Habilitado",
-      fechaAlta: new Date().toISOString().split("T")[0],
+      estado: true,
+      fkIdPersona: { idPersona: seedData.seedPersonaId || 1 },
     }
   );
   if (usrResult.ok && usrResult.data?.idUsuario) {
@@ -181,12 +177,17 @@ async function seedCatalogData(page: Page): Promise<void> {
   }
 
   // 6. Create a folio
+  // References existing persona (id=1 "Juan Carlos Garcia") and tipo_de_folio (id=1 "De documento")
   const folioResult = await apiPost<{ idFolio: number }>(
     page,
     "/folio",
     {
       numero: Math.floor(10000 + Math.random() * 90000),
+      anio: 2026,
+      estado: "Nuevo",
       disponible: true,
+      fkIdPersonaEscribano: { idPersona: seedData.seedPersonaId || 1 },
+      fkIdTipoFolio: { idTipoFolio: 1 },
     }
   );
   if (folioResult.ok && folioResult.data?.idFolio) {
@@ -194,7 +195,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   }
 
   // 7. Create an estado de gestión
-  const egResult = await apiPost<{ idEstadoDeGestion: number }>(
+  const egResult = await apiPost<{ idEstadoGestion: number }>(
     page,
     "/estado-gestion",
     {
@@ -202,8 +203,8 @@ async function seedCatalogData(page: Page): Promise<void> {
       descripcion: "Seeded by global-setup",
     }
   );
-  if (egResult.ok && egResult.data?.idEstadoDeGestion) {
-    seedData.seedEstadoGestionId = egResult.data.idEstadoDeGestion;
+  if (egResult.ok && egResult.data?.idEstadoGestion) {
+    seedData.seedEstadoGestionId = egResult.data.idEstadoGestion;
   }
 }
 
