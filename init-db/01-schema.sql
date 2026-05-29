@@ -66,7 +66,9 @@ CREATE TABLE tipos_de_documento (
 CREATE TABLE tipos_de_folio (
   version integer NOT NULL,
   id_tipo_folio SERIAL PRIMARY KEY,
-  nombre text NOT NULL
+  nombre text NOT NULL,
+  observaciones text,
+  habilitado boolean NOT NULL DEFAULT true
 );
 
 -- Table: tipos_de_tramite
@@ -263,6 +265,7 @@ CREATE TABLE testimonios (
   numero_carpeta integer,
   numero_expediente integer,
   reingresado boolean NOT NULL,
+  observado boolean NOT NULL DEFAULT false,
   fk_id_escritura integer REFERENCES escrituras(id_escritura)
 );
 
@@ -302,8 +305,12 @@ CREATE TABLE folios_copias (
 -- Table: movimientos_testimonio
 CREATE TABLE movimientos_testimonio (
   version integer NOT NULL,
-  id_movimiento SERIAL PRIMARY KEY,
-  fecha_movimiento date NOT NULL,
+  id_movimiento_testimonio SERIAL PRIMARY KEY,
+  fecha_ingreso date NOT NULL,
+  fecha_salida date,
+  fecha_inscripcion date,
+  inscripta boolean NOT NULL DEFAULT false,
+  numero_carton integer NOT NULL DEFAULT 0,
   observaciones text,
   fk_id_testimonio integer REFERENCES testimonios(id_testimonio)
 );
@@ -316,6 +323,7 @@ CREATE TABLE items (
   valor real NOT NULL,
   porcentaje integer NOT NULL,
   concepto_fijo boolean NOT NULL,
+  observaciones text,
   fk_id_presupuesto integer REFERENCES presupuestos(id_presupuesto)
 );
 
