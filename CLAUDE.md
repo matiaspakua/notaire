@@ -92,7 +92,7 @@ mvn test -pl backend-api -Dtest="**/unit/*"
 # Integration tests only (require running PostgreSQL; H2-based tests work standalone)
 mvn test -pl backend-api -Dtest="**/integration/*"
 
-# Coverage check (80% minimum enforced by JaCoCo)
+# Coverage check (enforced ratchet floor via JaCoCo on `mvn verify`; 80% is the target)
 mvn jacoco:check -pl backend-api
 mvn jacoco:report -pl backend-api  # HTML report at backend-api/target/site/jacoco/index.html
 

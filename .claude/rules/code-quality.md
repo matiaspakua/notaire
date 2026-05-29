@@ -19,9 +19,16 @@ JaCoCo is used to measure code coverage during test execution.
 
 ### Configuration
 
-Minimum coverage requirements (configured in `pom.xml`):
-- **Line coverage**: 80%
-- **Branch coverage**: 80%
+Coverage is split into an **aspirational target** and an **enforced ratchet floor**:
+
+- **Long-term target**: 80% line / 80% branch.
+- **Enforced gate** (`jacoco:check`, bound to `mvn verify`, BUNDLE scope, legacy
+  `jpa`/`servicios.Administrador*` packages excluded): a ratchet floor set just below
+  the current real coverage — **28% line / 14% branch** as of 2026-05-29 (actual:
+  ~29% line / ~15% branch). The build fails if coverage drops below the floor.
+- **Policy**: raise the floor as coverage improves; never lower it. The historical
+  per-class 80% rule was bound to `<phase>none</phase>` and never ran, so the prior
+  "80% enforced" claim was inaccurate.
 
 ### Running Coverage
 
@@ -169,7 +176,7 @@ The complete quality gate in CI:
 1. **Build** - Compilation
 2. **Unit Tests** - JUnit tests
 3. **Integration Tests** - Spring Boot tests
-4. **Coverage** - JaCoCo (80% minimum)
+4. **Coverage** - JaCoCo (enforced ratchet floor; 80% target)
 5. **Security** - Trivy vulnerability scan
 6. **Code Quality** - Checkstyle + SpotBugs
 

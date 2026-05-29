@@ -452,7 +452,7 @@ Total               440+   ~37,000+
 
 | Módulo | Cobertura Líneas | Cobertura Branches | Estado |
 |:-------|:----------------|:-------------------|:-------|
-| backend-api | ≥ 80% | ≥ 80% | ✅ Verificado por JaCoCo |
+| backend-api | ~29% (objetivo 80%) | ~15% (objetivo 80%) | ⚙️ Piso mínimo aplicado por JaCoCo (`mvn verify`), con ratchet ascendente |
 
 ### Ciclo de Vida del Proyecto
 
@@ -585,8 +585,8 @@ mvn verify -pl backend-api
 |:-----|:----------|:------------|
 | ✅ Tests unitarios | 100% passing | JUnit 5 + Surefire |
 | ✅ Tests integración | 100% passing | Spring Boot Test |
-| ✅ Cobertura de línea | ≥ 80% | JaCoCo |
-| ✅ Cobertura de branches | ≥ 80% | JaCoCo |
+| ⚙️ Cobertura de línea | piso ~28% (objetivo 80%) | JaCoCo (ratchet) |
+| ⚙️ Cobertura de branches | piso ~14% (objetivo 80%) | JaCoCo (ratchet) |
 | ✅ Vulnerabilidades críticas | 0 | Trivy |
 | ✅ Code style | Sin violaciones | Checkstyle (Google Style) |
 | ✅ Bug detection | Sin errores | SpotBugs (Max effort) |

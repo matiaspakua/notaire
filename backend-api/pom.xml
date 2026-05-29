@@ -257,24 +257,41 @@
                     </execution>
                     <execution>
                         <id>check</id>
-                        <phase>none</phase>
+                        <!--
+                            Enforced ratchet floor (runs on `mvn verify`). The long-term
+                            target is 80% (see docs/code-quality), but the current real
+                            coverage of the non-legacy code is ~29% line / ~15% branch, so
+                            the gate is set just below that to prevent regressions while we
+                            climb. Raise these minimums as coverage improves; do not lower.
+                        -->
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
+                                <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
-                                    <element>CLASS</element>
+                                    <element>BUNDLE</element>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.28</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.14</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
