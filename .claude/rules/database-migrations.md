@@ -6,6 +6,18 @@ This file provides rules for database schema migrations using Flyway in the Nota
 
 The Notaire project uses **Flyway** for database schema versioning. All database changes MUST be managed through Flyway migrations.
 
+> ⚠️ **Important caveat — the Docker stack does not run Flyway.** In Docker the
+> schema is created from `init-db/01-schema.sql` (mounted into the postgres
+> container), which runs before the app starts; Flyway then finds the tables
+> already present and stays dormant (no `flyway_schema_history` is created).
+> As a result `db/migration/V3..V5` (written to add entity columns) never took
+> effect in Docker, which caused production 500s. **Until the two sources are
+> reconciled, any schema change must be applied to BOTH `init-db/01-schema.sql`
+> (authoritative for Docker) AND a new Flyway migration (for the local/Flyway
+> path).** Validate alignment with `mvn test -Ppg-integration`
+> (`InitDbSchemaValidationIntegrationTest`). Reconciling to a single source of
+> truth is a tracked follow-up.
+
 ## Mandatory Rules
 
 ### 1. NEVER Modify Existing Migrations

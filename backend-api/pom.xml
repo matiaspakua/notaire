@@ -198,6 +198,20 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!--
+                        Heavyweight Testcontainers (real PostgreSQL) integration tests are
+                        excluded from the fast default test run because mixing a full
+                        container-backed Spring context into the H2 surefire batch
+                        destabilizes the in-memory tests. Run them on demand with the
+                        'pg-integration' profile: mvn test -Ppg-integration
+                    -->
+                    <excludedGroups>pg-integration</excludedGroups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>3.5.5</version>
             </plugin>
@@ -243,24 +257,41 @@
                     </execution>
                     <execution>
                         <id>check</id>
-                        <phase>none</phase>
+                        <!--
+                            Enforced ratchet floor (runs on `mvn verify`). The long-term
+                            target is 80% (see docs/code-quality), but the current real
+                            coverage of the non-legacy code is ~29% line / ~15% branch, so
+                            the gate is set just below that to prevent regressions while we
+                            climb. Raise these minimums as coverage improves; do not lower.
+                        -->
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>com/licensis/notaire/jpa/**/*</exclude>
+                                <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
-                                    <element>CLASS</element>
+                                    <element>BUNDLE</element>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.28</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
+                                            <minimum>0.14</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -331,4 +362,27 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <profiles>
+        <!--
+            Runs the heavyweight Testcontainers (real PostgreSQL) integration tests,
+            e.g. InitDbSchemaValidationIntegrationTest, which validate the entities
+            against the production init-db schema. Requires Docker.
+            Usage: mvn test -Ppg-integration
+        -->
+        <profile>
+            <id>pg-integration</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration combine.self="override">
+                            <groups>pg-integration</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -89,6 +89,15 @@
     letter-spacing: -0.015em;
   }
 
+  /* Global keyboard focus indicator (WCAG: visible focus on all interactive
+     elements). :focus-visible targets keyboard navigation only, so pointer
+     interactions remain visually clean. Components with their own focus ring
+     still work; this is the accessible baseline for everything else. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
   /* Apple-style scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
@@ -154,9 +163,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Neutralise the decorative button scale so motion-sensitive users get no
+     movement (the transforms are otherwise driven by transitions above). */
+  .apple-button:hover,
+  .apple-button:active {
+    transform: none !important;
   }
 }

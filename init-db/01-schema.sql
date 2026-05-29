@@ -120,6 +120,14 @@ CREATE TABLE personas (
   es_escribano boolean NOT NULL DEFAULT false
 );
 
+-- Table: identificaciones (composite PK: persona + tipo de identificación)
+CREATE TABLE identificaciones (
+  fk_id_persona integer NOT NULL REFERENCES personas(id_persona),
+  fk_id_tipo_identificacion integer NOT NULL REFERENCES tipos_identificacion(id_tipo_identificacion),
+  numero integer NOT NULL,
+  PRIMARY KEY (fk_id_persona, fk_id_tipo_identificacion)
+);
+
 -- Table: inmuebles
 CREATE TABLE inmuebles (
   version integer NOT NULL,
@@ -266,6 +274,7 @@ CREATE TABLE testimonios (
   numero_carpeta integer,
   numero_expediente integer,
   reingresado boolean NOT NULL,
+  observado boolean NOT NULL DEFAULT false,
   fk_id_escritura integer REFERENCES escrituras(id_escritura)
 );
 
@@ -305,8 +314,12 @@ CREATE TABLE folios_copias (
 -- Table: movimientos_testimonio
 CREATE TABLE movimientos_testimonio (
   version integer NOT NULL,
-  id_movimiento SERIAL PRIMARY KEY,
-  fecha_movimiento date NOT NULL,
+  id_movimiento_testimonio SERIAL PRIMARY KEY,
+  fecha_ingreso date NOT NULL,
+  fecha_salida date,
+  fecha_inscripcion date,
+  inscripta boolean NOT NULL DEFAULT false,
+  numero_carton integer NOT NULL DEFAULT 0,
   observaciones text,
   fk_id_testimonio integer REFERENCES testimonios(id_testimonio)
 );
