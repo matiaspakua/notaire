@@ -120,6 +120,14 @@ CREATE TABLE personas (
   es_escribano boolean NOT NULL DEFAULT false
 );
 
+-- Table: identificaciones (composite PK: persona + tipo de identificación)
+CREATE TABLE identificaciones (
+  fk_id_persona integer NOT NULL REFERENCES personas(id_persona),
+  fk_id_tipo_identificacion integer NOT NULL REFERENCES tipos_identificacion(id_tipo_identificacion),
+  numero integer NOT NULL,
+  PRIMARY KEY (fk_id_persona, fk_id_tipo_identificacion)
+);
+
 -- Table: inmuebles
 CREATE TABLE inmuebles (
   version integer NOT NULL,
