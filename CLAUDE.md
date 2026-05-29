@@ -120,7 +120,9 @@ Package root: `com.licensis.notaire`
 
 **Key architectural note:** The `jpa` package contains `*JpaController` classes (not REST controllers) — these are large data-access classes migrated from the original monolith. They are being superseded by the `repository` package (Spring Data repos). New code should use `repository`, not `jpa`.
 
-**Database:** PostgreSQL 16 via Docker. Schema managed by `init-db/` SQL scripts. `ddl-auto=update` locally, `none` in Docker. ORM: Hibernate (PostgreSQLDialect).
+**Database:** PostgreSQL 16 via Docker. ORM: Hibernate (PostgreSQLDialect), `ddl-auto=none` (Hibernate never creates/alters the schema).
+
+> ⚠️ **Schema source of truth:** In the Docker stack the schema is built **only** from `init-db/01-schema.sql` (mounted into the postgres container). Flyway is on the classpath and `spring.flyway.enabled=true`, but it is **dormant in Docker** — the `init-db` scripts create the schema first, so the `db/migration/V*` files never run there. **Therefore `init-db/01-schema.sql` is the authoritative Docker schema and MUST stay aligned with the JPA entities.** Adding/renaming an entity column without updating `init-db` causes runtime 500s (`column ... does not exist`). The H2 unit tests cannot catch this (they generate their schema from the entities); the guard is `InitDbSchemaValidationIntegrationTest` — run `mvn test -Ppg-integration`. See `.claude/rules/database-migrations.md`.
 
 **Reports:** JasperReports (`.jasper`/`.jrxml`) in `src/main/resources/reportes/`. The `ReporteController` handles report generation.
 
