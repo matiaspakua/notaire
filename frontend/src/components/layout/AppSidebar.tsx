@@ -11,6 +11,7 @@ import {
   Scale,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
@@ -97,24 +98,34 @@ export function AppSidebar() {
                 key={item.href}
                 href={item.href}
                 aria-label={label}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+                  "relative flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
                   active
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    ? "text-primary-foreground"
                     : "text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-foreground))]"
                 )}
               >
-                {item.pngIcon ? (
-                  <NotaireIcon
-                    src={item.pngIcon}
-                    alt={label}
-                    size={20}
-                    className={cn("shrink-0", active ? "brightness-0 invert" : "")}
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    className="absolute inset-0 rounded-[12px] bg-primary shadow-md shadow-primary/20"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
-                ) : Icon ? (
-                  <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
-                ) : null}
-                {label}
+                )}
+                <span className="relative z-10 flex items-center gap-3">
+                  {item.pngIcon ? (
+                    <NotaireIcon
+                      src={item.pngIcon}
+                      alt={label}
+                      size={20}
+                      className={cn("shrink-0", active ? "brightness-0 invert" : "")}
+                    />
+                  ) : Icon ? (
+                    <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
+                  ) : null}
+                  {label}
+                </span>
               </Link>
             );
           })}

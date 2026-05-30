@@ -1,5 +1,7 @@
 "use client";
 
+import { Table as TableIcon } from "lucide-react";
+import { motion } from "motion/react";
 import {
   Table,
   TableBody,
@@ -8,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+const MotionTableRow = motion.create(TableRow);
 
 export interface Column<T> {
   key: string;
@@ -72,9 +76,12 @@ export function DataTable<T>({
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row) => (
-              <TableRow
+            data.map((row, i) => (
+              <MotionTableRow
                 key={keyExtractor(row)}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], delay: Math.min(i * 0.03, 0.3) }}
                 className="border-b border-border/20 last:border-0 hover:bg-[#F5F5F7]/30 transition-colors duration-200 group"
               >
                 {columns.map((col) => (
@@ -82,7 +89,7 @@ export function DataTable<T>({
                     {col.render(row)}
                   </TableCell>
                 ))}
-              </TableRow>
+              </MotionTableRow>
             ))
           )}
         </TableBody>
@@ -90,8 +97,6 @@ export function DataTable<T>({
     </div>
   );
 }
-
-import { Table as TableIcon } from "lucide-react";
 
 function cn(...classes: (string | undefined | false)[]) {
   return classes.filter(Boolean).join(" ");
