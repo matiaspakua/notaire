@@ -5,13 +5,16 @@ import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, apiPost } from "@/lib/api-client";
+import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { EstadoDeGestion } from "@/types";
+
+const EMPTY: Partial<EstadoDeGestion> = { nombre: "", observaciones: "" };
 
 export default function EstadosGestionPage() {
   const t = useTranslations("administracion.estadosGestion");
@@ -19,29 +22,43 @@ export default function EstadosGestionPage() {
 
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ["estados-gestion"],
-    queryFn: () => apiGet<EstadoDeGestion[]>("/catalogos/estados-gestion"),
+    queryFn: () => apiGet<EstadoDeGestion[]>("/estado-gestion"),
   });
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+  const [editing, setEditing] = useState<Partial<EstadoDeGestion>>(EMPTY);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   function openCreate() {
-    setNombre("");
-    setDescripcion("");
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setModalOpen(true);
+  }
+
+  function openEdit(estado: EstadoDeGestion) {
+    setEditing(estado);
+    setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (!nombre.trim()) {
+    if (!editing.nombre?.trim()) {
       toast.error(t("nameRequired"));
       return;
     }
     setSaving(true);
     try {
-      await apiPost("/catalogos/estados-gestion", { nombre: nombre.trim(), descripcion: descripcion.trim() });
-      toast.success(t("created"));
+      const body = { nombre: editing.nombre.trim(), observaciones: editing.observaciones?.trim() };
+      if (isEditMode && editing.idEstadoGestion) {
+        await apiPut(`/estado-gestion/${editing.idEstadoGestion}`, { ...body, version: editing.version });
+        toast.success(t("updated"));
+      } else {
+        await apiPost("/estado-gestion", body);
+        toast.success(t("created"));
+      }
       setModalOpen(false);
       refetch();
     } catch {
@@ -51,10 +68,47 @@ export default function EstadosGestionPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!deleteId) return;
+    setDeleting(true);
+    try {
+      await apiDelete(`/estado-gestion/${deleteId}`);
+      toast.success(t("deleted"));
+      refetch();
+    } catch {
+      toast.error(t("errorDelete"));
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+    }
+  }
+
   const columns: Column<EstadoDeGestion>[] = [
-    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEstadoDeGestion}</span>, className: "w-12" },
+    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEstadoGestion}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.nombre}</span> },
-    { key: "desc", header: tc("description"), render: (e) => e.descripcion ?? "—" },
+    { key: "desc", header: tc("description"), render: (e) => e.observaciones ?? "—" },
+    {
+      key: "actions",
+      header: "",
+      className: "w-24",
+      render: (e) => (
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(e)} data-testid="btn-edit-estado" aria-label={tc("edit")}>
+            <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteId(e.idEstadoGestion!)}
+            data-testid="btn-delete-estado"
+            aria-label={tc("delete")}
+          >
+            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -69,24 +123,24 @@ export default function EstadosGestionPage() {
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoDeGestion!} emptyMessage={t("noData")} />
+      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoGestion!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("newEstado")}>
+            <FormSection title={isEditMode ? t("editEstado") : t("newEstado")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
+                  value={editing.nombre ?? ""}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-nombre-estado"
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
                 <Input
-                  value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
+                  value={editing.observaciones ?? ""}
+                  onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })}
                   placeholder={t("fields.descripcionPlaceholder")}
                 />
               </FormField>
@@ -98,12 +152,14 @@ export default function EstadosGestionPage() {
               </Button>
               <Button onClick={handleSave} disabled={saving}>
                 <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
-                {tc("save")}
+                {isEditMode ? tc("update") : tc("save")}
               </Button>
             </FormActions>
           </FormContainer>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />
     </div>
   );
 }
