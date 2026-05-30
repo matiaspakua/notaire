@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { useAuthStore } from "@/store/auth-store";
+import { AnimatePresence, PageTransition } from "@/components/motion";
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
   // Delay auth check until after client hydration so Zustand can read localStorage.
   // Without this, the layout redirects before persist has loaded the stored auth state.
   const [mounted, setMounted] = useState(false);
@@ -35,7 +37,11 @@ export default function DashboardLayout({
       <AppSidebar />
       <div className="flex-1 flex flex-col">
         <AppHeader />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+          <AnimatePresence mode="wait" initial={false}>
+            <PageTransition key={pathname}>{children}</PageTransition>
+          </AnimatePresence>
+        </main>
       </div>
     </div>
   );

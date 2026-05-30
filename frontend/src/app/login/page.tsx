@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Scale, Loader2 } from "lucide-react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,9 +55,14 @@ export default function LoginPage() {
       <div className="w-full max-w-[400px] space-y-8 animate-in fade-in duration-700">
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="bg-primary/10 p-4 rounded-[22px] shadow-sm">
+            <motion.div
+              className="bg-primary/10 p-4 rounded-[22px] shadow-sm"
+              initial={{ scale: 0.8, opacity: 0, rotate: -8 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 18 }}
+            >
               <Scale className="h-10 w-10 text-primary" />
-            </div>
+            </motion.div>
           </div>
           <div className="space-y-2">
             <h1 className="text-4xl font-semibold tracking-tight text-foreground">Notaire</h1>
