@@ -94,9 +94,9 @@ import type {
 } from "@/types";
 
 describe("TypeScript type shape contracts", () => {
-  it("EstadoDeGestion uses idEstadoDeGestion", () => {
-    const e: EstadoDeGestion = { idEstadoDeGestion: 1, nombre: "En proceso" };
-    expect(e.idEstadoDeGestion).toBe(1);
+  it("EstadoDeGestion uses idEstadoGestion", () => {
+    const e: EstadoDeGestion = { idEstadoGestion: 1, nombre: "En proceso" };
+    expect(e.idEstadoGestion).toBe(1);
   });
 
   it("TipoDeTramite uses idTipoDeTramite", () => {
