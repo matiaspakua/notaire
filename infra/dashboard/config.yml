@@ -6,7 +6,7 @@ subtitle: "Infrastructure Control Center"
 logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/images/logoRojoLetraMediano.png"
 
 header: true
-footer: '<p>Built with love for Notaire S-SDLC | <b>admin/admin</b> for all services</p>'
+footer: '<p>Built with love for Notaire S-SDLC | Credentials live in the local <b>.env</b> file</p>'
 
 columns: "3"
 
@@ -37,9 +37,14 @@ services:
         subtitle: "Spring Boot REST API"
         tag: "API"
         url: "http://localhost:8080/swagger-ui.html"
+      - name: "Audit Module"
+        logo: "https://nextjs.org/favicon.ico"
+        subtitle: "Business operation audit log (UI)"
+        tag: "Audit"
+        url: "http://localhost:3000/dashboard/auditoria"
       - name: "pgAdmin"
         logo: "https://www.pgadmin.org/favicon.ico"
-        subtitle: "Database Management (admin/admin)"
+        subtitle: "Database Management"
         tag: "Admin"
         url: "http://localhost:5050"
 
@@ -48,35 +53,16 @@ services:
     items:
       - name: "SonarQube"
         logo: "https://www.sonarqube.org/favicon.ico"
-        subtitle: "SAST & Code Quality (admin/admin)"
+        subtitle: "SAST & Code Quality"
         tag: "Static"
         url: "http://localhost:9000"
-      - name: "Dependency-Track"
-        logo: "https://dependencytrack.org/favicon.ico"
-        subtitle: "SCA & SBOM Mgmt"
-        tag: "Library"
-        url: "http://localhost:8085"
-
-  - name: "Orchestration & Artifacts"
-    icon: "fas fa-cogs"
-    items:
-      - name: "Jenkins"
-        logo: "https://www.jenkins.io/favicon.ico"
-        subtitle: "CI/CD Pipelines (admin/admin)"
-        tag: "Automation"
-        url: "http://localhost:8082"
-      - name: "Nexus"
-        logo: "https://www.sonatype.com/favicon.ico"
-        subtitle: "Maven & Docker Repo (admin/admin123)"
-        tag: "Artifacts"
-        url: "http://localhost:8081"
 
   - name: "Observability"
     icon: "fas fa-chart-line"
     items:
       - name: "Grafana"
         logo: "https://grafana.com/favicon.ico"
-        subtitle: "Dashboards & Logs (admin/admin)"
+        subtitle: "Dashboards & Logs"
         tag: "Metrics"
         url: "http://localhost:3001"
       - name: "Prometheus"
@@ -103,6 +89,11 @@ services:
         subtitle: "PostgreSQL Metrics"
         tag: "Grafana"
         url: "http://localhost:3001/d/notaire-postgres"
+      - name: "Logs Dashboard"
+        logo: "https://grafana.com/favicon.ico"
+        subtitle: "Backend & Frontend Logs (Loki)"
+        tag: "Grafana"
+        url: "http://localhost:3001/d/notaire-logs"
       - name: "Health Check"
         logo: "https://spring.io/favicon.ico"
         subtitle: "System Health Status"

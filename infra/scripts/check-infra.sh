@@ -86,15 +86,13 @@ echo ""
 
 echo ">>> DevSecOps Infrastructure"
 echo "----------------------------------------"
-check_service "Dashboard (Homer)" "http://localhost:80" 200
+check_service "Dashboard (Homer)" "http://localhost:8888" 200
 check_service "SonarQube" "http://localhost:9000/api/system/status" 200
-check_service "Jenkins" "http://localhost:8082/login" 200
-check_service "Nexus" "http://localhost:8081" 200
-check_service "Dependency-Track" "http://localhost:8085" 200
 check_service "Prometheus" "http://localhost:9090/-/ready" 200
 check_service "Grafana" "http://localhost:3001/api/health" 200
 check_service "Loki" "http://localhost:3100/ready" 200
 check_service "PostgreSQL Exporter" "http://localhost:9187/metrics" 200
+check_container "Promtail" "devsecops-promtail"
 
 echo ""
 echo ">>> Notaire Application"
