@@ -51,9 +51,10 @@ export interface TipoDeFolio {
 }
 
 export interface EstadoDeGestion {
-  idEstadoDeGestion?: number;
+  idEstadoGestion?: number;
   nombre?: string;
-  descripcion?: string;
+  observaciones?: string;
+  version?: number;
 }
 
 export interface Concepto {
@@ -66,8 +67,12 @@ export interface Concepto {
 export interface Folio {
   idFolio?: number;
   numero?: number;
+  anio?: number;
+  estado?: string;
+  observaciones?: string;
   tipoDeFolio?: TipoDeFolio;
   disponible?: boolean;
+  version?: number;
 }
 
 export interface Tramite {
@@ -109,6 +114,7 @@ export interface Item {
 export interface PlantillaPresupuesto {
   idPlantillaPresupuesto?: number;
   nombre?: string;
+  descripcion?: string;
   itemList?: Item[];
 }
 

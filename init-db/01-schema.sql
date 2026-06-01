@@ -274,7 +274,6 @@ CREATE TABLE testimonios (
   numero_carpeta integer,
   numero_expediente integer,
   reingresado boolean NOT NULL,
-  observado boolean NOT NULL DEFAULT false,
   fk_id_escritura integer REFERENCES escrituras(id_escritura)
 );
 

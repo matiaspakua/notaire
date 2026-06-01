@@ -1,102 +1,105 @@
 package com.licensis.notaire.config;
 
-import com.licensis.notaire.jpa.PersonaJpaController;
-import com.licensis.notaire.jpa.TipoIdentificacionJpaController;
-import com.licensis.notaire.jpa.UsuarioJpaController;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.negocio.Usuario;
-import jakarta.annotation.PostConstruct;
+import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.TipoIdentificacionRepository;
+import com.licensis.notaire.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityManagerFactory;
-import com.licensis.notaire.servicios.AdministradorJpa;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.Optional;
 
 /**
- * Crea usuario admin/persona/tipo identificación inicial si la base está vacía
- * (p. ej. con ddl-auto=create).
+ * Garantiza que el usuario por defecto {@code admin}/{@code admin} exista y pueda
+ * iniciar sesión en cada arranque del backend.
+ *
+ * <p>La contraseña se almacena como hash MD5, coincidiendo con la verificación que
+ * realiza {@code UsuarioController#login}. Es idempotente: si el usuario ya existe
+ * (por ejemplo, sembrado por {@code init-db}) se actualiza su contraseña y estado;
+ * si no existe, se crea junto con su persona asociada. Esto asegura el acceso por
+ * defecto incluso sobre un volumen de base de datos preexistente, donde los scripts
+ * de {@code init-db} no se vuelven a ejecutar.</p>
  */
 @Component
-public class DataInitializer {
+public class DataInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
     private static final String ADMIN_USER = "admin";
     private static final String ADMIN_PASS_PLAIN = "admin";
-    private final EntityManagerFactory emf;
 
-    public DataInitializer(EntityManagerFactory emf) {
-        this.emf = emf;
+    private final UsuarioRepository usuarioRepository;
+    private final PersonaRepository personaRepository;
+    private final TipoIdentificacionRepository tipoIdentificacionRepository;
+
+    public DataInitializer(UsuarioRepository usuarioRepository,
+                           PersonaRepository personaRepository,
+                           TipoIdentificacionRepository tipoIdentificacionRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.personaRepository = personaRepository;
+        this.tipoIdentificacionRepository = tipoIdentificacionRepository;
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    @Transactional
+    public void run(ApplicationArguments args) {
         try {
-            AdministradorJpa.setEmf(emf);
-            UsuarioJpaController usuarioJpa = UsuarioJpaController.getInstancia();
-            List<Usuario> usuarios = usuarioJpa.buscarUsuarios();
-
-            Usuario admin = null;
-            if (usuarios != null) {
-                for (Usuario u : usuarios) {
-                    if (u.getNombre().equalsIgnoreCase(ADMIN_USER)) {
-                        admin = u;
-                        break;
-                    }
-                }
-            }
-
-            if (admin != null) {
-                log.info("Usuario 'admin' ya existe. Actualizando contraseña para asegurar acceso.");
-                admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
-                admin.setEstado(true);
-                // Usamos un metodo que asuma que ya existe
-                try {
-                    // Intenta editar si existe el controlador
-                    usuarioJpa.edit(admin);
-                } catch (Exception e) {
-                    log.error("No se pudo actualizar admin: {}", e.getMessage());
-                }
-            } else {
-                log.info("Usuario 'admin' no encontrado. Creando...");
-                // Reutilizamos la logica de creacion
-                TipoIdentificacionJpaController tipoIdJpa = TipoIdentificacionJpaController.getInstancia();
-                List<TipoIdentificacion> tipos = tipoIdJpa.findTipoIdentificacionEntities();
-                TipoIdentificacion tipoDni;
-                if (tipos != null && !tipos.isEmpty()) {
-                    tipoDni = tipos.get(0);
-                } else {
-                    tipoDni = new TipoIdentificacion();
-                    tipoDni.setNombre("DNI");
-                    tipoIdJpa.create(tipoDni);
-                }
-
-                PersonaJpaController personaJpa = PersonaJpaController.getInstancia();
-                Persona adminPersona = new Persona();
-                adminPersona.setNombre("Admin");
-                adminPersona.setApellido("Sistema");
-                adminPersona.setEsCliente(false);
-                adminPersona.setNumeroIdentificacion("00000000");
-                adminPersona.setFkIdTipoIdentificacion(tipoDni);
-                personaJpa.create(adminPersona);
-
-                admin = new Usuario();
-                admin.setNombre(ADMIN_USER);
-                admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
-                admin.setEstado(true);
-                admin.setTipo("Escribano");
-                admin.setFkIdPersona(adminPersona);
-                usuarioJpa.create(admin);
-                log.info("Usuario inicial 'admin' creado correctamente.");
-            }
-
+            ensureAdminUser();
         } catch (Exception e) {
-            log.warn("No se pudo crear usuario inicial: {}", e.getMessage());
+            log.warn("No se pudo garantizar el usuario inicial 'admin': {}", e.getMessage());
         }
+    }
+
+    private void ensureAdminUser() {
+        Optional<Usuario> existing = usuarioRepository.findByNombre(ADMIN_USER);
+        if (existing.isPresent()) {
+            Usuario admin = existing.get();
+            admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
+            admin.setEstado(true);
+            usuarioRepository.save(admin);
+            log.info("Usuario 'admin' verificado: contraseña por defecto y estado activo asegurados.");
+            return;
+        }
+
+        log.info("Usuario 'admin' no encontrado. Creando usuario por defecto admin/admin...");
+        Persona adminPersona = buildAdminPersona();
+        personaRepository.save(adminPersona);
+
+        Usuario admin = new Usuario();
+        admin.setNombre(ADMIN_USER);
+        admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
+        admin.setEstado(true);
+        admin.setTipo("Escribano");
+        admin.setFkIdPersona(adminPersona);
+        usuarioRepository.save(admin);
+        log.info("Usuario inicial 'admin' creado correctamente.");
+    }
+
+    private Persona buildAdminPersona() {
+        TipoIdentificacion tipo = tipoIdentificacionRepository.findAll().stream()
+                .findFirst()
+                .orElseGet(this::createDefaultTipoIdentificacion);
+
+        Persona persona = new Persona();
+        persona.setNombre("Admin");
+        persona.setApellido("Sistema");
+        persona.setEsCliente(false);
+        persona.setNumeroIdentificacion("00000000");
+        persona.setFkIdTipoIdentificacion(tipo);
+        return persona;
+    }
+
+    private TipoIdentificacion createDefaultTipoIdentificacion() {
+        TipoIdentificacion tipo = new TipoIdentificacion();
+        tipo.setNombre("DNI");
+        return tipoIdentificacionRepository.save(tipo);
     }
 
     private static String md5(String input) {
@@ -109,7 +112,7 @@ public class DataInitializer {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("MD5 no disponible en la JVM", e);
         }
     }
 }
