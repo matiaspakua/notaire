@@ -377,8 +377,8 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(3)
-        @DisplayName("CU28 — Create folio returns 200")
-        void createFolioReturns200() throws Exception {
+        @DisplayName("CU28 — Create folio returns 201 Created")
+        void createFolioReturns201() throws Exception {
             mockMvc.perform(post("/api/v1/folio")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
@@ -390,7 +390,7 @@ class BusinessWorkflowIntegrationTest {
                                       "fkIdTipoFolio": {"idTipoFolio": 1}
                                     }
                                     """))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }
     }
 

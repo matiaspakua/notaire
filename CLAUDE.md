@@ -69,9 +69,37 @@ bash scripts/stop.sh
 # Logs
 bash scripts/logs.sh
 
+# Start the FULL system: application + observability/quality infra
+bash scripts/start-all.sh        # = start.sh then start-infra.sh
+bash scripts/start-infra.sh      # infra only (app must be up first)
+
 # Run backend directly (needs local PostgreSQL on 5432)
 cd backend-api && mvn spring-boot:run
 ```
+
+## Credentials & Environment (`.env`)
+
+All service credentials live in a **single, git-ignored `.env` file at the repo
+root** (copy from `.env.example`). Both `docker-compose.yml` (app) and
+`infra/docker-compose.yml` (observability) read from it. Never hard-code
+secrets in compose files or docs — add a key to `.env(.example)` instead.
+
+## Observability & Quality Infrastructure (`infra/`)
+
+Runs alongside the app and is wired to it (see `infra/README.md`):
+- **Prometheus** (`:9090`) scrapes the backend `/actuator/prometheus`
+  (Basic auth `ACTUATOR_USER`/`ACTUATOR_PASSWORD`) and `postgres-exporter`.
+- **Grafana** (`:3001`) — provisioned dashboards `notaire-backend`,
+  `notaire-postgres`, `notaire-logs`.
+- **Loki + Promtail** — aggregate the backend's structured JSON logs
+  (Logback `LogstashEncoder`); query `{container_name="notary-backend"}`.
+- **SonarQube** (`:9000`) — run `bash scripts/run-sonar.sh` to analyze the backend.
+- **Homer** (`:8888`) — landing page linking every service.
+
+**Business audit:** the `AuditoriaAspect` records create/update/delete
+operations (and logins) into `registro_auditoria`, attributing the acting user
+via the `X-Notaire-User` header sent by the frontend `api-client`. Read-only
+GETs are not audited. Surfaced in the UI at `/dashboard/auditoria`.
 
 **Ports:** Backend API `8080`, PostgreSQL `5432`, pgAdmin `5050`
 **Swagger UI:** `http://localhost:8080/swagger-ui.html`

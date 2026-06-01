@@ -179,6 +179,7 @@ class SimpleControllersTest {
             DtoEstadoDeGestion dto = new DtoEstadoDeGestion();
             dto.setIdEstadoGestion(1);
             dto.setNombre("Activo");
+            when(repo.save(any(EstadoDeGestion.class))).thenReturn(build());
             mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             when(repo.save(any(EstadoDeGestion.class))).thenThrow(new RuntimeException("x"));
@@ -347,6 +348,7 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
+            when(repo.save(any(MovimientoTestimonio.class))).thenReturn(build());
             mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/movimiento-testimonio/1").contentType("application/json")
@@ -477,6 +479,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/testimonio/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimonio/2")).andExpect(status().isNotFound());
 
+            when(repo.save(any(Testimonio.class))).thenReturn(build());
             mvc.perform(post("/api/v1/testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/testimonio/1").contentType("application/json")
@@ -525,6 +528,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/tipo-de-documento/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
 
+            when(repo.save(any(TipoDeDocumento.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
@@ -571,6 +575,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/tipo-folio/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
 
+            when(repo.save(any(TipoDeFolio.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-folio/1").contentType("application/json")
@@ -622,6 +627,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/tipo-tramite/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
 
+            when(repo.save(any(TipoDeTramite.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")

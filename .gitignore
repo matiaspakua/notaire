@@ -52,3 +52,7 @@ integration-test/e2e-swing/screenshots/
 docs/business/.DS_Store
 infra/tests/e2e/test-results/**
 infra/tests/e2e/node_modules/**
+
+# Local environment file with all service credentials (never commit)
+.env
+infra/.env
