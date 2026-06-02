@@ -230,7 +230,7 @@ El frontend actual Swing permanece como una fase intermedia durante la migració
 #### Orquestación
 
 - `docker-compose.yml`: define servicios de `postgres`, `backend` y `pgadmin`
-- `Dockerfile.backend`: imagen Docker del backend Spring Boot
+- `backend-api/Dockerfile`: imagen Docker del backend Spring Boot
 
 ### Flujo de datos
 
@@ -275,7 +275,7 @@ API --> Shared : DTO contracts
 
 ### Deployment y operación
 
-- El backend se ejecuta en un contenedor Docker construible con `Dockerfile.backend`.
+- El backend se ejecuta en un contenedor Docker construible con `backend-api/Dockerfile`.
 - PostgreSQL se inicia con Docker Compose usando `init-db` para inicializar el esquema.
 - El frontend Next.js se desplegará como otro contenedor o aplicación web independiente.
 - pgAdmin se utiliza como herramienta de operación de base de datos.
