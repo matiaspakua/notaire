@@ -9,54 +9,82 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { PlantillaPresupuesto } from "@/types";
+import type { PlantillaPresupuesto, TipoDeTramite, Concepto } from "@/types";
 
-const EMPTY: Partial<PlantillaPresupuesto> = { nombre: "", descripcion: "" };
+interface PlantillaKey {
+  tipoTramiteId: number;
+  conceptoId: number;
+}
 
 export default function PlantillasPage() {
   const t = useTranslations("administracion.plantillas");
   const tc = useTranslations("common");
 
   const { data = [], isLoading, refetch } = useQuery({
-    queryKey: ["plantillas-presupuesto"],
-    queryFn: () => apiGet<PlantillaPresupuesto[]>("/plantilla-presupuesto"),
+    queryKey: ["plantilla-presupuestos"],
+    queryFn: () => apiGet<PlantillaPresupuesto[]>("/plantilla-presupuestos"),
+  });
+  const { data: tiposTramite = [] } = useQuery({
+    queryKey: ["tipo-tramite"],
+    queryFn: () => apiGet<TipoDeTramite[]>("/tipo-tramite"),
+  });
+  const { data: conceptos = [] } = useQuery({
+    queryKey: ["conceptos"],
+    queryFn: () => apiGet<Concepto[]>("/conceptos"),
   });
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Partial<PlantillaPresupuesto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [tipoTramiteId, setTipoTramiteId] = useState("");
+  const [conceptoId, setConceptoId] = useState("");
+  const [observaciones, setObservaciones] = useState("");
+  const [deleteKey, setDeleteKey] = useState<PlantillaKey | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   function openCreate() {
-    setEditing(EMPTY);
     setIsEditMode(false);
+    setTipoTramiteId("");
+    setConceptoId("");
+    setObservaciones("");
     setModalOpen(true);
   }
 
-  function openEdit(plantilla: PlantillaPresupuesto) {
-    setEditing(plantilla);
+  function openEdit(p: PlantillaPresupuesto) {
     setIsEditMode(true);
+    setTipoTramiteId(String(p.plantillaPresupuestoPK?.fkIdTipoTramite ?? ""));
+    setConceptoId(String(p.plantillaPresupuestoPK?.fkIdConcepto ?? ""));
+    setObservaciones(p.observaciones ?? "");
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) {
-      toast.error(t("nameRequired"));
+    const tt = Number(tipoTramiteId);
+    const cc = Number(conceptoId);
+    if (!tt || !cc) {
+      toast.error(t("selectionRequired"));
       return;
     }
     setSaving(true);
     try {
-      const body = { nombre: editing.nombre.trim(), descripcion: editing.descripcion?.trim() };
-      if (isEditMode && editing.idPlantillaPresupuesto) {
-        await apiPut(`/plantilla-presupuesto/${editing.idPlantillaPresupuesto}`, body);
+      // The backend derives the composite PK from the related entities. It reads
+      // TipoDeTramite via getIdTipoTramite(), so the relation must carry the
+      // `idTipoTramite` key (the typed field is idTipoDeTramite — hence the cast).
+      const body = {
+        plantillaPresupuestoPK: { fkIdTipoTramite: tt, fkIdConcepto: cc },
+        tipoDeTramite: { idTipoTramite: tt },
+        concepto: { idConcepto: cc },
+        observaciones: observaciones.trim() || undefined,
+      } as unknown as PlantillaPresupuesto;
+      if (isEditMode) {
+        await apiPut(`/plantilla-presupuestos/tipo-tramite/${tt}/concepto/${cc}`, body);
         toast.success(t("updated"));
       } else {
-        await apiPost("/plantilla-presupuesto", body);
+        await apiPost("/plantilla-presupuestos", body);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -69,25 +97,35 @@ export default function PlantillasPage() {
   }
 
   async function handleDelete() {
-    if (!deleteId) return;
+    if (!deleteKey) return;
     setDeleting(true);
     try {
-      await apiDelete(`/plantilla-presupuesto/${deleteId}`);
+      await apiDelete(`/plantilla-presupuestos/tipo-tramite/${deleteKey.tipoTramiteId}/concepto/${deleteKey.conceptoId}`);
       toast.success(t("deleted"));
       refetch();
     } catch {
       toast.error(t("errorDelete"));
     } finally {
       setDeleting(false);
-      setDeleteId(null);
+      setDeleteKey(null);
     }
   }
 
+  const tramiteName = (id?: number) => tiposTramite.find((x) => x.idTipoDeTramite === id)?.nombre ?? `#${id}`;
+  const conceptoName = (id?: number) => conceptos.find((x) => x.idConcepto === id)?.nombre ?? `#${id}`;
+
   const columns: Column<PlantillaPresupuesto>[] = [
-    { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPlantillaPresupuesto}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (p) => <span className="font-medium">{p.nombre}</span> },
-    { key: "desc", header: tc("description"), render: (p) => p.descripcion ?? "—" },
-    { key: "items", header: t("fields.items"), render: (p) => p.itemList?.length ?? 0 },
+    {
+      key: "tramite",
+      header: t("fields.tipoTramite"),
+      render: (p) => <span className="font-medium">{p.tipoDeTramite?.nombre ?? tramiteName(p.plantillaPresupuestoPK?.fkIdTipoTramite)}</span>,
+    },
+    {
+      key: "concepto",
+      header: t("fields.concepto"),
+      render: (p) => p.concepto?.nombre ?? conceptoName(p.plantillaPresupuestoPK?.fkIdConcepto),
+    },
+    { key: "obs", header: t("fields.observaciones"), render: (p) => p.observaciones ?? "—" },
     {
       key: "actions",
       header: "",
@@ -101,7 +139,12 @@ export default function PlantillasPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(p.idPlantillaPresupuesto!)}
+            onClick={() =>
+              setDeleteKey({
+                tipoTramiteId: p.plantillaPresupuestoPK!.fkIdTipoTramite,
+                conceptoId: p.plantillaPresupuestoPK!.fkIdConcepto,
+              })
+            }
             data-testid="btn-delete-plantilla"
             aria-label={tc("delete")}
           >
@@ -124,22 +167,53 @@ export default function PlantillasPage() {
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPlantillaPresupuesto!} emptyMessage={t("noData")} />
+      <DataTable
+        data={data}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(p) => `${p.plantillaPresupuestoPK?.fkIdTipoTramite}-${p.plantillaPresupuestoPK?.fkIdConcepto}`}
+        emptyMessage={t("noData")}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
-              <FormField label={t("fields.nombre")} required>
-                <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
-                  placeholder={t("fields.namePlaceholder")}
-                  data-testid="input-nombre-plantilla"
-                />
+              <FormField label={t("fields.tipoTramite")} required>
+                <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
+                  <SelectTrigger data-testid="select-tipo-tramite" disabled={isEditMode}>
+                    <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tiposTramite.map((tt) => (
+                      <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>
+                        {tt.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
-              <FormField label={tc("description")}>
-                <Input value={editing.descripcion ?? ""} onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })} />
+              <FormField label={t("fields.concepto")} required>
+                <Select value={conceptoId} onValueChange={setConceptoId}>
+                  <SelectTrigger data-testid="select-concepto" disabled={isEditMode}>
+                    <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {conceptos.map((c) => (
+                      <SelectItem key={c.idConcepto} value={String(c.idConcepto)}>
+                        {c.nombre}
+                        {c.valor ? ` ($${c.valor})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.observaciones")}>
+                <Input
+                  value={observaciones}
+                  onChange={(e) => setObservaciones(e.target.value)}
+                  data-testid="input-observaciones-plantilla"
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">
@@ -156,7 +230,7 @@ export default function PlantillasPage() {
         </DialogContent>
       </Dialog>
 
-      <ConfirmDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={handleDelete} loading={deleting} />
+      <ConfirmDialog open={!!deleteKey} onOpenChange={(v) => !v && setDeleteKey(null)} onConfirm={handleDelete} loading={deleting} />
     </div>
   );
 }

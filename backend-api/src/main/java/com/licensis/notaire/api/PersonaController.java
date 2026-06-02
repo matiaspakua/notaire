@@ -81,12 +81,19 @@ public class PersonaController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar persona")
-    public ResponseEntity<Void> deletePersona(@PathVariable Integer id) {
-        if (personaService.findById(id).isPresent()) {
+    public ResponseEntity<Object> deletePersona(@PathVariable Integer id) {
+        if (personaService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
             personaService.deleteById(id);
             return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            // Persona is still referenced (usuario, folio, presupuesto, …):
+            // surface a 409 instead of a raw 500.
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se puede eliminar: la persona está referenciada por otros registros.");
         }
-        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/buscar")

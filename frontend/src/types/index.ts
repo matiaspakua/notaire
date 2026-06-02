@@ -111,7 +111,19 @@ export interface Item {
   presupuesto?: Presupuesto;
 }
 
+export interface PlantillaPresupuestoPK {
+  fkIdTipoTramite: number;
+  fkIdConcepto: number;
+}
+
 export interface PlantillaPresupuesto {
+  // Real backend model: a (tipo de trámite × concepto) pair with observaciones.
+  plantillaPresupuestoPK?: PlantillaPresupuestoPK;
+  tipoDeTramite?: TipoDeTramite;
+  concepto?: Concepto;
+  observaciones?: string;
+  version?: number;
+  // Legacy fields kept for backward compatibility with older unit tests.
   idPlantillaPresupuesto?: number;
   nombre?: string;
   descripcion?: string;

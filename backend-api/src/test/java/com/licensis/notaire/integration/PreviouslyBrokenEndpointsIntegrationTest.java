@@ -97,4 +97,21 @@ class PreviouslyBrokenEndpointsIntegrationTest {
         mockMvc.perform(get("/api/v1/items/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("Should return a JSON array for GET /api/v1/folio")
+    void shouldListFoliosWhenRequested() throws Exception {
+        // Folio list previously returned 500: raw entities were serialized with
+        // uninitialized lazy Hibernate proxies. The controller now maps to DtoFolio.
+        mockMvc.perform(get("/api/v1/folio"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    @DisplayName("Should return 404 for GET /api/v1/folio/{id} when absent")
+    void shouldReturnNotFoundWhenFolioMissing() throws Exception {
+        mockMvc.perform(get("/api/v1/folio/" + MISSING_ID))
+                .andExpect(status().isNotFound());
+    }
 }
