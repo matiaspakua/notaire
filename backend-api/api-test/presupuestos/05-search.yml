@@ -1,0 +1,15 @@
+info:
+  name: Search Presupuestos (filter)
+  type: http
+  seq: 5
+  description: "## CU60 Buscar — GET /api/v1/presupuestos/buscar"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos/buscar?q=Presupuesto"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

@@ -1,0 +1,7 @@
+opencollection: 1.0.0
+info:
+  name: notaire
+  description: Notaire backend API test suite (OpenCollection / YAML format)
+headers:
+  - name: Content-Type
+    value: application/json

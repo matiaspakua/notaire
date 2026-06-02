@@ -1,22 +1,17 @@
 info:
   name: Delete Concepto
   type: http
-  description: |-
-      ## Delete Concepto
-      Elimina un concepto del sistema.
-      
-      **Method:** DELETE
-      **Path:** /api/v1/conceptos/{id}
+  seq: 6
+  description: "## Delete Concepto — DELETE /api/v1/conceptos/{id} (204 No Content)"
 
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/conceptos/1"
+  url: "{{base_url}}/api/v1/conceptos/{{concepto_id}}"
+  headers:
+    Content-Type: application/json
 
 runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200", function () {
-            expect(res.getStatus()).to.equal(200);
-          });
-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

@@ -1,0 +1,23 @@
+info:
+  name: Create Estado de Gestion
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/estado-gestion"
+  body:
+    type: json
+    data: |-
+        {"nombre":"EG E2E","observaciones":"estado e2e"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idEstadoGestion", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idEstadoGestion');
+            bru.setVar('_id', b.idEstadoGestion);
+          });

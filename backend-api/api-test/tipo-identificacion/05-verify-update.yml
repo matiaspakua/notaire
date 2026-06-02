@@ -1,0 +1,17 @@
+info:
+  name: Verify Tipo de Identificacion Update
+  type: http
+  seq: 5
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-identificacion/{{_id}}"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Update persisted (nombre)", function () {
+            expect(String(res.getBody().nombre)).to.equal('TI E2E Actualizado');
+          });

@@ -1,0 +1,18 @@
+info:
+  name: Update Tipo de Documento
+  type: http
+  seq: 4
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-de-documento/{{_id}}"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TD E2E Actualizado","vence":true,"diasVencimiento":30,"quienEntrega":"Escribano"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

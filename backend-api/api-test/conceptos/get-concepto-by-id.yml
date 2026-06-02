@@ -1,0 +1,22 @@
+info:
+  name: Get Concepto By ID
+  type: http
+  seq: 3
+  description: "## Get Concepto by ID — GET /api/v1/conceptos/{id}"
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/conceptos/{{concepto_id}}"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested concepto", function () {
+            const b = res.getBody();
+            expect(b.idConcepto).to.equal(Number(bru.getVar('concepto_id')));
+            expect(b).to.have.property('nombre');
+          });

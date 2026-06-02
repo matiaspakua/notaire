@@ -1,0 +1,15 @@
+info:
+  name: Get Usuario By ID
+  type: http
+  seq: 5
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios/{{usuario_id}}"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the usuario", function () { expect(res.getBody().idUsuario).to.equal(Number(bru.getVar('usuario_id'))); });

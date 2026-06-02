@@ -1,0 +1,24 @@
+info:
+  name: Update Presupuesto
+  type: http
+  seq: 6
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/presupuestos/{{presupuesto_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "fkIdPersona": { "idPersona": 1 },
+          "fecha": "2026-06-02",
+          "encabezado": "Presupuesto E2E Actualizado",
+          "estado": "Aprobado",
+          "observaciones": "actualizado"
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

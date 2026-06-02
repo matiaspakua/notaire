@@ -1,0 +1,19 @@
+info:
+  name: List Personas
+  type: http
+  seq: 2
+  description: "## CU54 — GET /api/v1/personas"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/personas"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Array contains the created persona", function () {
+            const id = Number(bru.getVar('persona_id'));
+            expect(res.getBody().some(p => p.idPersona === id)).to.equal(true);
+          });

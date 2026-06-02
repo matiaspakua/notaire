@@ -1,0 +1,14 @@
+info:
+  name: Delete Folio
+  type: http
+  seq: 4
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/folio/{{folio_id}}"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

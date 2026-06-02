@@ -1,0 +1,19 @@
+info:
+  name: List Estado de Gestion
+  type: http
+  seq: 2
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/estado-gestion"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response is an array", function () { expect(res.getBody()).to.be.an('array'); });
+          test("Created item is in the list", function () {
+            const id = Number(bru.getVar('_id'));
+            expect(res.getBody().some(x => x.idEstadoGestion === id)).to.equal(true);
+          });

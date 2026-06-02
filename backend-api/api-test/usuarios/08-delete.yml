@@ -1,0 +1,14 @@
+info:
+  name: Delete Usuario
+  type: http
+  seq: 8
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/usuarios/{{usuario_id}}"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

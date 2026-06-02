@@ -1,0 +1,23 @@
+info:
+  name: Update Usuario
+  type: http
+  seq: 7
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/usuarios/{{usuario_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "apitest-usuario",
+          "tipo": "ADMIN",
+          "estado": true,
+          "fkIdPersona": { "idPersona": 1 }
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

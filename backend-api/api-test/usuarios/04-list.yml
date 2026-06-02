@@ -1,0 +1,18 @@
+info:
+  name: List Usuarios
+  type: http
+  seq: 4
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Created usuario is listed", function () {
+            const id = Number(bru.getVar('usuario_id'));
+            expect(res.getBody().some(u => u.idUsuario === id)).to.equal(true);
+          });

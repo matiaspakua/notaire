@@ -174,12 +174,17 @@ public class TipoDeTramite implements Serializable {
         if (dtoTipoDeTramite.isValido()) {
             this.idTipoTramite = dtoTipoDeTramite.getIdTipoTramite();
             this.nombre = dtoTipoDeTramite.getNombre();
-            this.seArchiva = dtoTipoDeTramite.isSeArchiva();
-            this.seInscribe = dtoTipoDeTramite.isSeInscribe();
-            this.asociaInmuebles = dtoTipoDeTramite.getAsociaInmuebles();
+            // Null-safe unboxing: PUT payloads may omit boolean flags, which
+            // previously NPE'd (e.g. getAsociaInmuebles() null on update).
+            this.seArchiva = Boolean.TRUE.equals(dtoTipoDeTramite.getSeArchiva());
+            this.seInscribe = Boolean.TRUE.equals(dtoTipoDeTramite.getSeInscribe());
+            this.asociaInmuebles = Boolean.TRUE.equals(dtoTipoDeTramite.getAsociaInmuebles());
             this.observaciones = dtoTipoDeTramite.getObservaciones();
-            this.version = dtoTipoDeTramite.getVersion();
-            habilitado = dtoTipoDeTramite.getHabilitado();
+            // Preserve current version when the payload omits it (avoids NPE on update).
+            if (dtoTipoDeTramite.getVersion() != null) {
+                this.version = dtoTipoDeTramite.getVersion();
+            }
+            habilitado = !Boolean.FALSE.equals(dtoTipoDeTramite.getHabilitado());
         }
     }
 

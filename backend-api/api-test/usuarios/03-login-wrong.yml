@@ -1,0 +1,23 @@
+info:
+  name: Login wrong password
+  type: http
+  seq: 3
+  description: "## Negative — wrong password returns valido:false"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "apitest-usuario", "contrasenia": "WRONG" }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 400", function () { expect([200,400]).to.include(res.getStatus()); });
+          test("valido is false for wrong credentials", function () {
+            const b = res.getBody();
+            if (b && b.valido !== undefined) expect(b.valido).to.equal(false);
+          });

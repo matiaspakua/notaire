@@ -183,9 +183,12 @@ public class TipoDeDocumento implements Serializable
         }
 
         this.quienEntrega = miDto.getQuienEntrega();
-        this.version = miDto.getVersion();
-
-        habilitado = miDto.getHabilitado();
+        // Preserve current version when omitted; default habilitado to enabled.
+        // Both are nullable in the DTO and previously NPE'd on update.
+        if (miDto.getVersion() != null) {
+            this.version = miDto.getVersion();
+        }
+        habilitado = !Boolean.FALSE.equals(miDto.getHabilitado());
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
