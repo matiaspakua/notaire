@@ -1,52 +1,52 @@
-# 🛠️ DevSecOps Infrastructure - Notaire
+# 🛠️ Observability & Quality Infrastructure — Notaire
 
-This directory contains the infrastructure necessary to support the Secure Software Development Life Cycle (S-SDLC) of the Notaire project. It is designed to run in parallel with the application, providing tools for code analysis, security scanning, artifact management, and observability.
+This directory contains the infrastructure that runs **alongside** the Notaire
+application, providing **observability** (metrics, logs, dashboards) and
+**code quality** analysis. Every service here is wired to the running Notaire
+stack and shows real data.
 
-**All services are configured with default credentials: `admin` / `admin`** (except Nexus which uses `admin` / `admin123`).
+> **Credentials live in a single, git-ignored `.env` file at the repo root.**
+> Copy `.env.example` → `.env` and adjust if needed. Nothing here hard-codes
+> secrets.
 
 ## 🧰 Tools Stack
-
-### 🛡️ Security & Quality (DevSecOps)
-| Tool | Category | Description | Port | Credentials |
-|------|----------|-------------|------|-------------|
-| **SonarQube (CE)** | SAST | Static analysis for code quality and security vulnerabilities. | 9000 | admin/Admin@123456 |
-| **Dependency-Track** | SCA | Analysis of third-party library vulnerabilities (SBOM). | 8085 | - |
-| **DefectDojo** | Vulnerability Mgmt | Aggregates findings from various tools into a single dashboard. | 8084 | - |
-| **OWASP ZAP** | DAST | Dynamic analysis of the running application. | - | - |
-| **Trivy** | Container/FS Scan | Scans Docker images and the filesystem for vulnerabilities. | - | - |
-
-### 🏗️ CI/CD & Artifacts
-| Tool | Category | Description | Port | Credentials |
-|------|----------|-------------|------|-------------|
-| **Jenkins** | Orchestration | Automates builds, tests, and security scans. | 8082 | admin/admin |
-| **Nexus Repository** | Artifacts | Private repository for Maven dependencies and Docker images. | 8081 | admin/admin123 |
 
 ### 📊 Observability (Monitoring & Logging)
 | Tool | Category | Description | Port | Credentials |
 |------|----------|-------------|------|-------------|
-| **Prometheus** | Metrics | Time-series database for service and infrastructure metrics. | 9090 | - |
-| **Grafana** | Visualization | Dashboards for Prometheus metrics and Loki logs. | 3001 | admin/admin |
-| **Loki** | Logging | Log aggregation system (similar to ELK but more lightweight). | 3100 | - |
+| **Prometheus** | Metrics | Scrapes backend (Actuator/Micrometer) + Postgres metrics. | 9090 | – |
+| **Grafana** | Visualization | Dashboards for Prometheus metrics and Loki logs. | 3001 | `$GRAFANA_ADMIN_USER` / `$GRAFANA_ADMIN_PASSWORD` |
+| **Loki** | Logging | Aggregates structured JSON logs from all containers. | 3100 | – |
+| **Promtail** | Log shipper | Discovers Docker containers and ships logs to Loki. | – | – |
+| **PostgreSQL Exporter** | DB Metrics | Exposes Notaire DB metrics for Prometheus. | 9187 | – |
 
-### 🗄️ Database Monitoring
+### 🛡️ Security & Quality
 | Tool | Category | Description | Port | Credentials |
 |------|----------|-------------|------|-------------|
-| **PostgreSQL Exporter** | DB Metrics | PostgreSQL metrics collector for Prometheus. | 9187 | - |
+| **SonarQube (CE)** | SAST | Static analysis of the backend (bugs, smells, coverage). | 9000 | `$SONAR_ADMIN_USER` / `$SONAR_ADMIN_PASSWORD` |
 
 ### 🕹️ Centralized Control Center
 | Tool | Category | Description | Port | Credentials |
 |------|----------|-------------|------|-------------|
-| **Homer Hub** | Landing Page | A single entry point to navigate all DevSecOps services. | 80 | - |
+| **Homer Hub** | Landing Page | A single entry point to navigate every service. | 8888 | – |
 
-## 📋 Monitored Services
+> **Removed (2026-06):** Jenkins, Nexus and Dependency-Track were removed —
+> they were not wired to the running application and are out of scope for the
+> observability + quality goal. Re-add them to `docker-compose.yml` if needed.
 
-The infrastructure monitors the following Notaire services:
+## 📋 What is Monitored
 
 | Service | Type | Monitoring Method | Prometheus Job |
 |---------|------|-------------------|----------------|
-| **Backend API** | Spring Boot | Actuator / Micrometer | `notaire-backend` |
+| **Backend API** | Spring Boot | Actuator / Micrometer (`/actuator/prometheus`, Basic auth) | `notaire-backend` |
 | **PostgreSQL** | Database | postgres-exporter | `notaire-postgres` |
-| **notaire-shared** | Shared Module | Micrometer (via Backend) | `notaire-shared` |
+| **Grafana** | Self | `/metrics` | `grafana` |
+| **Loki** | Self | `/metrics` | `loki` |
+
+**Business audit trail** (create / update / delete operations and logins) is
+recorded by the backend `AuditoriaAspect` into the `registro_auditoria` table
+and surfaced in the application UI at **`/dashboard/auditoria`**. The acting
+user is propagated from the frontend via the `X-Notaire-User` header.
 
 ---
 
@@ -54,189 +54,99 @@ The infrastructure monitors the following Notaire services:
 
 ### Prerequisites
 - Docker and Docker Compose
-- Minimum 8GB RAM recommended (this stack is comprehensive)
-- The Notaire application must be running first (see root `docker-compose.yml`)
+- ~6 GB RAM (SonarQube needs ~2 GB)
+- A `.env` file at the repo root (`cp .env.example .env`)
 
-### Starting the Infrastructure
+### Start everything (application + infrastructure)
+```bash
+bash scripts/start-all.sh           # app, then infra
+```
 
-1. **Start the application network** (in the root):
-   ```bash
-   cd /path/to/notaire
-   docker-compose up -d
-   ```
+### Or start them independently
+```bash
+bash scripts/start.sh               # 1) application (creates the app network)
+bash scripts/start-infra.sh         # 2) observability + SonarQube
+```
+The infra stack attaches to the application's Docker network
+(`notaire_notary-network`, declared `external`), so the application must be up
+first.
 
-2. **Start the infra**:
-   ```bash
-   cd /path/to/notaire/infra
-   docker-compose up -d
-   ```
-
-3. **Access the Hub**: Open `http://localhost:80` in your browser.
-
-### Starting Order
-The infrastructure is designed to connect to the existing `notary-network`. Start services in this order:
-
-1. Notaire application (PostgreSQL, Backend, pgAdmin)
-2. Infrastructure (Prometheus, Grafana, Loki, Jenkins, etc.)
+### Access the Hub
+Open **http://localhost:8888**.
 
 ---
 
-## 🛡️ Testing & Validation
-
-### Full Health Check
-To verify that all Notaire services and infrastructure are running correctly:
-
+## 🛡️ Health Check
 ```bash
 bash infra/scripts/check-infra.sh
 ```
+Checks Homer, SonarQube, Prometheus, Grafana, Loki, Promtail, PostgreSQL
+Exporter, and all Notaire application endpoints.
 
-This script checks:
-- **DevSecOps**: SonarQube, Jenkins, Nexus, Dependency-Track
-- **Monitoring**: Prometheus, Grafana, Loki, PostgreSQL Exporter
-- **Notaire**: Backend API health, liveness, readiness, metrics, Swagger, pgAdmin, PostgreSQL
-
-### Quick Service Checks
-
+### Quick checks
 ```bash
-# Backend API health
-curl http://localhost:8080/actuator/health
-
-# Prometheus targets (should show all services as UP)
-curl http://localhost:9090/api/v1/targets
-
-# Grafana health
-curl http://localhost:3001/api/health
-
-# PostgreSQL exporter metrics
-curl http://localhost:9187/metrics | head -20
-
-# Loki readiness
-curl http://localhost:3100/ready
+curl http://localhost:8080/actuator/health                 # backend health
+curl -u admin:admin http://localhost:8080/actuator/prometheus | head   # backend metrics
+curl http://localhost:9090/api/v1/targets                  # prometheus targets (all UP)
+curl http://localhost:3001/api/health                      # grafana
+curl http://localhost:3100/ready                           # loki
+curl http://localhost:9187/metrics | head                  # postgres exporter
 ```
 
 ---
 
-## 📊 Dashboards
-
-Grafana is pre-provisioned with the following dashboards:
+## 📊 Dashboards (pre-provisioned in Grafana)
 
 | Dashboard | UID | Description |
 |-----------|-----|-------------|
-| **Notaire Backend API** | `notaire-backend` | Spring Boot metrics (JVM, HTTP, DB pool, logs) |
-| **Notaire PostgreSQL** | `notaire-postgres` | Database metrics (connections, transactions, size, business entities) |
+| **Notaire Backend API** | `notaire-backend` | JVM, HTTP, DB pool, log volume |
+| **Notaire PostgreSQL** | `notaire-postgres` | Connections, transactions, size |
+| **Notaire Logs** | `notaire-logs` | Backend & frontend logs from Loki |
 
-Access at: http://localhost:3001 (login: admin/admin)
-
-### Data Sources (Pre-configured)
-- **Prometheus**: http://prometheus:9090 (default)
-- **Loki**: http://loki:3100
+Data sources (auto-provisioned): **Prometheus** (`http://prometheus:9090`),
+**Loki** (`http://loki:3100`).
 
 ---
 
 ## 📝 Logging
 
-Loki aggregates logs from all Docker containers. Use Grafana Explore with the Loki datasource:
+The backend logs structured JSON (Logback `LogstashEncoder`) to stdout. Promtail
+ships every container's logs to Loki. Query in Grafana → Explore → Loki:
 
-1. Open http://localhost:3001/explore
-2. Select "Loki" datasource
-3. Query logs by label: `{container="notary-backend"}`
-4. Available labels: `container`, `service`, `app`, `level`
-
----
-
-## 🔐 Credentials Quick Reference
-
-| Service | URL | Username | Password |
-|---------|-----|----------|----------|
-| Grafana | http://localhost:3001 | `admin` | `admin` |
-| Jenkins | http://localhost:8082 | `admin` | `admin` |
-| SonarQube | http://localhost:9000 | `admin` | `Admin@123456` |
-| Nexus | http://localhost:8081 | `admin` | `admin123` |
-| Backend (Actuator) | http://localhost:8080 | `admin` | `admin` |
-| PostgreSQL | localhost:5432 | `admin` | `admin` |
-| pgAdmin | http://localhost:5050 | `admin@notaire.com` | `admin` |
+```
+{container_name="notary-backend"} | json
+{service="notaire"}
+```
+Available labels: `container`, `container_name`, `service`, `app`, `level`.
 
 ---
 
-## 📊 Reporting System
+## 🔍 Code Quality (SonarQube)
 
-The infrastructure includes a report generator that aggregates security findings into Markdown and HTML formats.
-
-### Generating a Security Report
 ```bash
-bash infra/scripts/generate-report.sh
+bash scripts/run-sonar.sh
+```
+This waits for SonarQube, handles the first-login password change, generates an
+analysis token (saved to `.env` as `SONAR_TOKEN`), runs the backend test suite
+with JaCoCo, and submits the analysis. View results at
+**http://localhost:9000/dashboard?id=notaire-backend**.
+
+---
+
+## 📊 Reporting
+```bash
+bash infra/scripts/generate-report.sh   # Markdown + HTML in infra/reports/
 ```
 
-The report will include:
-- Infrastructure health status
-- Container vulnerability findings (via Trivy)
-- SAST summary (SonarQube)
-- SCA overview (Dependency-Track)
-
-Reports are saved in `/infra/reports/`.
-
 ---
 
-## 🔗 Integration with Notaire
+## ⚠️ Networking
 
-### 1. Static Analysis (SonarQube)
-```bash
-mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=<token>
-```
-
-### 2. Vulnerability Management (SCA & Containers)
-- **Dependency-Track**: Access at `http://localhost:8085`. Upload your `bom.xml` (generated via `cyclonedx-maven-plugin`).
-- **Trivy**: Scan Docker images:
-  ```bash
-  trivy image notary-backend:latest
-  ```
-
-### 3. Dynamic Analysis (DAST)
-```bash
-docker run -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
-  -t http://backend:8080/v3/api-docs -f openapi
-```
-
-### 4. Metrics & Monitoring (Prometheus/Grafana)
-- **Prometheus**: http://localhost:9090 — Scrapes Actuator metrics from the backend every 10s.
-- **Grafana**: http://localhost:3001 (`admin/admin`) — Pre-configured with Prometheus and Loki.
-- **Dashboards**: Backend API and PostgreSQL dashboards pre-installed.
-
-### 5. Log Aggregation (Loki/Promtail)
-- **Loki**: Receives logs from Promtail at http://loki:3100.
-- **Promtail**: Discovers all Docker containers and ships their logs to Loki.
-- **Grafana Explore**: Query logs by container: `{container="notary-backend"}`
-
----
-
-## 🛠️ Automated CI Pipeline (Example)
-
-A typical Jenkins pipeline for this project:
-
-1. **Build**: `mvn clean install -pl backend-api -am`
-2. **SAST**: `mvn sonar:sonar`
-3. **SCA**: `mvn cyclonedx:makeAggregateBom` → Upload to Dependency-Track
-4. **Container Scan**: `trivy image notary-backend:latest`
-5. **DAST**: Trigger ZAP API Scan
-6. **Deploy**: Push to Nexus and deploy to environment
-
----
-
-## ⚠️ Important Note on Networking
-
-The infrastructure connects to the `notary-network` (used by the main application) as an **external** network.
-
-1. Start the main application first: `docker-compose up -d` (in the root).
-2. Start the infra: `docker-compose up -d` (in `/infra`).
-
-If you want to run the infra independently, create the network manually:
-```bash
-docker network create notary-network
-```
+The infra connects to `notaire_notary-network` as an **external** network.
+Start the application first so the network exists. `scripts/start-infra.sh`
+verifies this and fails fast with guidance if it is missing.
 
 ## 📖 Additional Documentation
-
-For detailed monitoring setup and usage, see:
 - [Monitoring Guide](../docs/04-operations/04-monitoring/README.md)
 - [Operations README](../docs/04-operations/README.md)
-- [DevSecOps Pipeline](../docs/04-operations/01-devsecops/README.md)
+- Credentials reference: [`CREDENTIALS.md`](CREDENTIALS.md)

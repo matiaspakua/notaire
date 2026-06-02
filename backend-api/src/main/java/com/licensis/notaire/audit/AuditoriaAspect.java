@@ -14,8 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -32,6 +40,14 @@ import java.util.Optional;
 public class AuditoriaAspect {
 
     private static final Logger log = LoggerFactory.getLogger(AuditoriaAspect.class);
+
+    /**
+     * Header set by the Next.js frontend carrying the name of the currently
+     * logged-in application user. Used to attribute audit records since the
+     * REST API itself is stateless and does not establish a Spring Security
+     * session for application logins.
+     */
+    public static final String ACTING_USER_HEADER = "X-Notaire-User";
 
     private final RegistroAuditoriaService auditoriaService;
     private final UsuarioRepository usuarioRepository;
@@ -58,16 +74,24 @@ public class AuditoriaAspect {
     @AfterReturning("controllerMethods()")
     public void auditAfterControllerInvocation(JoinPoint joinPoint) {
         try {
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            Method method = signature.getMethod();
+
+            // Only business operations are audited: create / update / delete and
+            // authentication events. Read-only queries (GET) are intentionally
+            // skipped so the audit trail stays focused and is not flooded by the
+            // many list refreshes the UI performs.
+            if (!isAuditableOperation(method)) {
+                return;
+            }
+
             String controllerName = resolveControllerSimpleName(joinPoint);
             String modulo = AuditModuleResolver.resolve(controllerName);
-
-            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-            String detalle = AuditOperationDescriber.describe(
-                    signature.getMethod(), joinPoint.getArgs(), modulo);
+            String detalle = AuditOperationDescriber.describe(method, joinPoint.getArgs(), modulo);
 
             Usuario usuario = resolveCurrentUser().orElse(null);
             if (usuario == null) {
-                log.debug("Skipping audit for {} — no authenticated user", controllerName);
+                log.debug("Skipping audit for {} — no acting user", controllerName);
                 return;
             }
 
@@ -109,17 +133,61 @@ public class AuditoriaAspect {
         return simpleName;
     }
 
-    private Optional<Usuario> resolveCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Optional.empty();
+    /**
+     * Only audit state-changing business operations (create / update / delete)
+     * and authentication events (login / logout). Read-only GET endpoints are
+     * not auditable.
+     */
+    private boolean isAuditableOperation(Method method) {
+        if (method == null) {
+            return false;
         }
-        String name = authentication.getName();
-        if (name == null || name.isBlank() || "anonymousUser".equals(name)) {
+        String name = method.getName().toLowerCase(Locale.ROOT);
+        if (name.contains("login") || name.contains("logout")) {
+            return true;
+        }
+        return method.isAnnotationPresent(PostMapping.class)
+                || method.isAnnotationPresent(PutMapping.class)
+                || method.isAnnotationPresent(PatchMapping.class)
+                || method.isAnnotationPresent(DeleteMapping.class);
+    }
+
+    /**
+     * Resolves the acting user from (1) the Spring Security context, then
+     * (2) the {@link #ACTING_USER_HEADER} request header set by the frontend.
+     * The application login is stateless, so in practice (2) is the common path.
+     */
+    private Optional<Usuario> resolveCurrentUser() {
+        String name = resolveActingUsername();
+        if (name == null || name.isBlank()) {
             return Optional.empty();
         }
         return usuarioRepository.findAll().stream()
                 .filter(u -> u.getNombre() != null && u.getNombre().equalsIgnoreCase(name))
                 .findFirst();
+    }
+
+    private String resolveActingUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String name = authentication.getName();
+            if (name != null && !name.isBlank() && !"anonymousUser".equals(name)) {
+                return name;
+            }
+        }
+        return currentRequestHeader(ACTING_USER_HEADER);
+    }
+
+    private String currentRequestHeader(String headerName) {
+        try {
+            ServletRequestAttributes attributes =
+                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                return attributes.getRequest().getHeader(headerName);
+            }
+        } catch (RuntimeException ignored) {
+            // No request bound to the current thread (e.g. async); not auditable.
+        }
+        return null;
     }
 }

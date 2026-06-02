@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,22 +59,38 @@ class AuditoriaFlowIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should write an audit row when authenticated user hits a controller")
+    @DisplayName("Should write an audit row when authenticated user performs a business mutation")
     void shouldWriteAuditRowWhenAuthenticatedHitController() throws Exception {
         long before = auditRepository.count();
 
-        mockMvc.perform(get("/api/v1/conceptos"))
-                .andExpect(status().isOk());
+        // Only state-changing operations are audited; a POST (create) qualifies.
+        mockMvc.perform(post("/api/v1/estado-gestion")
+                        .contentType("application/json")
+                        .content("{\"nombre\":\"Auditoría IT\",\"observaciones\":\"flujo de auditoría\"}"))
+                .andExpect(status().isCreated());
 
         long after = auditRepository.count();
         assertThat(after).isGreaterThan(before);
 
-        // The latest audit row must describe a "Conceptos" consultation.
+        // The latest audit row must describe an "EstadosDeGestion" creation.
         boolean hasMatch = auditRepository.findAll().stream()
-                .anyMatch(r -> "Conceptos".equals(r.getModulo())
+                .anyMatch(r -> "EstadosDeGestion".equals(r.getModulo())
                         && r.getDetalleOperacion() != null
-                        && r.getDetalleOperacion().toLowerCase().contains("consulta"));
+                        && r.getDetalleOperacion().toLowerCase().contains("creación"));
         assertThat(hasMatch).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should NOT audit read-only GET operations")
+    void shouldNotAuditReadOnlyGets() throws Exception {
+        long before = auditRepository.count();
+
+        // GET is a read; it must not produce an audit record.
+        mockMvc.perform(get("/api/v1/conceptos"))
+                .andExpect(status().isOk());
+
+        long after = auditRepository.count();
+        assertThat(after).isEqualTo(before);
     }
 
     @Test

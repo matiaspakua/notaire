@@ -1,5 +1,13 @@
 # Monitoring & Observability - Notaire Project
 
+> ℹ️ **As of 2026-06, the live source of truth for the infra stack is
+> [`infra/README.md`](../../../infra/README.md).** The stack was slimmed to
+> **Observability (Prometheus, Grafana, Loki, Promtail, postgres-exporter,
+> Homer) + SonarQube**; Jenkins, Nexus and Dependency-Track were removed. All
+> credentials live in the git-ignored root `.env`. Start everything with
+> `bash scripts/start-all.sh`. Some legacy references below may mention removed
+> tools.
+
 ## Overview
 
 This document describes the complete monitoring and observability infrastructure for the Notaire system. The entire system (backend API, PostgreSQL database, notaire-shared module) is monitored through a unified observability stack consisting of **Prometheus**, **Grafana**, **Loki**, and **Grafana Dashboard**.

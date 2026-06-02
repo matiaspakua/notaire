@@ -5,7 +5,7 @@ title: E2E Coverage Report - 2026-06-01
 # E2E Coverage Report
 
 **Date:** 2026-06-01
-**Trigger:** schedule
+**Trigger:** push
 
 ## Summary
 
