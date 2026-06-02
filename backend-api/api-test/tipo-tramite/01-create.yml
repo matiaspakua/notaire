@@ -1,0 +1,23 @@
+info:
+  name: Create Tipo de Tramite
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TT E2E","descripcion":"tramite e2e","seArchiva":false,"seInscribe":false}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idTipoDeTramite", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idTipoDeTramite');
+            bru.setVar('_id', b.idTipoDeTramite);
+          });

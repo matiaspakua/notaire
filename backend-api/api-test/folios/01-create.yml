@@ -1,0 +1,31 @@
+info:
+  name: Create Folio
+  type: http
+  seq: 1
+  description: "## CU28/40 — POST /api/v1/folio"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/folio"
+  body:
+    type: json
+    data: |-
+        {
+          "numero": 55777,
+          "anio": 2026,
+          "estado": "Nuevo",
+          "disponible": true,
+          "fkIdPersonaEscribano": { "idPersona": 1 },
+          "fkIdTipoFolio": { "idTipoFolio": 1 }
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idFolio", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idFolio');
+            bru.setVar('folio_id', b.idFolio);
+          });

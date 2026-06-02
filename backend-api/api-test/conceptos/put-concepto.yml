@@ -1,22 +1,22 @@
 info:
   name: Update Concepto
   type: http
+  seq: 4
   description: |-
-      ## Update Concepto
-      Actualiza un concepto existente en el sistema.
-      
-      **Method:** PUT
-      **Path:** /api/v1/conceptos/{id}
+      ## Update Concepto — PUT /api/v1/conceptos/{id}
+      Regression guard for issue #415: payload omits `habilitado` and must not 500.
 
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/conceptos/1"
+  url: "{{base_url}}/api/v1/conceptos/{{concepto_id}}"
   body:
     type: json
     data: |-
-        nombre: "Concepto actualizado"
-        descripcion: "Descripción actualizada"
-        valor: 200.00
+        {
+          "nombre": "Concepto E2E Actualizado",
+          "descripcion": "Actualizado por la suite",
+          "valor": 2750.00
+        }
   headers:
     Content-Type: application/json
 
@@ -24,7 +24,6 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200", function () {
+          test("Status 200 (no NPE when habilitado omitted)", function () {
             expect(res.getStatus()).to.equal(200);
           });
-

@@ -1,0 +1,18 @@
+info:
+  name: List Presupuestos
+  type: http
+  seq: 2
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Created presupuesto is listed", function () {
+            const id = Number(bru.getVar('presupuesto_id'));
+            expect(res.getBody().some(p => p.idPresupuesto === id)).to.equal(true);
+          });

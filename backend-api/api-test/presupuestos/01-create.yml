@@ -1,0 +1,30 @@
+info:
+  name: Create Presupuesto
+  type: http
+  seq: 1
+  description: "## CU01 Preparar presupuesto — POST /api/v1/presupuestos"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "fkIdPersona": { "idPersona": 1 },
+          "fecha": "2026-06-02",
+          "encabezado": "Presupuesto E2E",
+          "estado": "Pendiente",
+          "observaciones": "creado por la suite"
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idPresupuesto", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idPresupuesto');
+            bru.setVar('presupuesto_id', b.idPresupuesto);
+          });

@@ -17,6 +17,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByFkIdPersonaIdPersona(Integer idPersona);
 
+    // A persona may be linked to more than one usuario; "findFirst" avoids a
+    // NonUniqueResult 500 when several rows match.
+    Optional<Usuario> findFirstByFkIdPersonaIdPersona(Integer idPersona);
+
     List<Usuario> findByEstado(boolean estado);
 
     boolean existsByNombre(String nombre);

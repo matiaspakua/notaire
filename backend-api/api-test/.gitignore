@@ -1,0 +1,7 @@
+# Bruno CLI run artifacts
+results.html
+results.xml
+results.json
+results-junit.xml
+bruno-test-report.xml
+.DS_Store

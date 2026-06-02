@@ -1,12 +1,10 @@
 info:
   name: Create Concepto
   type: http
+  seq: 1
   description: |-
-      ## Create Concepto
-      Crea un nuevo concepto en el sistema.
-      
-      **Method:** POST
-      **Path:** /api/v1/conceptos
+      ## Create Concepto (CU29)
+      Crea un nuevo concepto de precio. Captura `concepto_id` para el resto del ciclo.
 
 http:
   method: POST
@@ -14,9 +12,11 @@ http:
   body:
     type: json
     data: |-
-        nombre: "Concepto de prueba"
-        descripcion: "Descripción del concepto"
-        valor: 100.00
+        {
+          "nombre": "Concepto E2E",
+          "descripcion": "Concepto creado por la suite de API",
+          "valor": 1500.50
+        }
   headers:
     Content-Type: application/json
 
@@ -24,7 +24,15 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 201 or 200", function () {
-            expect([200, 201]).to.include(res.getStatus());
+          test("Status is 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
           });
-
+          test("Body returns the created concepto with idConcepto", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idConcepto');
+            expect(b.nombre).to.equal('Concepto E2E');
+            bru.setVar('concepto_id', b.idConcepto);
+          });
+          test("Default habilitado is true on create", function () {
+            expect(res.getBody().habilitado).to.equal(true);
+          });

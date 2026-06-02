@@ -1,0 +1,23 @@
+info:
+  name: Create Tipo de Folio
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-folio"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TF E2E","observaciones":"folio e2e"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idTipoFolio", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idTipoFolio');
+            bru.setVar('_id', b.idTipoFolio);
+          });

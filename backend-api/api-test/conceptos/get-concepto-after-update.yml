@@ -1,0 +1,22 @@
+info:
+  name: Verify Concepto Update
+  type: http
+  seq: 5
+  description: "## Verify the update persisted — GET /api/v1/conceptos/{id}"
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/conceptos/{{concepto_id}}"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Update was persisted", function () {
+            const b = res.getBody();
+            expect(b.nombre).to.equal('Concepto E2E Actualizado');
+            expect(Number(b.valor)).to.equal(2750);
+          });

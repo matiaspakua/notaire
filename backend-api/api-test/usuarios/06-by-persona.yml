@@ -1,0 +1,15 @@
+info:
+  name: Get Usuarios By Persona (filter)
+  type: http
+  seq: 6
+  description: "## Filter — GET /api/v1/usuarios/persona/{idPersona}"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios/persona/1"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

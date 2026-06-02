@@ -42,7 +42,7 @@ public class UsuarioController {
     @GetMapping("/persona/{idPersona}")
     @Operation(summary = "Obtener usuario por id de persona asociada")
     public ResponseEntity<Usuario> getUsuarioByPersona(@PathVariable Integer idPersona) {
-        return usuarioRepository.findByFkIdPersonaIdPersona(idPersona)
+        return usuarioRepository.findFirstByFkIdPersonaIdPersona(idPersona)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -81,6 +81,10 @@ public class UsuarioController {
             usuario.setIdUsuario(id);
             if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
                 usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
+            } else {
+                // Preserve the stored password when the update omits it
+                // (contrasenia is NOT NULL — a null would violate the constraint).
+                usuario.setContrasenia(existing.get().getContrasenia());
             }
             usuarioRepository.save(usuario);
             return ResponseEntity.ok().build();

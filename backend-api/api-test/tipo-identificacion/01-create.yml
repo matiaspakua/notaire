@@ -1,0 +1,23 @@
+info:
+  name: Create Tipo de Identificacion
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-identificacion"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TI E2E","caracteres":"8"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idTipoIdentificacion", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idTipoIdentificacion');
+            bru.setVar('_id', b.idTipoIdentificacion);
+          });

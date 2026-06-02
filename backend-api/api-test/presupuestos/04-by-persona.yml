@@ -1,0 +1,16 @@
+info:
+  name: Presupuestos By Persona (filter)
+  type: http
+  seq: 4
+  description: "## CU60 — GET /api/v1/presupuestos/persona/{idPersona}"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos/persona/1"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns an array", function () { expect(res.getBody()).to.be.an('array'); });
