@@ -19,7 +19,7 @@ interface CuCheck {
   id: string;
   name: string;
   method: "GET" | "POST" | "PUT" | "DELETE" | "SEARCH";
-  path: string | ((page: Page) => Promise<string>);
+  path: string | ((page: Page) => string | Promise<string>);
   expectStatus?: number;
   skipIf?: boolean;
 }
