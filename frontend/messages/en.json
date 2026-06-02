@@ -432,14 +432,23 @@
       "title": "Quote Templates",
       "description": "Reusable templates for building quotes",
       "newPlantilla": "New Quote Template",
+      "editPlantilla": "Edit Quote Template",
       "created": "Template created",
+      "updated": "Template updated",
+      "deleted": "Template deleted",
       "errorCreate": "Error creating template",
+      "errorDelete": "Error deleting template",
       "noData": "No templates",
       "nameRequired": "Name is required",
+      "selectionRequired": "Select case type and concept",
       "fields": {
         "nombre": "Name",
         "namePlaceholder": "E.g.: Standard Sale",
         "tipoTramite": "Case Type",
+        "tipoTramitePlaceholder": "Select case type...",
+        "concepto": "Concept",
+        "conceptoPlaceholder": "Select concept...",
+        "observaciones": "Notes",
         "items": "Items"
       }
     }

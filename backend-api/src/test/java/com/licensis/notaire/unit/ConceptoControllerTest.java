@@ -127,6 +127,24 @@ class ConceptoControllerTest {
     }
 
     @Test
+    @DisplayName("PUT /api/v1/conceptos/{id} should return 200 when payload omits habilitado")
+    void shouldUpdateConceptoWhenHabilitadoOmitted() throws Exception {
+        // Regression: a payload without 'habilitado' must not NPE while unboxing
+        // a null Boolean — the controller preserves the existing enabled state.
+        Concepto existing = buildEntity();
+        when(repository.findById(1)).thenReturn(Optional.of(existing));
+        when(repository.save(any(Concepto.class))).thenReturn(existing);
+
+        DtoConcepto partial = buildDto();
+        partial.setHabilitado(null);
+
+        mockMvc.perform(put("/api/v1/conceptos/1")
+                        .contentType("application/json")
+                        .content(mapper.writeValueAsString(partial)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("PUT /api/v1/conceptos/{id} should return 404 when not found")
     void shouldReturn404WhenUpdatingMissingConcepto() throws Exception {
         when(repository.findById(99)).thenReturn(Optional.empty());

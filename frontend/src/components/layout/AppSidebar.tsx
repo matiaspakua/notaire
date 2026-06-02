@@ -60,7 +60,7 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="flex flex-col w-72 min-h-screen bg-[hsl(var(--sidebar))] backdrop-blur-xl border-r border-[hsl(var(--sidebar-border))]">
+    <aside data-testid="sidebar" className="flex flex-col w-72 min-h-screen bg-[hsl(var(--sidebar))] backdrop-blur-xl border-r border-[hsl(var(--sidebar-border))]">
       {/* Logo */}
       <div className="flex items-center gap-3 px-7 py-8">
         <div className="flex items-center justify-center w-10 h-10 rounded-[12px] bg-primary text-primary-foreground shadow-sm">
@@ -135,6 +135,7 @@ export function AppSidebar() {
       <div className="px-4 py-6 border-t border-[hsl(var(--sidebar-border))] space-y-3">
         <LanguageSwitcher />
         <button
+          data-testid="btn-logout"
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >

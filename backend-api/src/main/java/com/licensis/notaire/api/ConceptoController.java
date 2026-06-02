@@ -72,6 +72,11 @@ public class ConceptoController {
         try {
             dto.setIdConcepto(id);
             Concepto entity = existing.get();
+            // Preserve the current enabled state when the payload omits it,
+            // otherwise setAtributos unboxes a null Boolean and throws an NPE.
+            if (dto.getHabilitado() == null) {
+                dto.setHabilitado(entity.getHabilitado());
+            }
             entity.setAtributos(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();

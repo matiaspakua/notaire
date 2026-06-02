@@ -40,6 +40,9 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
   return (
     <button
       type="button"
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded={open}
       onClick={() => setOpen(!open)}
       className={cn(
         "flex h-12 w-full items-center justify-between rounded-[12px] border border-[hsl(var(--border))] bg-white px-4 py-2.5 text-base shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring apple-focus disabled:cursor-not-allowed disabled:opacity-50",

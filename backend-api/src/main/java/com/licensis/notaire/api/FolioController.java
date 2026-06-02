@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.jpa.FolioJpaController;
 import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.negocio.Folio;
@@ -26,19 +27,29 @@ public class FolioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los folio")
-    public ResponseEntity<List<Folio>> getAll() {
+    public ResponseEntity<List<DtoFolio>> getAll() {
         try {
-            return ResponseEntity.ok(getJpaController().findFolioEntities());
+            // Map to DTOs: serializing raw entities fails because their lazy
+            // associations are uninitialized Hibernate proxies.
+            List<DtoFolio> result = getJpaController().findFolioEntities().stream()
+                    .map(Folio::getDto)
+                    .toList();
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
+            log.error("Failed to list folios", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener folio por ID")
-    public ResponseEntity<Folio> getById(@PathVariable Integer id) {
+    public ResponseEntity<DtoFolio> getById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(getJpaController().findFolio(id));
+            Folio folio = getJpaController().findFolio(id);
+            if (folio == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(folio.getDto());
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

@@ -432,14 +432,23 @@
       "title": "Plantillas de Presupuesto",
       "description": "Plantillas reutilizables para armar presupuestos",
       "newPlantilla": "Nueva Plantilla de Presupuesto",
+      "editPlantilla": "Editar Plantilla de Presupuesto",
       "created": "Plantilla creada",
+      "updated": "Plantilla actualizada",
+      "deleted": "Plantilla eliminada",
       "errorCreate": "Error al crear la plantilla",
+      "errorDelete": "Error al eliminar la plantilla",
       "noData": "No hay plantillas",
       "nameRequired": "El nombre es requerido",
+      "selectionRequired": "Seleccione tipo de trámite y concepto",
       "fields": {
         "nombre": "Nombre",
         "namePlaceholder": "Ej: Compraventa estándar",
         "tipoTramite": "Tipo de Trámite",
+        "tipoTramitePlaceholder": "Seleccionar tipo de trámite...",
+        "concepto": "Concepto",
+        "conceptoPlaceholder": "Seleccionar concepto...",
+        "observaciones": "Observaciones",
         "items": "Items"
       }
     }

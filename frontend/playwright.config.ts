@@ -43,7 +43,8 @@ export default defineConfig({
       name: "chromium",
       testMatch: "**/*.spec.ts",
       grepInvert: /@smoke|@health/,
-      use: { ...devices["Desktop Chrome"] },
+      // Use the real Google Chrome browser (channel) instead of bundled Chromium.
+      use: { ...devices["Desktop Chrome"], channel: "chrome" },
     },
   ],
   // Skip webServer since we're using Docker
