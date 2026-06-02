@@ -21,6 +21,23 @@ mvn test
 mvn jacoco:check -pl backend-api
 ```
 
+## Docker
+
+La imagen del backend se construye con `backend-api/Dockerfile`. Es un build
+multi-etapa **cuyo contexto es la raíz del repositorio** (no `backend-api/`),
+porque necesita los módulos `notaire-shared` y `frontend-swing` para compilar:
+
+```bash
+# desde la raíz del repo
+docker build -f backend-api/Dockerfile -t notaire-backend .
+# o vía compose (lo usa scripts/start.sh)
+docker compose build backend
+```
+
+`backend-api/Dockerfile.slim` es una variante que copia un JAR ya compilado
+(actualmente sin referenciar). El `.dockerignore` y `docker-compose.yml` viven
+en la raíz porque el contexto de build y la orquestación son a nivel de repo.
+
 ## Documentación relevante
 
 - `/docs/02-architecture/` — diseño de arquitectura

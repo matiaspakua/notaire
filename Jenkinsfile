@@ -117,7 +117,7 @@ pipeline {
                 script {
                     docker.build(
                         "notaire-backend:latest",
-                        "-f backend-api/Dockerfile backend-api/"
+                        "-f backend-api/Dockerfile ."
                     )
                 }
             }
