@@ -33,37 +33,57 @@ public class UsuarioController {
         this.usuarioRepository = usuarioRepository;
     }
 
+    record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
+
+    record UsuarioResponse(Integer idUsuario, String nombre, String tipo, boolean activo, PersonaInfo persona) {}
+
+    record UsuarioRequest(String nombre, String contrasenia, String tipo, boolean activo) {}
+
+    private UsuarioResponse toResponse(Usuario u) {
+        PersonaInfo persona = null;
+        if (u.getFkIdPersona() != null) {
+            var p = u.getFkIdPersona();
+            persona = new PersonaInfo(p.getIdPersona(), p.getNombre(), p.getApellido());
+        }
+        return new UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getTipo(), u.getEstado(), persona);
+    }
+
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios")
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
-        return ResponseEntity.ok(usuarioRepository.findAll());
+    public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
+        return ResponseEntity.ok(usuarioRepository.findAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/persona/{idPersona}")
     @Operation(summary = "Obtener usuario por id de persona asociada")
-    public ResponseEntity<Usuario> getUsuarioByPersona(@PathVariable Integer idPersona) {
+    public ResponseEntity<UsuarioResponse> getUsuarioByPersona(@PathVariable Integer idPersona) {
         return usuarioRepository.findFirstByFkIdPersonaIdPersona(idPersona)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioResponse> getUsuarioById(@PathVariable Integer id) {
         return usuarioRepository.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo usuario")
-    public ResponseEntity<Object> createUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<Object> createUsuario(@RequestBody UsuarioRequest request) {
         try {
-            if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
-                usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
-            }
+            Usuario usuario = new Usuario();
+            usuario.setNombre(request.nombre());
+            usuario.setTipo(request.tipo());
+            usuario.setEstado(request.activo());
+            String pwd = request.contrasenia();
+            usuario.setContrasenia(pwd != null && !pwd.isEmpty() ? encriptaEnMD5(pwd) : "");
             usuario = usuarioRepository.save(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(usuario));
         } catch (Exception e) {
             log.error("Failed to create usuario", e);
             return ResponseEntity.internalServerError().build();
@@ -72,19 +92,19 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
-    public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
+    public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @RequestBody UsuarioRequest request) {
         Optional<Usuario> existing = usuarioRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
-            usuario.setIdUsuario(id);
-            if (usuario.getContrasenia() != null && !usuario.getContrasenia().isEmpty()) {
-                usuario.setContrasenia(encriptaEnMD5(usuario.getContrasenia()));
-            } else {
-                // Preserve the stored password when the update omits it
-                // (contrasenia is NOT NULL — a null would violate the constraint).
-                usuario.setContrasenia(existing.get().getContrasenia());
+            Usuario usuario = existing.get();
+            usuario.setNombre(request.nombre());
+            usuario.setTipo(request.tipo());
+            usuario.setEstado(request.activo());
+            String pwd = request.contrasenia();
+            if (pwd != null && !pwd.isEmpty()) {
+                usuario.setContrasenia(encriptaEnMD5(pwd));
             }
             usuarioRepository.save(usuario);
             return ResponseEntity.ok().build();

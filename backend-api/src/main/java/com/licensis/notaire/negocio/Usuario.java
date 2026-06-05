@@ -70,7 +70,7 @@ public class Usuario implements Serializable {
     private List<RegistroAuditoria> registroAuditoriaList;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
     @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Persona fkIdPersona;
 
     public Usuario() {
