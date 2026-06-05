@@ -83,8 +83,7 @@ class BusinessWorkflowIntegrationTest {
                                       "nombre": "test_workflow_user",
                                       "contrasenia": "test123",
                                       "tipo": "EMPLEADO",
-                                      "estado": true,
-                                      "fkIdPersona": {"idPersona": 1}
+                                      "activo": true
                                     }
                                     """))
                     .andExpect(status().is2xxSuccessful());

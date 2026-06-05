@@ -203,19 +203,27 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/usuarios/persona/10")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/usuarios/persona/99")).andExpect(status().isNotFound());
 
-            // create with no password
-            Usuario noPwd = new Usuario(2, "user", "", true, "Escribano");
+            // create with no password — uses UsuarioRequest format (activo, not estado)
+            String noPwdJson = """
+                    {"nombre":"user","contrasenia":"","tipo":"Escribano","activo":true}
+                    """;
+            when(repo.save(any(Usuario.class))).thenReturn(u);
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
-                    .content(mapper.writeValueAsString(noPwd))).andExpect(status().isCreated());
+                    .content(noPwdJson)).andExpect(status().isCreated());
             // create with password
-            Usuario withPwd = new Usuario(3, "user", "pwd", true, "Escribano");
+            String withPwdJson = """
+                    {"nombre":"user","contrasenia":"pwd","tipo":"Escribano","activo":true}
+                    """;
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
-                    .content(mapper.writeValueAsString(withPwd))).andExpect(status().isCreated());
+                    .content(withPwdJson)).andExpect(status().isCreated());
 
+            String updateJson = """
+                    {"nombre":"admin","contrasenia":"","tipo":"Escribano","activo":true}
+                    """;
             mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(u))).andExpect(status().isOk());
+                    .content(updateJson)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/usuarios/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(u))).andExpect(status().isNotFound());
+                    .content(updateJson)).andExpect(status().isNotFound());
 
             mvc.perform(delete("/api/v1/usuarios/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/usuarios/2")).andExpect(status().isNotFound());
@@ -251,9 +259,9 @@ class AdditionalControllersTest {
             // Failure paths
             when(repo.save(any(Usuario.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
-                    .content(mapper.writeValueAsString(noPwd))).andExpect(status().isInternalServerError());
+                    .content(noPwdJson)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(u))).andExpect(status().isInternalServerError());
+                    .content(updateJson)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/usuarios/1")).andExpect(status().isConflict());
 

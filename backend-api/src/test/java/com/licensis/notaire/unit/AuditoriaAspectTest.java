@@ -208,11 +208,12 @@ class AuditoriaAspectTest {
 
     @Test
     @DisplayName("Should resolve Usuarios module from UsuarioController mutation")
-    void shouldResolveUsuariosModuleFromUsuarioController() throws NoSuchMethodException {
+    void shouldResolveUsuariosModuleFromUsuarioController() throws NoSuchMethodException, ClassNotFoundException {
         authenticateAs("admin");
         when(usuarioRepository.findAll()).thenReturn(List.of(adminUser));
 
-        Method method = UsuarioController.class.getDeclaredMethod("createUsuario", Usuario.class);
+        Class<?> requestClass = Class.forName("com.licensis.notaire.api.UsuarioController$UsuarioRequest");
+        Method method = UsuarioController.class.getDeclaredMethod("createUsuario", requestClass);
         stubJoinPoint(UsuarioController.class, method, new Object[]{null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
