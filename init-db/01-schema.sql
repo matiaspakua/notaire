@@ -255,9 +255,9 @@ CREATE TABLE documentos_presentados (
   observado boolean NOT NULL,
   observaciones text,
   entregado boolean DEFAULT false,
-  reingresado boolean NOT NULL,
+  reingresado boolean,
   quien_entrega text NOT NULL,
-  fk_id_tramite integer NOT NULL REFERENCES tramites(id_tramite),
+  fk_id_tramite integer REFERENCES tramites(id_tramite),
   fk_id_tipo_documento integer REFERENCES tipos_de_documento(id_tipo_documento)
 );
 

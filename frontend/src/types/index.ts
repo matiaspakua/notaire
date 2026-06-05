@@ -89,6 +89,12 @@ export interface DocumentoPresentado {
   fecha?: string;
 }
 
+export interface DocumentoPresentadoRequest {
+  tipoId: number | null;
+  fecha: string | null;
+  entregado: boolean;
+}
+
 export interface Historial {
   idHistorial?: number;
   estado?: EstadoDeGestion;

@@ -110,7 +110,7 @@ public class DocumentoPresentado implements Serializable
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Tramite fkIdTramite;
 
     public DocumentoPresentado()
@@ -417,6 +417,11 @@ public class DocumentoPresentado implements Serializable
     }
 
     public int getFkIdTipoDocumento()
+    {
+        return fkIdTipoDocumento;
+    }
+
+    public Integer getFkIdTipoDocumentoNullable()
     {
         return fkIdTipoDocumento;
     }
