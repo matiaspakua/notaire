@@ -59,9 +59,9 @@ export default function DocumentosPage() {
   }
 
   async function handleSave() {
-    const data: Partial<DocumentoPresentado> = {
-      tipo: form.tipoId ? { idTipoDocumento: Number(form.tipoId) } as TipoDeDocumento : undefined,
-      fecha: form.fecha || undefined,
+    const data = {
+      tipoId: form.tipoId ? Number(form.tipoId) : null,
+      fecha: form.fecha || null,
       entregado: form.entregado,
     };
     try {

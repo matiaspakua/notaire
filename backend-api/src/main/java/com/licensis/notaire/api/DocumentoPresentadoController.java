@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -42,16 +43,31 @@ public class DocumentoPresentadoController {
         this.tipoRepository = tipoRepository;
     }
 
+    private DocumentoPresentado toEntity(DocumentoPresentadoRequest request) {
+        DocumentoPresentado entity = new DocumentoPresentado();
+        entity.setFkIdTipoDocumento(request.tipoId());
+        entity.setEntregado(request.entregado() != null ? request.entregado() : false);
+        entity.setNombre("");
+        entity.setQuienEntrega("");
+        entity.setPreparado(false);
+        entity.setVence(false);
+        if (request.fecha() != null) {
+            try {
+                entity.setFechaIngreso(DATE_FORMAT.parse(request.fecha()));
+            } catch (ParseException e) {
+                log.warn("Invalid fecha format: {}", request.fecha());
+            }
+        }
+        return entity;
+    }
+
     private DocumentoPresentadoResponse toResponse(DocumentoPresentado d) {
         TipoDocInfo tipo = null;
-        try {
-            // getFkIdTipoDocumento() returns primitive int — NPEs when the DB column is NULL
-            int tipoId = d.getFkIdTipoDocumento();
+        Integer tipoId = d.getFkIdTipoDocumentoNullable();
+        if (tipoId != null) {
             tipo = tipoRepository.findById(tipoId)
                     .map(t -> new TipoDocInfo(t.getIdTipoDocumento(), t.getNombre()))
                     .orElse(null);
-        } catch (NullPointerException e) {
-            log.debug("fk_id_tipo_documento is NULL for documento {}", d.getIdDocumentoPresentado());
         }
         String fecha = d.getFechaIngreso() != null ? DATE_FORMAT.format(d.getFechaIngreso()) : null;
         return new DocumentoPresentadoResponse(d.getIdDocumentoPresentado(), tipo, fecha, d.getEntregado());
@@ -74,8 +90,9 @@ public class DocumentoPresentadoController {
 
     @PostMapping
     @Operation(summary = "Crear nuevo documento presentado")
-    public ResponseEntity<Object> create(@RequestBody DocumentoPresentado entity) {
+    public ResponseEntity<Object> create(@RequestBody DocumentoPresentadoRequest request) {
         try {
+            DocumentoPresentado entity = toEntity(request);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
@@ -86,11 +103,12 @@ public class DocumentoPresentadoController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar documento presentado")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody DocumentoPresentado entity) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody DocumentoPresentadoRequest request) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         try {
+            DocumentoPresentado entity = toEntity(request);
             entity.setIdDocumentoPresentado(id);
             repository.save(entity);
             return ResponseEntity.ok().build();
