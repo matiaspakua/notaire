@@ -52,6 +52,10 @@ public class TipoIdentificacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "nombre")
     private String nombre;
+    // Column is NOT NULL in the schema; map it so inserts populate it
+    // (previously missing → "null value in column caracteres" 500 on create).
+    @Column(name = "caracteres")
+    private String caracteres;
     @XmlTransient
     @JsonIgnore
     @JsonIgnoreProperties("fkIdTipoIdentificacion")
@@ -84,6 +88,14 @@ public class TipoIdentificacion implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getCaracteres() {
+        return caracteres;
+    }
+
+    public void setCaracteres(String caracteres) {
+        this.caracteres = caracteres;
     }
 
     @XmlTransient

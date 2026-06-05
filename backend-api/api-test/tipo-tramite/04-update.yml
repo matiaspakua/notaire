@@ -1,0 +1,18 @@
+info:
+  name: Update Tipo de Tramite
+  type: http
+  seq: 4
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-tramite/{{_id}}"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TT E2E Actualizado","descripcion":"upd","seArchiva":true,"seInscribe":false}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

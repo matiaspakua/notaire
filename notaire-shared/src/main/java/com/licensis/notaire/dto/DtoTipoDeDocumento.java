@@ -81,7 +81,9 @@ public class DtoTipoDeDocumento implements DtoValido
 
     public boolean isVence()
     {
-        return this.vence;
+        // Null-safe: a tipo de documento that doesn't specify "vence" defaults
+        // to not expiring, avoiding an NPE when the field is omitted on create.
+        return Boolean.TRUE.equals(this.vence);
     }
 
     public void setVence(boolean vence)

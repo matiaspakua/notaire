@@ -1,0 +1,31 @@
+info:
+  name: Create Usuario
+  type: http
+  seq: 1
+  description: "## CU20 Dar alta usuario — POST /api/v1/usuarios"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "apitest-usuario",
+          "contrasenia": "Test1234!",
+          "tipo": "EMPLEADO",
+          "estado": true,
+          "fkIdPersona": { "idPersona": 1 }
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idUsuario and hashes the password", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idUsuario');
+            expect(b.contrasenia, 'password must not be stored in plaintext').to.not.equal('Test1234!');
+            bru.setVar('usuario_id', b.idUsuario);
+          });

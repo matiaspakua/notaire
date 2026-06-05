@@ -1,0 +1,23 @@
+info:
+  name: Create Tipo de Documento
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-de-documento"
+  body:
+    type: json
+    data: |-
+        {"nombre":"TD E2E","vence":false,"quienEntrega":"Cliente"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idTipoDocumento", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idTipoDocumento');
+            bru.setVar('_id', b.idTipoDocumento);
+          });

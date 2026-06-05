@@ -1,4 +1,38 @@
 name: Developmen
 variables:
   - name: base_url
-    value: http:\\localhost:3000
+    value: http://localhost:8080
+  - name: token
+    value: ""
+  - name: user_id
+    value: ""
+  - name: persona_id
+    value: ""
+  - name: escritura_id
+    value: ""
+  - name: tramite_id
+    value: ""
+  - name: presupuesto_id
+    value: ""
+  - name: gestion_id
+    value: ""
+  - name: suplencia_id
+    value: ""
+  - name: folio_id
+    value: ""
+  - name: concepto_id
+    value: ""
+  - name: tipo_tramite_id
+    value: ""
+  - name: tipo_documento_id
+    value: ""
+  - name: estado_gestion_id
+    value: ""
+  - name: item_id
+    value: ""
+  - name: pago_id
+    value: ""
+  - name: inmueble_id
+    value: ""
+  - name: copia_id
+    value: ""

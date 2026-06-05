@@ -1,0 +1,17 @@
+info:
+  name: Verify Concepto Deleted
+  type: http
+  seq: 7
+  description: "## Confirm deletion — GET deleted id returns 404"
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/conceptos/{{concepto_id}}"
+  headers:
+    Content-Type: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 after delete", function () { expect(res.getStatus()).to.equal(404); });

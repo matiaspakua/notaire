@@ -1,0 +1,16 @@
+info:
+  name: Search Personas (filter)
+  type: http
+  seq: 4
+  description: "## CU61 Buscar persona — GET /api/v1/personas/buscar?q="
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/personas/buscar?q=Lopez"
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Search returns an array", function () { expect(res.getBody()).to.be.an('array'); });

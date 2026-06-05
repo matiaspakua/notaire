@@ -1,0 +1,34 @@
+info:
+  name: Create Persona
+  type: http
+  seq: 1
+  description: "## CU17 Dar alta persona — POST /api/v1/personas"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/personas"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "Ana",
+          "apellido": "Lopez E2E",
+          "numeroIdentificacion": "30555444",
+          "esCliente": true,
+          "tipoIdentificacion": { "idTipoIdentificacion": 1 },
+          "nacionalidad": "Argentina",
+          "estadoCivil": "Soltero",
+          "sexo": "Femenino"
+        }
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idPersona and is marked cliente", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idPersona');
+            expect(b.esCliente).to.equal(true);
+            bru.setVar('persona_id', b.idPersona);
+          });

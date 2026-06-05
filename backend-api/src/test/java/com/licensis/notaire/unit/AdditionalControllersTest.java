@@ -192,8 +192,8 @@ class AdditionalControllersTest {
             when(repo.findAll()).thenReturn(List.of(u));
             when(repo.findById(1)).thenReturn(Optional.of(u));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findByFkIdPersonaIdPersona(10)).thenReturn(Optional.of(u));
-            when(repo.findByFkIdPersonaIdPersona(99)).thenReturn(Optional.empty());
+            when(repo.findFirstByFkIdPersonaIdPersona(10)).thenReturn(Optional.of(u));
+            when(repo.findFirstByFkIdPersonaIdPersona(99)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
