@@ -384,9 +384,9 @@ class BusinessWorkflowIntegrationTest {
                                     {
                                       "numero": 9001,
                                       "anio": 2025,
-                                      "estado": "ACTIVO",
-                                      "fkIdPersonaEscribano": {"idPersona": 1},
-                                      "fkIdTipoFolio": {"idTipoFolio": 1}
+                                      "estado": "Nuevo",
+                                      "tipoFolioId": 1,
+                                      "escribanoId": 1
                                     }
                                     """))
                     .andExpect(status().isCreated());

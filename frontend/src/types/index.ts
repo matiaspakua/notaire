@@ -71,6 +71,8 @@ export interface Folio {
   estado?: string;
   observaciones?: string;
   tipoDeFolio?: TipoDeFolio;
+  tiposDeFolio?: { idTipoFolio?: number; nombre?: string };
+  personaEscribano?: { idPersona?: number; registroEscribano?: number };
   disponible?: boolean;
   version?: number;
 }

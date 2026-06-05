@@ -406,8 +406,16 @@
         "numero": "Number",
         "tipo": "Type",
         "estado": "Status",
-        "year": "Year"
-      }
+        "year": "Year",
+        "escribano": "Notary",
+        "estadoPlaceholder": "Select status",
+        "tipoPlaceholder": "Select type",
+        "escribanoPlaceholder": "Select notary"
+      },
+      "updated": "Folio updated",
+      "deleted": "Folio deleted",
+      "errorDelete": "Error deleting folio",
+      "editFolio": "Edit Folio"
     },
     "tramites": {
       "title": "Case Types",

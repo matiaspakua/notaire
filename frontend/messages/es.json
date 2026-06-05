@@ -406,8 +406,16 @@
         "numero": "Número",
         "tipo": "Tipo",
         "estado": "Estado",
-        "year": "Año"
-      }
+        "year": "Año",
+        "escribano": "Escribano",
+        "estadoPlaceholder": "Seleccionar estado",
+        "tipoPlaceholder": "Seleccionar tipo",
+        "escribanoPlaceholder": "Seleccionar escribano"
+      },
+      "updated": "Folio actualizado",
+      "deleted": "Folio eliminado",
+      "errorDelete": "Error al eliminar el folio",
+      "editFolio": "Editar Folio"
     },
     "tramites": {
       "title": "Tipos de Trámite",
