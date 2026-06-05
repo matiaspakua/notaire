@@ -1,305 +1,138 @@
-# AGENTS.md - Agent Coding Guidelines for Notaire
+# AGENTS.md — Notaire Agent Reference
 
-This file provides essential information for agentic coding agents operating in the Notaire repository.
+Coding agents for the Notaire project. All agents enforce the mandatory development workflow defined in `AUDITORIA.md` and `.claude/rules/ai-agent-workflow.md`.
 
-## Project Overview
+---
 
-Multi-module Maven project refactoring a Java Swing monolith to microservices:
-- **backend-api**: Spring Boot REST API (Java 21, PostgreSQL)
-- **frontend-swing**: Swing GUI client (REST client only)
-- **notaire-shared**: Shared DTOs and common code
+## Available Agents
 
-## Build Commands
+| Agent | File | Role |
+|-------|------|------|
+| **efficiency_config_agent** | `.claude/agents/efficiency_config_agent.md` | **Primary coding agent.** Implementation, debugging, refactoring. Enforces AUDITORIA.md workflow. |
+| **Code Reviewers** | `.claude/agents/code-reviewer.md` | Code review: correctness, security, KIS/SRP, workflow compliance. |
+| **java-architect** | `.claude/agents/java-architect.md` | Java/Spring Boot architecture decisions, package structure, migration from legacy `jpa`. |
+| **devops-engineer** | `.claude/agents/devops-engineer.md` | Docker, CI/CD, observability (Prometheus/Grafana/Loki), scripts. |
+| **Security Auditors** | `.claude/agents/security-auditor.md` | OWASP Top 10, auth/authz, dependency CVEs, configuration security. |
+| **Sync Issues and Code** | `.claude/agents/sync_issues_and_code.md` | GitHub issue ↔ code sync: Use Case validation, IN PROGRESS state, PR linkage. |
 
-```bash
-# Build entire project
-mvn clean install
+---
 
-# Build specific module with dependencies (-am builds dependencies too)
-mvn clean install -pl backend-api -am
+## Mandatory Development Workflow (all agents follow this)
 
-# Package for deployment
-mvn clean package
+```
+0. Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
+1. Branch from updated main: <type>/<issue-number>_<description>
+1.5 Move issue to IN PROGRESS
+2. TDD — write failing tests first (watch them fail)
+3. Implement (make tests pass)
+4. Refactor — KIS, SRP, remove dead/duplicate code
+5. Run ALL tests: unit + integration + E2E Playwright
+6. Commit (Conventional Commits + Closes #issue)
+7. Push
+8. Update documentation (archive outdated docs → docs/archive/)
+9. PR + Close issue
 ```
 
-## Testing Commands
+Full details: `.claude/rules/ai-agent-workflow.md`
+
+---
+
+## Project Quick Reference
+
+### Build
 
 ```bash
-# Run all tests
-mvn test
-
-# Run tests for specific module
-mvn test -pl backend-api
-mvn test -pl frontend-swing
-
-# Single test class
-mvn test -Dtest=PresupuestoEntityTest
-
-# Single test method
-mvn test -Dtest=PresupuestoEntityTest#shouldCreatePresupuestoWithRequiredFields
-
-# Test pattern matching
-mvn test -Dtest="*ControllerTest"
-mvn test -Dtest="*ServiceTest,*RepositoryTest"
-
-# Run unit tests only
-mvn test -Dtest="**/unit/*"
-
-# Run integration tests only
-mvn test -Dtest="**/integration/*"
-
-# Check JaCoCo coverage (80% minimum required)
-mvn jacoco:check -pl backend-api
-mvn jacoco:report -pl backend-api
-
-# HTTP API integration tests (requires running API)
-bash scripts/test.sh
+mvn clean install                       # all modules
+mvn clean install -pl backend-api -am   # backend + shared
 ```
 
-## Code Quality & Linting
+### Run
 
 ```bash
-# Run all checks (tests + static analysis)
-mvn verify -pl backend-api
-
-# Checkstyle
-mvn checkstyle:check -pl backend-api
-
-# SpotBugs (requires Java 21 locally)
-mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
-
-# Full site generation with all reports
-mvn site -pl backend-api
-```
-
-## Application Commands
-
-```bash
-# Start application and database
-bash scripts/start.sh
-
-# Stop application
+bash scripts/start.sh                   # DB + backend (Docker)
 bash scripts/stop.sh
-
-# View logs
 bash scripts/logs.sh
-
-# Run backend directly
-cd backend-api && mvn spring-boot:run
-
-# Access Swagger UI: http://localhost:8080/swagger-ui.html
+bash scripts/start-all.sh               # app + observability infra
 ```
 
-## Java Code Style Guidelines
+### Test
 
-### General Conventions
-- **Java Version**: 21
-- **Indentation**: 4 spaces (no tabs)
-- **Line Limit**: 120 characters
-- **Braces**: Same line, always use braces for control blocks
-- **Spacing**: Space after keywords (`if ()`, `while ()`, `for ()`), spaces around operators
-
-### Naming Conventions
-| Element | Convention | Example |
-|---------|-----------|---------|
-| Classes | PascalCase | `UsuarioController`, `PresupuestoService` |
-| Methods/variables | camelCase | `isLoading`, `hasError`, `getActiveUsers` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Packages | lowercase | `com.licensis.notaire.api` |
-| DTOs | DtoEntityName | `DtoUsuario`, `DtoPersona` |
-| Tests | *Test suffix | `PresupuestoEntityTest` |
-| Test methods | shouldXxxYyy | `shouldCreatePresupuestoWithRequiredFields` |
-
-### Imports
-- **No wildcard imports** (e.g., `import java.util.*`)
-- **Import order**: java → javax → third-party → own packages
-
-### Critical Java Pitfalls (MUST AVOID)
-- `==` compares references, not content — use `.equals()` for strings
-- Override `equals()` must also override `hashCode()` — HashMap/HashSet break
-- `Optional.get()` throws if empty — use `orElse()`, `orElseGet()`, `ifPresent()`
-- Modifying while iterating throws `ConcurrentModificationException` — use Iterator.remove()
-- Unboxing null throws NPE — `Integer i = null; int x = i;` crashes
-- `Integer == Integer` uses reference for values outside -128 to 127 — use `.equals()`
-- Try-with-resources for AutoCloseable — implement `AutoCloseable`, Java 7+
-
-### Error Handling
-- Return `ResponseEntity` with appropriate status codes (200, 201, 400, 404, 500)
-- Use SLF4J `Logger`, parameterized logging (`log.info("msg {}", var)`)
-- **Never ignore exceptions silently**
-- Return empty collections, not null (`Collections.emptyList()`)
-- Use `Optional<T>` for nullable returns
-
-### Architecture Packages
-- **Backend**: `com.licensis.notaire.{api,service,jpa,negocio,dto}`
-- **Frontend**: `com.licensis.notaire.gui` (REST client only, no business logic)
-
-### REST API Design
-- **URL**: `/api/v1/resource` (plural nouns)
-- **HTTP methods**: GET (read), POST (create), PUT (update), DELETE (delete)
-- Use `@Operation` and `@Tag` from springdoc-openapi
-
-### Testing Guidelines
-- **Pattern**: AAA (Arrange-Act-Assert)
-- **Assertions**: AssertJ fluent API (`assertThat(...).isEqualTo(...)`)
-- **Organization**: Use `@Nested` classes for related tests
-- **Naming**: `@DisplayName` + descriptive method names
-- **Coverage**: Minimum 80% (JaCoCo enforces this)
-
-### Database
-- **Engine**: PostgreSQL 15 in Docker
-- **ORM**: Spring Data JPA with EclipseLink
-- **Entities**: Implement `equals()`/`hashCode()` based on ID
-
-## Frontend Design System (Next.js/React)
-
-**MANDATORY**: All frontend forms must follow the centralized Apple-inspired design system.
-
-### Design System Files
-
-- `frontend/src/theme/tokens.ts` — Single source of truth for colors, spacing, typography, shadows
-- `frontend/src/theme/index.ts` — Theme utilities and hooks
-- `frontend/src/theme/form-patterns.tsx` — Reusable form component patterns
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Complete design system documentation
-
-### Form Component Pattern
-
-Every form must follow this structure:
-
-```tsx
-import { 
-  FormContainer, 
-  FormField, 
-  FormSection, 
-  FormActions,
-  FormHeader 
-} from "@/theme/form-patterns";
-
-export function MyForm() {
-  return (
-    <FormContainer>
-      <FormHeader title="Title" description="Description" />
-      
-      <FormSection title="Section 1">
-        <FormField label="Label" required>
-          <Input placeholder="..." />
-        </FormField>
-      </FormSection>
-
-      <FormActions align="right">
-        <Button variant="secondary">Cancel</Button>
-        <Button variant="default">Submit</Button>
-      </FormActions>
-    </FormContainer>
-  );
-}
+```bash
+mvn test -pl backend-api                          # unit + integration
+mvn test -pl backend-api -Dtest=ClassName         # single class
+mvn jacoco:check -pl backend-api                  # coverage ≥ 80%
+mvn verify -pl backend-api                        # all quality checks
+bash scripts/test.sh                              # HTTP integration (API running)
+cd frontend && npx playwright test                # E2E
 ```
 
-### Theme Token Usage
+### Code Quality
 
-Always use theme tokens, never hardcode values:
-
-```typescript
-import { theme } from "@/theme/tokens";
-
-// Colors
-theme.colors.primary[600]           // Apple blue
-theme.colors.neutral[900]           // Dark gray (text)
-theme.semantic.form.inputBorder     // Form input border
-
-// Spacing
-theme.spacing[4]                    // 16px (form field gap)
-theme.spacing[8]                    // 32px (card padding)
-
-// Typography
-theme.typography.fontSize.base      // 16px
-theme.typography.fontWeight.semibold // 600
-theme.borderRadius.lg               // 16px
-
-// Shadows
-theme.shadows.sm                    // Subtle shadow
-theme.shadows.md                    // Card shadow
+```bash
+mvn checkstyle:check -pl backend-api
+mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
+bash scripts/run-sonar.sh                         # SonarQube
 ```
 
-### UI Component Standards
+### Key URLs (local)
 
-| Component | Height | Border Radius | Spacing |
-|-----------|--------|---------------|---------|
-| Input | 48px | 12px | 16px padding |
-| Button | 40px (md) / 48px (lg) | 12px | 12-20px padding |
-| Card | Auto | 28px | 32px padding |
-| Form Section Gap | N/A | N/A | 24px between sections |
+| Service | URL |
+|---------|-----|
+| Swagger UI | http://localhost:8080/swagger-ui.html |
+| Grafana | http://localhost:3001 |
+| Prometheus | http://localhost:9090 |
+| pgAdmin | http://localhost:5050 |
+| SonarQube | http://localhost:9000 |
+| Homer | http://localhost:8888 |
 
-### Key Rules
+---
 
-- ✅ Use semantic colors: `theme.semantic.form.*`, `theme.semantic.button.*`
-- ✅ All inputs must have labels (above, not placeholder)
-- ✅ Form fields must be grouped in `FormSection` components
-- ✅ Button actions must be in `FormActions` with proper alignment
-- ✅ Show validation errors below inputs with red color
-- ✅ Disable button during submission to prevent duplicates
-- ✅ Test responsive: 320px (mobile), 768px (tablet), 1024px (desktop)
-- ✅ Verify color contrast (4.5:1 minimum) and keyboard navigation
-- ❌ Never hardcode colors, spacing, or dimensions
-- ❌ Never use placeholder as form label
-- ❌ Never mix component patterns
-- ❌ Don't add custom styling; use theme tokens
+## Architecture Summary
 
-### References
+**Backend** (`backend-api`): Spring Boot 4.0.4, Java 21, PostgreSQL 16.
 
-- **UI/UX Rules**: `@.claude/rules/ui-ux-design.md`
-- **Frontend Design Skill**: `@.claude/skills/frontend-design/SKILL.md`
-- **Design System Doc**: `docs/02-architecture/03-design/DESIGN-SYSTEM.md`
+Package root: `com.licensis.notaire`
 
-## Prohibited Patterns
-- Backend: Swing dependencies, direct database access from controllers
-- Frontend: Direct JDBC connections, SQL queries, business logic in event handlers, hardcoded colors/spacing
-- General: Hardcoded credentials, ignored exceptions, wildcard imports
+| Package | Role |
+|---------|------|
+| `api` | REST controllers |
+| `service` | Business logic |
+| `repository` | Spring Data JPA — use for new code |
+| `negocio` | JPA entities |
+| `jpa` | Legacy data-access — being replaced |
+| `config` | Spring configuration |
 
-## Git Workflow
+**Frontend** (`frontend`): Next.js 15, React 19, TypeScript, Tailwind CSS.
+- Design system: `src/theme/tokens.ts` (single source of truth).
+- Forms: `FormContainer → FormSection → FormField → FormActions`.
 
-1. Ensure branch is clean before editing
-2. Create feature branch: `git checkout -b <TASK-ID>/[feat/fix/add]/<short-task-name>`
-3. Never commit directly to main/master
-4. Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
-   - Format: `[#<ISSUE-NUMBER>] <type>: <description>`
-   - Examples: `223/feat: add CI/CD reports`, `223/fix: resolve workflow errors`
-5. Run test suite and static analysis before committing
-6. Verify build succeeds: `mvn test` or `mvn package`
-7. Create PR with title: `[#<ISSUE-NUMBER>] <type>: <description>` and description: "Fixes #ISSUE-NUMBER"
+**Database**: Schema source of truth for Docker = `init-db/01-schema.sql`. Flyway is dormant in Docker. Any schema change MUST update both this file and a new Flyway migration.
 
-## Issue-PR Traceability Rules
+---
 
-When creating or updating issues and PRs, always maintain traceability:
+## Rules Reference
 
-### PR Title Format (Conventional Commits)
-- Use standard conventional commit format: `<type>: <description>`
-- Example: `feat: add CI/CD markdown reports`
-- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
-- Note: Issue reference goes in PR description (e.g., "Fixes #223"), not in title
+| Rule | File |
+|------|------|
+| Development Workflow | `.claude/rules/ai-agent-workflow.md` |
+| General | `.claude/rules/general.md` |
+| Programming | `.claude/rules/programming.md` |
+| Code Quality | `.claude/rules/code-quality.md` |
+| UI/UX Design | `.claude/rules/ui-ux-design.md` |
+| DB Migrations | `.claude/rules/database-migrations.md` |
+| Refactoring | `.claude/rules/refactoring.md` |
 
-### PR Description
-- Always reference the associated issue in the first line: "Fixes #ISSUE-NUMBER" or "Implements #ISSUE-NUMBER"
-- Add section with labels used and their purpose
+---
 
-### Issue Labels for Traceability
-- Add appropriate type labels: `MEJORAS`, `BUG`, `DOCUMENTACION`, etc.
-- Add component labels: `BACKEND`, `FRONTEND`, `DEVOPS`, `DB`, etc.
-- Add status labels: `in-progress`, `ready-for-dev`, `blocked`, etc.
+## Violations (all agents enforce these)
 
-### Git Commits
-- Use conventional commits with issue reference: `<ISSUE-ID>/<type>: <description>`
-- Example: `223/feat: add CI/CD reports to GitHub Pages`
-
-### Workflow Changes
-- When modifying GitHub Actions workflows, ensure:
-  - Jobs use `continue-on-error: true` for non-critical steps
-  - Test reporters have `only-if` conditions checking for report files
-  - All jobs complete successfully without failing the workflow
-
-## Best Practices for CI/CD
-
-1. **Never skip tests** - Use test patterns with `-DfailIfNoTests=false` when filtering
-2. **Handle missing reports** - Use `only-if` for test reporters and conditional steps
-3. **External services** - Avoid dependence on GitHub Code Scanning, use local reports
-4. **Report format** - Generate Markdown reports and publish to GitHub Pages
+- ❌ Code without an associated issue + Use Case
+- ❌ Implement before writing failing tests (TDD)
+- ❌ Commit directly to `main`
+- ❌ Skip or `@Disabled` tests without justification
+- ❌ Leave dead code or duplicate code
+- ❌ Leave documentation out of date
+- ❌ Hardcode credentials or secrets
+- ❌ Push without creating PR
+- ❌ Skip E2E Playwright tests for UI changes
+- ❌ Schema change without updating `init-db/01-schema.sql`

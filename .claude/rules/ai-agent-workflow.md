@@ -31,44 +31,53 @@ This rule applies to:
    └──────┬──────┘
           │
           ▼
-   ┌─────────────────────┐
-   │ 1. CHECK ISSUE      │◄─────────────────────────────────────┐
-   │    Exists?          │                                      │
-   └──────┬──────────────┘                                      │
-          │                                                      │
-    ┌─────┴─────┐                                               │
-    │ YES       │ NO                                             │
-    ▼           ▼                                                │
-┌────────┐  ┌─────────────────┐                                  │
-│ Get    │  │ CREATE ISSUE    │                                  │
-│ Issue# │  │ on GitHub       │─────────────────────────────────┘
-└────┬───┘  └────────┬────────┘
+   ┌─────────────────────────┐
+   │ 0. CHECK ISSUE          │
+   │    + USE CASE (Caso Uso)│◄──────────────────────────────────┐
+   └──────┬──────────────────┘                                   │
+          │                                                       │
+    ┌─────┴─────┐                                                │
+    │ YES       │ NO                                              │
+    ▼           ▼                                                 │
+┌────────┐  ┌──────────────────────────┐                         │
+│ Get    │  │ CREATE ISSUE + USE CASE  │─────────────────────────┘
+│ Issue# │  │  on GitHub               │
+└────┬───┘  └────────┬─────────────────┘
      │               │
      └───────┬───────┘
              ▼
    ┌─────────────────────┐
-   │ 2. CREATE BRANCH     │
+   │ 1. CREATE BRANCH    │
    │ <type>/<#>-<desc>   │
    └──────────┬──────────┘
               ▼
    ┌─────────────────────┐
+   │ 1.5 MOVE ISSUE TO   │
+   │  IN PROGRESS        │
+   └──────────┬──────────┘
+              ▼
+   ┌─────────────────────┐
+   │ 2. TDD: WRITE       │◄── Tests FIRST, then implement
+   │  FAILING TESTS      │
+   └──────────┬──────────┘
+              ▼
+   ┌─────────────────────┐
    │ 3. IMPLEMENT        │
-   │    Changes          │
-   └──────────┬──────────┘
-              │
-              ▼
-   ┌─────────────────────┐
-   │ 4. WRITE TESTS      │◄── Mandatory for all changes
-   │    Unit + Integration│
+   │  Make tests pass    │
    └──────────┬──────────┘
               ▼
    ┌─────────────────────┐
-   │ 5. RUN TESTS        │
-   │    mvn test         │
+   │ 4. REFACTOR         │◄── Clean code, remove dead code,
+   │  + Code quality     │    remove duplicates, KIS + SRP
    └──────────┬──────────┘
+              ▼
+   ┌─────────────────────────────────────┐
+   │ 5. RUN ALL TESTS                    │
+   │  Unit + Integration + E2E Playwright│
+   └──────────┬──────────────────────────┘
               │
          ┌────┴────┐
-         │ PASS?    │
+         │ PASS?   │
          └────┬────┘
         NO    │ YES
          ▼    │
@@ -84,11 +93,16 @@ This rule applies to:
    └──────────┬──────────┘
               ▼
    ┌─────────────────────┐
-   │ 7. PUSH TO REMOTE  │
+   │ 7. PUSH TO REMOTE   │
    └──────────┬──────────┘
               ▼
    ┌─────────────────────┐
-   │ 8. CREATE PR        │
+   │ 8. UPDATE DOCS      │
+   │  Business + Tech    │
+   └──────────┬──────────┘
+              ▼
+   ┌─────────────────────┐
+   │ 9. CREATE PR        │
    │    + Close Issue    │
    └──────────┬──────────┘
               │
@@ -102,7 +116,7 @@ This rule applies to:
 
 ## Step-by-Step Workflow
 
-### Step 0: Pre-Condition - Issue Verification
+### Step 0: Pre-Condition — Issue + Use Case Verification
 
 **MANDATORY** Before ANY code change:
 
@@ -116,6 +130,9 @@ gh issue create \
   --body "## Description
 <detailed description>
 
+## Use Case (Caso de Uso)
+<name and ID of the associated use case — MANDATORY>
+
 ## Acceptance Criteria
 - [ ] Criterion 1
 - [ ] Criterion 2
@@ -126,11 +143,26 @@ gh issue create \
   --assignee "@me"
 ```
 
-**Output Required**: Store the issue number (e.g., `#253`)
+#### Use Case Association (MANDATORY — no exceptions)
+
+Every issue **MUST** be linked to an existing Use Case (Caso de Uso) in the project documentation:
+
+1. Check `docs/` for the relevant Use Case.
+2. If no Use Case exists → **create it first** in the documentation, update all related documents (architecture, requirements, etc.), then create the issue referencing it.
+3. Record the Use Case ID/name in the issue body.
+
+**Output Required**: Issue number (e.g., `#253`) + Use Case reference.
 
 ---
 
 ### Step 1: Create Feature Branch
+
+Always pull from main before creating the branch:
+
+```bash
+git checkout main && git pull origin main
+git checkout -b <type>/<issue-number>_<short-description>
+```
 
 **Branch Naming Convention**: `<type>/<issue-number>_<short-description>`
 
@@ -144,104 +176,163 @@ gh issue create \
 | `chore` | Maintenance tasks |
 | `ci` | CI/CD changes |
 | `add` | Adding new files or resources |
+| `design` | Design/UI updates |
 
 **Examples**:
 ```bash
-# Correct branch names
+# Correct
 feat/253_user_authentication
 fix/254_login_timeout
 refactor/255_move_service_layer
-test/256_add_user_tests
-docs/257_update_api_docs
 
-# WRONG - Don't do this
+# WRONG
 my-branch
 feature-user
 fix-bug-123
 ```
 
-**Command**:
+---
+
+### Step 1.5: Move Issue to IN PROGRESS
+
+After creating the branch and starting work, update the GitHub issue status:
+
 ```bash
-git checkout -b <type>/<issue-number>_<description>
+# Move issue to IN PROGRESS (using project board label or status field)
+gh issue edit <issue-number> --add-label "in-progress"
 ```
 
 ---
 
-### Step 2: Implement Changes
+### Step 2: TDD — Write Failing Tests First
 
-1. Read existing code to understand context
-2. Follow project conventions (see `.claude/rules/`)
-3. Apply clean code principles
-4. Keep changes focused and minimal
+**MANDATORY**: Apply TDD (Test-Driven Development) for ALL changes.
 
-**Reference**: See `.claude/rules/programming.md`, `.claude/rules/code-quality.md`
+Order of work:
+1. **Analyze the issue** — understand fully before writing any code.
+2. **Write tests** that define the expected behavior.
+3. **Run tests** — they MUST fail at this point (no implementation yet).
+4. Proceed to Step 3 only when tests are written and failing.
 
----
+This ensures tests drive the design and implementation is provably correct.
 
-### Step 3: Write Tests (MANDATORY)
-
-**This step is MANDATORY for ALL changes.**
+```bash
+# Verify tests fail before implementing
+mvn test -pl backend-api -Dtest=YourNewTestClass
+# Expected: FAILURE (that's correct at this stage)
+```
 
 #### Test Requirements
 
 | Change Type | Minimum Tests |
 |-------------|---------------|
 | New feature | Unit tests + Integration tests |
-| Bug fix | Unit tests that reproduce the bug |
-| Refactor | Same tests as before (no behavior change) |
-| API change | Controller tests + Integration tests |
-| Database change | Repository tests |
+| Bug fix | Tests that reproduce the bug first |
+| Refactor | Same tests as before (verify behavior unchanged) |
+| New API endpoint | Controller tests + Integration tests + OpenAPI docs |
+| Database change | Repository tests + Flyway migration |
+| UI change | E2E Playwright tests for every screen/form |
 
 #### Test Location
 - **Unit tests**: `src/test/java/.../unit/`
 - **Integration tests**: `src/test/java/.../integration/`
-- **E2E tests**: `integration-test/` (Robot Framework)
+- **E2E tests**: `frontend/tests/` (Playwright)
 
 #### Test Naming Convention
-```
-should[ExpectedBehavior]When[Condition]
-```
-
-**Example**:
 ```java
 @Test
 @DisplayName("Should return user when valid ID provided")
-void shouldReturnUserWhenValidIdProvided() {
-    // test code
-}
+void shouldReturnUserWhenValidIdProvided() { }
 ```
-
-**Reference**: See `.claude/rules/programming.md#testing`
 
 ---
 
-### Step 4: Run Tests
+### Step 3: Implement Changes
 
-**Always run tests BEFORE committing.**
+Implement only what is needed to make the failing tests pass. No more.
+
+1. Read existing code to understand context before modifying.
+2. Follow project conventions (see `.claude/rules/`).
+3. Apply clean code principles — no shortcuts.
+4. Keep changes focused and minimal (YAGNI).
+
+#### Special cases
+
+**New REST endpoint**:
+- Implement the endpoint.
+- Write controller + integration tests.
+- Document in OpenAPI/Swagger (`@Operation`, `@ApiResponse`).
+- Verify the endpoint appears correctly in Swagger UI.
+- Ensure the endpoint is called from the UI (see UI traceability below).
+
+**Database change**:
+- Use Flyway migration (new `V{n}__description.sql`).
+- Update `init-db/01-schema.sql` (Docker authoritative schema).
+- Run `mvn test -Ppg-integration` to validate alignment.
+- See `.claude/rules/database-migrations.md`.
+
+**UI change**:
+- Follow `.claude/rules/ui-ux-design.md` and the design system.
+- Write E2E Playwright tests for every screen and form.
+- Test golden path AND edge cases.
+
+#### UI Endpoint Traceability (MANDATORY)
+
+Every REST endpoint **MUST** be invoked from the UI at least once. Traceability must be documented in a simple, standard, and clear way:
+- Add a comment or entry in `docs/` mapping each endpoint to the UI screen/action that calls it.
+- Use the API test collection (Bruno) to confirm the endpoint is exercised end-to-end.
+
+---
+
+### Step 4: Refactor and Code Quality
+
+After implementation, before running the full test suite:
+
+1. **Remove dead code** — any code that is never executed or reachable.
+2. **Remove duplicate code** — refactor to a single reusable unit.
+3. **Reduce cyclomatic and cognitive complexity** — break up complex methods.
+4. **No comments** unless strictly necessary (prefer self-explanatory code).
+5. **Apply KIS** (Keep It Simple) — simplest solution that passes all tests.
+6. **Apply SRP** (Single Responsibility Principle) — in both code and tests.
 
 ```bash
-# Backend tests (this project)
-mvn test -pl backend-api
-
-# With coverage check
-mvn test -pl backend-api && mvn jacoco:check -pl backend-api
-
-# Single test class
-mvn test -pl backend-api -Dtest=UserServiceTest
-
-# All tests including frontend
-mvn test
+# Check for style violations and static bugs
+mvn checkstyle:check -pl backend-api
+mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 ```
-
-**Quality Gates** (enforced by CI):
-- Minimum 80% code coverage (JaCoCo)
-- All tests must pass
-- No checkstyle violations
-- No SpotBugs warnings
 
 ---
 
-### Step 5: Commit Changes
+### Step 5: Run All Tests
+
+**Run the complete test suite before committing. Never skip tests.**
+
+```bash
+# Backend unit + integration tests
+mvn test -pl backend-api
+
+# Coverage check
+mvn jacoco:check -pl backend-api
+
+# All quality checks
+mvn verify -pl backend-api
+
+# E2E Playwright (frontend must be running)
+cd frontend && npx playwright test
+```
+
+**Quality Gates** (all must pass):
+- All unit and integration tests pass.
+- Coverage ≥ 80% (JaCoCo).
+- No Checkstyle violations.
+- No SpotBugs warnings.
+- All E2E Playwright tests pass.
+
+If any check fails → fix and retest. **No exceptions**.
+
+---
+
+### Step 6: Commit Changes
 
 **Commit Message Format**: [Conventional Commits](https://www.conventionalcommits.org/)
 
@@ -250,71 +341,71 @@ mvn test
 
 [optional body]
 
-[optional footer with issue reference]
+Closes #<issue-number>
 ```
 
-**Format Rules**:
-- Use imperative mood: "add" not "added" or "adds"
+**Rules**:
+- Imperative mood: "add" not "added"
 - First line ≤ 72 characters
-- Reference issue in footer: `Closes #<issue-number>`
+- Always reference the issue: `Closes #<number>`
 
 **Examples**:
 ```bash
-# Feature
-git commit -m "feat(api): add user authentication endpoint
+git commit -m "feat(api): add document creation endpoint
 
-Implemented JWT-based authentication with login and token refresh.
-Added rate limiting for login attempts.
+Implements POST /api/v1/documentos with full validation.
+Documented in OpenAPI. E2E test added for the form flow.
 
 Closes #253"
 
-# Bug fix
-git commit -m "fix(auth): resolve session timeout issue
+git commit -m "fix(usuarios): resolve user edit failing with 500
 
-The session was expiring prematurely due to incorrect refresh logic.
-Added proper token rotation.
+Missing DTO mapping caused NPE on update. Added null check
+and integration test to reproduce the scenario.
 
 Closes #254"
-
-# Test
-git commit -m "test(service): add unit tests for UserService
-
-Added tests for:
-- shouldCreateUserWithValidData
-- shouldThrowExceptionWhenEmailInvalid
-- shouldHashPasswordBeforeSaving
-
-Closes #256"
 ```
 
 **DO NOT**:
 - ❌ Commit without tests
-- ❌ Commit broken code
-- ❌ Leave commented code
+- ❌ Commit failing code
+- ❌ Leave commented-out code
 - ❌ Commit secrets or credentials
+- ❌ Skip tests with `@Disabled` without explicit justification
 
 ---
 
-### Step 6: Push to Remote
+### Step 7: Push to Remote
 
 ```bash
-# Push branch
 git push -u origin <branch-name>
-
-# Example
-git push -u origin feat/253_user_authentication
 ```
 
 ---
 
-### Step 7: Create Pull Request
+### Step 8: Update Documentation
+
+**MANDATORY** after every change:
+
+1. Review and update all affected documentation (business and engineering).
+2. Ensure documents are consistent, readable, and up to date.
+3. **Avoid duplication** — centralize information in the most coherent location; remove duplicates.
+4. If documentation is missing → add it.
+5. If documentation is outdated or no longer applicable → move it to `docs/archive/`.
+6. If a new Use Case was created in Step 0 → verify all related documents reference it correctly.
+
+```bash
+# Docs live under docs/
+ls docs/
+# Archive old docs here:
+# docs/archive/
+```
+
+---
+
+### Step 9: Create Pull Request and Close Issue
 
 **PR Title Format**: `[#<issue-number>] <type>: <description>`
-
-**Example**:
-```
-[253] feat: add user authentication with JWT
-```
 
 **PR Description Template**:
 ```markdown
@@ -323,24 +414,26 @@ git push -u origin feat/253_user_authentication
 
 ## Changes
 ### Added
-- New feature description
-
 ### Modified
-- Changed behavior description
-
 ### Fixed
-- Bug fix description
 
 ## Testing
 - [ ] Unit tests added/updated
 - [ ] Integration tests pass
+- [ ] E2E Playwright tests pass
 - [ ] Coverage ≥ 80%
+
+## Documentation
+- [ ] Docs updated / archived
+- [ ] OpenAPI updated (if endpoint changed)
+- [ ] Use Case referenced
 
 ## Checklist
 - [ ] Code follows project conventions
 - [ ] No hardcoded credentials
-- [ ] Documentation updated
+- [ ] No dead code
 - [ ] No TODO comments left
+- [ ] KIS and SRP applied
 
 ## Issue Reference
 Fixes #<issue-number>
@@ -348,18 +441,12 @@ Fixes #<issue-number>
 
 **Commands**:
 ```bash
-# Create PR using GitHub CLI
 gh pr create \
-  --title "[#253] feat: add user authentication" \
+  --title "[#253] feat: add document creation" \
   --body "$(cat <<'EOF'
 ## Summary
-- Implemented JWT-based authentication
-- Added login and token refresh endpoints
-
-## Testing
-- Unit tests: 15 tests added
-- Integration tests: 5 tests added
-- Coverage: 85%
+- Added POST /api/v1/documentos endpoint
+- Added E2E test for the creation form
 
 Fixes #253
 EOF
@@ -368,41 +455,43 @@ EOF
 
 ---
 
-### Step 8: Close Associated Issue
-
-After PR is created, close the issue:
+## Quick Reference
 
 ```bash
-# Close the issue (automatically done with "Fixes #number" in PR body)
-gh issue close <issue-number>
-```
-
-Or add to PR body: `Closes #<issue-number>`
-
----
-
-## Quick Reference Commands
-
-```bash
-# 1. Check/create issue
+# 0. Check/create issue (verify Use Case first)
 gh issue list --search "task"
 gh issue create --title "..." --body "..."
 
-# 2. Create branch
+# 1. Create branch (always from updated main)
+git checkout main && git pull origin main
 git checkout -b feat/253_task_description
 
-# 3. Implement & test
-# ... make changes ...
-mvn test -pl backend-api
+# 1.5 Move issue to IN PROGRESS
+gh issue edit 253 --add-label "in-progress"
 
-# 4. Commit
-git add .
+# 2. Write failing tests first (TDD)
+mvn test -pl backend-api -Dtest=YourNewTest  # must FAIL
+
+# 3. Implement
+
+# 4. Refactor (remove dead code, simplify, KIS/SRP)
+mvn checkstyle:check -pl backend-api
+
+# 5. Run all tests
+mvn verify -pl backend-api
+cd frontend && npx playwright test
+
+# 6. Commit
 git commit -m "feat(scope): description
 
 Closes #253"
 
-# 5. Push & PR
+# 7. Push
 git push -u origin feat/253_task_description
+
+# 8. Update docs
+
+# 9. Create PR
 gh pr create --title "[253] feat: description" --body "Fixes #253"
 ```
 
@@ -410,22 +499,21 @@ gh pr create --title "[253] feat: description" --body "Fixes #253"
 
 ## Integration with AI Agents
 
-### OpenCode (RTK)
-
-Add to `.rtk/config.toml` or workflow:
-
-```toml
-[workflow]
-require_issue = true
-require_tests = true
-auto_close_issue = true
-```
-
 ### Claude Code
 
 Add to `CLAUDE.md`:
 ```
 @.claude/rules/ai-agent-workflow.md
+```
+
+### OpenCode (RTK)
+
+Reference in commands:
+```toml
+[workflow]
+require_issue = true
+require_tests = true
+auto_close_issue = true
 ```
 
 ### GitHub Copilot
@@ -440,8 +528,7 @@ The workflow documentation in `/docs` serves as context for Copilot suggestions.
 - [GitHub Flow](https://docs.github.com/en/get-started/quickstart/github-flow) - Branching strategy
 - [Test-Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) - TDD methodology
 - [Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882) - Robert C. Martin
-- [Trunk-Based Development](https://trunkbaseddevelopment.com/) - Branching model
-- [Semantic Versioning](https://semver.org/) - Version numbering
+- [Conventional Branches](https://conventionalbranch.org/) - Branch naming
 
 ---
 
@@ -450,27 +537,27 @@ The workflow documentation in `/docs` serves as context for Copilot suggestions.
 **AI Agents MUST NOT**:
 
 1. ❌ Make changes without an associated issue
-2. ❌ Commit directly to `main` or `master`
-3. ❌ Skip writing or updating tests
-4. ❌ Commit code with failing tests
-5. ❌ Leave hardcoded credentials or secrets
-6. ❌ Push directly without creating PR
-7. ❌ Ignore code quality tools (checkstyle, SpotBugs)
-8. ❌ Skip coverage requirements (80% minimum)
-
-**Consequences of Violations**:
-- CI/CD pipeline will fail
-- PR will be rejected
-- Human review will flag violations
+2. ❌ Make changes without a linked Use Case (Caso de Uso)
+3. ❌ Commit directly to `main` or `master`
+4. ❌ Skip TDD — implement before writing tests
+5. ❌ Skip writing or updating tests
+6. ❌ Commit code with failing tests
+7. ❌ Leave hardcoded credentials or secrets
+8. ❌ Push directly without creating PR
+9. ❌ Ignore code quality tools (Checkstyle, SpotBugs)
+10. ❌ Skip E2E Playwright tests for UI changes
+11. ❌ Leave dead code or duplicate code
+12. ❌ Leave documentation out of date
+13. ❌ Skip the documentation review step
 
 ---
 
 ## Exceptions
 
-Only in **extreme circumstances** and with **explicit human approval** may these rules be bypassed:
+Only in **extreme circumstances** with **explicit human approval**:
 
 1. Emergency hotfixes (security critical)
-2. Documentation-only changes (minor)
-3. One-time scripts or migrations
+2. Documentation-only changes (minor spelling/formatting)
+3. One-time migration scripts
 
 Document any exception in the commit message.

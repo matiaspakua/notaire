@@ -14,13 +14,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Quick Workflow Summary
 
 ```
-1. Check/create GitHub issue
-2. Create branch: <type>/<#>-<description>
-3. Implement changes
-4. Write & run tests (MANDATORY)
-5. Commit (Conventional Commits)
-6. Push to remote
-7. Create PR + Close Issue
+0. Verify Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
+1. Create branch from updated main: <type>/<#>_<description>
+1.5 Move issue to IN PROGRESS
+2. TDD — write failing tests FIRST, then implement
+3. Implement (make tests pass)
+4. Refactor — KIS, SRP, remove dead/duplicate code
+5. Run ALL tests: unit + integration + E2E Playwright
+6. Commit (Conventional Commits + Closes #issue)
+7. Push to remote
+8. Update documentation (business + engineering; archive outdated)
+9. Create PR + Close Issue
 ```
 
 ### Full Workflow Details

@@ -1,11 +1,29 @@
 # General rules to apply always
 
 1. Before any change in the codebase, ensure you understand the existing code and its functionality.
-2. Always create a branch for your changes and follow the naming convention: `feature/your-feature-name` or `bugfix/your-bug-description`.
-3. Any change, shall have associated a github ISSUE describing the problem and the solution, and link the PR to that issue.
-4. Write clear and concise commit messages that describe the purpose of the change.
-5. Follow the coding standards and style guidelines established for the project.
-6. Ensure that your code is well-documented, including comments where necessary to explain complex logic.
-7. Write unit tests for your code to ensure it works as expected and to prevent future regressions.
-8. Before merging your changes, ensure that all tests pass.
-9. If no issue exists associated with the change, create one (in github repository, using the github CLI, with the rights labels /docs/business/labels.csv) and link it to the PR.
+
+2. Always create a branch for your changes following the naming convention `<type>/<issue-number>_<description>`. Always pull from main before creating the branch.
+
+3. Every change **must** have an associated GitHub issue. Create one if it does not exist (using the GitHub CLI with the correct labels from `/docs/business/labels.csv`) and link the PR to that issue.
+
+4. Every issue **must** be associated with a Use Case (Caso de Uso) from the project documentation. If no Use Case exists, create it and update all related documentation first. No exceptions.
+
+5. After creating the branch and starting work, move the GitHub issue to **IN PROGRESS**.
+
+6. Write clear and concise commit messages following Conventional Commits format (`<type>(<scope>): <description>`, ending with `Closes #<issue-number>`).
+
+7. Follow the coding standards and style guidelines established for the project. See `.claude/rules/programming.md`.
+
+8. Code must be self-explanatory. Do not add comments unless strictly necessary (hidden constraint, subtle invariant, or a specific workaround). Never write comments that explain what the code does — only why.
+
+9. Write unit tests for your code using TDD: write failing tests first, then implement, then refactor.
+
+10. Before merging, ensure **all tests pass**: unit, integration, and E2E (Playwright for UI changes). Never skip tests without explicit, documented justification.
+
+11. Apply **KIS** (Keep It Simple): write clean, simple, clear, easy-to-maintain code. Reject unnecessary complexity.
+
+12. Apply **SRP** (Single Responsibility Principle) in both code and tests. Each class, method, and test should do exactly one thing.
+
+13. Remove dead code when found. Refactor duplicate code to a single reusable unit. Avoid cyclomatic and cognitive complexity.
+
+14. After every change, review and update the project documentation (business and engineering). Ensure documents are consistent and up to date. Centralize duplicated information. Move outdated or non-applicable documents to `docs/archive/`.

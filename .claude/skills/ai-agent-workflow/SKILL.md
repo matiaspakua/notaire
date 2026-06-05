@@ -2,7 +2,7 @@
 
 ## Overview
 
-This skill provides comprehensive guidance for AI coding agents (OpenCode, Claude Code, GitHub Copilot) to implement changes in the Notaire project following industry best practices.
+This skill provides comprehensive guidance for AI coding agents (OpenCode, Claude Code, GitHub Copilot) to implement changes in the Notaire project following the mandatory development process defined in `AUDITORIA.md`.
 
 ## When to Use This Skill
 
@@ -12,63 +12,72 @@ Invoke this skill when:
 - Refactoring code
 - Writing tests
 - Creating documentation
-- ANY code change requested by user
+- ANY code change requested by the user
 
 ## Core Workflow
 
 ### The Golden Rule
 
-> **Every user request → One Issue → One Branch → One PR**
+> **Every task → One Use Case → One Issue → One Branch → One PR**
 
-### Workflow Diagram
+### Workflow Summary
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    AI AGENT DEVELOPMENT WORKFLOW                         │
-└─────────────────────────────────────────────────────────────────────────┘
-
-    START ──► [1. Check/Create Issue] ──► [2. Create Branch]
-                                                    │
-                                                    ▼
-                                       [3. Implement Changes]
-                                                    │
-                                                    ▼
-                                       [4. Write & Update Tests]
-                                         (MANDATORY - ALL CHANGES)
-                                                    │
-                                                    ▼
-                                       [5. Run Tests & Verify]
-                                                    │
-                                    ┌────────────────┴────────────────┐
-                                    │                                     │
-                               PASS                              FAIL
-                                    │                                     ▼
-                                    ▼                              [FIX & RETEST]
-                            [6. Commit Changes]
-                                    │
-                                    ▼
-                            [7. Push to Remote]
-                                    │
-                                    ▼
-                            [8. Create PR + Close Issue]
-                                    │
-                                    ▼
-                                  END
+START
+  │
+  ▼
+[0. CHECK ISSUE + USE CASE] — create both if missing
+  │
+  ▼
+[1. CREATE BRANCH] — from updated main, conventional naming
+  │
+  ▼
+[1.5 MOVE ISSUE TO IN PROGRESS]
+  │
+  ▼
+[2. TDD: WRITE FAILING TESTS FIRST] — MANDATORY
+  │
+  ▼
+[3. IMPLEMENT] — make tests pass
+  │
+  ▼
+[4. REFACTOR] — KIS, SRP, remove dead/duplicate code
+  │
+  ▼
+[5. RUN ALL TESTS] — unit + integration + E2E Playwright
+  │
+  ├── FAIL → FIX & RETEST
+  │
+  ▼
+[6. COMMIT] — Conventional Commits + Closes #issue
+  │
+  ▼
+[7. PUSH TO REMOTE]
+  │
+  ▼
+[8. UPDATE DOCUMENTATION] — business + engineering docs
+  │
+  ▼
+[9. CREATE PR + CLOSE ISSUE]
+  │
+  ▼
+END
 ```
 
-## Step 1: Issue Management
+---
+
+## Step 0: Issue + Use Case Verification
 
 ### Check Existing Issue
 
 ```bash
-# Search for existing issue
 gh issue list --state open --search "user authentication"
-
-# View specific issue
 gh issue view 253
 ```
 
-### Create New Issue (If Needed)
+### Create New Issue (with Use Case reference)
+
+Every issue MUST reference a Use Case (Caso de Uso). If no Use Case exists, create the documentation first.
 
 ```bash
 gh issue create \
@@ -77,29 +86,34 @@ gh issue create \
 ## Description
 Implement JWT-based authentication for the Notaire API.
 
-## User Story
-As an API client, I want to authenticate with username/password
-and receive a JWT token so that I can access protected endpoints.
+## Use Case (Caso de Uso)
+UC-12: Autenticación de usuario
 
 ## Acceptance Criteria
 - [ ] POST /api/v1/auth/login returns JWT on valid credentials
-- [ ] POST /api/v1/auth/refresh refreshes expired tokens
 - [ ] Protected endpoints return 401 without valid token
 - [ ] Tokens expire after configured time
 
 ## Technical Notes
 - Use Spring Security with JWT
-- Store refresh tokens securely
-- Implement rate limiting for login attempts
 EOF
 )" \
   --label "feature" \
   --assignee "@me"
 ```
 
-**Output**: Store issue number (e.g., `253`)
+**Output**: Issue number (e.g., `253`) + Use Case reference.
 
-## Step 2: Create Branch
+---
+
+## Step 1: Create Branch
+
+Always pull from main first:
+
+```bash
+git checkout main && git pull origin main
+git checkout -b feat/253_jwt_authentication
+```
 
 ### Branch Naming Convention
 
@@ -116,71 +130,52 @@ EOF
 | `docs` | Documentation changes |
 | `chore` | Maintenance, dependencies |
 | `ci` | CI/CD pipeline changes |
-| `add` | Adding new resources |
+| `design` | Design/UI updates |
 
-### Examples
+---
 
-```bash
-# ✅ Correct
-feat/253_jwt_authentication
-fix/254_login_timeout
-refactor/255_move_to_service
-test/256_user_service_tests
-
-# ❌ Wrong
-my-feature
-feature-user
-bugfix-123
-```
-
-### Command
+## Step 1.5: Move Issue to IN PROGRESS
 
 ```bash
-git checkout -b feat/253_jwt_authentication
+gh issue edit 253 --add-label "in-progress"
 ```
 
-## Step 3: Implement Changes
+---
 
-### Best Practices
+## Step 2: TDD — Write Failing Tests First
 
-1. **Understand First**: Read existing code before modifying
-2. **Small Changes**: Make incremental changes
-3. **Follow Conventions**: Use project standards
-4. **Clean Code**: Write readable, maintainable code
+**MANDATORY order**: write tests → watch them fail → implement → watch them pass → refactor.
 
-### Reference Files
+```bash
+# Write your test class first, then verify it fails
+mvn test -pl backend-api -Dtest=YourNewTestClass
+# Expected: FAILURE — this is correct at this stage
+```
 
-| Topic | Reference |
-|-------|-----------|
-| Java Style | `.claude/rules/programming.md` |
-| Code Quality | `.claude/rules/code-quality.md` |
-| Naming | `.claude/rules/programming.md#naming-conventions` |
-| Error Handling | `.claude/rules/programming.md#error-handling` |
+### Test Requirements
 
-## Step 4: Write Tests (MANDATORY)
-
-### Test Requirements by Change Type
-
-| Your Change | Required Tests |
+| Change Type | Required Tests |
 |-------------|----------------|
 | New feature | Unit tests + Integration tests |
-| Bug fix | Tests that reproduce & verify fix |
+| Bug fix | Tests reproducing the bug first |
 | Refactor | Same tests as before (verify behavior) |
-| API endpoint | Controller tests + Integration |
-| Database | Repository tests |
-| Service layer | Service unit tests |
+| New API endpoint | Controller tests + Integration + OpenAPI |
+| Database change | Repository tests + Flyway migration |
+| UI screen/form | E2E Playwright tests |
 
 ### Test Structure
 
 ```
 src/test/java/com/licensis/notaire/
 ├── unit/
-│   └── service/
-│       └── UserServiceTest.java
+│   └── service/UserServiceTest.java
 ├── integration/
-│   └── api/
-│       └── UserControllerIntegrationTest.java
+│   └── api/UserControllerIntegrationTest.java
 └── TestBase.java
+
+frontend/tests/
+└── e2e/
+    └── usuarios.spec.ts
 ```
 
 ### Test Naming
@@ -193,332 +188,206 @@ void shouldReturnUserWhenValidIdProvided() { }
 void shouldThrowExceptionWhenUserNotFound() { }
 ```
 
-### Reference
+---
 
-- `.claude/skills/testing/SKILL.md`
-- `.claude/rules/programming.md#testing`
+## Step 3: Implement Changes
 
-## Step 5: Run Tests
+Implement only what is needed to make the failing tests pass.
 
-### Commands
+### New REST Endpoint Checklist
+
+- [ ] Implement the endpoint in the controller.
+- [ ] Add service + repository methods as needed.
+- [ ] Write controller tests + integration tests.
+- [ ] Document in OpenAPI (`@Operation`, `@ApiResponse`).
+- [ ] Verify endpoint appears in Swagger UI.
+- [ ] Ensure the endpoint is called from the UI at least once (**UI traceability**).
+- [ ] Add entry to `docs/` mapping the endpoint to the UI screen that calls it.
+
+### Database Change Checklist
+
+- [ ] Create new Flyway migration `V{n}__description.sql` in `db/migration/`.
+- [ ] Update `init-db/01-schema.sql` (Docker authoritative schema).
+- [ ] Run `mvn test -Ppg-integration` to validate alignment.
+- [ ] See `.claude/rules/database-migrations.md`.
+
+### UI Change Checklist
+
+- [ ] Follow `.claude/rules/ui-ux-design.md` and design system.
+- [ ] Write E2E Playwright tests for every screen and form.
+- [ ] Test golden path and edge cases.
+- [ ] Test on mobile (320px), tablet (768px), desktop (1024px).
+
+---
+
+## Step 4: Refactor and Code Quality
+
+Before running the full test suite:
+
+1. Remove all dead code.
+2. Remove duplicate code — refactor to a single reusable unit.
+3. Reduce cyclomatic and cognitive complexity.
+4. Remove unnecessary comments — code must be self-explanatory.
+5. Apply **KIS** (Keep It Simple): simplest solution that satisfies the tests.
+6. Apply **SRP** (Single Responsibility Principle): in both code and tests.
 
 ```bash
-# All backend tests
+mvn checkstyle:check -pl backend-api
+mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
+```
+
+---
+
+## Step 5: Run All Tests
+
+```bash
+# Backend
 mvn test -pl backend-api
+mvn jacoco:check -pl backend-api
+mvn verify -pl backend-api
 
-# With coverage
-mvn test -pl backend-api && mvn jacoco:check -pl backend-api
-
-# Single test class
-mvn test -pl backend-api -Dtest=UserServiceTest
-
-# Specific test method
-mvn test -pl backend-api -Dtest=UserServiceTest#shouldReturnUserWhenValidId
-
-# Code quality
-mvn verify -pl backend-api  # All checks
+# E2E (frontend must be running)
+cd frontend && npx playwright test
 ```
 
 ### Quality Gates
 
 | Check | Threshold |
 |-------|-----------|
-| Tests | All must pass |
+| Unit + Integration tests | All must pass |
 | Coverage | ≥ 80% (JaCoCo) |
 | Checkstyle | No violations |
 | SpotBugs | No warnings |
+| E2E Playwright | All must pass |
 
-### Iterate Until Passing
+---
 
-```
-FAIL → Fix code → Run tests → FAIL → Fix → Run → ... → PASS
-```
-
-## Step 6: Commit Changes
-
-### Conventional Commits Format
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer]
-```
-
-### Examples
+## Step 6: Commit
 
 ```bash
-# Feature
 git commit -m "feat(auth): add JWT authentication
 
-Implemented login endpoint that returns JWT tokens.
-Added token refresh mechanism.
-Configured Spring Security for JWT validation.
+Implemented login endpoint returning JWT tokens.
+E2E test added for the login form flow.
+OpenAPI documentation updated.
 
 Closes #253"
-
-# Bug fix
-git commit -m "fix(auth): resolve session timeout issue
-
-The session was expiring prematurely after 5 minutes
-instead of the configured 30 minutes. Fixed the token
-expiration calculation.
-
-Closes #254"
-
-# Tests
-git commit -m "test(service): add UserService unit tests
-
-Added comprehensive unit tests:
-- shouldCreateUserWithValidData
-- shouldThrowExceptionWhenEmailInvalid
-- shouldHashPasswordBeforeSaving
-
-Closes #256"
-
-# Refactor
-git commit -m "refactor(service): extract validation logic
-
-Moved email validation from controller to service layer
-for better reuse and testability.
-
-Closes #255"
 ```
 
-### DO NOT
-
+**DO NOT**:
 - ❌ Commit without tests
 - ❌ Commit broken code
-- ❌ Leave TODO comments
+- ❌ Leave commented-out code
 - ❌ Commit secrets or credentials
-- ❌ Use past tense in commit message
+
+---
 
 ## Step 7: Push to Remote
 
 ```bash
-# First push (sets upstream)
 git push -u origin feat/253_jwt_authentication
-
-# Subsequent pushes
-git push
 ```
 
-## Step 8: Create Pull Request
+---
 
-### PR Title Format
+## Step 8: Update Documentation
 
+**MANDATORY** after every change:
+
+1. Review and update all affected docs (business + engineering).
+2. Ensure consistency and accuracy.
+3. Centralize duplicated info; remove redundant documents.
+4. Move outdated docs to `docs/archive/`.
+5. If a new Use Case was created in Step 0 → verify all related docs reference it.
+
+---
+
+## Step 9: Create Pull Request
+
+### PR Title
 ```
-[#<issue>] <type>: <description>
+[#253] feat: add user authentication with JWT
 ```
 
-Example: `[253] feat: add user authentication with JWT`
-
-### PR Description Template
+### PR Template
 
 ```markdown
 ## Summary
-<!-- 1-3 bullet points of what changed -->
-
-## Changes
-
-### Added
-<!-- New features -->
-
-### Modified
-<!-- Changed behavior -->
-
-### Fixed
-<!-- Bug fixes -->
+- JWT-based authentication implemented
+- Login and token refresh endpoints added
 
 ## Testing
 - [ ] Unit tests added/updated
 - [ ] Integration tests pass
-- [ ] Coverage: __%
+- [ ] E2E Playwright tests pass
+- [ ] Coverage ≥ 80%
+
+## Documentation
+- [ ] Docs updated
+- [ ] OpenAPI updated
+- [ ] Use Case referenced
 
 ## Checklist
-- [ ] Code follows conventions
+- [ ] No dead code
 - [ ] No hardcoded secrets
-- [ ] Documentation updated
-- [ ] No TODO comments
+- [ ] KIS and SRP applied
 
-## Issue Reference
-Fixes #<issue-number>
+Fixes #253
 ```
 
-### Commands
-
 ```bash
-# Create PR
 gh pr create \
   --title "[253] feat: add user authentication with JWT" \
   --body "Fixes #253"
-
-# Or with full description
-gh pr create --title "[253] feat: add user authentication" \
-  --body "$(cat <<'EOF'
-## Summary
-- Added JWT-based authentication
-- Implemented login and token refresh endpoints
-- Configured Spring Security for JWT validation
-
-## Testing
-- 15 unit tests added
-- 5 integration tests added
-- Coverage: 87%
-
-Fixes #253
-EOF
-)"
-```
-
-### Close Issue
-
-Add to PR body:
-```
-Closes #253
-```
-
-Or run:
-```bash
-gh issue close 253
 ```
 
 ---
 
 ## Quick Reference
 
-### Complete Workflow (Copy-Paste)
-
 ```bash
-# 1. Check issue (or create)
+# 0. Check/create issue (verify Use Case first)
 gh issue list --search "task"
 
-# 2. Create branch
-git checkout -b feat/XXX_description
+# 1. Create branch from updated main
+git checkout main && git pull origin main
+git checkout -b feat/253_description
 
-# 3. Implement (your changes here)
+# 1.5 Move to IN PROGRESS
+gh issue edit 253 --add-label "in-progress"
 
-# 4. Write tests
+# 2. Write failing tests first
+mvn test -pl backend-api -Dtest=YourTest  # must FAIL
 
-# 5. Run tests
-mvn test -pl backend-api && mvn jacoco:check -pl backend-api
+# 3. Implement
+
+# 4. Refactor (KIS, SRP, remove dead code)
+mvn checkstyle:check -pl backend-api
+
+# 5. Run all tests
+mvn verify -pl backend-api
+cd frontend && npx playwright test
 
 # 6. Commit
-git add .
 git commit -m "feat(scope): description
 
-Closes #XXX"
+Closes #253"
 
 # 7. Push
-git push -u origin feat/XXX_description
+git push -u origin feat/253_description
 
-# 8. Create PR
-gh pr create --title "[XXX] feat: description" --body "Fixes #XXX"
+# 8. Update docs
+
+# 9. Create PR
+gh pr create --title "[253] feat: description" --body "Fixes #253"
 ```
-
----
-
-## Branch Types Quick Reference
-
-| Type | Prefix | Example |
-|------|--------|---------|
-| Feature | `feat/` | `feat/253_user_auth` |
-| Bug Fix | `fix/` | `fix/254_timeout_bug` |
-| Refactor | `refactor/` | `refactor/255_cleanup` |
-| Test | `test/` | `test/256_new_tests` |
-| Docs | `docs/` | `docs/257_readme` |
-| Chore | `chore/` | `chore/258_deps` |
-| CI | `ci/` | `ci/259_workflow` |
 
 ---
 
 ## Industry Best Practices
 
-### References
-
-1. **Conventional Commits**: https://www.conventionalcommits.org/
-2. **GitHub Flow**: https://docs.github.com/en/get-started/quickstart/github-flow
-3. **TDD Best Practices**: `.claude/skills/testing/references/tdd-iron-laws.md`
-4. **Clean Code**: `.claude/rules/programming.md`
-
-### Key Principles
-
-1. **Small PRs**: Merge often, small changes
-2. **Test First**: Write tests before code (TDD)
-3. **CI/CD**: All tests must pass before merge
-4. **Code Review**: Every change needs review
-5. **Document**: Update docs with changes
-
----
-
-## Integration with AI Agents
-
-### OpenCode (RTK)
-
-Reference in commands:
-```
-@.claude/rules/ai-agent-workflow.md
-@.claude/skills/ai-agent-workflow/SKILL.md
-```
-
-### Claude Code
-
-Add to CLAUDE.md:
-```
-Always follow the workflow in .claude/rules/ai-agent-workflow.md
-```
-
-### GitHub Copilot
-
-The project documentation provides context for Copilot suggestions. Ensure workflow awareness when using Copilot.
-
----
-
-## Troubleshooting
-
-### Issue Already Exists
-
-```bash
-# Find the issue number
-gh issue list --search "authentication"
-
-# Use existing number for branch
-git checkout -b feat/253_existing_issue
-```
-
-### Tests Failing
-
-1. Read the failure message carefully
-2. Fix the test or the implementation
-3. Re-run: `mvn test -pl backend-api`
-4. Iterate until all pass
-
-### PR Conflicts
-
-```bash
-# Rebase on main
-git fetch origin main
-git rebase origin/main
-
-# Resolve conflicts
-# Stage resolved files
-git add .
-git rebase --continue
-
-# Force push
-git push --force-with-lease
-```
-
-### Wrong Branch
-
-```bash
-# Stash changes
-git stash
-
-# Switch to correct branch
-git checkout correct-branch
-
-# Apply changes
-git stash pop
-```
+1. [Conventional Commits](https://www.conventionalcommits.org/)
+2. [Conventional Branches](https://conventionalbranch.org/)
+3. [GitHub Flow](https://docs.github.com/en/get-started/quickstart/github-flow)
+4. [Test-Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html)
+5. Clean Code — Robert C. Martin
