@@ -9,13 +9,33 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { Folio } from "@/types";
+import type { Folio, Persona } from "@/types";
 
-const EMPTY: Partial<Folio> = { numero: undefined, anio: new Date().getFullYear(), estado: "", observaciones: "" };
+const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
+
+interface FolioFormState {
+  idFolio?: number;
+  numero?: number;
+  anio?: number;
+  estado: string;
+  observaciones: string;
+  tipoFolioId?: number;
+  escribanoId?: number;
+}
+
+const EMPTY: FolioFormState = {
+  numero: undefined,
+  anio: new Date().getFullYear(),
+  estado: "Nuevo",
+  observaciones: "",
+  tipoFolioId: undefined,
+  escribanoId: undefined,
+};
 
 export default function FoliosAdminPage() {
   const t = useTranslations("administracion.folios");
@@ -26,40 +46,68 @@ export default function FoliosAdminPage() {
     queryFn: () => apiGet<Folio[]>("/folio"),
   });
 
+  const { data: tiposFolio = [] } = useQuery({
+    queryKey: ["tipos-folio"],
+    queryFn: () => apiGet<{ idTipoFolio: number; nombre: string }[]>("/tipo-folio"),
+  });
+
+  const { data: escribanos = [] } = useQuery({
+    queryKey: ["escribanos-disponibles"],
+    queryFn: () => apiGet<Persona[]>("/escrituras/escribanos-disponibles"),
+  });
+
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Partial<Folio>>(EMPTY);
+  const [form, setForm] = useState<FolioFormState>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   function openCreate() {
-    setEditing(EMPTY);
+    setForm(EMPTY);
     setIsEditMode(false);
     setModalOpen(true);
   }
 
   function openEdit(folio: Folio) {
-    setEditing(folio);
+    setForm({
+      idFolio: folio.idFolio,
+      numero: folio.numero,
+      anio: folio.anio,
+      estado: folio.estado ?? "Nuevo",
+      observaciones: folio.observaciones ?? "",
+      tipoFolioId: folio.tiposDeFolio?.idTipoFolio,
+      escribanoId: folio.personaEscribano?.idPersona,
+    });
     setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
-    if (editing.numero === undefined || editing.numero === null || Number.isNaN(editing.numero)) {
+    if (form.numero === undefined || form.numero === null || Number.isNaN(form.numero)) {
       toast.error(t("numberRequired"));
+      return;
+    }
+    if (!form.tipoFolioId) {
+      toast.error(t("fields.tipo") + " " + tc("required"));
+      return;
+    }
+    if (!form.escribanoId) {
+      toast.error(t("fields.escribano") + " " + tc("required"));
       return;
     }
     setSaving(true);
     try {
       const body = {
-        numero: editing.numero,
-        anio: editing.anio,
-        estado: editing.estado,
-        observaciones: editing.observaciones,
+        numero: form.numero,
+        anio: form.anio,
+        estado: form.estado,
+        observaciones: form.observaciones,
+        tipoFolioId: form.tipoFolioId,
+        escribanoId: form.escribanoId,
       };
-      if (isEditMode && editing.idFolio) {
-        await apiPut(`/folio/${editing.idFolio}`, body);
+      if (isEditMode && form.idFolio) {
+        await apiPut(`/folio/${form.idFolio}`, body);
         toast.success(t("updated"));
       } else {
         await apiPost("/folio", body);
@@ -93,7 +141,7 @@ export default function FoliosAdminPage() {
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
     { key: "numero", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.numero}</span> },
     { key: "anio", header: tc("year"), render: (f) => f.anio ?? "—" },
-    { key: "tipo", header: t("fields.tipo"), render: (f) => f.tipoDeFolio?.nombre ?? "—" },
+    { key: "tipo", header: t("fields.tipo"), render: (f) => f.tiposDeFolio?.nombre ?? f.tipoDeFolio?.nombre ?? "—" },
     {
       key: "estado",
       header: t("fields.estado"),
@@ -144,8 +192,8 @@ export default function FoliosAdminPage() {
               <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
-                  value={editing.numero ?? ""}
-                  onChange={(e) => setEditing({ ...editing, numero: e.target.value === "" ? undefined : Number(e.target.value) })}
+                  value={form.numero ?? ""}
+                  onChange={(e) => setForm({ ...form, numero: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder="1001"
                   data-testid="input-numero-folio"
                 />
@@ -153,16 +201,60 @@ export default function FoliosAdminPage() {
               <FormField label={tc("year")}>
                 <Input
                   type="number"
-                  value={editing.anio ?? ""}
-                  onChange={(e) => setEditing({ ...editing, anio: e.target.value === "" ? undefined : Number(e.target.value) })}
+                  value={form.anio ?? ""}
+                  onChange={(e) => setForm({ ...form, anio: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder={String(new Date().getFullYear())}
                 />
               </FormField>
-              <FormField label={t("fields.estado")}>
-                <Input value={editing.estado ?? ""} onChange={(e) => setEditing({ ...editing, estado: e.target.value })} />
+              <FormField label={t("fields.estado")} required>
+                <Select value={form.estado} onValueChange={(v) => setForm({ ...form, estado: v })}>
+                  <SelectTrigger data-testid="select-estado-folio">
+                    <SelectValue placeholder={t("fields.estadoPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ESTADOS_FOLIO.map((e) => (
+                      <SelectItem key={e} value={e}>{e}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.tipo")} required>
+                <Select
+                  value={form.tipoFolioId !== undefined ? String(form.tipoFolioId) : ""}
+                  onValueChange={(v) => setForm({ ...form, tipoFolioId: Number(v) })}
+                >
+                  <SelectTrigger data-testid="select-tipo-folio">
+                    <SelectValue placeholder={t("fields.tipoPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tiposFolio.map((tf) => (
+                      <SelectItem key={tf.idTipoFolio} value={String(tf.idTipoFolio)}>{tf.nombre}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.escribano")} required>
+                <Select
+                  value={form.escribanoId !== undefined ? String(form.escribanoId) : ""}
+                  onValueChange={(v) => setForm({ ...form, escribanoId: Number(v) })}
+                >
+                  <SelectTrigger data-testid="select-escribano-folio">
+                    <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {escribanos.map((e) => (
+                      <SelectItem key={e.idPersona} value={String(e.idPersona)}>
+                        {e.apellido} {e.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
               <FormField label={tc("observations")}>
-                <Input value={editing.observaciones ?? ""} onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })} />
+                <Input
+                  value={form.observaciones}
+                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">
