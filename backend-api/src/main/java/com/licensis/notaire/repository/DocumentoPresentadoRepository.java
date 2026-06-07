@@ -19,4 +19,6 @@ public interface DocumentoPresentadoRepository extends JpaRepository<DocumentoPr
     List<DocumentoPresentado> findByObservado(Boolean observado);
 
     List<DocumentoPresentado> findByPreparado(Boolean preparado);
+
+    boolean existsByFkIdTipoDocumento(Integer fkIdTipoDocumento);
 }

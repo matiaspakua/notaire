@@ -503,8 +503,12 @@ class SimpleControllersTest {
     @DisplayName("TipoDeDocumentoController")
     class TipoDeDocumentoControllerTests {
         private final TipoDeDocumentoRepository repo = mock(TipoDeDocumentoRepository.class);
+        private final com.licensis.notaire.repository.PlantillaTramiteRepository plantillaRepo =
+                mock(com.licensis.notaire.repository.PlantillaTramiteRepository.class);
+        private final com.licensis.notaire.repository.DocumentoPresentadoRepository docPresentadoRepo =
+                mock(com.licensis.notaire.repository.DocumentoPresentadoRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeDocumentoController(repo)).build();
+                standaloneSetup(new TipoDeDocumentoController(repo, plantillaRepo, docPresentadoRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
@@ -523,6 +527,8 @@ class SimpleControllersTest {
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(plantillaRepo.findByTipoDeDocumentoIdTipoDocumento(anyInt())).thenReturn(List.of());
+            when(docPresentadoRepo.existsByFkIdTipoDocumento(anyInt())).thenReturn(false);
 
             mvc.perform(get("/api/v1/tipo-de-documento")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-de-documento/1")).andExpect(status().isOk());
@@ -543,7 +549,8 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+
+            when(plantillaRepo.findByTipoDeDocumentoIdTipoDocumento(1)).thenReturn(List.of(new com.licensis.notaire.negocio.PlantillaTramite()));
             mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isConflict());
         }
     }
