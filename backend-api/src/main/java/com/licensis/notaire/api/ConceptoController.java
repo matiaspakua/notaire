@@ -3,9 +3,9 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.negocio.Concepto;
 import com.licensis.notaire.repository.ConceptoRepository;
+import com.licensis.notaire.repository.PlantillaPresupuestoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,9 +28,12 @@ import java.util.Optional;
 public class ConceptoController {
 
     private final ConceptoRepository repository;
+    private final PlantillaPresupuestoRepository plantillaRepository;
 
-    public ConceptoController(ConceptoRepository repository) {
+    public ConceptoController(ConceptoRepository repository,
+                              PlantillaPresupuestoRepository plantillaRepository) {
         this.repository = repository;
+        this.plantillaRepository = plantillaRepository;
     }
 
     @GetMapping
@@ -38,6 +43,25 @@ public class ConceptoController {
                 .map(Concepto::getDto)
                 .toList();
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Buscar conceptos por nombre")
+    public ResponseEntity<List<DtoConcepto>> searchConceptos(@RequestParam String nombre) {
+        List<DtoConcepto> result = repository.findByNombreContaining(nombre).stream()
+                .map(Concepto::getDto)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/in-use")
+    @Operation(summary = "Verificar si un concepto está en uso")
+    public ResponseEntity<Map<String, Boolean>> isConceptoInUse(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean inUse = !plantillaRepository.findByConceptoIdConcepto(id).isEmpty();
+        return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
     @GetMapping("/{id}")
@@ -69,11 +93,13 @@ public class ConceptoController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        if (!plantillaRepository.findByConceptoIdConcepto(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Este concepto está en uso y no puede modificarse. Cree un nuevo concepto."));
+        }
         try {
             dto.setIdConcepto(id);
             Concepto entity = existing.get();
-            // Preserve the current enabled state when the payload omits it,
-            // otherwise setAtributos unboxes a null Boolean and throws an NPE.
             if (dto.getHabilitado() == null) {
                 dto.setHabilitado(entity.getHabilitado());
             }
@@ -91,12 +117,11 @@ public class ConceptoController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        try {
-            repository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        if (!plantillaRepository.findByConceptoIdConcepto(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No se puede eliminar: el concepto está referenciado por otros registros.");
+                    .body(Map.of("error", "No se puede eliminar: el concepto está siendo utilizado en plantillas de presupuesto."));
         }
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

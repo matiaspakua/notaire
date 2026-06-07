@@ -35,12 +35,15 @@ class ConceptoControllerTest {
     @Mock
     private ConceptoRepository repository;
 
+    @Mock
+    private com.licensis.notaire.repository.PlantillaPresupuestoRepository plantillaRepository;
+
     private MockMvc mockMvc;
     private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-        ConceptoController controller = new ConceptoController(repository);
+        ConceptoController controller = new ConceptoController(repository, plantillaRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         mapper = new ObjectMapper();
     }
@@ -185,11 +188,13 @@ class ConceptoControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/conceptos/{id} should return 409 when delete fails")
-    void shouldReturn409WhenDeleteFails() throws Exception {
+    @DisplayName("DELETE /api/v1/conceptos/{id} should return 409 when concepto is in use")
+    void shouldReturn409WhenConceptoIsInUse() throws Exception {
+        com.licensis.notaire.negocio.PlantillaPresupuesto pp = new com.licensis.notaire.negocio.PlantillaPresupuesto();
         when(repository.existsById(1)).thenReturn(true);
-        doThrow(new RuntimeException("FK violation")).when(repository).deleteById(1);
+        when(plantillaRepository.findByConceptoIdConcepto(1)).thenReturn(List.of(pp));
         mockMvc.perform(delete("/api/v1/conceptos/1"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").exists());
     }
 }
