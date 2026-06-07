@@ -182,7 +182,10 @@ export default function PlantillasPage() {
               <FormField label={t("fields.tipoTramite")} required>
                 <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
                   <SelectTrigger data-testid="select-tipo-tramite" disabled={isEditMode}>
-                    <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
+                    <SelectValue
+                      placeholder={t("fields.tipoTramitePlaceholder")}
+                      label={tipoTramiteId ? tiposTramite.find((tt) => String(tt.idTipoDeTramite) === tipoTramiteId)?.nombre : undefined}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {tiposTramite.map((tt) => (
@@ -196,7 +199,10 @@ export default function PlantillasPage() {
               <FormField label={t("fields.concepto")} required>
                 <Select value={conceptoId} onValueChange={setConceptoId}>
                   <SelectTrigger data-testid="select-concepto" disabled={isEditMode}>
-                    <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
+                    <SelectValue
+                      placeholder={t("fields.conceptoPlaceholder")}
+                      label={conceptoId ? conceptos.find((c) => String(c.idConcepto) === conceptoId)?.nombre : undefined}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {conceptos.map((c) => (

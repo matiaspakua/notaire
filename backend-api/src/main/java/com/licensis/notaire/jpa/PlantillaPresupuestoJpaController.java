@@ -51,6 +51,10 @@ public class PlantillaPresupuestoJpaController implements Serializable, IPersist
         }
         plantillaPresupuesto.getPlantillaPresupuestoPK().setFkIdConcepto(plantillaPresupuesto.getConcepto().getIdConcepto());
         plantillaPresupuesto.getPlantillaPresupuestoPK().setFkIdTipoTramite(plantillaPresupuesto.getTipoDeTramite().getIdTipoTramite());
+        if (findPlantillaPresupuesto(plantillaPresupuesto.getPlantillaPresupuestoPK()) != null)
+        {
+            throw new PreexistingEntityException("PlantillaPresupuesto " + plantillaPresupuesto.getPlantillaPresupuestoPK() + " already exists.");
+        }
         EntityManager em = null;
         try
         {

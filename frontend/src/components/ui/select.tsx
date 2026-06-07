@@ -15,17 +15,27 @@ interface SelectContextValue {
   onValueChange?: (value: string) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  selectedLabel: string;
+  setSelectedLabel: (label: string) => void;
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
   open: false,
   setOpen: () => {},
+  selectedLabel: "",
+  setSelectedLabel: () => {},
 });
 
 function Select({ value, onValueChange, children }: SelectProps) {
   const [open, setOpen] = React.useState(false);
+  const [selectedLabel, setSelectedLabel] = React.useState("");
+
+  React.useEffect(() => {
+    if (!value) setSelectedLabel("");
+  }, [value]);
+
   return (
-    <SelectContext.Provider value={{ value, onValueChange, open, setOpen }}>
+    <SelectContext.Provider value={{ value, onValueChange, open, setOpen, selectedLabel, setSelectedLabel }}>
       <div className="relative">{children}</div>
     </SelectContext.Provider>
   );
@@ -56,9 +66,11 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
   );
 }
 
-function SelectValue({ placeholder }: { placeholder?: string }) {
-  const { value } = React.useContext(SelectContext);
-  return <span>{value ?? placeholder ?? ""}</span>;
+function SelectValue({ placeholder, label }: { placeholder?: string; label?: string }) {
+  const { value, selectedLabel } = React.useContext(SelectContext);
+  const display = selectedLabel || label;
+  if (!value) return <span className="text-muted-foreground">{placeholder ?? ""}</span>;
+  return <span>{display || value}</span>;
 }
 
 interface SelectContentProps {
@@ -71,7 +83,7 @@ function SelectContent({ children, className }: SelectContentProps) {
   if (!open) return null;
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop — closes dropdown when clicking outside */}
       <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
       <div
         className={cn(
@@ -90,14 +102,24 @@ interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
+function extractText(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (React.isValidElement(node)) {
+    return extractText((node.props as { children?: React.ReactNode }).children);
+  }
+  return "";
+}
+
 function SelectItem({ value, children, className, ...props }: SelectItemProps) {
-  const { onValueChange, value: selected, setOpen } = React.useContext(SelectContext);
+  const { onValueChange, value: selected, setOpen, setSelectedLabel } = React.useContext(SelectContext);
   const isSelected = selected === value;
   return (
     <div
       role="option"
       aria-selected={isSelected}
       onClick={() => {
+        setSelectedLabel(extractText(children));
         onValueChange?.(value);
         setOpen(false);
       }}
