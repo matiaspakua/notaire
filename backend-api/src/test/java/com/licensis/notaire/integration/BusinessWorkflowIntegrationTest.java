@@ -501,6 +501,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("CU39/CU49/CU55 — Plantillas de presupuesto")
     class PlantillasWorkflow {
 
@@ -520,6 +521,48 @@ class BusinessWorkflowIntegrationTest {
             mockMvc.perform(get("/api/v1/plantilla-presupuestos/tipo-tramite/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("POST /api/v1/plantilla-presupuestos returns 201 with bounded response — no circular JSON")
+        void createPlantillaReturns201WithBoundedResponse() throws Exception {
+            String body = """
+                    {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},
+                     "tipoDeTramite":{"idTipoTramite":1},
+                     "concepto":{"idConcepto":1}}
+                    """;
+
+            MvcResult result = mockMvc.perform(post("/api/v1/plantilla-presupuestos")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isCreated())
+                    .andReturn();
+
+            // Response body must be parseable JSON and must not be a circular/huge blob
+            String responseBody = result.getResponse().getContentAsString();
+            if (!responseBody.isBlank()) {
+                assertDoesNotThrow(() -> new ObjectMapper().readTree(responseBody),
+                        "Response body must be valid, bounded JSON (no circular serialization)");
+                assertTrue(responseBody.length() < 2048,
+                        "Response body must be small — not the full entity graph. Got " + responseBody.length() + " chars");
+            }
+        }
+
+        @Test
+        @Order(4)
+        @DisplayName("POST duplicate plantilla (same tipo=1/concepto=1 created in Order 3) returns 409 Conflict")
+        void createDuplicatePlantillaReturns409() throws Exception {
+            // Order 3 already created (tipo=1, concepto=1). Re-posting the same PK must return 409.
+            String body = """
+                    {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},
+                     "tipoDeTramite":{"idTipoTramite":1},
+                     "concepto":{"idConcepto":1}}
+                    """;
+            mockMvc.perform(post("/api/v1/plantilla-presupuestos")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isConflict());
         }
     }
 }
