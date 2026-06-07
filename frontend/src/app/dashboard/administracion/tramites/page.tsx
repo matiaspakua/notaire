@@ -15,6 +15,19 @@ import type { TipoDeTramite } from "@/types";
 
 const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
 
+function extractApiError(err: unknown): string | null {
+  if (!(err instanceof Error)) return null;
+  if (!err.message.includes("[409]")) return null;
+  try {
+    const jsonStart = err.message.indexOf("{");
+    if (jsonStart !== -1) {
+      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
+      return body.error ?? null;
+    }
+  } catch { }
+  return null;
+}
+
 export default function TramitesPage() {
   const t = useTranslations("administracion.tramites");
   const tc = useTranslations("common");
@@ -28,6 +41,11 @@ export default function TramitesPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<TipoDeTramite>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filtered = search.trim()
+    ? data.filter((item) => item.nombre?.toLowerCase().includes(search.toLowerCase()))
+    : data;
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setModalOpen(true); }
@@ -43,8 +61,9 @@ export default function TramitesPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      const apiError = extractApiError(err);
+      toast.error(apiError ?? t("errorSave"));
     }
   }
 
@@ -53,8 +72,9 @@ export default function TramitesPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      const apiError = extractApiError(err);
+      toast.error(apiError ?? t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -91,8 +111,16 @@ export default function TramitesPage() {
           </Button>
         }
       />
+      <div className="mb-4">
+        <Input
+          placeholder={t("searchPlaceholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
       <DataTable
-        data={data}
+        data={filtered}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(item) => item.idTipoDeTramite!}

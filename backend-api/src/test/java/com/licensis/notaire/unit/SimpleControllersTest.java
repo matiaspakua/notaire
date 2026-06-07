@@ -606,8 +606,14 @@ class SimpleControllersTest {
     @DisplayName("TipoDeTramiteController")
     class TipoDeTramiteControllerTests {
         private final TipoDeTramiteRepository repo = mock(TipoDeTramiteRepository.class);
+        private final com.licensis.notaire.repository.PlantillaTramiteRepository plantillaRepo =
+                mock(com.licensis.notaire.repository.PlantillaTramiteRepository.class);
+        private final com.licensis.notaire.repository.PlantillaPresupuestoRepository presupuestoRepo =
+                mock(com.licensis.notaire.repository.PlantillaPresupuestoRepository.class);
+        private final com.licensis.notaire.repository.TramiteRepository tramiteRepo =
+                mock(com.licensis.notaire.repository.TramiteRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeTramiteController(repo)).build();
+                standaloneSetup(new TipoDeTramiteController(repo, plantillaRepo, presupuestoRepo, tramiteRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
@@ -629,6 +635,9 @@ class SimpleControllersTest {
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(plantillaRepo.findByTipoDeTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
+            when(presupuestoRepo.findByTipoDeTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
+            when(tramiteRepo.findByFkIdTipoTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
 
             mvc.perform(get("/api/v1/tipo-tramite")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-tramite/1")).andExpect(status().isOk());
@@ -649,7 +658,7 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+            when(plantillaRepo.findByTipoDeTramiteIdTipoTramite(1)).thenReturn(List.of(new com.licensis.notaire.negocio.PlantillaTramite()));
             mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isConflict());
         }
     }
