@@ -430,6 +430,7 @@
       "errorDelete": "Error deleting",
       "noData": "No case types registered",
       "nameRequired": "Name is required",
+      "searchPlaceholder": "Search by name...",
       "fields": {
         "nombre": "Name",
         "namePlaceholder": "E.g.: Sale",

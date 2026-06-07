@@ -430,6 +430,7 @@
       "errorDelete": "Error al eliminar",
       "noData": "No hay tipos de trámite registrados",
       "nameRequired": "El nombre es requerido",
+      "searchPlaceholder": "Buscar por nombre...",
       "fields": {
         "nombre": "Nombre",
         "namePlaceholder": "Ej: Compraventa",
