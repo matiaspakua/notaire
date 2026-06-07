@@ -378,7 +378,8 @@
       "errorDelete": "Cannot delete: document type is referenced by other records.",
       "noData": "No document types registered",
       "nameRequired": "Name is required",
-      "namePlaceholder": "E.g.: ID Card, Deed"
+      "namePlaceholder": "E.g.: ID Card, Deed",
+      "searchPlaceholder": "Search by name..."
     },
     "estadosGestion": {
       "title": "Case Statuses",

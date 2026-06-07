@@ -378,7 +378,8 @@
       "errorDelete": "No se puede eliminar: el tipo de documento está referenciado por otros registros.",
       "noData": "No hay tipos de documento registrados",
       "nameRequired": "El nombre es requerido",
-      "namePlaceholder": "Ej: DNI, Escritura"
+      "namePlaceholder": "Ej: DNI, Escritura",
+      "searchPlaceholder": "Buscar por nombre..."
     },
     "estadosGestion": {
       "title": "Estados de Gestión",

@@ -2,6 +2,8 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
 import com.licensis.notaire.negocio.TipoDeDocumento;
+import com.licensis.notaire.repository.DocumentoPresentadoRepository;
+import com.licensis.notaire.repository.PlantillaTramiteRepository;
 import com.licensis.notaire.repository.TipoDeDocumentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,18 +21,31 @@ import java.util.Optional;
 public class TipoDeDocumentoController {
 
     private final TipoDeDocumentoRepository repository;
+    private final PlantillaTramiteRepository plantillaTramiteRepository;
+    private final DocumentoPresentadoRepository documentoPresentadoRepository;
 
-    public TipoDeDocumentoController(TipoDeDocumentoRepository repository) {
+    public TipoDeDocumentoController(TipoDeDocumentoRepository repository,
+                                     PlantillaTramiteRepository plantillaTramiteRepository,
+                                     DocumentoPresentadoRepository documentoPresentadoRepository) {
         this.repository = repository;
+        this.plantillaTramiteRepository = plantillaTramiteRepository;
+        this.documentoPresentadoRepository = documentoPresentadoRepository;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los tipo-de-documento")
     public ResponseEntity<List<DtoTipoDeDocumento>> getAll() {
-        List<DtoTipoDeDocumento> result = repository.findAll().stream()
+        return ResponseEntity.ok(repository.findAll().stream()
                 .map(TipoDeDocumento::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+                .toList());
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Buscar tipo-de-documento por nombre")
+    public ResponseEntity<List<DtoTipoDeDocumento>> search(@RequestParam String nombre) {
+        return ResponseEntity.ok(repository.findByNombreContaining(nombre).stream()
+                .map(TipoDeDocumento::getDto)
+                .toList());
     }
 
     @GetMapping("/{id}")
@@ -38,6 +54,17 @@ public class TipoDeDocumentoController {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/in-use")
+    @Operation(summary = "Verificar si el tipo de documento está en uso")
+    public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean inUse = !plantillaTramiteRepository.findByTipoDeDocumentoIdTipoDocumento(id).isEmpty()
+                || documentoPresentadoRepository.existsByFkIdTipoDocumento(id);
+        return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
     @PostMapping
@@ -64,9 +91,17 @@ public class TipoDeDocumentoController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        if (!plantillaTramiteRepository.findByTipoDeDocumentoIdTipoDocumento(id).isEmpty()
+                || documentoPresentadoRepository.existsByFkIdTipoDocumento(id)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Este tipo de documento está en uso y no puede modificarse. Cree uno nuevo."));
+        }
         try {
             TipoDeDocumento entity = existing.get();
             dto.setIdTipoDocumento(id);
+            if (dto.getQuienEntrega() == null) {
+                dto.setQuienEntrega(entity.getQuienEntrega());
+            }
             entity.setAtributos(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
@@ -81,12 +116,12 @@ public class TipoDeDocumentoController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        try {
-            repository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        if (!plantillaTramiteRepository.findByTipoDeDocumentoIdTipoDocumento(id).isEmpty()
+                || documentoPresentadoRepository.existsByFkIdTipoDocumento(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No se puede eliminar: el tipo de documento está referenciado por otros registros.");
+                    .body(Map.of("error", "No se puede eliminar: el tipo de documento está siendo utilizado en plantillas o documentos presentados."));
         }
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

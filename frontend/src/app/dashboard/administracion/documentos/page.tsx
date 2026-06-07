@@ -16,6 +16,19 @@ import type { TipoDeDocumento } from "@/types";
 
 const EMPTY: Partial<TipoDeDocumento> = { nombre: "" };
 
+function extractApiError(err: unknown): string | null {
+  if (!(err instanceof Error)) return null;
+  if (!err.message.includes("[409]")) return null;
+  try {
+    const jsonStart = err.message.indexOf("{");
+    if (jsonStart !== -1) {
+      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
+      return body.error ?? null;
+    }
+  } catch { }
+  return null;
+}
+
 export default function DocumentosPage() {
   const t = useTranslations("administracion.documentos");
   const tc = useTranslations("common");
@@ -44,6 +57,11 @@ export default function DocumentosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<TipoDeDocumento>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filtered = search.trim()
+    ? tipos.filter((t) => t.nombre?.toLowerCase().includes(search.toLowerCase()))
+    : tipos;
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(tipo: TipoDeDocumento) { setEditing(tipo); setIsEditMode(true); setModalOpen(true); }
@@ -59,8 +77,9 @@ export default function DocumentosPage() {
         toast.success("Tipo de documento creado");
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      const apiError = extractApiError(err);
+      toast.error(apiError ?? t("errorSave"));
     }
   }
 
@@ -69,8 +88,9 @@ export default function DocumentosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success("Tipo de documento eliminado");
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      const apiError = extractApiError(err);
+      toast.error(apiError ?? t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -106,8 +126,16 @@ export default function DocumentosPage() {
           </Button>
         }
       />
+      <div className="mb-4">
+        <Input
+          placeholder={t("searchPlaceholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
       <DataTable
-        data={tipos}
+        data={filtered}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(tipo) => tipo.idTipoDocumento!}
