@@ -59,8 +59,7 @@ class UsuarioDeleteControllerTest {
                   "nombre": "to_be_deleted",
                   "contrasenia": "pass",
                   "tipo": "EMPLEADO",
-                  "estado": true,
-                  "fkIdPersona": {"idPersona": 1}
+                  "activo": true
                 }
                 """;
 
@@ -97,8 +96,7 @@ class UsuarioDeleteControllerTest {
                   "nombre": "to_be_removed_from_list",
                   "contrasenia": "pass",
                   "tipo": "EMPLEADO",
-                  "estado": true,
-                  "fkIdPersona": {"idPersona": 1}
+                  "activo": true
                 }
                 """;
 
@@ -133,8 +131,7 @@ class UsuarioDeleteControllerTest {
                   "nombre": "user_with_audit",
                   "contrasenia": "pass",
                   "tipo": "EMPLEADO",
-                  "estado": true,
-                  "fkIdPersona": {"idPersona": 1}
+                  "activo": true
                 }
                 """;
         MvcResult result = mockMvc.perform(post("/api/v1/usuarios")

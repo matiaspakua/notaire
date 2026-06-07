@@ -17,6 +17,22 @@ import type { Concepto } from "@/types";
 
 const EMPTY: Partial<Concepto> = { nombre: "", descripcion: "", valor: undefined };
 
+function extractApiError(err: unknown): string | null {
+  if (!(err instanceof Error)) return null;
+  const match = err.message.match(/\[409\]/);
+  if (!match) return null;
+  try {
+    const jsonStart = err.message.indexOf("{");
+    if (jsonStart !== -1) {
+      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
+      return body.error ?? null;
+    }
+  } catch {
+    // not JSON — return null
+  }
+  return null;
+}
+
 export default function ConceptosPage() {
   const t = useTranslations("administracion.conceptos");
   const tc = useTranslations("common");
@@ -30,6 +46,11 @@ export default function ConceptosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Concepto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filtered = conceptos.filter((c) =>
+    !search || c.nombre?.toLowerCase().includes(search.toLowerCase())
+  );
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(c: Concepto) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
@@ -45,7 +66,14 @@ export default function ConceptosPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error(t("errorSave")); }
+    } catch (err) {
+      const conflict = extractApiError(err);
+      if (conflict) {
+        toast.error(conflict);
+      } else {
+        toast.error(t("errorSave"));
+      }
+    }
   }
 
   async function handleDelete() {
@@ -53,8 +81,14 @@ export default function ConceptosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch { toast.error(t("errorDelete")); }
-    finally { setDeleteId(null); }
+    } catch (err) {
+      const conflict = extractApiError(err);
+      if (conflict) {
+        toast.error(conflict);
+      } else {
+        toast.error(t("errorDelete"));
+      }
+    } finally { setDeleteId(null); }
   }
 
   const columns: Column<Concepto>[] = [
@@ -80,7 +114,18 @@ export default function ConceptosPage() {
         description={t("description")}
         actions={<Button onClick={openCreate}><NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />{t("newConcepto")}</Button>}
       />
-      <DataTable data={conceptos} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage={t("noData")} />
+
+      <div className="px-4 pb-4">
+        <Input
+          placeholder={t("searchPlaceholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-64"
+          data-testid="input-search-concepto"
+        />
+      </div>
+
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
