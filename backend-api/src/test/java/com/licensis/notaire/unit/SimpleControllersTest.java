@@ -38,6 +38,7 @@ import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.CopiaRepository;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
+import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.MovimientoTestimonioRepository;
@@ -147,8 +148,9 @@ class SimpleControllersTest {
     @DisplayName("EstadoDeGestionController")
     class EstadoDeGestionControllerTests {
         private final EstadoDeGestionRepository repo = mock(EstadoDeGestionRepository.class);
+        private final GestionDeEscrituraRepository gestionRepo = mock(GestionDeEscrituraRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EstadoDeGestionController(repo)).build();
+                standaloneSetup(new EstadoDeGestionController(repo, gestionRepo)).build();
 
         private EstadoDeGestion build() {
             EstadoDeGestion e = new EstadoDeGestion(1, "Activo");
@@ -188,29 +190,33 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("PUT should return 200 when present, 404 when missing, 500 on failure")
+        @DisplayName("PUT should return 200 when present and not in-use, 404 when missing, 409 when in-use")
         void update() throws Exception {
             DtoEstadoDeGestion dto = new DtoEstadoDeGestion();
             dto.setNombre("Updated");
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
+            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(anyInt())).thenReturn(List.of());
             mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/estado-gestion/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            when(repo.save(any(EstadoDeGestion.class))).thenThrow(new RuntimeException("x"));
+            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(1))
+                    .thenReturn(List.of(new com.licensis.notaire.negocio.GestionDeEscritura()));
             mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
+                    .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
         }
 
         @Test
-        @DisplayName("DELETE should return 200, 404 or 409 appropriately")
+        @DisplayName("DELETE should return 200, 404, or 409 appropriately")
         void deleteOne() throws Exception {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(anyInt())).thenReturn(List.of());
             mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/estado-gestion/2")).andExpect(status().isNotFound());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(1))
+                    .thenReturn(List.of(new com.licensis.notaire.negocio.GestionDeEscritura()));
             mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isConflict());
         }
     }

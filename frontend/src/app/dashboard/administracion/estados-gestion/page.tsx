@@ -16,6 +16,19 @@ import type { EstadoDeGestion } from "@/types";
 
 const EMPTY: Partial<EstadoDeGestion> = { nombre: "", observaciones: "" };
 
+function extractApiError(err: unknown): string | null {
+  if (!(err instanceof Error)) return null;
+  if (!err.message.includes("[409]")) return null;
+  try {
+    const jsonStart = err.message.indexOf("{");
+    if (jsonStart !== -1) {
+      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
+      return body.error ?? null;
+    }
+  } catch { }
+  return null;
+}
+
 export default function EstadosGestionPage() {
   const t = useTranslations("administracion.estadosGestion");
   const tc = useTranslations("common");
@@ -25,12 +38,17 @@ export default function EstadosGestionPage() {
     queryFn: () => apiGet<EstadoDeGestion[]>("/estado-gestion"),
   });
 
+  const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Partial<EstadoDeGestion>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const filtered = search.trim()
+    ? data.filter((e) => e.nombre?.toLowerCase().includes(search.toLowerCase()))
+    : data;
 
   function openCreate() {
     setEditing(EMPTY);
@@ -61,8 +79,9 @@ export default function EstadosGestionPage() {
       }
       setModalOpen(false);
       refetch();
-    } catch {
-      toast.error(t("errorCreate"));
+    } catch (err) {
+      const apiMsg = extractApiError(err);
+      toast.error(apiMsg ?? t("errorSave"));
     } finally {
       setSaving(false);
     }
@@ -75,8 +94,9 @@ export default function EstadosGestionPage() {
       await apiDelete(`/estado-gestion/${deleteId}`);
       toast.success(t("deleted"));
       refetch();
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      const apiMsg = extractApiError(err);
+      toast.error(apiMsg ?? t("errorDelete"));
     } finally {
       setDeleting(false);
       setDeleteId(null);
@@ -123,7 +143,16 @@ export default function EstadosGestionPage() {
           </Button>
         }
       />
-      <DataTable data={data} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoGestion!} emptyMessage={t("noData")} />
+      <div className="mb-4">
+        <Input
+          placeholder={t("searchPlaceholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+          data-testid="search-estados"
+        />
+      </div>
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoGestion!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
