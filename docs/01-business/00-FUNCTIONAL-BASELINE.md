@@ -183,10 +183,10 @@ graph LR
 ### Workflow de Estados de Gestión
 | CU | Name | Grado | API | UI |
 |----|------|:----:|:--:|:--:|
-| CU70 | Definir Workflow de Estados de Gestión | E | 🔲 | 🔲 |
-| CU71 | Definir Transiciones entre Estados | E | 🔲 | 🔲 |
-| CU72 | Validar Consistencia del Workflow | E | 🔲 | 🔲 |
-| CU73 | Asignar Workflow a Tipo de Trámite | E | 🔲 | 🔲 |
+| CU70 | Definir Workflow de Estados de Gestión | E | ✅ | ✅ |
+| CU71 | Definir Transiciones entre Estados | E | ✅ | ✅ |
+| CU72 | Validar Consistencia del Workflow | E | ✅ | ✅ |
+| CU73 | Asignar Workflow a Tipo de Trámite | E | ✅ | ✅ |
 
 ### Auditoría
 | CU | Name | Grado | API | UI |
