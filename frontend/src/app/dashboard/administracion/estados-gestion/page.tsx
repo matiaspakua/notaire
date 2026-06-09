@@ -6,12 +6,14 @@ import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { WorkflowViewer } from "@/components/shared/WorkflowViewer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from "@/hooks/useWorkflow";
 import type { EstadoDeGestion } from "@/types";
 
 const EMPTY: Partial<EstadoDeGestion> = { nombre: "", observaciones: "" };
@@ -39,6 +41,10 @@ export default function EstadosGestionPage() {
   });
 
   const [search, setSearch] = useState("");
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState<number | undefined>(undefined);
+  const { data: workflows = [] } = useWorkflowDefinitions();
+  const { data: workflowNodes = [] } = useWorkflowNodes(selectedWorkflowId);
+  const { data: workflowTransitions = [] } = useWorkflowTransitions(selectedWorkflowId);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Partial<EstadoDeGestion>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -153,6 +159,26 @@ export default function EstadosGestionPage() {
         />
       </div>
       <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoGestion!} emptyMessage={t("noData")} />
+
+      {workflows.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="text-base font-semibold text-neutral-800">{t("workflowSection")}</h2>
+            <select
+              className="border border-neutral-300 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
+              value={selectedWorkflowId ?? ""}
+              onChange={(e) => setSelectedWorkflowId(e.target.value ? Number(e.target.value) : undefined)}
+              data-testid="select-workflow"
+            >
+              <option value="">{t("selectWorkflow")}</option>
+              {workflows.map((wf) => (
+                <option key={wf.id} value={wf.id}>{wf.nombre}</option>
+              ))}
+            </select>
+          </div>
+          <WorkflowViewer nodes={workflowNodes} transitions={workflowTransitions} data-testid="workflow-viewer" />
+        </div>
+      )}
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

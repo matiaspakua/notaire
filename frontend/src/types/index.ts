@@ -185,6 +185,40 @@ export interface RegistroAuditoria {
 }
 
 // ──────────────────────────────────────────────
+// Workflow types (CU70, CU71, CU72, CU73)
+// ──────────────────────────────────────────────
+export type WorkflowNodeType = "INITIAL" | "INTERMEDIATE" | "FINAL";
+
+export interface WorkflowDefinition {
+  id?: number;
+  nombre?: string;
+  descripcion?: string;
+  activo?: boolean;
+  version?: number;
+}
+
+export interface WorkflowNode {
+  id?: number;
+  workflowDefinitionId?: number;
+  estadoGestionId?: number;
+  estadoGestionNombre?: string;
+  tipo?: WorkflowNodeType;
+  posicionX?: number;
+  posicionY?: number;
+  version?: number;
+}
+
+export interface WorkflowTransition {
+  id?: number;
+  workflowDefinitionId?: number;
+  nodoOrigenId?: number;
+  nodoDestinoId?: number;
+  condicion?: string;
+  descripcion?: string;
+  version?: number;
+}
+
+// ──────────────────────────────────────────────
 // UI / Navigation types
 // ──────────────────────────────────────────────
 

@@ -399,7 +399,9 @@
         "namePlaceholder": "E.g.: In Progress",
         "descripcion": "Description",
         "descripcionPlaceholder": "Optional description"
-      }
+      },
+      "workflowSection": "Workflow Diagram",
+      "selectWorkflow": "Select workflow..."
     },
     "folios": {
       "title": "Folios",
