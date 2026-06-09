@@ -19,6 +19,8 @@ public class DtoTipoDeTramite extends GenericDto implements DtoValido {
     private Boolean habilitado;
     private Integer version;
     private List<DtoPlantillaTramite> plantillaTramites = new ArrayList<>();
+    private Integer workflowDefinitionId;
+    private String workflowDefinitionNombre;
 
     public DtoTipoDeTramite() {
     }
@@ -137,6 +139,22 @@ public class DtoTipoDeTramite extends GenericDto implements DtoValido {
 
     public void setPlantillaPresupuestos(List<DtoPlantillaPresupuesto> plantillaPresupuestos) {
         // Backend-only, ignored in shared module
+    }
+
+    public Integer getWorkflowDefinitionId() {
+        return workflowDefinitionId;
+    }
+
+    public void setWorkflowDefinitionId(Integer workflowDefinitionId) {
+        this.workflowDefinitionId = workflowDefinitionId;
+    }
+
+    public String getWorkflowDefinitionNombre() {
+        return workflowDefinitionNombre;
+    }
+
+    public void setWorkflowDefinitionNombre(String workflowDefinitionNombre) {
+        this.workflowDefinitionNombre = workflowDefinitionNombre;
     }
 
     @Override

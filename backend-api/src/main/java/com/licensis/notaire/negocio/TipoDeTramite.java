@@ -17,6 +17,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -75,6 +77,9 @@ public class TipoDeTramite implements Serializable {
     private List<PlantillaTramite> plantillaTramiteList = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoTramite", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_workflow_definition_id")
+    private WorkflowDefinition workflowDefinition;
 
     public TipoDeTramite() {
     }
@@ -170,6 +175,14 @@ public class TipoDeTramite implements Serializable {
         this.tramiteList = tramiteList;
     }
 
+    public WorkflowDefinition getWorkflowDefinition() {
+        return workflowDefinition;
+    }
+
+    public void setWorkflowDefinition(WorkflowDefinition workflowDefinition) {
+        this.workflowDefinition = workflowDefinition;
+    }
+
     public void setAtributos(DtoTipoDeTramite dtoTipoDeTramite) {
         if (dtoTipoDeTramite.isValido()) {
             this.idTipoTramite = dtoTipoDeTramite.getIdTipoTramite();
@@ -200,6 +213,10 @@ public class TipoDeTramite implements Serializable {
         miDto.setObservaciones(observaciones);
         miDto.setVersion(version);
         miDto.setHabilitado(habilitado);
+        if (workflowDefinition != null) {
+            miDto.setWorkflowDefinitionId(workflowDefinition.getId());
+            miDto.setWorkflowDefinitionNombre(workflowDefinition.getNombre());
+        }
 
         return miDto;
     }

@@ -38,6 +38,8 @@ export interface TipoDeTramite {
   descripcion?: string;
   seArchiva?: boolean;
   seInscribe?: boolean;
+  workflowDefinitionId?: number | null;
+  workflowDefinitionNombre?: string | null;
 }
 
 export interface TipoDeDocumento {
