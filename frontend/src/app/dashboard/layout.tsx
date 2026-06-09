@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
+import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { useAuthStore } from "@/store/auth-store";
 import { AnimatePresence, PageTransition } from "@/components/motion";
 
@@ -37,6 +38,9 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col">
         {/* Each page renders its own AppHeader with a title; a title-less one
             here only produced an empty (a11y-invalid) duplicate <h1>. */}
+        <div className="px-6 lg:px-8 pt-4 pb-0">
+          <Breadcrumb />
+        </div>
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition key={pathname}>{children}</PageTransition>
