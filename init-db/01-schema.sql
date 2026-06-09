@@ -27,6 +27,9 @@ DROP TABLE IF EXISTS tipos_identificacion CASCADE;
 DROP TABLE IF EXISTS tipos_de_tramite CASCADE;
 DROP TABLE IF EXISTS tipos_de_folio CASCADE;
 DROP TABLE IF EXISTS tipos_de_documento CASCADE;
+DROP TABLE IF EXISTS workflow_transition CASCADE;
+DROP TABLE IF EXISTS workflow_node CASCADE;
+DROP TABLE IF EXISTS workflow_definition CASCADE;
 DROP TABLE IF EXISTS estados_de_gestion CASCADE;
 DROP TABLE IF EXISTS conceptos CASCADE;
 
@@ -47,6 +50,37 @@ CREATE TABLE estados_de_gestion (
   id_estado_gestion SERIAL PRIMARY KEY,
   nombre text NOT NULL,
   observaciones text
+);
+
+-- Table: workflow_definition
+CREATE TABLE workflow_definition (
+  version integer NOT NULL DEFAULT 0,
+  id_workflow_definition SERIAL PRIMARY KEY,
+  nombre text NOT NULL,
+  descripcion text,
+  activo boolean NOT NULL DEFAULT false
+);
+
+-- Table: workflow_node
+CREATE TABLE workflow_node (
+  version integer NOT NULL DEFAULT 0,
+  id_workflow_node SERIAL PRIMARY KEY,
+  fk_workflow_definition_id integer NOT NULL REFERENCES workflow_definition(id_workflow_definition) ON DELETE CASCADE,
+  fk_estado_gestion_id integer NOT NULL REFERENCES estados_de_gestion(id_estado_gestion),
+  tipo text NOT NULL CHECK (tipo IN ('INITIAL', 'INTERMEDIATE', 'FINAL')),
+  posicion_x real,
+  posicion_y real
+);
+
+-- Table: workflow_transition
+CREATE TABLE workflow_transition (
+  version integer NOT NULL DEFAULT 0,
+  id_workflow_transition SERIAL PRIMARY KEY,
+  fk_workflow_definition_id integer NOT NULL REFERENCES workflow_definition(id_workflow_definition) ON DELETE CASCADE,
+  fk_nodo_origen_id integer NOT NULL REFERENCES workflow_node(id_workflow_node) ON DELETE CASCADE,
+  fk_nodo_destino_id integer NOT NULL REFERENCES workflow_node(id_workflow_node) ON DELETE CASCADE,
+  condicion text,
+  descripcion text
 );
 
 -- Table: tipos_de_documento
