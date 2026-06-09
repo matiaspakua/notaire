@@ -1,0 +1,23 @@
+info:
+  name: Create Suplencia
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/suplencia"
+  body:
+    type: json
+    data: |-
+        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"idPersona":1},"fkIdSuplantado":{"idPersona":2}}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idSuplencia", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idSuplencia');
+            bru.setVar('_suplencia_id', b.idSuplencia);
+          });

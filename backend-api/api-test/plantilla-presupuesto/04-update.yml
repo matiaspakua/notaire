@@ -1,0 +1,18 @@
+info:
+  name: Update Plantilla Presupuesto
+  type: http
+  seq: 4
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/plantilla-presupuestos/tipo-tramite/{{_pp_tipo_tramite}}/concepto/{{_pp_concepto}}"
+  body:
+    type: json
+    data: |-
+        {"observaciones":"Updated E2E"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

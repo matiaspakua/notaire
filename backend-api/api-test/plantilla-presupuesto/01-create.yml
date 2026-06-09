@@ -1,0 +1,22 @@
+info:
+  name: Create Plantilla Presupuesto
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/plantilla-presupuestos"
+  body:
+    type: json
+    data: |-
+        {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},"observaciones":"Test plantilla E2E"}
+  headers:
+    Content-Type: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 or 200", function () { expect([200,201]).to.include(res.getStatus()); });
+          test("Saves tipo-tramite and concepto IDs", function () {
+            bru.setVar('_pp_tipo_tramite', 1);
+            bru.setVar('_pp_concepto', 1);
+          });

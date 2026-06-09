@@ -1,0 +1,17 @@
+info:
+  name: Buscar Escrituras por Numero
+  type: http
+  seq: 1
+  description: "## CU62 — GET /api/v1/escrituras/buscar?numero=<n>"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/escrituras/buscar"
+  params:
+    - name: numero
+      value: "1"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns array", function () { expect(res.getBody()).to.be.an('array'); });
