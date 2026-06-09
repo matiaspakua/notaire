@@ -114,7 +114,8 @@ CREATE TABLE tipos_de_tramite (
   habilitado boolean NOT NULL,
   se_archiva boolean NOT NULL,
   se_inscribe boolean NOT NULL,
-  asocia_inmuebles boolean NOT NULL
+  asocia_inmuebles boolean NOT NULL,
+  fk_workflow_definition_id integer REFERENCES workflow_definition(id_workflow_definition)
 );
 
 -- Table: tipos_identificacion

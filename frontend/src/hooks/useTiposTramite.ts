@@ -46,3 +46,13 @@ export function useDeleteTipoTramite() {
       qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
   });
 }
+
+export function useAssignWorkflowToTipoTramite() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, workflowDefinitionId }: { id: number; workflowDefinitionId: number | null }) =>
+      apiPut<TipoDeTramite>(`/tipo-tramite/${id}/workflow`, { workflowDefinitionId }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
+  });
+}

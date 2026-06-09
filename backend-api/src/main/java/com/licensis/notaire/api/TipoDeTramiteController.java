@@ -6,6 +6,8 @@ import com.licensis.notaire.repository.PlantillaPresupuestoRepository;
 import com.licensis.notaire.repository.PlantillaTramiteRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.repository.WorkflowDefinitionRepository;
+import com.licensis.notaire.negocio.WorkflowDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -30,18 +32,21 @@ import java.util.Optional;
 public class TipoDeTramiteController {
 
     private final TipoDeTramiteRepository repository;
-    private final PlantillaTramiteRepository plantillaTramiteRepository;
     private final PlantillaPresupuestoRepository plantillaPresupuestoRepository;
     private final TramiteRepository tramiteRepository;
+    private final PlantillaTramiteRepository plantillaTramiteRepository;
+    private final WorkflowDefinitionRepository workflowDefinitionRepository;
 
     public TipoDeTramiteController(TipoDeTramiteRepository repository,
-                                   PlantillaTramiteRepository plantillaTramiteRepository,
                                    PlantillaPresupuestoRepository plantillaPresupuestoRepository,
-                                   TramiteRepository tramiteRepository) {
+                                   TramiteRepository tramiteRepository,
+                                   PlantillaTramiteRepository plantillaTramiteRepository,
+                                   WorkflowDefinitionRepository workflowDefinitionRepository) {
         this.repository = repository;
-        this.plantillaTramiteRepository = plantillaTramiteRepository;
         this.plantillaPresupuestoRepository = plantillaPresupuestoRepository;
         this.tramiteRepository = tramiteRepository;
+        this.plantillaTramiteRepository = plantillaTramiteRepository;
+        this.workflowDefinitionRepository = workflowDefinitionRepository;
     }
 
     @GetMapping
@@ -138,5 +143,34 @@ public class TipoDeTramiteController {
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/workflow")
+    @Operation(summary = "Asignar o desasignar workflow a tipo de tramite")
+    public ResponseEntity<Object> assignWorkflow(@PathVariable Integer id,
+                                                 @RequestBody Map<String, Object> body) {
+        Optional<TipoDeTramite> existing = repository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        TipoDeTramite tipo = existing.get();
+        Object wfIdObj = body.get("workflowDefinitionId");
+        if (wfIdObj == null) {
+            tipo.setWorkflowDefinition(null);
+            repository.save(tipo);
+            return ResponseEntity.ok(tipo.getDto());
+        }
+        Integer wfId = (Integer) wfIdObj;
+        Optional<WorkflowDefinition> wf = workflowDefinitionRepository.findById(wfId);
+        if (wf.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!wf.get().isActivo()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "El workflow seleccionado no está activo."));
+        }
+        tipo.setWorkflowDefinition(wf.get());
+        repository.save(tipo);
+        return ResponseEntity.ok(tipo.getDto());
     }
 }

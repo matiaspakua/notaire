@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
-import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite } from "@/hooks/useTiposTramite";
+import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite, useAssignWorkflowToTipoTramite } from "@/hooks/useTiposTramite";
+import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import type { TipoDeTramite } from "@/types";
 
 const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
@@ -36,29 +37,41 @@ export default function TramitesPage() {
   const createMutation = useCreateTipoTramite();
   const updateMutation = useUpdateTipoTramite();
   const deleteMutation = useDeleteTipoTramite();
+  const assignWorkflowMutation = useAssignWorkflowToTipoTramite();
+  const { data: workflows = [] } = useWorkflowDefinitions();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<TipoDeTramite>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
 
   const filtered = search.trim()
     ? data.filter((item) => item.nombre?.toLowerCase().includes(search.toLowerCase()))
     : data;
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setSelectedWorkflowId(""); setModalOpen(true); }
+  function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : ""); setModalOpen(true); }
 
   async function handleSave() {
     if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
     try {
+      let savedId = editing.idTipoDeTramite;
       if (isEditMode && editing.idTipoDeTramite) {
         await updateMutation.mutateAsync({ id: editing.idTipoDeTramite, data: editing });
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(editing);
+        const created = await createMutation.mutateAsync(editing) as TipoDeTramite | undefined;
+        savedId = created?.idTipoDeTramite ?? editing.idTipoDeTramite;
         toast.success(t("created"));
+      }
+      if (savedId) {
+        const wfId = selectedWorkflowId ? Number(selectedWorkflowId) : null;
+        const currentWfId = editing.workflowDefinitionId ?? null;
+        if (wfId !== currentWfId) {
+          await assignWorkflowMutation.mutateAsync({ id: savedId, workflowDefinitionId: wfId });
+        }
       }
       setModalOpen(false);
     } catch (err) {
@@ -84,6 +97,7 @@ export default function TramitesPage() {
     { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idTipoDeTramite}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.nombre}</span> },
     { key: "desc", header: t("fields.descripcion"), render: (item) => item.descripcion ?? "—" },
+    { key: "workflow", header: "Workflow", render: (item) => item.workflowDefinitionNombre ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionNombre}</span> : <span className="text-xs text-muted-foreground">—</span> },
     {
       key: "actions", header: "", className: "w-24",
       render: (item) => (
@@ -156,6 +170,19 @@ export default function TramitesPage() {
                 checked={editing.seInscribe ?? false}
                 onChange={(v) => setEditing({ ...editing, seInscribe: v })}
               />
+              <FormField label="Workflow">
+                <select
+                  className="w-full h-12 rounded-xl border border-neutral-300 px-3 text-sm bg-white"
+                  value={selectedWorkflowId}
+                  onChange={(e) => setSelectedWorkflowId(e.target.value)}
+                  data-testid="select-workflow-tramite"
+                >
+                  <option value="">— Sin workflow —</option>
+                  {workflows.filter((w) => w.activo).map((w) => (
+                    <option key={w.id} value={String(w.id)}>{w.nombre}</option>
+                  ))}
+                </select>
+              </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>

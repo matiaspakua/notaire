@@ -618,8 +618,10 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.repository.PlantillaPresupuestoRepository.class);
         private final com.licensis.notaire.repository.TramiteRepository tramiteRepo =
                 mock(com.licensis.notaire.repository.TramiteRepository.class);
+        private final com.licensis.notaire.repository.WorkflowDefinitionRepository workflowRepo =
+                mock(com.licensis.notaire.repository.WorkflowDefinitionRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeTramiteController(repo, plantillaRepo, presupuestoRepo, tramiteRepo)).build();
+                standaloneSetup(new TipoDeTramiteController(repo, presupuestoRepo, tramiteRepo, plantillaRepo, workflowRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
