@@ -399,7 +399,9 @@
         "namePlaceholder": "Ej: En trámite",
         "descripcion": "Descripción",
         "descripcionPlaceholder": "Descripción opcional"
-      }
+      },
+      "workflowSection": "Diagrama de Workflow",
+      "selectWorkflow": "Seleccionar workflow..."
     },
     "folios": {
       "title": "Folios",
