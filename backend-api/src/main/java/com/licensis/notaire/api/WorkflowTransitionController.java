@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,6 +91,36 @@ public class WorkflowTransitionController {
             transition.setDescripcion(dto.getDescripcion());
             transition = repository.save(transition);
             return ResponseEntity.status(HttpStatus.CREATED).body(transition.toDto());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar transición")
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowTransition dto) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<WorkflowNode> origen = nodeRepository.findById(dto.getNodoOrigenId());
+        if (origen.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<WorkflowNode> destino = nodeRepository.findById(dto.getNodoDestinoId());
+        if (destino.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            WorkflowTransition transition = repository.findById(id).get();
+            transition.setNodoOrigen(origen.get());
+            transition.setNodoDestino(destino.get());
+            transition.setCondicion(dto.getCondicion());
+            transition.setDescripcion(dto.getDescripcion());
+            return ResponseEntity.ok(repository.save(transition).toDto());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
         }
