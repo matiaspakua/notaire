@@ -6,6 +6,8 @@ import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,10 @@ public class WorkflowDefinitionController {
         return ResponseEntity.ok(repository.findAll().stream().map(WorkflowDefinition::toDto).toList());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener workflow por ID")
     public ResponseEntity<DtoWorkflowDefinition> getById(@PathVariable Integer id) {
@@ -53,6 +59,11 @@ public class WorkflowDefinitionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear workflow")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowDefinition dto) {
@@ -68,6 +79,10 @@ public class WorkflowDefinitionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar workflow")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowDefinition dto) {
@@ -90,6 +105,10 @@ public class WorkflowDefinitionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar workflow")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {

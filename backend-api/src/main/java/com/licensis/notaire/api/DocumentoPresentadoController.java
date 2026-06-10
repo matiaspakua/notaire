@@ -4,6 +4,8 @@ import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
 import com.licensis.notaire.repository.TipoDeDocumentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +81,10 @@ public class DocumentoPresentadoController {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener documento presentado por ID")
     public ResponseEntity<DocumentoPresentadoResponse> getById(@PathVariable Integer id) {
@@ -88,6 +94,11 @@ public class DocumentoPresentadoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo documento presentado")
     public ResponseEntity<Object> create(@RequestBody DocumentoPresentadoRequest request) {
@@ -101,6 +112,10 @@ public class DocumentoPresentadoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar documento presentado")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody DocumentoPresentadoRequest request) {
@@ -118,6 +133,10 @@ public class DocumentoPresentadoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar documento presentado")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

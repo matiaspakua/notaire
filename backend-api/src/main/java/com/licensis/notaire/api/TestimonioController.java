@@ -4,6 +4,8 @@ import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.repository.TestimonioRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,10 @@ public class TestimonioController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener testimonio por ID")
     public ResponseEntity<DtoTestimonio> getById(@PathVariable Integer id) {
@@ -40,6 +46,11 @@ public class TestimonioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo testimonio")
     public ResponseEntity<Object> create(@RequestBody DtoTestimonio dto) {
@@ -53,6 +64,10 @@ public class TestimonioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar testimonio")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoTestimonio dto) {
@@ -71,6 +86,10 @@ public class TestimonioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar testimonio")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {

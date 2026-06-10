@@ -4,6 +4,8 @@ import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.service.RegistroAuditoriaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +69,10 @@ public class RegistroAuditoriaController {
         return ResponseEntity.ok(toPageResponse(result));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener registro de auditoria por ID")
     public ResponseEntity<DtoRegistroAuditoria> getById(@PathVariable Integer id) {
@@ -81,6 +87,11 @@ public class RegistroAuditoriaController {
         return ResponseEntity.ok(service.findByUsuarioIdAsDto(idUsuario));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo registro de auditoria")
     public ResponseEntity<RegistroAuditoria> create(@RequestBody RegistroAuditoria entity) {
@@ -88,6 +99,10 @@ public class RegistroAuditoriaController {
         return ResponseEntity.ok(saved);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar registro de auditoria")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

@@ -3,6 +3,8 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.repository.ItemRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,10 @@ public class ItemController {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener ítem por ID")
     public ResponseEntity<Item> getById(@PathVariable Integer id) {
@@ -45,6 +51,11 @@ public class ItemController {
         return ResponseEntity.ok(repository.findByFkIdPresupuestoIdPresupuesto(idPresupuesto));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo ítem")
     public ResponseEntity<Object> create(@RequestBody Item entity) {
@@ -57,6 +68,10 @@ public class ItemController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar ítem")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Item entity) {
@@ -73,6 +88,10 @@ public class ItemController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar ítem")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

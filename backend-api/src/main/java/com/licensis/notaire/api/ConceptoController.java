@@ -5,6 +5,8 @@ import com.licensis.notaire.negocio.Concepto;
 import com.licensis.notaire.repository.ConceptoRepository;
 import com.licensis.notaire.repository.PlantillaPresupuestoRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +66,10 @@ public class ConceptoController {
         return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener concepto por ID")
     public ResponseEntity<DtoConcepto> getConceptoById(@PathVariable Integer id) {
@@ -72,6 +78,11 @@ public class ConceptoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo concepto")
     public ResponseEntity<Object> createConcepto(@RequestBody DtoConcepto dto) {
@@ -86,6 +97,10 @@ public class ConceptoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar concepto")
     public ResponseEntity<Object> updateConcepto(@PathVariable Integer id, @RequestBody DtoConcepto dto) {
@@ -111,6 +126,10 @@ public class ConceptoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar concepto")
     public ResponseEntity<Object> deleteConcepto(@PathVariable Integer id) {

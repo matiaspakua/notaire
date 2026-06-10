@@ -4,6 +4,8 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.service.PresupuestoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -41,6 +43,10 @@ public class PresupuestoController {
         return ResponseEntity.ok(presupuestoService.findAll());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener presupuesto por ID")
     public ResponseEntity<Presupuesto> getById(@PathVariable Integer id) {
@@ -62,6 +68,11 @@ public class PresupuestoController {
         return ResponseEntity.ok(presupuestoService.findByEstado(estado));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo presupuesto")
     public ResponseEntity<Presupuesto> create(@RequestBody Presupuesto entity) {
@@ -69,6 +80,10 @@ public class PresupuestoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar presupuesto")
     public ResponseEntity<Presupuesto> update(@PathVariable Integer id, @RequestBody Presupuesto entity) {
@@ -80,6 +95,10 @@ public class PresupuestoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar presupuesto")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
