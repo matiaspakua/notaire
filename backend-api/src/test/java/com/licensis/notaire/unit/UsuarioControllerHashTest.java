@@ -16,7 +16,9 @@ class UsuarioControllerHashTest {
     @Test
     void shouldGenerateMd5HashForPassword() throws Exception {
         UsuarioController controller = new UsuarioController(
-                Mockito.mock(UsuarioRepository.class), Mockito.mock(JwtTokenService.class));
+                Mockito.mock(UsuarioRepository.class),
+                Mockito.mock(JwtTokenService.class),
+                Mockito.mock(com.licensis.notaire.observability.MetricsUtil.class));
         Method method = UsuarioController.class.getDeclaredMethod("encriptaEnMD5", String.class);
         method.setAccessible(true);
 

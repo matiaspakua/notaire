@@ -193,7 +193,8 @@ class AdditionalControllersTest {
             UsuarioRepository repo = mock(UsuarioRepository.class);
             var jwtSvc = mock(com.licensis.notaire.config.JwtTokenService.class);
             when(jwtSvc.generateToken(any())).thenReturn("mock-jwt-token");
-            var mvc = standaloneSetup(new UsuarioController(repo, jwtSvc)).build();
+            var metrics = mock(com.licensis.notaire.observability.MetricsUtil.class);
+            var mvc = standaloneSetup(new UsuarioController(repo, jwtSvc, metrics)).build();
             Usuario u = new Usuario(1, "admin", "abc", true, "Escribano");
 
             when(repo.findAll()).thenReturn(List.of(u));
