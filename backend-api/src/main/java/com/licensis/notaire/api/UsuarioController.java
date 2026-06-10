@@ -4,6 +4,7 @@ import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,10 +33,13 @@ public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
     private final JwtTokenService jwtTokenService;
+    private final MetricsUtil metricsUtil;
 
-    public UsuarioController(UsuarioRepository usuarioRepository, JwtTokenService jwtTokenService) {
+    public UsuarioController(UsuarioRepository usuarioRepository, JwtTokenService jwtTokenService,
+                             MetricsUtil metricsUtil) {
         this.usuarioRepository = usuarioRepository;
         this.jwtTokenService = jwtTokenService;
+        this.metricsUtil = metricsUtil;
     }
 
     record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
@@ -181,6 +185,7 @@ public class UsuarioController {
                     if (usuario.getContrasenia().equals(passwordIngresado)) {
                         if (usuario.getEstado()) {
                             log.info("Login exitoso para usuario: '{}'", usuario.getNombre());
+                            metricsUtil.incrementCounter("login", "success");
                             DtoUsuario dtoUsuario = new DtoUsuario();
                             dtoUsuario.setIdUsuario(usuario.getIdUsuario());
                             dtoUsuario.setNombre(usuario.getNombre());
@@ -216,21 +221,25 @@ public class UsuarioController {
                             return ResponseEntity.ok(response);
                         } else {
                             log.warn("Login fallido para '{}': usuario inactivo", usuario.getNombre());
+                            metricsUtil.incrementCounter("login", "inactive");
                         }
                     } else {
                         log.warn("Login fallido para '{}': contraseña incorrecta", usuario.getNombre());
+                        metricsUtil.incrementCounter("login", "bad_credentials");
                     }
                 }
             }
 
             log.warn("Login fallido: usuario '{}' no encontrado en {} usuarios cargados.", loginRequest.getNombre(),
                     usuarios.size());
+            metricsUtil.incrementCounter("login", "not_found");
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("valido", false);
             return ResponseEntity.ok(errorResponse);
 
         } catch (Exception e) {
             log.error("Failed to process login for {}", loginRequest.getNombre(), e);
+            metricsUtil.incrementCounter("login", "error");
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("valido", false);
             return ResponseEntity.ok(errorResponse);
