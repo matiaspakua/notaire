@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class SecurityAndCorsConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8080}")
     private String[] allowedOrigins;
@@ -84,7 +91,8 @@ public class SecurityAndCorsConfig {
 
     /**
      * Security filter chain for API endpoints.
-     * Permits all for now - authentication will be added in future phases.
+     * JWT filter authenticates requests that carry a valid Bearer token.
+     * Endpoints remain accessible without auth for backward compatibility.
      */
     @Bean
     @Order(2)
@@ -94,7 +102,7 @@ public class SecurityAndCorsConfig {
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()
             )
-            .httpBasic(withDefaults())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.disable())
             .cors(withDefaults());

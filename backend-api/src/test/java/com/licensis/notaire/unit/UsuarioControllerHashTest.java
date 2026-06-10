@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.UsuarioController;
+import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +15,8 @@ class UsuarioControllerHashTest {
 
     @Test
     void shouldGenerateMd5HashForPassword() throws Exception {
-        UsuarioController controller = new UsuarioController(Mockito.mock(UsuarioRepository.class));
+        UsuarioController controller = new UsuarioController(
+                Mockito.mock(UsuarioRepository.class), Mockito.mock(JwtTokenService.class));
         Method method = UsuarioController.class.getDeclaredMethod("encriptaEnMD5", String.class);
         method.setAccessible(true);
 
