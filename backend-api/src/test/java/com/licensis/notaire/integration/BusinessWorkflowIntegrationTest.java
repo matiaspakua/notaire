@@ -151,7 +151,7 @@ class BusinessWorkflowIntegrationTest {
         void getAllGestionesReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/gestiones"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray());
+                    .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test
@@ -204,7 +204,7 @@ class BusinessWorkflowIntegrationTest {
         void getAllPresupuestosReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/presupuestos"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray());
+                    .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test
@@ -311,7 +311,7 @@ class BusinessWorkflowIntegrationTest {
         void getAllEscriturasReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/escrituras"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray());
+                    .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test

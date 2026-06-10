@@ -160,7 +160,7 @@ class CoreBusinessControllersIntegrationTest {
             mockMvc.perform(get("/api/v1/presupuestos"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test
@@ -207,7 +207,7 @@ class CoreBusinessControllersIntegrationTest {
             mockMvc.perform(get("/api/v1/escrituras"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test

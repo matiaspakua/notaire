@@ -4,6 +4,10 @@ import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.service.EscrituraService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +36,9 @@ public class EscrituraController {
     @GetMapping
     @Operation(summary = "Obtener todas las escrituras")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Escritura>> getAll() {
-        return ResponseEntity.ok(escrituraService.findAll());
+    public ResponseEntity<Page<Escritura>> getAll(
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(escrituraService.findAllPaged(pageable));
     }
 
     @ApiResponses({

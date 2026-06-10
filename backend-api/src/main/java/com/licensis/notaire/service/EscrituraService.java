@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -27,6 +29,10 @@ public class EscrituraService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Escritura> findAllPaged(Pageable pageable) {
+        return escrituraRepository.findAll(pageable);
+    }
+
     public List<Escritura> findAll() {
         logger.debug("Finding all escrituras");
         return escrituraRepository.findAll();

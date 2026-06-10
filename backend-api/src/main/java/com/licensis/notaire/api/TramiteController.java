@@ -3,6 +3,10 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.TramiteRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,8 +33,9 @@ public class TramiteController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los trámites")
-    public ResponseEntity<List<Tramite>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<Page<Tramite>> getAll(
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(repository.findAll(pageable));
     }
 
     @ApiResponses({
