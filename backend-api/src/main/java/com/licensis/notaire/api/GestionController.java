@@ -5,6 +5,10 @@ import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,8 +38,9 @@ public class GestionController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las gestiones")
-    public ResponseEntity<List<GestionDeEscritura>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<Page<GestionDeEscritura>> getAll(
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(repository.findAll(pageable));
     }
 
     @ApiResponses({

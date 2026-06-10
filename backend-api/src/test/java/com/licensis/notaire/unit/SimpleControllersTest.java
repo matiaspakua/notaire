@@ -58,6 +58,11 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
@@ -380,14 +385,16 @@ class SimpleControllersTest {
     class EscrituraControllerTests {
         private final EscrituraService service = mock(EscrituraService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EscrituraController(service)).build();
+                standaloneSetup(new EscrituraController(service))
+                        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                        .build();
 
         @Test
         @DisplayName("Should cover all paths")
         void allPaths() throws Exception {
             Escritura e = new Escritura();
             e.setIdEscritura(1);
-            when(service.findAll()).thenReturn(List.of(e));
+            when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(e));
             when(service.findById(2)).thenReturn(Optional.empty());
             when(service.findEscribanosDisponibles()).thenReturn(List.of());
@@ -420,14 +427,16 @@ class SimpleControllersTest {
     class PresupuestoControllerTests {
         private final PresupuestoService service = mock(PresupuestoService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PresupuestoController(service)).build();
+                standaloneSetup(new PresupuestoController(service))
+                        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                        .build();
 
         @Test
         @DisplayName("Should cover all paths")
         void allPaths() throws Exception {
             Presupuesto p = new Presupuesto();
             p.setIdPresupuesto(1);
-            when(service.findAll()).thenReturn(List.of(p));
+            when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
             when(service.findByPersona(5)).thenReturn(List.of(p));
@@ -719,14 +728,16 @@ class SimpleControllersTest {
     class TramiteControllerTests {
         private final TramiteRepository repo = mock(TramiteRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TramiteController(repo)).build();
+                standaloneSetup(new TramiteController(repo))
+                        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                        .build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
             Tramite t = new Tramite();
             t.setIdTramite(1);
-            when(repo.findAll()).thenReturn(List.of(t));
+            when(repo.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(t), PageRequest.of(0, 20), 1));
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);

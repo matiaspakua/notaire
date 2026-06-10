@@ -92,7 +92,7 @@ class RemainingControllersIntegrationTest {
             mockMvc.perform(get("/api/v1/gestiones"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test
@@ -121,7 +121,7 @@ class RemainingControllersIntegrationTest {
             mockMvc.perform(get("/api/v1/tramites"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test

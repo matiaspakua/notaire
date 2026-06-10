@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequestMapping("/api/v1/presupuestos")
@@ -38,9 +42,11 @@ public class PresupuestoController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los presupuestos")
-    public ResponseEntity<List<Presupuesto>> getAll() {
-        return ResponseEntity.ok(presupuestoService.findAll());
+    @Operation(summary = "Obtener presupuestos paginados",
+            description = "Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)")
+    public ResponseEntity<Page<Presupuesto>> getAll(
+            @PageableDefault(size = 20, sort = "idPresupuesto", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(presupuestoService.findAllPaged(pageable));
     }
 
     @ApiResponses({

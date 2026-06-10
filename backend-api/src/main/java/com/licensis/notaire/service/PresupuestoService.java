@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service layer for Presupuesto domain operations.
@@ -36,6 +38,11 @@ public class PresupuestoService {
     public List<Presupuesto> findAll() {
         log.debug("Finding all presupuestos");
         return presupuestoRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Presupuesto> findAllPaged(Pageable pageable) {
+        return presupuestoRepository.findAll(pageable);
     }
 
     /**

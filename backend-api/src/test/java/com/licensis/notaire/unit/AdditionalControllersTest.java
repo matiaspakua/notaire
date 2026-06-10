@@ -33,6 +33,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @DisplayName("Additional controllers unit tests")
@@ -131,13 +133,16 @@ class AdditionalControllersTest {
         void all() throws Exception {
             GestionDeEscrituraRepository repo = mock(GestionDeEscrituraRepository.class);
             HistorialRepository histRepo = mock(HistorialRepository.class);
-            var mvc = standaloneSetup(new GestionController(repo, histRepo)).build();
+            var mvc = standaloneSetup(new GestionController(repo, histRepo))
+                    .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                    .build();
 
             GestionDeEscritura g = new GestionDeEscritura(1);
             com.licensis.notaire.negocio.Persona escr = new com.licensis.notaire.negocio.Persona();
             escr.setIdPersona(99);
             g.setFkIdPersonaEscribano(escr);
-            when(repo.findAll()).thenReturn(List.of(g));
+            when(repo.findAll(any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(g), org.springframework.data.domain.PageRequest.of(0, 20), 1));
             when(repo.findById(1)).thenReturn(Optional.of(g));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.findByNumero(10)).thenReturn(Optional.of(g));
