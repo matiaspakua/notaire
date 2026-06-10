@@ -16,11 +16,13 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for core business controllers.
  * Covers: CU01, CU02, CU05, CU15, CU17, CU18, CU20, CU29, CU34, CU37, CU41, CU45, CU47, CU54, CU60, CU61, CU66
  */
+@RequirementCoverage({"CU01", "CU02", "CU05", "CU15", "CU17", "CU18", "CU20", "CU45", "CU47", "CU54", "CU60", "CU61"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

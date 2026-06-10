@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU70", "CU71", "CU72"})
 @DisplayName("Workflow Entity Tests")
 class WorkflowEntityTest {
 

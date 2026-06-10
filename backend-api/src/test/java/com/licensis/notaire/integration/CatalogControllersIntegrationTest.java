@@ -16,11 +16,13 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for catalog controllers that were previously returning 500 errors.
  * Covers: CU27, CU30, CU32, CU35, CU36, CU38, CU40, CU58, CU65, CU67, CU68
  */
+@RequirementCoverage({"CU26", "CU27", "CU28", "CU29", "CU30", "CU31", "CU32", "CU33", "CU34", "CU35", "CU36", "CU37", "CU38", "CU40", "CU57", "CU58", "CU64", "CU65", "CU66", "CU67", "CU68"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for complete business workflows.
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Uses H2 in-memory database (PostgreSQL compatibility mode) for fast execution.
  * DirtiesContext ensures clean state between test classes.
  */
+@RequirementCoverage({"CU03", "CU17", "CU18", "CU19", "CU20", "CU02", "CU15", "CU05", "CU06", "CU26", "CU45", "CU47"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

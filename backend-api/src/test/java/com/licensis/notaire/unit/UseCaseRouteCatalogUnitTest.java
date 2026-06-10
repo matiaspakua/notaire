@@ -16,12 +16,12 @@ class UseCaseRouteCatalogUnitTest {
     @Test
     void shouldContainAllUseCasesWithoutDuplicates() {
         List<UseCaseRouteCatalog.UseCaseRoute> routes = UseCaseRouteCatalog.all();
-        assertEquals(68, routes.size(), "The catalog must contain all 68 use cases.");
+        assertEquals(72, routes.size(), "The catalog must contain all 72 use cases.");
 
         Set<String> ids = routes.stream()
                 .map(UseCaseRouteCatalog.UseCaseRoute::useCaseId)
                 .collect(Collectors.toSet());
-        assertEquals(68, ids.size(), "Use case IDs must be unique.");
+        assertEquals(72, ids.size(), "Use case IDs must be unique.");
     }
 
     @Test

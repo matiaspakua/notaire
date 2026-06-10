@@ -23,7 +23,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU01", "CU45", "CU60"})
 @DisplayName("PresupuestoService unit tests")
 @ExtendWith(MockitoExtension.class)
 class PresupuestoServiceTest {
