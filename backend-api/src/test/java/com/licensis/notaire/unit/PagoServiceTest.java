@@ -22,7 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU15", "CU47"})
 @DisplayName("PagoService Tests")
 @ExtendWith(MockitoExtension.class)
 class PagoServiceTest {

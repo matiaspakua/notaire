@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU02", "CU13", "CU14", "CU19", "CU24"})
 @DisplayName("GestionDeEscritura Entity Tests")
 class GestionDeEscrituraEntityTest {
 

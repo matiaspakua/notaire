@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for remaining controllers.
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *         CU24, CU25, CU33, CU39, CU42, CU43, CU44, CU46, CU47, CU48, CU49,
  *         CU50, CU51, CU53, CU55, CU56
  */
+@RequirementCoverage({"CU02", "CU04", "CU11", "CU13", "CU14", "CU15", "CU22", "CU24", "CU25", "CU59"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

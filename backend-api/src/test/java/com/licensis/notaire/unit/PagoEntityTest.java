@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU15", "CU47"})
 @DisplayName("Pago Entity Tests")
 class PagoEntityTest {
 

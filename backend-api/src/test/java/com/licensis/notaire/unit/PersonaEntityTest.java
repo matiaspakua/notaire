@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU17", "CU18", "CU41", "CU46", "CU48", "CU51", "CU54", "CU61"})
 @DisplayName("Persona Entity Tests")
 class PersonaEntityTest {
 

@@ -12,7 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU01", "CU45", "CU60"})
 @DisplayName("Presupuesto Entity Tests")
 class PresupuestoEntityTest {
 

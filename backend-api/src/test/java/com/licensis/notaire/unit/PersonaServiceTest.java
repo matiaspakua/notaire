@@ -19,7 +19,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU17", "CU18", "CU41", "CU54", "CU61"})
 @DisplayName("PersonaService unit tests")
 @ExtendWith(MockitoExtension.class)
 class PersonaServiceTest {

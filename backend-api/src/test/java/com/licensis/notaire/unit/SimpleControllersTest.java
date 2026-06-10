@@ -72,7 +72,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import com.licensis.notaire.testing.RequirementCoverage;
 
+@RequirementCoverage({"CU07", "CU08", "CU09", "CU10", "CU11", "CU12", "CU14", "CU22", "CU56"})
 @DisplayName("Simple Controller unit tests")
 class SimpleControllersTest {
 
