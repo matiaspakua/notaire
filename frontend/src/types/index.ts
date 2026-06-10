@@ -257,3 +257,31 @@ export interface NavItem {
   icon?: string;
   adminOnly?: boolean;
 }
+
+// ──────────────────────────────────────────────
+// Workflow Trace (dashboard)
+// ──────────────────────────────────────────────
+
+/** A single historial entry for the workflow trace. */
+export interface HistorialEntry {
+  idHistorial?: number;
+  estadoGestionId?: number;
+  estadoGestionNombre?: string;
+  fecha?: string;
+  observaciones?: string;
+}
+
+/** Aggregated response from GET /gestiones/{id}/workflow-trace. */
+export interface GestionWorkflowTrace {
+  gestionId: number;
+  numero?: number;
+  encabezado?: string;
+  fechaInicio?: string;
+  estadoActual?: string;
+  workflowDefinition?: WorkflowDefinition;
+  nodes: WorkflowNode[];
+  transitions: WorkflowTransition[];
+  historial: HistorialEntry[];
+  /** nodeId → "completed" | "in_progress" | "pending" */
+  nodeStatuses: Record<number, string>;
+}

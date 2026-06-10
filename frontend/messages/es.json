@@ -53,6 +53,7 @@
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
     "viewAll": "Ver todos los servicios",
+    "workflowProgress": "Progreso del workflow",
     "gestiones": {
       "label": "Gestiones",
       "description": "Gestionar trámites y escrituras"

@@ -1,9 +1,11 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
+import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +32,14 @@ public class GestionController {
 
     private final GestionDeEscrituraRepository repository;
     private final HistorialRepository historialRepository;
+    private final WorkflowTraceService workflowTraceService;
 
-    public GestionController(GestionDeEscrituraRepository repository, HistorialRepository historialRepository) {
+    public GestionController(GestionDeEscrituraRepository repository,
+                             HistorialRepository historialRepository,
+                             WorkflowTraceService workflowTraceService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
+        this.workflowTraceService = workflowTraceService;
     }
 
     @GetMapping
@@ -135,6 +141,26 @@ public class GestionController {
         } catch (Exception e) {
             log.error("Failed to delete gestion id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada"),
+        @ApiResponse(responseCode = "400", description = "Gestion sin tramites o workflow definition")
+    })
+    @GetMapping("/{id}/workflow-trace")
+    @Operation(summary = "Obtener trace del workflow de una gestion (con nodos, transiciones, historial y estados)")
+    public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
+        try {
+            DtoGestionWorkflowTrace trace = workflowTraceService.buildTrace(id);
+            return ResponseEntity.ok(trace);
+        } catch (IllegalArgumentException e) {
+            log.warn("Cannot build workflow trace for gestion {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Failed to build workflow trace for gestion id {}", id, e);
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

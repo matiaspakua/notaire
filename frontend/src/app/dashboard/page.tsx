@@ -17,6 +17,8 @@ import { useAuthStore } from "@/store/auth-store";
 import { useGestiones } from "@/hooks/useGestiones";
 import { usePersonas } from "@/hooks/usePersonas";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
+import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
+import WorkflowTracker from "@/components/motion/WorkflowTracker";
 import type { ComponentType } from "react";
 
 type LucideIcon = ComponentType<{ className?: string }>;
@@ -53,6 +55,10 @@ export default function DashboardPage() {
   const { data: gestiones } = useGestiones();
   const { data: personas } = usePersonas();
   const { data: presupuestos } = usePresupuestos();
+
+  // Pick the first gestion for the workflow tracker
+  const latestGestionId = gestiones && gestiones.length > 0 ? gestiones[0].idGestion : undefined;
+  const { data: workflowTrace, isLoading: traceLoading } = useGestionWorkflowTrace(latestGestionId);
 
   const visibleModules = modules.filter((m) => !m.adminOnly || isAdmin());
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
@@ -100,6 +106,36 @@ export default function DashboardPage() {
           </StaggerItem>
         ))}
       </Stagger>
+
+      {/* ── Workflow Tracker ── */}
+      {workflowTrace && (
+        <section className="space-y-4 px-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">
+                {td("workflowProgress")}
+              </h2>
+              <p className="text-sm text-[#86868b] mt-1">
+                {workflowTrace.encabezado ?? `Gestión #${workflowTrace.numero}`}
+                {workflowTrace.estadoActual && (
+                  <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                    {workflowTrace.estadoActual}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <WorkflowTracker trace={workflowTrace} />
+        </section>
+      )}
+
+      {/* ── Loading skeleton ── */}
+      {traceLoading && (
+        <section className="space-y-4 px-2">
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="h-[300px] bg-gray-50 rounded-xl animate-pulse" />
+        </section>
+      )}
 
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">

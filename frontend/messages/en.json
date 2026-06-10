@@ -53,6 +53,7 @@
     "today": "Today's activity summary",
     "availableModules": "Available modules",
     "viewAll": "View all services",
+    "workflowProgress": "Workflow progress",
     "gestiones": {
       "label": "Cases",
       "description": "Manage cases and deeds"
