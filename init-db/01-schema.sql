@@ -32,6 +32,8 @@ DROP TABLE IF EXISTS workflow_node CASCADE;
 DROP TABLE IF EXISTS workflow_definition CASCADE;
 DROP TABLE IF EXISTS estados_de_gestion CASCADE;
 DROP TABLE IF EXISTS conceptos CASCADE;
+DROP TABLE IF EXISTS roles_permisos CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
 
 -- Table: conceptos
 CREATE TABLE conceptos (
@@ -391,6 +393,23 @@ CREATE TABLE suplencias (
   fk_id_suplente integer REFERENCES personas(id_persona)
 );
 
+-- Table: roles
+CREATE TABLE roles (
+  version integer NOT NULL DEFAULT 0,
+  id_rol SERIAL PRIMARY KEY,
+  nombre text NOT NULL,
+  descripcion text,
+  activo boolean NOT NULL DEFAULT true,
+  CONSTRAINT roles_nombre_unique UNIQUE (nombre)
+);
+
+-- Table: roles_permisos
+CREATE TABLE roles_permisos (
+  fk_id_rol integer NOT NULL REFERENCES roles(id_rol) ON DELETE CASCADE,
+  modulo text NOT NULL,
+  PRIMARY KEY (fk_id_rol, modulo)
+);
+
 -- Table: usuarios (column names match backend entity Usuario)
 CREATE TABLE usuarios (
   version integer NOT NULL,
@@ -399,7 +418,8 @@ CREATE TABLE usuarios (
   contrasenia text NOT NULL,
   tipo text NOT NULL,
   estado boolean NOT NULL,
-  fk_id_persona integer REFERENCES personas(id_persona)
+  fk_id_persona integer REFERENCES personas(id_persona),
+  fk_id_rol integer REFERENCES roles(id_rol)
 );
 
 -- Table: registro_auditoria

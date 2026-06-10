@@ -14,7 +14,7 @@ export function useUsuarios() {
 export function useCreateUsuario() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Usuario>) => apiPost<void>("/usuarios", data),
+    mutationFn: (data: Partial<Usuario>) => apiPost<Usuario>("/usuarios", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: usuariosKeys.all }),
   });
 }

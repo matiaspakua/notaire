@@ -23,6 +23,14 @@ export interface Persona {
   esCliente?: boolean;
 }
 
+export interface Rol {
+  idRol?: number;
+  nombre?: string;
+  descripcion?: string;
+  activo?: boolean;
+  modulos?: string[];
+}
+
 export interface Usuario {
   idUsuario?: number;
   nombre?: string;
@@ -30,6 +38,7 @@ export interface Usuario {
   tipo?: string;
   activo?: boolean;
   persona?: Persona;
+  rol?: { idRol: number; nombre: string } | null;
 }
 
 export interface TipoDeTramite {

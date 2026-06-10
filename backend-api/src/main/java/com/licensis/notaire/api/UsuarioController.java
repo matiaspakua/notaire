@@ -35,7 +35,10 @@ public class UsuarioController {
 
     record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
 
-    record UsuarioResponse(Integer idUsuario, String nombre, String tipo, boolean activo, PersonaInfo persona) {}
+    record RolInfo(Integer idRol, String nombre) {}
+
+    record UsuarioResponse(Integer idUsuario, String nombre, String tipo, boolean activo,
+                            PersonaInfo persona, RolInfo rol) {}
 
     record UsuarioRequest(String nombre, String contrasenia, String tipo, boolean activo) {}
 
@@ -45,7 +48,11 @@ public class UsuarioController {
             var p = u.getFkIdPersona();
             persona = new PersonaInfo(p.getIdPersona(), p.getNombre(), p.getApellido());
         }
-        return new UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getTipo(), u.getEstado(), persona);
+        RolInfo rolInfo = null;
+        if (u.getRol() != null) {
+            rolInfo = new RolInfo(u.getRol().getIdRol(), u.getRol().getNombre());
+        }
+        return new UsuarioResponse(u.getIdUsuario(), u.getNombre(), u.getTipo(), u.getEstado(), persona, rolInfo);
     }
 
     @GetMapping

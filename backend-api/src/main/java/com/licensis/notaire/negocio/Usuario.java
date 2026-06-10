@@ -73,6 +73,11 @@ public class Usuario implements Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Persona fkIdPersona;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "fk_id_rol", referencedColumnName = "id_rol")
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private Rol rol;
+
     public Usuario() {
     }
 
@@ -145,6 +150,14 @@ public class Usuario implements Serializable {
         this.fkIdPersona = fkIdPersona;
     }
 
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -211,6 +224,11 @@ public class Usuario implements Serializable {
 
             miDto.setPersonas(miDtoPersona);
             miDto.setTipo(tipo);
+
+            if (rol != null) {
+                miDto.setRolId(rol.getIdRol());
+                miDto.setRolNombre(rol.getNombre());
+            }
 
             // Controlo la version del objeto
             miDto.setVersion(version);
