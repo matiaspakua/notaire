@@ -4,6 +4,8 @@ import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,10 @@ public class TipoDeFolioController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo de folio por ID")
     public ResponseEntity<DtoTipoDeFolio> getById(@PathVariable Integer id) {
@@ -40,6 +46,11 @@ public class TipoDeFolioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear tipo de folio")
     public ResponseEntity<Object> create(@RequestBody DtoTipoDeFolio dto) {
@@ -53,6 +64,10 @@ public class TipoDeFolioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de folio")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoTipoDeFolio dto) {
@@ -71,6 +86,10 @@ public class TipoDeFolioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar tipo de folio")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {

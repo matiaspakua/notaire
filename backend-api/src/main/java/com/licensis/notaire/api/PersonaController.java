@@ -5,6 +5,8 @@ import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.service.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,10 @@ public class PersonaController {
         return ResponseEntity.ok(personas);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener persona por ID")
     @Transactional(readOnly = true)
@@ -43,6 +49,11 @@ public class PersonaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nueva persona")
     public ResponseEntity<Object> createPersona(@RequestBody Persona persona) {
@@ -63,6 +74,10 @@ public class PersonaController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar persona")
     public ResponseEntity<Persona> updatePersona(@PathVariable Integer id, @RequestBody Persona persona) {
@@ -79,6 +94,10 @@ public class PersonaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar persona")
     public ResponseEntity<Object> deletePersona(@PathVariable Integer id) {

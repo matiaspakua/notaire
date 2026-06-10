@@ -3,6 +3,8 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,10 @@ public class TipoIdentificacionController {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo de identificacion por ID")
     public ResponseEntity<TipoIdentificacion> getById(@PathVariable Integer id) {
@@ -39,6 +45,11 @@ public class TipoIdentificacionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo tipo de identificacion")
     public ResponseEntity<Object> create(@RequestBody TipoIdentificacion entity) {
@@ -51,6 +62,10 @@ public class TipoIdentificacionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de identificacion")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TipoIdentificacion entity) {
@@ -67,6 +82,10 @@ public class TipoIdentificacionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar tipo de identificacion")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

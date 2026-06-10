@@ -3,6 +3,8 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.service.PagoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -39,6 +41,10 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "CU47 - Consultar pago por ID")
     public ResponseEntity<Pago> getById(@PathVariable Integer id) {
@@ -92,6 +98,11 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
     public ResponseEntity<Pago> procesarPago(@RequestBody PagoRequest request) {
@@ -132,6 +143,10 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Editar pago")
     public ResponseEntity<Pago> update(@PathVariable Integer id, @RequestBody Pago entity) {
@@ -146,6 +161,10 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar pago")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {

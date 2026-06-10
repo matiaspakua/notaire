@@ -7,6 +7,8 @@ import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import com.licensis.notaire.negocio.PlantillaPresupuestoPK;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.http.HttpStatus;
@@ -61,6 +63,11 @@ public class PlantillaPresupuestoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nueva plantilla de presupuesto")
     public ResponseEntity<?> create(@RequestBody PlantillaPresupuesto entity) {

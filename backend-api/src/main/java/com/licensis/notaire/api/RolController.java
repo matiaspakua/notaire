@@ -5,6 +5,8 @@ import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.repository.RolRepository;
 import com.licensis.notaire.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +51,10 @@ public class RolController {
         return ResponseEntity.ok(rolRepository.findAll().stream().map(this::toResponse).toList());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener rol por ID")
     public ResponseEntity<RolResponse> getRolById(@PathVariable Integer id) {
@@ -58,6 +64,11 @@ public class RolController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo rol")
     public ResponseEntity<Object> createRol(@RequestBody RolRequest request) {
@@ -74,6 +85,10 @@ public class RolController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar rol")
     public ResponseEntity<RolResponse> updateRol(@PathVariable Integer id, @RequestBody RolRequest request) {
@@ -89,6 +104,10 @@ public class RolController {
         return ResponseEntity.ok(toResponse(rolRepository.save(rol)));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar rol")
     public ResponseEntity<Void> deleteRol(@PathVariable Integer id) {

@@ -5,6 +5,8 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +72,10 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
     public ResponseEntity<UsuarioResponse> getUsuarioById(@PathVariable Integer id) {
@@ -79,6 +85,11 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nuevo usuario")
     public ResponseEntity<Object> createUsuario(@RequestBody UsuarioRequest request) {
@@ -97,6 +108,10 @@ public class UsuarioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
     public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @RequestBody UsuarioRequest request) {
@@ -121,6 +136,10 @@ public class UsuarioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar usuario")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Integer id) {

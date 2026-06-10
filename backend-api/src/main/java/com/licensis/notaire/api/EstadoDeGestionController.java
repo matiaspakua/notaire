@@ -5,6 +5,8 @@ import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,10 @@ public class EstadoDeGestionController {
         return ResponseEntity.ok(result);
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener estado de gestion por ID")
     public ResponseEntity<DtoEstadoDeGestion> getById(@PathVariable Integer id) {
@@ -72,6 +78,11 @@ public class EstadoDeGestionController {
         return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear estado de gestion")
     public ResponseEntity<Object> create(@RequestBody DtoEstadoDeGestion dto) {
@@ -88,6 +99,10 @@ public class EstadoDeGestionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar estado de gestion")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoEstadoDeGestion dto) {
@@ -114,6 +129,10 @@ public class EstadoDeGestionController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar estado de gestion")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {

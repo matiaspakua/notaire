@@ -6,6 +6,8 @@ import com.licensis.notaire.repository.WorkflowTransitionRepository;
 import com.licensis.notaire.service.WorkflowValidationService;
 import com.licensis.notaire.service.WorkflowValidationService.ValidationResult;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

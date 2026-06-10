@@ -4,6 +4,8 @@ import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.service.EscrituraService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,10 @@ public class EscrituraController {
         return ResponseEntity.ok(escrituraService.findAll());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/{id}")
     @Operation(summary = "Obtener escritura por ID")
     @Transactional(readOnly = true)
@@ -43,6 +49,11 @@ public class EscrituraController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping
     @Operation(summary = "Crear nueva escritura")
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
@@ -55,6 +66,10 @@ public class EscrituraController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar escritura")
     public ResponseEntity<Escritura> update(@PathVariable Integer id, @RequestBody Escritura entity) {
@@ -68,6 +83,10 @@ public class EscrituraController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar escritura")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
