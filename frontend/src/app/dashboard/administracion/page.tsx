@@ -17,6 +17,7 @@ export default function AdministracionPage() {
     { key: "tramites" as const, href: "/dashboard/administracion/tramites", pngIcon: "/icons/admin/tramites.png" },
     { key: "estadosGestion" as const, href: "/dashboard/administracion/estados-gestion", pngIcon: "/icons/admin/estadosGestion.png" },
     { key: "plantillas" as const, href: "/dashboard/administracion/plantillas", pngIcon: "/icons/admin/plantillaPresupuesto.png" },
+    { key: "roles" as const, href: "/dashboard/administracion/roles", pngIcon: "/icons/admin/usuarios.png" },
   ];
 
   return (

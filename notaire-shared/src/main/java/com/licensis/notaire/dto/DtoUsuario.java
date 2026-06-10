@@ -17,6 +17,8 @@ public class DtoUsuario
     private String registroAuditoria;
     private Integer version;
     private boolean valido = false;
+    private Integer rolId;
+    private String rolNombre;
 
     public boolean isValido()
     {
@@ -116,6 +118,26 @@ public class DtoUsuario
     public void setVersion(Integer version)
     {
         this.version = version;
+    }
+
+    public Integer getRolId()
+    {
+        return rolId;
+    }
+
+    public void setRolId(Integer rolId)
+    {
+        this.rolId = rolId;
+    }
+
+    public String getRolNombre()
+    {
+        return rolNombre;
+    }
+
+    public void setRolNombre(String rolNombre)
+    {
+        this.rolNombre = rolNombre;
     }
 }
 

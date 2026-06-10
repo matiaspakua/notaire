@@ -327,6 +327,10 @@
       "plantillas": {
         "label": "Plantillas Presupuesto",
         "description": "Plantillas reutilizables para presupuestos"
+      },
+      "roles": {
+        "label": "Roles y Permisos",
+        "description": "Gestión de roles de usuario y accesos a módulos"
       }
     },
     "usuarios": {

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from "@/hooks/useUsuarios";
+import { useRoles, useAssignRolToUsuario, useUnassignRolFromUsuario } from "@/hooks/useRoles";
 import type { Usuario } from "@/types";
 
 const EMPTY: Partial<Usuario> = { nombre: "", contrasenia: "", tipo: "EMPLEADO", activo: true };
@@ -29,27 +30,46 @@ export default function UsuariosPage() {
   const tc = useTranslations("common");
 
   const { data: usuarios = [], isLoading } = useUsuarios();
+  const { data: roles = [] } = useRoles();
   const createMutation = useCreateUsuario();
   const updateMutation = useUpdateUsuario();
   const deleteMutation = useDeleteUsuario();
+  const assignRolMutation = useAssignRolToUsuario();
+  const unassignRolMutation = useUnassignRolFromUsuario();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Usuario>>(EMPTY);
+  const [selectedRolId, setSelectedRolId] = useState<string>("none");
   const [isEditMode, setIsEditMode] = useState(false);
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(u: Usuario) { setEditing({ ...u, contrasenia: "" }); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() { setEditing(EMPTY); setSelectedRolId("none"); setIsEditMode(false); setModalOpen(true); }
+  function openEdit(u: Usuario) {
+    setEditing({ ...u, contrasenia: "" });
+    setSelectedRolId(u.rol?.idRol?.toString() ?? "none");
+    setIsEditMode(true);
+    setModalOpen(true);
+  }
 
   async function handleSave() {
     if (!editing.nombre?.trim()) { toast.error(t("fields.nombre") + " " + tc("required")); return; }
     try {
+      let savedId: number | undefined;
       if (isEditMode && editing.idUsuario) {
         await updateMutation.mutateAsync({ id: editing.idUsuario, data: editing });
+        savedId = editing.idUsuario;
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(editing);
+        const created = await createMutation.mutateAsync(editing);
+        savedId = (created as Usuario)?.idUsuario;
         toast.success(t("created"));
+      }
+      if (savedId) {
+        if (selectedRolId && selectedRolId !== "none") {
+          await assignRolMutation.mutateAsync({ idRol: Number(selectedRolId), idUsuario: savedId });
+        } else if (isEditMode && editing.rol) {
+          await unassignRolMutation.mutateAsync(savedId);
+        }
       }
       setModalOpen(false);
     } catch { toast.error(t("errorSave")); }
@@ -74,6 +94,7 @@ export default function UsuariosPage() {
     { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUsuario}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.nombre}</span> },
     { key: "tipo", header: t("fields.tipo"), render: (u) => <Badge variant={tipoVariant(u.tipo)}>{u.tipo ?? "—"}</Badge> },
+    { key: "rol", header: "Rol", render: (u) => u.rol ? <Badge variant="outline">{u.rol.nombre}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
     { key: "activo", header: tc("status"), render: (u) => u.activo ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
     {
       key: "actions", header: "", className: "w-24",
@@ -128,6 +149,19 @@ export default function UsuariosPage() {
                     <SelectItem value="EMPLEADO">{t("roles.empleado")}</SelectItem>
                     <SelectItem value="ADMIN">{t("roles.admin")}</SelectItem>
                     <SelectItem value="ESCRIBANO">{t("roles.escribano")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label="Rol de acceso" helperText="Permisos de módulos del sistema">
+                <Select value={selectedRolId} onValueChange={setSelectedRolId} data-testid="select-rol-usuario">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sin rol asignado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sin rol</SelectItem>
+                    {roles.filter((r) => r.activo).map((r) => (
+                      <SelectItem key={r.idRol} value={String(r.idRol)}>{r.nombre}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormField>

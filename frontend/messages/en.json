@@ -327,6 +327,10 @@
       "plantillas": {
         "label": "Quote Templates",
         "description": "Reusable quote templates"
+      },
+      "roles": {
+        "label": "Roles & Permissions",
+        "description": "User role management and module access control"
       }
     },
     "usuarios": {

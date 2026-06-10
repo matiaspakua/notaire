@@ -16,6 +16,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   items: "Ítems",
   auditoria: "Auditoría",
   workflows: "Workflows",
+  roles: "Roles y Permisos",
   suplencias: "Suplencias",
   personas: "Personas",
   escrituras: "Escrituras",
