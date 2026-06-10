@@ -1,0 +1,157 @@
+{
+  "title": "Notaire Auth & Security",
+  "version": 1,
+  "uid": "notaire-auth",
+  "description": "Login attempts, authentication outcomes, and security metrics",
+  "tags": ["notaire", "auth", "security"],
+  "schemaVersion": 36,
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "title": "Login Attempts - Total Rate",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(notaire_operation_total{operation='login'}[5m]))",
+          "legendFormat": "logins/s"
+        }
+      ],
+      "description": "Total login attempts per second (5-min window)"
+    },
+    {
+      "title": "Successful Logins",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(increase(notaire_operation_total{operation='login', status='success'}[1h]))",
+          "legendFormat": "success"
+        }
+      ],
+      "description": "Successful logins in the last hour",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      }
+    },
+    {
+      "title": "Failed Logins (Bad Credentials)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(increase(notaire_operation_total{operation='login', status='bad_credentials'}[1h]))",
+          "legendFormat": "bad_credentials"
+        }
+      ],
+      "description": "Wrong password attempts in the last hour",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "orange" }
+        }
+      }
+    },
+    {
+      "title": "Inactive User Attempts",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(increase(notaire_operation_total{operation='login', status='inactive'}[1h]))",
+          "legendFormat": "inactive"
+        }
+      ],
+      "description": "Login attempts by inactive users in the last hour",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "red" }
+        }
+      }
+    },
+    {
+      "title": "Login Outcomes Over Time",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "expr": "rate(notaire_operation_total{operation='login', status='success'}[2m])",
+          "legendFormat": "success"
+        },
+        {
+          "expr": "rate(notaire_operation_total{operation='login', status='bad_credentials'}[2m])",
+          "legendFormat": "bad_credentials"
+        },
+        {
+          "expr": "rate(notaire_operation_total{operation='login', status='not_found'}[2m])",
+          "legendFormat": "not_found"
+        },
+        {
+          "expr": "rate(notaire_operation_total{operation='login', status='inactive'}[2m])",
+          "legendFormat": "inactive"
+        },
+        {
+          "expr": "rate(notaire_operation_total{operation='login', status='error'}[2m])",
+          "legendFormat": "error"
+        }
+      ],
+      "description": "Login outcome rates over time — spikes in bad_credentials or not_found may indicate brute-force attempts"
+    },
+    {
+      "title": "Login Failure Rate (% of attempts)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 12 },
+      "targets": [
+        {
+          "expr": "100 * sum(rate(notaire_operation_total{operation='login', status!='success'}[5m])) / sum(rate(notaire_operation_total{operation='login'}[5m]))",
+          "legendFormat": "failure %"
+        }
+      ],
+      "description": "Percentage of failed logins over the last 5 minutes",
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 25 },
+              { "color": "red", "value": 50 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "All Operations (login by status)",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 12 },
+      "targets": [
+        {
+          "expr": "sum by (status) (increase(notaire_operation_total{operation='login'}[1h]))",
+          "legendFormat": "{{status}}"
+        }
+      ],
+      "description": "Distribution of login outcomes in the last hour"
+    },
+    {
+      "title": "Recent Login Errors (from logs)",
+      "type": "logs",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 12 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{container_name=\"notary-backend\"} |= \"Login fallido\" | json",
+          "legendFormat": ""
+        }
+      ],
+      "description": "Failed login log entries from the backend"
+    }
+  ]
+}

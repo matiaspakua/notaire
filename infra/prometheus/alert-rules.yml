@@ -1,0 +1,55 @@
+groups:
+  - name: notaire.auth
+    interval: 30s
+    rules:
+      - alert: HighLoginFailureRate
+        expr: |
+          100 * sum(rate(notaire_operation_total{operation="login", status!="success"}[5m]))
+            /
+          sum(rate(notaire_operation_total{operation="login"}[5m]))
+          > 50
+        for: 2m
+        labels:
+          severity: warning
+          team: notaire
+        annotations:
+          summary: "High login failure rate on Notaire"
+          description: "More than 50% of login attempts have failed for 2 minutes. Current rate: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: SuspiciousLoginActivity
+        expr: |
+          sum(rate(notaire_operation_total{operation="login", status="bad_credentials"}[2m])) > 0.5
+        for: 1m
+        labels:
+          severity: critical
+          team: notaire
+        annotations:
+          summary: "Suspicious brute-force activity detected"
+          description: "More than 30 bad-credential login attempts per minute for 1 minute."
+
+  - name: notaire.availability
+    interval: 30s
+    rules:
+      - alert: BackendDown
+        expr: up{job="notaire-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: notaire
+        annotations:
+          summary: "Notaire backend is down"
+          description: "The Notaire backend API has been unreachable for more than 1 minute."
+
+      - alert: HighJvmHeapUsage
+        expr: |
+          jvm_memory_used_bytes{application="notaire-backend", area="heap"}
+            /
+          jvm_memory_max_bytes{application="notaire-backend", area="heap"}
+          > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          team: notaire
+        annotations:
+          summary: "JVM heap usage above 85%"
+          description: "Heap utilization is {{ $value | printf \"%.0f\" }}% — consider increasing memory or investigating leaks."
