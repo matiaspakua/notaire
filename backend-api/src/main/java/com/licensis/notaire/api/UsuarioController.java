@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
@@ -30,9 +31,11 @@ public class UsuarioController {
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
     private final UsuarioRepository usuarioRepository;
+    private final JwtTokenService jwtTokenService;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
+    public UsuarioController(UsuarioRepository usuarioRepository, JwtTokenService jwtTokenService) {
         this.usuarioRepository = usuarioRepository;
+        this.jwtTokenService = jwtTokenService;
     }
 
     record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
@@ -197,6 +200,7 @@ public class UsuarioController {
                             // Create a map response to ensure 'valido' field is included
                             Map<String, Object> response = new HashMap<>();
                             response.put("valido", true);
+                            response.put("token", jwtTokenService.generateToken(usuario.getNombre()));
                             response.put("idUsuario", dtoUsuario.getIdUsuario());
                             response.put("nombre", dtoUsuario.getNombre());
                             response.put("estado", dtoUsuario.isEstado());
