@@ -17,6 +17,9 @@ jobs:
     name: Robot Framework E2E Swing Tests
     runs-on: macos-latest
     timeout-minutes: 60
+    # Only execute when explicitly dispatched; skip gracefully on push/PR events
+    # so GitHub does not mark the run as failed when no inputs are provided.
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout code
