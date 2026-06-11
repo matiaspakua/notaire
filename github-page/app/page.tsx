@@ -5,7 +5,10 @@ import { Hero } from "@/components/Hero";
 import { Timeline } from "@/components/Timeline";
 import { TechEvolution } from "@/components/TechEvolution";
 import { AIEra } from "@/components/AIEra";
+import { AITools } from "@/components/AITools";
 import { Architecture } from "@/components/Architecture";
+import { InfraStack } from "@/components/InfraStack";
+import { FunFacts } from "@/components/FunFacts";
 import { Stats } from "@/components/Stats";
 import { Footer } from "@/components/Footer";
 
@@ -20,7 +23,10 @@ export default function Home() {
           <Timeline />
           <TechEvolution />
           <AIEra />
+          <AITools />
           <Architecture />
+          <InfraStack />
+          <FunFacts />
           <Stats />
         </main>
         <Footer />
