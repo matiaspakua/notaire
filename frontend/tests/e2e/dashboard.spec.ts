@@ -30,10 +30,10 @@ test.describe("Dashboard navigation", () => {
     await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
   });
 
-  test("sidebar PNG icons render with correct alt text", async ({ page }) => {
+  test("sidebar lucide icons render for every nav item", async ({ page }) => {
     await loginAs(page);
 
-    const iconAlts = [
+    const navLabels = [
       "Gestiones",
       "Presupuestos",
       "Personas",
@@ -42,22 +42,23 @@ test.describe("Dashboard navigation", () => {
       "Protocolo",
       "Documentos",
       "Administración",
-      "Cerrar sesión",
     ];
 
-    for (const alt of iconAlts) {
-      const img = page.locator(`aside img[alt="${alt}"]`);
-      await expect(img).toBeVisible({ timeout: 5000 });
+    for (const label of navLabels) {
+      const icon = page.locator(`aside a[aria-label="${label}"] svg`);
+      await expect(icon).toBeVisible({ timeout: 5000 });
     }
+
+    await expect(page.locator('[data-testid="btn-logout"] svg')).toBeVisible({ timeout: 5000 });
   });
 
   test("dashboard stat icons load correctly", async ({ page }) => {
     await loginAs(page);
 
-    // Use .first() because stat cards and dashboard module grid both render Gestiones/Personas/Presupuestos icons
-    await expect(page.locator('main img[alt="Gestiones"]').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('main img[alt="Personas"]').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('main img[alt="Presupuestos"]').first()).toBeVisible({ timeout: 5000 });
+    const statIcons = ["lucide-folder-kanban", "lucide-users", "lucide-calculator"];
+    for (const iconClass of statIcons) {
+      await expect(page.locator(`main svg.${iconClass}`).first()).toBeVisible({ timeout: 5000 });
+    }
   });
 
   test("all module card icons in dashboard grid are visible", async ({ page }) => {

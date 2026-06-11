@@ -28,16 +28,15 @@ async function authSetup(page: import("@playwright/test").Page) {
 }
 
 /**
- * Assert that every <img> element on the page has loaded.
- * Uses the naturalWidth property — only works after img.onload.
+ * Assert that the page renders icons: every <img> (if any) has loaded
+ * (naturalWidth > 0) and at least one icon is present — either a PNG
+ * <img> or a lucide SVG.
  */
 async function assertAllIconsLoaded(page: import("@playwright/test").Page) {
   const icons = page.locator("img");
   const count = await icons.count();
-  if (count === 0) {
-    test.fail(true, "Expected at least one icon (<img>) on the page");
-    return;
-  }
+  const lucideCount = await page.locator("svg.lucide").count();
+  expect(count + lucideCount).toBeGreaterThan(0);
   for (let i = 0; i < count; i++) {
     const img = icons.nth(i);
     await expect(async () => {
@@ -54,26 +53,27 @@ test.describe("Icon rendering — Dashboard sidebar", () => {
     await page.waitForLoadState("networkidle");
   });
 
-  const sidebarIcons: Array<{ label: string; src: string }> = [
-    { label: "Gestiones", src: "/icons/modulos/gestion.png" },
-    { label: "Presupuestos", src: "/icons/modulos/presupuestos.png" },
-    { label: "Personas", src: "/icons/modulos/clientes.png" },
-    { label: "Escrituras", src: "/icons/modulos/escrituras.png" },
-    { label: "Pagos", src: "/icons/modulos/pagos.png" },
-    { label: "Protocolo", src: "/icons/modulos/protocolo.png" },
-    { label: "Documentos", src: "/icons/admin/documentos.png" },
-    { label: "Administración", src: "/icons/modulos/admin.png" },
-    { label: "Cerrar sesión", src: "/icons/modulos/salir.png" },
+  const sidebarIcons: Array<{ label: string; iconClass: string }> = [
+    { label: "Gestiones", iconClass: "lucide-folder-kanban" },
+    { label: "Presupuestos", iconClass: "lucide-calculator" },
+    { label: "Personas", iconClass: "lucide-users" },
+    { label: "Escrituras", iconClass: "lucide-scroll-text" },
+    { label: "Pagos", iconClass: "lucide-credit-card" },
+    { label: "Protocolo", iconClass: "lucide-book-marked" },
+    { label: "Documentos", iconClass: "lucide-file-text" },
+    { label: "Administración", iconClass: "lucide-settings" },
   ];
 
   for (const icon of sidebarIcons) {
-    test(`sidebar icon "${icon.label}" renders with correct src`, async ({ page }) => {
-      // scope to sidebar <aside> to avoid collision with dashboard stat icons
-      const img = page.locator(`aside img[alt="${icon.label}"]`).first();
-      await expect(img).toBeVisible({ timeout: 5000 });
-      await expect(img).toHaveAttribute("src", /icons\/(modulos|admin)\//);
+    test(`sidebar icon "${icon.label}" renders as lucide SVG`, async ({ page }) => {
+      const svg = page.locator(`aside a[aria-label="${icon.label}"] svg.${icon.iconClass}`);
+      await expect(svg).toBeVisible({ timeout: 5000 });
     });
   }
+
+  test("logout button renders lucide log-out icon", async ({ page }) => {
+    await expect(page.locator('[data-testid="btn-logout"] svg.lucide-log-out')).toBeVisible({ timeout: 5000 });
+  });
 });
 
 test.describe("Icon rendering — Dashboard modules grid", () => {
@@ -83,23 +83,22 @@ test.describe("Icon rendering — Dashboard modules grid", () => {
     await page.waitForLoadState("networkidle");
   });
 
-  const moduleIcons: Array<{ label: string; src: string }> = [
-    { label: "Gestiones", src: "/icons/modulos/gestion.png" },
-    { label: "Presupuestos", src: "/icons/modulos/presupuestos.png" },
-    { label: "Personas", src: "/icons/modulos/clientes.png" },
-    { label: "Escrituras", src: "/icons/modulos/escrituras.png" },
-    { label: "Pagos", src: "/icons/modulos/pagos.png" },
-    { label: "Protocolo", src: "/icons/modulos/protocolo.png" },
-    { label: "Documentos", src: "/icons/admin/documentos.png" },
-    { label: "Administración", src: "/icons/modulos/admin.png" },
+  const moduleIcons: Array<{ label: string; iconClass: string }> = [
+    { label: "Gestiones", iconClass: "lucide-folder-kanban" },
+    { label: "Presupuestos", iconClass: "lucide-calculator" },
+    { label: "Personas", iconClass: "lucide-users" },
+    { label: "Escrituras", iconClass: "lucide-scroll-text" },
+    { label: "Pagos", iconClass: "lucide-credit-card" },
+    { label: "Protocolo", iconClass: "lucide-book-marked" },
+    { label: "Documentos", iconClass: "lucide-file-text" },
+    { label: "Administración", iconClass: "lucide-settings" },
   ];
 
   for (const icon of moduleIcons) {
     test(`module card icon "${icon.label}" renders`, async ({ page }) => {
-      const img = page.locator(`aside img[alt="${icon.label}"]`).or(
-        page.locator(`main img[alt="${icon.label}"]`)
-      );
-      await expect(img.first()).toBeVisible({ timeout: 5000 });
+      const card = page.locator(`main a:has(h3:text-is("${icon.label}"))`);
+      await expect(card).toBeVisible({ timeout: 5000 });
+      await expect(card.locator(`svg.${icon.iconClass}`)).toBeVisible({ timeout: 5000 });
     });
   }
 });

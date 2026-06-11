@@ -53,6 +53,31 @@
     "today": "Today's activity summary",
     "availableModules": "Available modules",
     "viewAll": "View all services",
+    "workflowProgress": "Workflow progress",
+    "workflow": {
+      "searchLabel": "Reference number",
+      "searchPlaceholder": "e.g. 1024",
+      "searchButton": "Trace",
+      "notFound": "No case found with that number",
+      "empty": "This case has no workflow assigned yet",
+      "status": {
+        "completed": "Completed",
+        "in_progress": "In progress",
+        "pending": "Pending"
+      },
+      "type": {
+        "INITIAL": "Start",
+        "INTERMEDIATE": "Intermediate",
+        "FINAL": "Final"
+      },
+      "modal": {
+        "close": "Close",
+        "incoming": "Previous steps",
+        "outgoing": "Next steps",
+        "history": "History",
+        "noHistory": "No history entries for this step yet"
+      }
+    },
     "gestiones": {
       "label": "Cases",
       "description": "Manage cases and deeds"

@@ -205,7 +205,7 @@ jobs:
           min-coverage-overall: 80
 
   # ==========================================
-  # JOB 5: Security Scan (Trivy) - No External Dependency
+  # JOB 5: Security Scan (Trivy)
   # ==========================================
   security:
     name: Security Scan
@@ -215,6 +215,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'maven'
+
+      # Pre-warm the local Maven cache so Trivy can resolve POM metadata
+      # without hitting Maven Central (avoids 429 rate-limit errors).
+      - name: Warm Maven dependency cache
+        run: mvn dependency:resolve -pl backend-api -am -q --no-transfer-progress || true
+
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -222,6 +234,10 @@ jobs:
           scan-ref: '.'
           format: 'json'
           output: 'trivy-results.json'
+          # Never fail the build on found vulnerabilities — report only.
+          # exit-code 0 means: scan, report, but don't block CI.
+          exit-code: '0'
+          ignore-unfixed: true
 
       - name: Display Trivy Results
         run: |

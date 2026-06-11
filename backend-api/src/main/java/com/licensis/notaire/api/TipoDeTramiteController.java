@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,7 @@ public class TipoDeTramiteController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     @Operation(summary = "Obtener todos los tipos de tramite")
     public ResponseEntity<List<DtoTipoDeTramite>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
@@ -60,6 +62,7 @@ public class TipoDeTramiteController {
     }
 
     @GetMapping("/search")
+    @Transactional(readOnly = true)
     @Operation(summary = "Buscar tipos de tramite por nombre")
     public ResponseEntity<List<DtoTipoDeTramite>> search(@RequestParam String nombre) {
         return ResponseEntity.ok(repository.findByNombreContaining(nombre).stream()
@@ -72,6 +75,7 @@ public class TipoDeTramiteController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     @Operation(summary = "Obtener tipo de tramite por ID")
     public ResponseEntity<DtoTipoDeTramite> getById(@PathVariable Integer id) {
         return repository.findById(id)

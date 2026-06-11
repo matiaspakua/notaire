@@ -5,7 +5,7 @@
  * Read-only — audit logs are not editable.
  */
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { apiGet, apiGetPaged } from "@/lib/api-client";
 import type { RegistroAuditoria } from "@/types";
 
 export const auditoriaKeys = {
@@ -16,7 +16,7 @@ export const auditoriaKeys = {
 export function useAuditoria() {
   return useQuery({
     queryKey: auditoriaKeys.all,
-    queryFn: () => apiGet<RegistroAuditoria[]>("/registro-auditoria"),
+    queryFn: () => apiGetPaged<RegistroAuditoria>("/registro-auditoria"),
   });
 }
 

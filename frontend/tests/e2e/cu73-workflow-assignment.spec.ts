@@ -20,7 +20,7 @@ test.describe("CU73 - Workflow assignment to TipoDeTramite", () => {
   });
 
   test("tramites page shows workflow column", async ({ page }) => {
-    await expect(page.getByText("Workflow")).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: "Workflow" })).toBeVisible();
     await expect(page.getByTestId("btn-nuevo-tipo-tramite")).toBeVisible();
   });
 

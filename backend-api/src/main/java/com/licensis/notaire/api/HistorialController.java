@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoHistorialSummary;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.HistorialRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,8 +30,10 @@ public class HistorialController {
 
     @GetMapping
     @Operation(summary = "Obtener todo el historial")
-    public ResponseEntity<List<Historial>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<DtoHistorialSummary>> getAll() {
+        return ResponseEntity.ok(repository.findAll().stream()
+                .map(DtoHistorialSummary::from)
+                .toList());
     }
 
     @ApiResponses({
@@ -39,16 +42,18 @@ public class HistorialController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener historial por ID")
-    public ResponseEntity<Historial> getById(@PathVariable Integer id) {
+    public ResponseEntity<DtoHistorialSummary> getById(@PathVariable Integer id) {
         return repository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(h -> ResponseEntity.ok(DtoHistorialSummary.from(h)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/gestion/{idGestion}")
     @Operation(summary = "Obtener historial de una gestion (CU13)")
-    public ResponseEntity<List<Historial>> getByGestion(@PathVariable Integer idGestion) {
-        return ResponseEntity.ok(repository.findByFkIdGestionIdGestion(idGestion));
+    public ResponseEntity<List<DtoHistorialSummary>> getByGestion(@PathVariable Integer idGestion) {
+        return ResponseEntity.ok(repository.findByFkIdGestionIdGestion(idGestion).stream()
+                .map(DtoHistorialSummary::from)
+                .toList());
     }
 
     @ApiResponses({

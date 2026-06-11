@@ -53,6 +53,31 @@
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
     "viewAll": "Ver todos los servicios",
+    "workflowProgress": "Progreso del workflow",
+    "workflow": {
+      "searchLabel": "Número de referencia",
+      "searchPlaceholder": "ej. 1024",
+      "searchButton": "Rastrear",
+      "notFound": "No se encontró una gestión con ese número",
+      "empty": "Esta gestión todavía no tiene un workflow asignado",
+      "status": {
+        "completed": "Completada",
+        "in_progress": "En curso",
+        "pending": "Pendiente"
+      },
+      "type": {
+        "INITIAL": "Inicio",
+        "INTERMEDIATE": "Intermedio",
+        "FINAL": "Final"
+      },
+      "modal": {
+        "close": "Cerrar",
+        "incoming": "Pasos anteriores",
+        "outgoing": "Pasos siguientes",
+        "history": "Historial",
+        "noHistory": "Aún no hay entradas de historial para este paso"
+      }
+    },
     "gestiones": {
       "label": "Gestiones",
       "description": "Gestionar trámites y escrituras"

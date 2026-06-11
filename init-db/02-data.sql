@@ -90,5 +90,60 @@ SELECT setval('personas_id_persona_seq', (SELECT MAX(id_persona) FROM personas))
 INSERT INTO usuarios (version, id_usuario, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
 (0, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
 
--- Reset sequence  
+-- Reset sequence
 SELECT setval('usuarios_id_usuario_seq', (SELECT MAX(id_usuario) FROM usuarios));
+
+-- =============================================================================
+-- Workflow demo data (CU70/CU71 — issue #453): standard gestión workflow with a
+-- fork, assigned to the main tipos de trámite, plus sample gestiones with
+-- trámites and historial so the dashboard workflow tracker renders end-to-end.
+-- =============================================================================
+
+INSERT INTO workflow_definition (version, id_workflow_definition, nombre, descripcion, activo) VALUES
+(0, 1, 'Workflow de Gestión Estándar', 'Ciclo de vida estándar de una gestión de escritura', true);
+
+SELECT setval('workflow_definition_id_workflow_definition_seq', (SELECT MAX(id_workflow_definition) FROM workflow_definition));
+
+INSERT INTO workflow_node (version, id_workflow_node, fk_workflow_definition_id, fk_estado_gestion_id, tipo) VALUES
+(0, 1, 1, 1, 'INITIAL'),       -- Iniciada
+(0, 2, 1, 2, 'INTERMEDIATE'),  -- En Tramite
+(0, 3, 1, 3, 'INTERMEDIATE'),  -- Documentacion Completa
+(0, 4, 1, 7, 'INTERMEDIATE'),  -- Escritura Sin Firmar
+(0, 5, 1, 6, 'INTERMEDIATE'),  -- Escritura Firmada
+(0, 6, 1, 10, 'FINAL'),        -- Escritura Inscripta
+(0, 7, 1, 4, 'FINAL');         -- Archivada
+
+SELECT setval('workflow_node_id_workflow_node_seq', (SELECT MAX(id_workflow_node) FROM workflow_node));
+
+INSERT INTO workflow_transition (version, id_workflow_transition, fk_workflow_definition_id, fk_nodo_origen_id, fk_nodo_destino_id, condicion, descripcion) VALUES
+(0, 1, 1, 1, 2, NULL, 'Se asignan trámites y comienza la gestión'),
+(0, 2, 1, 2, 3, NULL, 'Toda la documentación requerida fue presentada'),
+(0, 3, 1, 3, 4, NULL, 'Se redacta la escritura'),
+(0, 4, 1, 4, 5, NULL, 'Las partes firman la escritura'),
+(0, 5, 1, 5, 6, NULL, 'La escritura se inscribe en el registro'),
+(0, 6, 1, 3, 7, NULL, 'La gestión se archiva sin escritura');
+
+SELECT setval('workflow_transition_id_workflow_transition_seq', (SELECT MAX(id_workflow_transition) FROM workflow_transition));
+
+UPDATE tipos_de_tramite SET fk_workflow_definition_id = 1 WHERE id_tipo_tramite IN (1, 2, 3);
+
+INSERT INTO gestiones_de_escrituras (version, id_gestion, numero, fecha_inicio, encabezado, observaciones, fk_id_persona_escribano, fk_id_estado_de_gestion) VALUES
+(0, 1, 1001, '2026-05-02', 'Compraventa Lote 12 — Familia Pérez', NULL, 1, 3),
+(0, 2, 1002, '2026-05-20', 'Donación — Sucesión Gómez', NULL, 1, 2);
+
+SELECT setval('gestiones_de_escrituras_id_gestion_seq', (SELECT MAX(id_gestion) FROM gestiones_de_escrituras));
+
+INSERT INTO tramites (version, id_tramite, numero, nombre, observaciones, fk_id_tipo_tramite, fk_id_gestion) VALUES
+(0, 1, 1, 'Compraventa inmueble Lote 12', NULL, 1, 1),
+(0, 2, 2, 'Donación a herederos', NULL, 2, 2);
+
+SELECT setval('tramites_id_tramite_seq', (SELECT MAX(id_tramite) FROM tramites));
+
+INSERT INTO historial (version, id_historial, fecha, observaciones, fk_id_gestion, fk_id_estado_gestion) VALUES
+(0, 1, '2026-05-02', 'Apertura de la gestión', 1, 1),
+(0, 2, '2026-05-09', 'Trámite de compraventa en curso', 1, 2),
+(0, 3, '2026-05-28', 'Documentación completa recibida', 1, 3),
+(0, 4, '2026-05-20', 'Apertura de la gestión', 2, 1),
+(0, 5, '2026-06-01', 'Trámite de donación en curso', 2, 2);
+
+SELECT setval('historial_id_historial_seq', (SELECT MAX(id_historial) FROM historial));

@@ -1,9 +1,14 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoGestionSummary;
+import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
+import com.licensis.notaire.dto.DtoHistorialSummary;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
+import com.licensis.notaire.service.GestionQueryService;
+import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,17 +35,24 @@ public class GestionController {
 
     private final GestionDeEscrituraRepository repository;
     private final HistorialRepository historialRepository;
+    private final WorkflowTraceService workflowTraceService;
+    private final GestionQueryService gestionQueryService;
 
-    public GestionController(GestionDeEscrituraRepository repository, HistorialRepository historialRepository) {
+    public GestionController(GestionDeEscrituraRepository repository,
+                             HistorialRepository historialRepository,
+                             WorkflowTraceService workflowTraceService,
+                             GestionQueryService gestionQueryService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
+        this.workflowTraceService = workflowTraceService;
+        this.gestionQueryService = gestionQueryService;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todas las gestiones")
-    public ResponseEntity<Page<GestionDeEscritura>> getAll(
+    public ResponseEntity<Page<DtoGestionSummary>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(repository.findAll(pageable));
+        return ResponseEntity.ok(gestionQueryService.findAll(pageable));
     }
 
     @ApiResponses({
@@ -49,16 +61,16 @@ public class GestionController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener gestion por ID")
-    public ResponseEntity<GestionDeEscritura> getById(@PathVariable Integer id) {
-        return repository.findById(id)
+    public ResponseEntity<DtoGestionSummary> getById(@PathVariable Integer id) {
+        return gestionQueryService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/numero/{numero}")
     @Operation(summary = "Obtener gestion por numero")
-    public ResponseEntity<GestionDeEscritura> getByNumero(@PathVariable Integer numero) {
-        return repository.findByNumero(numero)
+    public ResponseEntity<DtoGestionSummary> getByNumero(@PathVariable Integer numero) {
+        return gestionQueryService.findByNumero(numero)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -71,14 +83,14 @@ public class GestionController {
 
     @GetMapping("/{id}/estado-actual")
     @Operation(summary = "Obtener estado actual de una gestion")
-    public ResponseEntity<Historial> getEstadoActual(@PathVariable Integer id) {
+    public ResponseEntity<DtoHistorialSummary> getEstadoActual(@PathVariable Integer id) {
         List<Historial> historiales = historialRepository.findByFkIdGestionIdGestion(id);
         if (historiales.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return historiales.stream()
                 .max(Comparator.comparing(Historial::getFecha))
-                .map(ResponseEntity::ok)
+                .map(h -> ResponseEntity.ok(DtoHistorialSummary.from(h)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -135,6 +147,26 @@ public class GestionController {
         } catch (Exception e) {
             log.error("Failed to delete gestion id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada"),
+        @ApiResponse(responseCode = "400", description = "Gestion sin tramites o workflow definition")
+    })
+    @GetMapping("/{id}/workflow-trace")
+    @Operation(summary = "Obtener trace del workflow de una gestion (con nodos, transiciones, historial y estados)")
+    public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
+        try {
+            DtoGestionWorkflowTrace trace = workflowTraceService.buildTrace(id);
+            return ResponseEntity.ok(trace);
+        } catch (IllegalArgumentException e) {
+            log.warn("Cannot build workflow trace for gestion {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Failed to build workflow trace for gestion id {}", id, e);
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
