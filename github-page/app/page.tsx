@@ -10,6 +10,7 @@ import { Architecture } from "@/components/Architecture";
 import { InfraStack } from "@/components/InfraStack";
 import { FunFacts } from "@/components/FunFacts";
 import { Stats } from "@/components/Stats";
+import { Coverage } from "@/components/Coverage";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
           <Architecture />
           <InfraStack />
           <FunFacts />
+          <Coverage />
           <Stats />
         </main>
         <Footer />
