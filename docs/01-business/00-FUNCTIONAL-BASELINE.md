@@ -278,7 +278,7 @@ CU07/08 etc.; it is now guarded by `InitDbSchemaValidationIntegrationTest`
 |----------|----------|
 | Actors | `docs/01-business/03-actors/` |
 | Use cases (detail) | `docs/01-business/02-use-cases/` |
-| Use-case progress | `docs/business/03_CU - Casos de Uso/Progreso Sistema - CASOS DE USO.csv` |
+| Use-case progress | `docs/01-business/03_CU - Casos de Uso/Progreso Sistema - CASOS DE USO.csv` |
 | CU ↔ API ↔ test matrix | `docs/testing/CU-API-MATRIX.csv` |
 | Functional requirements | `docs/01-business/01-requirements/` (`requerimientos.csv`) |
 | Data model (detail) | `docs/01-business/04-data-model/` |

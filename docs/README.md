@@ -1,329 +1,119 @@
-# Notaire Project - Complete Documentation
+# Notaire System Documentation
 
-Bienvenido a la documentación completa del proyecto Notaire. Esta guía proporciona toda la información necesaria para entender, desarrollar, y operar el sistema.
+Welcome to the Notaire notarial management system documentation. This guide covers system design, architecture, implementation, testing, operations, and API specifications.
 
-> Nota: la documentación principal del sistema está centralizada en `/docs`. Los servicios también tienen README propios en `backend-api/README.md`, `frontend-swing/README.md` e `init-db/README.md`.
+## Quick Navigation
 
-## 📖 Documentation Structure
+**New to the system?** Start here:
+- [Getting Started Guide](06-learning/GETTING-STARTED.md) — Setup and first steps (5 min)
+- [System Overview](02-architecture/02-overview/README.md) — High-level architecture (15 min)
+- [FAQ & Troubleshooting](FAQ.md) — Common questions answered
 
-Nuestra documentación está organizada según el SDLC (Software Development Lifecycle):
-
-### [01. Business Documentation](01-business/)
-**Entender el negocio y los requisitos**
-
-- Requirements & Use Cases - Especificación funcional completa (73 casos de uso)
-- Actors & Stakeholders - Identificación de actores del sistema
-- Data Model - Diccionario de datos y modelo entidad-relación
-- User Manuals - Guías de usuario y administrador
-
-**¿Cuándo usar?**
-- Eres un stakeholder o product owner
-- Necesitas entender qué hace el sistema
-- Buscas funcionalidades específicas
-
-### [02. Architecture Documentation](02-architecture/)
-**Entender cómo está diseñado el sistema**
-
-- **[Architecture Decision Records (ADRs)](02-architecture/01-adr/)** - Decisiones arquitectónicas documentadas
-  - ADR-001: Microservices Architecture
-  - ADR-002: Module Structure (Maven)
-  - ADR-003: REST API Versioning
-  - ADR-004: Database Migration (MySQL → PostgreSQL)
-  - ADR-005: Modern Frontend Migration
-  - ADR-006: Testing Strategy
-  - ADR-007: Database Schema Versioning (Flyway)
-  - ADR-008: Security & Authentication
-
-- **Architecture Overview** - Visión general del sistema
-- **Diagrams** - Diagramas de arquitectura y flujos
-- **Patterns** - Patrones de diseño y mejores prácticas
-
-**¿Cuándo usar?**
-- Eres un arquitecto o senior engineer
-- Tomas decisiones técnicas importantes
-- Necesitas entender por qué el sistema está diseñado así
-
-### [03. Development Documentation](03-development/)
-**Cómo desarrollar en el proyecto**
-
-- **[Development Setup](03-development/01-setup/)** - Configurar ambiente local
-  - Java 21 installation
-  - Docker & PostgreSQL setup
-  - IDE configuration
-  
-- **[Build & Deploy](03-development/02-build/)** - Cómo buildear y deployar
-  - Maven commands
-  - Docker builds
-  - Docker Compose deployment
-
-- **[Testing Guide](03-development/03-testing/)** - Estrategia de testing
-  - Unit testing
-  - Integration testing
-  - Coverage requirements (80% minimum)
-
-- **[Code Standards](03-development/04-code-standards/)** - Estándares de código
-  - Naming conventions
-  - Formatting rules
-  - Import ordering
-
-**¿Cuándo usar?**
-- Eres desarrollador en el proyecto
-- Necesitas setup local
-- Quieres contribuir código
-
-### [04. Operations Documentation](04-operations/)
-**Cómo operar y mantener el sistema**
-
-- **[DevSecOps Pipeline](04-operations/01-devsecops/)** - CI/CD pipeline
-- **[Deployment Guide](04-operations/02-deployment/)** - Cómo deployar a producción
-- **[Security](04-operations/03-security/)** - Estándares de seguridad
-- **[Monitoring](04-operations/04-monitoring/)** - Monitoreo y alertas
-
-**¿Cuándo usar?**
-- Eres DevOps o SRE
-- Necesitas deployar el sistema
-- Debes monitorear el sistema
-
-### [05. API Documentation](05-api/)
-**Referencia de API REST**
-
-- **API Overview** - Descripción de endpoints
-- **Endpoints** - Referencia completa de cada endpoint
-- **Schemas** - DTOs y estructuras de respuesta
-
-**¿Cuándo usar?**
-- Desarrollas integraciones con la API
-- Necesitas referencia de endpoints
-- Buscas esquemas de respuesta
-
-### [06. Learning Resources](06-learning/)
-**Recursos para aprender sobre el proyecto**
-
-- **[Onboarding Guide](06-learning/01-onboarding/)** - Guía para nuevos miembros
-- **[Architecture Overview](06-learning/02-architecture-overview/)** - Visión general técnica
-- **[Refactoring Guide](06-learning/03-refactoring-guide/)** - Plan de migración del monolito
-
-**¿Cuándo usar?**
-- Eres nuevo en el proyecto
-- Necesitas una introducción
-- Quieres entender el plan de refactoring
-
-## 🚀 Quick Start
-
-### For Developers
-
-1. **Setup**: [Development Setup Guide](03-development/01-setup/)
-2. **Build**: [Build & Deploy Guide](03-development/02-build/)
-3. **Code**: Follow [Code Standards](03-development/04-code-standards/)
-4. **Test**: Run tests with [Testing Guide](03-development/03-testing/)
-
-### For Architects
-
-1. **Read**: [Architecture Overview](02-architecture/README.md)
-2. **Review**: [Architecture Decision Records](02-architecture/01-adr/)
-3. **Understand**: [Diagrams](02-architecture/03-diagrams/)
-4. **Consult**: [CLAUDE.md](../CLAUDE.md) for design principles
-
-### For Operations
-
-1. **Deploy**: [Deployment Guide](04-operations/02-deployment/)
-2. **Monitor**: [Monitoring Guide](04-operations/04-monitoring/)
-3. **Secure**: [Security Guide](04-operations/03-security/)
-4. **Pipeline**: [DevSecOps Guide](04-operations/01-devsecops/)
-
-### For Product/Business
-
-1. **Understand**: [Business Documentation](01-business/README.md)
-2. **Explore**: [Use Cases](01-business/02-use-cases/)
-3. **Refer**: [Data Model](01-business/04-data-model/)
-
-## 📋 Documentation Map
-
-```
-Documentación por Rol:
-
-┌─────────────────────────────────────────────────────────┐
-│                Product Owner / Stakeholder              │
-├─────────────────────────────────────────────────────────┤
-│  Business (requirements, use cases, data model)         │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│         Architect / Senior Engineer                     │
-├─────────────────────────────────────────────────────────┤
-│  Architecture (ADRs, design decisions, patterns)        │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│              Developer / Engineer                       │
-├─────────────────────────────────────────────────────────┤
-│  Development (setup, build, testing, code standards)    │
-│  API (endpoints, schemas)                               │
-│  Learning (refactoring guide)                           │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│         DevOps / SRE / Infrastructure                   │
-├─────────────────────────────────────────────────────────┤
-│  Operations (deployment, monitoring, security, CI/CD)   │
-└─────────────────────────────────────────────────────────┘
-```
-
-## 🏗️ System Overview
-
-### Architecture
-
-```
-┌─────────────────────────────────────────────┐
-│        Frontend (Java Swing)                │
-│   - Presupuestos                            │
-│   - Personas                                │
-│   - Escrituras                              │
-│   - Gestiones                               │
-└────────────────┬────────────────────────────┘
-                 │ REST API (HTTP/JSON)
-                 ↓
-┌─────────────────────────────────────────────┐
-│     Backend (Spring Boot 4.0.4)             │
-│   - Controllers (REST endpoints)            │
-│   - Services (business logic)               │
-│   - Repositories (data access)              │
-│   - Entities (domain model)                 │
-│   - Observability (metrics, logs, health)   │
-├────────────────┬────────────────────────────┤
-│   Actuator     │   Micrometer               │
-│   /actuator/*  │   Prometheus metrics       │
-└────────┬───────┴───────────┬────────────────┘
-         │                   │
-         ▼                   ▼
-┌─────────────────────────────────────────────┐
-│   Database (PostgreSQL 16)                  │
-│   - Tables, indexes, constraints            │
-│   - Audit logging                           │
-│   - pg_stat_queries                         │
-└────────────────┬────────────────────────────┘
-                 │
-                 ▼
-┌─────────────────────────────────────────────┐
-│       Monitoring Infrastructure              │
-│   ┌──────────┐  ┌──────────┐               │
-│   │Prometheus│  │  Grafana │               │
-│   │  :9090   │  │  :3001   │               │
-│   └─────┬────┘  └────┬─────┘               │
-│         │             │                     │
-│   ┌─────┴────┐  ┌────┴─────┐               │
-│   │   Loki    │  │postgres- │               │
-│   │  :3100    │  │exporter  │               │
-│   └──────────┘  │  :9187   │               │
-│                 └──────────┘               │
-└─────────────────────────────────────────────┘
-```
-
-### Technology Stack
-
-| Component | Technology |
-|-----------|-----------|
-| Backend Framework | Spring Boot 4.0.4 |
-| Language | Java 21 LTS |
-| Build Tool | Maven 3.9.x |
-| Database | PostgreSQL 16 |
-| ORM | Hibernate 6.x |
-| Frontend | Java Swing |
-| Containerization | Docker |
-| Orchestration | Docker Compose |
-| API Docs | OpenAPI 3.0 |
-| Testing | JUnit 5, Mockito, AssertJ |
-| Code Quality | JaCoCo, Checkstyle, SpotBugs |
-| **Metrics** | **Prometheus + Micrometer** |
-| **Dashboards** | **Grafana** |
-| **Log Aggregation** | **Loki + Promtail** |
-| **CI/CD** | **Jenkins + GitHub Actions** |
-
-## 📚 Key Documents
-
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| [CLAUDE.md](../CLAUDE.md) | Project guidance & rules | All |
-| [ADR-001](02-architecture/01-adr/ADR-001-microservices-architecture.md) | Why 3-tier architecture? | Architects, Seniors |
-| [ADR-002](02-architecture/01-adr/ADR-002-module-structure.md) | Maven module structure | Developers, Architects |
-| [ADR-003](02-architecture/01-adr/ADR-003-rest-api-versioning.md) | API versioning strategy | Developers, Architects |
-| [ADR-004](02-architecture/01-adr/ADR-004-database-migration.md) | MySQL → PostgreSQL | Architects, DevOps |
-| [Development Setup](03-development/01-setup/) | Local environment | Developers |
-| [Code Standards](03-development/04-code-standards/) | Naming, formatting rules | Developers |
-| [Testing Guide](03-development/03-testing/) | Unit & integration tests | QA, Developers |
-| [Monitoring Guide](04-operations/04-monitoring/) | Prometheus, Grafana, Loki setup | DevOps, SRE |
-| [Deployment Guide](04-operations/02-deployment/) | Full deployment instructions | DevOps, Developers |
-| [Infra README](../infra/README.md) | Infrastructure services setup | DevOps |
-
-## 🤝 Contributing
-
-Antes de contribuir código:
-
-1. **Read**: [Code Standards](03-development/04-code-standards/)
-2. **Understand**: [CLAUDE.md](../CLAUDE.md)
-3. **Follow**: [Development Guide](03-development/)
-4. **Check**: [Architecture ADRs](02-architecture/01-adr/) for design decisions
-
-### Documentation Contributions
-
-Para mejorar documentación:
-
-1. Ubicar el archivo correcto en la carpeta adecuada
-2. Seguir estructura Markdown consistente
-3. Incluir ejemplos prácticos cuando sea posible
-4. Mantener actualizado con cambios de código
-5. Crear PR con cambios documentados
-
-## 📞 Getting Help
-
-| Pregunta | Recurso |
-|----------|---------|
-| ¿Cómo configuro el ambiente? | [Development Setup](03-development/01-setup/) |
-| ¿Cuál es la arquitectura del sistema? | [Architecture ADRs](02-architecture/01-adr/) |
-| ¿Cuáles son los estándares de código? | [Code Standards](03-development/04-code-standards/) |
-| ¿Cómo escribo tests? | [Testing Guide](03-development/03-testing/) |
-| ¿Cómo deployar? | [Deployment Guide](04-operations/02-deployment/) |
-| ¿Cómo monitorear el sistema? | [Monitoring Guide](04-operations/04-monitoring/) |
-| ¿Dónde están las credenciales? | [Infra README](../infra/README.md#credentials) |
-| ¿Qué hace cada caso de uso? | [Use Cases](01-business/02-use-cases/) |
-| ¿Cuál es el modelo de datos? | [Data Model](01-business/04-data-model/) |
-
-## 📊 Documentation Status
-
-| Section | Status | Updated |
-|---------|--------|---------|
-| Business (Requirements, Use Cases) | ✅ Complete | 2024-04-13 |
-| Architecture (ADRs 001-004) | ✅ Complete | 2024-04-13 |
-| Development (Setup, Build, Testing) | ✅ Complete | 2024-04-13 |
-| Operations (Deployment, Monitoring, Security) | ✅ Complete | 2026-05-07 |
-| API Reference | 🟡 In Progress | - |
-| Learning Resources | 🟡 In Progress | - |
-
-*Status Leyenda: ✅ Completo | 🟡 En Progreso | ❌ Pendiente*
-
-## 🔄 Document Versioning
-
-Documentación sigue el mismo versionado que el código:
-- **Cambios menores**: v1.1.0 (formatting, clarification)
-- **Nuevas secciones**: v1.2.0 (guides, ADRs)
-- **Reestructuración mayor**: v2.0.0 (reorganización completa)
-
-Último actualizado: **2026-05-07**
-
-## 📖 Navigation
-
-- **[Business](01-business/)** - Requisitos y casos de uso
-- **[Architecture](02-architecture/)** - ADRs y decisiones de diseño
-- **[Development](03-development/)** - Setup, build, testing
-- **[Operations](04-operations/)** - Deployment, monitoring, security
-- **[API](05-api/)** - Referencia de endpoints
-- **[Learning](06-learning/)** - Guías de aprendizaje
+**Looking for specific information?** See [NAVIGATION.md](NAVIGATION.md) — complete map of all documentation by use case.
 
 ---
 
-**¿Eres nuevo en el proyecto?** → [Onboarding Guide](06-learning/01-onboarding/)
+## Documentation Structure
 
-**¿Necesitas ayuda rápida?** → Usa la tabla de [Getting Help](#-getting-help) arriba
+| Directory | Contents | Audience |
+|-----------|----------|----------|
+| **01-business/** | Business requirements, use cases, data model, user manuals | Product managers, business analysts, end users |
+| **02-architecture/** | System design, architecture decisions, design patterns | Architects, senior engineers, tech leads |
+| **03-development/** | Setup guides, coding standards, testing strategies, CI/CD | Developers, QA engineers, DevOps engineers |
+| **04-operations/** | Monitoring, logging, security, deployment runbooks | Operations, SRE, security engineers |
+| **05-api/** | REST API specifications, endpoint documentation, examples | Backend developers, API consumers |
+| **06-learning/** | Quick references, roadmaps, onboarding materials | All team members, new contributors |
+| **archive/** | Deprecated/historical documentation (Swing GUI, old plans) | Historical reference |
 
-**¿Quieres contribuir?** → Lee [Contributing](#-contributing)
+---
 
+## Key Features Documented
+
+### Business Processes
+- **Use Cases (CU-01 to CU-78)** — Notarial office workflows from budget preparation to archive
+- **Requirements (RF-01 to RF-95, RNF-01 to RNF-24)** — Functional and non-functional requirements
+- **Data Model** — Entity definitions, relationships, schemas
+
+### Technical Stack
+- **Backend**: Spring Boot 3.x, Java 21, PostgreSQL 16
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Infrastructure**: Docker, Kubernetes, Prometheus/Grafana, Loki
+- **Testing**: JUnit 5, Mockito, Playwright E2E
+- **CI/CD**: GitHub Actions, SonarQube, Trivy
+
+### Architecture Highlights
+- **Three-tier architecture**: PostgreSQL → Spring Boot REST API → Next.js Frontend
+- **Microservices-ready**: Stateless backend, horizontal scaling
+- **Observability**: Prometheus metrics, Grafana dashboards, Loki logs, OpenTelemetry tracing
+- **Security**: HTTPS/TLS, authentication, audit logging (AUDITORIA), secrets management
+
+---
+
+## Getting Started
+
+### For Developers
+1. Clone the repository
+2. Follow [03-development/01-setup/README.md](03-development/01-setup/README.md)
+3. Read [02-architecture/02-overview/sad.md](02-architecture/02-overview/sad.md) for context
+4. See [03-development/04-code-standards/README.md](03-development/04-code-standards/README.md) for coding rules
+
+### For Operators
+1. Review [04-operations/README.md](04-operations/README.md)
+2. Understand [02-architecture/02-overview/sad.md](02-architecture/02-overview/sad.md)
+3. Check [04-operations/01-monitoring/README.md](04-operations/01-monitoring/README.md)
+
+### For Product Managers
+1. Start with [01-business/README.md](01-business/README.md)
+2. Review [Use Cases (CU-01 to CU-78)](01-business/02-use-cases/)
+3. Check [Roadmap](06-learning/ROADMAP.md)
+
+---
+
+## Important Notes
+
+### ⚠️ Documentation Organization
+- **Old `docs/business/` directory has been consolidated** into `docs/01-business/`
+- All references updated to use the new `01-business` path
+- **Do not use the old `business/` directory** — it no longer exists
+
+### 🛠️ Deprecated Components
+- **Swing GUI Frontend**: Replaced with modern Next.js frontend
+  - See [ADR-005](02-architecture/01-adr/ADR-005-modern-frontend-migration.md) for rationale
+  - Legacy documentation archived in `docs/archive/`
+
+### 📚 Recommended Reading Order
+1. This README (you are here)
+2. [System Overview](02-architecture/02-overview/README.md)
+3. [Architecture Decision Records](02-architecture/01-adr/README.md) (pick relevant ones)
+4. Your role-specific documentation (see table above)
+
+---
+
+## Documentation Standards
+
+All documentation follows these principles:
+
+- **Single Source of Truth**: One canonical location per topic (no duplicates)
+- **Progressive Disclosure**: Basic concepts first, advanced details later
+- **Audience-First**: Documentation organized by who needs it
+- **Maintainability**: ADRs explain "why", not just "what"
+- **Link Density**: Cross-references between related topics
+
+---
+
+## Contributing to Documentation
+
+When updating documentation:
+1. Update in one location only (the canonical source)
+2. Update cross-references if you move files
+3. Keep ADRs accurate (append new decisions, don't delete history)
+4. Use consistent formatting and terminology
+5. Link to related documentation and ADRs
+
+See [NAVIGATION.md](NAVIGATION.md) for the complete documentation map.
+
+---
+
+**Last Updated**: June 11, 2026  
+**Maintainer**: Development Team  
+**Questions?** See [FAQ.md](FAQ.md) or open an issue.
