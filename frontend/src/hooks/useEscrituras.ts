@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Escritura } from "@/types";
 
 export const escriturasKeys = {
@@ -10,7 +10,7 @@ export const escriturasKeys = {
 export function useEscrituras() {
   return useQuery({
     queryKey: escriturasKeys.all,
-    queryFn: () => apiGet<Escritura[]>("/escrituras"),
+    queryFn: () => apiGetPaged<Escritura>("/escrituras"),
   });
 }
 

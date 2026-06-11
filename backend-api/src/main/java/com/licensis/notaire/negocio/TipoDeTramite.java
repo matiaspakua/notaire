@@ -175,6 +175,7 @@ public class TipoDeTramite implements Serializable {
         this.tramiteList = tramiteList;
     }
 
+    @JsonIgnore
     public WorkflowDefinition getWorkflowDefinition() {
         return workflowDefinition;
     }

@@ -110,16 +110,20 @@ export interface DocumentoPresentadoRequest {
 
 export interface Historial {
   idHistorial?: number;
-  estado?: EstadoDeGestion;
   fecha?: string;
   observaciones?: string;
+  gestionId?: number;
+  estadoGestionId?: number;
+  estadoGestionNombre?: string;
 }
 
 export interface GestionDeEscritura {
   idGestion?: number;
   numero?: number;
-  tramiteList?: Tramite[];
-  historialList?: Historial[];
+  encabezado?: string;
+  fechaInicio?: string;
+  estadoActual?: string;
+  tramiteCount?: number;
 }
 
 export interface Item {

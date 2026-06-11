@@ -89,7 +89,7 @@ export default function GestionesPage() {
     {
       key: "tramites",
       header: t("fields.tipo"),
-      render: (g) => g.tramiteList?.length ?? 0,
+      render: (g) => g.tramiteCount ?? 0,
     },
     {
       key: "actions",

@@ -1,17 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { GestionDeEscritura } from "@/types";
 
 export const gestionesKeys = {
   all: ["gestiones"] as const,
   detail: (id: number) => ["gestiones", id] as const,
   byCliente: (id: number) => ["gestiones", "cliente", id] as const,
+  byNumero: (numero: number) => ["gestiones", "numero", numero] as const,
 };
 
 export function useGestiones() {
   return useQuery({
     queryKey: gestionesKeys.all,
-    queryFn: () => apiGet<GestionDeEscritura[]>("/gestiones"),
+    queryFn: () => apiGetPaged<GestionDeEscritura>("/gestiones"),
+  });
+}
+
+export function useGestionByNumero(numero: number | undefined) {
+  return useQuery({
+    queryKey: gestionesKeys.byNumero(numero ?? 0),
+    queryFn: () => apiGet<GestionDeEscritura>(`/gestiones/numero/${numero}`),
+    enabled: numero != null && numero > 0,
+    retry: false,
   });
 }
 

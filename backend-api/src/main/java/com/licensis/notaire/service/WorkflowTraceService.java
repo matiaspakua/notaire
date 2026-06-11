@@ -156,7 +156,7 @@ public class WorkflowTraceService {
      *   <li>If it does not appear in historial at all → {@code "pending"}</li>
      * </ul>
      */
-    static Map<Integer, String> computeNodeStatuses(
+    public static Map<Integer, String> computeNodeStatuses(
             List<WorkflowNode> nodes, List<Historial> historialList) {
 
         // Sort historial by fecha ASC

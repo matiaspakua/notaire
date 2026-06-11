@@ -3,18 +3,26 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Home,
+  BookMarked,
   Building2,
+  Calculator,
   Copy,
+  CreditCard,
+  FileText,
+  FolderKanban,
+  Home,
   ListTodo,
-  Shield,
+  LogOut,
   Scale,
+  ScrollText,
+  Settings,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 type LucideIcon = React.ComponentType<{ className?: string }>;
@@ -22,28 +30,27 @@ type LucideIcon = React.ComponentType<{ className?: string }>;
 interface NavItem {
   labelKey: string;
   href: string;
-  icon?: LucideIcon;
-  pngIcon?: string;
+  icon: LucideIcon;
   adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
   { labelKey: "home", href: "/dashboard", icon: Home },
-  { labelKey: "gestiones", href: "/dashboard/gestiones", pngIcon: "/icons/modulos/gestion.png" },
-  { labelKey: "presupuestos", href: "/dashboard/presupuestos", pngIcon: "/icons/modulos/presupuestos.png" },
-  { labelKey: "personas", href: "/dashboard/personas", pngIcon: "/icons/modulos/clientes.png" },
-  { labelKey: "escrituras", href: "/dashboard/escrituras", pngIcon: "/icons/modulos/escrituras.png" },
-  { labelKey: "pagos", href: "/dashboard/pagos", pngIcon: "/icons/modulos/pagos.png" },
-  { labelKey: "protocolo", href: "/dashboard/protocolo", pngIcon: "/icons/modulos/protocolo.png" },
+  { labelKey: "gestiones", href: "/dashboard/gestiones", icon: FolderKanban },
+  { labelKey: "presupuestos", href: "/dashboard/presupuestos", icon: Calculator },
+  { labelKey: "personas", href: "/dashboard/personas", icon: Users },
+  { labelKey: "escrituras", href: "/dashboard/escrituras", icon: ScrollText },
+  { labelKey: "pagos", href: "/dashboard/pagos", icon: CreditCard },
+  { labelKey: "protocolo", href: "/dashboard/protocolo", icon: BookMarked },
   { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
   { labelKey: "copias", href: "/dashboard/copias", icon: Copy },
   { labelKey: "items", href: "/dashboard/items", icon: ListTodo },
-  { labelKey: "documentos", href: "/dashboard/documentos", pngIcon: "/icons/admin/documentos.png" },
-  { labelKey: "auditoria", href: "/dashboard/auditoria", icon: Shield },
+  { labelKey: "documentos", href: "/dashboard/documentos", icon: FileText },
+  { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck },
   {
     labelKey: "administracion",
     href: "/dashboard/administracion",
-    pngIcon: "/icons/modulos/admin.png",
+    icon: Settings,
     adminOnly: true,
   },
 ];
@@ -114,16 +121,7 @@ export function AppSidebar() {
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-3">
-                  {item.pngIcon ? (
-                    <NotaireIcon
-                      src={item.pngIcon}
-                      alt={label}
-                      size={20}
-                      className={cn("shrink-0", active ? "brightness-0 invert" : "")}
-                    />
-                  ) : Icon ? (
-                    <Icon className={cn("h-4 w-4 shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
-                  ) : null}
+                  <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]")} />
                   {label}
                 </span>
               </Link>
@@ -139,7 +137,7 @@ export function AppSidebar() {
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >
-          <NotaireIcon src="/icons/modulos/salir.png" alt={t("logout")} size={18} className="shrink-0" />
+          <LogOut className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
           {t("logout")}
         </button>
       </div>

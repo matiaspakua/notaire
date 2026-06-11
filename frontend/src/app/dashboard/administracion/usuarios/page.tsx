@@ -153,8 +153,8 @@ export default function UsuariosPage() {
                 </Select>
               </FormField>
               <FormField label="Rol de acceso" helperText="Permisos de módulos del sistema">
-                <Select value={selectedRolId} onValueChange={setSelectedRolId} data-testid="select-rol-usuario">
-                  <SelectTrigger>
+                <Select value={selectedRolId} onValueChange={setSelectedRolId}>
+                  <SelectTrigger data-testid="select-rol-usuario">
                     <SelectValue placeholder="Sin rol asignado" />
                   </SelectTrigger>
                   <SelectContent>

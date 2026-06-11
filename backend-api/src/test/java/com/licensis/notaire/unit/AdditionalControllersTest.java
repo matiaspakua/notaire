@@ -133,7 +133,9 @@ class AdditionalControllersTest {
         void all() throws Exception {
             GestionDeEscrituraRepository repo = mock(GestionDeEscrituraRepository.class);
             HistorialRepository histRepo = mock(HistorialRepository.class);
-            var mvc = standaloneSetup(new GestionController(repo, histRepo))
+            var traceService = mock(com.licensis.notaire.service.WorkflowTraceService.class);
+            var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
+            var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .build();
 
@@ -141,12 +143,13 @@ class AdditionalControllersTest {
             com.licensis.notaire.negocio.Persona escr = new com.licensis.notaire.negocio.Persona();
             escr.setIdPersona(99);
             g.setFkIdPersonaEscribano(escr);
-            when(repo.findAll(any(org.springframework.data.domain.Pageable.class)))
-                    .thenReturn(new PageImpl<>(List.of(g), org.springframework.data.domain.PageRequest.of(0, 20), 1));
-            when(repo.findById(1)).thenReturn(Optional.of(g));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findByNumero(10)).thenReturn(Optional.of(g));
-            when(repo.findByNumero(99)).thenReturn(Optional.empty());
+            var summary = new com.licensis.notaire.dto.DtoGestionSummary(1, 10, "Gestion", new Date(), null, 0);
+            when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
+            when(queryService.findById(1)).thenReturn(Optional.of(summary));
+            when(queryService.findById(2)).thenReturn(Optional.empty());
+            when(queryService.findByNumero(10)).thenReturn(Optional.of(summary));
+            when(queryService.findByNumero(99)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             Historial h = new Historial();

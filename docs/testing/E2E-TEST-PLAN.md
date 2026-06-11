@@ -121,6 +121,7 @@ frontend/tests/e2e/
 ├── cu-matrix.spec.ts             # Health check coverage matrix
 ├── admin.spec.ts                 # Administration module (existing, enhanced)
 ├── icons-ux.spec.ts              # UI/UX icon tests (existing)
+├── workflow-tracker.spec.ts      # CU70, CU71 — animated workflow tracker (dashboard)
 ├── personas.spec.ts              # Personas CRUD (existing)
 ├── presupuestos.spec.ts          # Presupuestos CRUD (existing)
 └── suplencias.spec.ts            # Suplencias CRUD (existing)

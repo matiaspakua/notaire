@@ -31,3 +31,4 @@ test-results/
 playwright-report/
 playwright-results/
 coverage/
+tests/e2e/fixtures/

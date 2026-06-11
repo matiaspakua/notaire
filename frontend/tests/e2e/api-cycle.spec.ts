@@ -223,9 +223,9 @@ test.describe("API — Usuarios endpoints", () => {
 test.describe("API — Presupuestos endpoints", () => {
   test("GET /api/v1/presupuestos — list presupuestos", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiPresupuesto[]>(page, "/presupuestos");
+    const result = await apiGet<{ content: ApiPresupuesto[] }>(page, "/presupuestos");
     expect(result.ok).toBe(true);
-    expect(Array.isArray(result.data)).toBe(true);
+    expect(Array.isArray(result.data?.content)).toBe(true);
   });
 });
 

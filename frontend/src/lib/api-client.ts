@@ -66,6 +66,27 @@ export async function apiGet<T>(path: string): Promise<T> {
   return handleResponse<T>(res, path, "GET");
 }
 
+/** Shape of a Spring Data `Page` response. */
+export interface SpringPage<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+const PAGE_SIZE_ALL = 1000;
+
+/**
+ * Fetches a paginated Spring Data endpoint and returns the unwrapped content.
+ * Uses a large page size because list screens render the full collection.
+ */
+export async function apiGetPaged<T>(path: string): Promise<T[]> {
+  const separator = path.includes("?") ? "&" : "?";
+  const page = await apiGet<SpringPage<T>>(`${path}${separator}size=${PAGE_SIZE_ALL}`);
+  return page.content;
+}
+
 export async function apiPost<T = void>(
   path: string,
   body: unknown
