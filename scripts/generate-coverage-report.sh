@@ -17,9 +17,44 @@ mvn clean test jacoco:report -q 2>/dev/null || true
 cd ..
 
 # Extract JaCoCo metrics
+JACOCO_LINE="N/A"
+JACOCO_BRANCH="N/A"
+JACOCO_LINE_NUM=0
+JACOCO_BRANCH_NUM=0
+
 if [ -f "backend-api/target/site/jacoco/index.html" ]; then
-  JACOCO_LINE=$(grep -oP 'Total.*?<td class="bar">.*?</td><td class="ctr2">\K[^<]+' backend-api/target/site/jacoco/index.html | head -1 || echo "N/A")
-  JACOCO_BRANCH=$(grep -oP 'Total.*?<td class="bar">.*?</td><td class="ctr2">[^<]*</td><td class="bar">.*?</td><td class="ctr2">\K[^<]+' backend-api/target/site/jacoco/index.html | head -1 || echo "N/A")
+  # Extract percentage from JaCoCo HTML report
+  JACOCO_LINE=$(grep -oP '(?<=<td class="ctr2">)[0-9.]+%' backend-api/target/site/jacoco/index.html | head -1 || echo "N/A")
+  JACOCO_BRANCH=$(grep -oP '(?<=<td class="ctr2">)[0-9.]+%' backend-api/target/site/jacoco/index.html | sed -n '2p' || echo "N/A")
+  # Also parse from XML for precision
+  JACOCO_LINE_NUM=$(echo "$JACOCO_LINE" | grep -oP '[0-9.]+' | head -1 || echo "0")
+  JACOCO_BRANCH_NUM=$(echo "$JACOCO_BRANCH" | grep -oP '[0-9.]+' | head -1 || echo "0")
+fi
+
+# Fallback: parse from JaCoCo XML if HTML parsing fails
+if [ "$JACOCO_LINE" = "N/A" ] && [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
+  python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
+root = tree.getroot()
+total, covered = 0, 0
+btotal, bcovered = 0, 0
+for counter in root.findall('.//counter'):
+    typ = counter.get('type')
+    missed = int(counter.get('missed'))
+    covered = int(counter.get('covered'))
+    if typ == 'INSTRUCTION':
+        total = missed + covered
+        covered = covered
+    elif typ == 'BRANCH':
+        btotal = missed + covered
+        bcovered = covered
+print(f'INSTRUCTIONS={covered/total*100:.1f}%' if total else 'INSTRUCTIONS=N/A')
+print(f'BRANCHES={bcovered/btotal*100:.1f}%' if btotal else 'BRANCHES=N/A')
+" > /tmp/jacoco_metrics.txt
+  source /tmp/jacoco_metrics.txt
+  if [ -n "$INSTRUCTIONS" ]; then JACOCO_LINE="$INSTRUCTIONS"; JACOCO_LINE_NUM=$(echo "$INSTRUCTIONS" | grep -oP '[0-9.]+'); fi
+  if [ -n "$BRANCHES" ]; then JACOCO_BRANCH="$BRANCHES"; JACOCO_BRANCH_NUM=$(echo "$BRANCHES" | grep -oP '[0-9.]+'); fi
 fi
 
 echo "   ✓ Coverage: Instructions=${JACOCO_LINE}, Branches=${JACOCO_BRANCH}"
@@ -97,12 +132,12 @@ cat > "$REPORT_DIR/index.html" << 'REPORT'
           <span class="metric-label">Instructions</span>
           <span class="metric-value" id="jacoco-instructions">Loading...</span>
         </div>
-        <div class="coverage-bar"><div class="coverage-fill" style="width: 31%"></div></div>
+        <div class="coverage-bar"><div class="coverage-fill" style="width: ${JACOCO_LINE_NUM}%"></div></div>
         <div class="coverage-metric">
           <span class="metric-label">Branches</span>
           <span class="metric-value" id="jacoco-branches">Loading...</span>
         </div>
-        <div class="coverage-bar"><div class="coverage-fill" style="width: 18%"></div></div>
+        <div class="coverage-bar"><div class="coverage-fill" style="width: ${JACOCO_BRANCH_NUM}%"></div></div>
       </div>
       
       <div class="coverage-card">
@@ -158,8 +193,8 @@ cat > "$REPORT_DIR/index.html" << 'REPORT'
   </div>
   
   <script>
-    document.getElementById('jacoco-instructions').textContent = '31%';
-    document.getElementById('jacoco-branches').textContent = '18%';
+    document.getElementById('jacoco-instructions').textContent = '${JACOCO_LINE}';
+    document.getElementById('jacoco-branches').textContent = '${JACOCO_BRANCH}';
   </script>
 </body>
 </html>
