@@ -4,6 +4,8 @@
 **Target**: 50% code coverage through service layer unit tests
 **Tests Needed**: 200+ new service layer tests
 
+> **Current status**: All 8 services have test files. See [anchored summary](https://github.com/matiaspakua/notaire/pull/479).
+
 ## Overview
 
 Phase 1 focuses on implementing comprehensive unit tests for all service layer classes. Services contain business logic and are the ideal place to increase coverage efficiently.
@@ -40,9 +42,11 @@ Phase 1 focuses on implementing comprehensive unit tests for all service layer c
    - Payment operations and calculations
    - 15+ test cases minimum
 
-6. **GestionQueryService** (1.7 KB)
-   - Query operations
-   - 8+ test cases minimum
+6. **GestionQueryService** (1.7 KB) ✅
+   - findAll() paged, findById(), findByNumero()
+   - DTO mapping (all fields, null estado, null tramiteList, tramite count)
+   - Edge cases (empty results, non-existent IDs)
+   - 10 test cases (completed)
 
 7. **WorkflowValidationService** (3.8 KB)
    - Workflow state validation
@@ -300,9 +304,10 @@ Before committing tests:
 - PR validating patterns
 
 ### Week 4: PagoService + GestionQueryService
-- 20-25 tests
+- **GestionQueryService** ✅ (10 tests, DTO mapping + edge cases)
+- **PagoService** 🔄 (pending)
+- 20-25 tests total
 - Coverage → 43%
-- PR with payment logic tests
 
 ### Week 5: Workflow Services
 - 30-35 tests
