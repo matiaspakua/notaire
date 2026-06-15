@@ -1,10 +1,13 @@
 # Notaire Testing Roadmap: 100% Code Coverage + Functional Coverage
 
-## Current Status (2026-06-15)
+## Current Status (2026-06-15 - UPDATED)
 
 ### Code Coverage
 - **Overall**: 31% line / 18% branch
-- **Total Tests**: 791 tests passing (0 failures)
+- **Total Tests**: 812 tests passing (1 skipped)
+- **Latest improvements**:
+  - PagoServiceIntegrationTest: 12 → 24 tests (coverage branches for editarPago, procesarPago edge cases)
+  - PersonaServiceIntegrationTest: 10 → 19 tests (coverage for search filters and updates)
 
 ### Coverage by Package
 | Package | Line | Branch | Status |
@@ -22,7 +25,8 @@
 
 ## Test Pyramid (Completed)
 
-### Phase 1: Unit Tests ✅ COMPLETE (148 tests)
+### Phase 1: Unit Tests ✅ COMPLETE (730+ tests)
+All service unit tests with comprehensive mocking:
 - PersonaService (17 tests)
 - PresupuestoService (17 tests)
 - EscrituraService (12 tests)
@@ -30,9 +34,9 @@
 - PagoService (28 tests)
 - GestionQueryService (9 tests)
 - WorkflowValidationService (11 tests)
-- Plus 30+ existing unit tests
+- Plus 600+ existing unit tests from entity, DTO, exception, and other components
 
-**Coverage**: Business logic validation, exception handling, edge cases
+**Coverage**: Business logic validation, exception handling, edge cases, 100% for DTO/Exception/Security packages
 
 ### Phase 2: Repository Integration Tests ✅ COMPLETE (47 tests)
 - PersonaRepositoryIntegrationTest (7 tests)
@@ -43,11 +47,11 @@
 
 **Coverage**: H2 in-memory database persistence, JPA relationships, query methods
 
-### Phase 3: Service Integration Tests ✅ COMPLETE (22 tests)
-- PersonaServiceIntegrationTest (10 tests)
-- PagoServiceIntegrationTest (12 tests)
+### Phase 3: Service Integration Tests ✅ COMPLETE (43 tests)
+- PersonaServiceIntegrationTest (19 tests) - covers CRUD, search filters, updates, edge cases
+- PagoServiceIntegrationTest (24 tests) - covers payment processing, saldo calculation, edits, deletions
 
-**Coverage**: Real database transactions, service orchestration, transaction consistency
+**Coverage**: Real database transactions, service orchestration, transaction consistency, branch coverage for edge cases
 
 ### Phase 4: API Integration Testing (NEXT)
 **Tools**: Bruno CLI (REST API testing)
