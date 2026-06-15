@@ -174,4 +174,154 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    @DisplayName("Should search personas with apellido filter only")
+    void shouldSearchPersonasWithApellidoOnly() {
+        Persona saved = personaService.save(testPersona);
+
+        List<Persona> found = personaService.buscar(null, "Pérez", null, null, null);
+
+        assertThat(found).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+    }
+
+    @Test
+    @DisplayName("Should search personas with numero_identificacion filter only")
+    void shouldSearchPersonasWithNumeroIdentificacionOnly() {
+        Persona saved = personaService.save(testPersona);
+
+        List<Persona> found = personaService.buscar(null, null, "12345678", null, null);
+
+        assertThat(found).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+    }
+
+    @Test
+    @DisplayName("Should search personas with tipo_identificacion filter only")
+    void shouldSearchPersonasWithTipoIdentificacionOnly() {
+        Persona saved = personaService.save(testPersona);
+
+        List<Persona> found = personaService.buscar(
+                null,
+                null,
+                null,
+                tipoIdentificacion.getIdTipoIdentificacion(),
+                null
+        );
+
+        assertThat(found).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+    }
+
+    @Test
+    @DisplayName("Should return empty list when searching with no matches")
+    void shouldReturnEmptyListWhenSearchingWithNoMatches() {
+        List<Persona> found = personaService.buscar(
+                "NonexistentName",
+                "NonexistentApellido",
+                "99999999",
+                null,
+                null
+        );
+
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should search personas with combination of filters")
+    void shouldSearchPersonasWithCombinationOfFilters() {
+        Persona saved = personaService.save(testPersona);
+
+        List<Persona> found = personaService.buscar(
+                "Juan",
+                "Pérez",
+                "12345678",
+                tipoIdentificacion.getIdTipoIdentificacion(),
+                false
+        );
+
+        assertThat(found).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+    }
+
+    @Test
+    @DisplayName("Should create multiple personas with different data")
+    void shouldCreateMultiplePersonasWithDifferentData() {
+        Persona p1 = new Persona();
+        p1.setNombre("Juan");
+        p1.setApellido("Pérez");
+        p1.setNumeroIdentificacion("12345678");
+        p1.setEsCliente(true);
+        p1.setFkIdTipoIdentificacion(tipoIdentificacion);
+
+        Persona p2 = new Persona();
+        p2.setNombre("María");
+        p2.setApellido("García");
+        p2.setNumeroIdentificacion("87654321");
+        p2.setEsCliente(false);
+        p2.setFkIdTipoIdentificacion(tipoIdentificacion);
+
+        Persona saved1 = personaService.save(p1);
+        Persona saved2 = personaService.save(p2);
+
+        assertThat(saved1.getIdPersona()).isNotNull();
+        assertThat(saved2.getIdPersona()).isNotNull();
+        assertThat(saved1.getIdPersona()).isNotEqualTo(saved2.getIdPersona());
+
+        List<Persona> all = personaService.findAll();
+        assertThat(all).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved1.getIdPersona()))
+                .anyMatch(p -> p.getIdPersona().equals(saved2.getIdPersona()));
+    }
+
+    @Test
+    @DisplayName("Should update persona fields")
+    void shouldUpdatePersonaFields() {
+        Persona saved = personaService.save(testPersona);
+
+        saved.setNombre("Carlos");
+        saved.setApellido("López");
+        saved.setEsCliente(true);
+        Persona updated = personaService.save(saved);
+
+        assertThat(updated)
+                .hasFieldOrPropertyWithValue("nombre", "Carlos")
+                .hasFieldOrPropertyWithValue("apellido", "López")
+                .hasFieldOrPropertyWithValue("esCliente", true);
+    }
+
+    @Test
+    @DisplayName("Should find persona by id even after update")
+    void shouldFindPersonaByIdEvenAfterUpdate() {
+        Persona saved = personaService.save(testPersona);
+        Integer id = saved.getIdPersona();
+
+        saved.setNombre("UpdatedName");
+        personaService.save(saved);
+
+        Optional<Persona> found = personaService.findById(id);
+
+        assertThat(found).isPresent()
+                .hasValueSatisfying(p -> assertThat(p.getNombre()).isEqualTo("UpdatedName"));
+    }
+
+    @Test
+    @DisplayName("Should search personas filtering by esCliente = false")
+    void shouldSearchPersonasFilteringByEsClienteFalse() {
+        Persona notClient = new Persona();
+        notClient.setNombre("Abogado");
+        notClient.setApellido("Penal");
+        notClient.setNumeroIdentificacion("11111111");
+        notClient.setEsCliente(false);
+        notClient.setFkIdTipoIdentificacion(tipoIdentificacion);
+
+        Persona saved = personaService.save(notClient);
+
+        List<Persona> found = personaService.buscar(null, null, null, null, false);
+
+        assertThat(found).isNotEmpty()
+                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona())
+                        && p.getEsCliente() == false);
+    }
 }
