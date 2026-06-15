@@ -244,4 +244,192 @@ class PagoServiceIntegrationTest extends ServiceIntegrationTest {
         List<Pago> pagos = pagoService.findPagosByPresupuesto(testPresupuesto.getIdPresupuesto());
         assertThat(pagos).isEmpty();
     }
+
+    @Test
+    @DisplayName("Should handle editarPago with null monto")
+    void shouldHandleEditarPagoWithNullMonto() {
+        Pago saved = pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                100000f,
+                new Date(),
+                "Pago Original"
+        );
+
+        Pago edited = pagoService.editarPago(saved.getIdPago(), null, new Date(), "Updated");
+
+        assertThat(edited).isNotNull()
+                .hasFieldOrPropertyWithValue("monto", 100000f)
+                .hasFieldOrPropertyWithValue("observaciones", "Updated");
+    }
+
+    @Test
+    @DisplayName("Should handle editarPago with null fecha")
+    void shouldHandleEditarPagoWithNullFecha() {
+        Date originalDate = new Date();
+        Pago saved = pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                100000f,
+                originalDate,
+                "Pago"
+        );
+
+        Pago edited = pagoService.editarPago(saved.getIdPago(), 120000f, null, "Updated");
+
+        assertThat(edited).isNotNull()
+                .hasFieldOrPropertyWithValue("monto", 120000f)
+                .hasFieldOrPropertyWithValue("fecha", originalDate);
+    }
+
+    @Test
+    @DisplayName("Should handle editarPago with null observaciones")
+    void shouldHandleEditarPagoWithNullObservaciones() {
+        Pago saved = pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                100000f,
+                new Date(),
+                "Original"
+        );
+
+        Pago edited = pagoService.editarPago(saved.getIdPago(), 120000f, new Date(), null);
+
+        assertThat(edited).isNotNull()
+                .hasFieldOrPropertyWithValue("monto", 120000f)
+                .hasFieldOrPropertyWithValue("observaciones", "Original");
+    }
+
+    @Test
+    @DisplayName("Should reject negative monto in editarPago")
+    void shouldRejectNegativeMontoInEditarPago() {
+        Pago saved = pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                100000f,
+                new Date(),
+                "Pago"
+        );
+
+        assertThatThrownBy(() -> pagoService.editarPago(
+                saved.getIdPago(),
+                -50000f,
+                new Date(),
+                "Invalid"
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mayor a cero");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when editing non-existent pago")
+    void shouldThrowExceptionWhenEditingNonExistentPago() {
+        assertThatThrownBy(() -> pagoService.editarPago(
+                9999,
+                100000f,
+                new Date(),
+                "Test"
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no encontrado");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when deleting non-existent pago")
+    void shouldThrowExceptionWhenDeletingNonExistentPago() {
+        assertThatThrownBy(() -> pagoService.deletePago(9999))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no encontrado");
+    }
+
+    @Test
+    @DisplayName("Should handle procesarPago with null fecha and use current date")
+    void shouldHandleProcessPagoWithNullFecha() {
+        long beforeTime = System.currentTimeMillis();
+
+        Pago result = pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                100000f,
+                null,
+                "Pago"
+        );
+
+        long afterTime = System.currentTimeMillis();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getFecha()).isNotNull();
+        assertThat(result.getFecha().getTime()).isBetween(beforeTime, afterTime);
+    }
+
+    @Test
+    @DisplayName("Should handle zero monto in procesarPago")
+    void shouldRejectZeroMontoInProcessarPago() {
+        assertThatThrownBy(() -> pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                0f,
+                new Date(),
+                "Invalid"
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mayor a cero");
+    }
+
+    @Test
+    @DisplayName("Should handle multiple pagos with different amounts")
+    void shouldHandleMultiplePagosWithDifferentAmounts() {
+        float monto1 = 50000f;
+        float monto2 = 75000f;
+        float monto3 = 125000f;
+
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), monto1, new Date(), "Pago 1");
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), monto2, new Date(), "Pago 2");
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), monto3, new Date(), "Pago 3");
+
+        List<Pago> pagos = pagoService.findPagosByPresupuesto(testPresupuesto.getIdPresupuesto());
+
+        assertThat(pagos)
+                .hasSize(3)
+                .extracting(Pago::getMonto)
+                .containsExactlyInAnyOrder(monto1, monto2, monto3);
+
+        Float saldoPendiente = pagoService.calcularSaldoPendiente(testPresupuesto.getIdPresupuesto());
+        float totalPagado = monto1 + monto2 + monto3;
+        assertThat(saldoPendiente).isEqualTo(500000f - totalPagado);
+    }
+
+    @Test
+    @DisplayName("Should find pagos by fecha range with multiple entries")
+    void shouldFindPagosByFechaRangeWithMultipleEntries() {
+        long now = System.currentTimeMillis();
+        Date date1 = new Date(now - 2 * 86400000);
+        Date date2 = new Date(now - 86400000);
+        Date date3 = new Date(now);
+
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), 100000f, date1, "Pago 1");
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), 100000f, date2, "Pago 2");
+        pagoService.procesarPago(testPresupuesto.getIdPresupuesto(), 100000f, date3, "Pago 3");
+
+        Date startDate = new Date(now - 3 * 86400000);
+        Date endDate = new Date(now + 86400000);
+
+        List<Pago> found = pagoService.findPagosByFechaRange(startDate, endDate);
+
+        assertThat(found).isNotEmpty()
+                .hasSize(3);
+    }
+
+    @Test
+    @DisplayName("Should calculate saldo correctly with full payment")
+    void shouldCalculateSaldoWithFullPayment() {
+        pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                500000f,
+                new Date(),
+                "Full payment"
+        );
+
+        Float saldoPendiente = pagoService.calcularSaldoPendiente(testPresupuesto.getIdPresupuesto());
+        assertThat(saldoPendiente).isZero();
+    }
+
+    @Test
+    @DisplayName("Should throw exception when calcularSaldoPendiente for non-existent presupuesto")
+    void shouldThrowExceptionWhenCalculatingSaldoForNonExistentPresupuesto() {
+        assertThatThrownBy(() -> pagoService.calcularSaldoPendiente(9999))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no encontrado");
+    }
 }
