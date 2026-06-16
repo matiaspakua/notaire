@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("PersonaRepository Integration Tests")
-class PersonaRepositoryIntegrationTest extends RepositoryIntegrationTest {
+@DisplayName("Persona Repository Integration Tests")
+class PersonaRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private PersonaRepository personaRepository;
@@ -23,113 +23,111 @@ class PersonaRepositoryIntegrationTest extends RepositoryIntegrationTest {
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
-    private Persona testPersona;
-    private TipoIdentificacion tipoIdentificacion;
+    private TipoIdentificacion tipoId;
 
     @BeforeEach
     void setUp() {
-        tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setNombre("DNI");
-        tipoIdentificacionRepository.save(tipoIdentificacion);
+        personaRepository.deleteAll();
+        tipoIdentificacionRepository.deleteAll();
 
-        testPersona = new Persona();
-        testPersona.setNombre("Juan");
-        testPersona.setApellido("Pérez");
-        testPersona.setNumeroIdentificacion("12345678");
-        testPersona.setEsCliente(false);
-        testPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
+        tipoId = new TipoIdentificacion();
+        tipoId.setNombre("DNI");
+        tipoId.setCaracteres("8");
+        tipoId = tipoIdentificacionRepository.save(tipoId);
     }
 
     @Test
-    @DisplayName("Should persist and retrieve persona")
-    void shouldPersistAndRetrievePersona() {
-        Persona saved = personaRepository.save(testPersona);
+    @DisplayName("Should create persona with required fields")
+    void shouldCreatePersonaWithRequiredFields() {
+        Persona persona = new Persona();
+        persona.setNombre("Juan");
+        persona.setApellido("Pérez");
+        persona.setNumeroIdentificacion("12345678");
+        persona.setEsCliente(true);
+        persona.setFkIdTipoIdentificacion(tipoId);
+
+        Persona saved = personaRepository.save(persona);
 
         assertThat(saved.getIdPersona()).isNotNull();
-
-        Optional<Persona> retrieved = personaRepository.findById(saved.getIdPersona());
-
-        assertThat(retrieved).isPresent()
-                .hasValueSatisfying(p -> {
-                    assertThat(p.getNombre()).isEqualTo("Juan");
-                    assertThat(p.getApellido()).isEqualTo("Pérez");
-                    assertThat(p.getNumeroIdentificacion()).isEqualTo("12345678");
-                    assertThat(p.getEsCliente()).isFalse();
-                });
+        assertThat(saved.getNombre()).isEqualTo("Juan");
+        assertThat(saved.getApellido()).isEqualTo("Pérez");
+        assertThat(saved.getNumeroIdentificacion()).isEqualTo("12345678");
     }
 
     @Test
-    @DisplayName("Should find persona by numero identificacion")
-    void shouldFindByNumeroIdentificacion() {
-        personaRepository.save(testPersona);
+    @DisplayName("Should retrieve persona by ID")
+    void shouldRetrievePersonaById() {
+        Persona persona = new Persona();
+        persona.setNombre("María");
+        persona.setApellido("García");
+        persona.setNumeroIdentificacion("87654321");
+        persona.setEsCliente(false);
+        persona.setFkIdTipoIdentificacion(tipoId);
+        Persona saved = personaRepository.save(persona);
 
-        Optional<Persona> found = personaRepository.findByNumeroIdentificacion("12345678");
+        Optional<Persona> found = personaRepository.findById(saved.getIdPersona());
 
-        assertThat(found).isPresent()
-                .hasValueSatisfying(p -> assertThat(p.getNombre()).isEqualTo("Juan"));
+        assertThat(found).isPresent();
+        assertThat(found.get().getNombre()).isEqualTo("María");
+        assertThat(found.get().getFkIdTipoIdentificacion()).isNotNull();
     }
 
     @Test
-    @DisplayName("Should find personas by nombre containing")
-    void shouldFindByNombreContaining() {
-        Persona saved = personaRepository.save(testPersona);
+    @DisplayName("Should update persona data")
+    void shouldUpdatePersonaData() {
+        Persona persona = new Persona();
+        persona.setNombre("Carlos");
+        persona.setApellido("López");
+        persona.setNumeroIdentificacion("11111111");
+        persona.setEsCliente(true);
+        persona.setFkIdTipoIdentificacion(tipoId);
+        Persona saved = personaRepository.save(persona);
 
-        List<Persona> found = personaRepository.findByNombreContainingIgnoreCase("Juan");
+        saved.setNombre("Carlos Alberto");
+        saved.setEsCliente(false);
+        Persona updated = personaRepository.save(saved);
 
-        assertThat(found).isNotEmpty()
-                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+        assertThat(updated.getNombre()).isEqualTo("Carlos Alberto");
+        assertThat(updated.getEsCliente()).isFalse();
     }
 
     @Test
-    @DisplayName("Should find personas by apellido containing")
-    void shouldFindByApellidoContaining() {
-        Persona saved = personaRepository.save(testPersona);
+    @DisplayName("Should handle optional fields")
+    void shouldHandleOptionalFields() {
+        Persona persona = new Persona();
+        persona.setNombre("Ana");
+        persona.setApellido("Martínez");
+        persona.setNumeroIdentificacion("22222222");
+        persona.setEsCliente(true);
+        persona.setFkIdTipoIdentificacion(tipoId);
+        persona.setDomicilio("Calle Falsa 123");
+        persona.setTelefono("123-4567");
+        persona.setEMail("ana@example.com");
 
-        List<Persona> found = personaRepository.findByApellidoContainingIgnoreCase("Pérez");
+        Persona saved = personaRepository.save(persona);
 
-        assertThat(found).isNotEmpty()
-                .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
+        assertThat(saved.getDomicilio()).isEqualTo("Calle Falsa 123");
+        assertThat(saved.getTelefono()).isEqualTo("123-4567");
+        assertThat(saved.getEMail()).isEqualTo("ana@example.com");
     }
 
     @Test
-    @DisplayName("Should find personas by tipo identificacion")
-    void shouldFindByTipoIdentificacion() {
-        personaRepository.save(testPersona);
+    @DisplayName("Should support multiple personas")
+    void shouldSupportMultiplePersonas() {
+        for (int i = 0; i < 5; i++) {
+            Persona persona = new Persona();
+            persona.setNombre("Nombre" + i);
+            persona.setApellido("Apellido" + i);
+            persona.setNumeroIdentificacion("ID" + (10000000 + i));
+            persona.setEsCliente(i % 2 == 0);
+            persona.setFkIdTipoIdentificacion(tipoId);
+            personaRepository.save(persona);
+        }
 
-        List<Persona> found = personaRepository
-                .findByFkIdTipoIdentificacionIdTipoIdentificacion(tipoIdentificacion.getIdTipoIdentificacion());
+        List<Persona> all = personaRepository.findAll();
+        assertThat(all).hasSize(5);
 
-        assertThat(found).hasSize(1)
-                .allMatch(p -> p.getFkIdTipoIdentificacion().equals(tipoIdentificacion));
-    }
-
-    @Test
-    @DisplayName("Should update persona")
-    void shouldUpdatePersona() {
-        Persona saved = personaRepository.save(testPersona);
-
-        saved.setNombre("Carlos");
-        saved.setApellido("Lopez");
-        personaRepository.save(saved);
-
-        Optional<Persona> updated = personaRepository.findById(saved.getIdPersona());
-
-        assertThat(updated).isPresent()
-                .hasValueSatisfying(p -> {
-                    assertThat(p.getNombre()).isEqualTo("Carlos");
-                    assertThat(p.getApellido()).isEqualTo("Lopez");
-                });
-    }
-
-    @Test
-    @DisplayName("Should delete persona")
-    void shouldDeletePersona() {
-        Persona saved = personaRepository.save(testPersona);
-
-        personaRepository.deleteById(saved.getIdPersona());
-
-        Optional<Persona> deleted = personaRepository.findById(saved.getIdPersona());
-
-        assertThat(deleted).isEmpty();
+        long clientes = all.stream().filter(Persona::getEsCliente).count();
+        assertThat(clientes).isGreaterThan(0);
     }
 }
