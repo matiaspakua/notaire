@@ -51,17 +51,48 @@ jobs:
             -not -path "*/node_modules/*" \
             -not -path "*/.git/*" | wc -l | tr -d ' ')
 
-          TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null \
-            | wc -l | tr -d ' ')
+          # Backend + Frontend test files
+          BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
+          FRONTEND_TEST_COUNT=$(find frontend/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
+          TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT ))
 
           ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
+
+          # Use Cases count
+          UC_COUNT=$(find docs/01-business/02-use-cases -name "CU-*.md" 2>/dev/null | wc -l | tr -d ' ')
+
+          # Functional Requirements count (from CSV, exclude header)
+          RF_FILE="docs/01-business/01-requirements/01_RF - Requerimientos Funcionales/requerimientos.csv"
+          RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | grep -c "Requerimientos Funcionales" || echo "0")
+
+          # Docker services (counted from services section of each compose file)
+          DOCKER_COUNT=$(python3 -c "
+import yaml
+c = 0
+for f in ['docker-compose.yml', 'infra/docker-compose.yml']:
+    try:
+        d = yaml.safe_load(open(f))
+        c += len(d.get('services', {}))
+    except:
+        pass
+print(c)
+" 2>/dev/null || echo "12")
+
+          # Grafana dashboards
+          GRAFANA_COUNT=$(find infra/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+
+          # Contributors count
+          CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
+
+          # First commit date
+          FIRST_COMMIT=$(git log --reverse --format="%aI" | head -1)
 
           # Coverage snapshot (updated by CI pipeline)
           COVERAGE_FILE="docs/metrics/coverage-snapshot.json"
           if [ -f "$COVERAGE_FILE" ]; then
             COVERAGE_JSON=$(cat "$COVERAGE_FILE")
           else
-            COVERAGE_JSON='{"backendInstruction":31,"backendBranch":18,"frontendComponent":45,"e2eTests":85,"apiEndpoints":78,"lastUpdated":"2026-01-01"}'
+            COVERAGE_JSON='{"backendInstruction":32,"backendBranch":19,"frontendComponent":45,"e2eTests":85,"apiEndpoints":78,"lastUpdated":"2026-06-16"}'
           fi
 
           cat > github-page/public/metrics.json << METRICS_EOF
@@ -72,6 +103,13 @@ jobs:
             "markdownFiles": ${MD_COUNT},
             "testClasses": ${TEST_COUNT},
             "adrCount": ${ADR_COUNT},
+            "useCases": ${UC_COUNT},
+            "functionalRequirements": ${RF_COUNT},
+            "dockerServices": ${DOCKER_COUNT},
+            "grafanaDashboards": ${GRAFANA_COUNT},
+            "aiTools": 4,
+            "contributors": ${CONTRIBUTORS},
+            "firstCommitDate": "${FIRST_COMMIT}",
             "coverage": ${COVERAGE_JSON}
           }
           METRICS_EOF

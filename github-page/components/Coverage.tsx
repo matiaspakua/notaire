@@ -192,15 +192,15 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">E2E Tests (Playwright)</span>
-                  <span className="text-green-400 font-mono">500+ tests</span>
+                  <span className="text-green-400 font-mono">28 suites</span>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span className="text-slate-400">E2E Test Cases</span>
+                  <span className="text-green-400 font-mono">163 tests</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">API Tests (Bruno)</span>
-                  <span className="text-green-400 font-mono">50+ endpoints</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Critical Flows</span>
-                  <span className="text-green-400 font-mono">100%</span>
+                  <span className="text-green-400 font-mono">86 tests</span>
                 </li>
               </ul>
             </div>
