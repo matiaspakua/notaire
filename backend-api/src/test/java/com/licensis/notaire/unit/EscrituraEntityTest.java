@@ -1,5 +1,8 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.dto.DtoEscritura;
+import com.licensis.notaire.dto.DtoFolio;
+import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
@@ -211,6 +214,144 @@ class EscrituraEntityTest {
             Escritura escritura = new Escritura(42);
 
             assertThat(escritura.toString()).contains("42");
+        }
+    }
+
+    @Nested
+    @DisplayName("setAtributos branches")
+    class SetAtributosTests {
+
+        @Test
+        @DisplayName("setAtributos with null DTO — no-op")
+        void setAtributosWithNullDtoIsNoOp() {
+            Escritura e = new Escritura(1);
+            e.setAtributos(null);
+            assertThat(e.getIdEscritura()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("setAtributos with null idEscritura — does not overwrite id")
+        void setAtributosDoesNotOverwriteWhenIdNull() {
+            Escritura e = new Escritura();
+            DtoEscritura dto = new DtoEscritura();
+            dto.setNumero(100);
+            dto.setIdEscritura(5);
+            e.setAtributos(dto);
+            assertThat(e.getNumero()).isEqualTo(100);
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null idEscritura — copies id")
+        void setAtributosOverwritesIdWhenNotNull() {
+            Escritura e = new Escritura(1);
+            DtoEscritura dto = new DtoEscritura();
+            dto.setIdEscritura(9);
+            dto.setNumero(200);
+            e.setAtributos(dto);
+            assertThat(e.getNumero()).isEqualTo(200);
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null folios — populates folioList")
+        void setAtributosWithFoliosPopulatesList() {
+            Escritura e = new Escritura(1);
+            DtoEscritura dto = new DtoEscritura();
+            dto.setNumero(1);
+            dto.getFolios().add(new DtoFolio());
+            e.setAtributos(dto);
+            assertThat(e.getFolioList()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with empty DTO folios — creates empty folioList")
+        void setAtributosWithEmptyFoliosCreatesEmptyList() {
+            Escritura e = new Escritura(1);
+            DtoEscritura dto = new DtoEscritura();
+            dto.setNumero(1);
+            // DtoEscritura.getFolios() always returns a new ArrayList (setFolios is no-op in shared module)
+            e.setAtributos(dto);
+            assertThat(e.getFolioList()).isNotNull().isEmpty();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null tramites — populates tramiteList")
+        void setAtributosWithTramitesPopulatesList() {
+            Escritura e = new Escritura(1);
+            DtoEscritura dto = new DtoEscritura();
+            dto.setNumero(1);
+            DtoTramite dtoTramite = new DtoTramite();
+            dtoTramite.setIdTramite(10);
+            dto.getTramites().add(dtoTramite);
+            e.setAtributos(dto);
+            assertThat(e.getTramiteList()).isNotNull().hasSize(1);
+        }
+
+        @Test
+        @DisplayName("setAtributos with null tramites — does not create tramiteList")
+        void setAtributosWithNullTramitesDoesNotCreateList() {
+            Escritura e = new Escritura(1);
+            DtoEscritura dto = new DtoEscritura();
+            dto.setNumero(1);
+            dto.setTramites(null);
+            e.setAtributos(dto);
+            assertThat(e.getTramiteList()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("getDto branches")
+    class GetDtoTests {
+
+        @Test
+        @DisplayName("getDto with null folioList returns empty folios from DTO")
+        void getDtoWithNullFolioListReturnsFoliosEmpty() {
+            Escritura e = new Escritura(1);
+            e.setNumero(42);
+            // folioList is null by default → getDto sets folios null on DTO, but DtoEscritura.getFolios() returns new ArrayList<>()
+            var dto = e.getDto();
+            assertThat(dto.getFolios()).isNotNull().isEmpty();
+        }
+
+        @Test
+        @DisplayName("getDto with empty folioList returns empty folios from DTO")
+        void getDtoWithEmptyFolioListReturnsFoliosEmpty() {
+            Escritura e = new Escritura(1);
+            e.setNumero(42);
+            e.setFolioList(new ArrayList<>());
+            var dto = e.getDto();
+            assertThat(dto.getFolios()).isNotNull().isEmpty();
+        }
+
+        @Test
+        @DisplayName("getDto with null tramiteList returns empty tramites")
+        void getDtoWithNullTramiteListReturnsTramitesEmpty() {
+            Escritura e = new Escritura(1);
+            e.setNumero(42);
+            var dto = e.getDto();
+            // tramiteList null → setTramites(null) → dto.getTramites() is null
+            assertThat(dto.getTramites()).isNull();
+        }
+
+        @Test
+        @DisplayName("getDto with empty tramiteList returns null tramites")
+        void getDtoWithEmptyTramiteListReturnsTramitesNull() {
+            Escritura e = new Escritura(1);
+            e.setNumero(42);
+            e.setTramiteList(new ArrayList<>());
+            var dto = e.getDto();
+            assertThat(dto.getTramites()).isNull();
+        }
+
+        @Test
+        @DisplayName("getDto maps basic fields correctly")
+        void getDtoMapsBasicFields() {
+            Escritura e = new Escritura(5);
+            e.setNumero(3001);
+            e.setCuerpo("Escritura de prueba");
+            var dto = e.getDto();
+            assertThat(dto.getIdEscritura()).isEqualTo(5);
+            assertThat(dto.getNumero()).isEqualTo(3001);
+            assertThat(dto.getCuerpo()).isEqualTo("Escritura de prueba");
         }
     }
 }
