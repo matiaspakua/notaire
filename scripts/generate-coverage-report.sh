@@ -12,6 +12,8 @@ TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
 
 # Backend Coverage (JaCoCo)
 echo "1️⃣ Backend Unit & Integration Tests (JaCoCo)..."
+echo "   Installing shared module dependency..."
+mvn install -pl notaire-shared -q 2>/dev/null || true
 cd backend-api
 mvn clean test jacoco:report -q 2>/dev/null || true
 cd ..
