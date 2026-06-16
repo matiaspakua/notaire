@@ -21,7 +21,7 @@ export default function ProtocoloPage() {
 
   const { data: folios = [], isLoading } = useQuery({
     queryKey: ["folios"],
-    queryFn: () => apiGet<Folio[]>("/folios"),
+    queryFn: () => apiGet<Folio[]>("/folio"),
   });
 
   const [reportDialog, setReportDialog] = useState<string | null>(null);
