@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import type { SiteMetrics } from "@/lib/metrics";
 
 interface CoverageMetric {
   name: string;
@@ -10,48 +11,51 @@ interface CoverageMetric {
   lastUpdate: string;
 }
 
-const coverageData: CoverageMetric[] = [
-  {
-    name: "Backend (JaCoCo)",
-    type: "Instruction Coverage",
-    percentage: 31,
-    color: "var(--ai-cyan)",
-    trend: "↑ +5% this month",
-    lastUpdate: "2026-06-11",
-  },
-  {
-    name: "Backend (JaCoCo)",
-    type: "Branch Coverage",
-    percentage: 18,
-    color: "#f59e0b",
-    trend: "↑ +3% this month",
-    lastUpdate: "2026-06-11",
-  },
-  {
-    name: "Frontend (Jest)",
-    type: "Component Coverage",
-    percentage: 45,
-    color: "var(--spring-green)",
-    trend: "→ Stable",
-    lastUpdate: "2026-06-11",
-  },
-  {
-    name: "E2E (Playwright)",
-    type: "Test Coverage",
-    percentage: 85,
-    color: "var(--ai-purple)",
-    trend: "↑ +10% this month",
-    lastUpdate: "2026-06-11",
-  },
-  {
-    name: "API (Bruno)",
-    type: "Endpoint Coverage",
-    percentage: 78,
-    color: "#ec4899",
-    trend: "↑ +8% this month",
-    lastUpdate: "2026-06-11",
-  },
-];
+function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
+  const { coverage } = metrics;
+  return [
+    {
+      name: "Backend (JaCoCo)",
+      type: "Instruction Coverage",
+      percentage: coverage.backendInstruction,
+      color: "var(--ai-cyan)",
+      trend: "↑ Increasing",
+      lastUpdate: coverage.lastUpdated,
+    },
+    {
+      name: "Backend (JaCoCo)",
+      type: "Branch Coverage",
+      percentage: coverage.backendBranch,
+      color: "#f59e0b",
+      trend: "↑ Increasing",
+      lastUpdate: coverage.lastUpdated,
+    },
+    {
+      name: "Frontend (Jest)",
+      type: "Component Coverage",
+      percentage: coverage.frontendComponent,
+      color: "var(--spring-green)",
+      trend: "→ Stable",
+      lastUpdate: coverage.lastUpdated,
+    },
+    {
+      name: "E2E (Playwright)",
+      type: "Test Coverage",
+      percentage: coverage.e2eTests,
+      color: "var(--ai-purple)",
+      trend: "↑ Increasing",
+      lastUpdate: coverage.lastUpdated,
+    },
+    {
+      name: "API (Bruno)",
+      type: "Endpoint Coverage",
+      percentage: coverage.apiEndpoints,
+      color: "#ec4899",
+      trend: "↑ Increasing",
+      lastUpdate: coverage.lastUpdated,
+    },
+  ];
+}
 
 function CoverageCard({ metric }: { metric: CoverageMetric }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -126,7 +130,9 @@ function CoverageCard({ metric }: { metric: CoverageMetric }) {
   );
 }
 
-export function Coverage() {
+export function Coverage({ metrics }: { metrics: SiteMetrics }) {
+  const coverageData = buildCoverageData(metrics);
+
   return (
     <section className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
@@ -139,7 +145,7 @@ export function Coverage() {
             Test Coverage <span className="grad-cyan">Dashboard</span>
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Real-time coverage metrics across backend, frontend, E2E, and API layers. Updated every commit and nightly.
+            Real-time coverage metrics across backend, frontend, E2E, and API layers. Updated on every merge to main.
           </p>
         </div>
 
@@ -160,11 +166,11 @@ export function Coverage() {
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">Unit Tests (JUnit 5)</span>
-                  <span className="text-cyan-400 font-mono">67 tests</span>
+                  <span className="text-cyan-400 font-mono">{metrics.testClasses} classes</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">Integration Tests (H2 DB)</span>
-                  <span className="text-cyan-400 font-mono">30+ tests</span>
+                  <span className="text-cyan-400 font-mono">H2 + Pg</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">JaCoCo Enforcement</span>
