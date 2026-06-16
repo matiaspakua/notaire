@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class RolController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los roles")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<RolResponse>> getAllRoles() {
         return ResponseEntity.ok(rolRepository.findAll().stream().map(this::toResponse).toList());
     }
@@ -57,6 +59,7 @@ public class RolController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener rol por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<RolResponse> getRolById(@PathVariable Integer id) {
         return rolRepository.findById(id)
                 .map(this::toResponse)

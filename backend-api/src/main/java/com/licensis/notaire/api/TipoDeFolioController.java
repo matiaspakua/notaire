@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class TipoDeFolioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los tipos de folio")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTipoDeFolio>> getAll() {
         List<DtoTipoDeFolio> result = repository.findAll().stream()
                 .map(TipoDeFolio::getDto)
@@ -40,6 +42,7 @@ public class TipoDeFolioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo de folio por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoTipoDeFolio> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))

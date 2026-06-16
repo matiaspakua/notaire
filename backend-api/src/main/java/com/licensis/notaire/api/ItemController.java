@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ItemController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los ítems")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Item>> getAll() {
         return ResponseEntity.ok(repository.findAll());
     }
@@ -39,6 +41,7 @@ public class ItemController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener ítem por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Item> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
@@ -47,6 +50,7 @@ public class ItemController {
 
     @GetMapping("/presupuesto/{idPresupuesto}")
     @Operation(summary = "Obtener ítems por presupuesto")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Item>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
         return ResponseEntity.ok(repository.findByFkIdPresupuestoIdPresupuesto(idPresupuesto));
     }

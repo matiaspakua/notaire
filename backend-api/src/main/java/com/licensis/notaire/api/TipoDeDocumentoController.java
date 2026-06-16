@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class TipoDeDocumentoController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los tipo-de-documento")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTipoDeDocumento>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
                 .map(TipoDeDocumento::getDto)
@@ -44,6 +46,7 @@ public class TipoDeDocumentoController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar tipo-de-documento por nombre")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTipoDeDocumento>> search(@RequestParam String nombre) {
         return ResponseEntity.ok(repository.findByNombreContaining(nombre).stream()
                 .map(TipoDeDocumento::getDto)
@@ -56,6 +59,7 @@ public class TipoDeDocumentoController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo-de-documento por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoTipoDeDocumento> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))
@@ -64,6 +68,7 @@ public class TipoDeDocumentoController {
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Verificar si el tipo de documento está en uso")
+    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

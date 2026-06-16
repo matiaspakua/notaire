@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ public class PagoController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los pagos")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Pago>> getAll() {
         try {
             return ResponseEntity.ok(pagoService.findAll());
@@ -47,6 +49,7 @@ public class PagoController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "CU47 - Consultar pago por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Pago> getById(@PathVariable Integer id) {
         try {
             return pagoService.consultarPago(id)
@@ -60,6 +63,7 @@ public class PagoController {
 
     @GetMapping("/presupuesto/{idPresupuesto}")
     @Operation(summary = "Obtener pagos por presupuesto")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Pago>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
         try {
             return ResponseEntity.ok(pagoService.findPagosByPresupuesto(idPresupuesto));
@@ -71,6 +75,7 @@ public class PagoController {
 
     @GetMapping("/presupuesto/{idPresupuesto}/saldo")
     @Operation(summary = "Calcular saldo pendiente de un presupuesto")
+    @Transactional(readOnly = true)
     public ResponseEntity<Float> getSaldoPendiente(@PathVariable Integer idPresupuesto) {
         try {
             Float saldo = pagoService.calcularSaldoPendiente(idPresupuesto);
@@ -85,6 +90,7 @@ public class PagoController {
 
     @GetMapping("/fecha")
     @Operation(summary = "Obtener pagos por rango de fechas")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Pago>> getByFechaRange(
             @Parameter(description = "Fecha inicio (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,

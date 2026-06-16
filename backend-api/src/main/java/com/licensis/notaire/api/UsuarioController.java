@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,12 +67,14 @@ public class UsuarioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioRepository.findAll().stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/persona/{idPersona}")
     @Operation(summary = "Obtener usuario por id de persona asociada")
+    @Transactional(readOnly = true)
     public ResponseEntity<UsuarioResponse> getUsuarioByPersona(@PathVariable Integer idPersona) {
         return usuarioRepository.findFirstByFkIdPersonaIdPersona(idPersona)
                 .map(this::toResponse)
@@ -85,6 +88,7 @@ public class UsuarioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<UsuarioResponse> getUsuarioById(@PathVariable Integer id) {
         return usuarioRepository.findById(id)
                 .map(this::toResponse)

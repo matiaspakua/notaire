@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -55,6 +56,7 @@ public class PresupuestoController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener presupuesto por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Presupuesto> getById(@PathVariable Integer id) {
         return presupuestoService.findById(id)
                 .map(ResponseEntity::ok)
@@ -63,12 +65,14 @@ public class PresupuestoController {
 
     @GetMapping("/persona/{idPersona}")
     @Operation(summary = "Obtener presupuestos de una persona (CU60)")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Presupuesto>> getByPersona(@PathVariable Integer idPersona) {
         return ResponseEntity.ok(presupuestoService.findByPersona(idPersona));
     }
 
     @GetMapping("/buscar")
     @Operation(summary = "Buscar presupuestos por estado (CU60)")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Presupuesto>> buscar(
             @Parameter(description = "Estado del presupuesto") @RequestParam(required = false) String estado) {
         return ResponseEntity.ok(presupuestoService.findByEstado(estado));

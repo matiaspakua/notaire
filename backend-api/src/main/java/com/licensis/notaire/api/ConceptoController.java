@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class ConceptoController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los conceptos")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcepto>> getAllConceptos() {
         List<DtoConcepto> result = repository.findAll().stream()
                 .map(Concepto::getDto)
@@ -49,6 +51,7 @@ public class ConceptoController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar conceptos por nombre")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoConcepto>> searchConceptos(@RequestParam String nombre) {
         List<DtoConcepto> result = repository.findByNombreContaining(nombre).stream()
                 .map(Concepto::getDto)
@@ -58,6 +61,7 @@ public class ConceptoController {
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Verificar si un concepto está en uso")
+    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isConceptoInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -72,6 +76,7 @@ public class ConceptoController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener concepto por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoConcepto> getConceptoById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))

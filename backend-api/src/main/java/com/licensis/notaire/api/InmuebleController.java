@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,7 @@ public class InmuebleController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los inmueble")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Inmueble>> getAll() {
         try {
             return ResponseEntity.ok(getJpaController().findInmuebleEntities());
@@ -38,6 +40,7 @@ public class InmuebleController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener inmueble por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Inmueble> getById(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(getJpaController().findInmueble(id));

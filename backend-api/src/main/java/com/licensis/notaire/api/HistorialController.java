@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class HistorialController {
 
     @GetMapping
     @Operation(summary = "Obtener todo el historial")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorialSummary>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
                 .map(DtoHistorialSummary::from)
@@ -42,6 +44,7 @@ public class HistorialController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener historial por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoHistorialSummary> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(h -> ResponseEntity.ok(DtoHistorialSummary.from(h)))
@@ -50,6 +53,7 @@ public class HistorialController {
 
     @GetMapping("/gestion/{idGestion}")
     @Operation(summary = "Obtener historial de una gestion (CU13)")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorialSummary>> getByGestion(@PathVariable Integer idGestion) {
         return ResponseEntity.ok(repository.findByFkIdGestionIdGestion(idGestion).stream()
                 .map(DtoHistorialSummary::from)

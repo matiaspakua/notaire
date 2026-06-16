@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class MovimientoTestimonioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los movimiento-testimonio")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoMovimientoTestimonio>> getAll() {
         List<DtoMovimientoTestimonio> result = repository.findAll().stream()
                 .map(MovimientoTestimonio::getDto)
@@ -40,6 +42,7 @@ public class MovimientoTestimonioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener movimiento-testimonio por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoMovimientoTestimonio> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))

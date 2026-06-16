@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class EstadoDeGestionController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los estados de gestion")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoEstadoDeGestion>> getAll() {
         List<DtoEstadoDeGestion> result = repository.findAll().stream()
                 .map(EstadoDeGestion::getDto)
@@ -53,6 +55,7 @@ public class EstadoDeGestionController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener estado de gestion por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoEstadoDeGestion> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))
@@ -61,6 +64,7 @@ public class EstadoDeGestionController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar estados de gestion por nombre")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoEstadoDeGestion>> search(@RequestParam String nombre) {
         List<DtoEstadoDeGestion> result = repository.findByNombreContaining(nombre).stream()
                 .map(EstadoDeGestion::getDto)
@@ -70,6 +74,7 @@ public class EstadoDeGestionController {
 
     @GetMapping("/{id}/in-use")
     @Operation(summary = "Verificar si el estado esta referenciado")
+    @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

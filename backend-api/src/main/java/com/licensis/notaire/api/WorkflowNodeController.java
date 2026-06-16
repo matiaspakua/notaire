@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ public class WorkflowNodeController {
 
     @GetMapping("/by-workflow/{workflowId}")
     @Operation(summary = "Obtener nodos por workflow")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowNode>> getByWorkflow(@PathVariable Integer workflowId) {
         return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
                 .stream().map(WorkflowNode::toDto).toList());
@@ -61,6 +63,7 @@ public class WorkflowNodeController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener nodo por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(n -> ResponseEntity.ok(n.toDto()))
