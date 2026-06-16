@@ -17,19 +17,33 @@ export interface SiteMetrics {
   markdownFiles: number;
   testClasses: number;
   adrCount: number;
+  useCases: number;
+  functionalRequirements: number;
+  dockerServices: number;
+  grafanaDashboards: number;
+  aiTools: number;
+  contributors: number;
+  firstCommitDate: string;
   coverage: CoverageSnapshot;
 }
 
 const DEFAULTS: SiteMetrics = {
   generatedAt: new Date().toISOString(),
-  commits: 449,
-  pullRequests: 159,
-  markdownFiles: 577,
-  testClasses: 94,
+  commits: 451,
+  pullRequests: 178,
+  markdownFiles: 293,
+  testClasses: 122,
   adrCount: 11,
+  useCases: 78,
+  functionalRequirements: 94,
+  dockerServices: 12,
+  grafanaDashboards: 4,
+  aiTools: 4,
+  contributors: 3,
+  firstCommitDate: "2026-06-10",
   coverage: {
-    backendInstruction: 31,
-    backendBranch: 18,
+    backendInstruction: 32,
+    backendBranch: 19,
     frontendComponent: 45,
     e2eTests: 85,
     apiEndpoints: 78,

@@ -11,20 +11,25 @@ interface StatItem {
   sub: string;
 }
 
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
 function buildStats(metrics: SiteMetrics): StatItem[] {
   return [
-    { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: "Since March 2014" },
+    { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: `Since ${formatDate(metrics.firstCommitDate)}` },
     { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "100% merge rate" },
-    { value: 78, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: "CU-01 → CU-78" },
-    { value: 95, label: "Functional Requirements", suffix: "", color: "#f59e0b", icon: "📌", sub: "RF-01 → RF-95" },
+    { value: metrics.useCases, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: `CU-01 → CU-${metrics.useCases}` },
+    { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#f59e0b", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
     { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: "JaCoCo enforced" },
     { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ec4899", icon: "📚", sub: "Living documentation" },
-    { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration" },
-    { value: 10, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
-    { value: 4, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
-    { value: 4, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: "Claude, Copilot, Gemini, OpenCode" },
+    { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration + E2E" },
+    { value: metrics.dockerServices, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
+    { value: metrics.grafanaDashboards, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
+    { value: metrics.aiTools, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: "Claude, Copilot, Gemini, OpenCode" },
     { value: metrics.adrCount, label: "Architecture Decisions", suffix: "", color: "#6366f1", icon: "🏛️", sub: `ADR-001 → ADR-0${metrics.adrCount}` },
-    { value: metrics.pullRequests, label: "Branches Created", suffix: "", color: "#f43f5e", icon: "🌿", sub: "feature, fix, refactor, docs…" },
+    { value: metrics.contributors, label: "Contributors", suffix: "", color: "#f43f5e", icon: "👥", sub: "Active development" },
   ];
 }
 
