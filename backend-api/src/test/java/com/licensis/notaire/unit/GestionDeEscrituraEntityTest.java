@@ -1,7 +1,11 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.GestionDeEscritura;
+import com.licensis.notaire.dto.DtoEstadoDeGestion;
+import com.licensis.notaire.dto.DtoGestionDeEscritura;
+import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.negocio.EstadoDeGestion;
+import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Persona;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -91,6 +95,109 @@ class GestionDeEscrituraEntityTest {
             var gestiones = java.util.List.of(gestion1, gestion2, gestion3);
 
             assertThat(gestiones).hasSize(3);
+        }
+    }
+
+    @Nested
+    @DisplayName("Equality and hashCode branches")
+    class EqualityTests {
+
+        @Test
+        @DisplayName("Should not be equal to null")
+        void shouldNotBeEqualToNull() {
+            GestionDeEscritura g = new GestionDeEscritura(1);
+            assertThat(g).isNotEqualTo(null);
+        }
+
+        @Test
+        @DisplayName("Should not be equal to different type")
+        void shouldNotBeEqualToDifferentType() {
+            GestionDeEscritura g = new GestionDeEscritura(1);
+            assertThat(g).isNotEqualTo("string");
+        }
+
+        @Test
+        @DisplayName("Should be equal when both IDs are null")
+        void shouldBeEqualWhenBothIdsNull() {
+            GestionDeEscritura g1 = new GestionDeEscritura();
+            GestionDeEscritura g2 = new GestionDeEscritura();
+            assertThat(g1).isEqualTo(g2);
+        }
+
+        @Test
+        @DisplayName("Should not be equal when this ID null and other has ID")
+        void shouldNotBeEqualWhenThisNullOtherHasId() {
+            GestionDeEscritura g1 = new GestionDeEscritura();
+            GestionDeEscritura g2 = new GestionDeEscritura(5);
+            assertThat(g1).isNotEqualTo(g2);
+        }
+
+        @Test
+        @DisplayName("hashCode should be non-zero for default ID (-1)")
+        void hashCodeDefaultIdIsNonZero() {
+            GestionDeEscritura g = new GestionDeEscritura();
+            assertThat(g.hashCode()).isNotEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("hashCode should be consistent with same ID")
+        void hashCodeShouldBeConsistentWithSameId() {
+            GestionDeEscritura g1 = new GestionDeEscritura(7);
+            GestionDeEscritura g2 = new GestionDeEscritura(7);
+            assertThat(g1.hashCode()).isEqualTo(g2.hashCode());
+        }
+
+        @Test
+        @DisplayName("toString should contain ID")
+        void toStringShouldContainId() {
+            GestionDeEscritura g = new GestionDeEscritura(33);
+            assertThat(g.toString()).contains("33");
+        }
+    }
+
+    @Nested
+    @DisplayName("setAtributos branches")
+    class SetAtributosTests {
+
+        @Test
+        @DisplayName("setAtributos with null personaEscribano — does not set escribano")
+        void setAtributosWithNullPersonaEscribano() throws Exception {
+            GestionDeEscritura g = new GestionDeEscritura(1);
+            DtoGestionDeEscritura dto = new DtoGestionDeEscritura();
+            dto.setNumero(100);
+            dto.setPersonaEscribano(null);
+            DtoEstadoDeGestion dtoEstado = new DtoEstadoDeGestion();
+            dtoEstado.setIdEstadoGestion(1);
+            dtoEstado.setNombre("Iniciada");
+            dto.setEstado(dtoEstado);
+
+            g.setAtributos(dto);
+            assertThat(g.getFkIdPersonaEscribano()).isNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null personaEscribano — sets escribano")
+        void setAtributosWithPersonaEscribano() throws Exception {
+            GestionDeEscritura g = new GestionDeEscritura(1);
+            DtoGestionDeEscritura dto = new DtoGestionDeEscritura();
+            dto.setNumero(200);
+            DtoTipoIdentificacion dtoTipoId = new DtoTipoIdentificacion();
+            dtoTipoId.setIdTipoIdentificacion(1);
+            dtoTipoId.setNombre("DNI");
+            DtoPersona dtoPersona = new DtoPersona();
+            dtoPersona.setIdPersona(10);
+            dtoPersona.setNombre("Juan");
+            dtoPersona.setApellido("García");
+            dtoPersona.setVersion(0);
+            dtoPersona.setDtoTipoIdentificacion(dtoTipoId);
+            dto.setPersonaEscribano(dtoPersona);
+            DtoEstadoDeGestion dtoEstado = new DtoEstadoDeGestion();
+            dtoEstado.setIdEstadoGestion(1);
+            dtoEstado.setNombre("Iniciada");
+            dto.setEstado(dtoEstado);
+
+            g.setAtributos(dto);
+            assertThat(g.getFkIdPersonaEscribano()).isNotNull();
         }
     }
 
