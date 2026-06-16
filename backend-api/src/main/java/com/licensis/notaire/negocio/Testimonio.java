@@ -258,9 +258,10 @@ public class Testimonio implements Serializable
     @Override
     public String toString()
     {
+        String escrituraId = fkIdEscritura != null ? String.valueOf(fkIdEscritura.getIdEscritura()) : "null";
         return "Testimonio[ idTestimonio=" + idTestimonio + " ]"
                 + "[ numero=" + numero + " ]"
-                + "[ idEscritura=" + fkIdEscritura.getIdEscritura() + " ]";
+                + "[ idEscritura=" + escrituraId + " ]";
     }
 
     public int getVersion()

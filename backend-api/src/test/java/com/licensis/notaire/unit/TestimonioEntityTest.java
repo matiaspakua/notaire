@@ -178,5 +178,13 @@ class TestimonioEntityTest {
             assertThat(testimonio.toString()).contains("33");
             assertThat(testimonio.toString()).contains("101");
         }
+
+        @Test
+        @DisplayName("toString should not throw when escritura is null")
+        void toStringShouldNotThrowWhenEscrituraIsNull() {
+            Testimonio testimonio = new Testimonio(7, 200, false);
+
+            assertThat(testimonio.toString()).contains("7").contains("200").contains("null");
+        }
     }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class TestimonioController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los testimonio")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTestimonio>> getAll() {
         List<DtoTestimonio> result = repository.findAll().stream()
                 .map(Testimonio::getDto)
@@ -40,6 +42,7 @@ public class TestimonioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener testimonio por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoTestimonio> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))
