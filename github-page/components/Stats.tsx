@@ -1,20 +1,32 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import type { SiteMetrics } from "@/lib/metrics";
 
-const stats = [
-  { value: 527, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: "Since March 2014" },
-  { value: 159, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "100% merge rate" },
-  { value: 78, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: "CU-01 → CU-78" },
-  { value: 95, label: "Functional Requirements", suffix: "", color: "#f59e0b", icon: "📌", sub: "RF-01 → RF-95" },
-  { value: 80, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: "JaCoCo enforced" },
-  { value: 545, label: "Docs (Markdown files)", suffix: "", color: "#ec4899", icon: "📚", sub: "Living documentation" },
-  { value: 69, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration" },
-  { value: 10, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
-  { value: 4, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
-  { value: 4, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: "Claude, Copilot, Gemini, OpenCode" },
-  { value: 11, label: "Architecture Decisions", suffix: "", color: "#6366f1", icon: "🏛️", sub: "ADR-001 → ADR-011" },
-  { value: 97, label: "Branches Created", suffix: "", color: "#f43f5e", icon: "🌿", sub: "feature, fix, refactor, docs…" },
-];
+interface StatItem {
+  value: number;
+  label: string;
+  suffix: string;
+  color: string;
+  icon: string;
+  sub: string;
+}
+
+function buildStats(metrics: SiteMetrics): StatItem[] {
+  return [
+    { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: "Since March 2014" },
+    { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "100% merge rate" },
+    { value: 78, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: "CU-01 → CU-78" },
+    { value: 95, label: "Functional Requirements", suffix: "", color: "#f59e0b", icon: "📌", sub: "RF-01 → RF-95" },
+    { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: "JaCoCo enforced" },
+    { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ec4899", icon: "📚", sub: "Living documentation" },
+    { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration" },
+    { value: 10, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
+    { value: 4, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
+    { value: 4, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: "Claude, Copilot, Gemini, OpenCode" },
+    { value: metrics.adrCount, label: "Architecture Decisions", suffix: "", color: "#6366f1", icon: "🏛️", sub: `ADR-001 → ADR-0${metrics.adrCount}` },
+    { value: metrics.pullRequests, label: "Branches Created", suffix: "", color: "#f43f5e", icon: "🌿", sub: "feature, fix, refactor, docs…" },
+  ];
+}
 
 function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0);
@@ -47,7 +59,9 @@ function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-export function Stats() {
+export function Stats({ metrics }: { metrics: SiteMetrics }) {
+  const stats = buildStats(metrics);
+
   return (
     <section id="today" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">

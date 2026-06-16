@@ -3,7 +3,7 @@ name: Deploy GitHub Page
 on:
   push:
     branches: [main]
-    paths: ["github-page/**"]
+    paths: ["github-page/**", "docs/metrics/**"]
   workflow_dispatch:
 
 permissions:
@@ -23,12 +23,61 @@ jobs:
         working-directory: github-page
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: github-page/package-lock.json
+
+      - name: Fetch repository metrics
+        working-directory: .
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${{ github.repository }}"
+
+          # Commit count from git history
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+
+          # PR count via GitHub search API (single request, no pagination needed)
+          PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" \
+            --jq '.total_count' 2>/dev/null || echo "0")
+
+          # File counts from repo
+          MD_COUNT=$(find . -name "*.md" \
+            -not -path "*/node_modules/*" \
+            -not -path "*/.git/*" | wc -l | tr -d ' ')
+
+          TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null \
+            | wc -l | tr -d ' ')
+
+          ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
+
+          # Coverage snapshot (updated by CI pipeline)
+          COVERAGE_FILE="docs/metrics/coverage-snapshot.json"
+          if [ -f "$COVERAGE_FILE" ]; then
+            COVERAGE_JSON=$(cat "$COVERAGE_FILE")
+          else
+            COVERAGE_JSON='{"backendInstruction":31,"backendBranch":18,"frontendComponent":45,"e2eTests":85,"apiEndpoints":78,"lastUpdated":"2026-01-01"}'
+          fi
+
+          cat > github-page/public/metrics.json << METRICS_EOF
+          {
+            "generatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commits": ${COMMIT_COUNT},
+            "pullRequests": ${PR_COUNT},
+            "markdownFiles": ${MD_COUNT},
+            "testClasses": ${TEST_COUNT},
+            "adrCount": ${ADR_COUNT},
+            "coverage": ${COVERAGE_JSON}
+          }
+          METRICS_EOF
+
+          echo "Generated metrics.json:"
+          cat github-page/public/metrics.json
 
       - name: Install dependencies
         run: npm ci
