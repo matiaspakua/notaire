@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -39,7 +40,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         testPersona = new Persona();
         testPersona.setNombre("Juan");
         testPersona.setApellido("Pérez");
-        testPersona.setNumeroIdentificacion("12345678");
+        testPersona.setNumeroIdentificacion("DNI-" + UUID.randomUUID().toString().substring(0, 8));
         testPersona.setEsCliente(false);
         testPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
     }
@@ -94,7 +95,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         List<Persona> found = personaService.buscar(
                 "Juan",
                 "Pérez",
-                "12345678",
+                saved.getNumeroIdentificacion(),
                 tipoIdentificacion.getIdTipoIdentificacion(),
                 false
         );
@@ -120,7 +121,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         Persona cliente = new Persona();
         cliente.setNombre("Carlos");
         cliente.setApellido("Lopez");
-        cliente.setNumeroIdentificacion("87654321");
+        cliente.setNumeroIdentificacion("ID-" + UUID.randomUUID().toString().substring(0, 8));
         cliente.setEsCliente(true);
         cliente.setFkIdTipoIdentificacion(tipoIdentificacion);
         Persona saved = personaService.save(cliente);
@@ -191,7 +192,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
     void shouldSearchPersonasWithNumeroIdentificacionOnly() {
         Persona saved = personaService.save(testPersona);
 
-        List<Persona> found = personaService.buscar(null, null, "12345678", null, null);
+        List<Persona> found = personaService.buscar(null, null, saved.getNumeroIdentificacion(), null, null);
 
         assertThat(found).isNotEmpty()
                 .anyMatch(p -> p.getIdPersona().equals(saved.getIdPersona()));
@@ -236,7 +237,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         List<Persona> found = personaService.buscar(
                 "Juan",
                 "Pérez",
-                "12345678",
+                saved.getNumeroIdentificacion(),
                 tipoIdentificacion.getIdTipoIdentificacion(),
                 false
         );
@@ -251,14 +252,14 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         Persona p1 = new Persona();
         p1.setNombre("Juan");
         p1.setApellido("Pérez");
-        p1.setNumeroIdentificacion("12345678");
+        p1.setNumeroIdentificacion("ID-" + UUID.randomUUID().toString().substring(0, 8));
         p1.setEsCliente(true);
         p1.setFkIdTipoIdentificacion(tipoIdentificacion);
 
         Persona p2 = new Persona();
         p2.setNombre("María");
         p2.setApellido("García");
-        p2.setNumeroIdentificacion("87654321");
+        p2.setNumeroIdentificacion("ID-" + UUID.randomUUID().toString().substring(0, 8));
         p2.setEsCliente(false);
         p2.setFkIdTipoIdentificacion(tipoIdentificacion);
 
@@ -312,7 +313,7 @@ class PersonaServiceIntegrationTest extends ServiceIntegrationTest {
         Persona notClient = new Persona();
         notClient.setNombre("Abogado");
         notClient.setApellido("Penal");
-        notClient.setNumeroIdentificacion("11111111");
+        notClient.setNumeroIdentificacion("ID-" + UUID.randomUUID().toString().substring(0, 8));
         notClient.setEsCliente(false);
         notClient.setFkIdTipoIdentificacion(tipoIdentificacion);
 
