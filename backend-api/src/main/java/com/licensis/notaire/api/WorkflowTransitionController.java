@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class WorkflowTransitionController {
 
     @GetMapping("/by-workflow/{workflowId}")
     @Operation(summary = "Obtener transiciones por workflow")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowTransition>> getByWorkflow(@PathVariable Integer workflowId) {
         return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
                 .stream().map(WorkflowTransition::toDto).toList());
@@ -56,6 +58,7 @@ public class WorkflowTransitionController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener transición por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowTransition> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(t -> ResponseEntity.ok(t.toDto()))

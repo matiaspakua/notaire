@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,6 +78,7 @@ public class DocumentoPresentadoController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los documentos presentados")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DocumentoPresentadoResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
@@ -87,6 +89,7 @@ public class DocumentoPresentadoController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener documento presentado por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DocumentoPresentadoResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(this::toResponse)

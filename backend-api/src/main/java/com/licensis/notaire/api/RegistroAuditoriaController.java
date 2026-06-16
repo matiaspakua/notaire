@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ public class RegistroAuditoriaController {
      */
     @GetMapping
     @Operation(summary = "Obtener los registros de auditoria con paginación y filtros opcionales")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
@@ -75,6 +77,7 @@ public class RegistroAuditoriaController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener registro de auditoria por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoRegistroAuditoria> getById(@PathVariable Integer id) {
         return service.findByIdAsDto(id)
                 .map(ResponseEntity::ok)
@@ -83,6 +86,7 @@ public class RegistroAuditoriaController {
 
     @GetMapping("/usuario/{idUsuario}")
     @Operation(summary = "Obtener registros de auditoria por usuario")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<DtoRegistroAuditoria>> getByUsuario(@PathVariable Integer idUsuario) {
         return ResponseEntity.ok(service.findByUsuarioIdAsDto(idUsuario));
     }

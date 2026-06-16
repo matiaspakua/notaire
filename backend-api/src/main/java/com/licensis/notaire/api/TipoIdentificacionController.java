@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class TipoIdentificacionController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los tipos de identificacion")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<TipoIdentificacion>> getAll() {
         return ResponseEntity.ok(repository.findAll());
     }
@@ -39,6 +41,7 @@ public class TipoIdentificacionController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo de identificacion por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<TipoIdentificacion> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)

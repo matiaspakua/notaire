@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,12 +34,14 @@ public class PlantillaTramiteController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las plantillas de tramite")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<PlantillaTramite>> getAll() {
         return ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping("/tipo-tramite/{idTipoTramite}")
     @Operation(summary = "Obtener plantillas de tramite por tipo de tramite")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<PlantillaTramite>> getByTipoTramite(@PathVariable Integer idTipoTramite) {
         return ResponseEntity.ok(repository.findByTipoDeTramiteIdTipoTramite(idTipoTramite));
     }
@@ -49,6 +52,7 @@ public class PlantillaTramiteController {
     })
     @GetMapping("/{idTipoTramite}/{idTipoDocumento}")
     @Operation(summary = "Obtener plantilla por clave compuesta (CU55)")
+    @Transactional(readOnly = true)
     public ResponseEntity<PlantillaTramite> getById(@PathVariable Integer idTipoTramite,
             @PathVariable Integer idTipoDocumento) {
         return repository.findById(new PlantillaTramitePK(idTipoTramite, idTipoDocumento))

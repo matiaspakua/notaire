@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,7 @@ public class SuplenciaController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los suplencia")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Suplencia>> getAll() {
         try {
             return ResponseEntity.ok(getJpaController().findSuplenciaEntities());
@@ -38,6 +40,7 @@ public class SuplenciaController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener suplencia por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Suplencia> getById(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(getJpaController().findSuplencia(id));

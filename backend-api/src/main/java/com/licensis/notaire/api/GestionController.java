@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,6 +51,7 @@ public class GestionController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las gestiones")
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<DtoGestionSummary>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(gestionQueryService.findAll(pageable));
@@ -61,6 +63,7 @@ public class GestionController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener gestion por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoGestionSummary> getById(@PathVariable Integer id) {
         return gestionQueryService.findById(id)
                 .map(ResponseEntity::ok)
@@ -69,6 +72,7 @@ public class GestionController {
 
     @GetMapping("/numero/{numero}")
     @Operation(summary = "Obtener gestion por numero")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoGestionSummary> getByNumero(@PathVariable Integer numero) {
         return gestionQueryService.findByNumero(numero)
                 .map(ResponseEntity::ok)
@@ -77,12 +81,14 @@ public class GestionController {
 
     @GetMapping("/cliente/{idPersona}")
     @Operation(summary = "Obtener gestiones de un cliente (CU19)")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<GestionDeEscritura>> getByCliente(@PathVariable Integer idPersona) {
         return ResponseEntity.ok(List.of());
     }
 
     @GetMapping("/{id}/estado-actual")
     @Operation(summary = "Obtener estado actual de una gestion")
+    @Transactional(readOnly = true)
     public ResponseEntity<DtoHistorialSummary> getEstadoActual(@PathVariable Integer id) {
         List<Historial> historiales = historialRepository.findByFkIdGestionIdGestion(id);
         if (historiales.isEmpty()) {
@@ -157,6 +163,7 @@ public class GestionController {
     })
     @GetMapping("/{id}/workflow-trace")
     @Operation(summary = "Obtener trace del workflow de una gestion (con nodos, transiciones, historial y estados)")
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
         try {
             DtoGestionWorkflowTrace trace = workflowTraceService.buildTrace(id);

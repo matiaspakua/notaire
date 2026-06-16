@@ -14,6 +14,7 @@ import jakarta.persistence.OptimisticLockException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class PlantillaPresupuestoController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las plantillas de presupuesto")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<PlantillaPresupuesto>> getAll() {
         try {
             return ResponseEntity.ok(getJpaController().findPlantillaPresupuestoEntities());
@@ -54,6 +56,7 @@ public class PlantillaPresupuestoController {
 
     @GetMapping("/tipo-tramite/{idTipoTramite}")
     @Operation(summary = "Obtener plantillas de presupuesto por tipo de tramite")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<PlantillaPresupuesto>> getByTipoTramite(@PathVariable Integer idTipoTramite) {
         try {
             return ResponseEntity.ok(getJpaController().findPlantillasDePresupuesto(idTipoTramite));

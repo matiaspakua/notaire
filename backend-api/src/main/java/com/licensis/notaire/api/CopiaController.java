@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class CopiaController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las copias")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Copia>> getAll() {
         return ResponseEntity.ok(repository.findAll());
     }
@@ -39,6 +41,7 @@ public class CopiaController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener copia por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Copia> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)

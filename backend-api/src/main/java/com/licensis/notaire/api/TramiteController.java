@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +34,7 @@ public class TramiteController {
 
     @GetMapping
     @Operation(summary = "Obtener todos los trámites")
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<Tramite>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(repository.findAll(pageable));
@@ -44,6 +46,7 @@ public class TramiteController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener trámite por ID")
+    @Transactional(readOnly = true)
     public ResponseEntity<Tramite> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
