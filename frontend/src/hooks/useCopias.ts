@@ -5,21 +5,12 @@ import type { Copia } from "@/types";
 export const copiasKeys = {
   all: ["copias"] as const,
   detail: (id: number) => ["copias", id] as const,
-  byTestimonio: (id: number) => ["copias", "testimonio", id] as const,
 };
 
 export function useCopias() {
   return useQuery({
     queryKey: copiasKeys.all,
     queryFn: () => apiGet<Copia[]>("/copia"),
-  });
-}
-
-export function useCopiasByTestimonio(idTestimonio: number) {
-  return useQuery({
-    queryKey: copiasKeys.byTestimonio(idTestimonio),
-    queryFn: () => apiGet<Copia[]>(`/copia/testimonio/${idTestimonio}`),
-    enabled: idTestimonio > 0,
   });
 }
 
