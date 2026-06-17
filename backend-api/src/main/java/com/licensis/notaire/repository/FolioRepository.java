@@ -23,4 +23,6 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
     List<Folio> findByFkIdPersonaEscribanoIdPersona(Integer idEscribano);
 
     List<Folio> findByAnio(int anio);
+
+    List<Folio> findByEstado(String estado);
 }

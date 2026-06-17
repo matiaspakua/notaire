@@ -576,8 +576,10 @@ class SimpleControllersTest {
     @DisplayName("TipoDeFolioController")
     class TipoDeFolioControllerTests {
         private final TipoDeFolioRepository repo = mock(TipoDeFolioRepository.class);
+        private final com.licensis.notaire.repository.FolioRepository folioRepo =
+                mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeFolioController(repo)).build();
+                standaloneSetup(new TipoDeFolioController(repo, folioRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")

@@ -2,6 +2,7 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.negocio.TipoDeFolio;
+import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,9 +23,11 @@ import java.util.Optional;
 public class TipoDeFolioController {
 
     private final TipoDeFolioRepository repository;
+    private final FolioRepository folioRepository;
 
-    public TipoDeFolioController(TipoDeFolioRepository repository) {
+    public TipoDeFolioController(TipoDeFolioRepository repository, FolioRepository folioRepository) {
         this.repository = repository;
+        this.folioRepository = folioRepository;
     }
 
     @GetMapping
@@ -34,6 +38,27 @@ public class TipoDeFolioController {
                 .map(TipoDeFolio::getDto)
                 .toList();
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Buscar tipos de folio por nombre")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoTipoDeFolio>> search(@RequestParam String nombre) {
+        List<DtoTipoDeFolio> result = repository.findByNombreContaining(nombre).stream()
+                .map(TipoDeFolio::getDto)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/in-use")
+    @Operation(summary = "Verificar si un tipo de folio está en uso")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean inUse = !folioRepository.findByFkIdTipoFolioIdTipoFolio(id).isEmpty();
+        return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
     @ApiResponses({
@@ -78,6 +103,10 @@ public class TipoDeFolioController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        if (!folioRepository.findByFkIdTipoFolioIdTipoFolio(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Este tipo de folio está en uso y no puede modificarse. Cree uno nuevo."));
+        }
         try {
             TipoDeFolio entity = existing.get();
             dto.setIdTipoFolio(id);
@@ -98,6 +127,10 @@ public class TipoDeFolioController {
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
+        }
+        if (!folioRepository.findByFkIdTipoFolioIdTipoFolio(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "No se puede eliminar: el tipo de folio está siendo utilizado por folios."));
         }
         try {
             repository.deleteById(id);

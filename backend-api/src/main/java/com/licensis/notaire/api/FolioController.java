@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,6 +27,8 @@ import java.util.Optional;
 public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
+
+    private static final String ESTADO_UTILIZADO = "Utilizado";
 
     record FolioRequest(
             int numero,
@@ -60,6 +63,23 @@ public class FolioController {
             log.error("Failed to list folios", e);
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Buscar folios por estado")
+    public ResponseEntity<List<DtoFolio>> search(@RequestParam String estado) {
+        List<DtoFolio> result = folioRepository.findByEstado(estado).stream()
+                .map(Folio::getDto)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/in-use")
+    @Operation(summary = "Verificar si un folio está en uso")
+    public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
+        return folioRepository.findById(id)
+                .map(f -> ResponseEntity.ok(Map.of("inUse", ESTADO_UTILIZADO.equals(f.getEstado()))))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
@@ -112,10 +132,14 @@ public class FolioController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar folio")
-    public ResponseEntity<DtoFolio> update(@PathVariable Integer id, @RequestBody FolioRequest request) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FolioRequest request) {
         Optional<Folio> existing = folioRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        if (ESTADO_UTILIZADO.equals(existing.get().getEstado())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Este folio está en uso (Utilizado) y no puede modificarse."));
         }
         Folio folio = existing.get();
         folio.setNumero(request.numero());
@@ -144,10 +168,14 @@ public class FolioController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar folio")
     @Transactional
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         Optional<Folio> opt = folioRepository.findById(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        if (ESTADO_UTILIZADO.equals(opt.get().getEstado())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "No se puede eliminar: el folio está en uso (Utilizado)."));
         }
         try {
             Folio folio = opt.get();
