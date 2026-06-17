@@ -13,6 +13,22 @@ This directory contains **deprecated or historical documentation** that is no lo
 
 ## Contents
 
+### testing-reports-2026-06/ — Point-in-time Testing/Audit Reports
+**Status**: 🔴 **SUPERSEDED** (as of 2026-06-17)
+
+Dated, point-in-time session/phase reports from the June 2026 testing
+initiative (Phases 4-7, API/UI alignment audits, session summaries). All
+findings in these reports were either resolved (tracked via closed GitHub
+issues #426-#436, #450-#455, #510, #512) or superseded by the live state of
+the codebase. Kept for historical context only — do not treat any
+percentages, endpoint counts, or "remaining gaps" in these files as current;
+re-measure with `mvn jacoco:report -pl backend-api` and `npx playwright test`
+instead.
+
+**What replaced it?**: `.claude/rules/code-quality.md` (live coverage
+policy), `CLAUDE.md` Testing Commands section, and `docs/testing/` for
+current test/UC traceability.
+
 ### e2e-swing/ — Legacy Swing GUI E2E Testing
 **Status**: 🔴 **DEPRECATED** (as of 2026-06-11)
 
