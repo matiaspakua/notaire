@@ -114,16 +114,16 @@ Captures:
 | **Custom (GET /path/*)** | 19 | 17 | 89% |
 | **TOTAL** | **126** | **113** | **90%** |
 
-### Unmapped Frontend Calls (4)
+### Unmapped Frontend Calls (4) — Resolved 2026-06-17
 
-These are likely test-data endpoints or edge cases:
+Re-investigated directly against the live codebase:
 
-| Call | Reason | Recommendation |
+| Call | Finding | Resolution |
 |---|---|---|
-| `/copia/testimonio/${idTestimonio}` | Specific subresource not in API | Check if endpoint exists with different path |
-| `/folios` | Should be `/folio` (singular) | Verify API contract |
-| `/gestiones/1` | Test data ID | Not a real endpoint pattern |
-| `/gestiones/999` | Test data ID | Not a real endpoint pattern |
+| `/copia/testimonio/${idTestimonio}` | Confirmed: `CopiaController` only exposes `/copia` and `/copia/{id}`; the hook calling this path was unused anywhere in the UI | Removed as dead code (#512, PR #513) rather than adding an unexercised endpoint |
+| `/folios` | Not found — frontend's `useFolios.ts` correctly calls singular `/folio`, matching `FolioController`'s `@RequestMapping("/api/v1/folio")` | No mismatch; original finding was stale/incorrect |
+| `/gestiones/1` | Only appears in `frontend/src/tests/unit/api-client.test.ts` as a mock fixture | Test data, not a real endpoint call; no action needed |
+| `/gestiones/999` | Only appears in `frontend/src/tests/unit/api-client.test.ts` as a mock fixture | Test data, not a real endpoint call; no action needed |
 
 ### Unused Backend Endpoints (25)
 
