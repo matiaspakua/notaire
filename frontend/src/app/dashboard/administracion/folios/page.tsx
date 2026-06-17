@@ -84,9 +84,13 @@ export default function FoliosAdminPage() {
   const [tipoSaving, setTipoSaving] = useState(false);
   const [tipoDeleting, setTipoDeleting] = useState(false);
 
-  const filteredTiposFolio = tipoSearch
-    ? tiposFolio.filter((tf) => tf.nombre?.toLowerCase().includes(tipoSearch.toLowerCase()))
-    : tiposFolio;
+  const { data: filteredTiposFolio = [] } = useQuery({
+    queryKey: ["tipos-folio", "search", tipoSearch, tiposFolio],
+    queryFn: () =>
+      tipoSearch
+        ? apiGet<TipoDeFolioRow[]>(`/tipo-folio/search?nombre=${encodeURIComponent(tipoSearch)}`)
+        : Promise.resolve(tiposFolio),
+  });
 
   function openCreateTipo() {
     setTipoEditing(null);
