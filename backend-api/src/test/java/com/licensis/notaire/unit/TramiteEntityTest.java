@@ -1,5 +1,11 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.dto.DtoEscritura;
+import com.licensis.notaire.dto.DtoGestionDeEscritura;
+import com.licensis.notaire.dto.DtoInmueble;
+import com.licensis.notaire.dto.DtoPresupuesto;
+import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
@@ -203,6 +209,183 @@ class TramiteEntityTest {
             tramite.setIdTramite(null);
 
             assertThat(tramite.hashCode()).isEqualTo(0);
+        }
+    }
+
+    @Nested
+    @DisplayName("setAtributos branches")
+    class SetAtributosTests {
+
+        private DtoTramite baseDto() {
+            DtoTipoDeTramite tipoDto = new DtoTipoDeTramite();
+            tipoDto.setIdTipoTramite(1);
+            tipoDto.setNombre("Compraventa");
+            DtoTramite dto = new DtoTramite();
+            dto.setIdTramite(10);
+            dto.setObservaciones("obs");
+            dto.setTiposDeTramite(tipoDto);
+            return dto;
+        }
+
+        @Test
+        @DisplayName("setAtributos with all optional fields null — covers null branches")
+        void setAtributosAllNullOptional() {
+            DtoTramite dto = baseDto();
+            dto.setInmueble(null);
+
+            Tramite tramite = new Tramite();
+            tramite.setAtributos(dto);
+
+            assertThat(tramite.getIdTramite()).isEqualTo(10);
+            assertThat(tramite.getFkIdInmueble()).isNull();
+            assertThat(tramite.getFkIdEscritura()).isNull();
+            assertThat(tramite.getFkIdGestion()).isNull();
+            assertThat(tramite.getFkIdPresupuesto()).isNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null inmueble — covers non-null branch")
+        void setAtributosWithInmueble() {
+            DtoTramite dto = baseDto();
+            DtoInmueble dtoInmueble = new DtoInmueble();
+            dtoInmueble.setIdInmueble(5);
+            dtoInmueble.setDomicilio("Calle Test 123");
+            dto.setInmueble(dtoInmueble);
+
+            Tramite tramite = new Tramite();
+            tramite.setAtributos(dto);
+
+            assertThat(tramite.getFkIdInmueble()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null escritura — covers non-null branch")
+        void setAtributosWithEscritura() {
+            DtoTramite dto = baseDto();
+            DtoEscritura dtoEscritura = new DtoEscritura();
+            dtoEscritura.setIdEscritura(7);
+            dtoEscritura.setNumero(2025001);
+            dto.setEscritura(dtoEscritura);
+
+            Tramite tramite = new Tramite();
+            tramite.setAtributos(dto);
+
+            assertThat(tramite.getFkIdEscritura()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null gestion — covers non-null branch")
+        void setAtributosWithGestion() {
+            DtoTramite dto = baseDto();
+            DtoGestionDeEscritura dtoGestion = new DtoGestionDeEscritura();
+            dtoGestion.setIdGestion(3);
+            dto.setGestionDeEscritura(dtoGestion);
+
+            Tramite tramite = new Tramite();
+            tramite.setAtributos(dto);
+
+            assertThat(tramite.getFkIdGestion()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("setAtributos with non-null presupuesto — covers non-null branch")
+        void setAtributosWithPresupuesto() {
+            DtoTramite dto = baseDto();
+            DtoPresupuesto dtoPresupuesto = new DtoPresupuesto();
+            dtoPresupuesto.setIdPresupuesto(20);
+            dtoPresupuesto.setNumero(12345);
+            dtoPresupuesto.setVersion(0);
+            dto.setPresupuesto(dtoPresupuesto);
+
+            Tramite tramite = new Tramite();
+            tramite.setAtributos(dto);
+
+            assertThat(tramite.getFkIdPresupuesto()).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("getDto branches")
+    class GetDtoTests {
+
+        private Tramite baseTramite() {
+            Tramite tramite = new Tramite(5);
+            TipoDeTramite tipo = new TipoDeTramite(1);
+            tipo.setNombre("Compraventa");
+            tramite.setFkIdTipoTramite(tipo);
+            return tramite;
+        }
+
+        @Test
+        @DisplayName("getDto with all optional refs null — covers null branches")
+        void getDtoAllNullOptional() {
+            Tramite tramite = baseTramite();
+
+            var dto = tramite.getDto();
+
+            assertThat(dto.getIdTramite()).isEqualTo(5);
+            assertThat(dto.getEscritura()).isNull();
+            assertThat(dto.getGestion()).isNull();
+            assertThat(dto.getInmueble()).isNull();
+            assertThat(dto.getPresupuesto()).isNull();
+        }
+
+        @Test
+        @DisplayName("getDto with escritura set — covers non-null escritura branch")
+        void getDtoWithEscritura() {
+            Tramite tramite = baseTramite();
+            Escritura escritura = new Escritura(7);
+            escritura.setNumero(2025001);
+            tramite.setFkIdEscritura(escritura);
+
+            var dto = tramite.getDto();
+
+            assertThat(dto.getEscritura()).isNotNull();
+            assertThat(dto.getEscritura().getIdEscritura()).isEqualTo(7);
+        }
+
+        @Test
+        @DisplayName("getDto with inmueble set — covers non-null inmueble branch")
+        void getDtoWithInmueble() {
+            Tramite tramite = baseTramite();
+            Inmueble inmueble = new Inmueble(3);
+            inmueble.setDomicilio("Calle Test 456");
+            tramite.setFkIdInmueble(inmueble);
+
+            var dto = tramite.getDto();
+
+            assertThat(dto.getInmueble()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("getDto with presupuesto set — covers non-null presupuesto branch")
+        void getDtoWithPresupuesto() {
+            Tramite tramite = baseTramite();
+            Presupuesto presupuesto = new Presupuesto(15);
+            tramite.setFkIdPresupuesto(presupuesto);
+
+            var dto = tramite.getDto();
+
+            assertThat(dto.getPresupuesto()).isNotNull();
+            assertThat(dto.getPresupuesto().getIdPresupuesto()).isEqualTo(15);
+        }
+
+        @Test
+        @DisplayName("getDto with gestion set — covers non-null gestion branch")
+        void getDtoWithGestion() {
+            Tramite tramite = baseTramite();
+            GestionDeEscritura gestion = new GestionDeEscritura();
+            gestion.setIdGestion(9);
+            gestion.setNumero(5001);
+            Persona escribano = new Persona(3);
+            escribano.setRegistroEscribano(1001);
+            gestion.setFkIdPersonaEscribano(escribano);
+            tramite.setFkIdGestion(gestion);
+
+            var dto = tramite.getDto();
+
+            assertThat(dto.getGestion()).isNotNull();
+            assertThat(dto.getGestion().getIdGestion()).isEqualTo(9);
         }
     }
 }
