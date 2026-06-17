@@ -44,7 +44,8 @@
     "noData": "No data",
     "required": "required",
     "optional": "optional",
-    "language": "Language"
+    "language": "Language",
+    "all": "All"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -453,7 +454,22 @@
       "updated": "Folio updated",
       "deleted": "Folio deleted",
       "errorDelete": "Error deleting folio",
-      "editFolio": "Edit Folio"
+      "editFolio": "Edit Folio",
+      "inUseCannotModify": "This folio is in use (Utilizado) and cannot be modified",
+      "tiposDeFolio": {
+        "title": "Folio Types",
+        "newTipo": "New Folio Type",
+        "editTipo": "Edit Folio Type",
+        "searchPlaceholder": "Search by name...",
+        "nameRequired": "Name is required",
+        "created": "Folio type created",
+        "updated": "Folio type updated",
+        "deleted": "Folio type deleted",
+        "errorSave": "Error saving folio type",
+        "errorDelete": "Error deleting folio type",
+        "inUseCannotDelete": "Cannot delete: it is in use by folios",
+        "noData": "No folio types"
+      }
     },
     "tramites": {
       "title": "Case Types",

@@ -163,4 +163,80 @@ class FolioControllerTest {
         mockMvc.perform(delete("/api/v1/folio/999999"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("CU63 — GET /search?estado= should return only folios matching the estado")
+    void shouldSearchFoliosByEstado() throws Exception {
+        mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9010, "Errose")))
+                .andExpect(status().isCreated());
+
+        MvcResult result = mockMvc.perform(get("/api/v1/folio/search").param("estado", "Errose"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var nodes = mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(nodes.isArray()).isTrue();
+        for (var node : nodes) {
+            assertThat(node.get("estado").asText()).isEqualTo("Errose");
+        }
+    }
+
+    @Test
+    @DisplayName("GET /{id}/in-use should report false for a folio with estado Nuevo")
+    void shouldReportNotInUseForNuevoFolio() throws Exception {
+        MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9011, "Nuevo")))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(get("/api/v1/folio/" + id + "/in-use"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.inUse").value(false));
+    }
+
+    @Test
+    @DisplayName("GET /{id}/in-use should report true for a folio with estado Utilizado")
+    void shouldReportInUseForUtilizadoFolio() throws Exception {
+        MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9012, "Utilizado")))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(get("/api/v1/folio/" + id + "/in-use"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.inUse").value(true));
+    }
+
+    @Test
+    @DisplayName("PUT should return 409 when folio is already Utilizado")
+    void shouldReturn409WhenUpdatingUtilizadoFolio() throws Exception {
+        MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9013, "Utilizado")))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(put("/api/v1/folio/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9013, "Errose")))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    @DisplayName("DELETE should return 409 when folio is already Utilizado")
+    void shouldReturn409WhenDeletingUtilizadoFolio() throws Exception {
+        MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9014, "Utilizado")))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(delete("/api/v1/folio/" + id))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").exists());
+    }
 }

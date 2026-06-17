@@ -115,6 +115,40 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(dialog.getByLabel(/número/i)).toBeVisible();
     await expect(dialog.getByLabel(/año/i)).toBeVisible();
   });
+
+  test("CU63 — estado filter select is present and usable", async ({ page }) => {
+    await expect(page.getByTestId("select-filter-estado-folio")).toBeVisible();
+  });
+
+  test("Tipos de Folio section: full CRUD via search + create + edit + delete", async ({ page }) => {
+    const uniqueName = `TipoTest${Date.now()}`;
+    const renamed = `${uniqueName}-edit`;
+
+    await expect(page.getByRole("heading", { name: /tipos de folio/i })).toBeVisible();
+
+    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    const createDialog = page.getByRole("dialog");
+    await createDialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
+    await createDialog.getByTestId("btn-save-tipo-folio").click();
+    await expect(createDialog).toBeHidden();
+
+    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
+    const row = page.getByText(uniqueName, { exact: true });
+    await expect(row).toBeVisible();
+
+    await page.getByTestId("btn-edit-tipo-folio").first().click();
+    const editDialog = page.getByRole("dialog");
+    await editDialog.getByTestId("input-nombre-tipo-folio").fill(renamed);
+    await editDialog.getByTestId("btn-save-tipo-folio").click();
+    await expect(editDialog).toBeHidden();
+
+    await page.getByTestId("input-search-tipo-folio").fill(renamed);
+    await expect(page.getByText(renamed, { exact: true })).toBeVisible();
+
+    await page.getByTestId("btn-delete-tipo-folio").first().click();
+    await page.getByRole("alertdialog").getByRole("button", { name: /eliminar/i }).click();
+    await expect(page.getByText(renamed, { exact: true })).toBeHidden();
+  });
 });
 
 test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {

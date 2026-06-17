@@ -44,7 +44,8 @@
     "noData": "Sin datos",
     "required": "requerido",
     "optional": "opcional",
-    "language": "Idioma"
+    "language": "Idioma",
+    "all": "Todos"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -453,7 +454,22 @@
       "updated": "Folio actualizado",
       "deleted": "Folio eliminado",
       "errorDelete": "Error al eliminar el folio",
-      "editFolio": "Editar Folio"
+      "editFolio": "Editar Folio",
+      "inUseCannotModify": "Este folio está en uso (Utilizado) y no puede modificarse",
+      "tiposDeFolio": {
+        "title": "Tipos de Folio",
+        "newTipo": "Nuevo Tipo de Folio",
+        "editTipo": "Editar Tipo de Folio",
+        "searchPlaceholder": "Buscar por nombre...",
+        "nameRequired": "El nombre es requerido",
+        "created": "Tipo de folio creado",
+        "updated": "Tipo de folio actualizado",
+        "deleted": "Tipo de folio eliminado",
+        "errorSave": "Error al guardar el tipo de folio",
+        "errorDelete": "Error al eliminar el tipo de folio",
+        "inUseCannotDelete": "No se puede eliminar: está siendo utilizado por folios",
+        "noData": "No hay tipos de folio"
+      }
     },
     "tramites": {
       "title": "Tipos de Trámite",
