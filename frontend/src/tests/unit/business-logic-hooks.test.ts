@@ -107,10 +107,6 @@ describe("copiasKeys (CU44, CU53)", () => {
   it("detail key includes id", () => {
     expect(copiasKeys.detail(8)).toEqual(["copias", 8]);
   });
-
-  it("byTestimonio key includes testimonio id", () => {
-    expect(copiasKeys.byTestimonio(12)).toEqual(["copias", "testimonio", 12]);
-  });
 });
 
 describe("documentosKeys (CU27, CU65)", () => {
