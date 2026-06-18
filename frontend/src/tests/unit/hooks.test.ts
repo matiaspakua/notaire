@@ -3,7 +3,7 @@
  * Tests verify query keys, enabled conditions, and mutation side effects.
  * All HTTP calls are mocked via vi.mock.
  *
- * Covers: useEstadosGestion, useTiposTramite, useFolios, usePlantillas, useAuditoria
+ * Covers: useEstadosGestion, useTiposTramite, useAuditoria
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -13,8 +13,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 import { estadosGestionKeys } from "@/hooks/useEstadosGestion";
 import { tiposTramiteKeys } from "@/hooks/useTiposTramite";
-import { foliosKeys } from "@/hooks/useFolios";
-import { plantillasKeys } from "@/hooks/usePlantillas";
 import { auditoriaKeys } from "@/hooks/useAuditoria";
 
 describe("React Query key contracts", () => {
@@ -35,38 +33,6 @@ describe("React Query key contracts", () => {
 
     it("detail key includes id", () => {
       expect(tiposTramiteKeys.detail(3)).toEqual(["tiposTramite", 3]);
-    });
-  });
-
-  describe("foliosKeys", () => {
-    it("all key is ['folios']", () => {
-      expect(foliosKeys.all).toEqual(["folios"]);
-    });
-
-    it("tiposFolio key is ['tiposFolio']", () => {
-      expect(foliosKeys.tiposFolio).toEqual(["tiposFolio"]);
-    });
-  });
-
-  describe("plantillasKeys", () => {
-    it("all key is ['plantillas']", () => {
-      expect(plantillasKeys.all).toEqual(["plantillas"]);
-    });
-
-    it("byTipoTramite key includes tipo tramite id", () => {
-      expect(plantillasKeys.byTipoTramite(7)).toEqual([
-        "plantillas",
-        "tipoTramite",
-        7,
-      ]);
-    });
-
-    it("byTipoTramite with null-guard uses 0", () => {
-      expect(plantillasKeys.byTipoTramite(0)).toEqual([
-        "plantillas",
-        "tipoTramite",
-        0,
-      ]);
     });
   });
 
@@ -179,14 +145,6 @@ describe("API endpoint path contracts", () => {
 // ──────────────────────────────────────────────
 
 describe("Conditional query enabled logic", () => {
-  it("usePlantillasByTipoTramite — enabled when idTipoTramite > 0", () => {
-    const enabled = (id: number | null) => id !== null && id > 0;
-    expect(enabled(5)).toBe(true);
-    expect(enabled(0)).toBe(false);
-    expect(enabled(null)).toBe(false);
-    expect(enabled(-1)).toBe(false);
-  });
-
   it("useAuditoriaByUsuario — enabled when idUsuario > 0", () => {
     const enabled = (id: number | null) => id !== null && id > 0;
     expect(enabled(1)).toBe(true);
