@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 import jakarta.transaction.UserTransaction;
-import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.service.AdministradorJpa;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.RegistroAuditoria;

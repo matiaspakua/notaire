@@ -1,6 +1,6 @@
 package com.licensis.notaire.api;
 
-import com.licensis.notaire.servicios.ReporteService;
+import com.licensis.notaire.service.ReporteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

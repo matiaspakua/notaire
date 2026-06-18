@@ -14,7 +14,7 @@ import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
 import com.licensis.notaire.repository.PlantillaTramiteRepository;
 import com.licensis.notaire.repository.UsuarioRepository;
-import com.licensis.notaire.servicios.ReporteService;
+import com.licensis.notaire.service.ReporteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

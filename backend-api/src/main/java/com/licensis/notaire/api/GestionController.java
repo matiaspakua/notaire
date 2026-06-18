@@ -95,9 +95,9 @@ public class GestionController {
             return ResponseEntity.notFound().build();
         }
         return historiales.stream()
-                .max(Comparator.comparing(Historial::getFecha))
-                .map(h -> ResponseEntity.ok(DtoHistorialSummary.from(h)))
-                .orElse(ResponseEntity.notFound().build());
+            .max(Comparator.comparing(Historial::getFecha))
+            .map(h -> ResponseEntity.ok(com.licensis.notaire.service.mappers.HistorialMapper.toDto(h)))
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
