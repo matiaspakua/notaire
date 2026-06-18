@@ -121,6 +121,16 @@ jobs:
             exit 1
           fi
 
+      - name: Ensure metrics included in export
+        run: |
+          if [ -f github-page/public/metrics.json ]; then
+            mkdir -p github-page/out
+            cp github-page/public/metrics.json github-page/out/metrics.json || true
+            echo "Copied metrics.json to out/"
+          else
+            echo "No metrics.json found to copy"
+          fi
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
