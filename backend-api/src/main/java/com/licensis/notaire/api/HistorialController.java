@@ -1,6 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoHistorialSummary;
+import com.licensis.notaire.service.mappers.HistorialMapper;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.HistorialRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,8 +35,8 @@ public class HistorialController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorialSummary>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
-                .map(DtoHistorialSummary::from)
-                .toList());
+            .map(HistorialMapper::toDto)
+            .toList());
     }
 
     @ApiResponses({
@@ -47,7 +48,7 @@ public class HistorialController {
     @Transactional(readOnly = true)
     public ResponseEntity<DtoHistorialSummary> getById(@PathVariable Integer id) {
         return repository.findById(id)
-                .map(h -> ResponseEntity.ok(DtoHistorialSummary.from(h)))
+                .map(h -> ResponseEntity.ok(HistorialMapper.toDto(h)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -56,8 +57,8 @@ public class HistorialController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorialSummary>> getByGestion(@PathVariable Integer idGestion) {
         return ResponseEntity.ok(repository.findByFkIdGestionIdGestion(idGestion).stream()
-                .map(DtoHistorialSummary::from)
-                .toList());
+            .map(HistorialMapper::toDto)
+            .toList());
     }
 
     @ApiResponses({

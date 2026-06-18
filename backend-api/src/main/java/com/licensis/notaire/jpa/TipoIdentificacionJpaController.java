@@ -9,7 +9,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.service.AdministradorJpa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

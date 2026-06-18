@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.licensis.notaire.servicios;
+package com.licensis.notaire.service;
 
 import com.licensis.notaire.dto.DtoDocumentoPresentado;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
@@ -20,15 +16,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
 
-/**
- * Clase que se encarga de generar todos los reportes del sistema. Cada metodo
- * genera un reporte
- * distinto. Todo los archivos utilizado por Jasper son almacenados en el
- * paquete: gui.reportes.
- * Dentro de este paquete viven los .jaspers y los .jrxml.
- *
- * @author matias
- */
 public class AdministradorReportes {
 
     private static AdministradorReportes instancia = null;
@@ -38,7 +25,6 @@ public class AdministradorReportes {
     public static String PATH = "";
     public static String WINDOWS_PATH = "C:\\reportes\\";
     public static String LINUX_PATH = "/home/matias/reportes/";
-    // Reportes
     public String RUTA_REPORTE_PRESUPUESTO = "reportePresupuestoSinInmueble.jasper";
     public String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportePresupuestoInmuebles.jasper";
     public String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE = "reporteListaDocumetosTramite.jasper";
@@ -46,9 +32,6 @@ public class AdministradorReportes {
     public String RUTA_REPORTO_CONSULTAR_VENCIMIENTO_DOCUMENTOS = "reporteConsultarVencimientosDocumentos.jasper";
     public String RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS = "reporteConsultarDeudaDocumentos.jasper";
 
-    /**
-     * Constructor privado para AdministradorReportes.
-     */
     private AdministradorReportes() {
     }
 
@@ -124,11 +107,6 @@ public class AdministradorReportes {
         this.RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS = RUTA_REPORTE_CONSULTAR_DEUDA_VENCIMIENTO_DOCUMENTOS;
     }
 
-    /**
-     * Genera el reporte correspondiente a la creacion de un nuevo presupuesto.
-     *
-     * @param presupuesto Los datos del presupuesto para generar el reporte.
-     */
     public void generarReportePresupuesto(DtoPresupuesto presupuesto) throws IOException {
         try {
 
@@ -139,7 +117,6 @@ public class AdministradorReportes {
                 jasperViewer = new JasperViewer(print, false);
                 jasperViewer.setVisible(true);
             } else {
-                // No tiene inmueble asociado
                 parameters.put("pIdPresupuesto", presupuesto.getIdPresupuesto());
                 print = JasperFillManager.fillReport(this.getRUTA_REPORTE_PRESUPUESTO(), parameters,
                         Conexion.getInstancia().getConexion());
@@ -153,15 +130,6 @@ public class AdministradorReportes {
         parameters.clear();
     }
 
-    /**
-     * Genera el reporte correspondiente a la lista de documentacion asociada a un
-     * determinado
-     * tramite.
-     *
-     * @param listaTiposTramites El o los tramites para los cuales se requiere la
-     *                           lista de
-     *                           documentacion asociada.
-     */
     public void generarReporteListaDocumentos(List<DtoTipoDeTramite> listaTiposTramites) throws IOException {
         for (Iterator<DtoTipoDeTramite> it = listaTiposTramites.iterator(); it.hasNext();) {
             try {
@@ -178,12 +146,6 @@ public class AdministradorReportes {
         parameters.clear();
     }
 
-    /**
-     * Genera el reporte correspondiente al registro del historial de una gestion en
-     * particular.
-     *
-     * @param gestion El dto gestion con el ID de la gestion.
-     */
     public void generarReporteHistorialGestion(DtoGestionDeEscritura gestion) throws IOException {
         try {
             parameters.put("idGestion", gestion.getIdGestion());
@@ -229,30 +191,18 @@ public class AdministradorReportes {
         parameters.clear();
     }
 
-    /**
-     * @return the jasperViewer
-     */
     public JasperViewer getJasperViewer() {
         return jasperViewer;
     }
 
-    /**
-     * @param jasperViewer the jasperViewer to set
-     */
     public void setJasperViewer(JasperViewer jasperViewer) {
         this.jasperViewer = jasperViewer;
     }
 
-    /**
-     * @return the print
-     */
     public JasperPrint getPrint() {
         return print;
     }
 
-    /**
-     * @param print the print to set
-     */
     public void setPrint(JasperPrint print) {
         this.print = print;
     }

@@ -20,7 +20,7 @@ import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.negocio.TramitesPersonas;
 import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.servicios.AdministradorJpa;
+import com.licensis.notaire.service.AdministradorJpa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
