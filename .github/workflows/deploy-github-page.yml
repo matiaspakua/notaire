@@ -3,7 +3,6 @@ name: Deploy GitHub Page
 on:
   push:
     branches: [main]
-    paths: ["github-page/**", "docs/metrics/**"]
   workflow_dispatch:
 
 permissions:
