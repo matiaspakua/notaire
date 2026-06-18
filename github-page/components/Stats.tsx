@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SiteMetrics } from "@/lib/metrics";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface StatItem {
   value: number;
@@ -44,16 +48,18 @@ function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true;
-        const duration = 1800;
-        const startTime = performance.now();
-        const step = (now: number) => {
-          const pct = Math.min((now - startTime) / duration, 1);
-          const ease = 1 - Math.pow(1 - pct, 3);
-          setCount(Math.floor(ease * target));
-          if (pct < 1) requestAnimationFrame(step);
-          else setCount(target);
-        };
-        requestAnimationFrame(step);
+        const duration = 2.5;
+        gsap.to({ value: 0 }, {
+          value: target,
+          duration,
+          ease: "power2.out",
+          onUpdate(tween) {
+            setCount(Math.floor(tween.progress() * target));
+          },
+          onComplete() {
+            setCount(target);
+          },
+        });
         observer.disconnect();
       }
     }, { threshold: 0.3 });
@@ -64,30 +70,84 @@ function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
+function StatCard({ stat, index }: { stat: StatItem; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    gsap.set(card, { opacity: 0, y: 30 });
+
+    ScrollTrigger.create({
+      trigger: card,
+      start: "top 90%",
+      onEnter: () => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+          delay: index * 0.05,
+        });
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, [index]);
+
+  return (
+    <div
+      ref={cardRef}
+      className="glass rounded-2xl p-6 text-center group hover:scale-105 hover:shadow-lg transition-all duration-300 border"
+      style={{ borderColor: `${stat.color}20` }}
+    >
+      <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">
+        {stat.icon}
+      </div>
+      <div className="text-3xl sm:text-4xl font-bold mb-1 font-mono" style={{ color: stat.color }}>
+        <AnimCounter target={stat.value} suffix={stat.suffix} />
+      </div>
+      <div className="text-white text-xs font-semibold mb-1">{stat.label}</div>
+      <div className="text-slate-500 text-xs">{stat.sub}</div>
+    </div>
+  );
+}
+
 export function Stats({ metrics }: { metrics: SiteMetrics }) {
   const stats = buildStats(metrics);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (headingRef.current) {
+      gsap.from(headingRef.current.querySelector(".grad-cyan"), {
+        duration: 1.2,
+        backgroundPosition: "200% center",
+        ease: "power2.inOut",
+      });
+    }
+  }, []);
 
   return (
     <section id="today" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">By The Numbers</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <h2
+            ref={headingRef}
+            className="text-4xl sm:text-5xl font-bold text-white mb-4"
+            style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
+          >
             A Decade of <span className="grad-cyan">Progress</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">Every metric tells a story. From zero to production-grade in the AI era.</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {stats.map((s, i) => (
-            <div key={i} className="glass rounded-2xl p-6 text-center group hover:scale-105 transition-transform duration-300 border" style={{ borderColor: `${s.color}20` }}>
-              <div className="text-3xl mb-2">{s.icon}</div>
-              <div className="text-3xl sm:text-4xl font-bold mb-1 font-mono" style={{ color: s.color }}>
-                <AnimCounter target={s.value} suffix={s.suffix} />
-              </div>
-              <div className="text-white text-xs font-semibold mb-1">{s.label}</div>
-              <div className="text-slate-500 text-xs">{s.sub}</div>
-            </div>
+          {stats.map((stat, i) => (
+            <StatCard key={i} stat={stat} index={i} />
           ))}
         </div>
       </div>

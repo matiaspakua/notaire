@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SiteMetrics } from "@/lib/metrics";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface CoverageMetric {
   name: string;
@@ -57,42 +61,54 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
   ];
 }
 
-function CoverageCard({ metric }: { metric: CoverageMetric }) {
+function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    el.style.opacity = "0";
-    el.style.transform = "translateY(20px)";
+    const progressBar = progressBarRef.current;
+    if (!el || !progressBar) return;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          el.style.transition = "opacity 0.5s, transform 0.5s cubic-bezier(0.16,1,0.3,1)";
-          el.style.opacity = "1";
-          el.style.transform = "translateY(0)";
-        }, 100);
+    gsap.set(el, { opacity: 0, y: 30 });
+    gsap.set(progressBar, { scaleX: 0, transformOrigin: "left" });
 
-        let current = 0;
-        const interval = setInterval(() => {
-          current += Math.random() * 15;
-          if (current >= metric.percentage) {
-            setAnimatedPercentage(metric.percentage);
-            clearInterval(interval);
-          } else {
-            setAnimatedPercentage(Math.floor(current));
-          }
-        }, 30);
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 85%",
+      onEnter: () => {
+        gsap.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+          delay: index * 0.08,
+        });
 
-        observer.disconnect();
-      }
-    }, { threshold: 0.2 });
+        gsap.to({ value: 0 }, {
+          value: metric.percentage,
+          duration: 1.4,
+          ease: "power2.out",
+          delay: index * 0.08 + 0.2,
+          onUpdate(tween) {
+            setAnimatedPercentage(Math.floor(tween.progress() * metric.percentage));
+          },
+        });
 
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [metric.percentage]);
+        gsap.to(progressBar, {
+          scaleX: 1,
+          duration: 1.4,
+          ease: "power2.out",
+          delay: index * 0.08 + 0.2,
+        });
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, [metric.percentage, index]);
 
   return (
     <div ref={ref} className="glass rounded-xl p-5 border" style={{ borderColor: `${metric.color}25` }}>
@@ -112,8 +128,9 @@ function CoverageCard({ metric }: { metric: CoverageMetric }) {
         <div className="flex-1">
           <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-1">
             <div
-              className="h-full rounded-full transition-all duration-300"
-              style={{ background: metric.color, width: `${animatedPercentage}%` }}
+              ref={progressBarRef}
+              className="h-full rounded-full"
+              style={{ background: metric.color }}
             />
           </div>
           <div className="flex justify-between items-center">
@@ -132,6 +149,24 @@ function CoverageCard({ metric }: { metric: CoverageMetric }) {
 
 export function Coverage({ metrics }: { metrics: SiteMetrics }) {
   const coverageData = buildCoverageData(metrics);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (headingRef.current) {
+      const section = headingRef.current.closest("section");
+      if (section) {
+        gsap.from(section, {
+          opacity: 0,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            once: true,
+          },
+        });
+      }
+    }
+  }, []);
 
   return (
     <section className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
@@ -139,6 +174,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
         <div className="text-center mb-16">
           <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Quality Metrics</p>
           <h2
+            ref={headingRef}
             className="text-4xl sm:text-5xl font-bold text-white mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
@@ -151,7 +187,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
           {coverageData.map((metric, i) => (
-            <CoverageCard key={i} metric={metric} />
+            <CoverageCard key={i} metric={metric} index={i} />
           ))}
         </div>
 
@@ -209,10 +245,8 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
 
         <div className="mt-8 text-center">
           <a
-            href="https://matiaspakua.github.io/notaire/coverage/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all"
+            href="/coverage/"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 duration-300"
             style={{
               background: "linear-gradient(135deg, #06b6d4, #7c3aed)",
               color: "white",

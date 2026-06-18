@@ -29,25 +29,25 @@ export interface SiteMetrics {
 
 const DEFAULTS: SiteMetrics = {
   generatedAt: new Date().toISOString(),
-  commits: 451,
-  pullRequests: 178,
-  markdownFiles: 293,
+  commits: 474,
+  pullRequests: 30,
+  markdownFiles: 193,
   testClasses: 122,
-  adrCount: 11,
+  adrCount: 12,
   useCases: 78,
   functionalRequirements: 94,
   dockerServices: 12,
   grafanaDashboards: 4,
   aiTools: 4,
   contributors: 3,
-  firstCommitDate: "2026-06-10",
+  firstCommitDate: "2014-03-27",
   coverage: {
     backendInstruction: 32,
     backendBranch: 19,
     frontendComponent: 45,
     e2eTests: 85,
     apiEndpoints: 78,
-    lastUpdated: "2026-06-16",
+    lastUpdated: "2026-06-18",
   },
 };
 
