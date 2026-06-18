@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: github-page/package-lock.json
 
       - name: Fetch repository metrics
-        working-directory: .
+        working-directory: ..
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
