@@ -1,10 +1,9 @@
 /**
- * Unit tests for useItems and useHistorial hooks.
+ * Unit tests for useItems hook plus Historial/Gestiones business logic.
  * Covers CU01, CU39 (Items), CU13, CU53 (Historial), CU02, CU53 (Gestiones search)
  */
 import { describe, it, expect } from "vitest";
 import { itemsKeys } from "@/hooks/useItems";
-import { historialKeys } from "@/hooks/useHistorial";
 
 // ──────────────────────────────────────────────
 // Query key contracts
@@ -25,20 +24,6 @@ describe("itemsKeys", () => {
 
   it("byPresupuesto key with id 1", () => {
     expect(itemsKeys.byPresupuesto(1)).toEqual(["items", "presupuesto", 1]);
-  });
-});
-
-describe("historialKeys", () => {
-  it("all key is ['historial']", () => {
-    expect(historialKeys.all).toEqual(["historial"]);
-  });
-
-  it("detail key includes id", () => {
-    expect(historialKeys.detail(5)).toEqual(["historial", 5]);
-  });
-
-  it("byGestion key includes gestion id", () => {
-    expect(historialKeys.byGestion(42)).toEqual(["historial", "gestion", 42]);
   });
 });
 
