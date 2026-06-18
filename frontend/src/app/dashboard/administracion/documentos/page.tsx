@@ -59,9 +59,13 @@ export default function DocumentosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
 
-  const filtered = search.trim()
-    ? tipos.filter((t) => t.nombre?.toLowerCase().includes(search.toLowerCase()))
-    : tipos;
+  const { data: filtered = tipos } = useQuery({
+    queryKey: ["tiposDocumento", "search", search, tipos],
+    queryFn: () =>
+      search.trim()
+        ? apiGet<TipoDeDocumento[]>(`/tipo-de-documento/search?nombre=${encodeURIComponent(search.trim())}`)
+        : Promise.resolve(tipos),
+  });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(tipo: TipoDeDocumento) { setEditing(tipo); setIsEditMode(true); setModalOpen(true); }
@@ -80,6 +84,19 @@ export default function DocumentosPage() {
     } catch (err) {
       const apiError = extractApiError(err);
       toast.error(apiError ?? t("errorSave"));
+    }
+  }
+
+  async function handleDeleteClick(tipo: TipoDeDocumento) {
+    try {
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-de-documento/${tipo.idTipoDocumento}/in-use`);
+      if (inUse) {
+        toast.error(t("inUseCannotDelete"));
+        return;
+      }
+      setDeleteId(tipo.idTipoDocumento!);
+    } catch {
+      toast.error(t("errorDelete"));
     }
   }
 
@@ -106,7 +123,7 @@ export default function DocumentosPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)}>
             <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(tipo.idTipoDocumento!)}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-documento">
             <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
@@ -132,6 +149,7 @@ export default function DocumentosPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
+          data-testid="input-search-documento"
         />
       </div>
       <DataTable

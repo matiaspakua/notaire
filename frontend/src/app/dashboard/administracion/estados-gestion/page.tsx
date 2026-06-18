@@ -52,9 +52,13 @@ export default function EstadosGestionPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const filtered = search.trim()
-    ? data.filter((e) => e.nombre?.toLowerCase().includes(search.toLowerCase()))
-    : data;
+  const { data: filtered = data } = useQuery({
+    queryKey: ["estados-gestion", "search", search, data],
+    queryFn: () =>
+      search.trim()
+        ? apiGet<EstadoDeGestion[]>(`/estado-gestion/search?nombre=${encodeURIComponent(search.trim())}`)
+        : Promise.resolve(data),
+  });
 
   function openCreate() {
     setEditing(EMPTY);
@@ -93,6 +97,19 @@ export default function EstadosGestionPage() {
     }
   }
 
+  async function handleDeleteClick(estado: EstadoDeGestion) {
+    try {
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/estado-gestion/${estado.idEstadoGestion}/in-use`);
+      if (inUse) {
+        toast.error(t("inUseCannotDelete"));
+        return;
+      }
+      setDeleteId(estado.idEstadoGestion!);
+    } catch {
+      toast.error(t("errorDelete"));
+    }
+  }
+
   async function handleDelete() {
     if (!deleteId) return;
     setDeleting(true);
@@ -126,7 +143,7 @@ export default function EstadosGestionPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(e.idEstadoGestion!)}
+            onClick={() => handleDeleteClick(e)}
             data-testid="btn-delete-estado"
             aria-label={tc("delete")}
           >

@@ -73,6 +73,14 @@ test.describe("CU67 — Estados de Gestión", () => {
     await page.getByRole("button", { name: /cancelar/i }).click();
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
+
+  test("CU67 — typing in search calls GET /estado-gestion/search", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/estado-gestion/search") && req.method() === "GET"
+    );
+    await page.getByTestId("search-estados").fill("Iniciada");
+    await searchRequest;
+  });
 });
 
 test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
@@ -94,6 +102,52 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
     await expect(dialog.getByLabel(/descripción/i)).toBeVisible();
     await expect(dialog.getByLabel(/se archiva/i)).toBeVisible();
     await expect(dialog.getByLabel(/se inscribe/i)).toBeVisible();
+  });
+
+  test("CU26/CU64 — typing in search calls GET /tipo-tramite/search", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/tipo-tramite/search") && req.method() === "GET"
+    );
+    await page.getByTestId("input-search-tramite").fill("Compraventa");
+    await searchRequest;
+  });
+});
+
+test.describe("CU37 — Conceptos", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminAuthSetup(page);
+    await page.goto("/dashboard/administracion/conceptos");
+  });
+
+  test("page loads with correct title", async ({ page }) => {
+    await expect(page.getByRole("heading", { name: /conceptos/i })).toBeVisible();
+  });
+
+  test("typing in search calls GET /conceptos/search", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/conceptos/search") && req.method() === "GET"
+    );
+    await page.getByTestId("input-search-concepto").fill("Honorarios");
+    await searchRequest;
+  });
+});
+
+test.describe("CU38 — Tipos de Documento", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminAuthSetup(page);
+    await page.goto("/dashboard/administracion/documentos");
+  });
+
+  test("page loads with correct title", async ({ page }) => {
+    await expect(page.getByRole("heading", { name: /tipos de documento/i })).toBeVisible();
+  });
+
+  test("typing in search calls GET /tipo-de-documento/search", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/tipo-de-documento/search") && req.method() === "GET"
+    );
+    await page.getByTestId("input-search-documento").fill("DNI");
+    await searchRequest;
   });
 });
 
