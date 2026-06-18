@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import {
   usePresupuestos,
   useCreatePresupuesto,
@@ -48,8 +50,15 @@ export default function PresupuestosPage() {
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
 
-  const filteredPresupuestos = presupuestos.filter((p) => {
-    if (filterEstado !== "TODOS" && p.estado !== filterEstado) return false;
+  const { data: byEstado = presupuestos } = useQuery({
+    queryKey: ["presupuestos", "buscar", filterEstado, presupuestos],
+    queryFn: () =>
+      filterEstado !== "TODOS"
+        ? apiGet<Presupuesto[]>(`/presupuestos/buscar?estado=${encodeURIComponent(filterEstado)}`)
+        : Promise.resolve(presupuestos),
+  });
+
+  const filteredPresupuestos = byEstado.filter((p) => {
     if (searchPresupuesto) {
       const q = searchPresupuesto.toLowerCase();
       const matchId = p.idPresupuesto?.toString().includes(q);

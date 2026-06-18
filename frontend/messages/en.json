@@ -169,6 +169,7 @@
     "errorSave": "Error saving case",
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
+    "filterByCliente": "Filter by client...",
     "fields": {
       "numero": "Number",
       "tipo": "Case type",
@@ -190,6 +191,7 @@
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
     "noData": "No deeds registered",
+    "searchPlaceholder": "Search by number...",
     "fields": {
       "numero": "Number",
       "fecha": "Date",

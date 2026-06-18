@@ -12,6 +12,8 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import {
   usePersonas,
   useCreatePersona,
@@ -50,12 +52,21 @@ export default function PersonasPage() {
   const [searchDni, setSearchDni] = useState("");
   const [filterClientes, setFilterClientes] = useState(false);
 
-  const filteredPersonas = personas.filter((p) => {
-    if (filterClientes && !p.esCliente) return false;
-    if (searchNombre && !p.nombre?.toLowerCase().includes(searchNombre.toLowerCase())) return false;
-    if (searchApellido && !p.apellido?.toLowerCase().includes(searchApellido.toLowerCase())) return false;
-    if (searchDni && !p.dni?.toLowerCase().includes(searchDni.toLowerCase())) return false;
-    return true;
+  const hasSearchCriteria = !!(searchNombre || searchApellido || searchDni || filterClientes);
+
+  const { data: filteredPersonas = personas } = useQuery({
+    queryKey: ["personas", "buscar", searchNombre, searchApellido, searchDni, filterClientes, personas],
+    queryFn: () => {
+      if (!hasSearchCriteria) {
+        return Promise.resolve(personas);
+      }
+      const params = new URLSearchParams();
+      if (searchNombre) params.set("nombre", searchNombre);
+      if (searchApellido) params.set("apellido", searchApellido);
+      if (searchDni) params.set("numeroIdentificacion", searchDni);
+      if (filterClientes) params.set("esCliente", "true");
+      return apiGet<Persona[]>(`/personas/buscar?${params.toString()}`);
+    },
   });
 
   function openCreate() {

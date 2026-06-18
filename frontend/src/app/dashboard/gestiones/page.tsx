@@ -10,19 +10,24 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useGestiones,
+  useGestionesByCliente,
   useCreateGestion,
   useUpdateGestion,
   useDeleteGestion,
 } from "@/hooks/useGestiones";
+import { usePersonas } from "@/hooks/usePersonas";
+import { fullName } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 
 export default function GestionesPage() {
   const t = useTranslations("gestiones");
   const tc = useTranslations("common");
   const { data: gestiones = [], isLoading } = useGestiones();
+  const { data: personas = [] } = usePersonas();
   const createMutation = useCreateGestion();
   const updateMutation = useUpdateGestion();
   const deleteMutation = useDeleteGestion();
@@ -31,6 +36,14 @@ export default function GestionesPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
+  const [clienteFilter, setClienteFilter] = useState("");
+
+  const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useGestionesByCliente(
+    clienteFilter ? Number(clienteFilter) : 0
+  );
+
+  const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
+  const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
 
   function openCreate() {
     setEditing(null);
@@ -126,10 +139,24 @@ export default function GestionesPage() {
         }
       />
 
+      <div className="px-4 pb-4 flex items-center gap-2">
+        <Select value={clienteFilter || "all"} onValueChange={(v) => setClienteFilter(v === "all" ? "" : v)}>
+          <SelectTrigger className="w-56" data-testid="select-filter-cliente-gestion">
+            <SelectValue placeholder={t("filterByCliente")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{tc("all")}</SelectItem>
+            {personas.filter((p) => p.esCliente).map((p) => (
+              <SelectItem key={p.idPersona} value={String(p.idPersona)}>{fullName(p)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <DataTable
-        data={gestiones}
+        data={visibleGestiones}
         columns={columns}
-        isLoading={isLoading}
+        isLoading={isLoadingVisible}
         keyExtractor={(g) => g.idGestion!}
         emptyMessage={t("noData")}
       />
