@@ -15,15 +15,6 @@ export function useItems() {
   });
 }
 
-/** CU01, CU39 — Obtener ítems de un presupuesto específico */
-export function useItemsByPresupuesto(idPresupuesto: number) {
-  return useQuery({
-    queryKey: itemsKeys.byPresupuesto(idPresupuesto),
-    queryFn: () => apiGet<Item[]>(`/items/presupuesto/${idPresupuesto}`),
-    enabled: idPresupuesto > 0,
-  });
-}
-
 export function useCreateItem() {
   const qc = useQueryClient();
   return useMutation({

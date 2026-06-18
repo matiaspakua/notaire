@@ -25,14 +25,6 @@ export function useGestionByNumero(numero: number | undefined) {
   });
 }
 
-export function useGestion(id: number) {
-  return useQuery({
-    queryKey: gestionesKeys.detail(id),
-    queryFn: () => apiGet<GestionDeEscritura>(`/gestiones/${id}`),
-    enabled: id > 0,
-  });
-}
-
 export function useGestionesByCliente(idPersona: number) {
   return useQuery({
     queryKey: gestionesKeys.byCliente(idPersona),

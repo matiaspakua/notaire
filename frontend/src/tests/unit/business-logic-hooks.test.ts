@@ -244,27 +244,6 @@ describe("Persona display name (CU17, CU18, CU61)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Gestiones enabled condition (CU02, CU24)
-// ──────────────────────────────────────────────
-
-describe("useGestion enabled condition (CU02, CU24)", () => {
-  const isEnabled = (id: number) => id > 0;
-
-  it("enabled when id > 0", () => {
-    expect(isEnabled(1)).toBe(true);
-    expect(isEnabled(100)).toBe(true);
-  });
-
-  it("disabled when id is 0", () => {
-    expect(isEnabled(0)).toBe(false);
-  });
-
-  it("disabled when id is negative", () => {
-    expect(isEnabled(-1)).toBe(false);
-  });
-});
-
-// ──────────────────────────────────────────────
 // Copia type shape (CU44, CU53)
 // ──────────────────────────────────────────────
 

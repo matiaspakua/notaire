@@ -14,14 +14,6 @@ export function usePersonas() {
   });
 }
 
-export function usePersona(id: number) {
-  return useQuery({
-    queryKey: personasKeys.detail(id),
-    queryFn: () => apiGet<Persona>(`/personas/${id}`),
-    enabled: id > 0,
-  });
-}
-
 export function useCreatePersona() {
   const qc = useQueryClient();
   return useMutation({
