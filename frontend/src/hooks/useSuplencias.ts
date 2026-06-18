@@ -15,14 +15,6 @@ export function useSuplencias() {
   });
 }
 
-export function useSuplencia(id: number) {
-  return useQuery({
-    queryKey: suplenciasKeys.detail(id),
-    queryFn: () => apiGet<Suplencia>(`/suplencia/${id}`),
-    enabled: id > 0,
-  });
-}
-
 export function useCreateSuplencia() {
   const qc = useQueryClient();
   return useMutation({

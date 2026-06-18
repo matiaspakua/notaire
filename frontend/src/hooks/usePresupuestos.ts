@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Presupuesto } from "@/types";
 
 export const presupuestosKeys = {
@@ -12,22 +12,6 @@ export function usePresupuestos() {
   return useQuery({
     queryKey: presupuestosKeys.all,
     queryFn: () => apiGetPaged<Presupuesto>("/presupuestos"),
-  });
-}
-
-export function usePresupuesto(id: number) {
-  return useQuery({
-    queryKey: presupuestosKeys.detail(id),
-    queryFn: () => apiGet<Presupuesto>(`/presupuestos/${id}`),
-    enabled: id > 0,
-  });
-}
-
-export function usePresupuestosByPersona(idPersona: number) {
-  return useQuery({
-    queryKey: presupuestosKeys.byPersona(idPersona),
-    queryFn: () => apiGet<Presupuesto[]>(`/presupuestos/persona/${idPersona}`),
-    enabled: idPersona > 0,
   });
 }
 
