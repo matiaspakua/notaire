@@ -108,6 +108,19 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Validate exported site
+        run: |
+          if [ ! -f out/index.html ]; then
+            echo "ERROR: Static export did not generate out/index.html" >&2
+            ls -la out || true
+            exit 1
+          fi
+          if [ ! -d out/_next ] && [ ! -d out/_not-found ]; then
+            echo "ERROR: Static export missing required directories in out/" >&2
+            ls -la out || true
+            exit 1
+          fi
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
