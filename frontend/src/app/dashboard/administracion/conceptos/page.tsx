@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import { useConceptos, useCreateConcepto, useUpdateConcepto, useDeleteConcepto } from "@/hooks/useConceptos";
 import { formatCurrency } from "@/lib/utils";
 import type { Concepto } from "@/types";
@@ -48,9 +50,13 @@ export default function ConceptosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
 
-  const filtered = conceptos.filter((c) =>
-    !search || c.nombre?.toLowerCase().includes(search.toLowerCase())
-  );
+  const { data: filtered = conceptos } = useQuery({
+    queryKey: ["conceptos", "search", search, conceptos],
+    queryFn: () =>
+      search
+        ? apiGet<Concepto[]>(`/conceptos/search?nombre=${encodeURIComponent(search)}`)
+        : Promise.resolve(conceptos),
+  });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(c: Concepto) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
@@ -73,6 +79,19 @@ export default function ConceptosPage() {
       } else {
         toast.error(t("errorSave"));
       }
+    }
+  }
+
+  async function handleDeleteClick(c: Concepto) {
+    try {
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/conceptos/${c.idConcepto}/in-use`);
+      if (inUse) {
+        toast.error(t("inUseCannotDelete"));
+        return;
+      }
+      setDeleteId(c.idConcepto!);
+    } catch {
+      toast.error(t("errorDelete"));
     }
   }
 
@@ -101,7 +120,7 @@ export default function ConceptosPage() {
       render: (c) => (
         <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(c.idConcepto!)}><NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concepto"><NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} /></Button>
         </div>
       ),
     },

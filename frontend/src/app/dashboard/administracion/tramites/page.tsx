@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite, useAssignWorkflowToTipoTramite } from "@/hooks/useTiposTramite";
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import type { TipoDeTramite } from "@/types";
@@ -47,9 +49,13 @@ export default function TramitesPage() {
   const [search, setSearch] = useState("");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
 
-  const filtered = search.trim()
-    ? data.filter((item) => item.nombre?.toLowerCase().includes(search.toLowerCase()))
-    : data;
+  const { data: filtered = data } = useQuery({
+    queryKey: ["tiposTramite", "search", search, data],
+    queryFn: () =>
+      search.trim()
+        ? apiGet<TipoDeTramite[]>(`/tipo-tramite/search?nombre=${encodeURIComponent(search.trim())}`)
+        : Promise.resolve(data),
+  });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setSelectedWorkflowId(""); setModalOpen(true); }
   function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : ""); setModalOpen(true); }
@@ -80,6 +86,19 @@ export default function TramitesPage() {
     }
   }
 
+  async function handleDeleteClick(item: TipoDeTramite) {
+    try {
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-tramite/${item.idTipoDeTramite}/in-use`);
+      if (inUse) {
+        toast.error(t("inUseCannotDelete"));
+        return;
+      }
+      setDeleteId(item.idTipoDeTramite!);
+    } catch {
+      toast.error(t("errorDelete"));
+    }
+  }
+
   async function handleDelete() {
     if (!deleteId) return;
     try {
@@ -105,7 +124,7 @@ export default function TramitesPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(item)}>
             <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(item.idTipoDeTramite!)}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(item)} data-testid="btn-delete-tramite">
             <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
           </Button>
         </div>
@@ -131,6 +150,7 @@ export default function TramitesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
+          data-testid="input-search-tramite"
         />
       </div>
       <DataTable
