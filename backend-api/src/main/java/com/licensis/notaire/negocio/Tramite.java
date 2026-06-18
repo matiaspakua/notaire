@@ -318,18 +318,6 @@ public class Tramite implements Serializable {
 
         this.documentoPresentadoList = new ArrayList<>();
 
-        // //Documentos asociados al tramite
-        // if((this.getDocumentoPresentadoList() != null) &&
-        // (!this.getDocumentoPresentadoList().isEmpty()))
-        // {
-        // for (Iterator<DocumentoPresentado> it =
-        // this.getDocumentoPresentadoList().iterator(); it.hasNext();)
-        // {
-        // DocumentoPresentado documentoPresentado = it.next();
-        //
-        // miDto.getListaDocumentosPresentados().add(documentoPresentado.getDto());
-        // }
-        // }
         return miDto;
     }
 

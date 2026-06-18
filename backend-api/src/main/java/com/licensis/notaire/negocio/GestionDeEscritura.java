@@ -232,11 +232,6 @@ public class GestionDeEscritura implements Serializable {
 
             dtoTramite.setGestionDeEscritura(dtoGestion);
             dtoTramite.setInmueble(new DtoInmueble());
-
-            // Tramite tramiteAsociado = new Tramite();
-            // tramiteAsociado.setAtributos(dtoTramite);
-            //
-            // this.getTramiteList().add(tramiteAsociado);
         }
 
         // Estado de la gestion
