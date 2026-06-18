@@ -62,4 +62,12 @@ test.describe("Personas module (CU17, CU18)", () => {
       .or(page.getByText(/no hay personas|no data/i));
     await expect(tableOrEmpty).toBeVisible({ timeout: 10000 });
   });
+
+  test("CU61 — escribir en búsqueda por nombre llama a GET /personas/buscar", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/personas/buscar") && req.method() === "GET"
+    );
+    await page.getByTestId("input-search-nombre").fill("Juan");
+    await searchRequest;
+  });
 });

@@ -169,6 +169,7 @@
     "errorSave": "Error al guardar la gestión",
     "errorDelete": "Error al eliminar la gestión",
     "noData": "No hay gestiones registradas",
+    "filterByCliente": "Filtrar por cliente...",
     "fields": {
       "numero": "Número",
       "tipo": "Tipo de Trámite",
@@ -190,6 +191,7 @@
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
     "noData": "No hay escrituras registradas",
+    "searchPlaceholder": "Buscar por número...",
     "fields": {
       "numero": "Número",
       "fecha": "Fecha",

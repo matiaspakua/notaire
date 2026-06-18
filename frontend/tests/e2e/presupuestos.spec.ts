@@ -69,6 +69,15 @@ test.describe("Presupuestos module (CU01, CU39)", () => {
       .or(page.getByText(/no hay presupuestos/i));
     await expect(tableOrEmpty).toBeVisible({ timeout: 10000 });
   });
+
+  test("CU60 — seleccionar un estado llama a GET /presupuestos/buscar", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/presupuestos/buscar") && req.method() === "GET"
+    );
+    await page.getByTestId("select-estado").click();
+    await page.getByRole("option", { name: /borrador/i }).click();
+    await searchRequest;
+  });
 });
 
 test.describe("Pagos module (CU15, CU47)", () => {

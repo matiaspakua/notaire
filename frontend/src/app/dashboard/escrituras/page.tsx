@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api-client";
 import {
   useEscrituras,
   useCreateEscritura,
@@ -35,6 +37,15 @@ export default function EscriturasPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Escritura>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [searchNumero, setSearchNumero] = useState("");
+
+  const { data: filteredEscrituras = escrituras } = useQuery({
+    queryKey: ["escrituras", "buscar", searchNumero, escrituras],
+    queryFn: () =>
+      searchNumero.trim()
+        ? apiGet<Escritura[]>(`/escrituras/buscar?numero=${encodeURIComponent(searchNumero.trim())}`)
+        : Promise.resolve(escrituras),
+  });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(e: Escritura) { setEditing(e); setIsEditMode(true); setModalOpen(true); }
@@ -83,7 +94,17 @@ export default function EscriturasPage() {
         title={t("title")}
         actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
       />
-      <DataTable data={escrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage={t("noData")} />
+      <div className="px-4 pb-4">
+        <Input
+          placeholder={t("searchPlaceholder")}
+          value={searchNumero}
+          onChange={(e) => setSearchNumero(e.target.value)}
+          className="w-48"
+          type="number"
+          data-testid="input-search-escritura"
+        />
+      </div>
+      <DataTable data={filteredEscrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

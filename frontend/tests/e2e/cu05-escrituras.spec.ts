@@ -87,7 +87,11 @@ test.describe("CU63 - Buscar Escritura", () => {
     await steps.givenUserIsOnPage("/dashboard/escrituras");
   });
 
-  test.skip("CU63-GW01: Given on escrituras page, When search by number, Then shows results", async () => {
-    // Skipped: escrituras page has no search bar in the current UI.
+  test("CU63-GW01: Given on escrituras page, When search by number, Then calls GET /escrituras/buscar", async () => {
+    const searchRequest = steps.page.waitForRequest((req) =>
+      req.url().includes("/api/v1/escrituras/buscar") && req.method() === "GET"
+    );
+    await steps.page.getByTestId("input-search-escritura").fill("1");
+    await searchRequest;
   });
 });
