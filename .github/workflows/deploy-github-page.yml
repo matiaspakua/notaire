@@ -104,9 +104,7 @@ jobs:
         run: npm ci
 
       - name: Build static site
-        run: |
-          npm run build
-          npm run export
+        run: npm run build
         env:
           NODE_ENV: production
 
