@@ -52,7 +52,7 @@ You are a security expert for the Notaire project. You audit the Spring Boot bac
 
 ### Dependency Vulnerabilities
 
-- [ ] Trivy scan clean (`bash scripts/test.sh` or `trivy fs .`).
+- [ ] Trivy scan clean (`bash integration-test/scripts/test.sh` or `trivy fs .`).
 - [ ] No known CVEs in `pom.xml` dependencies.
 - [ ] No outdated libraries with active exploits.
 

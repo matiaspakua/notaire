@@ -58,7 +58,7 @@ See [02-architecture/01-adr/](02-architecture/01-adr/) for all decisions.
    git clone <repo>
    cd notaire
    bash scripts/start.sh          # Start database + backend
-   bash scripts/start-infra.sh    # Optional: monitoring stack
+   bash infra/scripts/start-infra.sh    # Optional: monitoring stack
    cd frontend && npm run dev     # Start frontend
    ```
    Details: [03-development/01-setup/README.md](03-development/01-setup/README.md)

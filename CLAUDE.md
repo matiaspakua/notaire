@@ -75,7 +75,7 @@ bash scripts/logs.sh
 
 # Start the FULL system: application + observability/quality infra
 bash scripts/start-all.sh        # = start.sh then start-infra.sh
-bash scripts/start-infra.sh      # infra only (app must be up first)
+bash infra/scripts/start-infra.sh      # infra only (app must be up first)
 
 # Run backend directly (needs local PostgreSQL on 5432)
 cd backend-api && mvn spring-boot:run
@@ -97,7 +97,7 @@ Runs alongside the app and is wired to it (see `infra/README.md`):
   `notaire-postgres`, `notaire-logs`.
 - **Loki + Promtail** — aggregate the backend's structured JSON logs
   (Logback `LogstashEncoder`); query `{container_name="notary-backend"}`.
-- **SonarQube** (`:9000`) — run `bash scripts/run-sonar.sh` to analyze the backend.
+- **SonarQube** (`:9000`) — run `bash infra/scripts/run-sonar.sh` to analyze the backend.
 - **Homer** (`:8888`) — landing page linking every service.
 
 **Business audit:** the `AuditoriaAspect` records create/update/delete
@@ -134,7 +134,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 mvn verify -pl backend-api  # all checks
 
 # HTTP integration tests (requires running API)
-bash scripts/test.sh
+bash integration-test/scripts/test.sh
 ```
 
 ## Backend Architecture (`backend-api`)

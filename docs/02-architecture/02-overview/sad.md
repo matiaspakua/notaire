@@ -54,7 +54,7 @@ No incluye diseño detallado de cada endpoint ni especificación completa de UI.
 - ADR-006: `docs/02-architecture/01-adr/ADR-006-testing-strategy.md`
 - Docker Compose: `docker-compose.yml`
 - Módulos actuales: `backend-api/`, `frontend-swing/`, `notaire-shared/`, `init-db/`
-- Diagramas existentes: `images/arquitectura-original.drawio`, `images/arquitectura-notaire.drawio`
+- Diagramas existentes: `docs/images/arquitectura-original.drawio`, `docs/images/arquitectura-notaire.drawio`
 
 ## Arquitectura Legacy
 
@@ -85,7 +85,7 @@ El producto original era un sistema monolítico Java Swing que combinaba:
 - Dependencia de tecnología antigua y de MySQL directo
 
 
-> Ver diagrama legacy y original: `images/arquitectura-original.drawio` y `docs/02-architecture/02-overview/architecture-legacy.puml`
+> Ver diagrama legacy y original: `docs/images/arquitectura-original.drawio` y `docs/02-architecture/02-overview/architecture-legacy.puml`
 
 ## Estrategia de migración
 

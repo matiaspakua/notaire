@@ -62,7 +62,7 @@ mvn test -pl backend-api                          # unit + integration
 mvn test -pl backend-api -Dtest=ClassName         # single class
 mvn jacoco:check -pl backend-api                  # coverage ≥ 80%
 mvn verify -pl backend-api                        # all quality checks
-bash scripts/test.sh                              # HTTP integration (API running)
+bash integration-test/scripts/test.sh                              # HTTP integration (API running)
 cd frontend && npx playwright test                # E2E
 ```
 
@@ -71,7 +71,7 @@ cd frontend && npx playwright test                # E2E
 ```bash
 mvn checkstyle:check -pl backend-api
 mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
-bash scripts/run-sonar.sh                         # SonarQube
+bash infra/scripts/run-sonar.sh                         # SonarQube
 ```
 
 ### Key URLs (local)
