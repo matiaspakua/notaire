@@ -17,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: github-page
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,7 +29,7 @@ jobs:
           cache-dependency-path: github-page/package-lock.json
 
       - name: Fetch repository metrics
-        working-directory: ..
+        working-directory: ${{ github.workspace }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,14 +98,17 @@ jobs:
           cat github-page/public/metrics.json
 
       - name: Install dependencies
+        working-directory: github-page
         run: npm ci
 
       - name: Build static site
+        working-directory: github-page
         run: npm run build
         env:
           NODE_ENV: production
 
       - name: Validate exported site
+        working-directory: github-page
         run: |
           if [ ! -f out/index.html ]; then
             echo "ERROR: Static export did not generate out/index.html" >&2
@@ -122,10 +122,11 @@ jobs:
           fi
 
       - name: Ensure metrics included in export
+        working-directory: github-page
         run: |
-          if [ -f github-page/public/metrics.json ]; then
-            mkdir -p github-page/out
-            cp github-page/public/metrics.json github-page/out/metrics.json || true
+          if [ -f public/metrics.json ]; then
+            mkdir -p out
+            cp public/metrics.json out/metrics.json || true
             echo "Copied metrics.json to out/"
           else
             echo "No metrics.json found to copy"
