@@ -207,7 +207,7 @@ Implement only what is needed to make the failing tests pass.
 ### Database Change Checklist
 
 - [ ] Create new Flyway migration `V{n}__description.sql` in `db/migration/`.
-- [ ] Update `init-db/01-schema.sql` (Docker authoritative schema).
+- [ ] Flyway is the single source of truth (init-db archived at `docs/archive/init-db/`).
 - [ ] Run `mvn test -Ppg-integration` to validate alignment.
 - [ ] See `.claude/rules/database-migrations.md`.
 

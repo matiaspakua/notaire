@@ -15,28 +15,28 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Guards against drift between the JPA entities and {@code init-db/01-schema.sql},
- * the schema that builds the production Docker database.
+ * Guards against drift between the JPA entities and the Flyway-managed schema
+ * that builds the production Docker database.
  *
- * <p>The Docker database is created exclusively from the {@code init-db} scripts
- * (Flyway is dormant in Docker). Previously every read of an endpoint whose entity
- * referenced a column missing from {@code init-db} failed with HTTP 500
- * (InvalidDataAccessResourceUsageException). The pre-existing H2 tests could not
- * catch this because they use {@code ddl-auto=create}, generating the schema from
- * the entities themselves.</p>
+ * <p>Flyway is the single source of truth for the database schema (V1→V11).
+ * Previously the Docker stack used {@code init-db/01-schema.sql} (now archived),
+ * which caused 500s when Flyway migrations V3–V10 added columns unknown to the
+ * old init-db scripts — but Flyway was dormant in Docker because the init scripts
+ * ran first. Now Flyway runs against an empty database and applies all migrations
+ * sequentially, matching production behavior.</p>
  *
- * <p>This test boots the full application against a PostgreSQL container created
- * from the real {@code init-db} scripts at production fidelity ({@code ddl-auto=none}),
- * then smoke tests the endpoint families that previously returned 500. A missing
- * column or table reintroduced into the entities (or removed from init-db) makes
- * the corresponding request return 500 and fails the build.</p>
+ * <p>The pre-existing H2 unit tests use {@code ddl-auto=create}, generating the
+ * schema from the entities themselves, so they cannot catch column/table drift.
+ * This test boots the full application against a PostgreSQL container created
+ * from Flyway migrations at production fidelity ({@code ddl-auto=none}),
+ * then smoke tests the endpoint families that previously returned 500.</p>
  */
 @SpringBootTest
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("init-db Schema vs Entity Validation")
-class InitDbSchemaValidationIntegrationTest extends BaseIntegrationTest {
+@DisplayName("Flyway Schema vs Entity Validation")
+class FlywaySchemaValidationIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -49,38 +49,38 @@ class InitDbSchemaValidationIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should boot the application against the real init-db schema")
-    void shouldLoadContextAgainstInitDbSchema() {
+    @DisplayName("Should boot the application against the Flyway-managed schema")
+    void shouldLoadContextAgainstFlywaySchema() {
         // Reaching this point means @SpringBootTest started against a PostgreSQL
-        // container whose schema came from init-db/01-schema.sql (production fidelity).
+        // container whose schema came from Flyway migrations (production fidelity).
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/testimonio against the real schema")
+    @DisplayName("Should return 200 for GET /api/v1/testimonio against the Flyway schema")
     void shouldListTestimoniosWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/testimonio")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/movimiento-testimonio against the real schema")
+    @DisplayName("Should return 200 for GET /api/v1/movimiento-testimonio against the Flyway schema")
     void shouldListMovimientosTestimonioWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/movimiento-testimonio")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/tipo-folio against the real schema")
+    @DisplayName("Should return 200 for GET /api/v1/tipo-folio against the Flyway schema")
     void shouldListTiposDeFolioWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/tipo-folio")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/items against the real schema")
+    @DisplayName("Should return 200 for GET /api/v1/items against the Flyway schema")
     void shouldListItemsWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/items")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/personas (Folio to TipoDeFolio join) against the real schema")
+    @DisplayName("Should return 200 for GET /api/v1/personas (Folio to TipoDeFolio join) against the Flyway schema")
     void shouldListPersonasWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/personas")).andExpect(status().isOk());
     }

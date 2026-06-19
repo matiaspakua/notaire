@@ -53,7 +53,7 @@ No incluye diseño detallado de cada endpoint ni especificación completa de UI.
 - ADR-005: `docs/02-architecture/01-adr/ADR-005-modern-frontend-migration.md`
 - ADR-006: `docs/02-architecture/01-adr/ADR-006-testing-strategy.md`
 - Docker Compose: `docker-compose.yml`
-- Módulos actuales: `backend-api/`, `frontend-swing/`, `notaire-shared/`, `init-db/`
+- Módulos actuales: `backend-api/`, `frontend-swing/`, `notaire-shared/`
 - Diagramas existentes: `docs/images/arquitectura-original.drawio`, `docs/images/arquitectura-notaire.drawio`
 
 ## Arquitectura Legacy
@@ -104,7 +104,7 @@ El producto original era un sistema monolítico Java Swing que combinaba:
 2. **Módulo compartido**: crear `notaire-shared` para DTOs y contratos comunes.
 3. **Backend REST**: desarrollar `backend-api` con Spring Boot 4, JPA/Hibernate y PostgreSQL.
 4. **Modernización del frontend**: desarrollar `frontend` con Next.js 15, TypeScript y Tailwind CSS.
-5. **Migración de datos**: implementar `init-db` con scripts de inicialización y Flyway para versionado.
+5. **Migración de datos**: implementar Flyway como sistema de versionado de schema (inicialmente con scripts `init-db` como base, ahora archivados en `docs/archive/init-db/`).
 6. **Deprecación**: eliminar el código legacy y el frontend Swing transicional.
 
 ### Estado actual de la migración
@@ -114,7 +114,7 @@ Actualmente el repositorio contiene:
 - `backend-api/`: API REST Spring Boot 4 con `api`, `service`, `repository`, `negocio`, `config` y soporte de Spring Data JPA.
 - `frontend/`: aplicación web moderna en Next.js 15 que consume la API REST.
 - `notaire-shared/`: módulo compartido con DTOs, excepciones y contratos comunes.
-- `init-db/`: scripts de PostgreSQL para esquema y datos semilla, gestionados por Flyway.
+- `docs/archive/init-db/`: scripts PostgreSQL históricos (reemplazados por Flyway como fuente única de verdad).
 - `docker-compose.yml`: orquesta `postgres`, backend, frontend y herramientas de soporte.
 
 > Ver diagrama de migración: `docs/02-architecture/02-overview/arquitectura-migracion.drawio` y `docs/02-architecture/02-overview/migration-flow.puml`
@@ -221,11 +221,10 @@ El frontend actual Swing permanece como una fase intermedia durante la migració
 - `com.licensis.notaire.dto.interfaces`: contratos de DTO
 - `com.licensis.notaire.jpa`: helpers de JPA reutilizables
 
-#### Base de datos (`init-db`)
+#### Base de datos (Flyway)
 
-- `01-schema.sql`: esquema relacional inicial
-- `02-data.sql`: datos semilla
-- `migrate.load`: script de carga de datos
+- `backend-api/src/main/resources/db/migration/`: migraciones versionadas (fuente única de verdad)
+- `docs/archive/init-db/`: scripts `init-db` históricos (reemplazados por Flyway)
 
 #### Orquestación
 
@@ -276,7 +275,7 @@ API --> Shared : DTO contracts
 ### Deployment y operación
 
 - El backend se ejecuta en un contenedor Docker construible con `backend-api/Dockerfile`.
-- PostgreSQL se inicia con Docker Compose usando `init-db` para inicializar el esquema.
+- PostgreSQL se inicia con Docker Compose vacío; Flyway aplica las migraciones V1→V11+ al arrancar el backend.
 - El frontend Next.js se desplegará como otro contenedor o aplicación web independiente.
 - pgAdmin se utiliza como herramienta de operación de base de datos.
 - El puerto de la API es `8080` y el puerto de pgAdmin es `5050`.
@@ -299,7 +298,7 @@ API --> Shared : DTO contracts
   - **Mitigación**: mantener `frontend-swing` como fallback y avanzar por módulos.
 
 - **Riesgo**: incompatibilidades de datos entre MySQL y PostgreSQL.
-  - **Mitigación**: usar scripts de migración en `init-db` y pruebas de integridad.
+  - **Mitigación**: usar Flyway para migraciones versionadas y pruebas de integridad con `mvn test -Ppg-integration`.
 
 - **Riesgo**: versión de API incompatible para clientes.
   - **Mitigación**: adoptar versionado de API (`/api/v1`) según ADR-003.

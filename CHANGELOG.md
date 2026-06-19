@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Flyway single source of truth**: Removed dual schema source (init-db + Flyway)
+  - Removed `init-db:/docker-entrypoint-initdb.d` volume mount from docker-compose.yml
+  - PostgreSQL now starts empty; Flyway applies all V1→V11 migrations on startup
+  - Created V11 migration to fix `conceptos.version` for "Documentacion" (id=3)
+  - Rewrote `BaseIntegrationTest.java` to enable Flyway instead of copying init-db scripts
+  - Renamed `InitDbSchemaValidationIntegrationTest` → `FlywaySchemaValidationIntegrationTest`
+  - Archived `init-db/` directory to `docs/archive/init-db/`
+  - Updated all documentation, agent configs, and `.claude/rules/database-migrations.md`
+  - See `.claude/rules/database-migrations.md` for new migration workflow
+
 ### Added
 
 - **ADR-007**: Database Schema Versioning with Flyway

@@ -67,7 +67,7 @@ You are a code reviewer for the Notaire project. Review changes against the proj
 ### Database
 
 - [ ] Schema changes have a new Flyway migration (`V{n}__desc.sql`).
-- [ ] `init-db/01-schema.sql` updated to match (Docker authoritative schema).
+- [ ] New Flyway migration created for schema changes (Flyway is single source of truth).
 - [ ] `InitDbSchemaValidationIntegrationTest` passes.
 
 ### Frontend / UI

@@ -211,8 +211,8 @@ graph LR
 
 ## 5. Core Data Model (ERD)
 
-28 tables (PostgreSQL `public`). Authoritative for the Docker schema:
-`init-db/01-schema.sql`. Detailed attributes: `docs/01-business/04-data-model`.
+28 tables (PostgreSQL `public`). Schema source of truth: Flyway migrations
+(init-db archived at `docs/archive/init-db/`). Detailed attributes: `docs/01-business/04-data-model`.
 
 ```mermaid
 erDiagram
@@ -267,10 +267,11 @@ chain is the notarial-output core.
 **Catalog (reference) tables.** `tipos_de_documento`, `tipos_de_tramite`,
 `tipos_de_folio`, `tipos_identificacion`, `estados_de_gestion`, `conceptos`.
 
-**Schema integrity note.** The Docker schema is built only from `init-db/01-schema.sql`
-(Flyway is dormant in Docker). Entity↔schema drift here is what previously broke
-CU07/08 etc.; it is now guarded by `InitDbSchemaValidationIntegrationTest`
-(`mvn test -Ppg-integration`). See `.claude/rules/database-migrations.md`.
+**Schema integrity note.** The Docker schema is now built by Flyway migrations
+(init-db archived at `docs/archive/init-db/`). Entity↔schema drift is what
+previously broke CU07/08 etc.; it is now guarded by
+`FlywaySchemaValidationIntegrationTest` (`mvn test -Ppg-integration`).
+See `.claude/rules/database-migrations.md`.
 
 ## 6. Traceability
 
@@ -282,7 +283,7 @@ CU07/08 etc.; it is now guarded by `InitDbSchemaValidationIntegrationTest`
 | CU ↔ API ↔ test matrix | `docs/testing/CU-API-MATRIX.csv` |
 | Functional requirements | `docs/01-business/01-requirements/` (`requerimientos.csv`) |
 | Data model (detail) | `docs/01-business/04-data-model/` |
-| Authoritative Docker schema | `init-db/01-schema.sql` |
+| Schema source of truth | Flyway migrations (`docs/archive/init-db/` archived) |
 | GitHub issue traceability | CU → #154–#221 |
 
 ## 7. Recommendations (functional)
@@ -293,6 +294,6 @@ CU07/08 etc.; it is now guarded by `InitDbSchemaValidationIntegrationTest`
    convert the corresponding E2E `test.skip` into active assertions.
 3. **Complete CU15 (Procesar pago) business logic** and add the missing contract tests
    (CU22 POST suplencia; CU24/25/50 report endpoints).
-4. **Reconcile the dual schema source** (init-db vs Flyway) to a single source of truth.
+4. ~~Reconcile the dual schema source (init-db vs Flyway) to a single source of truth.~~ **DONE** — Flyway is now the sole schema source; init-db archived at `docs/archive/init-db/`.
 5. **Refresh `CU-API-MATRIX.csv`** — its 500-ERROR rows for testimonio/movimiento/
    tipo-folio are now stale (resolved 2026-05-29).

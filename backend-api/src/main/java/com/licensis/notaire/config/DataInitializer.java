@@ -23,10 +23,9 @@ import java.util.Optional;
  *
  * <p>La contraseña se almacena como hash MD5, coincidiendo con la verificación que
  * realiza {@code UsuarioController#login}. Es idempotente: si el usuario ya existe
- * (por ejemplo, sembrado por {@code init-db}) se actualiza su contraseña y estado;
- * si no existe, se crea junto con su persona asociada. Esto asegura el acceso por
- * defecto incluso sobre un volumen de base de datos preexistente, donde los scripts
- * de {@code init-db} no se vuelven a ejecutar.</p>
+ * (sembrado por Flyway V2) se actualiza su contraseña y estado; si no existe, se
+ * crea junto con su persona asociada. Esto asegura el acceso por defecto incluso
+ * sobre una base de datos preexistente donde las migraciones no se vuelven a ejecutar.</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {

@@ -13,7 +13,7 @@ This document details the implementation of Flyway as a schema version control s
 
 ### 1.1 Objective
 
-Replace static SQL scripts in `init-db/` with versioned Flyway migrations to enable:
+Replace static SQL scripts in `init-db/` (now archived at `docs/archive/init-db/`) with versioned Flyway migrations to enable:
 - Schema version control
 - Safe rollbacks
 - CI/CD integration
@@ -36,7 +36,7 @@ Replace static SQL scripts in `init-db/` with versioned Flyway migrations to ena
 
 **File structure:**
 ```
-init-db/
+init-db/ (now at docs/archive/init-db/)
 ├── 01-schema.sql      # 371 lines - Complete schema
 ├── 02-data.sql        # 94 lines - Initial data
 ├── migrate.load        # Historical documentation
@@ -44,7 +44,7 @@ init-db/
 ```
 
 **Current execution:**
-- Docker Compose mounts `./init-db` to `/docker-entrypoint-initdb.d/`
+- Previously Docker Compose mounted `./init-db` to `/docker-entrypoint-initdb.d/` (now removed — Flyway is sole source)
 - Scripts run ONLY on first container creation
 - No control over subsequent changes
 

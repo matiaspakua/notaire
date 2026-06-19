@@ -106,7 +106,7 @@ Package root: `com.licensis.notaire`
 - Design system: `src/theme/tokens.ts` (single source of truth).
 - Forms: `FormContainer → FormSection → FormField → FormActions`.
 
-**Database**: Schema source of truth for Docker = `init-db/01-schema.sql`. Flyway is dormant in Docker. Any schema change MUST update both this file and a new Flyway migration.
+**Database**: Flyway is the single source of truth. Docker starts PostgreSQL empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/archive/init-db/`.
 
 ---
 
@@ -135,4 +135,4 @@ Package root: `com.licensis.notaire`
 - ❌ Hardcode credentials or secrets
 - ❌ Push without creating PR
 - ❌ Skip E2E Playwright tests for UI changes
-- ❌ Schema change without updating `init-db/01-schema.sql`
+- ❌ Schema change without creating a new Flyway migration
