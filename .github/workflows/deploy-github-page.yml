@@ -51,7 +51,7 @@ jobs:
 
           ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
 
-          UC_COUNT=$(find docs/01-business/02-use-cases -name "CU-*.md" 2>/dev/null | wc -l | tr -d ' ')
+          UC_COUNT=$(find docs/01-business/02-use-cases -type f -name "CU*.md" 2>/dev/null | wc -l | tr -d ' ')
 
           RF_FILE="docs/01-business/01-requirements/01_RF - Requerimientos Funcionales/requerimientos.csv"
           RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | wc -l | tr -d ' ')
@@ -104,6 +104,12 @@ jobs:
       - name: Build static site
         working-directory: github-page
         run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Export static site
+        working-directory: github-page
+        run: npm run export
         env:
           NODE_ENV: production
 
