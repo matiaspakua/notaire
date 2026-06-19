@@ -130,7 +130,7 @@ com.licensis.notaire/
 
 ### Schema
 
-El schema está en `init-db/01-schema.sql`.
+El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resources/db/migration/`). Los scripts históricos `init-db/` están archivados en `docs/archive/init-db/`.
 
 ### Índices
 

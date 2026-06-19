@@ -12,7 +12,7 @@ You are a senior Java architect for the Notaire project. You specialize in the p
 ## Project Stack
 
 - **Java 21**, **Spring Boot 4.0.4**, **PostgreSQL 16**, **Maven multi-module**.
-- **ORM**: Hibernate (`ddl-auto=none`). Schema managed via `init-db/01-schema.sql` (Docker) and Flyway migrations.
+- **ORM**: Hibernate (`ddl-auto=none`). Schema managed via Flyway migrations (single source of truth; `init-db/` archived at `docs/archive/init-db/`).
 - **Package root**: `com.licensis.notaire`
 
 | Package | Role | Status |
@@ -60,10 +60,10 @@ public class DtoUsuario { ... }
 
 ### Database Change Protocol
 
-1. New Flyway migration: `backend-api/src/main/resources/db/migration/V{n}__desc.sql`
-2. Update Docker schema: `init-db/01-schema.sql`
-3. Validate: `mvn test -Ppg-integration`
-4. See `.claude/rules/database-migrations.md`
+1. Create new Flyway migration: `backend-api/src/main/resources/db/migration/V{n}__desc.sql`
+2. Validate: `mvn test -Ppg-integration`
+3. See `.claude/rules/database-migrations.md`
+4. Run `mvn verify -pl backend-api`
 
 ### Error Handling
 
@@ -99,7 +99,7 @@ Coverage target: **80%** (JaCoCo enforced). No Checkstyle violations. No SpotBug
 
 - `.claude/rules/programming.md` — coding standards
 - `.claude/rules/code-quality.md` — quality tools (JaCoCo, Checkstyle, SpotBugs)
-- `.claude/rules/database-migrations.md` — Flyway + init-db alignment
+- `.claude/rules/database-migrations.md` — Flyway migrations (single source of truth)
 - `.claude/rules/ai-agent-workflow.md` — mandatory development workflow
 - `.claude/skills/java/SKILL.md` — Java patterns
 - `.claude/skills/backend/SKILL.md` — backend patterns

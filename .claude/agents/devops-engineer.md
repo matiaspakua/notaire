@@ -16,7 +16,7 @@ You are a DevOps engineer for the Notaire project. You know the actual infrastru
 | Service | Port | Notes |
 |---------|------|-------|
 | Backend API | 8080 | Spring Boot, `/actuator/health`, `/actuator/prometheus` |
-| PostgreSQL | 5432 | Docker, schema from `init-db/01-schema.sql` |
+| PostgreSQL | 5432 | Docker, schema via Flyway migrations |
 | pgAdmin | 5050 | DB management UI |
 
 ### Observability Stack (`infra/`)
@@ -58,13 +58,13 @@ Required keys:
 docker-compose.yml          # App stack (backend + postgres + pgAdmin)
 infra/docker-compose.yml    # Observability stack
 infra/README.md             # Observability setup details
-init-db/01-schema.sql       # Authoritative Docker DB schema
+# Schema via Flyway migrations (init-db archived at docs/archive/init-db/)
 .env.example                # Environment template
 ```
 
 ## Critical: Schema Source of Truth
 
-The Docker PostgreSQL container runs `init-db/01-schema.sql` on first start. Flyway is dormant in Docker. **Any entity or schema change MUST update `init-db/01-schema.sql`** or the app will crash with 500 errors at runtime.
+Flyway is the single source of truth. The Docker PostgreSQL container starts empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/archive/init-db/`.
 
 Validate alignment: `mvn test -Ppg-integration`
 

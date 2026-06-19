@@ -141,7 +141,7 @@ notaire/
 │   ├── 05-api/               # API documentation
 │   └── 06-learning/          # Learning resources
 │
-├── init-db/                  # Database initialization scripts
+├── docs/archive/init-db/     # Historic database init scripts (now via Flyway)
 ├── scripts/                  # Utility scripts
 │   ├── start.sh              # Start PostgreSQL + backend
 │   ├── stop.sh               # Stop services

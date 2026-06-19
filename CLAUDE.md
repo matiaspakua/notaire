@@ -154,7 +154,12 @@ Package root: `com.licensis.notaire`
 
 **Database:** PostgreSQL 16 via Docker. ORM: Hibernate (PostgreSQLDialect), `ddl-auto=none` (Hibernate never creates/alters the schema).
 
-> ⚠️ **Schema source of truth:** In the Docker stack the schema is built **only** from `init-db/01-schema.sql` (mounted into the postgres container). Flyway is on the classpath and `spring.flyway.enabled=true`, but it is **dormant in Docker** — the `init-db` scripts create the schema first, so the `db/migration/V*` files never run there. **Therefore `init-db/01-schema.sql` is the authoritative Docker schema and MUST stay aligned with the JPA entities.** Adding/renaming an entity column without updating `init-db` causes runtime 500s (`column ... does not exist`). The H2 unit tests cannot catch this (they generate their schema from the entities); the guard is `InitDbSchemaValidationIntegrationTest` — run `mvn test -Ppg-integration`. See `.claude/rules/database-migrations.md`.
+> ✅ **Flyway is the single source of truth.** The Docker stack now uses Flyway
+> as the sole mechanism to create the database schema. PostgreSQL starts empty;
+> Flyway applies V1→V11+ sequentially. The old `init-db/` scripts have been
+> archived at `docs/archive/init-db/`. The guard test is
+> `FlywaySchemaValidationIntegrationTest` — run `mvn test -Ppg-integration`.
+> See `.claude/rules/database-migrations.md`.
 
 **Reports:** JasperReports (`.jasper`/`.jrxml`) in `src/main/resources/reportes/`. The `ReporteController` handles report generation.
 

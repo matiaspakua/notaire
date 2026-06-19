@@ -35,8 +35,8 @@ collects the distinct estado IDs in chronological order:
 
 ### Demo seed data
 
-`init-db/02-data.sql` (Docker, authoritative) and Flyway
-`V10__seed_workflow_demo_data.sql` (kept in parity) seed:
+Flyway `V10__seed_workflow_demo_data.sql` (and formerly `init-db/02-data.sql`,
+now archived at `docs/archive/init-db/`) seed:
 
 - "Workflow de Gestión Estándar" — 7 nodes covering Iniciada → Inscripta with
   a fork at *Documentación Completa* (→ Escritura Sin Firmar or → Archivada)

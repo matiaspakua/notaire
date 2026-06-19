@@ -163,9 +163,11 @@
             <scope>test</scope>
         </dependency>
         <!-- Flyway for database schema versioning -->
+        <!-- Spring Boot 4.x removed Flyway auto-configuration from spring-boot-autoconfigure.
+             Must use spring-boot-starter-flyway to get FlywayAutoConfiguration back. -->
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -392,8 +394,8 @@
     <profiles>
         <!--
             Runs the heavyweight Testcontainers (real PostgreSQL) integration tests,
-            e.g. InitDbSchemaValidationIntegrationTest, which validate the entities
-            against the production init-db schema. Requires Docker.
+            e.g. FlywaySchemaValidationIntegrationTest, which validate the entities
+            against the Flyway-managed schema. Requires Docker.
             Usage: mvn test -Ppg-integration
         -->
         <profile>

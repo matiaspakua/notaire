@@ -116,7 +116,7 @@ El sistema original era un **monolito Java 1.6 con Swing** que había servido fi
 | 🏗️ **Backend API** | ✅ Completo | 26 controllers REST, 27 repositorios Spring Data JPA, 30 entidades |
 | 🖥️ **Cliente Swing Transicional** | ✅ Completo | Swing refactorizado como REST client |
 | 📱 **Frontend Next.js** | ✅ Completo | 27 páginas, 20 hooks personalizados, Apple Design System |
-| 🗄️ **Base de Datos** | ✅ Completo | PostgreSQL 16, Flyway versionado, scripts init-db |
+| 🗄️ **Base de Datos** | ✅ Completo | PostgreSQL 16, Flyway versionado (init-db archivado) |
 | 🧪 **Testing** | ✅ Completo | Unitarios + Integración + E2E Playwright + Swing E2E |
 | 📊 **Observabilidad** | ✅ Completo | Prometheus + Loki + Grafana + structured logging |
 | 🌐 **Internacionalización** | ✅ En progreso | i18n con next-intl, multi-idioma |
@@ -180,7 +180,7 @@ flowchart TD
 
   %% ── DATABASE ──
   subgraph DB ["🗄️ Base de Datos"]
-    PG["PostgreSQL 16<br/>HikariCP Pool (min:5, max:20)<br/>init-db + Flyway"]:::data
+    PG["PostgreSQL 16<br/>HikariCP Pool (min:5, max:20)<br/>Flyway migrations"]:::data
   end
 
   %% ── INFRASTRUCTURE ──
@@ -275,7 +275,7 @@ notaire/
 │
 ├── 🔗 notaire-shared/                # DTOs y contratos compartidos
 │
-├── 🗄️ init-db/                       # Scripts PostgreSQL + init schema
+├── 🗄️ docs/archive/init-db/          # Scripts PostgreSQL históricos (archivados)
 │   ├── 01-schema.sql                 # DDL completo
 │   └── 02-data.sql                   # Datos iniciales
 │

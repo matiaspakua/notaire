@@ -58,7 +58,7 @@ mvn test -pl backend-api -Dtest=YourNewTestClass   # expected: FAILURE
 ### Step 3 — Implement (make tests pass)
 
 - New endpoint → implement + OpenAPI docs + UI traceability entry in `docs/`
-- DB change → new Flyway `V{n}__desc.sql` + update `init-db/01-schema.sql`
+- DB change → new Flyway `V{n}__desc.sql` (init-db archived, Flyway is single source of truth)
 - UI change → follow `@.claude/rules/ui-ux-design.md` + Playwright E2E tests
 
 **UI Endpoint Traceability**: every endpoint MUST be called from the UI at least once. Document the mapping in `docs/`.
@@ -169,7 +169,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 - New code → use `repository`, not `jpa`.
 - DTOs named `DtoEntityName` (e.g., `DtoUsuario`).
 - REST URLs: `/api/v1/resource` (plural nouns).
-- DB schema source of truth for Docker: `init-db/01-schema.sql`.
+- DB schema source of truth: Flyway migrations (init-db archived at `docs/archive/init-db/`).
 
 **Frontend**: `frontend/src/` — Next.js 15, React 19, TypeScript, Tailwind CSS.
 - Theme: `src/theme/tokens.ts` — single source of truth, no hardcoded values.
