@@ -107,22 +107,16 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Export static site
-        working-directory: github-page
-        run: npm run export
-        env:
-          NODE_ENV: production
-
       - name: Validate exported site
         working-directory: github-page
         run: |
           if [ ! -f out/index.html ]; then
-            echo "ERROR: Static export did not generate out/index.html" >&2
+            echo "ERROR: Static build did not generate out/index.html" >&2
             ls -la out || true
             exit 1
           fi
           if [ ! -d out/_next ] && [ ! -d out/_not-found ]; then
-            echo "ERROR: Static export missing required directories in out/" >&2
+            echo "ERROR: Static build missing required directories in out/" >&2
             ls -la out || true
             exit 1
           fi

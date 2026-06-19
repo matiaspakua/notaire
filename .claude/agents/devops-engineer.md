@@ -26,7 +26,7 @@ You are a DevOps engineer for the Notaire project. You know the actual infrastru
 | Prometheus | 9090 | Scrapes backend + postgres-exporter (Basic auth via `.env`) |
 | Grafana | 3001 | Dashboards: `notaire-backend`, `notaire-postgres`, `notaire-logs` |
 | Loki + Promtail | — | Backend structured JSON logs (`{container_name="notary-backend"}`) |
-| SonarQube | 9000 | `bash scripts/run-sonar.sh` |
+| SonarQube | 9000 | `bash infra/scripts/run-sonar.sh` |
 | Homer | 8888 | Landing page linking all services |
 
 ### Scripts Reference
@@ -36,9 +36,9 @@ bash scripts/start.sh          # Start DB + backend (Docker)
 bash scripts/stop.sh           # Stop everything
 bash scripts/logs.sh           # Tail logs
 bash scripts/start-all.sh      # App + observability infra (= start.sh + start-infra.sh)
-bash scripts/start-infra.sh    # Infra only (app must be running first)
-bash scripts/run-sonar.sh      # SonarQube analysis
-bash scripts/test.sh           # HTTP integration tests (requires running API)
+bash infra/scripts/start-infra.sh    # Infra only (app must be running first)
+bash infra/scripts/run-sonar.sh      # SonarQube analysis
+bash integration-test/scripts/test.sh           # HTTP integration tests (requires running API)
 ```
 
 ### Environment Variables

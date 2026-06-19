@@ -4,7 +4,7 @@
 # This script runs the test suite against the running API
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_DIR"
 
 # Colors for output
@@ -25,7 +25,7 @@ if ! curl -s http://localhost:8080/swagger-ui.html > /dev/null 2>&1; then
     echo -e "${YELLOW}Start the application first with: bash start.sh${NC}"
     echo ""
     echo -e "${YELLOW}Alternatively, run unit tests without API:${NC}"
-    echo -e "  bash scripts/test-all.sh"
+    echo -e "  bash integration-test/scripts/test-all.sh"
     exit 1
 fi
 echo -e "${GREEN}✓ API is running${NC}\n"

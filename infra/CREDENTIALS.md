@@ -37,7 +37,7 @@
 |---------|-----|----------|----------|-------------|
 | **SonarQube** | http://localhost:9000 | `admin` | `Admin@123456` | `SONAR_ADMIN_USER` / `SONAR_ADMIN_PASSWORD` |
 
-> SonarQube forces a password change on first login. `scripts/run-sonar.sh`
+> SonarQube forces a password change on first login. `infra/scripts/run-sonar.sh`
 > performs this automatically and generates an analysis token, stored back in
 > `.env` as `SONAR_TOKEN`.
 

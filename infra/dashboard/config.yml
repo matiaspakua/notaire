@@ -3,7 +3,7 @@
 
 title: "Notaire DevSecOps Hub"
 subtitle: "Infrastructure Control Center"
-logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/images/logoRojoLetraMediano.png"
+logo: "https://raw.githubusercontent.com/matiaspakua/notaire/main/docs/images/logoRojoLetraMediano.png"
 
 header: true
 footer: '<p>Built with love for Notaire S-SDLC | Credentials live in the local <b>.env</b> file</p>'

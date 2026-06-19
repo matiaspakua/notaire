@@ -65,7 +65,7 @@ bash scripts/start-all.sh           # app, then infra
 ### Or start them independently
 ```bash
 bash scripts/start.sh               # 1) application (creates the app network)
-bash scripts/start-infra.sh         # 2) observability + SonarQube
+bash infra/scripts/start-infra.sh         # 2) observability + SonarQube
 ```
 The infra stack attaches to the application's Docker network
 (`notaire_notary-network`, declared `external`), so the application must be up
@@ -124,7 +124,7 @@ Available labels: `container`, `container_name`, `service`, `app`, `level`.
 ## 🔍 Code Quality (SonarQube)
 
 ```bash
-bash scripts/run-sonar.sh
+bash infra/scripts/run-sonar.sh
 ```
 This waits for SonarQube, handles the first-login password change, generates an
 analysis token (saved to `.env` as `SONAR_TOKEN`), runs the backend test suite
@@ -143,7 +143,7 @@ bash infra/scripts/generate-report.sh   # Markdown + HTML in infra/reports/
 ## ⚠️ Networking
 
 The infra connects to `notaire_notary-network` as an **external** network.
-Start the application first so the network exists. `scripts/start-infra.sh`
+Start the application first so the network exists. `infra/scripts/start-infra.sh`
 verifies this and fails fast with guidance if it is missing.
 
 ## 📖 Additional Documentation

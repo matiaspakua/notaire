@@ -9,7 +9,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_DIR"
 
 GREEN='\033[0;32m'
@@ -95,6 +95,6 @@ echo -e "  Postgres Exporter:${YELLOW}http://localhost:9187/metrics${NC}"
 echo -e "${BLUE}Quality:${NC}"
 echo -e "  SonarQube:        ${YELLOW}http://localhost:9000${NC}  (\$SONAR_ADMIN_USER / \$SONAR_ADMIN_PASSWORD)"
 echo ""
-echo -e "  Run code analysis: ${YELLOW}bash scripts/run-sonar.sh${NC}"
+echo -e "  Run code analysis: ${YELLOW}bash infra/scripts/run-sonar.sh${NC}"
 echo -e "  Health check:      ${YELLOW}bash infra/scripts/check-infra.sh${NC}"
 echo ""

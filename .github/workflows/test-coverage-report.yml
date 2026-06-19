@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Run test coverage script
-        run: bash scripts/generate-coverage-report.sh
+        run: bash integration-test/scripts/generate-coverage-report.sh
 
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v6

@@ -554,7 +554,7 @@ cd frontend && npm run test:e2e
 # ────── API TESTS ──────
 
 # Tests HTTP con Bruno (requiere API corriendo)
-bash scripts/test.sh
+bash integration-test/scripts/test.sh
 
 # ────── TODO ──────
 
