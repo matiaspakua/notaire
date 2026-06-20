@@ -65,12 +65,14 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
 function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const [animatedPercentage, setAnimatedPercentage] = useState(0);
+  const [animatedPercentage, setAnimatedPercentage] = useState(metric.percentage);
 
   useEffect(() => {
     const el = ref.current;
     const progressBar = progressBarRef.current;
     if (!el || !progressBar) return;
+    // Show real value immediately
+    setAnimatedPercentage(metric.percentage);
 
     gsap.set(el, { opacity: 0, y: 30 });
     gsap.set(progressBar, { scaleX: 0, transformOrigin: "left" });
@@ -87,13 +89,14 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
           delay: index * 0.08,
         });
 
-        gsap.to({ value: 0 }, {
+        const proxy = { value: 0 };
+        gsap.to(proxy, {
           value: metric.percentage,
           duration: 1.4,
           ease: "power2.out",
           delay: index * 0.08 + 0.2,
-          onUpdate(tween) {
-            setAnimatedPercentage(Math.floor(tween.progress() * metric.percentage));
+          onUpdate() {
+            setAnimatedPercentage(Math.floor(proxy.value));
           },
         });
 

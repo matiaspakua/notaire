@@ -38,23 +38,27 @@ function buildStats(metrics: SiteMetrics): StatItem[] {
 }
 
 function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Show real value immediately — no reliance on JS animation
+    setCount(target);
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true;
-        const duration = 2.5;
-        gsap.to({ value: 0 }, {
+        // Animate from 0 → target as a visual enhancement
+        const proxy = { value: 0 };
+        gsap.to(proxy, {
           value: target,
-          duration,
+          duration: 2.5,
           ease: "power2.out",
-          onUpdate(tween) {
-            setCount(Math.floor(tween.progress() * target));
+          onUpdate() {
+            setCount(Math.floor(proxy.value));
           },
           onComplete() {
             setCount(target);
