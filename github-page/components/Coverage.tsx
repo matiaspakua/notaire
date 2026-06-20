@@ -75,7 +75,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
     gsap.set(el, { opacity: 0, y: 30 });
     gsap.set(progressBar, { scaleX: 0, transformOrigin: "left" });
 
-    ScrollTrigger.create({
+    const trigger = ScrollTrigger.create({
       trigger: el,
       start: "top 85%",
       onEnter: () => {
@@ -107,7 +107,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      trigger.kill();
     };
   }, [metric.percentage, index]);
 
