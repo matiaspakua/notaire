@@ -1,8 +1,12 @@
 name: Deploy GitHub Page
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["CI - Build, Test & Security"]
+    types:
+      - completed
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -15,8 +19,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      || github.event_name == 'workflow_dispatch'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,29 +44,94 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Generate JaCoCo coverage reports
+      # ── Download coverage artifacts from the completed CI run ──
+      - name: Download JaCoCo report from CI
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v8
+        with:
+          name: jacoco-report
+          path: jacoco-report
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Download coverage snapshot from CI
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage-snapshot
+          path: coverage-snapshot
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      # ── Fallback for manual workflow_dispatch: generate coverage from scratch ──
+      - name: Generate JaCoCo coverage (manual trigger only)
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
-          echo "Generating JaCoCo coverage reports..."
-          mvn clean test jacoco:report -pl backend-api -am -q 2>/dev/null || echo "WARNING: JaCoCo generation had issues (tests may have failed)"
+          echo "Generating JaCoCo coverage reports (manual trigger)..."
+          mvn clean test jacoco:report -pl backend-api -am -q 2>/dev/null \
+            || echo "WARNING: JaCoCo generation had issues (tests may have failed)"
           echo "OK"
 
-      - name: Copy coverage reports to Next.js public directory
+      # ── Copy coverage reports to Next.js public directory ──
+      # Prefer CI artifacts; fall back to local build (workflow_dispatch)
+      - name: Copy coverage reports to public directory
         run: |
           mkdir -p github-page/public/coverage
-          if [ -d "backend-api/target/site/jacoco" ]; then
+          if [ -d "jacoco-report" ] && [ "$(ls -A jacoco-report 2>/dev/null)" ]; then
+            cp -r jacoco-report/* github-page/public/coverage/
+            echo "Copied JaCoCo reports from CI artifacts to public/coverage/"
+          elif [ -d "backend-api/target/site/jacoco" ]; then
             cp -r backend-api/target/site/jacoco/* github-page/public/coverage/
-            echo "Copied JaCoCo reports to public/coverage/"
-            ls -la github-page/public/coverage/
+            echo "Copied JaCoCo reports from local build to public/coverage/"
           else
-            echo "No JaCoCo reports found, creating placeholder"
-            printf '%s\n' '<!DOCTYPE html>' '<html lang="en">' '<head><meta charset="UTF-8"><title>Coverage Reports - Notaire</title>' '<meta http-equiv="refresh" content="0; url=/notaire/">' '</head>' '<body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body>' '</html>' > github-page/public/coverage/index.html
+            echo "No JaCoCo reports found — creating placeholder"
+            cat > github-page/public/coverage/index.html << 'EOF'
+            <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>
+            <meta http-equiv="refresh" content="0; url=/notaire/"></head>
+            <body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>
+            EOF
           fi
-          # Also update the coverage-snapshot from JaCoCo XML for metrics
-          if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
-            python3 -c "import xml.etree.ElementTree as ET, json, datetime; tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml'); root = tree.getroot(); vals = {c.get('type'): round(int(c.get('covered')) / (int(c.get('missed')) + int(c.get('covered'))) * 100) for c in root.findall('.//counter')}; snapshot = {'backendInstruction': vals.get('INSTRUCTION', 0), 'backendBranch': vals.get('BRANCH', 0), 'frontendComponent': 45, 'e2eTests': 85, 'apiEndpoints': 78, 'lastUpdated': datetime.date.today().isoformat()}; json.dump(snapshot, open('docs/metrics/coverage-snapshot.json', 'w'), indent=2); print('Updated coverage-snapshot.json:', json.dumps(snapshot))"
+          ls -la github-page/public/coverage/ || true
+
+      # ── Prepare coverage snapshot for metrics ──
+      - name: Prepare coverage snapshot
+        run: |
+          SNAPSHOT_DIR="docs/metrics"
+          mkdir -p "$SNAPSHOT_DIR"
+
+          if [ -f "coverage-snapshot/coverage-snapshot.json" ]; then
+            cp coverage-snapshot/coverage-snapshot.json "$SNAPSHOT_DIR/"
+            echo "Used coverage-snapshot.json from CI artifacts"
+          elif [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
+            python3 -c "
+import xml.etree.ElementTree as ET, json, datetime
+tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
+root = tree.getroot()
+vals = {}
+for c in root.findall('.//counter'):
+    ct = c.get('type')
+    covered = int(c.get('covered', 0))
+    missed = int(c.get('missed', 0))
+    total = covered + missed
+    vals[ct] = round(covered * 100 / total) if total > 0 else 0
+snapshot = {
+    'backendInstruction': vals.get('INSTRUCTION', 0),
+    'backendBranch': vals.get('BRANCH', 0),
+    'frontendComponent': 45, 'e2eTests': 85, 'apiEndpoints': 78,
+    'lastUpdated': datetime.date.today().isoformat()
+}
+with open('$SNAPSHOT_DIR/coverage-snapshot.json', 'w') as f:
+    json.dump(snapshot, f, indent=2)
+print('Generated snapshot:', json.dumps(snapshot))
+" 2>/dev/null || echo "Could not generate snapshot from JaCoCo XML"
+          else
+            echo "No coverage data source available — keeping existing snapshot"
           fi
 
+      # ── Fetch repository metrics ──
       - name: Fetch repository metrics
         working-directory: ${{ github.workspace }}
         env:
@@ -166,13 +241,6 @@ jobs:
         with:
           path: github-page/out
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
-        id: deploy
+        id: deployment
         uses: actions/deploy-pages@v4
