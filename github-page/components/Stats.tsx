@@ -62,7 +62,7 @@ function AnimCounter({ target, suffix }: { target: number; suffix: string }) {
         });
         observer.disconnect();
       }
-    }, { threshold: 0.3 });
+    });
     observer.observe(el);
     return () => observer.disconnect();
   }, [target]);
@@ -79,7 +79,7 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
 
     gsap.set(card, { opacity: 0, y: 30 });
 
-    ScrollTrigger.create({
+    const trigger = ScrollTrigger.create({
       trigger: card,
       start: "top 90%",
       onEnter: () => {
@@ -94,14 +94,14 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      trigger.kill();
     };
   }, [index]);
 
   return (
     <div
       ref={cardRef}
-      className="glass rounded-2xl p-6 text-center group hover:scale-105 hover:shadow-lg transition-all duration-300 border"
+      className="glass rounded-2xl p-6 text-center group hover:scale-105 hover:shadow-lg transition-transform duration-300 border"
       style={{ borderColor: `${stat.color}20` }}
     >
       <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">
