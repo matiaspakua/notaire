@@ -626,6 +626,31 @@ jobs:
           fi
           ls -la github-page/public/coverage/ || true
 
+      - name: Download Playwright E2E report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Downloading latest Playwright report from playwright-e2e.yml..."
+          mkdir -p github-page/public/playwright
+          if gh run download --repo "${{ github.repository }}" \
+            --name playwright-report \
+            --workflow playwright-e2e.yml \
+            --dir playwright-report-dl 2>/dev/null; then
+            if [ -d "playwright-report-dl" ] && [ "$(ls -A playwright-report-dl 2>/dev/null)" ]; then
+              cp -r playwright-report-dl/* github-page/public/playwright/
+              echo "Copied Playwright report to public/playwright/"
+              ls -la github-page/public/playwright/ || true
+            fi
+          else
+            echo "No Playwright report available (workflow may not have run yet)"
+            # Create placeholder page
+            printf '%s\n' \
+              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Playwright E2E Report</title>' \
+              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
+              '<body><p>Playwright E2E report not available. <a href="/notaire/">Back to home</a></p></body></html>' \
+              > github-page/public/playwright/index.html
+          fi
+
       - name: Generate metrics.json from fresh data
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -247,7 +247,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
           </div>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link
             href="/coverage/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 duration-300"
@@ -257,6 +257,19 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
             }}
           >
             <span>📈</span> View Detailed Coverage Reports
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+          <Link
+            href="/playwright/"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 duration-300"
+            style={{
+              background: "linear-gradient(135deg, #7c3aed, #ec4899)",
+              color: "white",
+            }}
+          >
+            <span>🎭</span> View Playwright E2E Report
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
