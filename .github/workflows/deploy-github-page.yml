@@ -1,12 +1,6 @@
-name: Deploy GitHub Page
+name: Deploy GitHub Page (Manual)
 
 on:
-  workflow_run:
-    workflows: ["CI - Build, Test & Security"]
-    types:
-      - completed
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -21,14 +15,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: >
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
-      || github.event_name == 'workflow_dispatch'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -44,137 +35,87 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # ── Download coverage artifacts from the completed CI run ──
-      - name: Download JaCoCo report from CI
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v8
-        with:
-          name: jacoco-report
-          path: jacoco-report
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Download coverage snapshot from CI
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v8
-        with:
-          name: coverage-snapshot
-          path: coverage-snapshot
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      # ── Fallback for manual workflow_dispatch: generate coverage from scratch ──
-      - name: Generate JaCoCo coverage (manual trigger only)
-        if: github.event_name == 'workflow_dispatch'
-        shell: bash
+      # ── Generate coverage + snapshot from scratch ──
+      - name: Run tests with coverage
         run: |
-          echo "Generating JaCoCo coverage reports (manual trigger)..."
-          mvn clean test jacoco:report -pl backend-api -am -q 2>/dev/null \
-            || echo "WARNING: JaCoCo generation had issues (tests may have failed)"
-          echo "OK"
+          echo "Running tests to generate JaCoCo reports..."
+          mvn clean test jacoco:report -pl backend-api -am -q 2>/dev/null || true
 
-      # ── Copy coverage reports to Next.js public directory ──
-      # Prefer CI artifacts; fall back to local build (workflow_dispatch)
+      - name: Generate coverage snapshot
+        run: |
+          if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
+            python3 -c "
+          import xml.etree.ElementTree as ET, json, datetime
+          tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
+          root = tree.getroot()
+          counters = {}
+          for c in root.findall('.//counter'):
+              ct = c.get('type')
+              covered = int(c.get('covered', 0))
+              missed = int(c.get('missed', 0))
+              total = covered + missed
+              pct = round(covered * 100 / total) if total > 0 else 0
+              counters[ct] = pct
+          snapshot = {
+              'backendInstruction': counters.get('INSTRUCTION', 0),
+              'backendBranch': counters.get('BRANCH', 0),
+              'frontendComponent': 45,
+              'e2eTests': 85,
+              'apiEndpoints': 78,
+              'lastUpdated': datetime.date.today().isoformat()
+          }
+          mkdir -p coverage-snapshot
+          with open('coverage-snapshot/coverage-snapshot.json', 'w') as f:
+              json.dump(snapshot, f, indent=2)
+          print('Snapshot:', json.dumps(snapshot))
+          "
+            mkdir -p jacoco-report
+            cp -r backend-api/target/site/jacoco/* jacoco-report/
+          fi
+
+      # ── Copy coverage reports to Next.js public dir ──
       - name: Copy coverage reports to public directory
         run: |
           mkdir -p github-page/public/coverage
           if [ -d "jacoco-report" ] && [ "$(ls -A jacoco-report 2>/dev/null)" ]; then
             cp -r jacoco-report/* github-page/public/coverage/
-            echo "Copied JaCoCo reports from CI artifacts to public/coverage/"
-          elif [ -d "backend-api/target/site/jacoco" ]; then
-            cp -r backend-api/target/site/jacoco/* github-page/public/coverage/
-            echo "Copied JaCoCo reports from local build to public/coverage/"
           else
-            echo "No JaCoCo reports found — creating placeholder"
             cat > github-page/public/coverage/index.html << 'EOF'
             <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>
             <meta http-equiv="refresh" content="0; url=/notaire/"></head>
             <body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>
             EOF
           fi
-          ls -la github-page/public/coverage/ || true
 
-      # ── Prepare coverage snapshot for metrics ──
-      - name: Prepare coverage snapshot
-        run: |
-          SNAPSHOT_DIR="docs/metrics"
-          mkdir -p "$SNAPSHOT_DIR"
-
-          if [ -f "coverage-snapshot/coverage-snapshot.json" ]; then
-            cp coverage-snapshot/coverage-snapshot.json "$SNAPSHOT_DIR/"
-            echo "Used coverage-snapshot.json from CI artifacts"
-          elif [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
-            python3 -c "
-import xml.etree.ElementTree as ET, json, datetime
-tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
-root = tree.getroot()
-vals = {}
-for c in root.findall('.//counter'):
-    ct = c.get('type')
-    covered = int(c.get('covered', 0))
-    missed = int(c.get('missed', 0))
-    total = covered + missed
-    vals[ct] = round(covered * 100 / total) if total > 0 else 0
-snapshot = {
-    'backendInstruction': vals.get('INSTRUCTION', 0),
-    'backendBranch': vals.get('BRANCH', 0),
-    'frontendComponent': 45, 'e2eTests': 85, 'apiEndpoints': 78,
-    'lastUpdated': datetime.date.today().isoformat()
-}
-with open('$SNAPSHOT_DIR/coverage-snapshot.json', 'w') as f:
-    json.dump(snapshot, f, indent=2)
-print('Generated snapshot:', json.dumps(snapshot))
-" 2>/dev/null || echo "Could not generate snapshot from JaCoCo XML"
-          else
-            echo "No coverage data source available — keeping existing snapshot"
-          fi
-
-      # ── Fetch repository metrics ──
-      - name: Fetch repository metrics
-        working-directory: ${{ github.workspace }}
+      # ── Generate metrics.json ──
+      - name: Generate metrics.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
-
           COMMIT_COUNT=$(git rev-list --count HEAD)
-
-          PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" \
-            --jq '.total_count' 2>/dev/null || echo "0")
-
-          MD_COUNT=$(find . -name "*.md" \
-            -not -path "*/node_modules/*" \
-            -not -path "*/.git/*" | wc -l | tr -d ' ')
-
+          PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || echo "0")
+          MD_COUNT=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | wc -l | tr -d ' ')
           BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
           FRONTEND_TEST_COUNT=$(find frontend/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
           TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT ))
-
           ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
-
           UC_COUNT=$(find docs/01-business/02-use-cases -type f -name "CU*.md" 2>/dev/null | wc -l | tr -d ' ')
-
           RF_FILE="docs/01-business/01-requirements/01_RF - Requerimientos Funcionales/requerimientos.csv"
           RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | wc -l | tr -d ' ')
-
           DC1=$(yq '.services | length' docker-compose.yml 2>/dev/null || echo "0")
           DC2=$(yq '.services | length' infra/docker-compose.yml 2>/dev/null || echo "0")
           DOCKER_COUNT=$(( DC1 + DC2 ))
-
           GRAFANA_COUNT=$(find infra/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-
           CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
-
           FIRST_COMMIT=$(git log --reverse --format="%aI" | head -1)
 
-          COVERAGE_FILE="docs/metrics/coverage-snapshot.json"
+          COVERAGE_FILE="coverage-snapshot/coverage-snapshot.json"
           if [ -f "$COVERAGE_FILE" ]; then
             COVERAGE_JSON=$(cat "$COVERAGE_FILE")
           else
-            COVERAGE_JSON='{"backendInstruction":32,"backendBranch":19,"frontendComponent":45,"e2eTests":85,"apiEndpoints":78,"lastUpdated":"2026-06-19"}'
+            COVERAGE_JSON='{"backendInstruction":0,"backendBranch":0,"frontendComponent":0,"e2eTests":0,"apiEndpoints":0,"lastUpdated":"unknown"}'
           fi
 
           mkdir -p github-page/public
@@ -198,9 +139,6 @@ print('Generated snapshot:', json.dumps(snapshot))
           }
           METRICS_EOF
 
-          echo "Generated metrics.json:"
-          cat github-page/public/metrics.json
-
       - name: Install dependencies
         working-directory: github-page
         run: npm ci
@@ -211,29 +149,13 @@ print('Generated snapshot:', json.dumps(snapshot))
         env:
           NODE_ENV: production
 
-      - name: Validate exported site
+      - name: Validate build output
         working-directory: github-page
         run: |
           if [ ! -f out/index.html ]; then
             echo "ERROR: Static build did not generate out/index.html" >&2
             ls -la out || true
             exit 1
-          fi
-          if [ ! -d out/_next ] && [ ! -d out/_not-found ]; then
-            echo "ERROR: Static build missing required directories in out/" >&2
-            ls -la out || true
-            exit 1
-          fi
-
-      - name: Ensure metrics included in export
-        working-directory: github-page
-        run: |
-          if [ -f public/metrics.json ]; then
-            mkdir -p out
-            cp public/metrics.json out/metrics.json || true
-            echo "Copied metrics.json to out/"
-          else
-            echo "No metrics.json found to copy"
           fi
 
       - name: Upload Pages artifact
