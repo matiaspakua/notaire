@@ -618,11 +618,11 @@ jobs:
             echo "Copied JaCoCo reports from CI artifacts"
           else
             echo "Creating placeholder coverage page"
-            cat > github-page/public/coverage/index.html << 'EOF'
-            <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>
-            <meta http-equiv="refresh" content="0; url=/notaire/"></head>
-            <body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>
-            EOF
+            printf '%s\n' \
+              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>' \
+              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
+              '<body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>' \
+              > github-page/public/coverage/index.html
           fi
           ls -la github-page/public/coverage/ || true
 
@@ -658,24 +658,24 @@ jobs:
 
           mkdir -p github-page/public
           GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          cat > github-page/public/metrics.json << METRICS_EOF
           {
-            "generatedAt": "${GENERATED_AT}",
-            "commits": ${COMMIT_COUNT},
-            "pullRequests": ${PR_COUNT},
-            "markdownFiles": ${MD_COUNT},
-            "testClasses": ${TEST_COUNT},
-            "adrCount": ${ADR_COUNT},
-            "useCases": ${UC_COUNT},
-            "functionalRequirements": ${RF_COUNT},
-            "dockerServices": ${DOCKER_COUNT},
-            "grafanaDashboards": ${GRAFANA_COUNT},
-            "aiTools": 4,
-            "contributors": ${CONTRIBUTORS},
-            "firstCommitDate": "${FIRST_COMMIT}",
-            "coverage": ${COVERAGE_JSON}
-          }
-          METRICS_EOF
+            printf '%s\n' '{'
+            printf '  "generatedAt": "%s",\n' "${GENERATED_AT}"
+            printf '  "commits": %s,\n' "${COMMIT_COUNT}"
+            printf '  "pullRequests": %s,\n' "${PR_COUNT}"
+            printf '  "markdownFiles": %s,\n' "${MD_COUNT}"
+            printf '  "testClasses": %s,\n' "${TEST_COUNT}"
+            printf '  "adrCount": %s,\n' "${ADR_COUNT}"
+            printf '  "useCases": %s,\n' "${UC_COUNT}"
+            printf '  "functionalRequirements": %s,\n' "${RF_COUNT}"
+            printf '  "dockerServices": %s,\n' "${DOCKER_COUNT}"
+            printf '  "grafanaDashboards": %s,\n' "${GRAFANA_COUNT}"
+            printf '  "aiTools": 4,\n'
+            printf '  "contributors": %s,\n' "${CONTRIBUTORS}"
+            printf '  "firstCommitDate": "%s",\n' "${FIRST_COMMIT}"
+            printf '  "coverage": %s\n' "${COVERAGE_JSON}"
+            printf '%s\n' '}'
+          } > github-page/public/metrics.json
 
           echo "=== metrics.json ==="
           cat github-page/public/metrics.json

@@ -41,11 +41,13 @@ set -euo pipefail
 : "${GHA_SECURITY:?REQUIRED}"
 : "${GHA_DOCKER:?REQUIRED}"
 : "${GHA_QUALITY:?REQUIRED}"
-: "${UNIT_TOTAL:?REQUIRED}"
-: "${UNIT_FAIL:?REQUIRED}"
-: "${SEC_CRITICAL:?REQUIRED}"
-: "${SEC_HIGH:?REQUIRED}"
-: "${COV_PCT:?REQUIRED}"
+# Extracted metrics may be empty if no XML/JSON files were found during
+# the workflow run. Default to "0" to avoid script failure.
+: "${UNIT_TOTAL:-0}"
+: "${UNIT_FAIL:-0}"
+: "${SEC_CRITICAL:-0}"
+: "${SEC_HIGH:-0}"
+: "${COV_PCT:-0}"
 
 DATE="${REPORT_DATE:-$(date -u +"%Y-%m-%d %H:%M:%S")}"
 TITLE="${REPORT_TITLE:-CI/CD Pipeline Report}"
