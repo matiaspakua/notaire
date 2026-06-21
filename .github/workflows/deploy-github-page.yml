@@ -43,32 +43,8 @@ jobs:
 
       - name: Generate coverage snapshot
         run: |
+          python3 scripts/generate-coverage-snapshot.py
           if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
-            python3 -c "
-          import xml.etree.ElementTree as ET, json, datetime
-          tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
-          root = tree.getroot()
-          counters = {}
-          for c in root.findall('.//counter'):
-              ct = c.get('type')
-              covered = int(c.get('covered', 0))
-              missed = int(c.get('missed', 0))
-              total = covered + missed
-              pct = round(covered * 100 / total) if total > 0 else 0
-              counters[ct] = pct
-          snapshot = {
-              'backendInstruction': counters.get('INSTRUCTION', 0),
-              'backendBranch': counters.get('BRANCH', 0),
-              'frontendComponent': 45,
-              'e2eTests': 85,
-              'apiEndpoints': 78,
-              'lastUpdated': datetime.date.today().isoformat()
-          }
-          mkdir -p coverage-snapshot
-          with open('coverage-snapshot/coverage-snapshot.json', 'w') as f:
-              json.dump(snapshot, f, indent=2)
-          print('Snapshot:', json.dumps(snapshot))
-          "
             mkdir -p jacoco-report
             cp -r backend-api/target/site/jacoco/* jacoco-report/
           fi

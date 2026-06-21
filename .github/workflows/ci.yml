@@ -189,36 +189,7 @@ jobs:
 
       - name: Generate coverage snapshot
         if: always()
-        run: |
-          mkdir -p coverage-snapshot
-          if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
-            python3 -c "
-import xml.etree.ElementTree as ET, json, datetime
-tree = ET.parse('backend-api/target/site/jacoco/jacoco.xml')
-root = tree.getroot()
-counters = {}
-for c in root.findall('.//counter'):
-    ct = c.get('type')
-    covered = int(c.get('covered', 0))
-    missed = int(c.get('missed', 0))
-    total = covered + missed
-    pct = round(covered * 100 / total) if total > 0 else 0
-    counters[ct] = pct
-snapshot = {
-    'backendInstruction': counters.get('INSTRUCTION', 0),
-    'backendBranch': counters.get('BRANCH', 0),
-    'frontendComponent': 45,
-    'e2eTests': 85,
-    'apiEndpoints': 78,
-    'lastUpdated': datetime.date.today().isoformat()
-}
-with open('coverage-snapshot/coverage-snapshot.json', 'w') as f:
-    json.dump(snapshot, f, indent=2)
-print('coverage-snapshot.json:', json.dumps(snapshot))
-"
-          else
-            echo '{"backendInstruction":0,"backendBranch":0,"frontendComponent":0,"e2eTests":0,"apiEndpoints":0,"lastUpdated":"unknown"}' > coverage-snapshot/coverage-snapshot.json
-          fi
+        run: python3 scripts/generate-coverage-snapshot.py
 
       - name: Upload coverage snapshot
         uses: actions/upload-artifact@v7
