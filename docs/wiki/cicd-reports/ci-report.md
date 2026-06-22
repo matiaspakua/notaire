@@ -1,12 +1,12 @@
 ---
-title: CI Report - 2026-06-21
+title: CI Report - 2026-06-22
 ---
 
 # CI Pipeline Report
 
-**Date:** 2026-06-21  
+**Date:** 2026-06-22  
 **Branch:** main  
-**Commit:** a99e4b09b208391b8e3f8517797318e98ddaf040
+**Commit:** 47683e40bf0b2ad94a1e47f179e2dd656d7640d4
 
 ## Job Summary
 
@@ -24,8 +24,8 @@ title: CI Report - 2026-06-21
 
 | Type | Total | Failures |
 |------|-------|----------|
-| Unit Tests | reports/unit-test-results/backend-api/target/surefire-reports/TEST-com.licensis.notaire.service.unit.EscrituraServiceTest.xml:12 | reports/unit-test-results/backend-api/target/surefire-reports/TEST-com.licensis.notaire.service.unit.EscrituraServiceTest.xml:0 |
-| Integration Tests | reports/unit-test-results/backend-api/target/surefire-reports/TEST-com.licensis.notaire.service.unit.EscrituraServiceTest.xml:12 | reports/unit-test-results/backend-api/target/surefire-reports/TEST-com.licensis.notaire.service.unit.EscrituraServiceTest.xml:0 |
+| Unit Tests |  |  |
+| Integration Tests |  |  |
 
 ## Security Scan
 
@@ -36,7 +36,7 @@ title: CI Report - 2026-06-21
 
 ## Code Coverage
 
-**Line Coverage:** 75% (Target: 80%)
+**Line Coverage:** 0% (Target: 80%)
 
 ---
-*Report generated on 2026-06-21*
+*Report generated on 2026-06-22*
