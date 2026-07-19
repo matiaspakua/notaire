@@ -8,7 +8,6 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuditoria } from "@/hooks/useAuditoria";
-import { theme } from "@/theme/tokens";
 import type { RegistroAuditoria } from "@/types";
 
 export default function AuditoriaPage() {
@@ -83,43 +82,21 @@ export default function AuditoriaPage() {
         description={t("description")}
       />
 
-      <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[3], marginBottom: theme.spacing[4] }}>
-        <div style={{ position: "relative", flex: 1, maxWidth: "360px" }}>
-          <Search
-            style={{
-              position: "absolute",
-              left: theme.spacing[3],
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "16px",
-              height: "16px",
-              color: theme.colors.neutral[500],
-              pointerEvents: "none",
-            }}
-          />
+      <div className="flex items-center gap-3 mb-4">
+        <div className="relative flex-1 max-w-[360px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <Input
-            style={{ paddingLeft: "2.5rem" }}
+            className="pl-10"
             placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         {modulos.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
-            <Filter style={{ width: "16px", height: "16px", color: theme.colors.neutral[500], flexShrink: 0 }} />
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
             <select
-              style={{
-                height: theme.sizes.input.height,
-                borderRadius: theme.borderRadius.lg,
-                border: `1px solid ${theme.semantic.form.inputBorder}`,
-                backgroundColor: theme.semantic.form.inputBg,
-                padding: `0 ${theme.spacing[4]}`,
-                fontSize: theme.typography.fontSize.sm,
-                color: theme.semantic.form.inputText,
-                fontFamily: theme.typography.fontFamily.body,
-                outline: "none",
-                cursor: "pointer",
-              }}
+              className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
               value={moduloFilter}
               onChange={(e) => setModuloFilter(e.target.value)}
             >
@@ -142,53 +119,16 @@ export default function AuditoriaPage() {
         emptyMessage={t("noData")}
       />
 
-      <div
-        style={{
-          marginTop: theme.spacing[6],
-          borderRadius: theme.borderRadius["2xl"],
-          border: `1px solid ${theme.colors.neutral[200]}`,
-          backgroundColor: theme.semantic.card.bg,
-          boxShadow: theme.shadows.sm,
-          padding: theme.spacing[6],
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "flex-start", gap: theme.spacing[3] }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "40px",
-              height: "40px",
-              borderRadius: theme.borderRadius.lg,
-              backgroundColor: `${theme.colors.primary[600]}1a`,
-              flexShrink: 0,
-            }}
-          >
-            <Shield style={{ width: "20px", height: "20px", color: theme.colors.primary[600] }} />
+      <div className="mt-6 rounded-2xl border border-border bg-card shadow-sm p-6">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 shrink-0">
+            <Shield className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3
-              style={{
-                fontSize: theme.typography.fontSize.sm,
-                fontWeight: theme.typography.fontWeight.semibold,
-                color: theme.colors.neutral[900],
-                fontFamily: theme.typography.fontFamily.body,
-                margin: 0,
-                marginBottom: theme.spacing[1],
-              }}
-            >
+            <h3 className="text-sm font-semibold text-foreground mb-1">
               {t("title")}
             </h3>
-            <p
-              style={{
-                fontSize: theme.typography.fontSize.sm,
-                color: theme.colors.neutral[600],
-                fontFamily: theme.typography.fontFamily.body,
-                margin: 0,
-                lineHeight: theme.typography.lineHeight.relaxed,
-              }}
-            >
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t("description")}
             </p>
           </div>
