@@ -39,6 +39,7 @@ vi.mock("next-intl", () => ({
 
 import LoginPage from "@/app/login/page";
 import { apiPost } from "@/lib/api-client";
+import { useAuthStore } from "@/store/auth-store";
 
 function wrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -50,6 +51,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 });
 
 describe("LoginPage", () => {
@@ -84,6 +86,43 @@ describe("LoginPage", () => {
         contrasenia: "admin",
       });
     });
+  });
+
+  it("stores the JWT token from the login response (issue #552)", async () => {
+    const mockPost = vi.mocked(apiPost);
+    mockPost.mockResolvedValueOnce({
+      valido: true,
+      nombre: "admin",
+      tipo: "ADMIN",
+      token: "fake-jwt-token",
+    });
+
+    render(<LoginPage />, { wrapper });
+
+    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-ingresar"));
+
+    await waitFor(() => {
+      expect(useAuthStore.getState().token).toBe("fake-jwt-token");
+      expect(useAuthStore.getState().isAuthenticated).toBe(true);
+    });
+  });
+
+  it("does not log in when the response has no token", async () => {
+    const mockPost = vi.mocked(apiPost);
+    mockPost.mockResolvedValueOnce({ valido: true, nombre: "admin", tipo: "ADMIN" });
+
+    render(<LoginPage />, { wrapper });
+
+    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-ingresar"));
+
+    await waitFor(() => {
+      expect(mockPost).toHaveBeenCalled();
+    });
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
   });
 
   it("shows error toast on failed login (valido=false)", async () => {

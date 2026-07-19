@@ -35,8 +35,8 @@ export default function LoginPage() {
         contrasenia: contrasenia.trim(),
       });
 
-      if (result.valido) {
-        login(result);
+      if (result.valido && result.token) {
+        login(result, result.token);
         document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
         toast.success(`Bienvenido, ${result.nombre}`);
         router.push("/dashboard");

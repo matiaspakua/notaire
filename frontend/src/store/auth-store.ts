@@ -6,8 +6,9 @@ import type { DtoUsuario } from "@/types";
 
 interface AuthState {
   user: DtoUsuario | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (user: DtoUsuario) => void;
+  login: (user: DtoUsuario, token: string) => void;
   logout: () => void;
   isAdmin: () => boolean;
 }
@@ -16,10 +17,11 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
 
-      login: (user: DtoUsuario) =>
-        set({ user, isAuthenticated: true }),
+      login: (user: DtoUsuario, token: string) =>
+        set({ user, token, isAuthenticated: true }),
 
       logout: () => {
         // Clear the auth status cookie consumed by the Next.js middleware so the
@@ -30,7 +32,7 @@ export const useAuthStore = create<AuthState>()(
           document.cookie =
             "notaire-auth-status=; path=/; SameSite=Lax; Max-Age=0";
         }
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, token: null, isAuthenticated: false });
       },
 
       isAdmin: () => {
@@ -44,7 +46,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "notaire-auth",
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

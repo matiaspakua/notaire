@@ -8,6 +8,23 @@ import { logger } from "@/lib/logger";
 // This ensures the browser never needs to resolve internal Docker hostnames like "backend".
 const BASE_URL = "/api/v1";
 
+/** Shape of the persisted zustand auth store, as written to localStorage. */
+interface PersistedAuthState {
+  state?: { user?: { nombre?: string }; token?: string };
+}
+
+function readPersistedAuthState(): PersistedAuthState | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const raw = window.localStorage.getItem("notaire-auth");
+    return raw ? (JSON.parse(raw) as PersistedAuthState) : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Name of the currently logged-in application user, read from the persisted
  * auth store (zustand `persist` writes `{ state: { user } }` to localStorage).
@@ -15,30 +32,33 @@ const BASE_URL = "/api/v1";
  * attributed to a user in the audit module.
  */
 function actingUser(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  try {
-    const raw = window.localStorage.getItem("notaire-auth");
-    if (!raw) {
-      return null;
-    }
-    const parsed = JSON.parse(raw) as { state?: { user?: { nombre?: string } } };
-    return parsed?.state?.user?.nombre ?? null;
-  } catch {
-    return null;
-  }
+  return readPersistedAuthState()?.state?.user?.nombre ?? null;
+}
+
+/**
+ * JWT issued at login, read from the persisted auth store. Sent as a Bearer
+ * token on every request since the backend's /api/** security chain requires
+ * authentication for all endpoints except login.
+ */
+function authToken(): string | null {
+  return readPersistedAuthState()?.state?.token ?? null;
 }
 
 /**
  * Builds request headers, always including the acting-user header when a user
- * is logged in so the backend audit aspect can record who performed the action.
+ * is logged in so the backend audit aspect can record who performed the action,
+ * and the Bearer token so the backend's security filter chain authenticates
+ * the request.
  */
 function buildHeaders(base: Record<string, string> = {}): Record<string, string> {
   const headers: Record<string, string> = { ...base };
   const user = actingUser();
   if (user) {
     headers["X-Notaire-User"] = user;
+  }
+  const token = authToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
   return headers;
 }
