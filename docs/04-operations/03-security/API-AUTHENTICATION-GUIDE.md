@@ -4,7 +4,7 @@ This guide documents the authentication and authorization mechanisms implemented
 
 ## Overview
 
-Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.12.6 and Spring Security 6.x. The Swing desktop client authenticates via the `/api/v1/usuarios/login` endpoint and receives a JWT token on success. Subsequent requests may include the token as a Bearer header for future RBAC enforcement.
+Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.12.6 and Spring Security 6.x. Clients (the Next.js dashboard and the Swing desktop client) authenticate via the `/api/v1/usuarios/login` endpoint and receive a JWT token on success. Every other `/api/**` request **must** include that token as a Bearer header — requests without a valid token are rejected with `401 Unauthorized` (see issue #552).
 
 ## Architecture
 
@@ -66,6 +66,19 @@ Override in production via environment variable or `application-prod.yml`. Never
 | `JwtAuthenticationFilter` | `config/` | Extract Bearer token, set `SecurityContext` |
 | `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter |
 
+### Client-side token propagation
+
+Both clients capture the `token` field from the login response and attach it as
+`Authorization: Bearer <token>` on every subsequent request:
+
+| Client | Token capture | Header attachment |
+|--------|---------------|--------------------|
+| Next.js dashboard | `useAuthStore` (`frontend/src/store/auth-store.ts`) persists `token` alongside the user | `frontend/src/lib/api-client.ts`'s `buildHeaders()` reads the persisted token and sets `Authorization` |
+| Swing desktop client | `RestClient.login()` (`frontend-swing/.../api/client/RestClient.java`) stores the token from the response DTO in a static field via `setAuthToken()` | `RestClient`'s private request builders (`makeGetRequest`, `makePostRequest`, `makePutRequest`, `makeDeleteRequest`, `makeGetRequestBytes`) call `applyAuthHeader()` before connecting |
+
+The shared `DtoUsuario` (`notaire-shared`) and the TypeScript `DtoUsuario` type
+both carry an optional `token` field, populated only in the login response.
+
 ### Token generation
 
 ```java
@@ -111,12 +124,12 @@ The `Rol` entity is stored in the `roles` table. `UsuarioController` exposes the
 
 ### Current state
 
-All API endpoints use `permitAll()` for backward compatibility with the Swing client (which does not send Bearer tokens). Future work: enforce `hasRole(...)` on sensitive endpoints once the Swing client is updated to include the JWT header.
+`apiSecurityFilterChain` requires `authenticated()` on every `/api/**` request except `POST /api/v1/usuarios/login` and CORS preflight (`OPTIONS`). Any request without a valid Bearer token gets `401` before reaching a controller. This is coarse-grained (authenticated vs. not) — there is no per-role authorization yet.
 
 ### Extending RBAC
 
 1. Add permissions/modules to the `Rol` entity.
-2. Replace `permitAll()` with `.hasRole("ADMIN")` etc. in `SecurityAndCorsConfig`.
+2. Replace `.anyRequest().authenticated()` with per-route `.hasRole("ADMIN")` etc. in `SecurityAndCorsConfig`.
 3. Pass the role claim in the JWT payload.
 
 ## Authentication error handling
@@ -127,7 +140,7 @@ All API endpoints use `permitAll()` for backward compatibility with the Swing cl
 | User not found | 200 | `{ "valido": false }` |
 | Inactive user | 200 | `{ "valido": false }` |
 | DB error | 200 | `{ "valido": false }` |
-| Invalid/expired JWT | — | Request proceeds unauthenticated (`permitAll`) |
+| Missing/invalid/expired JWT on a protected endpoint | 401 | `Unauthorized` (via `apiAuthenticationEntryPoint`) |
 
 The login endpoint always returns HTTP 200 to avoid information leakage. The `valido` field in the response distinguishes success from failure.
 

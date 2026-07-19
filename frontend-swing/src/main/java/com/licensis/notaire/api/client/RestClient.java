@@ -22,9 +22,40 @@ import java.util.Map;
  * Usa HttpURLConnection (disponible en Java estándar)
  */
 public class RestClient {
-    
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    
+    private static volatile String authToken;
+
+    /**
+     * Establece el token JWT a incluir como Authorization: Bearer en cada petición subsiguiente.
+     */
+    public static void setAuthToken(String token) {
+        authToken = token;
+    }
+
+    /**
+     * Obtiene el token JWT actualmente almacenado, o null si no hay sesión iniciada.
+     */
+    public static String getAuthToken() {
+        return authToken;
+    }
+
+    /**
+     * Limpia el token JWT almacenado (p. ej. al cerrar sesión).
+     */
+    public static void clearAuthToken() {
+        authToken = null;
+    }
+
+    /**
+     * Agrega el header Authorization: Bearer a la conexión si hay un token JWT almacenado.
+     */
+    static void applyAuthHeader(HttpURLConnection connection) {
+        if (authToken != null && !authToken.isBlank()) {
+            connection.setRequestProperty("Authorization", "Bearer " + authToken);
+        }
+    }
+
     /**
      * Obtiene una lista de objetos desde el endpoint.
      * Si responseType es GenericDto, deserializa cada elemento JSON como Map y lo envuelve en GenericDto.
@@ -106,7 +137,11 @@ public class RestClient {
         String url = ApiConfig.getApiBaseUrl() + "/usuarios/login";
         String jsonBody = objectMapper.writeValueAsString(loginRequest);
         String jsonResponse = makePostRequest(url, jsonBody);
-        return objectMapper.readValue(jsonResponse, DtoUsuario.class);
+        DtoUsuario response = objectMapper.readValue(jsonResponse, DtoUsuario.class);
+        if (response != null && response.isValido() && response.getToken() != null) {
+            setAuthToken(response.getToken());
+        }
+        return response;
     }
 
     /**
@@ -135,6 +170,8 @@ public class RestClient {
         connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
         connection.setReadTimeout(ApiConfig.getReadTimeout());
         
+        applyAuthHeader(connection);
+        
         try {
             int responseCode = connection.getResponseCode();
             if (responseCode == 200 || responseCode == 201) {
@@ -157,6 +194,7 @@ public class RestClient {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
         connection.setReadTimeout(ApiConfig.getReadTimeout());
+        applyAuthHeader(connection);
         connection.setDoOutput(true);
         
         try {
@@ -186,6 +224,7 @@ public class RestClient {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
         connection.setReadTimeout(ApiConfig.getReadTimeout());
+        applyAuthHeader(connection);
         connection.setDoOutput(true);
         
         try {
@@ -216,6 +255,8 @@ public class RestClient {
         connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
         connection.setReadTimeout(ApiConfig.getReadTimeout());
         
+        applyAuthHeader(connection);
+        
         try {
             int responseCode = connection.getResponseCode();
             if (responseCode != 200 && responseCode != 204) {
@@ -235,6 +276,8 @@ public class RestClient {
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(ApiConfig.getConnectionTimeout());
         connection.setReadTimeout(ApiConfig.getReadTimeout());
+        
+        applyAuthHeader(connection);
         
         try {
             int responseCode = connection.getResponseCode();

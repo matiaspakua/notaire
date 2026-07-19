@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,7 +29,9 @@ class JwtAuthIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .build();
     }
 
     @Test
@@ -67,6 +70,21 @@ class JwtAuthIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));
+    }
+
+    @Test
+    @DisplayName("API request without a Bearer token is rejected with 401 (issue #552)")
+    void shouldRejectApiRequestWithoutToken() throws Exception {
+        mockMvc.perform(get("/api/v1/usuarios"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("API request with an invalid Bearer token is rejected with 401 (issue #552)")
+    void shouldRejectApiRequestWithInvalidToken() throws Exception {
+        mockMvc.perform(get("/api/v1/usuarios")
+                        .header("Authorization", "Bearer not-a-real-token"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
