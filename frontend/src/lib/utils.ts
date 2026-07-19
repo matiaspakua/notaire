@@ -33,3 +33,23 @@ export function fullName(p?: {
   if (!p) return "—";
   return [p.nombre, p.apellido].filter(Boolean).join(" ") || "—";
 }
+
+/**
+ * Extract the server-side error message from a 409 Conflict Error.
+ * Returns the `error` field from the JSON body embedded in the message,
+ * or null when the message isn't a 409 or carries no parseable JSON.
+ */
+export function extractApiError(err: unknown): string | null {
+  if (!(err instanceof Error)) return null;
+  if (!err.message.includes("[409]")) return null;
+  try {
+    const jsonStart = err.message.indexOf("{");
+    if (jsonStart !== -1) {
+      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
+      return body.error ?? null;
+    }
+  } catch {
+    // message is not JSON — fall through
+  }
+  return null;
+}

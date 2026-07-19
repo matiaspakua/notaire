@@ -14,6 +14,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { extractApiError } from "@/lib/utils";
 import type { Folio, Persona } from "@/types";
 
 const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
@@ -22,20 +23,6 @@ const ESTADO_UTILIZADO = "Utilizado";
 interface TipoDeFolioRow {
   idTipoFolio: number;
   nombre: string;
-}
-
-function extractApiError(err: unknown): string | null {
-  if (!(err instanceof Error)) return null;
-  try {
-    const jsonStart = err.message.indexOf("{");
-    if (jsonStart !== -1) {
-      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
-      return body.error ?? null;
-    }
-  } catch {
-    // not JSON — fall through
-  }
-  return null;
 }
 
 interface FolioFormState {
