@@ -14,26 +14,10 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { useConceptos, useCreateConcepto, useUpdateConcepto, useDeleteConcepto } from "@/hooks/useConceptos";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, extractApiError } from "@/lib/utils";
 import type { Concepto } from "@/types";
 
 const EMPTY: Partial<Concepto> = { nombre: "", descripcion: "", valor: undefined };
-
-function extractApiError(err: unknown): string | null {
-  if (!(err instanceof Error)) return null;
-  const match = err.message.match(/\[409\]/);
-  if (!match) return null;
-  try {
-    const jsonStart = err.message.indexOf("{");
-    if (jsonStart !== -1) {
-      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
-      return body.error ?? null;
-    }
-  } catch {
-    // not JSON — return null
-  }
-  return null;
-}
 
 export default function ConceptosPage() {
   const t = useTranslations("administracion.conceptos");

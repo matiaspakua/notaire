@@ -14,22 +14,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite, useAssignWorkflowToTipoTramite } from "@/hooks/useTiposTramite";
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
+import { extractApiError } from "@/lib/utils";
 import type { TipoDeTramite } from "@/types";
 
 const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
-
-function extractApiError(err: unknown): string | null {
-  if (!(err instanceof Error)) return null;
-  if (!err.message.includes("[409]")) return null;
-  try {
-    const jsonStart = err.message.indexOf("{");
-    if (jsonStart !== -1) {
-      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
-      return body.error ?? null;
-    }
-  } catch { }
-  return null;
-}
 
 export default function TramitesPage() {
   const t = useTranslations("administracion.tramites");

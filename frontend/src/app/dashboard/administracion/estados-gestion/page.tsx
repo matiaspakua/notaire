@@ -14,22 +14,10 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from "@/hooks/useWorkflow";
+import { extractApiError } from "@/lib/utils";
 import type { EstadoDeGestion } from "@/types";
 
 const EMPTY: Partial<EstadoDeGestion> = { nombre: "", observaciones: "" };
-
-function extractApiError(err: unknown): string | null {
-  if (!(err instanceof Error)) return null;
-  if (!err.message.includes("[409]")) return null;
-  try {
-    const jsonStart = err.message.indexOf("{");
-    if (jsonStart !== -1) {
-      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
-      return body.error ?? null;
-    }
-  } catch { }
-  return null;
-}
 
 export default function EstadosGestionPage() {
   const t = useTranslations("administracion.estadosGestion");
