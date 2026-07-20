@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("JwtTokenService unit tests")
 class JwtTokenServiceTest {
@@ -73,5 +75,45 @@ class JwtTokenServiceTest {
         assertThat(tokenA).isNotEqualTo(tokenB);
         assertThat(jwtTokenService.extractUsername(tokenA)).isEqualTo("userA");
         assertThat(jwtTokenService.extractUsername(tokenB)).isEqualTo("userB");
+    }
+
+    @Test
+    @DisplayName("Should fail fast on startup when jwt.secret is blank (issue #558)")
+    void shouldFailFastWhenSecretIsBlank() {
+        JwtTokenService unconfigured = new JwtTokenService();
+        ReflectionTestUtils.setField(unconfigured, "secretKey", "");
+
+        assertThatThrownBy(unconfigured::validateSecret)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
+    }
+
+    @Test
+    @DisplayName("Should fail fast on startup when jwt.secret is the known checked-in default (issue #558)")
+    void shouldFailFastWhenSecretIsTheOldHardcodedDefault() {
+        JwtTokenService unconfigured = new JwtTokenService();
+        ReflectionTestUtils.setField(unconfigured, "secretKey",
+                "notaire-default-secret-key-change-in-production-!!");
+
+        assertThatThrownBy(unconfigured::validateSecret)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
+    }
+
+    @Test
+    @DisplayName("Should fail fast on startup when jwt.secret is too short for HS256 (issue #558)")
+    void shouldFailFastWhenSecretIsTooShort() {
+        JwtTokenService unconfigured = new JwtTokenService();
+        ReflectionTestUtils.setField(unconfigured, "secretKey", "too-short");
+
+        assertThatThrownBy(unconfigured::validateSecret)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("jwt.secret");
+    }
+
+    @Test
+    @DisplayName("Should accept a sufficiently long, non-default jwt.secret")
+    void shouldAcceptValidSecret() {
+        assertThatCode(jwtTokenService::validateSecret).doesNotThrowAnyException();
     }
 }

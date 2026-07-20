@@ -52,11 +52,17 @@ Signing algorithm: **HS256** (HMAC-SHA256).
 
 ```yaml
 jwt:
-  secret: notaire-default-secret-key-change-in-production-!!
+  secret: ${JWT_SECRET}
   expiration-ms: 86400000  # 24 hours
 ```
 
-Override in production via environment variable or `application-prod.yml`. Never commit a real secret.
+`jwt.secret` has **no default** — the application fails fast at startup
+(`JwtTokenService#validateSecret`, `@PostConstruct`) if it is blank, shorter
+than 32 bytes, or left as the old hardcoded value that used to ship in this
+repo (issue #558: that value was a real, git-committed signing key, letting
+anyone with repo read access forge valid tokens for any user). Set
+`JWT_SECRET` in `.env` (see `.env.example`); generate one with
+`openssl rand -base64 48`. Never commit a real secret.
 
 ### Key classes
 
