@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -42,10 +40,10 @@ public class AuditoriaAspect {
     private static final Logger log = LoggerFactory.getLogger(AuditoriaAspect.class);
 
     /**
-     * Header set by the Next.js frontend carrying the name of the currently
-     * logged-in application user. Used to attribute audit records since the
-     * REST API itself is stateless and does not establish a Spring Security
-     * session for application logins.
+     * Legacy header the Next.js frontend still sends with the logged-in
+     * user's name. No longer trusted for audit attribution (issue #555):
+     * a client-supplied header is trivially forgeable. Kept here only as
+     * the well-known header name for tests asserting it is ignored.
      */
     public static final String ACTING_USER_HEADER = "X-Notaire-User";
 
@@ -153,9 +151,11 @@ public class AuditoriaAspect {
     }
 
     /**
-     * Resolves the acting user from (1) the Spring Security context, then
-     * (2) the {@link #ACTING_USER_HEADER} request header set by the frontend.
-     * The application login is stateless, so in practice (2) is the common path.
+     * Resolves the acting user solely from the verified Spring Security
+     * context populated by {@link com.licensis.notaire.config.JwtAuthenticationFilter}
+     * for a valid Bearer token. No client-supplied header is trusted (issue #555):
+     * every state-changing {@code /api/**} request requires authentication, so by
+     * the time this aspect runs, an authenticated request always has one.
      */
     private Optional<Usuario> resolveCurrentUser() {
         String name = resolveActingUsername();
@@ -174,19 +174,6 @@ public class AuditoriaAspect {
             if (name != null && !name.isBlank() && !"anonymousUser".equals(name)) {
                 return name;
             }
-        }
-        return currentRequestHeader(ACTING_USER_HEADER);
-    }
-
-    private String currentRequestHeader(String headerName) {
-        try {
-            ServletRequestAttributes attributes =
-                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (attributes != null) {
-                return attributes.getRequest().getHeader(headerName);
-            }
-        } catch (RuntimeException ignored) {
-            // No request bound to the current thread (e.g. async); not auditable.
         }
         return null;
     }
