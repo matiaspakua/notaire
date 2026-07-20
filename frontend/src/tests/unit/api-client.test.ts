@@ -22,6 +22,35 @@ function makeResponse(body: unknown, status = 200) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.localStorage.clear();
+});
+
+describe("Authorization header (issue #552)", () => {
+  it("attaches the persisted JWT as a Bearer token", async () => {
+    window.localStorage.setItem(
+      "notaire-auth",
+      JSON.stringify({ state: { user: { nombre: "admin" }, token: "fake-jwt-token" } })
+    );
+    mockFetch.mockReturnValueOnce(makeResponse([]));
+
+    await apiGet("/gestiones");
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("/gestiones"),
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: "Bearer fake-jwt-token" }),
+      })
+    );
+  });
+
+  it("omits the Authorization header when no token is persisted", async () => {
+    mockFetch.mockReturnValueOnce(makeResponse([]));
+
+    await apiGet("/gestiones");
+
+    const headers = mockFetch.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers.Authorization).toBeUndefined();
+  });
 });
 
 describe("apiGet()", () => {

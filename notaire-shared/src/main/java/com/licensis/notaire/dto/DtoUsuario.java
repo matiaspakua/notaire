@@ -19,6 +19,7 @@ public class DtoUsuario
     private boolean valido = false;
     private Integer rolId;
     private String rolNombre;
+    private String token;
 
     public boolean isValido()
     {
@@ -138,6 +139,19 @@ public class DtoUsuario
     public void setRolNombre(String rolNombre)
     {
         this.rolNombre = rolNombre;
+    }
+
+    /**
+     * JWT emitido por POST /usuarios/login; ausente fuera de la respuesta de login.
+     */
+    public String getToken()
+    {
+        return token;
+    }
+
+    public void setToken(String token)
+    {
+        this.token = token;
     }
 }
 

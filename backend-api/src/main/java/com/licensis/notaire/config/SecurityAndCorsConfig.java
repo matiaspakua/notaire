@@ -3,6 +3,8 @@ package com.licensis.notaire.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -90,18 +93,34 @@ public class SecurityAndCorsConfig {
     }
 
     /**
+     * Authentication entry point for unauthenticated API requests.
+     * Returns a plain 401 instead of Spring Security's default redirect/challenge
+     * behavior, since the API is consumed by a JS client, not a browser login form.
+     */
+    @Bean
+    public AuthenticationEntryPoint apiAuthenticationEntryPoint() {
+        return (request, response, authException) ->
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+    }
+
+    /**
      * Security filter chain for API endpoints.
      * JWT filter authenticates requests that carry a valid Bearer token.
-     * Endpoints remain accessible without auth for backward compatibility.
+     * Only the login endpoint (and CORS preflight) is reachable without one;
+     * every other /api/** request must present a valid token.
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
+            AuthenticationEntryPoint apiAuthenticationEntryPoint) throws Exception {
         http
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
+                .anyRequest().authenticated()
             )
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(apiAuthenticationEntryPoint))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.disable())

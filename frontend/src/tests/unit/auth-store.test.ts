@@ -28,7 +28,7 @@ vi.mock('zustand/middleware', () => ({
 
 // Reset store state between tests
 beforeEach(() => {
-  useAuthStore.setState({ user: null, isAuthenticated: false });
+  useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
   vi.clearAllMocks();
 });
 
@@ -47,24 +47,26 @@ const empleadoUser: DtoUsuario = {
 };
 
 describe("useAuthStore — login()", () => {
-  it("sets user and isAuthenticated on login", () => {
+  it("sets user, token and isAuthenticated on login", () => {
     const { login } = useAuthStore.getState();
-    login(adminUser);
+    login(adminUser, "fake-jwt-token");
 
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(true);
     expect(state.user).toEqual(adminUser);
+    expect(state.token).toBe("fake-jwt-token");
   });
 });
 
 describe("useAuthStore — logout()", () => {
-  it("clears user and isAuthenticated on logout", () => {
-    useAuthStore.setState({ user: adminUser, isAuthenticated: true });
+  it("clears user, token and isAuthenticated on logout", () => {
+    useAuthStore.setState({ user: adminUser, token: "fake-jwt-token", isAuthenticated: true });
     useAuthStore.getState().logout();
 
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(false);
     expect(state.user).toBeNull();
+    expect(state.token).toBeNull();
   });
 
   it("clears the notaire-auth-status cookie on logout (issue #392)", () => {
@@ -72,7 +74,7 @@ describe("useAuthStore — logout()", () => {
     document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
     expect(document.cookie).toContain("notaire-auth-status=1");
 
-    useAuthStore.setState({ user: adminUser, isAuthenticated: true });
+    useAuthStore.setState({ user: adminUser, token: "fake-jwt-token", isAuthenticated: true });
     useAuthStore.getState().logout();
 
     // After logout, the middleware-facing cookie must be gone so that

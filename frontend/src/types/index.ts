@@ -9,6 +9,8 @@ export interface DtoUsuario {
   tipo?: string;
   valido?: boolean;
   idPersona?: number;
+  /** JWT issued by POST /usuarios/login; absent outside the login response. */
+  token?: string;
 }
 
 export interface Persona {

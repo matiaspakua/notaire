@@ -3,15 +3,29 @@ package com.licensis.notaire.api.client;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.dto.GenericDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.*;
 
 public class RestClientTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @After
+    public void clearAuthToken() {
+        RestClient.clearAuthToken();
+        ApiConfig.setApiBaseUrl("http://localhost:8080/api/v1");
+    }
 
     @Test
     public void testDtoUsuarioSerialization() throws Exception {
@@ -106,11 +120,93 @@ public class RestClientTest {
     @Test
     public void testApiEndpointWithQueryParameters() {
         String baseUrl = ApiConfig.getApiBaseUrl();
-        
+
         String searchEndpoint = baseUrl + "/personas/buscar?nombre=John";
         assertEquals("http://localhost:8080/api/v1/personas/buscar?nombre=John", searchEndpoint);
-        
+
         String filterEndpoint = baseUrl + "/presupuestos?estado=pendiente";
         assertEquals("http://localhost:8080/api/v1/presupuestos?estado=pendiente", filterEndpoint);
+    }
+
+    @Test
+    public void testLoginResponseDtoCapturesJwtToken() throws Exception {
+        String json = "{\"nombre\":\"admin\",\"valido\":true,\"token\":\"eyJhbGciOiJIUzI1NiJ9.test\"}";
+
+        DtoUsuario usuario = objectMapper.readValue(json, DtoUsuario.class);
+
+        assertEquals("eyJhbGciOiJIUzI1NiJ9.test", usuario.getToken());
+    }
+
+    @Test
+    public void testAuthTokenIsNullByDefault() {
+        assertNull(RestClient.getAuthToken());
+    }
+
+    @Test
+    public void testSetAndClearAuthToken() {
+        RestClient.setAuthToken("my-token");
+        assertEquals("my-token", RestClient.getAuthToken());
+
+        RestClient.clearAuthToken();
+        assertNull(RestClient.getAuthToken());
+    }
+
+    @Test
+    public void testGetRequestSendsBearerTokenWhenSet() throws Exception {
+        RestClient.setAuthToken("abc123");
+
+        String requestHeaders = captureRequestHeaders(port -> {
+            ApiConfig.setApiBaseUrl("http://localhost:" + port);
+            RestClient.getList("/entidades", GenericDto.class);
+        });
+
+        assertTrue(requestHeaders.contains("Authorization: Bearer abc123"));
+    }
+
+    @Test
+    public void testGetRequestOmitsAuthorizationHeaderWhenNoToken() throws Exception {
+        String requestHeaders = captureRequestHeaders(port -> {
+            ApiConfig.setApiBaseUrl("http://localhost:" + port);
+            RestClient.getList("/entidades", GenericDto.class);
+        });
+
+        assertFalse(requestHeaders.contains("Authorization:"));
+    }
+
+    /**
+     * Levanta un servidor TCP local que responde "[]" a la primera petición recibida
+     * y captura sus headers crudos, para verificar qué envía realmente RestClient
+     * (HttpURLConnection oculta el header Authorization en getRequestProperty()).
+     */
+    private String captureRequestHeaders(RequestAction action) throws Exception {
+        try (ServerSocket server = new ServerSocket(0)) {
+            int port = server.getLocalPort();
+            CompletableFuture<String> captured = CompletableFuture.supplyAsync(() -> {
+                try (Socket socket = server.accept()) {
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+                    StringBuilder headers = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                        headers.append(line).append('\n');
+                    }
+                    OutputStream out = socket.getOutputStream();
+                    out.write(("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
+                            + "Content-Length: 2\r\n\r\n[]").getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                    return headers.toString();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            action.run(port);
+            return captured.get();
+        }
+    }
+
+    @FunctionalInterface
+    private interface RequestAction {
+        void run(int port) throws Exception;
     }
 }
