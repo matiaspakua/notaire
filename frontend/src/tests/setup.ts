@@ -1,5 +1,19 @@
 import "@testing-library/jest-dom";
 
+// jsdom does not implement scrollIntoView/hasPointerCapture/PointerEvent methods
+// that Radix UI primitives (e.g. Select) rely on for focus/scroll management.
+if (typeof window !== "undefined") {
+  if (!Element.prototype.scrollIntoView) {
+    Element.prototype.scrollIntoView = () => {};
+  }
+  if (!Element.prototype.hasPointerCapture) {
+    Element.prototype.hasPointerCapture = () => false;
+  }
+  if (!Element.prototype.releasePointerCapture) {
+    Element.prototype.releasePointerCapture = () => {};
+  }
+}
+
 // jsdom in this project does not provide window.localStorage; polyfill it with
 // a simple in-memory store so zustand's `persist` middleware (auth-store) and
 // any test reading/writing localStorage directly work without extra mocking.

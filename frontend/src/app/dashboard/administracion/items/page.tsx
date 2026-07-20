@@ -172,10 +172,7 @@ export default function ItemsPage() {
               <FormField label="Concepto">
                 <Select value={conceptoId} onValueChange={setConceptoId}>
                   <SelectTrigger data-testid="select-concepto">
-                    <SelectValue
-                      placeholder="Seleccionar concepto..."
-                      label={conceptoId ? conceptos.find((c) => c.idConcepto?.toString() === conceptoId)?.nombre : undefined}
-                    />
+                    <SelectValue placeholder="Seleccionar concepto..." />
                   </SelectTrigger>
                   <SelectContent>
                     {conceptos.map((c) => (

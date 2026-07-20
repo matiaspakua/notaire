@@ -342,10 +342,7 @@ export default function FoliosAdminPage() {
                   onValueChange={(v) => setForm({ ...form, tipoFolioId: Number(v) })}
                 >
                   <SelectTrigger data-testid="select-tipo-folio">
-                    <SelectValue
-                      placeholder={t("fields.tipoPlaceholder")}
-                      label={form.tipoFolioId ? tiposFolio.find((tf) => tf.idTipoFolio === form.tipoFolioId)?.nombre : undefined}
-                    />
+                    <SelectValue placeholder={t("fields.tipoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {tiposFolio.map((tf) => (
@@ -360,13 +357,7 @@ export default function FoliosAdminPage() {
                   onValueChange={(v) => setForm({ ...form, escribanoId: Number(v) })}
                 >
                   <SelectTrigger data-testid="select-escribano-folio">
-                    <SelectValue
-                      placeholder={t("fields.escribanoPlaceholder")}
-                      label={form.escribanoId ? (() => {
-                        const e = escribanos.find((w) => w.idPersona === form.escribanoId);
-                        return e ? [e.apellido, e.nombre].filter(Boolean).join(" ") : undefined;
-                      })() : undefined}
-                    />
+                    <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {escribanos.map((e) => (
