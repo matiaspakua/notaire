@@ -168,7 +168,7 @@ jobs:
             --spring.jpa.hibernate.ddl-auto=update &
           echo "Waiting for backend..."
           sleep 15
-          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/api/v1/usuarios)" != "200" ]]; do sleep 2; done'
+          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 2; done'
           echo "Backend is ready"
 
       # ── Start frontend ──
