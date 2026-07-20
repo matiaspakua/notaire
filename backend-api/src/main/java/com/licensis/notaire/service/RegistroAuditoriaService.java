@@ -111,12 +111,6 @@ public class RegistroAuditoriaService {
         return repository.save(registroAuditoria);
     }
 
-    @Transactional
-    public void deleteById(Integer id) {
-        logger.debug("Deleting RegistroAuditoria by id: {}", id);
-        repository.deleteById(id);
-    }
-
     /**
      * Maps a {@link RegistroAuditoria} entity to its DTO inside the current
      * transaction so that the LAZY {@code fkIdUsuario} association can be

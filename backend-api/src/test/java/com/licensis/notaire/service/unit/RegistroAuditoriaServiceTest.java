@@ -295,14 +295,6 @@ class RegistroAuditoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete registro by id")
-    void shouldDeleteRegistroById() {
-        service.deleteById(1);
-
-        verify(repository, times(1)).deleteById(1);
-    }
-
-    @Test
     @DisplayName("Should map registro to DTO correctly")
     void shouldMapRegistroToDto() {
         DtoRegistroAuditoria dto = RegistroAuditoriaService.toDto(testRegistro);

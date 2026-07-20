@@ -26,7 +26,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -273,21 +272,6 @@ class RegistroAuditoriaServiceTest {
             assertThat(result).isEqualTo(testRegistro);
             assertThat(result.getDetalleOperacion()).isEqualTo("LOGIN");
             verify(repository).save(testRegistro);
-        }
-    }
-
-    @Nested
-    @DisplayName("deleteById")
-    class DeleteById {
-
-        @Test
-        @DisplayName("Should delegate to repository deleteById")
-        void shouldDeleteRegistro() {
-            doNothing().when(repository).deleteById(1);
-
-            service.deleteById(1);
-
-            verify(repository).deleteById(1);
         }
     }
 
