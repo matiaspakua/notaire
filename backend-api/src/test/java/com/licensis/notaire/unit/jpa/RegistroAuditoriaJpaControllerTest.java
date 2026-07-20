@@ -127,6 +127,7 @@ class RegistroAuditoriaJpaControllerTest {
             inputRA.setFkIdUsuario(usuario);
 
             when(em.find(RegistroAuditoria.class, id)).thenReturn(persistentRA);
+            when(em.getReference(Usuario.class, 1)).thenReturn(usuario);
 
             controller.edit(inputRA);
 
