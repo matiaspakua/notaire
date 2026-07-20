@@ -172,10 +172,7 @@ export default function DocumentosPage() {
               <FormField label={tc("type")}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder="Seleccionar tipo"
-                      label={form.tipoId ? tiposDoc.find((t: TipoDeDocumento) => t.idTipoDocumento?.toString() === form.tipoId)?.nombre : undefined}
-                    />
+                    <SelectValue placeholder="Seleccionar tipo" />
                   </SelectTrigger>
                   <SelectContent>
                     {tiposDoc.map((tipo) => (

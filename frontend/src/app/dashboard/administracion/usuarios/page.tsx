@@ -143,7 +143,7 @@ export default function UsuariosPage() {
                   onValueChange={(v) => setEditing({ ...editing, tipo: v })}
                 >
                   <SelectTrigger>
-                    <SelectValue label={{ EMPLEADO: t("roles.empleado"), ADMIN: t("roles.admin"), ESCRIBANO: t("roles.escribano") }[editing.tipo ?? "EMPLEADO"]} />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="EMPLEADO">{t("roles.empleado")}</SelectItem>

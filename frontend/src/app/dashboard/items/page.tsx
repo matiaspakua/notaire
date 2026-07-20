@@ -173,10 +173,7 @@ export default function ItemsPage() {
               <FormField label={t("fields.concepto")}>
                 <Select value={form.conceptoId} onValueChange={(v) => setForm({ ...form, conceptoId: v })}>
                   <SelectTrigger>
-                    <SelectValue
-                      placeholder="Seleccionar concepto"
-                      label={form.conceptoId ? conceptos.find((c: Concepto) => c.idConcepto?.toString() === form.conceptoId)?.nombre : undefined}
-                    />
+                    <SelectValue placeholder="Seleccionar concepto" />
                   </SelectTrigger>
                   <SelectContent>
                     {conceptos.map((c) => (

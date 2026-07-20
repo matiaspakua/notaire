@@ -78,6 +78,19 @@ test.describe("Presupuestos module (CU01, CU39)", () => {
     await page.getByRole("option", { name: /borrador/i }).click();
     await searchRequest;
   });
+
+  test("#607 — selector de estado se opera solo con teclado", async ({ page }) => {
+    const searchRequest = page.waitForRequest((req) =>
+      req.url().includes("/api/v1/presupuestos/buscar") && req.method() === "GET"
+    );
+    await page.getByTestId("select-estado").focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("listbox")).toBeVisible();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await searchRequest;
+    await expect(page.getByRole("listbox")).not.toBeVisible();
+  });
 });
 
 test.describe("Pagos module (CU15, CU47)", () => {

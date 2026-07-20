@@ -169,10 +169,7 @@ export default function PresupuestosPage() {
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
           <SelectTrigger data-testid="select-estado" className="w-44">
-            <SelectValue
-              placeholder={`${tc("status")}...`}
-              label={{ TODOS: "Todos", BORRADOR: "Borrador", APROBADO: "Aprobado", RECHAZADO: "Rechazado", FACTURADO: "Facturado" }[filterEstado]}
-            />
+            <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="TODOS">Todos</SelectItem>
@@ -209,10 +206,7 @@ export default function PresupuestosPage() {
                   }}
                 >
                   <SelectTrigger data-testid="select-persona" disabled={personas.length === 0}>
-                    <SelectValue
-                      placeholder="Seleccionar cliente..."
-                      label={editing.persona ? fullName(editing.persona) : undefined}
-                    />
+                    <SelectValue placeholder="Seleccionar cliente..." />
                   </SelectTrigger>
                   <SelectContent>
                     {personas.map((p) => (
@@ -245,7 +239,7 @@ export default function PresupuestosPage() {
                   onValueChange={(v) => setEditing({ ...editing, estado: v })}
                 >
                   <SelectTrigger>
-                    <SelectValue label={{ BORRADOR: "Borrador", APROBADO: "Aprobado", RECHAZADO: "Rechazado", FACTURADO: "Facturado" }[editing.estado ?? "BORRADOR"]} />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="BORRADOR">Borrador</SelectItem>
