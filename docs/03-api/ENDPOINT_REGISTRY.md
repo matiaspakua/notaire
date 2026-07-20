@@ -126,7 +126,9 @@ These endpoints are actively called from the Next.js frontend:
 - `GET /api/v1/registro-auditoria` - List audit records
 - `GET /api/v1/registro-auditoria/usuario/{idUsuario}` - Get records by user
 - `GET /api/v1/registro-auditoria/{id}` - Get audit record
-- `DELETE /api/v1/registro-auditoria/{id}` - Delete audit record
+- `POST /api/v1/registro-auditoria` - Create audit record
+
+Audit records are append-only: no DELETE endpoint exists (see issue #556).
 
 ### Roles & Usuarios
 - `GET /api/v1/roles` - List roles

@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,20 +100,6 @@ public class RegistroAuditoriaController {
     public ResponseEntity<RegistroAuditoria> create(@RequestBody RegistroAuditoria entity) {
         RegistroAuditoria saved = service.save(entity);
         return ResponseEntity.ok(saved);
-    }
-
-    @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
-})
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar registro de auditoria")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (service.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        service.deleteById(id);
-        return ResponseEntity.ok().build();
     }
 
     private Pageable buildPageable(Integer page, Integer size, String sort) {

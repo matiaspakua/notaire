@@ -183,25 +183,10 @@ class RegistroAuditoriaControllerTest {
     }
 
     @Test
-    @DisplayName("Should delete an existing registro and return 200")
-    void shouldDeleteExistingRegistro() throws Exception {
-        when(service.findById(100)).thenReturn(Optional.of(sampleEntity));
-
+    @DisplayName("Should reject deletion of audit records - the trail is append-only (issue #556)")
+    void shouldRejectDeleteOfAuditRecords() throws Exception {
         mockMvc.perform(delete("/api/v1/registro-auditoria/100"))
-                .andExpect(status().isOk());
-
-        verify(service).deleteById(100);
-    }
-
-    @Test
-    @DisplayName("Should return 404 when deleting a non-existent registro")
-    void shouldReturn404WhenDeletingMissingRegistro() throws Exception {
-        when(service.findById(999)).thenReturn(Optional.empty());
-
-        mockMvc.perform(delete("/api/v1/registro-auditoria/999"))
-                .andExpect(status().isNotFound());
-
-        verify(service, never()).deleteById(999);
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
