@@ -452,6 +452,7 @@ class UsuarioJpaControllerTest {
             inputUsuario.setVersion(0);
 
             when(em.find(Usuario.class, id)).thenReturn(persistentUsuario);
+            when(em.getTransaction()).thenReturn(tx);
 
             Boolean result = controller.modificarUsuario(inputUsuario);
 
