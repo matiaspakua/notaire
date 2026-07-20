@@ -123,20 +123,18 @@ class AuditoriaAspectTest {
     }
 
     @Test
-    @DisplayName("Should resolve acting user from X-Notaire-User header when no security context")
-    void shouldResolveActingUserFromHeaderWhenNoSecurityContext() throws NoSuchMethodException {
+    @DisplayName("Should NOT trust a spoofed X-Notaire-User header when there is no verified authentication (issue #555)")
+    void shouldNotTrustSpoofedHeaderWhenNoSecurityContext() throws NoSuchMethodException {
         SecurityContextHolder.clearContext();
         bindRequestWithUserHeader("admin");
-        when(usuarioRepository.findAll()).thenReturn(List.of(adminUser));
+        lenient().when(usuarioRepository.findAll()).thenReturn(List.of(adminUser));
 
         Method method = escrituraMethod("update", Integer.class, Escritura.class);
         stubJoinPoint(EscrituraController.class, method, new Object[]{5, null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
 
-        ArgumentCaptor<RegistroAuditoria> captor = ArgumentCaptor.forClass(RegistroAuditoria.class);
-        verify(auditoriaService).save(captor.capture());
-        assertThat(captor.getValue().getFkIdUsuario()).isSameAs(adminUser);
+        verify(auditoriaService, never()).save(any());
     }
 
     @Test
