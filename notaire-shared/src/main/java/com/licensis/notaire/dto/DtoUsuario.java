@@ -1,6 +1,7 @@
 package com.licensis.notaire.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO que representa un Usuario.
@@ -65,6 +66,7 @@ public class DtoUsuario
         this.nombre = nombre;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getContrasenia()
     {
         return this.contrasenia;
