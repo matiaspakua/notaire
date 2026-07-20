@@ -46,22 +46,20 @@ class DataInitializerTest {
     }
 
     @Test
-    @DisplayName("Should reset password and activate existing admin user")
-    void shouldResetPasswordAndActivateExistingAdminUser() {
+    @DisplayName("Should not modify an already-existing admin user (issue #553)")
+    void shouldNotModifyExistingAdminUser() {
         Usuario existing = new Usuario();
         existing.setNombre("admin");
-        existing.setContrasenia("hash-obsoleto");
+        existing.setContrasenia("hash-ya-rotado-por-el-operador");
         existing.setEstado(false);
         when(usuarioRepository.findByNombre("admin")).thenReturn(Optional.of(existing));
 
         dataInitializer.run(null);
 
-        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
-        verify(usuarioRepository).save(captor.capture());
-        Usuario saved = captor.getValue();
-        assertThat(saved.getContrasenia()).isEqualTo(MD5_ADMIN);
-        assertThat(saved.getEstado()).isTrue();
+        verify(usuarioRepository, never()).save(any());
         verify(personaRepository, never()).save(any());
+        assertThat(existing.getContrasenia()).isEqualTo("hash-ya-rotado-por-el-operador");
+        assertThat(existing.getEstado()).isFalse();
     }
 
     @Test

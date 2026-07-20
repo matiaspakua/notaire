@@ -15,17 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 /**
- * Garantiza que el usuario por defecto {@code admin}/{@code admin} exista y pueda
- * iniciar sesión en cada arranque del backend.
+ * Siembra el usuario por defecto {@code admin}/{@code admin} una única vez, si no
+ * existe ninguno.
  *
  * <p>La contraseña se almacena como hash MD5, coincidiendo con la verificación que
- * realiza {@code UsuarioController#login}. Es idempotente: si el usuario ya existe
- * (sembrado por Flyway V2) se actualiza su contraseña y estado; si no existe, se
- * crea junto con su persona asociada. Esto asegura el acceso por defecto incluso
- * sobre una base de datos preexistente donde las migraciones no se vuelven a ejecutar.</p>
+ * realiza {@code UsuarioController#login}. Es un seed de una sola vez: si el usuario
+ * ya existe (sembrado por Flyway V2, o porque un operador ya rotó su contraseña) no
+ * se toca — de lo contrario cualquier cambio de credenciales quedaría deshecho en
+ * cada reinicio del backend (issue #553).</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -57,13 +56,8 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void ensureAdminUser() {
-        Optional<Usuario> existing = usuarioRepository.findByNombre(ADMIN_USER);
-        if (existing.isPresent()) {
-            Usuario admin = existing.get();
-            admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
-            admin.setEstado(true);
-            usuarioRepository.save(admin);
-            log.info("Usuario 'admin' verificado: contraseña por defecto y estado activo asegurados.");
+        if (usuarioRepository.findByNombre(ADMIN_USER).isPresent()) {
+            log.debug("Usuario 'admin' ya existe; no se modifican sus credenciales.");
             return;
         }
 
