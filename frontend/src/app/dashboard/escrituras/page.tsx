@@ -97,6 +97,7 @@ export default function EscriturasPage() {
       <div className="px-4 pb-4">
         <Input
           placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           value={searchNumero}
           onChange={(e) => setSearchNumero(e.target.value)}
           className="w-48"

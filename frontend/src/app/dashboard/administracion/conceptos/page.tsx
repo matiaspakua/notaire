@@ -121,6 +121,7 @@ export default function ConceptosPage() {
       <div className="px-4 pb-4">
         <Input
           placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"

@@ -135,6 +135,7 @@ export default function TramitesPage() {
       <div className="mb-4">
         <Input
           placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"

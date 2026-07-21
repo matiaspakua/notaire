@@ -88,6 +88,7 @@ export default function AuditoriaPage() {
           <Input
             className="pl-10"
             placeholder={t("searchPlaceholder")}
+            aria-label={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
