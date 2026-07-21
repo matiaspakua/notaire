@@ -68,8 +68,6 @@ import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.service.AdministradorJpa;
 import com.licensis.notaire.service.AdministradorSesion;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -3736,83 +3734,6 @@ public class ControllerNegocio
 // <editor-fold defaultstate="collapsed" desc="Administracion">
     // <editor-fold defaultstate="collapsed" desc="Usuarios">
     /**
-     * Metodo que permite dar de alta un usuario
-     *
-     * @param dtoUsuario
-     * @return El dtoUsuario para confirmar el alta
-     */
-    public DtoUsuario darAltaUsuario(DtoUsuario dtoUsuario)
-    {
-        Usuario usuario = new Usuario();
-        List<Usuario> listaUsuarios = new ArrayList<>();
-        Boolean flag = false;
-        usuario.setAtributos(dtoUsuario);
-
-        //Encrypto la clave del usuario
-        String clave = usuario.getContrasenia();
-        usuario.setContrasenia(this.encriptaEnMD5(clave));
-
-        //Controlo que el nombre del usuario no se repita            
-        listaUsuarios = (ArrayList<Usuario>) miJpaUsuario.buscarUsuarios();
-
-        for (int i = 0; i < listaUsuarios.size(); i++)
-        {
-            if (listaUsuarios.get(i).getNombre().equals(dtoUsuario.getNombre()))
-            {
-                flag = true;
-            }
-        }
-
-        if (!flag)
-        {
-            try
-            {
-                miJpaUsuario.create(usuario);
-
-                this.registrarAuditoria(usuario, ConstantesGui.DAR_ALTA_USUARIO);
-            }
-            catch (Exception ex)
-            {
-                //  No se pudo crear el usuario.
-                Logger.getLogger(ControllerNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else
-        {
-            dtoUsuario = null;
-        }
-
-        return dtoUsuario;
-    }
-
-    public String encriptaEnMD5(String stringAEncriptar)
-    {
-        {
-            char[] CONSTS_HEX =
-            {
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-            };
-            try
-            {
-                MessageDigest msgd = MessageDigest.getInstance("MD5");
-                byte[] bytes = msgd.digest(stringAEncriptar.getBytes());
-                StringBuilder strbCadenaMD5 = new StringBuilder(2 * bytes.length);
-                for (int i = 0; i < bytes.length; i++)
-                {
-                    int bajo = (int) (bytes[i] & 0x0f);
-                    int alto = (int) ((bytes[i] & 0xf0) >> 4);
-                    strbCadenaMD5.append(CONSTS_HEX[alto]);
-                    strbCadenaMD5.append(CONSTS_HEX[bajo]);
-                }
-                return strbCadenaMD5.toString();
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                return null;
-            }
-        }
-    }
-
-    /**
      * Metodo que permite buscar un usuario
      *
      * @param dtoUsuario
@@ -3901,68 +3822,6 @@ public class ControllerNegocio
         }
 
         return listaDtoUsuarios;
-    }
-
-    /**
-     * Metodo que permite modificar un usuario del sistema
-     *
-     * @param miDtoUsuario
-     * @return El dtoUsuario para confirmar la modificacion.
-     */
-    public DtoUsuario modificarUsuario(DtoUsuario miDtoUsuario) throws ClassModifiedException, ClassEliminatedException
-    {
-
-        Usuario miUsuario = new Usuario();
-
-        ArrayList<Usuario> listaUsuarios = null;
-        Boolean flag = false;//Variable para controlar el resultado de la modificacion
-        int count = 0;
-
-        miUsuario.setContrasenia(miDtoUsuario.getContrasenia());
-        miUsuario.setEstado(miDtoUsuario.isEstado());
-        miUsuario.setNombre(miDtoUsuario.getNombre());
-        miUsuario.setTipo(miDtoUsuario.getTipo());
-        miUsuario.setIdUsuario(miDtoUsuario.getIdUsuario());
-        miUsuario.setVersion(miDtoUsuario.getVersion());
-
-        //Encrypto la clave del usuario
-        String clave = miUsuario.getContrasenia();
-        miUsuario.setContrasenia(this.encriptaEnMD5(clave));
-
-        //Controlo que el nombre del usuario no se repita
-        listaUsuarios = (ArrayList<Usuario>) miJpaUsuario.buscarUsuarios();
-
-        if (listaUsuarios != null)
-        {
-            for (int i = 0; i < listaUsuarios.size(); i++)
-            {
-                if (listaUsuarios.get(i).getNombre().equals(miDtoUsuario.getNombre()))
-                {
-                    count++; //El usuario puede repetirse una vez, que es el nombre actual.
-                }
-            }
-            if (count <= 1)
-            {
-
-                flag = miJpaUsuario.modificarUsuario(miUsuario);
-
-                if (flag)
-                {
-
-                    this.registrarAuditoria(miUsuario, ConstantesGui.MODIFICAR_USUARIO);
-                } else
-                {
-                    //  error al modificar usuario.
-                }
-            } else if (!flag)
-            {
-            } else if (!flag)
-            {
-                miDtoUsuario = null;
-            }
-        }
-        return miDtoUsuario;
-
     }
 
     /**

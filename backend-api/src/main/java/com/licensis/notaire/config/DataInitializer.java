@@ -10,21 +10,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Siembra el usuario por defecto {@code admin}/{@code admin} una única vez, si no
  * existe ninguno.
  *
- * <p>La contraseña se almacena como hash MD5, coincidiendo con la verificación que
- * realiza {@code UsuarioController#login}. Es un seed de una sola vez: si el usuario
- * ya existe (sembrado por Flyway V2, o porque un operador ya rotó su contraseña) no
- * se toca — de lo contrario cualquier cambio de credenciales quedaría deshecho en
- * cada reinicio del backend (issue #553).</p>
+ * <p>La contraseña se almacena como hash BCrypt (issue #554), coincidiendo con la
+ * verificación que realiza {@code UsuarioController#login}. Es un seed de una sola
+ * vez: si el usuario ya existe (sembrado por Flyway V2, o porque un operador ya
+ * rotó su contraseña) no se toca — de lo contrario cualquier cambio de credenciales
+ * quedaría deshecho en cada reinicio del backend (issue #553).</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -36,13 +34,16 @@ public class DataInitializer implements ApplicationRunner {
     private final UsuarioRepository usuarioRepository;
     private final PersonaRepository personaRepository;
     private final TipoIdentificacionRepository tipoIdentificacionRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UsuarioRepository usuarioRepository,
                            PersonaRepository personaRepository,
-                           TipoIdentificacionRepository tipoIdentificacionRepository) {
+                           TipoIdentificacionRepository tipoIdentificacionRepository,
+                           PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.personaRepository = personaRepository;
         this.tipoIdentificacionRepository = tipoIdentificacionRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class DataInitializer implements ApplicationRunner {
 
         Usuario admin = new Usuario();
         admin.setNombre(ADMIN_USER);
-        admin.setContrasenia(md5(ADMIN_PASS_PLAIN));
+        admin.setContrasenia(passwordEncoder.encode(ADMIN_PASS_PLAIN));
         admin.setEstado(true);
         admin.setTipo("Escribano");
         admin.setFkIdPersona(adminPersona);
@@ -95,17 +96,4 @@ public class DataInitializer implements ApplicationRunner {
         return tipoIdentificacionRepository.save(tipo);
     }
 
-    private static String md5(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] bytes = md.digest(input.getBytes());
-            StringBuilder sb = new StringBuilder(2 * bytes.length);
-            for (byte b : bytes) {
-                sb.append(String.format("%02x", b & 0xff));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 no disponible en la JVM", e);
-        }
-    }
 }
