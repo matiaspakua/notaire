@@ -25,7 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 /**
  * Spring Security and CORS configuration for the application.
  * Provides centralized configuration for security settings including
- * Actuator endpoint protection with admin/admin credentials for Prometheus scraping.
+ * Actuator endpoint protection with configurable credentials for Prometheus scraping.
  */
 @Configuration
 @EnableWebSecurity
@@ -46,6 +46,12 @@ public class SecurityAndCorsConfig {
     @Value("${cors.max-age:3600}")
     private long maxAge;
 
+    @Value("${actuator.security.username}")
+    private String actuatorUsername;
+
+    @Value("${actuator.security.password}")
+    private String actuatorPassword;
+
     /**
      * Password encoder bean using BCrypt
      */
@@ -57,13 +63,16 @@ public class SecurityAndCorsConfig {
     /**
      * User details service for actuator and admin users.
      * Stores password as BCrypt hash for the admin user.
+     * Credentials come from actuator.security.username/password (bound to the
+     * ACTUATOR_USER/ACTUATOR_PASSWORD env vars, see .env.example) rather than
+     * being hardcoded, so they can be changed without a code change (issue #557).
      * This overrides Spring Boot auto-configuration from spring.security.user.* properties.
      */
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         var admin = User.builder()
-            .username("admin")
-            .password(passwordEncoder.encode("admin"))
+            .username(actuatorUsername)
+            .password(passwordEncoder.encode(actuatorPassword))
             .roles("ACTUATOR", "ADMIN")
             .build();
         return new InMemoryUserDetailsManager(admin);
@@ -72,7 +81,7 @@ public class SecurityAndCorsConfig {
     /**
      * Security filter chain for Actuator endpoints.
      * Protects Prometheus metrics and health endpoints with HTTP Basic auth.
-     * Credentials: admin / admin
+     * Credentials: actuator.security.username / actuator.security.password.
      */
     @Bean
     @Order(1)
