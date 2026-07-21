@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -109,6 +110,7 @@ public class Usuario implements Serializable {
         this.nombre = nombre;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String getContrasenia() {
         return contrasenia;
     }
