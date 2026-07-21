@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,8 @@ class DataInitializerTest {
     void setUp() {
         dataInitializer = new DataInitializer(
                 usuarioRepository, personaRepository, tipoIdentificacionRepository, passwordEncoder);
+        ReflectionTestUtils.setField(dataInitializer, "adminUsername", "admin");
+        ReflectionTestUtils.setField(dataInitializer, "adminPassword", "admin");
     }
 
     @Test
@@ -84,6 +87,25 @@ class DataInitializerTest {
         assertThat(created.getContrasenia()).isEqualTo(BCRYPT_ADMIN);
         assertThat(created.getEstado()).isTrue();
         assertThat(created.getFkIdPersona()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Should seed the configured username/password, not hardcoded literals (issue #651)")
+    void shouldUseConfiguredAdminCredentials() {
+        ReflectionTestUtils.setField(dataInitializer, "adminUsername", "custom-admin");
+        ReflectionTestUtils.setField(dataInitializer, "adminPassword", "custom-pass");
+        when(usuarioRepository.findByNombre("custom-admin")).thenReturn(Optional.empty());
+        TipoIdentificacion tipo = new TipoIdentificacion();
+        tipo.setNombre("DNI");
+        when(tipoIdentificacionRepository.findAll()).thenReturn(List.of(tipo));
+        when(passwordEncoder.encode("custom-pass")).thenReturn(BCRYPT_ADMIN);
+
+        dataInitializer.run(null);
+
+        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
+        verify(usuarioRepository).save(captor.capture());
+        assertThat(captor.getValue().getNombre()).isEqualTo("custom-admin");
+        assertThat(captor.getValue().getContrasenia()).isEqualTo(BCRYPT_ADMIN);
     }
 
     @Test

@@ -28,6 +28,12 @@ public class ProductionCredentialsGuard {
     @Value("${actuator.security.password}")
     private String actuatorPassword;
 
+    @Value("${app.admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${app.admin.password:admin}")
+    private String adminPassword;
+
     @PostConstruct
     public void validateCredentials() {
         if (!PRODUCTION_ENVIRONMENT.equalsIgnoreCase(environment)) {
@@ -39,6 +45,8 @@ public class ProductionCredentialsGuard {
         addIfDefault(insecureProperties, "spring.datasource.password", datasourcePassword);
         addIfDefault(insecureProperties, "actuator.security.username", actuatorUsername);
         addIfDefault(insecureProperties, "actuator.security.password", actuatorPassword);
+        addIfDefault(insecureProperties, "app.admin.username", adminUsername);
+        addIfDefault(insecureProperties, "app.admin.password", adminPassword);
 
         if (!insecureProperties.isEmpty()) {
             throw new IllegalStateException(

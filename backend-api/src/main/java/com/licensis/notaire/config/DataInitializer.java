@@ -8,6 +8,7 @@ import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,21 +16,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Siembra el usuario por defecto {@code admin}/{@code admin} una única vez, si no
- * existe ninguno.
+ * Siembra el usuario administrador inicial una única vez, si no existe ninguno.
  *
- * <p>La contraseña se almacena como hash BCrypt (issue #554), coincidiendo con la
- * verificación que realiza {@code UsuarioController#login}. Es un seed de una sola
- * vez: si el usuario ya existe (sembrado por Flyway V2, o porque un operador ya
- * rotó su contraseña) no se toca — de lo contrario cualquier cambio de credenciales
- * quedaría deshecho en cada reinicio del backend (issue #553).</p>
+ * <p>Username y password son configurables vía {@code APP_ADMIN_USER}/
+ * {@code APP_ADMIN_PASSWORD} (issue #651); por defecto {@code admin}/{@code admin}
+ * en desarrollo. La contraseña se almacena como hash BCrypt (issue #554),
+ * coincidiendo con la verificación que realiza {@code UsuarioController#login}.
+ * Es un seed de una sola vez: si el usuario ya existe (sembrado por Flyway V2, o
+ * porque un operador ya rotó su contraseña) no se toca — de lo contrario cualquier
+ * cambio de credenciales quedaría deshecho en cada reinicio del backend (issue
+ * #553).</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
-    private static final String ADMIN_USER = "admin";
-    private static final String ADMIN_PASS_PLAIN = "admin";
+
+    @Value("${app.admin.username:admin}")
+    private String adminUsername;
+
+    @Value("${app.admin.password:admin}")
+    private String adminPassword;
 
     private final UsuarioRepository usuarioRepository;
     private final PersonaRepository personaRepository;
@@ -52,28 +59,28 @@ public class DataInitializer implements ApplicationRunner {
         try {
             ensureAdminUser();
         } catch (Exception e) {
-            log.warn("No se pudo garantizar el usuario inicial 'admin': {}", e.getMessage());
+            log.warn("No se pudo garantizar el usuario inicial '{}': {}", adminUsername, e.getMessage());
         }
     }
 
     private void ensureAdminUser() {
-        if (usuarioRepository.findByNombre(ADMIN_USER).isPresent()) {
-            log.debug("Usuario 'admin' ya existe; no se modifican sus credenciales.");
+        if (usuarioRepository.findByNombre(adminUsername).isPresent()) {
+            log.debug("Usuario '{}' ya existe; no se modifican sus credenciales.", adminUsername);
             return;
         }
 
-        log.info("Usuario 'admin' no encontrado. Creando usuario por defecto admin/admin...");
+        log.info("Usuario '{}' no encontrado. Creando usuario administrador inicial...", adminUsername);
         Persona adminPersona = buildAdminPersona();
         personaRepository.save(adminPersona);
 
         Usuario admin = new Usuario();
-        admin.setNombre(ADMIN_USER);
-        admin.setContrasenia(passwordEncoder.encode(ADMIN_PASS_PLAIN));
+        admin.setNombre(adminUsername);
+        admin.setContrasenia(passwordEncoder.encode(adminPassword));
         admin.setEstado(true);
         admin.setTipo("Escribano");
         admin.setFkIdPersona(adminPersona);
         usuarioRepository.save(admin);
-        log.info("Usuario inicial 'admin' creado correctamente.");
+        log.info("Usuario administrador inicial '{}' creado correctamente.", adminUsername);
     }
 
     private Persona buildAdminPersona() {
