@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +29,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("DataInitializer — usuario admin por defecto")
 class DataInitializerTest {
 
-    /** MD5("admin") — debe coincidir con la verificación de UsuarioController#login. */
-    private static final String MD5_ADMIN = "21232f297a57a5a743894a0e4a801fc3";
+    private static final String BCRYPT_ADMIN = "$2a$12$stub.bcrypt.hash.for.admin.password";
 
     @Mock
     private UsuarioRepository usuarioRepository;
@@ -37,12 +37,15 @@ class DataInitializerTest {
     private PersonaRepository personaRepository;
     @Mock
     private TipoIdentificacionRepository tipoIdentificacionRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private DataInitializer dataInitializer;
 
     @BeforeEach
     void setUp() {
-        dataInitializer = new DataInitializer(usuarioRepository, personaRepository, tipoIdentificacionRepository);
+        dataInitializer = new DataInitializer(
+                usuarioRepository, personaRepository, tipoIdentificacionRepository, passwordEncoder);
     }
 
     @Test
@@ -63,12 +66,13 @@ class DataInitializerTest {
     }
 
     @Test
-    @DisplayName("Should create admin user with MD5 password when none exists")
+    @DisplayName("Should create admin user with BCrypt password when none exists")
     void shouldCreateAdminUserWhenNoneExists() {
         when(usuarioRepository.findByNombre("admin")).thenReturn(Optional.empty());
         TipoIdentificacion tipo = new TipoIdentificacion();
         tipo.setNombre("DNI");
         when(tipoIdentificacionRepository.findAll()).thenReturn(List.of(tipo));
+        when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_ADMIN);
 
         dataInitializer.run(null);
 
@@ -77,7 +81,7 @@ class DataInitializerTest {
         verify(usuarioRepository).save(captor.capture());
         Usuario created = captor.getValue();
         assertThat(created.getNombre()).isEqualTo("admin");
-        assertThat(created.getContrasenia()).isEqualTo(MD5_ADMIN);
+        assertThat(created.getContrasenia()).isEqualTo(BCRYPT_ADMIN);
         assertThat(created.getEstado()).isTrue();
         assertThat(created.getFkIdPersona()).isNotNull();
     }

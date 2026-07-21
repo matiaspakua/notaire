@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,12 +43,14 @@ public class UsuarioController {
     private final UsuarioRepository usuarioRepository;
     private final JwtTokenService jwtTokenService;
     private final MetricsUtil metricsUtil;
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioController(UsuarioRepository usuarioRepository, JwtTokenService jwtTokenService,
-                             MetricsUtil metricsUtil) {
+                             MetricsUtil metricsUtil, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.jwtTokenService = jwtTokenService;
         this.metricsUtil = metricsUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
@@ -117,7 +120,7 @@ public class UsuarioController {
             usuario.setTipo(request.tipo());
             usuario.setEstado(request.activo());
             String pwd = request.contrasenia();
-            usuario.setContrasenia(pwd != null && !pwd.isEmpty() ? encriptaEnMD5(pwd) : "");
+            usuario.setContrasenia(pwd != null && !pwd.isEmpty() ? passwordEncoder.encode(pwd) : "");
             usuario = usuarioRepository.save(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(usuario));
         } catch (Exception e) {
@@ -144,7 +147,7 @@ public class UsuarioController {
             usuario.setEstado(request.activo());
             String pwd = request.contrasenia();
             if (pwd != null && !pwd.isEmpty()) {
-                usuario.setContrasenia(encriptaEnMD5(pwd));
+                usuario.setContrasenia(passwordEncoder.encode(pwd));
             }
             usuarioRepository.save(usuario);
             return ResponseEntity.ok().build();
@@ -186,14 +189,11 @@ public class UsuarioController {
                 return ResponseEntity.ok(errorResponse);
             }
 
-            String passwordIngresado = encriptaEnMD5(loginRequest.getContrasenia());
-            log.debug("Intento de login para usuario: '{}' (hash: '{}')", loginRequest.getNombre(), passwordIngresado);
+            log.debug("Intento de login para usuario: '{}'", loginRequest.getNombre());
 
             for (Usuario usuario : usuarios) {
-                log.debug("Comparando con usuario en DB: '{}' (estado: {}, hash_db: '{}')",
-                        usuario.getNombre(), usuario.getEstado(), usuario.getContrasenia());
                 if (usuario.getNombre().equalsIgnoreCase(loginRequest.getNombre())) {
-                    if (usuario.getContrasenia().equals(passwordIngresado)) {
+                    if (passwordMatches(loginRequest.getContrasenia(), usuario)) {
                         if (usuario.getEstado()) {
                             log.info("Login exitoso para usuario: '{}'", usuario.getNombre());
                             metricsUtil.incrementCounter("login", "success");
@@ -258,10 +258,34 @@ public class UsuarioController {
     }
 
     /**
-     * Encripta una cadena usando MD5
+     * Verifica la contraseña ingresada contra el hash almacenado, soportando tanto el
+     * nuevo formato BCrypt como el legado MD5 (issue #554). Si el hash almacenado
+     * todavía es MD5 y la contraseña coincide, se re-encripta en BCrypt y se persiste
+     * de forma transparente, migrando la credencial sin exigir un reseteo al usuario.
      */
-    private String encriptaEnMD5(String stringAEncriptar) {
-        char[] CONSTS_HEX = {
+    private boolean passwordMatches(String rawPassword, Usuario usuario) {
+        String storedHash = usuario.getContrasenia();
+        if (isBcryptHash(storedHash)) {
+            return passwordEncoder.matches(rawPassword, storedHash);
+        }
+        if (!legacyMd5Hash(rawPassword).equals(storedHash)) {
+            return false;
+        }
+        usuario.setContrasenia(passwordEncoder.encode(rawPassword));
+        usuarioRepository.save(usuario);
+        return true;
+    }
+
+    private boolean isBcryptHash(String hash) {
+        return hash != null && hash.startsWith("$2");
+    }
+
+    /**
+     * Hash MD5 legado, mantenido únicamente para verificar credenciales sembradas
+     * antes de la migración a BCrypt (issue #554); no se usa para generar hashes nuevos.
+     */
+    private String legacyMd5Hash(String stringAEncriptar) {
+        char[] hexChars = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
         try {
@@ -271,8 +295,8 @@ public class UsuarioController {
             for (int i = 0; i < bytes.length; i++) {
                 int bajo = (int) (bytes[i] & 0x0f);
                 int alto = (int) ((bytes[i] & 0xf0) >> 4);
-                strbCadenaMD5.append(CONSTS_HEX[alto]);
-                strbCadenaMD5.append(CONSTS_HEX[bajo]);
+                strbCadenaMD5.append(hexChars[alto]);
+                strbCadenaMD5.append(hexChars[bajo]);
             }
             return strbCadenaMD5.toString();
         } catch (NoSuchAlgorithmException e) {
