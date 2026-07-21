@@ -35,21 +35,17 @@ import {
 import { apiPost } from "@/lib/api-client";
 import type { WorkflowNodeType } from "@/types";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
-
-const NODE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  INITIAL: { bg: "#dcfce7", border: "#16a34a", text: "#15803d" },
-  INTERMEDIATE: { bg: "#dbeafe", border: "#2563eb", text: "#1d4ed8" },
-  FINAL: { bg: "#fee2e2", border: "#dc2626", text: "#b91c1c" },
-};
+import { theme } from "@/theme/tokens";
+import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 
 function WorkflowNodeComponent({ data }: { data: { label: string; tipo: string } }) {
-  const colors = NODE_COLORS[data.tipo] ?? NODE_COLORS.INTERMEDIATE;
+  const meta = getNodeMeta(data.tipo);
   return (
     <div
       style={{
-        background: colors.bg,
-        border: `2px solid ${colors.border}`,
-        color: colors.text,
+        background: meta.background,
+        border: `2px solid ${meta.border}`,
+        color: meta.color,
         borderRadius: "8px",
         padding: "8px 16px",
         fontWeight: 600,
@@ -94,7 +90,10 @@ export default function WorkflowEditorPage() {
     id: String(n.id),
     type: "workflowNode",
     position: { x: n.posicionX ?? 0, y: n.posicionY ?? 0 },
-    data: { label: n.estadoGestionNombre ?? `Nodo ${n.id}`, tipo: n.tipo ?? "INTERMEDIATE" },
+    data: {
+      label: withNodeIcon(n.estadoGestionNombre ?? `Nodo ${n.id}`, n.tipo ?? "INTERMEDIATE"),
+      tipo: n.tipo ?? "INTERMEDIATE",
+    },
   }));
 
   const flowEdges: Edge[] = rawTransitions.map((t) => ({
@@ -103,7 +102,7 @@ export default function WorkflowEditorPage() {
     target: String(t.nodoDestinoId),
     label: t.descripcion ?? undefined,
     animated: false,
-    style: { stroke: "#94a3b8" },
+    style: { stroke: theme.colors.neutral[500] },
   }));
 
   const [nodes, , onNodesChange] = useNodesState(flowNodes);
@@ -248,7 +247,11 @@ export default function WorkflowEditorPage() {
         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-200 border border-red-600 inline-block" />Final</span>
       </div>
 
-      <div style={{ height: 520 }} className="rounded-xl border border-neutral-200 overflow-hidden" data-testid="workflow-editor">
+      <div
+        style={{ height: theme.sizes.workflowEditor.height }}
+        className="rounded-xl border border-neutral-200 overflow-hidden"
+        data-testid="workflow-editor"
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
