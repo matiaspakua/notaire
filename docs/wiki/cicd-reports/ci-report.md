@@ -6,7 +6,7 @@ title: CI Report - 2026-07-21
 
 **Date:** 2026-07-21  
 **Branch:** main  
-**Commit:** 75d1e85c7aee79dfd8527493d744b468a2a2792d
+**Commit:** 22e990ff4ac1b10a7507a44647a5e1927d45c175
 
 ## Job Summary
 
