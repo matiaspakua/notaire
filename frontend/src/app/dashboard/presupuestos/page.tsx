@@ -162,6 +162,7 @@ export default function PresupuestosPage() {
       <div className="flex flex-wrap gap-3 px-4 pb-4">
         <Input
           placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           value={searchPresupuesto}
           onChange={(e) => setSearchPresupuesto(e.target.value)}
           data-testid="input-search-presupuesto"

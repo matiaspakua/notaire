@@ -136,6 +136,7 @@ export default function WorkflowsPage() {
       <div className="mb-4">
         <Input
           placeholder="Buscar por nombre..."
+          aria-label="Buscar por nombre..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"

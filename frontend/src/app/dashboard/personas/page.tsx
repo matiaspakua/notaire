@@ -177,6 +177,7 @@ export default function PersonasPage() {
       <div data-testid="search-bar" className="flex flex-wrap gap-3 px-4 pb-4">
         <Input
           placeholder={t("searchPlaceholders.nombre")}
+          aria-label={t("searchPlaceholders.nombre")}
           value={searchNombre}
           onChange={(e) => setSearchNombre(e.target.value)}
           data-testid="input-search-nombre"
@@ -184,6 +185,7 @@ export default function PersonasPage() {
         />
         <Input
           placeholder={t("searchPlaceholders.apellido")}
+          aria-label={t("searchPlaceholders.apellido")}
           value={searchApellido}
           onChange={(e) => setSearchApellido(e.target.value)}
           data-testid="input-search-apellido"
@@ -191,6 +193,7 @@ export default function PersonasPage() {
         />
         <Input
           placeholder={t("searchPlaceholders.dni")}
+          aria-label={t("searchPlaceholders.dni")}
           value={searchDni}
           onChange={(e) => setSearchDni(e.target.value)}
           data-testid="input-search-dni"
