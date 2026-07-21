@@ -166,13 +166,17 @@ jobs:
             --spring.datasource.username=notaire \
             --spring.datasource.password=notaire \
             --spring.jpa.hibernate.ddl-auto=update \
-            --jwt.secret="${JWT_SECRET}" &
+            --jwt.secret="${JWT_SECRET}" \
+            --actuator.security.username="${ACTUATOR_USER}" \
+            --actuator.security.password="${ACTUATOR_PASSWORD}" &
           echo "Waiting for backend..."
           sleep 15
           timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 2; done'
           echo "Backend is ready"
         env:
           JWT_SECRET: ci-e2e-only-jwt-secret-do-not-use-in-prod-!!
+          ACTUATOR_USER: ci-e2e-actuator-user
+          ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
       # ── Start frontend ──
       - name: Start frontend
