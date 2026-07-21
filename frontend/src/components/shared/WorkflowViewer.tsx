@@ -10,33 +10,13 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { theme } from "@/theme/tokens";
+import { NODE_META, getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
-
-const NODE_META: Record<string, { background: string; border: string; color: string; icon: string }> = {
-  INITIAL: {
-    background: theme.colors.success[50],
-    border: theme.colors.success[500],
-    color: theme.colors.success[600],
-    icon: "▶",
-  },
-  INTERMEDIATE: {
-    background: theme.colors.primary[50],
-    border: theme.colors.primary[500],
-    color: theme.colors.primary[700],
-    icon: "●",
-  },
-  FINAL: {
-    background: theme.colors.error[50],
-    border: theme.colors.error[500],
-    color: theme.colors.error[600],
-    icon: "■",
-  },
-};
 
 export function toFlowNodes(nodes: WorkflowNode[]): Node[] {
   return nodes.map((n) => {
-    const meta = NODE_META[n.tipo ?? "INTERMEDIATE"];
-    const label = `${meta.icon} ${n.estadoGestionNombre ?? `Nodo ${n.id}`}`;
+    const meta = getNodeMeta(n.tipo);
+    const label = withNodeIcon(n.estadoGestionNombre ?? `Nodo ${n.id}`, n.tipo);
     return {
       id: String(n.id),
       position: { x: n.posicionX ?? 0, y: n.posicionY ?? 0 },

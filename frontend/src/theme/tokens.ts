@@ -230,6 +230,9 @@ export const sizes = {
   workflowViewer: {
     height: "27.5rem", // 440px
   },
+  workflowEditor: {
+    height: "32.5rem", // 520px
+  },
 } as const;
 
 // ============================================================================
