@@ -227,6 +227,9 @@ export const sizes = {
     padding: spacing[8],
     gap: spacing[4],
   },
+  workflowViewer: {
+    height: "27.5rem", // 440px
+  },
 } as const;
 
 // ============================================================================

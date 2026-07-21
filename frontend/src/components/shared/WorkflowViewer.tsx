@@ -9,25 +9,42 @@ import {
   type Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { theme } from "@/theme/tokens";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
 
-const NODE_COLORS: Record<string, { background: string; border: string; color: string }> = {
-  INITIAL: { background: "#dcfce7", border: "#16a34a", color: "#15803d" },
-  INTERMEDIATE: { background: "#dbeafe", border: "#2563eb", color: "#1d4ed8" },
-  FINAL: { background: "#fee2e2", border: "#dc2626", color: "#b91c1c" },
+const NODE_META: Record<string, { background: string; border: string; color: string; icon: string }> = {
+  INITIAL: {
+    background: theme.colors.success[50],
+    border: theme.colors.success[500],
+    color: theme.colors.success[600],
+    icon: "▶",
+  },
+  INTERMEDIATE: {
+    background: theme.colors.primary[50],
+    border: theme.colors.primary[500],
+    color: theme.colors.primary[700],
+    icon: "●",
+  },
+  FINAL: {
+    background: theme.colors.error[50],
+    border: theme.colors.error[500],
+    color: theme.colors.error[600],
+    icon: "■",
+  },
 };
 
-function toFlowNodes(nodes: WorkflowNode[]): Node[] {
+export function toFlowNodes(nodes: WorkflowNode[]): Node[] {
   return nodes.map((n) => {
-    const colors = NODE_COLORS[n.tipo ?? "INTERMEDIATE"];
+    const meta = NODE_META[n.tipo ?? "INTERMEDIATE"];
+    const label = `${meta.icon} ${n.estadoGestionNombre ?? `Nodo ${n.id}`}`;
     return {
       id: String(n.id),
       position: { x: n.posicionX ?? 0, y: n.posicionY ?? 0 },
-      data: { label: n.estadoGestionNombre ?? `Nodo ${n.id}` },
+      data: { label },
       style: {
-        background: colors.background,
-        border: `2px solid ${colors.border}`,
-        color: colors.color,
+        background: meta.background,
+        border: `2px solid ${meta.border}`,
+        color: meta.color,
         borderRadius: "8px",
         padding: "8px 16px",
         fontWeight: 600,
@@ -39,14 +56,14 @@ function toFlowNodes(nodes: WorkflowNode[]): Node[] {
   });
 }
 
-function toFlowEdges(transitions: WorkflowTransition[]): Edge[] {
+export function toFlowEdges(transitions: WorkflowTransition[]): Edge[] {
   return transitions.map((t) => ({
     id: String(t.id),
     source: String(t.nodoOrigenId),
     target: String(t.nodoDestinoId),
     label: t.descripcion ?? undefined,
     animated: false,
-    style: { stroke: "#94a3b8" },
+    style: { stroke: theme.colors.neutral[500] },
   }));
 }
 
@@ -72,7 +89,11 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
   }
 
   return (
-    <div style={{ height: 440 }} className="rounded-xl border border-neutral-200 overflow-hidden" data-testid={testId}>
+    <div
+      style={{ height: theme.sizes.workflowViewer.height }}
+      className="rounded-xl border border-neutral-200 overflow-hidden"
+      data-testid={testId}
+    >
       <ReactFlow
         nodes={flowNodes}
         edges={flowEdges}
@@ -85,7 +106,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
         <Controls showInteractive={false} />
         <MiniMap nodeColor={(n) => {
           const tipo = nodes.find((wn) => String(wn.id) === n.id)?.tipo ?? "INTERMEDIATE";
-          return NODE_COLORS[tipo]?.border ?? "#94a3b8";
+          return NODE_META[tipo]?.border ?? theme.colors.neutral[500];
         }} />
       </ReactFlow>
     </div>
