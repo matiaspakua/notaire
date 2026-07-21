@@ -1,6 +1,5 @@
 package com.licensis.notaire.integration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +43,6 @@ class ApiH2IntegrationTest {
     }
 
     @Test
-    @Disabled("Pending fix for lazy loading in JSON serialization")
     void shouldExposeCoreCatalogEndpoints() throws Exception {
         mockMvc.perform(get("/api/v1/conceptos"))
                 .andExpect(status().isOk());
