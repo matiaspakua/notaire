@@ -5,21 +5,11 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 
 ## Current
 
-- current_issue: 658
-- status: pr_open
-- branch: fix/658_bruno-json-parsing
-- pr_url: https://github.com/matiaspakua/notaire/pull/659
+- current_issue: null
+- status: pending
+- branch: null
+- pr_url: null
 - blocked_reason: null
-
-Note: 658 is a hotfix filed mid-run — PR #657 (issue #610)'s own CI run was the first real
-trigger of #587's coverage-report job (since #657 touched frontend/**), and it exposed a real
-crash: generate_e2e_coverage_report.py's _bruno_section() assumed bruno-results.json is a dict
-with a top-level "summary" key; the real @usebruno/cli output is a list of per-iteration
-objects, each with its own "results" and "summary". Downloaded the actual failing job's
-bruno-results artifact via the GitHub API to confirm the real shape before fixing (not
-guessing a second time). This is issue #4 in terms of PRs opened this run, but was not part of
-the original planned queue of 4 — it's an unplanned same-run regression fix, done immediately
-per the "fix forward" instruction rather than left for a future run.
 
 ## Completed (this and prior runs, from git history)
 
@@ -38,8 +28,35 @@ per the "fix forward" instruction rather than left for a future run.
   found.
 - 610 — test(e2e): mobile/tablet viewport coverage in Playwright. PR #657, squash-merged at
   2026-07-22T19:57:07Z. Its CI run (the first to touch frontend/** since #587 merged) exposed
-  a real crash in #587's script — filed and fixed as #658 (see Current, above), not folded into
-  this PR since the bug belongs to #587's file, not #610's.
+  a real crash in #587's script — filed and fixed as #658, not folded into this PR since the
+  bug belongs to #587's file, not #610's.
+- 658 (unplanned, same-run hotfix) — generate_e2e_coverage_report.py crashed on the real Bruno
+  CLI JSON shape (array of iterations, not a dict with "summary"). PR #659, squash-merged at
+  2026-07-22T20:11:41Z. Verified the fix against the actual failing job's downloaded artifact
+  rather than guessing the schema again; also fixed the reason Playwright results always
+  showed "not found" (playwright-e2e.yml passed `--reporter=html,json,junit` on the CLI,
+  overriding playwright.config.ts's own reporter array and its correct outputFile paths).
+
+## Notable discovery this run — NOT yet acted on, flagged for a future run
+
+While downloading real CI artifacts to fix #658, found that **83 of 86 Bruno API contract
+tests (137 of 147 sub-assertions) are currently failing on `main`** — e.g. `GET
+/api/v1/registro-auditoria` returns 401 Unauthorized in the Bruno run. This looks like recent
+JWT/auth-enforcement changes (issue #552 and friends — requests without a Bearer token now
+correctly rejected with 401) broke a large fraction of the Bruno collection, which likely still
+sends unauthenticated requests. This is a real, currently-broken state on `main`, unrelated to
+any of this run's 4 selected issues — worth a dedicated future issue/run rather than being
+folded into an unrelated PR. Not filed as a GitHub issue yet; flagging here first since it may
+warrant a look before triage (could be "Bruno collection needs auth token wiring" or could be
+a genuine backend regression — needs a human or a dedicated investigation to tell which).
+
+## This run's summary (2026-07-22 01:00 Europe/Madrid, executed ~17:50–20:12 UTC)
+
+5 PRs merged (4 planned + 1 unplanned same-run hotfix): #653, #654, #656, #657, #659.
+1 follow-up issue filed for future work: #655 (bean validation rollout).
+1 discovery flagged above for future triage (Bruno API test failures on main).
+No blockers. All CI green (except the two known-flaky jobs, ignored per policy) on every
+merged PR.
 
 ## This run's queue (2026-07-22 01:00 Europe/Madrid)
 
