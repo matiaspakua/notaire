@@ -6,9 +6,9 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 ## Current
 
 - current_issue: 658
-- status: in_progress
+- status: pr_open
 - branch: fix/658_bruno-json-parsing
-- pr_url: null
+- pr_url: https://github.com/matiaspakua/notaire/pull/659
 - blocked_reason: null
 
 Note: 658 is a hotfix filed mid-run — PR #657 (issue #610)'s own CI run was the first real
