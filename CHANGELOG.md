@@ -33,6 +33,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to the matched-user branch. Fixed by returning immediately once a matching user has been
   handled.
 
+- **E2E coverage reports were a fabricated static template** (issue #587): the
+  `.github/workflows/playwright-e2e.yml` "Business Coverage Report" job wrote an identical
+  hardcoded markdown block to `docs/wiki/cicd-reports/e2e-coverage-*.md` on every run,
+  including a stale action item ("Fix backend 500 errors on testimonio endpoints") that had
+  sat unchanged for 6+ weeks regardless of actual results. Replaced with
+  `scripts/generate_e2e_coverage_report.py`, which parses the real Playwright JSON reporter
+  output (`test-results/results.json`) and Bruno CLI JSON output (`bruno-results.json`) to
+  report actual pass/fail/skip counts and the actual failing test titles, with no fabricated
+  numbers when a results file is missing.
+
 - **Flyway single source of truth**: Removed dual schema source (init-db + Flyway)
   - Removed `init-db:/docker-entrypoint-initdb.d` volume mount from docker-compose.yml
   - PostgreSQL now starts empty; Flyway applies all V1→V11 migrations on startup
