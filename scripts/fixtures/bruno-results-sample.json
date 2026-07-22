@@ -1,0 +1,174 @@
+[
+  {
+    "iterationIndex": 0,
+    "results": [
+      {
+        "test": {
+          "filename": "auditoria/get-registros-auditoria.yml"
+        },
+        "request": {
+          "method": "GET",
+          "url": "http://localhost:8080/api/v1/registro-auditoria",
+          "headers": {
+            "content-type": null
+          }
+        },
+        "response": {
+          "status": 401,
+          "statusText": "",
+          "headers": {
+            "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+            "x-content-type-options": "nosniff",
+            "x-xss-protection": "0",
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "pragma": "no-cache",
+            "expires": "0",
+            "x-frame-options": "DENY",
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Wed, 22 Jul 2026 19:43:54 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "timestamp": "2026-07-22T19:43:54.462Z",
+            "status": 401,
+            "error": "Unauthorized",
+            "path": "/api/v1/registro-auditoria"
+          },
+          "url": "http://localhost/api/v1/registro-auditoria",
+          "responseTime": 38,
+          "duration": 38,
+          "size": 112
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "fail",
+            "error": "expected 401 to equal 200",
+            "uid": "SfAIP91OhfS7pa7YXsNPn"
+          },
+          {
+            "description": "Response is array",
+            "status": "fail",
+            "error": "expected { \u2026(4) } to be an array",
+            "uid": "0j3mhKZEnSZVAx4kxZyaB"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.25541129,
+        "name": "Get All Registros de Auditoria",
+        "suitename": "/home/runner/work/notaire/notaire/backend-api/api-test/auditoria/get-registros-auditoria",
+        "path": "auditoria/get-registros-auditoria.yml",
+        "iterationIndex": 0
+      },
+      {
+        "test": {
+          "filename": "auth/login.yml"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8080/api/v1/usuarios/login",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "data": "{ \"nombre\": \"admin\", \"contrasenia\": \"admin\" }"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "headers": {
+            "vary": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
+            "x-content-type-options": "nosniff",
+            "x-xss-protection": "0",
+            "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+            "pragma": "no-cache",
+            "expires": "0",
+            "x-frame-options": "DENY",
+            "content-type": "application/json",
+            "transfer-encoding": "chunked",
+            "date": "Wed, 22 Jul 2026 19:43:55 GMT",
+            "keep-alive": "timeout=60",
+            "connection": "keep-alive"
+          },
+          "data": {
+            "estado": true,
+            "tipo": "Escribano",
+            "valido": true,
+            "idUsuario": 1,
+            "nombre": "admin",
+            "version": 0,
+            "personas": {
+              "apellido": "Garcia",
+              "nombre": "Juan Carlos",
+              "idPersona": 1
+            },
+            "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc4NDc0OTQzNSwiZXhwIjoxNzg0ODM1ODM1fQ.JwRwvak0BHlPB-Wm-Ywk4hZiV0m38_IIcqr8cyYXYAA"
+          },
+          "url": "http://localhost/api/v1/usuarios/login",
+          "responseTime": 515,
+          "duration": 515,
+          "size": 303
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Status 200",
+            "status": "pass",
+            "uid": "ICPszBlYczrl-d6T8ERoL"
+          },
+          {
+            "description": "Response has valido field",
+            "status": "pass",
+            "uid": "bHoiEoj4CtEqgHETDE9zA"
+          },
+          {
+            "description": "admin login is valido",
+            "status": "pass",
+            "uid": "pcKlBWVZufA5V_YhIYKSp"
+          },
+          {
+            "description": "Stores user_id on success",
+            "status": "pass",
+            "uid": "8ogjlzo9Ir9177YYomAx-"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.627611294,
+        "name": "Login",
+        "suitename": "/home/runner/work/notaire/notaire/backend-api/api-test/auth/login",
+        "path": "auth/login.yml",
+        "iterationIndex": 0
+      }
+    ],
+    "summary": {
+      "totalRequests": 86,
+      "passedRequests": 3,
+      "failedRequests": 83,
+      "errorRequests": 0,
+      "skippedRequests": 0,
+      "skippedByBail": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 147,
+      "passedTests": 10,
+      "failedTests": 137,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    }
+  }
+]
