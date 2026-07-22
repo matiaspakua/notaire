@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Login rate limiting / account lockout** (issue #560): `POST /api/v1/usuarios/login`
+  now locks a username out for a configurable duration (`security.login.lockout-duration-ms`,
+  default 15 minutes) after a configurable number of consecutive failed attempts
+  (`security.login.max-attempts`, default 5), returning `429 Too Many Requests`. A
+  successful login resets the counter. Implemented in the new
+  `com.licensis.notaire.security.LoginAttemptService`.
+
 ### Fixed
+
+- **Login attempt double-counting** (found while implementing #560): `UsuarioController.login()`
+  fell through to its "usuario no encontrado" branch even when a username **was** matched but
+  the password was wrong or the account was inactive, executing that branch's logic in addition
+  to the matched-user branch. Fixed by returning immediately once a matching user has been
+  handled.
 
 - **Flyway single source of truth**: Removed dual schema source (init-db + Flyway)
   - Removed `init-db:/docker-entrypoint-initdb.d` volume mount from docker-compose.yml

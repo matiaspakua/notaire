@@ -6,6 +6,7 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.repository.UsuarioRepository;
+import com.licensis.notaire.security.LoginAttemptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -44,13 +45,16 @@ public class UsuarioController {
     private final JwtTokenService jwtTokenService;
     private final MetricsUtil metricsUtil;
     private final PasswordEncoder passwordEncoder;
+    private final LoginAttemptService loginAttemptService;
 
     public UsuarioController(UsuarioRepository usuarioRepository, JwtTokenService jwtTokenService,
-                             MetricsUtil metricsUtil, PasswordEncoder passwordEncoder) {
+                             MetricsUtil metricsUtil, PasswordEncoder passwordEncoder,
+                             LoginAttemptService loginAttemptService) {
         this.usuarioRepository = usuarioRepository;
         this.jwtTokenService = jwtTokenService;
         this.metricsUtil = metricsUtil;
         this.passwordEncoder = passwordEncoder;
+        this.loginAttemptService = loginAttemptService;
     }
 
     record PersonaInfo(Integer idPersona, String nombre, String apellido) {}
@@ -176,10 +180,23 @@ public class UsuarioController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK (ver campo 'valido' para el resultado)"),
+    @ApiResponse(responseCode = "429", description = "Cuenta bloqueada temporalmente por intentos fallidos")
+})
     @PostMapping("/login")
     @Operation(summary = "Autenticar usuario")
     public ResponseEntity<?> login(@RequestBody DtoUsuario loginRequest) {
         try {
+            if (loginAttemptService.isLocked(loginRequest.getNombre())) {
+                log.warn("Login bloqueado para '{}': demasiados intentos fallidos.", loginRequest.getNombre());
+                metricsUtil.incrementCounter("login", "locked");
+                Map<String, Object> lockedResponse = new HashMap<>();
+                lockedResponse.put("valido", false);
+                lockedResponse.put("message", "Cuenta bloqueada temporalmente por demasiados intentos fallidos.");
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(lockedResponse);
+            }
+
             List<Usuario> usuarios = usuarioRepository.findAll();
 
             if (usuarios == null || usuarios.isEmpty()) {
@@ -197,6 +214,7 @@ public class UsuarioController {
                         if (usuario.getEstado()) {
                             log.info("Login exitoso para usuario: '{}'", usuario.getNombre());
                             metricsUtil.incrementCounter("login", "success");
+                            loginAttemptService.onLoginSucceeded(usuario.getNombre());
                             DtoUsuario dtoUsuario = new DtoUsuario();
                             dtoUsuario.setIdUsuario(usuario.getIdUsuario());
                             dtoUsuario.setNombre(usuario.getNombre());
@@ -233,10 +251,14 @@ public class UsuarioController {
                         } else {
                             log.warn("Login fallido para '{}': usuario inactivo", usuario.getNombre());
                             metricsUtil.incrementCounter("login", "inactive");
+                            loginAttemptService.onLoginFailed(usuario.getNombre());
+                            return ResponseEntity.ok(invalidLoginResponse());
                         }
                     } else {
                         log.warn("Login fallido para '{}': contraseña incorrecta", usuario.getNombre());
                         metricsUtil.incrementCounter("login", "bad_credentials");
+                        loginAttemptService.onLoginFailed(usuario.getNombre());
+                        return ResponseEntity.ok(invalidLoginResponse());
                     }
                 }
             }
@@ -244,17 +266,20 @@ public class UsuarioController {
             log.warn("Login fallido: usuario '{}' no encontrado en {} usuarios cargados.", loginRequest.getNombre(),
                     usuarios.size());
             metricsUtil.incrementCounter("login", "not_found");
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("valido", false);
-            return ResponseEntity.ok(errorResponse);
+            loginAttemptService.onLoginFailed(loginRequest.getNombre());
+            return ResponseEntity.ok(invalidLoginResponse());
 
         } catch (Exception e) {
             log.error("Failed to process login for {}", loginRequest.getNombre(), e);
             metricsUtil.incrementCounter("login", "error");
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("valido", false);
-            return ResponseEntity.ok(errorResponse);
+            return ResponseEntity.ok(invalidLoginResponse());
         }
+    }
+
+    private Map<String, Object> invalidLoginResponse() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("valido", false);
+        return response;
     }
 
     /**
