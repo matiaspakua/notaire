@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   successful login resets the counter. Implemented in the new
   `com.licensis.notaire.security.LoginAttemptService`.
 
+- **Jakarta Bean Validation on request boundaries** (issue #561): `UsuarioController`'s
+  `createUsuario`/`updateUsuario` now validate the request body (`@NotBlank nombre`, `tipo`),
+  and `ReporteController`'s path/query parameters are validated (`@Positive` on ID-like
+  parameters, `@NotBlank` on `nombreTipoTramite`, `@Min(1)/@Max(12)` on `mes`), returning a
+  clean `400` instead of a generic `500` or silently accepting malformed input.
+  `GlobalExceptionHandler` now handles `MethodArgumentNotValidException` (body validation) and
+  `ConstraintViolationException` (`@RequestParam`/`@PathVariable` validation) consistently.
+  Full rollout across the remaining controllers is tracked as a follow-up.
+
 ### Fixed
 
 - **Login attempt double-counting** (found while implementing #560): `UsuarioController.login()`

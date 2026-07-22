@@ -5,21 +5,19 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 
 ## Current
 
-- current_issue: 560
+- current_issue: 561
 - status: pr_open
-- branch: fix/560_login-rate-limiting
-- pr_url: https://github.com/matiaspakua/notaire/pull/653
+- branch: fix/561_bean-validation
+- pr_url: https://github.com/matiaspakua/notaire/pull/654
 - blocked_reason: null
-
-Note: PR #653's first CI run failed "Validate PR" because the title used the type
-`security(auth):`, which isn't in the workflow's allowed Conventional Commits type list
-(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert). Renamed to `fix(auth): ...`
-in both the PR title and the commit subject (amended + force-pushed the feature branch,
-not main) and CI re-ran green except the known-flaky "Publish to Wiki" job.
 
 ## Completed (this and prior runs, from git history)
 
 - 648, 649, 650, 652 (merged before this loop-state.md file existed; see `git log --oneline main`)
+- 560 — security(auth): login rate limiting and account lockout. PR #653, squash-merged at
+  2026-07-22T18:46:59Z. Found and fixed a real pre-existing bug along the way (see PR body):
+  UsuarioController.login() fell through to its "not found" branch even after a match, which
+  would have double-counted failed attempts against the new lockout counter.
 
 ## This run's queue (2026-07-22 01:00 Europe/Madrid)
 

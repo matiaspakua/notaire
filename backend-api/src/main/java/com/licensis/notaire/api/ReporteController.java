@@ -6,11 +6,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/reportes")
+@Validated
 @Tag(name = "Reportes", description = "API para generación de reportes PDF")
 public class ReporteController {
 
@@ -57,7 +63,7 @@ public class ReporteController {
                description = "Genera un PDF con el presupuesto especificado")
     public ResponseEntity<byte[]> generarReportePresupuesto(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable Integer idPresupuesto) {
+            @PathVariable @Positive Integer idPresupuesto) {
         return buildPdfResponse("presupuesto_" + idPresupuesto + ".pdf",
                 () -> reporteService.generarReportePresupuesto(idPresupuesto));
     }
@@ -67,7 +73,7 @@ public class ReporteController {
                description = "Genera un PDF con el presupuesto e información de inmuebles")
     public ResponseEntity<byte[]> generarReportePresupuestoInmuebles(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable Integer idPresupuesto) {
+            @PathVariable @Positive Integer idPresupuesto) {
         return buildPdfResponse("presupuesto_inmuebles_" + idPresupuesto + ".pdf",
                 () -> reporteService.generarReportePresupuestoInmuebles(idPresupuesto));
     }
@@ -77,7 +83,7 @@ public class ReporteController {
                description = "Genera un PDF con la lista de documentos requeridos para un tipo de trámite")
     public ResponseEntity<byte[]> generarReporteListaDocumentosTramite(
             @Parameter(description = "Nombre del tipo de trámite")
-            @RequestParam String nombreTipoTramite) {
+            @RequestParam @NotBlank String nombreTipoTramite) {
         return buildPdfResponse("lista_documentos.pdf",
                 () -> reporteService.generarReporteListaDocumentosTramite(nombreTipoTramite));
     }
@@ -87,7 +93,7 @@ public class ReporteController {
                description = "Genera un PDF con el historial de una gestión específica")
     public ResponseEntity<byte[]> generarReporteHistorialGestion(
             @Parameter(description = "ID de la gestión")
-            @PathVariable Integer idGestion) {
+            @PathVariable @Positive Integer idGestion) {
         return buildPdfResponse("historial_gestion_" + idGestion + ".pdf",
                 () -> reporteService.generarReporteHistorialGestion(idGestion));
     }
@@ -97,7 +103,7 @@ public class ReporteController {
                description = "Genera un PDF con información de documentos próximos a vencer")
     public ResponseEntity<byte[]> generarReporteDocumentosPorVencer(
             @Parameter(description = "ID del documento presentado")
-            @PathVariable Integer idDocumentoPresentado) {
+            @PathVariable @Positive Integer idDocumentoPresentado) {
         return buildPdfResponse("documentos_vencer.pdf",
                 () -> reporteService.generarReporteDocumentosPorVencer(idDocumentoPresentado));
     }
@@ -107,7 +113,7 @@ public class ReporteController {
                description = "Genera un PDF con la consulta de deuda de documentos para una gestión")
     public ResponseEntity<byte[]> generarReporteConsultarDeudaDocumentos(
             @Parameter(description = "Número de gestión")
-            @RequestParam Integer numeroGestion) {
+            @RequestParam @Positive Integer numeroGestion) {
         return buildPdfResponse("deuda_documentos_" + numeroGestion + ".pdf",
                 () -> reporteService.generarReporteConsultarDeudaDocumentos(numeroGestion));
     }
@@ -117,7 +123,7 @@ public class ReporteController {
                description = "Endpoint base para CU24. Requiere plantilla Jasper de libro de indice")
     public ResponseEntity<byte[]> generarLibroIndice(
             @Parameter(description = "Año del libro de indice")
-            @RequestParam Integer anio) {
+            @RequestParam @Positive Integer anio) {
         return buildPdfResponse("libro_indice_" + anio + ".pdf",
                 () -> reporteService.generarReporteLibroIndice(anio));
     }
@@ -127,9 +133,9 @@ public class ReporteController {
                description = "Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual")
     public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
             @Parameter(description = "Año del periodo")
-            @RequestParam Integer anio,
+            @RequestParam @Positive Integer anio,
             @Parameter(description = "Mes del periodo")
-            @RequestParam Integer mes) {
+            @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {
             return ResponseEntity.badRequest().build();
         }
@@ -142,9 +148,9 @@ public class ReporteController {
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
     public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
             @Parameter(description = "Año del periodo")
-            @RequestParam Integer anio,
+            @RequestParam @Positive Integer anio,
             @Parameter(description = "Mes del periodo")
-            @RequestParam Integer mes) {
+            @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {
             return ResponseEntity.badRequest().build();
         }
