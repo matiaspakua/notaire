@@ -6,9 +6,9 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 ## Current
 
 - current_issue: 561
-- status: in_progress
+- status: pr_open
 - branch: fix/561_bean-validation
-- pr_url: null
+- pr_url: https://github.com/matiaspakua/notaire/pull/654
 - blocked_reason: null
 
 ## Completed (this and prior runs, from git history)
