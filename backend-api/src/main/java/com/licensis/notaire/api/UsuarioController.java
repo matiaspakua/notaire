@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,7 +66,11 @@ public class UsuarioController {
     record UsuarioResponse(Integer idUsuario, String nombre, String tipo, boolean activo,
                             PersonaInfo persona, RolInfo rol) {}
 
-    record UsuarioRequest(String nombre, String contrasenia, String tipo, boolean activo) {}
+    record UsuarioRequest(
+            @NotBlank String nombre,
+            String contrasenia,
+            @NotBlank String tipo,
+            boolean activo) {}
 
     private UsuarioResponse toResponse(Usuario u) {
         PersonaInfo persona = null;
@@ -117,7 +123,7 @@ public class UsuarioController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo usuario")
-    public ResponseEntity<Object> createUsuario(@RequestBody UsuarioRequest request) {
+    public ResponseEntity<Object> createUsuario(@Valid @RequestBody UsuarioRequest request) {
         try {
             Usuario usuario = new Usuario();
             usuario.setNombre(request.nombre());
@@ -139,7 +145,7 @@ public class UsuarioController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
-    public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @RequestBody UsuarioRequest request) {
+    public ResponseEntity<Void> updateUsuario(@PathVariable Integer id, @Valid @RequestBody UsuarioRequest request) {
         Optional<Usuario> existing = usuarioRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();

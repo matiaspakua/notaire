@@ -6,15 +6,21 @@ import com.licensis.notaire.exception.NotaireException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.observability.StructuredLogger;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Global exception handler for all REST controllers.
@@ -105,6 +111,74 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Map.of(
                 "path", request.getRequestURI(),
                 "message", ex.getMessage()
+            )
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle bean validation failures on {@code @RequestBody} arguments (issue #561).
+     * Overrides the superclass's default {@code ProblemDetail} handling to keep the
+     * project's own {@link ErrorResponse} shape consistent across all error responses.
+     *
+     * @param ex      the exception
+     * @param headers the HTTP headers
+     * @param status  the HTTP status
+     * @param request the web request
+     * @return 400 error response entity
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+        String path = request.getDescription(false).replace("uri=", "");
+        ErrorResponse errorResponse = new ErrorResponse(
+            400,
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            message,
+            path
+        );
+        STRUCTURED_LOG.logWarn(
+            "Request body validation failed",
+            Map.of(
+                "path", path,
+                "message", message
+            )
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle bean validation failures on {@code @RequestParam}/{@code @PathVariable}
+     * arguments, raised when the controller class is annotated {@code @Validated} (issue #561).
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return 400 error response entity
+     */
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+        String message = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .collect(Collectors.joining("; "));
+        ErrorResponse errorResponse = new ErrorResponse(
+            400,
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            message,
+            request.getRequestURI()
+        );
+        STRUCTURED_LOG.logWarn(
+            "Request parameter validation failed",
+            Map.of(
+                "path", request.getRequestURI(),
+                "message", message
             )
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
