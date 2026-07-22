@@ -5,10 +5,10 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 
 ## Current
 
-- current_issue: 561
-- status: pr_open
-- branch: fix/561_bean-validation
-- pr_url: https://github.com/matiaspakua/notaire/pull/654
+- current_issue: 587
+- status: in_progress
+- branch: fix/587_e2e-coverage-report
+- pr_url: null
 - blocked_reason: null
 
 ## Completed (this and prior runs, from git history)
@@ -18,6 +18,10 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
   2026-07-22T18:46:59Z. Found and fixed a real pre-existing bug along the way (see PR body):
   UsuarioController.login() fell through to its "not found" branch even after a match, which
   would have double-counted failed attempts against the new lockout counter.
+- 561 — security(validation): Jakarta Bean Validation on UsuarioController + ReporteController
+  (the issue's own suggested starting point). PR #654, squash-merged at 2026-07-22T19:18:51Z.
+  Filed #655 to track the full rollout across the remaining ~29 controllers as deliberate
+  follow-up rather than claiming it done here.
 
 ## This run's queue (2026-07-22 01:00 Europe/Madrid)
 
