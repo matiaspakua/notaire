@@ -5,10 +5,10 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 
 ## Current
 
-- current_issue: 587
-- status: pr_open
-- branch: fix/587_e2e-coverage-report
-- pr_url: https://github.com/matiaspakua/notaire/pull/656
+- current_issue: 610
+- status: in_progress
+- branch: fix/610_mobile-viewport-e2e
+- pr_url: null
 - blocked_reason: null
 
 ## Completed (this and prior runs, from git history)
@@ -22,6 +22,12 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
   (the issue's own suggested starting point). PR #654, squash-merged at 2026-07-22T19:18:51Z.
   Filed #655 to track the full rollout across the remaining ~29 controllers as deliberate
   follow-up rather than claiming it done here.
+- 587 — test(e2e): E2E coverage reports were a static hardcoded template. PR #656, squash-merged
+  at 2026-07-22T19:33:03Z. Note: this PR's own CI couldn't exercise the changed
+  `coverage-report` job (path-filtered to frontend/**/backend-api/**) — first real validation
+  happens on the next push to main touching those paths, or the weekday cron. Worth a spot
+  check by a future run or human that the first post-merge e2e-coverage-*.md report looks sane
+  (real numbers, not a crash).
 
 ## This run's queue (2026-07-22 01:00 Europe/Madrid)
 

@@ -46,6 +46,11 @@ export default defineConfig({
       // Use the real Google Chrome browser (channel) instead of bundled Chromium.
       use: { ...devices["Desktop Chrome"], channel: "chrome" },
     },
+    {
+      name: "mobile",
+      testMatch: "**/mobile-viewport.spec.ts",
+      use: { ...devices["iPhone SE"] },
+    },
   ],
   // Skip webServer since we're using Docker
   // Tests expect backend on :8080 and frontend on :3000

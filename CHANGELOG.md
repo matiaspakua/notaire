@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ConstraintViolationException` (`@RequestParam`/`@PathVariable` validation) consistently.
   Full rollout across the remaining controllers is tracked as a follow-up.
 
+- **Mobile/tablet viewport coverage in Playwright E2E** (issue #610): `frontend/playwright.config.ts`
+  previously only ran against `devices["Desktop Chrome"]`, with zero specs asserting layout at
+  the 320px/768px/1024px breakpoints mandated by `.claude/rules/ui-ux-design.md`. Added a
+  `mobile` project (`devices["iPhone SE"]`) and `tests/e2e/mobile-viewport.spec.ts`, which
+  asserts no horizontal overflow on the login page at 320px and 768px and on the dashboard at
+  320px after login.
+
 ### Fixed
 
 - **Login attempt double-counting** (found while implementing #560): `UsuarioController.login()`
