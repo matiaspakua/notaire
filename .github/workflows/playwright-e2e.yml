@@ -212,13 +212,18 @@ jobs:
           retention-days: 14
 
       # ── Run Playwright E2E tests ──
+      # Deliberately NOT passing --reporter here (issue #658): the CLI --reporter flag
+      # fully overrides playwright.config.ts's own `reporter` array, silently dropping
+      # its outputFile paths (test-results/results.json, results.xml) that
+      # scripts/generate_e2e_coverage_report.py depends on, and the custom
+      # tests/e2e/reporters/coverage-report.ts business-coverage reporter entirely.
       - name: Run Playwright E2E tests
         continue-on-error: true
         run: |
           if [ -n "${{ inputs.test_filter }}" ]; then
-            npx playwright test --grep "${{ inputs.test_filter }}" --reporter=html,json,junit
+            npx playwright test --grep "${{ inputs.test_filter }}"
           else
-            npx playwright test --reporter=html,json,junit
+            npx playwright test
           fi
         working-directory: frontend
         env:

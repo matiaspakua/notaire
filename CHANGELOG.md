@@ -50,6 +50,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   report actual pass/fail/skip counts and the actual failing test titles, with no fabricated
   numbers when a results file is missing.
 
+- **`generate_e2e_coverage_report.py` crashed on the real Bruno CLI output** (issue #658,
+  found on #587's own first real CI run): `_bruno_section()` assumed `bruno-results.json` is a
+  JSON object with a top-level `"summary"` key; the real `@usebruno/cli` output is a JSON array
+  of per-iteration objects, each with its own `"summary"`. Verified the fix against the actual
+  artifact from the failing job rather than guessing the schema a second time, and added a
+  regression test using that real (trimmed) sample. Also found and fixed the reason Playwright
+  results always showed "not found": `playwright-e2e.yml`'s "Run Playwright E2E tests" step
+  passed `--reporter=html,json,junit` on the CLI, which fully overrides
+  `playwright.config.ts`'s own `reporter` array — silently dropping the `outputFile` paths this
+  script depends on, and the custom `tests/e2e/reporters/coverage-report.ts` business-coverage
+  reporter entirely. Removed the CLI override so the config's reporters (which already have the
+  correct paths) take effect. Bruno failures are now also surfaced in the report's Action Items
+  section, not just Playwright ones — the discovery run had 137 failing Bruno tests silently
+  reported as "no action items" before this fix.
+
 - **Flyway single source of truth**: Removed dual schema source (init-db + Flyway)
   - Removed `init-db:/docker-entrypoint-initdb.d` volume mount from docker-compose.yml
   - PostgreSQL now starts empty; Flyway applies all V1→V11 migrations on startup

@@ -5,11 +5,21 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
 
 ## Current
 
-- current_issue: 610
+- current_issue: 658
 - status: pr_open
-- branch: fix/610_mobile-viewport-e2e
-- pr_url: https://github.com/matiaspakua/notaire/pull/657
+- branch: fix/658_bruno-json-parsing
+- pr_url: https://github.com/matiaspakua/notaire/pull/659
 - blocked_reason: null
+
+Note: 658 is a hotfix filed mid-run — PR #657 (issue #610)'s own CI run was the first real
+trigger of #587's coverage-report job (since #657 touched frontend/**), and it exposed a real
+crash: generate_e2e_coverage_report.py's _bruno_section() assumed bruno-results.json is a dict
+with a top-level "summary" key; the real @usebruno/cli output is a list of per-iteration
+objects, each with its own "results" and "summary". Downloaded the actual failing job's
+bruno-results artifact via the GitHub API to confirm the real shape before fixing (not
+guessing a second time). This is issue #4 in terms of PRs opened this run, but was not part of
+the original planned queue of 4 — it's an unplanned same-run regression fix, done immediately
+per the "fix forward" instruction rather than left for a future run.
 
 ## Completed (this and prior runs, from git history)
 
@@ -23,11 +33,13 @@ It did not exist before the 2026-07-22 01:00 Europe/Madrid scheduled run — cre
   Filed #655 to track the full rollout across the remaining ~29 controllers as deliberate
   follow-up rather than claiming it done here.
 - 587 — test(e2e): E2E coverage reports were a static hardcoded template. PR #656, squash-merged
-  at 2026-07-22T19:33:03Z. Note: this PR's own CI couldn't exercise the changed
-  `coverage-report` job (path-filtered to frontend/**/backend-api/**) — first real validation
-  happens on the next push to main touching those paths, or the weekday cron. Worth a spot
-  check by a future run or human that the first post-merge e2e-coverage-*.md report looks sane
-  (real numbers, not a crash).
+  at 2026-07-22T19:33:03Z. Its own CI couldn't exercise the changed `coverage-report` job
+  (path-filtered to frontend/**/backend-api/**) — see #658 below for what that first real run
+  found.
+- 610 — test(e2e): mobile/tablet viewport coverage in Playwright. PR #657, squash-merged at
+  2026-07-22T19:57:07Z. Its CI run (the first to touch frontend/** since #587 merged) exposed
+  a real crash in #587's script — filed and fixed as #658 (see Current, above), not folded into
+  this PR since the bug belongs to #587's file, not #610's.
 
 ## This run's queue (2026-07-22 01:00 Europe/Madrid)
 

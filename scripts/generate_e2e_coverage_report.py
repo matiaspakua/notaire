@@ -60,32 +60,56 @@ def _playwright_section(pw_data):
     return "\n".join(lines), failing
 
 
+def _bruno_summaries(bruno_data):
+    """`@usebruno/cli run --reporter-json` writes a LIST of per-iteration
+    objects (one per `--iteration-count` run, typically just one), each with
+    its own "summary" — not a single top-level object with a "summary" key
+    (issue #658, verified against a real CI artifact rather than guessed)."""
+    if isinstance(bruno_data, list):
+        return [item["summary"] for item in bruno_data if isinstance(item, dict) and item.get("summary")]
+    if isinstance(bruno_data, dict) and bruno_data.get("summary"):
+        return [bruno_data["summary"]]
+    return []
+
+
 def _bruno_section(bruno_data):
+    """Returns (markdown_summary, failed_test_count)."""
     if bruno_data is None:
-        return "No Bruno API test results found — the Bruno run may not have completed."
+        return "No Bruno API test results found — the Bruno run may not have completed.", 0
 
-    summary = bruno_data.get("summary")
-    if not summary:
-        return "Bruno results file present but its summary format was not recognized."
+    summaries = _bruno_summaries(bruno_data)
+    if not summaries:
+        return "Bruno results file present but its summary format was not recognized.", 0
 
-    total = summary.get("totalRequests", "?")
-    passed = summary.get("passedRequests", "?")
-    failed = summary.get("failedRequests", "?")
-    return (
-        f"- **Total requests:** {total}\n"
-        f"- **Passed:** {passed}\n"
-        f"- **Failed:** {failed}"
+    total_requests = sum(s.get("totalRequests", 0) for s in summaries)
+    passed_requests = sum(s.get("passedRequests", 0) for s in summaries)
+    failed_requests = sum(s.get("failedRequests", 0) for s in summaries)
+    total_tests = sum(s.get("totalTests", 0) for s in summaries)
+    passed_tests = sum(s.get("passedTests", 0) for s in summaries)
+    failed_tests = sum(s.get("failedTests", 0) for s in summaries)
+
+    summary_md = (
+        f"- **Total requests:** {total_requests}\n"
+        f"- **Passed requests:** {passed_requests}\n"
+        f"- **Failed requests:** {failed_requests}\n"
+        f"- **Total tests/assertions:** {total_tests}\n"
+        f"- **Passed tests:** {passed_tests}\n"
+        f"- **Failed tests:** {failed_tests}"
     )
+    return summary_md, failed_tests
 
 
 def build_report(pw_data, bruno_data, report_date, trigger):
     pw_summary, failing_specs = _playwright_section(pw_data)
-    bruno_summary = _bruno_section(bruno_data)
+    bruno_summary, bruno_failed_tests = _bruno_section(bruno_data)
 
-    if failing_specs:
-        action_items = "\n".join(f"- `{file}` — {title}" for title, file in failing_specs)
-    else:
-        action_items = "No action items — all executed tests passed."
+    items = [f"- `{file}` — {title}" for title, file in failing_specs]
+    if bruno_failed_tests:
+        items.append(
+            f"- Bruno API tests: {bruno_failed_tests} failing assertion(s) — see the "
+            f"`bruno-results` artifact for per-request detail."
+        )
+    action_items = "\n".join(items) if items else "No action items — all executed tests passed."
 
     return f"""---
 title: E2E Coverage Report - {report_date}
