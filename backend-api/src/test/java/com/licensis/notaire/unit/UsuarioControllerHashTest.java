@@ -6,6 +6,7 @@ import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.repository.UsuarioRepository;
+import com.licensis.notaire.security.LoginAttemptService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,8 @@ class UsuarioControllerHashTest {
 
     @BeforeEach
     void setUp() {
-        controller = new UsuarioController(usuarioRepository, jwtTokenService, metricsUtil, passwordEncoder);
+        controller = new UsuarioController(usuarioRepository, jwtTokenService, metricsUtil, passwordEncoder,
+                new LoginAttemptService(5, 900000));
         mockMvc = standaloneSetup(controller).build();
     }
 
