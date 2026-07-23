@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **k6 load-test suite** (issue #594): no performance/load testing existed anywhere in the
+  repository. Added `performance-test/k6/load-test.js`, covering the highest-traffic read
+  endpoints (`gestiones`, `presupuestos`, `tramites`) with baseline thresholds (`p(95)<500ms`,
+  error rate `<1%`), authenticating via the existing JWT login endpoint. Wired into a new
+  scheduled (weekly, not per-PR) `.github/workflows/performance-test.yml` job so it doesn't
+  gate every PR.
+
+- **Security response headers on the Next.js frontend** (issue #562): `frontend/next.config.ts`
+  had no `headers()` callback. Added `Content-Security-Policy`, `X-Frame-Options: DENY`,
+  `X-Content-Type-Options: nosniff`, and `Strict-Transport-Security` to every route.
+
+- **HistorialMapper unit tests** (issue #589): `service.mappers.HistorialMapper` had zero test
+  coverage despite not being excluded from the JaCoCo gate. Added `HistorialMapperTest` covering
+  the happy path and each nullable foreign key individually.
+
 - **Login rate limiting / account lockout** (issue #560): `POST /api/v1/usuarios/login`
   now locks a username out for a configurable duration (`security.login.lockout-duration-ms`,
   default 15 minutes) after a configurable number of consecutive failed attempts
@@ -33,6 +48,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   320px after login.
 
 ### Fixed
+
+- **Contradicting JaCoCo coverage-floor numbers** (issue #588): `CLAUDE.md`/`code-quality.md`
+  said the enforced floor was 28%/14%, `pom.xml`'s own comment said ~78%/~62%, and the actually
+  enforced `<minimum>` values were 70%/25% — three different numbers for the same gate. Also
+  fixed a dead exclusion path referencing the nonexistent `com/licensis/notaire/servicios/*`
+  package (real package is `service`), which meant `AdministradorJpa`/`AdministradorReportes`/
+  `AdministradorSesion`/`AdministradorValidaciones`/`Conexion` were silently counted in the
+  coverage gate instead of excluded as intended. Re-measured real coverage after the fix:
+  ~84% line / ~74% branch. Added `JacocoCoverageConfigConsistencyTest` to guard against this
+  drifting out of sync again.
 
 - **Login attempt double-counting** (found while implementing #560): `UsuarioController.login()`
   fell through to its "usuario no encontrado" branch even when a username **was** matched but
