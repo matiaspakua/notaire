@@ -6,7 +6,7 @@ title: CI Report - 2026-07-23
 
 **Date:** 2026-07-23  
 **Branch:** main  
-**Commit:** 6d7707246a8bff72210bb497303bdf7b21aa67fc
+**Commit:** 6f2547b344fa68f62363049f21714197a64e678b
 
 ## Job Summary
 
@@ -32,7 +32,7 @@ title: CI Report - 2026-07-23
 | Severity | Count |
 |----------|-------|
 | Critical | 4 |
-| High | 29 |
+| High | 37 |
 
 ## Code Coverage
 
