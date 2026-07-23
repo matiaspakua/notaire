@@ -1,0 +1,203 @@
+---
+title: E2E Coverage Report - 2026-07-23
+---
+
+# E2E Coverage Report
+
+**Date:** 2026-07-23
+**Trigger:** schedule
+
+## Playwright E2E Results
+
+- **Total:** 411
+- **Passed:** 202
+- **Failed:** 171
+- **Skipped:** 37
+- **Flaky:** 1
+
+## Bruno API Test Results
+
+- **Total requests:** 86
+- **Passed requests:** 3
+- **Failed requests:** 83
+- **Total tests/assertions:** 147
+- **Passed tests:** 10
+- **Failed tests:** 137
+
+## Action Items
+
+- `cu-matrix.spec.ts` — CU17: Dar Alta persona [POST /personas]
+- `cu-matrix.spec.ts` — CU18: Dar Alta Cliente [POST /personas]
+- `cu-matrix.spec.ts` — CU46: Ver detalle cliente [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU54: Modificar Persona [GET /personas]
+- `cu-matrix.spec.ts` — CU61: Buscar persona o cliente [GET /personas/buscar?q=test]
+- `cu-matrix.spec.ts` — CU01: Preparar Presupuesto [GET /presupuestos]
+- `cu-matrix.spec.ts` — CU45: Modificar presupuesto [GET /presupuestos]
+- `cu-matrix.spec.ts` — CU60: Buscar Presupuesto [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU02: Iniciar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU14: Consultar estado gestión [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU16: Archivar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU19: Buscar gestiones de un Cliente [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU53: Modificar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU56: Registrar inscripción [GET /gestiones]
+- `cu-matrix.spec.ts` — CU05: Preparar escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU06: Firmar escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU52: Modificar Escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU62: Buscar Escritura [GET /escrituras/buscar]
+- `cu-matrix.spec.ts` — CU48-SUB: Escribanos disponibles (GET) [GET /escrituras/escribanos-disponibles]
+- `cu-matrix.spec.ts` — CU07: Generar testimonio [GET /testimonio]
+- `cu-matrix.spec.ts` — CU08: Verificar Testimonio [GET /testimonio]
+- `cu-matrix.spec.ts` — CU03: Lista documentos [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU04: Registrar documentación cliente [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU42: Informar próximos vencimientos [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU43: Reingresar documentación [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU15: Procesar pago [GET /pagos]
+- `cu-matrix.spec.ts` — CU47: Consultar Pago [GET /pagos]
+- `cu-matrix.spec.ts` — CU20: Dar alta usuario [GET /usuarios]
+- `cu-matrix.spec.ts` — CU21: Modificar Usuario [GET /usuarios]
+- `cu-matrix.spec.ts` — CU48: Dar alta escribano [GET /personas]
+- `cu-matrix.spec.ts` — CU51: Modificar escribano [GET /personas]
+- `cu-matrix.spec.ts` — CU22: Registrar Suplencia [GET /suplencia]
+- `cu-matrix.spec.ts` — CU59: Consultar Suplencias [GET /suplencia]
+- `cu-matrix.spec.ts` — CU23-AUD: Ver registro de actividades [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU26: Ingresar nuevo tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU27: Ingresar nuevo tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU28: Ingresar nuevos folios [GET /folio]
+- `cu-matrix.spec.ts` — CU29: Ingresar nuevo concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU30: Ingresar nuevo estado de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU31: Modificar tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU32: Modificar tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU33: Modificar folio [GET /folio]
+- `cu-matrix.spec.ts` — CU34: Modificar concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU35: Modificar estado de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU36: Ingresar tipos de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU37: Eliminar concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU38: Eliminar tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU39: Crear Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU40: Modificar Tipo de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU57: Eliminar tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU58: Eliminar Tipo de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU63: Buscar Folios [GET /folio]
+- `cu-matrix.spec.ts` — CU64: Buscar Tipo de tramite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU65: Buscar Tipos de documentos [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU66: Buscar Conceptos [GET /conceptos]
+- `cu-matrix.spec.ts` — CU67: Buscar Estados de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU68: Buscar tipos de folios [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU13: Ver historial de gestión [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU11: Ingresar para inscripción [GET /historial]
+- `cu-matrix.spec.ts` — CU10: Registrar movimientos documentación [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU12: Retirar testimonio [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU44: Reingresar testimonio [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU49: Eliminar Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU55: Modificar Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU-INM: Inmuebles [GET /inmueble]
+- `cu-matrix.spec.ts` — CU-COP: Copias [GET /copia]
+- `cu-matrix.spec.ts` — CU-ITEM: Items [GET /items]
+- `cu-matrix.spec.ts` — CU17: Dar Alta persona [POST /personas]
+- `cu-matrix.spec.ts` — CU18: Dar Alta Cliente [POST /personas]
+- `cu-matrix.spec.ts` — CU46: Ver detalle cliente [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU54: Modificar Persona [GET /personas]
+- `cu-matrix.spec.ts` — CU61: Buscar persona o cliente [GET /personas/buscar?q=test]
+- `cu-matrix.spec.ts` — CU01: Preparar Presupuesto [GET /presupuestos]
+- `cu-matrix.spec.ts` — CU45: Modificar presupuesto [GET /presupuestos]
+- `cu-matrix.spec.ts` — CU60: Buscar Presupuesto [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU02: Iniciar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU14: Consultar estado gestión [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU16: Archivar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU19: Buscar gestiones de un Cliente [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU53: Modificar Gestión [GET /gestiones]
+- `cu-matrix.spec.ts` — CU56: Registrar inscripción [GET /gestiones]
+- `cu-matrix.spec.ts` — CU05: Preparar escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU06: Firmar escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU52: Modificar Escritura [GET /escrituras]
+- `cu-matrix.spec.ts` — CU62: Buscar Escritura [GET /escrituras/buscar]
+- `cu-matrix.spec.ts` — CU48-SUB: Escribanos disponibles (GET) [GET /escrituras/escribanos-disponibles]
+- `cu-matrix.spec.ts` — CU07: Generar testimonio [GET /testimonio]
+- `cu-matrix.spec.ts` — CU08: Verificar Testimonio [GET /testimonio]
+- `cu-matrix.spec.ts` — CU03: Lista documentos [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU04: Registrar documentación cliente [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU42: Informar próximos vencimientos [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU43: Reingresar documentación [GET /documento-presentado]
+- `cu-matrix.spec.ts` — CU15: Procesar pago [GET /pagos]
+- `cu-matrix.spec.ts` — CU47: Consultar Pago [GET /pagos]
+- `cu-matrix.spec.ts` — CU20: Dar alta usuario [GET /usuarios]
+- `cu-matrix.spec.ts` — CU21: Modificar Usuario [GET /usuarios]
+- `cu-matrix.spec.ts` — CU48: Dar alta escribano [GET /personas]
+- `cu-matrix.spec.ts` — CU51: Modificar escribano [GET /personas]
+- `cu-matrix.spec.ts` — CU22: Registrar Suplencia [GET /suplencia]
+- `cu-matrix.spec.ts` — CU59: Consultar Suplencias [GET /suplencia]
+- `cu-matrix.spec.ts` — CU23-AUD: Ver registro de actividades [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU26: Ingresar nuevo tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU27: Ingresar nuevo tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU28: Ingresar nuevos folios [GET /folio]
+- `cu-matrix.spec.ts` — CU29: Ingresar nuevo concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU30: Ingresar nuevo estado de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU31: Modificar tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU32: Modificar tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU33: Modificar folio [GET /folio]
+- `cu-matrix.spec.ts` — CU34: Modificar concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU35: Modificar estado de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU36: Ingresar tipos de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU37: Eliminar concepto [GET /conceptos]
+- `cu-matrix.spec.ts` — CU38: Eliminar tipo de documento [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU39: Crear Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU40: Modificar Tipo de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU57: Eliminar tipo de trámite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU58: Eliminar Tipo de folio [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU63: Buscar Folios [GET /folio]
+- `cu-matrix.spec.ts` — CU64: Buscar Tipo de tramite [GET /tipo-tramite]
+- `cu-matrix.spec.ts` — CU65: Buscar Tipos de documentos [GET /tipo-de-documento]
+- `cu-matrix.spec.ts` — CU66: Buscar Conceptos [GET /conceptos]
+- `cu-matrix.spec.ts` — CU67: Buscar Estados de Gestión [GET /estado-gestion]
+- `cu-matrix.spec.ts` — CU68: Buscar tipos de folios [GET /tipo-folio]
+- `cu-matrix.spec.ts` — CU13: Ver historial de gestión [GET (dynamic)]
+- `cu-matrix.spec.ts` — CU11: Ingresar para inscripción [GET /historial]
+- `cu-matrix.spec.ts` — CU10: Registrar movimientos documentación [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU12: Retirar testimonio [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU44: Reingresar testimonio [GET /movimiento-testimonio]
+- `cu-matrix.spec.ts` — CU49: Eliminar Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU55: Modificar Plantilla Presupuesto [GET /plantilla-presupuestos]
+- `cu-matrix.spec.ts` — CU-INM: Inmuebles [GET /inmueble]
+- `cu-matrix.spec.ts` — CU-COP: Copias [GET /copia]
+- `cu-matrix.spec.ts` — CU-ITEM: Items [GET /items]
+- `admin.spec.ts` — create button opens modal
+- `admin.spec.ts` — Tipos de Folio section: full CRUD via search + create + edit + delete
+- `api-cycle.spec.ts` — GET /api/v1/personas — list all personas
+- `api-cycle.spec.ts` — POST /api/v1/personas — create a persona
+- `api-cycle.spec.ts` — PUT /api/v1/personas/{id} — update a persona
+- `api-cycle.spec.ts` — GET /api/v1/usuarios — list all usuarios
+- `api-cycle.spec.ts` — GET /api/v1/presupuestos — list presupuestos
+- `api-cycle.spec.ts` — GET /api/v1/tipo-tramite — list tipos de trámite
+- `api-cycle.spec.ts` — POST /api/v1/tipo-tramite — create tipo de trámite
+- `api-cycle.spec.ts` — GET /api/v1/estado-gestion — list estados de gestión
+- `api-cycle.spec.ts` — POST /api/v1/estado-gestion — create estado de gestión
+- `api-cycle.spec.ts` — GET /api/v1/tipo-de-documento — list tipos de documento
+- `api-cycle.spec.ts` — GET /api/v1/conceptos — list conceptos
+- `api-cycle.spec.ts` — POST /api/v1/conceptos — create concepto
+- `api-cycle.spec.ts` — GET /api/v1/folio — list folios
+- `api-cycle.spec.ts` — GET /api/v1/gestiones — list gestiones
+- `api-cycle.spec.ts` — GET /api/v1/escrituras — list escrituras
+- `api-cycle.spec.ts` — GET /api/v1/pagos — list pagos
+- `api-cycle.spec.ts` — GET /api/v1/inmueble — list inmuebles
+- `api-cycle.spec.ts` — GET /api/v1/copia — list copias
+- `api-cycle.spec.ts` — GET /api/v1/items — list items
+- `api-cycle.spec.ts` — GET /api/v1/documento-presentado — list documentos
+- `api-cycle.spec.ts` — GET /api/v1/suplencia — list suplencias
+- `api-cycle.spec.ts` — GET /api/v1/registro-auditoria — list auditoría entries
+- `api-cycle.spec.ts` — Complete CREATE → READ → UPDATE → DELETE cycle
+- `cu05-escrituras.spec.ts` — CU05-GW01: Given user on escrituras page, When click nueva escritura, Then modal opens
+- `cu05-escrituras.spec.ts` — CU05-GW02: Given form open, When fill and submit, Then escritura created
+- `cu17-18-personas-clientes.spec.ts` — CU17-GW01: Given user on personas page, When click nueva persona, Then modal opens
+- `cu17-18-personas-clientes.spec.ts` — CU17-GW02: Given form open, When fill all fields and submit, Then persona created
+- `cu24-40-reportes.spec.ts` — CU26-GW01: Given on tipos tramite, When click nuevo, Then modal opens
+- `cu24-40-reportes.spec.ts` — CU29-GW01: Given on conceptos, When click nuevo, Then modal opens
+- `cu24-40-reportes.spec.ts` — CU29-GW02: Given form open, When fill and submit, Then concepto created
+- `icons-ux.spec.ts` — action icon renders for Agregar
+- `mobile-viewport.spec.ts` — dashboard has no horizontal overflow at 320px after login
+- `mobile-viewport.spec.ts` — login page has no horizontal overflow at 320px
+- `mobile-viewport.spec.ts` — login page has no horizontal overflow at 768px (tablet)
+- `mobile-viewport.spec.ts` — dashboard has no horizontal overflow at 320px after login
+- Bruno API tests: 137 failing assertion(s) — see the `bruno-results` artifact for per-request detail.
+
+---
+*Report generated by Playwright E2E Pipeline from actual test results (issue #587)*
