@@ -361,7 +361,7 @@ jobs:
   generate-reports:
     name: Generate Markdown Reports
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests, coverage, security, quality]
+    needs: [build, unit-tests, integration-tests, coverage, security, docker-build, quality]
     if: always()
     continue-on-error: true
     steps:
@@ -570,7 +570,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: add CI report for $(date +%Y-%m-%d)" || echo "No changes to commit"
+            git commit -m "docs: add CI report for $(date +%Y-%m-%d) [skip ci]" || echo "No changes to commit"
             git push origin ${{ github.ref_name }} || git push origin ${{ github.ref_name }} --force
           fi
 
