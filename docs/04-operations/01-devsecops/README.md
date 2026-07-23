@@ -17,9 +17,15 @@ The pipeline is divided into two main workflows:
 
 ### Triggers
 
-- Push to `main`, `develop`, `feature/**`, `bugfix/**` branches
-- Pull requests to `main`
+- Push to `main` only (every merge to main runs the full test pipeline)
 - Manual workflow dispatch
+
+> **Test enforcement policy**: test failures FAIL the pipeline. No
+> `continue-on-error` or `-Dmaven.test.failure.ignore` on test steps. The only
+> tolerated flag is `-Dsurefire.failIfNoSpecifiedTests=false`, which allows
+> modules with no tests matching a filter (`notaire-shared`); it never masks a
+> failing test. The only acceptable skip is an environment limitation (e.g.
+> Testcontainers tests auto-skip when Docker is unavailable — they run in CI).
 
 ### Jobs
 
@@ -28,36 +34,33 @@ The pipeline is divided into two main workflows:
 - Builds all modules with Maven
 - Extracts project version for downstream jobs
 
-#### 2. Unit Tests
-- Runs unit tests for `backend-api` and `frontend-swing` modules
-- Uses `-am` flag to build dependent modules first
-- Generates JUnit XML reports
+#### 2. Unit Tests (with coverage)
+- Backend: everything outside the `integration` package
+  (`-Dtest='!**/integration/**'`) plus the `frontend-swing` module
+- Uploads `unit-test-report` artifact: surefire XML + JaCoCo coverage report
 - Publishes test results with dorny/test-reporter
 
-#### 3. Integration Tests
-- Runs integration tests for backend API
-- Uses Testcontainers for database isolation
-- Generates coverage reports
+#### 3. Integration Tests (with coverage)
+- H2-based tests: `-Dtest='**/integration/**'`
+- Testcontainers/PostgreSQL tests: `-Ppg-integration` (Flyway schema validation)
+- Uploads `integration-test-report` artifact: surefire XML + JaCoCo coverage report
 
-#### 4. Code Coverage (JaCoCo)
-- Runs all tests with coverage enabled
-- Generates JaCoCo HTML and XML reports
-- Posts coverage comment on PRs (requires 80% minimum)
-- Uses madrapps/jacoco-report action
+#### 4. Coverage Gate (`mvn verify`)
+- Runs the full suite once; `jacoco:check` enforces the ratchet floor
+  (70% line / 25% branch as of Phase 8; target 80/80)
+- Uploads combined `jacoco-report` and `coverage-snapshot` artifacts
 
 #### 5. Security Scan
-- Runs Trivy vulnerability scanner on source code
-- Generates SARIF format results
-- Uploads results to GitHub Security tab
-- Checks for CRITICAL and HIGH severity vulnerabilities
+- Runs Trivy vulnerability scanner on source code (report-only)
+- Uploads JSON results as artifact
 
 #### 6. Build Docker Image
+- Runs only after unit, integration and coverage jobs succeed
 - Builds Docker image using Buildx
-- Scans image with Trivy for vulnerabilities
-- Does NOT push (push only happens on CD)
+- Does NOT push (push only happens on CD, gated on CI success)
 
 #### 7. Code Quality (SpotBugs)
-- Runs SpotBugs static analysis
+- Runs SpotBugs static analysis (report-only)
 - Generates XML report for review
 
 ### Permissions
@@ -75,7 +78,8 @@ permissions:
 
 ### Triggers
 
-- Push to `main` branch
+- `workflow_run`: after **CI - Build, Test & Security** completes successfully
+  on `main` (the image is never published if any test job failed)
 - Version tags (`v*`)
 - Manual workflow dispatch
 

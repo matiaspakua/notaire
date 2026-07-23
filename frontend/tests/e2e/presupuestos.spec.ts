@@ -2,35 +2,14 @@
  * Playwright E2E tests — Presupuestos module.
  * CU01, CU39, CU45, CU49, CU55, CU60
  *
- * Requires backend running on http://localhost:8080.
- * CI runs with continue-on-error; local run needs full stack up.
+ * Requires backend running on http://localhost:8080 and the full stack up.
  */
 import { test, expect } from "@playwright/test";
+import { authenticateAsAdmin } from "./setup/auth";
 
 test.describe("Presupuestos module (CU01, CU39)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
-
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: {
-            user: { nombre: "admin", tipo: "ADMIN", valido: true },
-            isAuthenticated: true,
-          },
-          version: 0,
-        })
-      );
-    });
-
+    await authenticateAsAdmin(page);
     await page.goto("/dashboard/presupuestos");
   });
 
@@ -85,38 +64,24 @@ test.describe("Presupuestos module (CU01, CU39)", () => {
     );
     await page.getByTestId("select-estado").focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("listbox")).toBeVisible();
+    const listbox = page.getByRole("listbox");
+    await expect(listbox).toBeVisible();
+    // Radix highlights the currently-selected item ("Todos") on open; ArrowDown moves
+    // the roving-tabindex highlight to the next option ("Borrador").
     await page.keyboard.press("ArrowDown");
+    await expect(listbox.getByRole("option", { name: /borrador/i })).toHaveAttribute(
+      "data-highlighted",
+      ""
+    );
     await page.keyboard.press("Enter");
     await searchRequest;
-    await expect(page.getByRole("listbox")).not.toBeVisible();
+    await expect(listbox).not.toBeVisible();
   });
 });
 
 test.describe("Pagos module (CU15, CU47)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
-
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: {
-            user: { nombre: "admin", tipo: "ADMIN", valido: true },
-            isAuthenticated: true,
-          },
-          version: 0,
-        })
-      );
-    });
-
+    await authenticateAsAdmin(page);
     await page.goto("/dashboard/pagos");
   });
 

@@ -1,16 +1,12 @@
 name: Playwright E2E — Full Suite
 
+# API tests (Bruno) + UI E2E tests (Playwright) against the full stack
+# (PostgreSQL + backend + frontend). Runs on every merge to main (and only
+# main), on a weekday schedule, and on manual dispatch. Test failures FAIL
+# the pipeline.
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
-      - 'backend-api/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'frontend/**'
-      - 'backend-api/**'
   schedule:
     - cron: '0 6 * * 1-5'  # Weekdays 6am UTC
   workflow_dispatch:
@@ -29,17 +25,19 @@ on:
 permissions:
   contents: read
   checks: write
-  pull-requests: write
   actions: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
   BASE_URL: http://localhost:3000
   E2E_CLEANUP: ${{ inputs.cleanup || 'true' }}
+  JWT_SECRET: ci-e2e-only-jwt-secret-do-not-use-in-prod-!!
+  ACTUATOR_USER: ci-e2e-actuator-user
+  ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
 jobs:
   # ──────────────────────────────────────────────
@@ -103,10 +101,106 @@ jobs:
           include-hidden-files: true
 
   # ──────────────────────────────────────────────
-  # JOB 3: E2E Tests (requires DB + backend + frontend)
+  # JOB 3: API Tests (Bruno) — requires DB + backend
+  # ──────────────────────────────────────────────
+  api-tests:
+    name: API Tests (Bruno)
+    runs-on: ubuntu-latest
+    needs: [backend-build]
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: notaire
+          POSTGRES_USER: notaire
+          POSTGRES_PASSWORD: notaire
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend-api/target/
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Start backend API
+        run: |
+          java -jar backend-api/target/*.jar \
+            --server.port=8080 \
+            --spring.datasource.url=jdbc:postgresql://localhost:5432/notaire \
+            --spring.datasource.username=notaire \
+            --spring.datasource.password=notaire \
+            --spring.jpa.hibernate.ddl-auto=update \
+            --jwt.secret="${JWT_SECRET}" \
+            --actuator.security.username="${ACTUATOR_USER}" \
+            --actuator.security.password="${ACTUATOR_PASSWORD}" &
+          echo "Waiting for backend..."
+          sleep 15
+          timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 2; done'
+          echo "Backend is ready"
+
+      # The collection sends "Authorization: Bearer {{token}}" on every request
+      # (opencollection.yml). Folders run alphabetically, so the token must be
+      # provided up front rather than captured by the auth/login request.
+      - name: Run Bruno API tests
+        run: |
+          TOKEN=$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
+            -H 'Content-Type: application/json' \
+            -d '{"nombre":"admin","contrasenia":"admin"}' | jq -r '.token')
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "ERROR: could not obtain JWT token from login endpoint" >&2
+            exit 1
+          fi
+          cd backend-api/api-test
+          npx @usebruno/cli run --env Developmen \
+            --env-var token="$TOKEN" \
+            --reporter-junit bruno-results.xml \
+            --reporter-json bruno-results.json \
+            --reporter-html bruno-report.html
+
+      - name: Upload API test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-report
+          path: |
+            backend-api/api-test/bruno-results.xml
+            backend-api/api-test/bruno-results.json
+            backend-api/api-test/bruno-report.html
+          retention-days: 30
+
+      - name: Publish API test results
+        uses: dorny/test-reporter@v3
+        if: always()
+        continue-on-error: true
+        with:
+          name: API Tests (Bruno)
+          path: backend-api/api-test/bruno-results.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  # ──────────────────────────────────────────────
+  # JOB 4: UI E2E Tests (Playwright) — requires DB + backend + frontend
   # ──────────────────────────────────────────────
   e2e-tests:
-    name: E2E Tests (${{ github.event_name }})
+    name: UI E2E Tests (Playwright)
     runs-on: ubuntu-latest
     needs: [backend-build, frontend-build]
     timeout-minutes: 45
@@ -155,7 +249,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'maven'
 
       # ── Start backend ──
       - name: Start backend API
@@ -173,10 +266,6 @@ jobs:
           sleep 15
           timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080/actuator/health)" != "200" ]]; do sleep 2; done'
           echo "Backend is ready"
-        env:
-          JWT_SECRET: ci-e2e-only-jwt-secret-do-not-use-in-prod-!!
-          ACTUATOR_USER: ci-e2e-actuator-user
-          ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
       # ── Start frontend ──
       - name: Start frontend
@@ -190,26 +279,12 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
 
       # ── Install Playwright ──
+      # chromium: smoke/health projects (bundled engine).
+      # chrome: the "chromium" project pins channel:"chrome" (playwright.config.ts).
+      # webkit: the "mobile" project emulates iPhone SE, which uses the WebKit engine.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium chrome webkit
         working-directory: frontend
-
-      # ── Run Bruno API contract tests ──
-      - name: Run Bruno API tests
-        continue-on-error: true
-        run: |
-          cd backend-api/api-test
-          npx @usebruno/cli run --env Developmen \
-            --reporter-junit bruno-results.xml \
-            --reporter-json bruno-results.json || echo "Bruno tests completed (some may have failed)"
-
-      - name: Upload Bruno results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: bruno-results
-          path: backend-api/api-test/bruno-results.*
-          retention-days: 14
 
       # ── Run Playwright E2E tests ──
       # Deliberately NOT passing --reporter here (issue #658): the CLI --reporter flag
@@ -218,7 +293,6 @@ jobs:
       # scripts/generate_e2e_coverage_report.py depends on, and the custom
       # tests/e2e/reporters/coverage-report.ts business-coverage reporter entirely.
       - name: Run Playwright E2E tests
-        continue-on-error: true
         run: |
           if [ -n "${{ inputs.test_filter }}" ]; then
             npx playwright test --grep "${{ inputs.test_filter }}"
@@ -250,53 +324,26 @@ jobs:
           path: frontend/test-results/traces/
           retention-days: 7
 
-      # ── Publish test results to PR ──
+      # ── Publish test results as a check ──
       - name: Publish test results
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         continue-on-error: true
         with:
-          name: E2E Test Results
+          name: UI E2E Test Results
           path: frontend/test-results/results.xml
           reporter: java-junit
           fail-on-error: false
 
-      # ── Comment coverage on PR ──
-      - name: Comment coverage on PR
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const coveragePath = 'frontend/test-results/coverage-report.html';
-            let summary = '## 🧪 E2E Test Summary\n\n';
-            summary += 'Full Playwright E2E suite executed.\n\n';
-            summary += '### Artifacts\n';
-            summary += '- [Playwright HTML Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n';
-            summary += '- Bruno API tests executed\n';
-            summary += '- Screenshots & traces on failure\n\n';
-            summary += '### Tags\n';
-            summary += '- `@smoke` — Critical path validated\n';
-            summary += '- `@health` — CU health check\n';
-            summary += '- `@regression` — Full suite\n';
-            summary += '---\n*Generated by Playwright E2E Pipeline*';
-
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: summary
-            });
-
   # ──────────────────────────────────────────────
-  # JOB 4: Generate and publish coverage report
+  # JOB 5: Generate and publish coverage report
   # ──────────────────────────────────────────────
   coverage-report:
     name: Business Coverage Report
     runs-on: ubuntu-latest
-    needs: [e2e-tests]
+    needs: [api-tests, e2e-tests]
     if: always()
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
@@ -310,7 +357,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: bruno-results
+          name: api-test-report
           path: bruno-results
         continue-on-error: true
 
@@ -333,6 +380,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: add E2E coverage report for $(date +%Y-%m-%d)" || true
-            git push origin ${{ github.head_ref || 'main' }} || echo "Push skipped"
+            git commit -m "docs: add E2E coverage report for $(date +%Y-%m-%d)"
+            git pull --rebase origin main
+            git push origin HEAD:main || echo "Push skipped"
           fi

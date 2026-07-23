@@ -9,82 +9,8 @@
  * Tests use the @tanstack/react-query hooks indirectly by visiting pages
  * that fetch data on load, then mocking/firing API calls directly.
  */
-import { test, expect, type Page } from "@playwright/test";
-
-/**
- * Direct API test — hits the backend via fetch() to verify the proxy works
- * and the backend responds. This is the simplest end-to-end connectivity test.
- */
-async function apiGet<T>(page: Page, path: string): Promise<{ ok: boolean; status: number; data?: T; error?: string }> {
-  const response = await page.request.get(`/api/v1${path}`);
-  const ok = response.ok();
-  let data: T | undefined;
-  let error: string | undefined;
-  try {
-    if (ok) {
-      data = (await response.json()) as T;
-    } else {
-      error = await response.text();
-    }
-  } catch {
-    error = "Failed to parse response";
-  }
-  return { ok, status: response.status(), data, error };
-}
-
-async function apiPost<T = void>(page: Page, path: string, body: unknown): Promise<{ ok: boolean; status: number; data?: T; error?: string }> {
-  const response = await page.request.post(`/api/v1${path}`, {
-    data: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-  const ok = response.ok();
-  let data: T | undefined;
-  let error: string | undefined;
-  try {
-    if (ok) {
-      const text = await response.text();
-      if (text) data = JSON.parse(text) as T;
-    } else {
-      error = await response.text();
-    }
-  } catch {
-    error = "Failed to parse response";
-  }
-  return { ok, status: response.status(), data, error };
-}
-
-async function apiPut<T = void>(page: Page, path: string, body: unknown): Promise<{ ok: boolean; status: number; data?: T; error?: string }> {
-  const response = await page.request.put(`/api/v1${path}`, {
-    data: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-  const ok = response.ok();
-  let data: T | undefined;
-  let error: string | undefined;
-  try {
-    if (ok) {
-      const text = await response.text();
-      if (text) data = JSON.parse(text) as T;
-    } else {
-      error = await response.text();
-    }
-  } catch {
-    error = "Failed to parse response";
-  }
-  return { ok, status: response.status(), data, error };
-}
-
-async function apiDelete(page: Page, path: string): Promise<{ ok: boolean; status: number; error?: string }> {
-  const response = await page.request.delete(`/api/v1${path}`);
-  const ok = response.ok();
-  let error: string | undefined;
-  try {
-    if (!ok) error = await response.text();
-  } catch {
-    error = "Failed to parse response";
-  }
-  return { ok, status: response.status(), error };
-}
+import { test, expect } from "@playwright/test";
+import { apiGet, apiPost, apiPut, apiDelete } from "./setup/api-helpers";
 
 // ──────────────────────────────────────────────
 // Record type interfaces (mirroring backend DTOs)

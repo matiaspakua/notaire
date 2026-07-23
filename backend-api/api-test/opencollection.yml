@@ -5,3 +5,5 @@ info:
 headers:
   - name: Content-Type
     value: application/json
+  - name: Authorization
+    value: "Bearer {{token}}"

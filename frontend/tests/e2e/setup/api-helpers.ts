@@ -27,8 +27,22 @@ function baseURL(): string {
   return process.env.BASE_URL || "http://localhost:3000";
 }
 
+/**
+ * The backend's security chain requires a JWT Bearer token on every endpoint except login.
+ * `page.request` is a separate fetch context from the browser page — it does not read the
+ * app's own localStorage-persisted token — so it must be attached explicitly here. global-setup
+ * stores the admin token in process.env.E2E_ADMIN_TOKEN, which — since it's set before the
+ * worker processes are spawned — is visible to every test file's process.env at call time.
+ */
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const token = process.env.E2E_ADMIN_TOKEN;
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
+}
+
 export async function apiGet<T = any>(page: Page, path: string): Promise<ApiResult<T>> {
-  const response = await page.request.get(`${baseURL()}/api/v1${path}`);
+  const response = await page.request.get(`${baseURL()}/api/v1${path}`, {
+    headers: authHeaders(),
+  });
   return parseResponse<T>(response);
 }
 
@@ -39,7 +53,7 @@ export async function apiPost<T = any>(
 ): Promise<ApiResult<T>> {
   const response = await page.request.post(`${baseURL()}/api/v1${path}`, {
     data: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
   });
   return parseResponse<T>(response);
 }
@@ -51,7 +65,7 @@ export async function apiPut<T = any>(
 ): Promise<ApiResult<T>> {
   const response = await page.request.put(`${baseURL()}/api/v1${path}`, {
     data: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
   });
   return parseResponse<T>(response);
 }
@@ -63,13 +77,15 @@ export async function apiPatch<T = any>(
 ): Promise<ApiResult<T>> {
   const response = await page.request.patch(`${baseURL()}/api/v1${path}`, {
     data: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
   });
   return parseResponse<T>(response);
 }
 
 export async function apiDelete<T = any>(page: Page, path: string): Promise<ApiResult<T>> {
-  const response = await page.request.delete(`${baseURL()}/api/v1${path}`);
+  const response = await page.request.delete(`${baseURL()}/api/v1${path}`, {
+    headers: authHeaders(),
+  });
   return parseResponse<T>(response);
 }
 
@@ -145,8 +161,7 @@ export interface UsuarioPayload {
   nombre: string;
   contrasenia: string;
   tipo: string;
-  estado?: boolean;
-  fkIdPersona?: { idPersona: number };
+  activo?: boolean;
 }
 
 export interface PagoPayload {
@@ -180,11 +195,11 @@ export interface MovimientoTestimonioPayload {
 }
 
 export interface SuplenciaPayload {
-  idEscribanoTitular: number;
-  idEscribanoSuplente: number;
+  fkIdSuplente: { idPersona: number };
+  fkIdSuplantado: { idPersona: number };
   fechaInicio: string;
   fechaFin?: string;
-  motivo?: string;
+  observaciones?: string;
 }
 
 // ──────────────────────────────────────────────
@@ -302,8 +317,7 @@ export async function createUsuario(
     nombre: `e2euser-${id}`,
     contrasenia: "Test1234!",
     tipo: "EMPLEADO",
-    estado: true,
-    ...(personaId ? { fkIdPersona: { idPersona: personaId } } : {}),
+    activo: true,
     ...overrides,
   });
 }
@@ -331,15 +345,14 @@ export async function createPago(
 export async function createFolio(
   page: Page,
   personaId?: number,
-  overrides: { numero?: number; anio?: number; estado?: string; disponible?: boolean; fkIdPersonaEscribano?: { idPersona: number }; fkIdTipoFolio?: { idTipoFolio: number } } = {},
+  overrides: { numero?: number; anio?: number; estado?: string; tipoFolioId?: number; escribanoId?: number } = {},
 ): Promise<ApiResult<{ idFolio: number }>> {
   return apiPost(page, "/folio", {
     numero: Math.floor(10000 + Math.random() * 90000),
     anio: 2026,
     estado: "Nuevo",
-    disponible: true,
-    fkIdPersonaEscribano: { idPersona: personaId || 1 },
-    fkIdTipoFolio: { idTipoFolio: 1 },
+    tipoFolioId: 1,
+    escribanoId: personaId || 1,
     ...overrides,
   });
 }
@@ -403,15 +416,15 @@ export async function createTipoDocumento(
  */
 export async function createSuplencia(
   page: Page,
-  idTitular: number,
   idSuplente: number,
+  idSuplantado: number,
   overrides: Partial<SuplenciaPayload> = {},
 ): Promise<ApiResult<{ idSuplencia: number }>> {
   return apiPost(page, "/suplencia", {
-    idEscribanoTitular: idTitular,
-    idEscribanoSuplente: idSuplente,
+    fkIdSuplente: { idPersona: idSuplente },
+    fkIdSuplantado: { idPersona: idSuplantado },
     fechaInicio: new Date().toISOString().split("T")[0],
-    motivo: "Suplencia E2E de prueba",
+    observaciones: "Suplencia E2E de prueba",
     ...overrides,
   });
 }

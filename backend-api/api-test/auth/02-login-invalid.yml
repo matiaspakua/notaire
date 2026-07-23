@@ -11,7 +11,8 @@ http:
     data: |-
         { "nombre": "admin", "contrasenia": "definitely-wrong" }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
 runtime:
   scripts:
     - type: tests

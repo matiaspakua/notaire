@@ -11,11 +11,13 @@ http:
         {
           "nombre": "apitest-usuario",
           "tipo": "ADMIN",
-          "estado": true,
-          "fkIdPersona": { "idPersona": 1 }
+          "activo": true
         }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

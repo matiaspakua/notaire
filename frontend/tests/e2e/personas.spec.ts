@@ -2,25 +2,14 @@
  * Playwright E2E tests — Personas module.
  * CU17, CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61
  *
- * Requires backend running on http://localhost:8080.
- * CI runs with continue-on-error; local run needs full stack up.
+ * Requires backend running on http://localhost:8080 and the full stack up.
  */
 import { test, expect } from "@playwright/test";
+import { authenticateAsAdmin } from "./setup/auth";
 
 test.describe("Personas module (CU17, CU18)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "admin", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
+    await authenticateAsAdmin(page);
     await page.goto("/dashboard/personas");
   });
 

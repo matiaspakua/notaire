@@ -5,27 +5,7 @@
  * Checks that images load (naturalWidth > 0) and have correct alt text.
  */
 import { test, expect } from "@playwright/test";
-
-/**
- * Auth setup: inject localStorage + cookie to bypass login
- */
-async function authSetup(page: import("@playwright/test").Page) {
-  await page.context().addCookies([
-    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-  ]);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "notaire-auth",
-      JSON.stringify({
-        state: {
-          user: { nombre: "admin", tipo: "ADMIN", valido: true },
-          isAuthenticated: true,
-        },
-        version: 0,
-      })
-    );
-  });
-}
+import { authenticateAsAdmin as authSetup } from "./setup/auth";
 
 /**
  * Assert that the page renders icons: every <img> (if any) has loaded
@@ -143,7 +123,8 @@ test.describe("Icon rendering — Admin sub-pages with action icons", () => {
         await authSetup(page);
         await page.goto(pageInfo.path);
         await page.waitForLoadState("networkidle");
-        const addImg = page.locator('img[alt="Agregar"]');
+        // Folios has two "Agregar" actions (folio + tipo de folio); either is fine here.
+        const addImg = page.locator('img[alt="Agregar"]').first();
         await expect(addImg).toBeVisible({ timeout: 5000 });
       });
 

@@ -14,7 +14,8 @@ http:
     data: |-
         { "nombre": "admin", "contrasenia": "admin" }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
 runtime:
   scripts:
     - type: tests
@@ -31,5 +32,12 @@ runtime:
             if (b && b.valido === true && b.idUsuario) {
               bru.setVar('user_id', b.idUsuario);
               expect(b.idUsuario).to.be.a('number');
+            }
+          });
+          test("Stores JWT token on success", function () {
+            const b = res.getBody();
+            if (b && b.valido === true && b.token) {
+              bru.setVar('token', b.token);
+              expect(b.token).to.be.a('string');
             }
           });

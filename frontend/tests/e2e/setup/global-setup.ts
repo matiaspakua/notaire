@@ -56,34 +56,53 @@ async function authenticateAdmin(page: Page): Promise<void> {
   await page.goto("/login");
   await page.waitForLoadState("networkidle");
 
-  // Try direct API login first (more reliable)
-  const loginResult = await apiPost<{ usuario: any; valido: boolean }>(
-    page,
-    "/usuarios/login",
-    { nombre: "admin", contrasenia: "admin" }
-  );
+  // Direct API login. Response is a flat map (valido, token, idUsuario, nombre, ...) —
+  // not nested under "usuario" — see UsuarioController#login.
+  const loginResult = await apiPost<{
+    valido: boolean;
+    token: string;
+    idUsuario: number;
+    nombre: string;
+    tipo: string;
+  }>(page, "/usuarios/login", { nombre: "admin", contrasenia: "admin" });
 
-  if (loginResult.ok && loginResult.data?.usuario) {
-    // Inject auth state via localStorage (same as frontend auth flow)
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: {
-            user: { nombre: "admin", tipo: "ADMIN", valido: true },
-            isAuthenticated: true,
-          },
-          version: 0,
-        })
-      );
-    });
-    seedData.adminAuth = { token: "", user: loginResult.data.usuario };
+  if (loginResult.ok && loginResult.data?.valido && loginResult.data.token) {
+    const { token, idUsuario, nombre, tipo } = loginResult.data;
+    // Inject auth state via localStorage (same shape the frontend auth store persists)
+    await page.addInitScript(
+      ([t, user]) => {
+        localStorage.setItem(
+          "notaire-auth",
+          JSON.stringify({
+            state: { user, token: t, isAuthenticated: true },
+            version: 0,
+          })
+        );
+      },
+      [token, { nombre, tipo, valido: true, idUsuario }] as const
+    );
+    seedData.adminAuth = { token, user: { idUsuario, nombre, tipo } };
+    // Visible to every worker process spawned after global-setup completes — read by
+    // tests/e2e/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
+    process.env.E2E_ADMIN_TOKEN = token;
   } else {
     // Fallback: UI-based login
     await page.getByTestId("input-usuario").fill("admin");
     await page.getByTestId("input-contrasenia").fill("admin");
     await page.getByTestId("btn-ingresar").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
+
+    const storedToken = await page.evaluate(() => {
+      try {
+        const raw = localStorage.getItem("notaire-auth");
+        return raw ? JSON.parse(raw)?.state?.token ?? null : null;
+      } catch {
+        return null;
+      }
+    });
+    if (storedToken) {
+      process.env.E2E_ADMIN_TOKEN = storedToken;
+    }
   }
 }
 
@@ -160,7 +179,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   }
 
-  // 5. Create a usuario (fkIdPersona references existing persona id=1 or seedPersonaId)
+  // 5. Create a usuario — UsuarioController's record is (nombre, contrasenia, tipo, activo)
   const usrResult = await apiPost<{ idUsuario: number }>(
     page,
     "/usuarios",
@@ -168,16 +187,15 @@ async function seedCatalogData(page: Page): Promise<void> {
       nombre: `testuser-${seedData.testId}`,
       contrasenia: "Test1234!",
       tipo: "EMPLEADO",
-      estado: true,
-      fkIdPersona: { idPersona: seedData.seedPersonaId || 1 },
+      activo: true,
     }
   );
   if (usrResult.ok && usrResult.data?.idUsuario) {
     seedData.seedUsuarioId = usrResult.data.idUsuario;
   }
 
-  // 6. Create a folio
-  // References existing persona (id=1 "Juan Carlos Garcia") and tipo_de_folio (id=1 "De documento")
+  // 6. Create a folio — FolioController's record is (numero, anio, estado, observaciones,
+  // tipoFolioId, escribanoId), not the nested fkIdTipoFolio/fkIdPersonaEscribano shape.
   const folioResult = await apiPost<{ idFolio: number }>(
     page,
     "/folio",
@@ -185,9 +203,8 @@ async function seedCatalogData(page: Page): Promise<void> {
       numero: Math.floor(10000 + Math.random() * 90000),
       anio: 2026,
       estado: "Nuevo",
-      disponible: true,
-      fkIdPersonaEscribano: { idPersona: seedData.seedPersonaId || 1 },
-      fkIdTipoFolio: { idTipoFolio: 1 },
+      tipoFolioId: 1,
+      escribanoId: seedData.seedPersonaId || 1,
     }
   );
   if (folioResult.ok && folioResult.data?.idFolio) {

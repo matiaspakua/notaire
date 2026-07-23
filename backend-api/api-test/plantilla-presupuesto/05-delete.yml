@@ -5,6 +5,9 @@ info:
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/plantilla-presupuestos/tipo-tramite/{{_pp_tipo_tramite}}/concepto/{{_pp_concepto}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

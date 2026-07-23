@@ -1,12 +1,15 @@
 info:
   name: Delete Folio
   type: http
-  seq: 4
+  seq: 5
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/folio/{{folio_id}}"
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

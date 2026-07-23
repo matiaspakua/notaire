@@ -109,6 +109,7 @@ public class Concepto implements Serializable
     }
 
     @XmlTransient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public List<PlantillaPresupuesto> getPlantillaPresupuestoList()
     {
         return plantillaPresupuestoList;

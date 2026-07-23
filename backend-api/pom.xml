@@ -233,6 +233,12 @@
                         'pg-integration' profile: mvn test -Ppg-integration
                     -->
                     <excludedGroups>pg-integration</excludedGroups>
+                    <!--
+                        Deterministic execution order: the default is filesystem-dependent,
+                        which lets test-order coupling pass locally and fail in CI (or the
+                        reverse). Alphabetical keeps every environment running the same order.
+                    -->
+                    <runOrder>alphabetical</runOrder>
                 </configuration>
             </plugin>
             <plugin>

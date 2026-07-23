@@ -8,9 +8,12 @@ http:
   body:
     type: json
     data: |-
-        {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},"observaciones":"Test plantilla E2E"}
+        {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},"tipoDeTramite":{"idTipoTramite":1},"concepto":{"idConcepto":1},"observaciones":"Test plantilla E2E"}
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

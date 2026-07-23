@@ -4,29 +4,7 @@
  * label, failing WCAG label-association for screen-reader users.
  */
 import { test, expect } from "@playwright/test";
-
-const adminAuthSetup = async (page: import("@playwright/test").Page) => {
-  await page.context().addCookies([
-    {
-      name: "notaire-auth-status",
-      value: "authenticated",
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "notaire-auth",
-      JSON.stringify({
-        state: {
-          user: { nombre: "admin", tipo: "ADMIN", valido: true },
-          isAuthenticated: true,
-        },
-        version: 0,
-      })
-    );
-  });
-};
+import { authenticateAsAdmin as adminAuthSetup } from "./setup/auth";
 
 test.describe("Search inputs expose an accessible label (#608)", () => {
   test.beforeEach(async ({ page }) => {
