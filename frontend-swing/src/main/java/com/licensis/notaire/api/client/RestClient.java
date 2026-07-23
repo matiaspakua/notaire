@@ -135,7 +135,14 @@ public class RestClient {
      */
     public static DtoUsuario login(DtoUsuario loginRequest) throws IOException {
         String url = ApiConfig.getApiBaseUrl() + "/usuarios/login";
-        String jsonBody = objectMapper.writeValueAsString(loginRequest);
+        // DtoUsuario.getContrasenia() is @JsonProperty(WRITE_ONLY) so it never
+        // serializes into outbound JSON (that's what keeps it out of API
+        // responses) — building the login body from a plain Map instead lets
+        // the actual credential reach the server.
+        Map<String, String> credentials = Map.of(
+                "nombre", loginRequest.getNombre(),
+                "contrasenia", loginRequest.getContrasenia());
+        String jsonBody = objectMapper.writeValueAsString(credentials);
         String jsonResponse = makePostRequest(url, jsonBody);
         DtoUsuario response = objectMapper.readValue(jsonResponse, DtoUsuario.class);
         if (response != null && response.isValido() && response.getToken() != null) {

@@ -322,7 +322,7 @@ jobs:
       # fails with "No plugin found for prefix" unless a matching pluginGroup is
       # configured in settings.xml — not guaranteed on a fresh CI runner.
       - name: Generate SpotBugs Report
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false -q
+        run: mvn compile com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false -q
 
       - name: Summarize SpotBugs findings
         run: |
