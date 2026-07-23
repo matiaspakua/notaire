@@ -937,8 +937,14 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("findSuplencia")
             void findById() {
-                when(mockEm.find(Suplencia.class, 3)).thenReturn(mock(Suplencia.class));
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Suplencia.class)));
                 assertThat(controller.findSuplencia(3)).isNotNull();
+            }
+
+            @Test @DisplayName("findSuplencia returns null when not found")
+            void findByIdNotFound() {
+                when(mockQuery.getResultList()).thenReturn(List.of());
+                assertThat(controller.findSuplencia(999)).isNull();
             }
 
             @Test @DisplayName("getSuplenciaCount")
@@ -958,7 +964,7 @@ class RemainingControllersJpaTest {
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
                 Suplencia entity = new Suplencia();
-                when(mockEm.getReference(Suplencia.class, 1)).thenReturn(entity);
+                when(mockEm.find(Suplencia.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();

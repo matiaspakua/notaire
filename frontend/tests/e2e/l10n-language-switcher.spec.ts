@@ -5,20 +5,10 @@
  * Requires: frontend at localhost:3000, backend at localhost:8080
  */
 import { type Page, test, expect } from "@playwright/test";
+import { authenticateAsAdmin } from "./setup/auth";
 
 async function setupAuthAndGo(page: Page, path = "/dashboard") {
-  await page.context().addCookies([
-    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-  ]);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "notaire-auth",
-      JSON.stringify({
-        state: { user: { nombre: "Admin Test", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-        version: 0,
-      })
-    );
-  });
+  await authenticateAsAdmin(page);
   await page.goto(path);
   await page.waitForLoadState("domcontentloaded");
 }
@@ -73,20 +63,11 @@ test.describe("Language Switcher — l10n feature", () => {
   });
 
   test("English locale shows English navigation labels", async ({ page }) => {
+    await authenticateAsAdmin(page);
     // Pre-set English locale cookie
     await page.context().addCookies([
       { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
     ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "Admin Test", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
     await page.goto("/dashboard");
     await page.waitForLoadState("domcontentloaded");
 

@@ -6,6 +6,7 @@
  */
 
 import { type Page, type Locator, expect } from "@playwright/test";
+import { authenticateAsAdmin } from "./setup/auth";
 
 /**
  * Gherkin step definitions and helpers
@@ -15,28 +16,9 @@ export class GherkinSteps {
 
   // =================== GIVEN steps ===================
 
+  /** Only "admin" is seeded by default; other roles fall back to it. */
   async givenUserIsAuthenticatedAs(role: "admin" | "empleado" = "admin") {
-    await this.page.context().addCookies([
-      {
-        name: "notaire-auth-status",
-        value: "authenticated",
-        domain: "localhost",
-        path: "/",
-      },
-    ]);
-
-    await this.page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: {
-            user: { nombre: role, tipo: role.toUpperCase(), valido: true },
-            isAuthenticated: true,
-          },
-          version: 0,
-        })
-      );
-    });
+    await authenticateAsAdmin(this.page);
   }
 
   async givenUserIsOnPage(path: string) {
@@ -78,8 +60,20 @@ export class GherkinSteps {
     await this.page.getByRole("link", { name: new RegExp(linkName, "i") }).click();
   }
 
+  /**
+   * List pages commonly have a "Buscar por {campo}..." search input whose
+   * aria-label also matches a modal field's label regex (e.g. /nombre/i
+   * matches both "Nombre" and "Buscar por nombre..."). Scoping to the open
+   * dialog when one exists avoids that ambiguity for form-field lookups.
+   */
+  private async formScope(): Promise<Locator | Page> {
+    const dialog = this.page.getByRole("dialog");
+    return (await dialog.isVisible().catch(() => false)) ? dialog : this.page;
+  }
+
   async whenUserFillsField(fieldLabel: string, value: string) {
-    await this.page.getByLabel(new RegExp(fieldLabel, "i")).fill(value);
+    const scope = await this.formScope();
+    await scope.getByLabel(new RegExp(fieldLabel, "i")).fill(value);
   }
 
   async whenUserSelectsFromDropdown(dropdownLabel: string, option: string) {
@@ -123,14 +117,14 @@ export class GherkinSteps {
 
   /** When: user selects a date in a date field */
   async whenUserPicksDate(fieldLabel: string, date: string) {
-    await this.page.getByLabel(new RegExp(fieldLabel, "i")).fill(date);
+    const scope = await this.formScope();
+    await scope.getByLabel(new RegExp(fieldLabel, "i")).fill(date);
   }
 
   /** When: user uploads a file */
   async whenUserUploadsFile(inputLabel: string, filePath: string) {
-    const fileChooser = await this.page
-      .getByLabel(new RegExp(inputLabel, "i"))
-      .setInputFiles(filePath);
+    const scope = await this.formScope();
+    await scope.getByLabel(new RegExp(inputLabel, "i")).setInputFiles(filePath);
   }
 
   /** When: user confirms a dialog */
@@ -193,7 +187,8 @@ export class GherkinSteps {
   }
 
   async thenFormHasField(fieldLabel: string) {
-    await expect(this.page.getByLabel(new RegExp(fieldLabel, "i"))).toBeVisible();
+    const scope = await this.formScope();
+    await expect(scope.getByLabel(new RegExp(fieldLabel, "i"))).toBeVisible();
   }
 
   async thenShowsSuccessMessage(message: string = "éxito") {

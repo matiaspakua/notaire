@@ -5,29 +5,7 @@
  * Requires backend running on http://localhost:8080.
  */
 import { test, expect } from "@playwright/test";
-
-const adminAuthSetup = async (page: import("@playwright/test").Page) => {
-  await page.context().addCookies([
-    {
-      name: "notaire-auth-status",
-      value: "authenticated",
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "notaire-auth",
-      JSON.stringify({
-        state: {
-          user: { nombre: "admin", tipo: "ADMIN", valido: true },
-          isAuthenticated: true,
-        },
-        version: 0,
-      })
-    );
-  });
-};
+import { authenticateAsAdmin as adminAuthSetup } from "./setup/auth";
 
 test.describe("Administración hub (ADMIN only)", () => {
   test.beforeEach(async ({ page }) => {
@@ -64,8 +42,9 @@ test.describe("CU67 — Estados de Gestión", () => {
 
   test("create button opens modal", async ({ page }) => {
     await page.getByRole("button", { name: /nuevo estado/i }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.getByLabel(/nombre/i)).toBeVisible();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByLabel(/nombre/i)).toBeVisible();
   });
 
   test("cancel closes modal without saving", async ({ page }) => {

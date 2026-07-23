@@ -16,21 +16,14 @@ describe("CU02 — Gestiones list display helpers", () => {
     expect(g.numero?.toString()).toBe("2024001");
   });
 
-  it("shows tramite count from tramiteList", () => {
-    const g: GestionDeEscritura = {
-      idGestion: 1,
-      tramiteList: [
-        { idTramite: 1 },
-        { idTramite: 2 },
-        { idTramite: 3 },
-      ],
-    };
-    expect(g.tramiteList?.length).toBe(3);
+  it("shows tramite count from tramiteCount", () => {
+    const g: GestionDeEscritura = { idGestion: 1, tramiteCount: 3 };
+    expect(g.tramiteCount).toBe(3);
   });
 
-  it("handles empty tramiteList gracefully", () => {
-    const g: GestionDeEscritura = { idGestion: 1, tramiteList: [] };
-    expect(g.tramiteList?.length ?? 0).toBe(0);
+  it("handles missing tramiteCount gracefully", () => {
+    const g: GestionDeEscritura = { idGestion: 1 };
+    expect(g.tramiteCount ?? 0).toBe(0);
   });
 });
 

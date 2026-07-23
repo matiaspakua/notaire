@@ -1,35 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { authenticateAsAdmin as authSetup } from "./setup/auth";
 
 /**
  * E2E tests for Suplencias page
  * CU12, CU42, CU59 — Registrar y consultar suplencias de escribano
- *
- * Note: These tests run against a mock/started Next.js server.
- * Backend calls will fail gracefully (loading states expected).
  */
-
-const authSetup = async (page: import("@playwright/test").Page) => {
-  await page.context().addCookies([
-    {
-      name: "notaire-auth-status",
-      value: "authenticated",
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      "notaire-auth",
-      JSON.stringify({
-        state: {
-          user: { nombre: "admin", tipo: "ADMIN", valido: true },
-          isAuthenticated: true,
-        },
-        version: 0,
-      })
-    );
-  });
-};
 
 test.describe("Suplencias page", () => {
   test.beforeEach(async ({ page }) => {

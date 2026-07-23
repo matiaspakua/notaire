@@ -1,16 +1,19 @@
 info:
   name: Update Suplencia
   type: http
-  seq: 4
+  seq: 6
 http:
   method: PUT
   url: "{{base_url}}/api/v1/suplencia/{{_suplencia_id}}"
   body:
     type: json
     data: |-
-        {"fechaInicio":"2026-02-01","fechaFin":"2026-02-28","fkIdSuplente":{"idPersona":1},"fkIdSuplantado":{"idPersona":2}}
+        {"fechaInicio":"2026-02-01","fechaFin":"2026-02-28","fkIdSuplente":{"idPersona":{{_suplente_id}}},"fkIdSuplantado":{"idPersona":{{_suplantado_id}}}}
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

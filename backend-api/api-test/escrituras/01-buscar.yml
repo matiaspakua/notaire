@@ -6,6 +6,9 @@ info:
 http:
   method: GET
   url: "{{base_url}}/api/v1/escrituras/buscar"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
   params:
     - name: numero
       value: "1"

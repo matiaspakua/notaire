@@ -50,7 +50,11 @@ public class SuplenciaController {
     @Transactional(readOnly = true)
     public ResponseEntity<Suplencia> getById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(getJpaController().findSuplencia(id));
+            Suplencia suplencia = getJpaController().findSuplencia(id);
+            if (suplencia == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(suplencia);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

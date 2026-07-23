@@ -6,7 +6,10 @@ http:
   method: GET
   url: "{{base_url}}/api/v1/tipo-folio"
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

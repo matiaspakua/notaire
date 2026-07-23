@@ -5,6 +5,9 @@ info:
 http:
   method: GET
   url: "{{base_url}}/api/v1/plantilla-presupuestos"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

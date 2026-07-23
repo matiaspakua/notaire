@@ -1,7 +1,7 @@
 info:
   name: Create Folio
   type: http
-  seq: 1
+  seq: 2
   description: "## CU28/40 — POST /api/v1/folio"
 http:
   method: POST
@@ -13,12 +13,15 @@ http:
           "numero": 55777,
           "anio": 2026,
           "estado": "Nuevo",
-          "disponible": true,
-          "fkIdPersonaEscribano": { "idPersona": 1 },
-          "fkIdTipoFolio": { "idTipoFolio": 1 }
+          "observaciones": "creado por la suite E2E",
+          "tipoFolioId": 1,
+          "escribanoId": {{_folio_escribano_id}}
         }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

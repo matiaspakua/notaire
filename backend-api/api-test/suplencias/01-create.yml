@@ -1,16 +1,19 @@
 info:
   name: Create Suplencia
   type: http
-  seq: 1
+  seq: 3
 http:
   method: POST
   url: "{{base_url}}/api/v1/suplencia"
   body:
     type: json
     data: |-
-        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"idPersona":1},"fkIdSuplantado":{"idPersona":2}}
+        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"idPersona":{{_suplente_id}}},"fkIdSuplantado":{"idPersona":{{_suplantado_id}}}}
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

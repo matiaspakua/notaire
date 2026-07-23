@@ -27,9 +27,6 @@ class PersonaRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        personaRepository.deleteAll();
-        tipoIdentificacionRepository.deleteAll();
-
         tipoId = new TipoIdentificacion();
         tipoId.setNombre("DNI");
         tipoId.setCaracteres("8");
@@ -114,20 +111,23 @@ class PersonaRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support multiple personas")
     void shouldSupportMultiplePersonas() {
+        String apellidoUnico = "Apellido" + System.nanoTime();
         for (int i = 0; i < 5; i++) {
             Persona persona = new Persona();
             persona.setNombre("Nombre" + i);
-            persona.setApellido("Apellido" + i);
+            persona.setApellido(apellidoUnico + i);
             persona.setNumeroIdentificacion("ID" + (10000000 + i));
             persona.setEsCliente(i % 2 == 0);
             persona.setFkIdTipoIdentificacion(tipoId);
             personaRepository.save(persona);
         }
 
-        List<Persona> all = personaRepository.findAll();
-        assertThat(all).hasSize(5);
+        List<Persona> creadas = personaRepository.findAll().stream()
+                .filter(p -> p.getApellido() != null && p.getApellido().startsWith(apellidoUnico))
+                .toList();
+        assertThat(creadas).hasSize(5);
 
-        long clientes = all.stream().filter(Persona::getEsCliente).count();
-        assertThat(clientes).isGreaterThan(0);
+        long clientes = creadas.stream().filter(Persona::getEsCliente).count();
+        assertThat(clientes).isEqualTo(3);
     }
 }

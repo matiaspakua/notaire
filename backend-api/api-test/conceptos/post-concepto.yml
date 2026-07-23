@@ -18,7 +18,10 @@ http:
           "valor": 1500.50
         }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 
 runtime:
   scripts:

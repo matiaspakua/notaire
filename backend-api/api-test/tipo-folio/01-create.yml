@@ -10,7 +10,10 @@ http:
     data: |-
         {"nombre":"TF E2E","observaciones":"folio e2e"}
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

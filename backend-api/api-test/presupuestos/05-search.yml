@@ -7,7 +7,10 @@ http:
   method: GET
   url: "{{base_url}}/api/v1/presupuestos/buscar?q=Presupuesto"
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

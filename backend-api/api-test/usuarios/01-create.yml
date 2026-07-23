@@ -13,11 +13,13 @@ http:
           "nombre": "apitest-usuario",
           "contrasenia": "Test1234!",
           "tipo": "EMPLEADO",
-          "estado": true,
-          "fkIdPersona": { "idPersona": 1 }
+          "activo": true
         }
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

@@ -88,27 +88,27 @@ jobs:
             ARGS="$ARGS --include ${{ inputs.tags }}"
           fi
 
-          # Run with timeout
-          robot $ARGS tests/ || true
+          # Failures fail the job; result artifacts are still uploaded (if: always()).
+          robot $ARGS tests/
 
       - name: Parse test results
         if: always()
         run: |
           if [ -f integration-test/e2e-swing/results/output.xml ]; then
-            python3 << 'EOF'
-import xml.etree.ElementTree as ET
-tree = ET.parse('integration-test/e2e-swing/results/output.xml')
-root = tree.getroot()
-stats = root.find('.//statistics/total/stat')
-if stats is not None:
-    passed = stats.get('pass', '0')
-    failed = stats.get('fail', '0')
-    print(f"Tests: {passed} passed, {failed} failed")
-    if int(failed) > 0:
-        print("FAILED TESTS:")
-        for test in root.findall('.//test[@status="FAIL"]'):
-            print(f"  - {test.get('name')}")
-EOF
+            python3 - << 'PYEOF'
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('integration-test/e2e-swing/results/output.xml')
+          root = tree.getroot()
+          stats = root.find('.//statistics/total/stat')
+          if stats is not None:
+              passed = stats.get('pass', '0')
+              failed = stats.get('fail', '0')
+              print(f"Tests: {passed} passed, {failed} failed")
+              if int(failed) > 0:
+                  print("FAILED TESTS:")
+                  for test in root.findall('.//test[@status="FAIL"]'):
+                      print(f"  - {test.get('name')}")
+          PYEOF
           fi
 
       - name: Upload test results

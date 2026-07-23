@@ -33,10 +33,6 @@ class PresupuestoRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        presupuestoRepository.deleteAll();
-        personaRepository.deleteAll();
-        tipoIdentificacionRepository.deleteAll();
-
         TipoIdentificacion tipoId = new TipoIdentificacion();
         tipoId.setNombre("DNI");
         tipoId.setCaracteres("8");
@@ -109,21 +105,24 @@ class PresupuestoRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support multiple presupuestos")
     void shouldSupportMultiplePresupuestos() {
+        String encabezadoUnico = "Pres" + System.nanoTime();
         String[] estados = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELADO"};
         for (int i = 0; i < estados.length; i++) {
             Presupuesto presupuesto = new Presupuesto();
             presupuesto.setNumero(4000 + i);
             presupuesto.setFecha(new Date());
-            presupuesto.setEncabezado("Pres " + estados[i]);
+            presupuesto.setEncabezado(encabezadoUnico + " " + estados[i]);
             presupuesto.setEstado(estados[i]);
             presupuesto.setFkIdPersona(persona);
             presupuestoRepository.save(presupuesto);
         }
 
-        List<Presupuesto> all = presupuestoRepository.findAll();
-        assertThat(all).hasSize(5);
+        List<Presupuesto> creados = presupuestoRepository.findAll().stream()
+                .filter(p -> p.getEncabezado() != null && p.getEncabezado().startsWith(encabezadoUnico))
+                .toList();
+        assertThat(creados).hasSize(5);
 
-        List<Presupuesto> aprobados = all.stream()
+        List<Presupuesto> aprobados = creados.stream()
                 .filter(p -> "APROBADO".equals(p.getEstado()))
                 .toList();
         assertThat(aprobados).hasSize(1);

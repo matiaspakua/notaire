@@ -152,27 +152,14 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Suplencia suplencia;
-            try
+            // Load directly (not via getReference + reverse-collection removal): Suplencia
+            // is the FK-owning side, so removing it from Persona.suplenciaList/suplenciaList1
+            // in memory has no cascading DB effect (no orphanRemoval) and previously left the
+            // row un-flushed — em.remove() below is sufficient and correct on its own.
+            Suplencia suplencia = em.find(Suplencia.class, id);
+            if (suplencia == null)
             {
-                suplencia = em.getReference(Suplencia.class, id);
-                suplencia.getIdSuplencia();
-            }
-            catch (EntityNotFoundException enfe)
-            {
-                throw new NonexistentEntityException("The suplencia with id " + id + " no longer exists.", enfe);
-            }
-            Persona fkIdSuplente = suplencia.getFkIdSuplente();
-            if (fkIdSuplente != null)
-            {
-                fkIdSuplente.getSuplenciaList().remove(suplencia);
-                fkIdSuplente = em.merge(fkIdSuplente);
-            }
-            Persona fkIdSuplantado = suplencia.getFkIdSuplantado();
-            if (fkIdSuplantado != null)
-            {
-                fkIdSuplantado.getSuplenciaList().remove(suplencia);
-                fkIdSuplantado = em.merge(fkIdSuplantado);
+                throw new NonexistentEntityException("The suplencia with id " + id + " no longer exists.");
             }
             em.remove(suplencia);
             em.getTransaction().commit();
@@ -235,7 +222,17 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            return em.find(Suplencia.class, id);
+            // JOIN FETCH: las personas son LAZY y la entidad se serializa con el
+            // EntityManager ya cerrado (detached); sin fetch la serialización falla.
+            Query q = em.createQuery(
+                    "SELECT s FROM Suplencia s "
+                            + "JOIN FETCH s.fkIdSuplente "
+                            + "JOIN FETCH s.fkIdSuplantado "
+                            + "WHERE s.idSuplencia = :id");
+            q.setParameter("id", id);
+            @SuppressWarnings("unchecked")
+            List<Suplencia> resultado = q.getResultList();
+            return resultado.isEmpty() ? null : resultado.get(0);
         }
         finally
         {

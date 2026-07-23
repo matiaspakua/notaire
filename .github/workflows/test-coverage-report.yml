@@ -1,20 +1,22 @@
 name: Test Coverage Report
 
+# Aggregates backend (JaCoCo), frontend (Vitest) and E2E coverage into a
+# single artifact. Report-only: test enforcement happens in ci.yml,
+# frontend-ci.yml and playwright-e2e.yml.
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches: [ main ]
   schedule:
     - cron: '0 2 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   coverage:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
 
@@ -39,23 +41,3 @@ jobs:
           name: coverage-reports
           path: coverage-reports/
           retention-days: 30
-
-      - name: Comment PR with coverage summary
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '## 📊 Test Coverage Report\n\n- **Backend Coverage**: 75% instructions / 60% branches (JaCoCo)\n- **Frontend Coverage**: TBD (Jest)\n- **E2E Coverage**: TBD (Playwright)\n- **API Tests**: 50+ endpoints (Bruno)\n- **Total Unit/Integration Tests**: 611+\n\n[View Full Report](https://matiaspakua.github.io/notaire/coverage/)'
-            })
-
-      - name: Publish coverage metrics
-        run: |
-          echo "Backend Coverage: 75% instructions, 60% branches (611+ tests passing)"
-          echo "Frontend Coverage: Pending"
-          echo "E2E Coverage: Pending"
-

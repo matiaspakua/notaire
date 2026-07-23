@@ -1,8 +1,11 @@
 info:
-  name: Create Persona
+  name: Setup - Create Suplente Persona
   type: http
   seq: 1
-  description: "## CU17 Dar alta persona — POST /api/v1/personas"
+  description: |-
+      ## Setup — POST /api/v1/personas
+      Crea la persona suplente requerida por el alta de suplencia, para que la
+      suite sea autosuficiente en una base de datos recién migrada.
 http:
   method: POST
   url: "{{base_url}}/api/v1/personas"
@@ -10,10 +13,10 @@ http:
     type: json
     data: |-
         {
-          "nombre": "Ana",
-          "apellido": "Lopez E2E",
-          "numeroIdentificacion": "30555444",
-          "esCliente": true,
+          "nombre": "Suplente",
+          "apellido": "Suplencias E2E",
+          "numeroIdentificacion": "30555446",
+          "esCliente": false,
           "tipoIdentificacion": { "idTipoIdentificacion": 1 },
           "nacionalidad": "Argentina",
           "estadoCivil": "Soltero",
@@ -29,9 +32,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idPersona and is marked cliente", function () {
+          test("Stores suplente id", function () {
             const b = res.getBody();
             expect(b).to.have.property('idPersona');
-            expect(b.esCliente).to.equal(true);
-            bru.setVar('persona_id', b.idPersona);
+            bru.setVar('_suplente_id', b.idPersona);
           });

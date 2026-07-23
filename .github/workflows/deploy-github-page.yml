@@ -56,11 +56,11 @@ jobs:
           if [ -d "jacoco-report" ] && [ "$(ls -A jacoco-report 2>/dev/null)" ]; then
             cp -r jacoco-report/* github-page/public/coverage/
           else
-            cat > github-page/public/coverage/index.html << 'EOF'
-            <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>
-            <meta http-equiv="refresh" content="0; url=/notaire/"></head>
-            <body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>
-            EOF
+            printf '%s\n' \
+              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>' \
+              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
+              '<body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>' \
+              > github-page/public/coverage/index.html
           fi
 
       # ── Download Playwright E2E report ──
@@ -81,11 +81,11 @@ jobs:
             fi
           else
             echo "No Playwright report available (workflow may not have run yet)"
-            cat > github-page/public/playwright/index.html << 'EOF'
-            <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Playwright E2E Report</title>
-            <meta http-equiv="refresh" content="0; url=/notaire/"></head>
-            <body><p>Playwright E2E report not available. <a href="/notaire/">Back to home</a></p></body></html>
-            EOF
+            printf '%s\n' \
+              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Playwright E2E Report</title>' \
+              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
+              '<body><p>Playwright E2E report not available. <a href="/notaire/">Back to home</a></p></body></html>' \
+              > github-page/public/playwright/index.html
           fi
 
       # ── Generate metrics.json ──

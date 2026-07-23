@@ -1,10 +1,13 @@
 info:
   name: Delete Suplencia
   type: http
-  seq: 5
+  seq: 7
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/suplencia/{{_suplencia_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

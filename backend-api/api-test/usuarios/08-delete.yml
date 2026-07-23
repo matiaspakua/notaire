@@ -6,7 +6,10 @@ http:
   method: DELETE
   url: "{{base_url}}/api/v1/usuarios/{{usuario_id}}"
   headers:
-    Content-Type: application/json
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests

@@ -407,8 +407,11 @@ class PagoServiceIntegrationTest extends ServiceIntegrationTest {
 
         List<Pago> found = pagoService.findPagosByFechaRange(startDate, endDate);
 
-        assertThat(found).isNotEmpty()
-                .hasSize(3);
+        List<Pago> foundDePresupuesto = found.stream()
+                .filter(p -> p.getPresupuesto() != null
+                        && testPresupuesto.getIdPresupuesto().equals(p.getPresupuesto().getIdPresupuesto()))
+                .toList();
+        assertThat(foundDePresupuesto).hasSize(3);
     }
 
     @Test

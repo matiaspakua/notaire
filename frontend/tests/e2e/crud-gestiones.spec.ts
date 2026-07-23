@@ -4,21 +4,11 @@
  * CU16 Archivar Gestión, CU53 Modificar Gestión
  */
 import { test, expect } from "@playwright/test";
+import { authenticateAsAdmin } from "./setup/auth";
 
 test.describe("Gestiones CRUD", () => {
   test.beforeEach(async ({ page }) => {
-    await page.context().addCookies([
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "admin", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
+    await authenticateAsAdmin(page);
     await page.goto("/dashboard/gestiones");
     await page.waitForLoadState("domcontentloaded");
   });

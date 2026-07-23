@@ -35,8 +35,8 @@ test.describe("CU05 - Preparar Escritura", () => {
     await steps.thenModalIsVisible();
 
     // When — fill the two available fields: Número (number input) and Fecha (date)
-    await steps.page.getByLabel(/número/i).fill("1001");
-    await steps.page.getByLabel(/fecha/i).fill(new Date().toISOString().split("T")[0]);
+    await steps.whenUserFillsField("número", "1001");
+    await steps.whenUserFillsField("fecha", new Date().toISOString().split("T")[0]);
     await steps.whenUserSubmitsForm();
 
     // Then — wait for modal to close, then verify success and table

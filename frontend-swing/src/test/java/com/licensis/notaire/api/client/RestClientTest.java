@@ -96,15 +96,35 @@ public class RestClientTest {
     }
 
     @Test
-    public void testLoginRequestDto() throws Exception {
+    public void testDtoUsuarioSerializationExcludesContrasenia() throws Exception {
+        // getContrasenia() is @JsonProperty(WRITE_ONLY): direct serialization of
+        // DtoUsuario (e.g. an API response) must never echo the password back.
         DtoUsuario loginRequest = new DtoUsuario();
         loginRequest.setNombre("admin");
         loginRequest.setContrasenia("admin");
 
         String json = objectMapper.writeValueAsString(loginRequest);
-        
+
         assertTrue(json.contains("\"nombre\":\"admin\""));
-        assertTrue(json.contains("\"contrasenia\":\"admin\""));
+        assertFalse(json.contains("contrasenia"));
+    }
+
+    @Test
+    public void testLoginSendsCredentialsInRequestBody() throws Exception {
+        // Regression test: RestClient.login() must not serialize its DtoUsuario
+        // argument directly (WRITE_ONLY would silently drop contrasenia from the
+        // outbound request, breaking authentication).
+        DtoUsuario loginRequest = new DtoUsuario();
+        loginRequest.setNombre("admin");
+        loginRequest.setContrasenia("admin");
+
+        String requestBody = captureRequestBody(port -> {
+            ApiConfig.setApiBaseUrl("http://localhost:" + port);
+            RestClient.login(loginRequest);
+        });
+
+        assertTrue(requestBody.contains("\"nombre\":\"admin\""));
+        assertTrue(requestBody.contains("\"contrasenia\":\"admin\""));
     }
 
     @Test
@@ -171,6 +191,45 @@ public class RestClientTest {
         });
 
         assertFalse(requestHeaders.contains("Authorization:"));
+    }
+
+    /**
+     * Igual que {@link #captureRequestHeaders}, pero responde un DtoUsuario válido
+     * (para que RestClient.login() no falle al deserializar la respuesta) y
+     * devuelve el cuerpo crudo de la petición saliente en lugar de los headers.
+     */
+    private String captureRequestBody(RequestAction action) throws Exception {
+        try (ServerSocket server = new ServerSocket(0)) {
+            int port = server.getLocalPort();
+            CompletableFuture<String> captured = CompletableFuture.supplyAsync(() -> {
+                try (Socket socket = server.accept()) {
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+                    int contentLength = 0;
+                    String line;
+                    while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                        if (line.toLowerCase().startsWith("content-length:")) {
+                            contentLength = Integer.parseInt(line.split(":", 2)[1].trim());
+                        }
+                    }
+                    char[] bodyChars = new char[contentLength];
+                    reader.read(bodyChars, 0, contentLength);
+
+                    String responseBody = "{\"valido\":false}";
+                    OutputStream out = socket.getOutputStream();
+                    out.write(("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
+                            + "Content-Length: " + responseBody.length() + "\r\n\r\n" + responseBody)
+                            .getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                    return new String(bodyChars);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            action.run(port);
+            return captured.get();
+        }
     }
 
     /**

@@ -38,10 +38,11 @@ test.describe("CU17 - Dar Alta Persona", () => {
     await steps.thenModalIsVisible();
 
     // When — form has: Nombre, Apellido, DNI, CUIL, Email, Teléfono, Domicilio (no tipo/numero identificacion)
+    const dialog = steps.page.getByRole("dialog");
     await steps.page.getByTestId("input-nombre").fill(TestData.persona.nombre);
     await steps.page.getByTestId("input-apellido").fill(TestData.persona.apellido);
-    await steps.page.getByLabel(/dni/i).fill(TestData.persona.numeroIdentificacion);
-    await steps.page.getByLabel(/email/i).fill(TestData.persona.correo);
+    await dialog.getByLabel(/dni/i).fill(TestData.persona.numeroIdentificacion);
+    await dialog.getByLabel(/email/i).fill(TestData.persona.correo);
     await steps.whenUserSubmitsForm();
 
     // Then
