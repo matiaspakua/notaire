@@ -259,11 +259,11 @@
                                 <exclude>sun/**/*</exclude>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
                                 <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
-                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                         </configuration>
@@ -279,11 +279,11 @@
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
                                 <exclude>com/licensis/notaire/jpa/exceptions/**/*</exclude>
                                 <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
-                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                         </configuration>
@@ -293,7 +293,8 @@
                         <!--
                             Enforced ratchet floor (runs on `mvn verify`). Legacy jpa package
                             is excluded from instrumentation so numbers reflect modern code only.
-                            Current: ~78% line / ~62% branch (2026-06-16, Phase 8).
+                            Floor: 70% line / 25% branch, set 2026-06-16 (Phase 8).
+                            Actual: ~84% line / ~74% branch as of 2026-07-23.
                             Long-term target: 80% line / 80% branch.
                             Raise these minimums as coverage improves; never lower.
                         -->
@@ -305,11 +306,11 @@
                             <excludes>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
                                 <exclude>com/licensis/notaire/negocio/ControllerNegocio*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorJpa*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorReportes*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/servicios/AdministradorValidaciones*</exclude>
-                                <exclude>com/licensis/notaire/servicios/Conexion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
+                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
                             <rules>
