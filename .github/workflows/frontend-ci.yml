@@ -37,12 +37,11 @@ jobs:
         run: npm ci
 
       - name: TypeScript type-check
-        run: npx tsc --noEmit
+        run: npm run typecheck
         continue-on-error: true
 
       - name: ESLint
-        run: npx next lint --dir src
-        continue-on-error: true
+        run: npm run lint
 
   # ──────────────────────────────────────────────
   # JOB 2: Unit tests

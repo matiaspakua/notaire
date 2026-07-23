@@ -5,7 +5,7 @@
  *
  * Covers: useEstadosGestion, useTiposTramite, useAuditoria
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 
 // ──────────────────────────────────────────────
 // Query key contracts

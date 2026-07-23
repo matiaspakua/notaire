@@ -85,7 +85,7 @@ export function useUpdateWorkflowNode() {
 export function useDeleteWorkflowNode() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, workflowId }: { id: number; workflowId: number }) =>
+    mutationFn: ({ id }: { id: number; workflowId: number }) =>
       apiDelete(`/workflow-node/${id}`),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.nodes(vars.workflowId) }),
@@ -105,7 +105,7 @@ export function useCreateWorkflowTransition() {
 export function useDeleteWorkflowTransition() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, workflowId }: { id: number; workflowId: number }) =>
+    mutationFn: ({ id }: { id: number; workflowId: number }) =>
       apiDelete(`/workflow-transition/${id}`),
     onSuccess: (_, vars) =>
       qc.invalidateQueries({ queryKey: workflowKeys.transitions(vars.workflowId) }),

@@ -34,7 +34,8 @@ npm run dev                         # http://localhost:3000
 npm run dev         # Development server
 npm run build       # Production build
 npm run start       # Production server
-npm run lint        # ESLint
+npm run lint        # ESLint (flat config, zero-warning gate)
+npm run typecheck   # TypeScript type-check (tsc --noEmit)
 npm run test        # Vitest unit tests
 npm run test:watch  # Watch mode
 npm run test:e2e    # Playwright E2E (backend must be running)
