@@ -80,6 +80,25 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - If any check fails: read the failure log, fix, push again, re-poll
 - Timeout after 10 polls → write status=blocked, blocked_reason="CI timeout on #<issue>", STOP
 
+### 8.5. DEPLOY CHECK — verify the stack actually runs
+
+- Bring up the stack and confirm the backend answers `/actuator/health` (and, for
+  frontend-affecting changes, that the relevant page/route loads and any new response headers
+  are actually present). Treat a failed deploy check the same as failed CI: diagnose, fix,
+  retest — never merge past it.
+- **Docker-unavailable fallback**: some execution sandboxes have no Docker daemon
+  (`docker version` connects fine but `docker compose up` / any container run fails with
+  `failed to connect to the docker API at unix:///var/run/docker.sock`). When that happens,
+  don't skip the check — do it directly instead:
+  - Backend: `service postgresql start` (a local PostgreSQL is available even without Docker in
+    that case), create the `notaire`/`notaire` role+database with `psql` if they don't exist yet,
+    `mvn -pl backend-api -am clean package -DskipTests`, then run the jar directly with the same
+    flags `.github/workflows/playwright-e2e.yml` already uses to start the backend without
+    Docker (`--spring.datasource.url=jdbc:postgresql://localhost:5432/notaire ...`), then
+    `curl localhost:8080/actuator/health` and kill the process afterward.
+  - Frontend: `npm run build && npx next start` in `frontend/`, then `curl -D -` the affected
+    page/route and grep for the expected headers/content, then stop the server.
+
 ### 9. MERGE — close the loop
 - merge_pull_request(owner=matiaspakua, repo=notaire, pullNumber=<pr>, merge_method=squash)
 - Add issue number to completed[] in loop-state.md
