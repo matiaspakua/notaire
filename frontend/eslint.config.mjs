@@ -1,12 +1,10 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import { FlatCompat } from "@eslint/eslintrc";
-
-// eslint-config-next still ships legacy eslintrc-style configs (`{ extends: [...] }`),
-// not native flat-config arrays, so they need FlatCompat to load under ESLint 9.
-const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
+import nextConfig from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
 export default defineConfig([
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextConfig,
+  ...nextTypescript,
   {
     files: ["tests/**"],
     rules: {
