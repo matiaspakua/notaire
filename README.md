@@ -556,6 +556,13 @@ cd frontend && npm run test:e2e
 # Tests HTTP con Bruno (requiere API corriendo)
 bash integration-test/scripts/test.sh
 
+# ────── PERFORMANCE ──────
+
+# Load test con k6 (requiere API corriendo, ver performance-test/k6/load-test.js)
+k6 run -e BASE_URL=http://localhost:8080 -e ADMIN_USER=admin -e ADMIN_PASSWORD=admin \
+  performance-test/k6/load-test.js
+# Ejecutado automáticamente semanal (no bloquea PRs) por .github/workflows/performance-test.yml
+
 # ────── TODO ──────
 
 # Verificación completa
