@@ -52,20 +52,20 @@ function emit(entry: LogEntry): void {
   const line = JSON.stringify(entry);
   switch (entry.level) {
     case "ERROR":
-      // eslint-disable-next-line no-console
+       
       console.error(line);
       break;
     case "WARN":
-      // eslint-disable-next-line no-console
+       
       console.warn(line);
       break;
     case "DEBUG":
-      // eslint-disable-next-line no-console
+       
       console.debug(line);
       break;
     case "INFO":
     default:
-      // eslint-disable-next-line no-console
+       
       console.log(line);
       break;
   }

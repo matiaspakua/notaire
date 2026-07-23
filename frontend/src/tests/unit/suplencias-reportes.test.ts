@@ -4,7 +4,7 @@
  *
  * Covers: CU12, CU42, CU59 (Suplencias), CU50, CU24, CU25, CU13, CU01 (Reportes)
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { suplenciasKeys } from "@/hooks/useSuplencias";
 
 // ──────────────────────────────────────────────

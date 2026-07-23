@@ -25,7 +25,7 @@ import {
   useDeleteDocumentoPresentado,
 } from "@/hooks/useDocumentosPresentados";
 import { useTiposDocumento } from "@/hooks/useDocumentos";
-import type { DocumentoPresentado, TipoDeDocumento } from "@/types";
+import type { DocumentoPresentado } from "@/types";
 
 export default function DocumentosPage() {
   const t = useTranslations("documentos");
