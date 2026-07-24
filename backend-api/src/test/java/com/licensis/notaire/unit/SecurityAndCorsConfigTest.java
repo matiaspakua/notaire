@@ -47,4 +47,50 @@ class SecurityAndCorsConfigTest {
 
         assertThat(user.getPassword()).isNotEqualTo("s3cret").startsWith("$2");
     }
+
+    @Test
+    @DisplayName("production startup should fail when allowedHeaders is a wildcard (issue #673)")
+    void shouldRejectWildcardAllowedHeadersInProduction() {
+        ReflectionTestUtils.setField(config, "environment", "production");
+        ReflectionTestUtils.setField(config, "allowedHeaders", new String[] {"*"});
+        ReflectionTestUtils.setField(config, "allowedOrigins", new String[] {"https://notaire.example.com"});
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(config::validateProductionCorsConfig)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("cors.allowed-headers");
+    }
+
+    @Test
+    @DisplayName("production startup should fail when allowedOrigins is a wildcard (issue #673)")
+    void shouldRejectWildcardAllowedOriginsInProduction() {
+        ReflectionTestUtils.setField(config, "environment", "production");
+        ReflectionTestUtils.setField(config, "allowedHeaders", new String[] {"Content-Type", "Authorization"});
+        ReflectionTestUtils.setField(config, "allowedOrigins", new String[] {"*"});
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(config::validateProductionCorsConfig)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("cors.allowed-origins");
+    }
+
+    @Test
+    @DisplayName("production startup should succeed when CORS is explicitly locked down (issue #673)")
+    void shouldAllowExplicitCorsConfigInProduction() {
+        ReflectionTestUtils.setField(config, "environment", "production");
+        ReflectionTestUtils.setField(config, "allowedHeaders", new String[] {"Content-Type", "Authorization"});
+        ReflectionTestUtils.setField(config, "allowedOrigins", new String[] {"https://notaire.example.com"});
+
+        org.assertj.core.api.Assertions.assertThatCode(config::validateProductionCorsConfig)
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("non-production environments may keep the wildcard CORS defaults (issue #673)")
+    void shouldAllowWildcardCorsOutsideProduction() {
+        ReflectionTestUtils.setField(config, "environment", "development");
+        ReflectionTestUtils.setField(config, "allowedHeaders", new String[] {"*"});
+        ReflectionTestUtils.setField(config, "allowedOrigins", new String[] {"*"});
+
+        org.assertj.core.api.Assertions.assertThatCode(config::validateProductionCorsConfig)
+                .doesNotThrowAnyException();
+    }
 }
