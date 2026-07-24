@@ -43,6 +43,12 @@ public class ProductionCredentialsGuard {
     @Value("${grafana.admin.password:admin}")
     private String grafanaPassword;
 
+    @Value("${postgres.exporter.username:admin}")
+    private String exporterUsername;
+
+    @Value("${postgres.exporter.password:admin}")
+    private String exporterPassword;
+
     @PostConstruct
     public void validateCredentials() {
         if (!PRODUCTION_ENVIRONMENT.equalsIgnoreCase(environment)) {
@@ -59,6 +65,8 @@ public class ProductionCredentialsGuard {
         addIfDefault(insecureProperties, "pgadmin.admin.password", pgAdminPassword);
         addIfDefault(insecureProperties, "grafana.admin.username", grafanaUsername);
         addIfDefault(insecureProperties, "grafana.admin.password", grafanaPassword);
+        addIfDefault(insecureProperties, "postgres.exporter.username", exporterUsername);
+        addIfDefault(insecureProperties, "postgres.exporter.password", exporterPassword);
 
         if (!insecureProperties.isEmpty()) {
             throw new IllegalStateException(

@@ -95,7 +95,11 @@ services:
     ports:
       - "9187:9187"
     environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-admin}@notary-postgres:5432/${POSTGRES_DB:-notaire}?sslmode=disable"
+      # Least-privilege role (pg_monitor only), created by Flyway migration
+      # V12 — NOT the app's own admin datasource credentials (issue #675).
+      # sslmode is still "disable": the notary-postgres container has no TLS
+      # configured yet, tracked separately by issue #684.
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_EXPORTER_USER:-notaire_exporter}:${POSTGRES_EXPORTER_PASSWORD:-admin}@notary-postgres:5432/${POSTGRES_DB:-notaire}?sslmode=disable"
     volumes:
       - ./prometheus/postgres_exporter.yml:/etc/postgres_exporter/queries.yml
     labels:

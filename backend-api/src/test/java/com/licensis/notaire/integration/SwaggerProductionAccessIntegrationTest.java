@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "app.admin.password=test-prod-admin-pass",
         "pgadmin.admin.password=test-prod-pgadmin-pass",
         "grafana.admin.username=test-prod-grafana-user",
-        "grafana.admin.password=test-prod-grafana-pass"
+        "grafana.admin.password=test-prod-grafana-pass",
+        "postgres.exporter.username=test-prod-exporter-user",
+        "postgres.exporter.password=test-prod-exporter-pass"
 })
 @DisplayName("Swagger/OpenAPI access is blocked in production (issue #671)")
 class SwaggerProductionAccessIntegrationTest {
