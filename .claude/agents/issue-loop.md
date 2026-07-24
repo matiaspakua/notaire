@@ -86,6 +86,13 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - Proceed only when ALL check runs show conclusion=success
 - If any check fails: read the failure log, fix, push again, re-poll
 - Timeout after 10 polls → write status=blocked, blocked_reason="CI timeout on #<issue>", STOP
+- **`get_check_runs`/`get_status` can go silently empty mid-run.** `pr-validation.yml`
+  auto-pushes a `docs: add PR validation report ... [skip ci]` commit shortly after a PR
+  opens. That commit becomes the PR's new HEAD, but since it's `[skip ci]` no checks run
+  against it — so `get_check_runs`/`get_status` (both keyed to current HEAD sha) report
+  `total_count: 0` even while the real CI run (against your actual code commit) is in
+  progress or already green. Use `actions_list(list_workflow_runs, branch: <branch-name>)`
+  instead — it lists every run for the branch regardless of which commit is currently HEAD.
 
 ### 8.5. DEPLOY CHECK — verify the stack actually runs
 
@@ -103,8 +110,19 @@ Repeat until no open issues remain OR `status: blocked` is written.
     flags `.github/workflows/playwright-e2e.yml` already uses to start the backend without
     Docker (`--spring.datasource.url=jdbc:postgresql://localhost:5432/notaire ...`), then
     `curl localhost:8080/actuator/health` and kill the process afterward.
+    Working role/db creation recipe (as the `postgres` OS user):
+    ```bash
+    psql -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='notaire') THEN
+      CREATE ROLE notaire LOGIN PASSWORD 'notaire'; END IF; END \$\$;"
+    psql -tc "SELECT 1 FROM pg_database WHERE datname='notaire'" | grep -q 1 || \
+      psql -c 'CREATE DATABASE notaire OWNER notaire'
+    ```
   - Frontend: `npm run build && npx next start` in `frontend/`, then `curl -D -` the affected
     page/route and grep for the expected headers/content, then stop the server.
+  - **Working directory matters for reactor commands.** `mvn -pl backend-api ...` fails with
+    "Could not find the selected project in the reactor: backend-api" if the shell's cwd has
+    drifted into a subdirectory (e.g. from an earlier `cd` used for a `grep`/`find` loop) —
+    always `cd` back to the repo root before Maven reactor commands, or use absolute paths.
 
 ### 9. MERGE — close the loop
 - merge_pull_request(owner=matiaspakua, repo=notaire, pullNumber=<pr>, merge_method=squash)
@@ -151,6 +169,14 @@ Rules for the fallback:
 - Never print `$GITHUB_TOKEN`/`$GH_TOKEN` in logs, commit messages, or PR bodies.
 - Prefer MCP > `gh` CLI > curl, in that order — only drop a level when the one above is confirmed unavailable.
 - A single transient MCP error is not "unavailable" — retry once before falling back.
+
+### Email fallback has no send capability
+
+If the outer task prompt says "send me an e-mail" when GitHub access can't be recovered
+(all of MCP/`gh`/curl fail): the Gmail MCP connection, as configured today, only exposes
+`create_draft` — there is no send-email tool. Diagnosed 2026-07-24. Don't claim an email was
+sent; the realistic fallback is to create a draft (`mcp__Gmail__create_draft`) with the full
+failure description and leave it for the human to review and send themselves.
 
 ## Stopping conditions
 - No more open issues → print summary of completed[]
