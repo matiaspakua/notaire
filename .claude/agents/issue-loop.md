@@ -25,6 +25,13 @@ Repeat until no open issues remain OR `status: blocked` is written.
 
 ## Cycle steps (execute in strict order)
 
+### 0. PREFLIGHT — verify GitHub access before starting
+- Confirm the GitHub MCP tools (`mcp__github__*`) respond (e.g. a cheap `list_issues` call). If the MCP server is disconnected, reconnecting, or a call errors out:
+  - Fall back to the `gh` CLI if it is installed (`which gh`).
+  - If `gh` is not installed either, fall back to `curl` against the GitHub REST API using `$GITHUB_TOKEN` or `$GH_TOKEN` from the environment (`curl -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/...`). Never print the token value.
+  - See "## GitHub access fallback" below for the concrete command mapping.
+- Do not treat a disconnected MCP server as a reason to stop the loop — retry the cheap call once, then fall back per above. Only write `status=blocked` if BOTH the MCP tools and the curl/gh fallback fail.
+
 ### 1. TRIAGE — select next issue
 - Use GitHub MCP to call: list_issues(owner=matiaspakua, repo=notaire, state=OPEN, orderBy=CREATED_AT, direction=ASC, perPage=1)
 - Skip issues already in `completed[]` from loop-state.md
@@ -124,6 +131,26 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - Checker agent: runs a second pass on the diff before step 7; uses prompt:
   "Review this diff against the acceptance condition in loop-state.md. List any violations of .claude/rules/. Output: APPROVED or CHANGES_NEEDED with specifics."
 - Only proceed to step 7 if checker outputs APPROVED
+
+## GitHub access fallback
+
+Try in this order; use whichever works first. Diagnosed 2026-07-24: the
+scheduled cloud environment has `$GITHUB_TOKEN`/`$GH_TOKEN` available but no
+`gh` CLI binary installed — don't assume `gh` exists, check first.
+
+| Need | MCP tool | `gh` CLI | curl fallback |
+|------|----------|----------|----------------|
+| List open issues | `list_issues` | `gh issue list --state open --repo matiaspakua/notaire` | `curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/matiaspakua/notaire/issues?state=open"` |
+| Read one issue | `issue_read` | `gh issue view <n> --repo matiaspakua/notaire` | `curl ... "https://api.github.com/repos/matiaspakua/notaire/issues/<n>"` |
+| Move issue in-progress (label) | `issue_write` | `gh issue edit <n> --add-label in-progress --repo matiaspakua/notaire` | `curl -X PATCH ... -d '{"labels":[...]}' ".../issues/<n>"` |
+| Create PR | `create_pull_request` | `gh pr create --title ... --body ... --base main --head <branch> --repo matiaspakua/notaire` | `curl -X POST ... -d '{"title":...,"head":...,"base":"main"}' ".../pulls"` |
+| Check CI status | `pull_request_read(get_check_runs)` | `gh pr checks <n> --repo matiaspakua/notaire` | `curl ... ".../commits/<sha>/check-runs"` |
+| Merge PR | `merge_pull_request` | `gh pr merge <n> --squash --repo matiaspakua/notaire` | `curl -X PUT ... -d '{"merge_method":"squash"}' ".../pulls/<n>/merge"` |
+
+Rules for the fallback:
+- Never print `$GITHUB_TOKEN`/`$GH_TOKEN` in logs, commit messages, or PR bodies.
+- Prefer MCP > `gh` CLI > curl, in that order — only drop a level when the one above is confirmed unavailable.
+- A single transient MCP error is not "unavailable" — retry once before falling back.
 
 ## Stopping conditions
 - No more open issues → print summary of completed[]

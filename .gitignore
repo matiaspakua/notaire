@@ -56,3 +56,8 @@ infra/tests/e2e/node_modules/**
 # Local environment file with all service credentials (never commit)
 .env
 infra/.env
+
+# Local-machine AI tooling runtime state (rtk/headroom token-optimization
+# caches) — never shared repo state, belongs in .claude/settings.local.json
+headroom_memory.db
+.rtk/
