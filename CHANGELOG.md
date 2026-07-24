@@ -49,6 +49,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Swagger/OpenAPI publicly accessible in production** (issue #671): `SecurityAndCorsConfig`
+  now denies `/swagger-ui/**`, `/swagger-ui.html`, and `/v3/api-docs/**` when
+  `app.environment=production` (the same signal `ProductionCredentialsGuard` already uses),
+  while leaving them reachable in dev/test. Previously any anonymous visitor could enumerate
+  the entire API surface and execute live requests via Swagger's "Try it out" in production.
+
+- **Default credentials committed to version control** (issue #672): `infra/grafana/grafana.ini`
+  no longer hardcodes `admin_user`/`admin_password` in plaintext — Grafana now gets its admin
+  credentials exclusively from `GF_SECURITY_ADMIN_USER`/`GF_SECURITY_ADMIN_PASSWORD`
+  (already wired to `GRAFANA_ADMIN_USER`/`GRAFANA_ADMIN_PASSWORD` in `.env`).
+  `ProductionCredentialsGuard` now also rejects default pgAdmin and Grafana credentials in
+  production, not just backend/DB/actuator/app-admin. `.env.example` defaults are explicitly
+  marked as insecure placeholders that must change before a production run.
+
+- **Order-dependent H2 integration test failures** (issue #661): `RepositoryIntegrationTest`
+  (base for `GestionDeEscrituraRepositoryIntegrationTest`, `PagoRepositoryIntegrationTest`,
+  `RegistroAuditoriaRepositoryIntegrationTest`) and `EstadoDeGestionReferentialIntegrityTest`
+  were the only integration test bases without `@Transactional`, so their inserts committed
+  permanently to the shared H2 instance instead of rolling back per test. Under
+  `runOrder=alphabetical`, this broke `WorkflowTransitionIntegrationTest` and
+  `WorkflowTraceApiH2IntegrationTest` when they ran later. Both classes now get
+  `@Transactional`, matching every other integration test base in the suite.
+
 - **Contradicting JaCoCo coverage-floor numbers** (issue #588): `CLAUDE.md`/`code-quality.md`
   said the enforced floor was 28%/14%, `pom.xml`'s own comment said ~78%/~62%, and the actually
   enforced `<minimum>` values were 70%/25% — three different numbers for the same gate. Also
