@@ -36,6 +36,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # required for cosign keyless (OIDC) signing
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -62,6 +63,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and Push Docker Image
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -74,23 +76,62 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
 
-      - name: Generate SBOM (JSON)
+      # Real SBOM: CycloneDX document listing every package in the image.
+      # (Previously this step ran a default Trivy vulnerability scan and
+      # mislabeled it "Generate SBOM" — no CycloneDX/SPDX doc was produced.)
+      - name: Generate SBOM (CycloneDX)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          format: 'json'
-          output: 'sbom.json'
+          scan-type: 'image'
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          format: 'cyclonedx'
+          output: 'sbom.cdx.json'
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v7
         with:
           name: sbom
-          path: sbom.json
+          path: sbom.cdx.json
           retention-days: 365
+
+      # Vulnerability scan of the published image — separate concern from the
+      # SBOM above. Report-only for now, tracked alongside the fs/image scan
+      # blocking-policy decision in #705.
+      - name: Scan Published Image for Vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'image'
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          format: 'json'
+          output: 'published-image-scan.json'
+          exit-code: '0'
+          ignore-unfixed: true
+
+      - name: Upload Published Image Scan
+        uses: actions/upload-artifact@v7
+        with:
+          name: published-image-scan
+          path: published-image-scan.json
+          retention-days: 30
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign Image (keyless/OIDC)
+        run: |
+          cosign sign --yes "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+
+      - name: Attest SBOM
+        run: |
+          cosign attest --yes \
+            --predicate sbom.cdx.json \
+            --type cyclonedx \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
 
       - name: Image Digest
         run: |
-          echo "Image digest: ${{ steps.meta.outputs.tags }}"
+          echo "Image tags: ${{ steps.meta.outputs.tags }}"
+          echo "Image digest: ${{ steps.build.outputs.digest }}"
 
   # ==========================================
   # Create GitHub Release

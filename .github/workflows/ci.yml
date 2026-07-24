@@ -1,10 +1,17 @@
 name: CI - Build, Test & Security
 
-# Full test pipeline: runs on every merge to main (and only main), plus manual dispatch.
-# Test failures FAIL the pipeline — no failure-ignore flags. The only tolerated skip
-# is -Dsurefire.failIfNoSpecifiedTests=false, which allows modules (notaire-shared)
-# that have no tests matching a filter; it never masks a failing test.
+# Full test pipeline: runs on every PR into main and every merge to main, plus
+# manual dispatch. Test failures FAIL the pipeline — no failure-ignore flags.
+# The only tolerated skip is -Dsurefire.failIfNoSpecifiedTests=false, which
+# allows modules (notaire-shared) that have no tests matching a filter; it
+# never masks a failing test.
+#
+# The report/wiki-publishing jobs (generate-reports/publish-reports/deploy-pages)
+# are guarded to only run on push-to-main or workflow_dispatch — a PR run must
+# never publish reports or push commits to main. See each job's `if:`.
 on:
+  pull_request:
+    branches: [ main ]
   push:
     branches: [ main ]
   workflow_dispatch:
@@ -291,12 +298,32 @@ jobs:
           context: .
           file: ./backend-api/Dockerfile
           push: false
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
           build-args: |
             VERSION=${{ needs.build.outputs.version }}
+
+      - name: Scan Docker Image for Vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'image'
+          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+          format: 'json'
+          output: 'trivy-image-results.json'
+          # Report-only for now, tracked alongside the fs scan's blocking-policy decision (#705).
+          exit-code: '0'
+          ignore-unfixed: true
+
+      - name: Upload Image Scan Results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: trivy-image-results
+          path: trivy-image-results.json
+          retention-days: 30
 
   # ==========================================
   # JOB 7: Quality Checks (SpotBugs) — report-only

@@ -172,6 +172,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          # Full history + origin/main ref needed for Spotless's ratchetFrom below.
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -180,6 +183,8 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
+      # Advisory only for now — 3,066 pre-existing violations, tracked in #705
+      # pending a blocking-policy decision (ratchet / hard-block / diff-scoped).
       - name: Checkstyle
         run: mvn checkstyle:check -pl backend-api -q || true
 
@@ -191,11 +196,28 @@ jobs:
           path: backend-api/target/checkstyle-result.xml
           retention-days: 7
 
+      # Blocking: format-check scoped to files changed since origin/main
+      # (ratchetFrom), so pre-existing unformatted code never fails a PR that
+      # doesn't touch it — only newly-changed code must be formatted.
+      - name: Format Check (Spotless)
+        env:
+          # Ensure filenames with non-ASCII characters (e.g. em/en-dashes in
+          # docs/) don't break Spotless's ratchet git-diff regardless of the
+          # runner's default locale.
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        run: mvn spotless:check -pl backend-api -q
+
   # ==========================================
-  # JOB 5: Branch Protection Check
+  # JOB 5: Branch Naming Convention Check
   # ==========================================
-  branch-protection:
-    name: Branch Protection Check
+  # NOTE: this only checks the branch name against a regex and warns — it does
+  # NOT enforce real GitHub branch-protection rules (required checks, review
+  # requirements, etc). Those live in the repo's Settings > Branches, outside
+  # any workflow file. Renamed from the misleading "Branch Protection Check"
+  # per #705.
+  branch-naming:
+    name: Branch Naming Convention Check
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -222,7 +244,7 @@ jobs:
   generate-report:
     name: Generate PR Report
     runs-on: ubuntu-latest
-    needs: [validate-pr, quick-build, dependency-analysis, lint, branch-protection]
+    needs: [validate-pr, quick-build, dependency-analysis, lint, branch-naming]
     if: always()
     steps:
       - name: Checkout code
@@ -235,7 +257,7 @@ jobs:
           GHA_QUICK_BUILD: ${{ needs.quick-build.result }}
           GHA_DEPENDENCY: ${{ needs.dependency-analysis.result }}
           GHA_LINT: ${{ needs.lint.result }}
-          GHA_BRANCH_PROT: ${{ needs.branch-protection.result }}
+          GHA_BRANCH_PROT: ${{ needs.branch-naming.result }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
@@ -260,7 +282,7 @@ jobs:
   comment-pr:
     name: Comment PR
     runs-on: ubuntu-latest
-    needs: [generate-report]
+    needs: [generate-report, quick-build, dependency-analysis, lint, branch-naming]
     if: github.event_name == 'pull_request'
     continue-on-error: true
     steps:
@@ -269,28 +291,34 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const prTitle = context.payload.pull_request.title;
             const branchName = context.payload.pull_request.head.ref;
-            
+
+            const mark = (result) => result === 'success' ? '✅' : (result === 'skipped' ? '⏭️' : '❌');
+            const buildResult = '${{ needs.quick-build.result }}';
+            const depsResult = '${{ needs.dependency-analysis.result }}';
+            const lintResult = '${{ needs.lint.result }}';
+            const branchResult = '${{ needs.branch-naming.result }}';
+
             const comment = `
             ## 🔍 PR Validation Summary
 
             **Branch:** \`${branchName}\`
-            
+
             ### Quick Info
-            - ✅ Build: Compiled successfully
-            - ✅ Dependencies: Analyzed
-            - ✅ Lint: Checkstyle completed
-            
+            - ${mark(buildResult)} Build: ${buildResult}
+            - ${mark(depsResult)} Dependencies: ${depsResult}
+            - ${mark(lintResult)} Lint (Checkstyle, advisory — see #705): ${lintResult}
+            - ${mark(branchResult)} Branch naming: ${branchResult}
+
             ### Next Steps
-            1. Wait for CI workflows to complete
+            1. Wait for CI workflows to complete (ci.yml, frontend-ci.yml, playwright-e2e.yml)
             2. Review test coverage results
-            3. Ensure all checks pass before merging
-            
+            3. Ensure all required checks pass before merging
+
             ---
             *This comment is automatically generated*
             `;
-            
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -304,7 +332,7 @@ jobs:
   publish-report:
     name: Publish to Wiki
     runs-on: ubuntu-latest
-    needs: [validate-pr, quick-build, dependency-analysis, lint, branch-protection, generate-report]
+    needs: [validate-pr, quick-build, dependency-analysis, lint, branch-naming, generate-report]
     if: github.event_name == 'pull_request'
     permissions:
       contents: write
@@ -329,7 +357,7 @@ jobs:
           GHA_QUICK_BUILD: ${{ needs.quick-build.result }}
           GHA_DEPENDENCY: ${{ needs.dependency-analysis.result }}
           GHA_LINT: ${{ needs.lint.result }}
-          GHA_BRANCH_PROT: ${{ needs.branch-protection.result }}
+          GHA_BRANCH_PROT: ${{ needs.branch-naming.result }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}

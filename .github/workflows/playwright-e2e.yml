@@ -1,10 +1,13 @@
 name: Playwright E2E — Full Suite
 
 # API tests (Bruno) + UI E2E tests (Playwright) against the full stack
-# (PostgreSQL + backend + frontend). Runs on every merge to main (and only
-# main), on a weekday schedule, and on manual dispatch. Test failures FAIL
-# the pipeline.
+# (PostgreSQL + backend + frontend). Runs on every PR into main, every merge
+# to main, on a weekday schedule, and on manual dispatch. Test failures FAIL
+# the pipeline. The coverage-report job (commits to docs/wiki/ and pushes to
+# main) is guarded to skip pull_request runs — see its `if:`.
 on:
+  pull_request:
+    branches: [ main ]
   push:
     branches: [ main ]
   schedule:
@@ -342,7 +345,8 @@ jobs:
     name: Business Coverage Report
     runs-on: ubuntu-latest
     needs: [api-tests, e2e-tests]
-    if: always()
+    # Commits to docs/wiki/ and pushes to main — never on a pull_request run.
+    if: always() && github.event_name != 'pull_request'
     timeout-minutes: 10
     permissions:
       contents: write
