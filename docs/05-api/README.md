@@ -37,6 +37,9 @@ Referencia completa de la API REST del proyecto Notaire.
 http://localhost:8080/swagger-ui.html
 ```
 
+> Swagger UI and `/v3/api-docs` are only reachable when `ENVIRONMENT` (mapped to
+> `app.environment`) is **not** `production` — see `SecurityAndCorsConfig` (issue #671).
+
 ### Example Request
 ```bash
 curl -X GET "http://localhost:8080/api/v1/presupuestos" \
