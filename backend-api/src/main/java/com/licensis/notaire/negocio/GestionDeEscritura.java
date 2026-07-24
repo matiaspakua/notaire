@@ -11,6 +11,7 @@ import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,6 +160,7 @@ public class GestionDeEscritura implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Historial> getHistorialList() {
         return historialList;
     }
@@ -176,6 +178,7 @@ public class GestionDeEscritura implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Tramite> getTramiteList() {
         return tramiteList;
     }

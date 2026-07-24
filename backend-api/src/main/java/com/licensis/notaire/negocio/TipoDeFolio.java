@@ -6,6 +6,7 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoTipoDeFolio;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.persistence.Basic;
@@ -116,6 +117,7 @@ public class TipoDeFolio implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Folio> getFolioList()
     {
         return folioList;

@@ -24,11 +24,16 @@ assert_status() {
   local url="$3"
   local data="${4:-}"
   local status
+  local auth_header=()
+
+  if [ -n "$AUTH_TOKEN" ]; then
+    auth_header=(-H "Authorization: Bearer $AUTH_TOKEN")
+  fi
 
   if [ -n "$data" ]; then
-    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json" -d "$data")
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json" "${auth_header[@]}" -d "$data")
   else
-    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json")
+    status=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" -H "Content-Type: application/json" "${auth_header[@]}")
   fi
 
   echo "$method $url -> $status"
@@ -39,7 +44,23 @@ assert_status() {
 }
 
 echo -e "${BLUE}=== TESTING AUTHENTICATION ===${NC}"
-assert_status 200 POST "$BASE_URL/api/v1/usuarios/login" '{"nombre":"admin","contrasenia":"admin"}'
+AUTH_TOKEN=""
+LOGIN_URL="$BASE_URL/api/v1/usuarios/login"
+LOGIN_RAW=$(curl -s -w '\n%{http_code}' -X POST "$LOGIN_URL" -H "Content-Type: application/json" -d '{"nombre":"admin","contrasenia":"admin"}')
+LOGIN_STATUS=$(printf '%s' "$LOGIN_RAW" | tail -n1)
+LOGIN_BODY=$(printf '%s' "$LOGIN_RAW" | sed '$d')
+
+echo "POST $LOGIN_URL -> $LOGIN_STATUS"
+if [ "$LOGIN_STATUS" -ne 200 ]; then
+  echo -e "${RED}Expected 200 but got $LOGIN_STATUS for POST $LOGIN_URL${NC}"
+  exit 1
+fi
+
+AUTH_TOKEN=$(printf '%s' "$LOGIN_BODY" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+if [ -z "$AUTH_TOKEN" ]; then
+  echo -e "${RED}Login succeeded but response had no token: $LOGIN_BODY${NC}"
+  exit 1
+fi
 
 echo -e "${BLUE}=== TESTING CORE READ ENDPOINTS ===${NC}"
 assert_status 200 GET "$BASE_URL/api/v1/conceptos"
@@ -50,8 +71,8 @@ assert_status 200 GET "$BASE_URL/api/v1/presupuestos"
 assert_status 200 GET "$BASE_URL/api/v1/items"
 
 echo -e "${BLUE}=== TESTING CREATE ENDPOINTS ===${NC}"
-assert_status 200 POST "$BASE_URL/api/v1/conceptos" '{"nombre":"Concepto Test V2","valor":500.0}'
-assert_status 200 POST "$BASE_URL/api/v1/items" '{"nombre":"Item Test V2","valor":10.0,"conceptoFijo":false}'
+assert_status 201 POST "$BASE_URL/api/v1/conceptos" '{"nombre":"Concepto Test V2","valor":500.0}'
+assert_status 201 POST "$BASE_URL/api/v1/items" '{"nombre":"Item Test V2","valor":10.0,"porcentaje":0,"conceptoFijo":false}'
 
 # ============================================================================
 # SUMMARY

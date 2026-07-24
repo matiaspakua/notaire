@@ -58,51 +58,51 @@ public class Presupuesto implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_presupuesto")
     private Integer idPresupuesto;
-    
+
     @Basic(optional = false)
     @Column(name = "numero")
     private int numero;
-    
+
     @Basic(optional = false)
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    
+
     @Basic(optional = false)
     @Column(name = "encabezado")
     private String encabezado;
-    
+
     @Column(name = "observaciones")
     private String observaciones;
-    
+
     @Basic(optional = false)
     @Column(name = "estado")
     private String estado;
-    
+
     @Column(name = "monto_inmueble")
     private Float montoInmueble;
-    
+
     @Basic(optional = false)
     @Column(name = "version")
     @Version
     private int version = 0;
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
     @ManyToOne(fetch = FetchType.EAGER)
     private Persona fkIdPersona;
-    
+
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
     @ManyToOne(fetch = FetchType.EAGER)
     private Tramite fkIdTramite;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.EAGER)
     private java.util.Set<Pago> pagoList;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.LAZY)
     private List<Item> itemList = new ArrayList<>();
 
@@ -164,10 +164,12 @@ public class Presupuesto implements Serializable {
         this.fkIdPersona = fkIdPersona;
     }
 
+    @JsonIgnore
     public Tramite getFkIdTramite() {
         return fkIdTramite;
     }
 
+    @JsonProperty
     public void setFkIdTramite(Tramite fkIdTramite) {
         this.fkIdTramite = fkIdTramite;
     }

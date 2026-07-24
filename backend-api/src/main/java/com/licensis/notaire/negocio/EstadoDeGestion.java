@@ -6,9 +6,9 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -101,6 +101,7 @@ public class EstadoDeGestion implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public java.util.Set<Historial> getHistorialList() {
         return historialList;
     }
@@ -168,6 +169,7 @@ public class EstadoDeGestion implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Collection<GestionDeEscritura> getGestionDeEscrituraCollection() {
         return gestionDeEscrituraCollection;
     }
