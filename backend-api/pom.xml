@@ -380,12 +380,19 @@
             </plugin>
             <plugin>
                 <!--
-                    Format-check gate (see #705). Scoped with ratchetFrom to only check
-                    files changed since origin/main — new/touched code must be formatted,
-                    the pre-existing codebase (never formatted with this tool before) is
-                    left alone rather than requiring a repo-wide reformat commit. Uses
-                    generic hygiene rules only (no AST reformatter like google-java-format),
-                    so it doesn't conflict with checkstyle.xml's 4-space/no-wildcard-import
+                    Format-check gate (see #705). Explicit-invocation only (no
+                    <executions> binding) — it's run via `mvn spotless:check` from
+                    pr-validation.yml's lint job, which fetches full git history so
+                    `ratchetFrom` can resolve origin/main. Jobs that only run `mvn
+                    verify`/`mvn test` (e.g. the coverage-gate job, which does a
+                    shallow checkout) must NOT pick this up automatically, or it
+                    fails with "No such reference 'origin/main'". Scoped with
+                    ratchetFrom to only check files changed since origin/main —
+                    new/touched code must be formatted, the pre-existing codebase
+                    (never formatted with this tool before) is left alone rather
+                    than requiring a repo-wide reformat commit. Uses generic hygiene
+                    rules only (no AST reformatter like google-java-format), so it
+                    doesn't conflict with checkstyle.xml's 4-space/no-wildcard-import
                     rules.
                 -->
                 <groupId>com.diffplug.spotless</groupId>
@@ -403,13 +410,6 @@
                         </indent>
                     </java>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
