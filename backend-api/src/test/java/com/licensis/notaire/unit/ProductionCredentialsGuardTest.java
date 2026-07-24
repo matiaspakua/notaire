@@ -20,24 +20,37 @@ class ProductionCredentialsGuardTest {
     private static final String SAFE_PGADMIN_PASSWORD = "s3cur3-pass4";
     private static final String SAFE_GRAFANA_USERNAME = "custom-grafana";
     private static final String SAFE_GRAFANA_PASSWORD = "s3cur3-pass5";
+    private static final String SAFE_EXPORTER_USERNAME = "custom-exporter";
+    private static final String SAFE_EXPORTER_PASSWORD = "s3cur3-pass6";
 
     private ProductionCredentialsGuard guardWith(String environment) {
         return guardWith(environment, SAFE_DATASOURCE_USERNAME, SAFE_DATASOURCE_PASSWORD,
                 SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME, SAFE_ADMIN_PASSWORD,
-                SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD);
+                SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD,
+                SAFE_EXPORTER_USERNAME, SAFE_EXPORTER_PASSWORD);
     }
 
     private ProductionCredentialsGuard guardWith(String environment, String datasourceUsername,
             String datasourcePassword, String actuatorUsername, String actuatorPassword,
             String adminUsername, String adminPassword) {
         return guardWith(environment, datasourceUsername, datasourcePassword, actuatorUsername, actuatorPassword,
-                adminUsername, adminPassword, SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD);
+                adminUsername, adminPassword, SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD,
+                SAFE_EXPORTER_USERNAME, SAFE_EXPORTER_PASSWORD);
     }
 
     private ProductionCredentialsGuard guardWith(String environment, String datasourceUsername,
             String datasourcePassword, String actuatorUsername, String actuatorPassword,
             String adminUsername, String adminPassword, String pgAdminPassword, String grafanaUsername,
             String grafanaPassword) {
+        return guardWith(environment, datasourceUsername, datasourcePassword, actuatorUsername, actuatorPassword,
+                adminUsername, adminPassword, pgAdminPassword, grafanaUsername, grafanaPassword,
+                SAFE_EXPORTER_USERNAME, SAFE_EXPORTER_PASSWORD);
+    }
+
+    private ProductionCredentialsGuard guardWith(String environment, String datasourceUsername,
+            String datasourcePassword, String actuatorUsername, String actuatorPassword,
+            String adminUsername, String adminPassword, String pgAdminPassword, String grafanaUsername,
+            String grafanaPassword, String exporterUsername, String exporterPassword) {
         ProductionCredentialsGuard guard = new ProductionCredentialsGuard();
         ReflectionTestUtils.setField(guard, "environment", environment);
         ReflectionTestUtils.setField(guard, "datasourceUsername", datasourceUsername);
@@ -49,6 +62,8 @@ class ProductionCredentialsGuardTest {
         ReflectionTestUtils.setField(guard, "pgAdminPassword", pgAdminPassword);
         ReflectionTestUtils.setField(guard, "grafanaUsername", grafanaUsername);
         ReflectionTestUtils.setField(guard, "grafanaPassword", grafanaPassword);
+        ReflectionTestUtils.setField(guard, "exporterUsername", exporterUsername);
+        ReflectionTestUtils.setField(guard, "exporterPassword", exporterPassword);
         return guard;
     }
 
@@ -113,6 +128,20 @@ class ProductionCredentialsGuardTest {
     }
 
     @Test
+    @DisplayName("Should reject default postgres-exporter credentials in production (issue #675)")
+    void shouldRejectDefaultExporterCredentialsInProduction() {
+        ProductionCredentialsGuard guard = guardWith("production", SAFE_DATASOURCE_USERNAME,
+                SAFE_DATASOURCE_PASSWORD, SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME,
+                SAFE_ADMIN_PASSWORD, SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD,
+                "admin", "admin");
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("postgres.exporter.username")
+                .hasMessageContaining("postgres.exporter.password");
+    }
+
+    @Test
     @DisplayName("Should accept non-default credentials in production")
     void shouldAcceptNonDefaultCredentialsInProduction() {
         ProductionCredentialsGuard guard = guardWith("production");
@@ -124,7 +153,7 @@ class ProductionCredentialsGuardTest {
     @DisplayName("Should not validate credentials outside production")
     void shouldSkipValidationOutsideProduction() {
         ProductionCredentialsGuard guard = guardWith("development", "admin", "admin", "admin", "admin",
-                "admin", "admin", "admin", "admin", "admin");
+                "admin", "admin", "admin", "admin", "admin", "admin", "admin");
 
         assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
     }
