@@ -137,6 +137,27 @@ mvn verify -pl backend-api  # all checks
 bash integration-test/scripts/test.sh
 ```
 
+## ⚠️ CI Preflight — run BEFORE every push
+
+**`mvn verify` is NOT sufficient to predict CI.** Spotless is deliberately
+unbound from the Maven lifecycle (see #705), so it only runs in CI's "Code Lint"
+job — a branch can be fully green locally and still fail CI on formatting.
+
+Always validate with the preflight script, which mirrors every CI gate:
+
+```bash
+bash scripts/install-git-hooks.sh   # once per clone: pre-push runs the gates automatically
+bash scripts/preflight.sh --fix     # auto-fix formatting/lint, then verify
+bash scripts/preflight.sh           # all blocking gates except server-backed suites
+bash scripts/preflight.sh --full    # adds Playwright E2E + HTTP API suite (needs stack up)
+bash scripts/preflight.sh --list    # local check -> CI job mapping
+```
+
+**When you add or change a gate in `.github/workflows/`, update
+`scripts/preflight.sh` in the same PR** — otherwise the local/CI gap reopens.
+
+Full details: `docs/03-development/CI-PREFLIGHT.md`
+
 ## Backend Architecture (`backend-api`)
 
 Package root: `com.licensis.notaire`

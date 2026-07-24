@@ -28,27 +28,39 @@ refactor: simplify payment calculation
 
 ### 3. Pull Request Process
 
-1. Create a feature branch from `main`
-2. Make your changes
-3. Run tests locally:
+1. Install the git hooks once per clone:
    ```bash
-   mvn clean test -pl backend-api
+   bash scripts/install-git-hooks.sh
    ```
-4. Ensure coverage is above 80%
-5. Push and create PR
+2. Create a feature branch from `main`
+3. Make your changes
+4. Run the CI gates locally before pushing:
+   ```bash
+   bash scripts/preflight.sh --fix
+   ```
+5. Push and create PR — the `pre-push` hook re-runs the gates and blocks the
+   push if any fail
 6. Wait for CI workflows to pass
 7. Request review from code owners
 
 ### 4. CI/CD Pipeline
 
+**Validate locally first.** `scripts/preflight.sh` runs the same gates CI runs,
+so a push that passes it passes CI. This matters because not every CI gate is
+reachable from the usual commands — notably, Spotless is not bound to `mvn
+verify`, so `mvn verify` can be green while CI's "Code Lint" job fails. See
+[CI-PREFLIGHT.md](./CI-PREFLIGHT.md).
+
 All PRs must pass:
 
 - [ ] Build compilation
 - [ ] Unit tests
-- [ ] Integration tests
-- [ ] Code coverage (≥80%)
+- [ ] Integration tests (H2 + Testcontainers/PostgreSQL)
+- [ ] Coverage gate (JaCoCo ratchet floor; 80% is the target)
+- [ ] Code Lint — Spotless format check (blocking) + Checkstyle (advisory)
+- [ ] Frontend: TypeScript, ESLint, Vitest, Next.js build
+- [ ] E2E: Playwright + Bruno API suite
 - [ ] Security scan (Trivy)
-- [ ] Code quality (SpotBugs)
 
 ### 5. Building Docker Image Locally
 
