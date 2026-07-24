@@ -17,15 +17,27 @@ class ProductionCredentialsGuardTest {
     private static final String SAFE_ACTUATOR_PASSWORD = "s3cur3-pass2";
     private static final String SAFE_ADMIN_USERNAME = "custom-admin";
     private static final String SAFE_ADMIN_PASSWORD = "s3cur3-pass3";
+    private static final String SAFE_PGADMIN_PASSWORD = "s3cur3-pass4";
+    private static final String SAFE_GRAFANA_USERNAME = "custom-grafana";
+    private static final String SAFE_GRAFANA_PASSWORD = "s3cur3-pass5";
 
     private ProductionCredentialsGuard guardWith(String environment) {
         return guardWith(environment, SAFE_DATASOURCE_USERNAME, SAFE_DATASOURCE_PASSWORD,
-                SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME, SAFE_ADMIN_PASSWORD);
+                SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME, SAFE_ADMIN_PASSWORD,
+                SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD);
     }
 
     private ProductionCredentialsGuard guardWith(String environment, String datasourceUsername,
             String datasourcePassword, String actuatorUsername, String actuatorPassword,
             String adminUsername, String adminPassword) {
+        return guardWith(environment, datasourceUsername, datasourcePassword, actuatorUsername, actuatorPassword,
+                adminUsername, adminPassword, SAFE_PGADMIN_PASSWORD, SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD);
+    }
+
+    private ProductionCredentialsGuard guardWith(String environment, String datasourceUsername,
+            String datasourcePassword, String actuatorUsername, String actuatorPassword,
+            String adminUsername, String adminPassword, String pgAdminPassword, String grafanaUsername,
+            String grafanaPassword) {
         ProductionCredentialsGuard guard = new ProductionCredentialsGuard();
         ReflectionTestUtils.setField(guard, "environment", environment);
         ReflectionTestUtils.setField(guard, "datasourceUsername", datasourceUsername);
@@ -34,6 +46,9 @@ class ProductionCredentialsGuardTest {
         ReflectionTestUtils.setField(guard, "actuatorPassword", actuatorPassword);
         ReflectionTestUtils.setField(guard, "adminUsername", adminUsername);
         ReflectionTestUtils.setField(guard, "adminPassword", adminPassword);
+        ReflectionTestUtils.setField(guard, "pgAdminPassword", pgAdminPassword);
+        ReflectionTestUtils.setField(guard, "grafanaUsername", grafanaUsername);
+        ReflectionTestUtils.setField(guard, "grafanaPassword", grafanaPassword);
         return guard;
     }
 
@@ -73,6 +88,31 @@ class ProductionCredentialsGuardTest {
     }
 
     @Test
+    @DisplayName("Should reject default pgAdmin password in production (issue #672)")
+    void shouldRejectDefaultPgAdminPasswordInProduction() {
+        ProductionCredentialsGuard guard = guardWith("production", SAFE_DATASOURCE_USERNAME,
+                SAFE_DATASOURCE_PASSWORD, SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME,
+                SAFE_ADMIN_PASSWORD, "admin", SAFE_GRAFANA_USERNAME, SAFE_GRAFANA_PASSWORD);
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("pgadmin.admin.password");
+    }
+
+    @Test
+    @DisplayName("Should reject default Grafana credentials in production (issue #672)")
+    void shouldRejectDefaultGrafanaCredentialsInProduction() {
+        ProductionCredentialsGuard guard = guardWith("production", SAFE_DATASOURCE_USERNAME,
+                SAFE_DATASOURCE_PASSWORD, SAFE_ACTUATOR_USERNAME, SAFE_ACTUATOR_PASSWORD, SAFE_ADMIN_USERNAME,
+                SAFE_ADMIN_PASSWORD, SAFE_PGADMIN_PASSWORD, "admin", "admin");
+
+        assertThatThrownBy(guard::validateCredentials)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("grafana.admin.username")
+                .hasMessageContaining("grafana.admin.password");
+    }
+
+    @Test
     @DisplayName("Should accept non-default credentials in production")
     void shouldAcceptNonDefaultCredentialsInProduction() {
         ProductionCredentialsGuard guard = guardWith("production");
@@ -84,7 +124,7 @@ class ProductionCredentialsGuardTest {
     @DisplayName("Should not validate credentials outside production")
     void shouldSkipValidationOutsideProduction() {
         ProductionCredentialsGuard guard = guardWith("development", "admin", "admin", "admin", "admin",
-                "admin", "admin");
+                "admin", "admin", "admin", "admin", "admin");
 
         assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
     }

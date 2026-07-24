@@ -34,6 +34,15 @@ public class ProductionCredentialsGuard {
     @Value("${app.admin.password:admin}")
     private String adminPassword;
 
+    @Value("${pgadmin.admin.password:admin}")
+    private String pgAdminPassword;
+
+    @Value("${grafana.admin.username:admin}")
+    private String grafanaUsername;
+
+    @Value("${grafana.admin.password:admin}")
+    private String grafanaPassword;
+
     @PostConstruct
     public void validateCredentials() {
         if (!PRODUCTION_ENVIRONMENT.equalsIgnoreCase(environment)) {
@@ -47,6 +56,9 @@ public class ProductionCredentialsGuard {
         addIfDefault(insecureProperties, "actuator.security.password", actuatorPassword);
         addIfDefault(insecureProperties, "app.admin.username", adminUsername);
         addIfDefault(insecureProperties, "app.admin.password", adminPassword);
+        addIfDefault(insecureProperties, "pgadmin.admin.password", pgAdminPassword);
+        addIfDefault(insecureProperties, "grafana.admin.username", grafanaUsername);
+        addIfDefault(insecureProperties, "grafana.admin.password", grafanaPassword);
 
         if (!insecureProperties.isEmpty()) {
             throw new IllegalStateException(
