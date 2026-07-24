@@ -31,6 +31,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityAndCorsConfig {
 
+    private static final String PRODUCTION_ENVIRONMENT = "production";
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityAndCorsConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -51,6 +53,9 @@ public class SecurityAndCorsConfig {
 
     @Value("${actuator.security.password}")
     private String actuatorPassword;
+
+    @Value("${app.environment:development}")
+    private String environment;
 
     /**
      * Password encoder bean using BCrypt
@@ -139,20 +144,32 @@ public class SecurityAndCorsConfig {
 
     /**
      * Security filter chain for all other endpoints (Swagger, etc.)
+     * Swagger UI and the OpenAPI spec are publicly reachable in every environment
+     * except production, where they are denied to avoid exposing the API surface
+     * and a live "Try it out" console to anonymous visitors (issue #671).
      */
     @Bean
     @Order(3)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                .anyRequest().permitAll()
-            )
+            .authorizeHttpRequests(auth -> {
+                var swaggerPaths = auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html");
+                if (isProduction()) {
+                    swaggerPaths.denyAll();
+                } else {
+                    swaggerPaths.permitAll();
+                }
+                auth.anyRequest().permitAll();
+            })
             .httpBasic(withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.disable())
             .cors(withDefaults());
         return http.build();
+    }
+
+    private boolean isProduction() {
+        return PRODUCTION_ENVIRONMENT.equalsIgnoreCase(environment);
     }
 
     /**
