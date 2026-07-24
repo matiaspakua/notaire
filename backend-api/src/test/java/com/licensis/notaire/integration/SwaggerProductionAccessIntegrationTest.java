@@ -20,7 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
         "app.environment=production",
         "app.admin.username=test-prod-admin",
-        "app.admin.password=test-prod-admin-pass"
+        "app.admin.password=test-prod-admin-pass",
+        "pgadmin.admin.password=test-prod-pgadmin-pass",
+        "grafana.admin.username=test-prod-grafana-user",
+        "grafana.admin.password=test-prod-grafana-pass"
 })
 @DisplayName("Swagger/OpenAPI access is blocked in production (issue #671)")
 class SwaggerProductionAccessIntegrationTest {
