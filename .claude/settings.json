@@ -1,5 +1,4 @@
 {
-  "model": "haiku",
   "permissions": {
     "readOnly": [
       "Bash:bash",
@@ -10,52 +9,11 @@
       "Bash:ls"
     ]
   },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "rtk hook claude"
-          }
-        ]
-      }
-    ]
-  },
   "enabledPlugins": {
     "remember@claude-plugins-official": true,
     "code-modernization@claude-plugins-official": true,
     "github@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {
-    "headroom-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "chopratejas/headroom"
-      }
-    }
-  },
-  "mcp": {
-    "headroom": {
-      "type": "stdio",
-      "command": "headroom",
-      "args": ["mcp", "serve"]
-    }
-  },
   "skipDangerousModePermissionPrompt": true,
-  "tui": "fullscreen",
-  "tokenOptimization": {
-    "enabled": true,
-    "rtk": {
-      "enabled": true,
-      "mode": "auto"
-    },
-    "headroom": {
-      "enabled": true,
-      "proxy": "http://127.0.0.1:8787",
-      "compressionThreshold": 2000,
-      "memoryCaching": true
-    }
-  }
+  "tui": "fullscreen"
 }
