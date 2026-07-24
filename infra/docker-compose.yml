@@ -67,11 +67,9 @@ services:
     image: prom/prometheus:latest
     container_name: devsecops-prometheus
     restart: unless-stopped
-    user: root
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9090:9090"
     command:
