@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -19,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Arrays;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -47,6 +50,9 @@ public class SecurityAndCorsConfig {
 
     @Value("${cors.max-age:3600}")
     private long maxAge;
+
+    @Value("${cors.allowed-headers:Content-Type,Authorization,X-Notaire-User}")
+    private String[] allowedHeaders;
 
     @Value("${actuator.security.username}")
     private String actuatorUsername;
@@ -173,6 +179,29 @@ public class SecurityAndCorsConfig {
     }
 
     /**
+     * Refuses to start in production with a wildcard CORS configuration.
+     * A wildcard {@code Access-Control-Allow-Headers} (including {@code Authorization})
+     * combined with an unrestricted origin lets any site read authenticated
+     * responses cross-origin (issue #673).
+     */
+    @PostConstruct
+    public void validateProductionCorsConfig() {
+        if (!isProduction()) {
+            return;
+        }
+        if (Arrays.asList(allowedHeaders).contains("*")) {
+            throw new IllegalStateException(
+                    "cors.allowed-headers no puede ser '*' en producción. "
+                    + "Configurá una lista explícita de headers permitidos.");
+        }
+        if (Arrays.asList(allowedOrigins).contains("*")) {
+            throw new IllegalStateException(
+                    "cors.allowed-origins no puede ser '*' en producción. "
+                    + "Configurá los orígenes del frontend explícitamente.");
+        }
+    }
+
+    /**
      * CORS configuration
      */
     @Bean
@@ -185,14 +214,14 @@ public class SecurityAndCorsConfig {
                     .allowedMethods(allowedMethods)
                     .allowCredentials(true)
                     .maxAge(maxAge)
-                    .allowedHeaders("*");
+                    .allowedHeaders(allowedHeaders);
 
                 registry.addMapping("/actuator/**")
                     .allowedOrigins(allowedOrigins)
                     .allowedMethods(allowedMethods)
                     .allowCredentials(true)
                     .maxAge(maxAge)
-                    .allowedHeaders("*");
+                    .allowedHeaders(allowedHeaders);
             }
         };
     }
