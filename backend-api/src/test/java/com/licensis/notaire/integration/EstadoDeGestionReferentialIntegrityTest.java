@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +34,7 @@ import com.licensis.notaire.repository.PersonaRepository;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@Transactional
 @DisplayName("CU28 — EstadoDeGestion referential integrity and search (issue #437)")
 class EstadoDeGestionReferentialIntegrityTest {
 
