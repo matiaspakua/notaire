@@ -1,9 +1,11 @@
 name: Frontend CI — Build, Typecheck & Test
 
 # Frontend static checks, unit tests (with coverage) and production build.
-# Runs on every merge to main (and only main), plus manual dispatch.
+# Runs on every PR into main and every merge to main, plus manual dispatch.
 # Failures FAIL the pipeline. UI E2E tests live in playwright-e2e.yml.
 on:
+  pull_request:
+    branches: [ main ]
   push:
     branches: [ main ]
   workflow_dispatch:
