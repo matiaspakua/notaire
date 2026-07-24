@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.jpa.ConstantesPersistencia;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -173,6 +174,7 @@ public class Folio implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Copia> getCopiaList()
     {
         return copiaList;
@@ -295,6 +297,7 @@ public class Folio implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public Collection<FoliosCopias> getFoliosCopiasCollection()
     {
         return foliosCopiasCollection;

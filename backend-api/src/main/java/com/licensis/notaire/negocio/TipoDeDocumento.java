@@ -5,6 +5,7 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoTipoDeDocumento;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -154,6 +155,7 @@ public class TipoDeDocumento implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<PlantillaTramite> getPlantillaTramiteList()
     {
         return plantillaTramiteList;
@@ -265,6 +267,7 @@ public class TipoDeDocumento implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public Collection<DocumentoPresentado> getDocumentoPresentadoCollection()
     {
         return documentoPresentadoCollection;

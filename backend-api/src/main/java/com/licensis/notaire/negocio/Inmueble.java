@@ -5,6 +5,7 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoInmueble;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,7 @@ public class Inmueble implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Tramite> getTramiteList() {
         return tramiteList;
     }

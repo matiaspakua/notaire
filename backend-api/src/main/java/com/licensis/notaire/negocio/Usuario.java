@@ -136,6 +136,7 @@ public class Usuario implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<RegistroAuditoria> getRegistroAuditoriaList() {
         return registroAuditoriaList;
     }

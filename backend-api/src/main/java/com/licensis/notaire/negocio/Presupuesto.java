@@ -164,10 +164,12 @@ public class Presupuesto implements Serializable {
         this.fkIdPersona = fkIdPersona;
     }
 
+    @JsonIgnore
     public Tramite getFkIdTramite() {
         return fkIdTramite;
     }
 
+    @JsonProperty
     public void setFkIdTramite(Tramite fkIdTramite) {
         this.fkIdTramite = fkIdTramite;
     }

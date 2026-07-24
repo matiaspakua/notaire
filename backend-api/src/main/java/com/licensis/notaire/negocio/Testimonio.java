@@ -6,6 +6,7 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,6 +133,7 @@ public class Testimonio implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<MovimientoTestimonio> getMovimientoTestimonioList()
     {
         return movimientoTestimonioList;
@@ -153,6 +155,7 @@ public class Testimonio implements Serializable
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Copia> getCopiaList()
     {
         return copiaList;
