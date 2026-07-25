@@ -49,6 +49,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **postgres-exporter reused the app's own admin DB credentials** (issue #675): `infra/docker-compose.yml`'s
+  `postgres-exporter` service connected with `POSTGRES_USER`/`POSTGRES_PASSWORD` — the same
+  credentials as the application itself — so a compromised metrics exporter had full read/write
+  access to every application table. Added Flyway migration `V12` creating a dedicated
+  `notaire_exporter` role granted only `pg_monitor` (PostgreSQL's built-in read-only statistics
+  role), wired through `POSTGRES_EXPORTER_USER`/`POSTGRES_EXPORTER_PASSWORD` in both
+  `docker-compose.yml` and `infra/docker-compose.yml`, and extended `ProductionCredentialsGuard`
+  to reject a default exporter password in production. Grafana anonymous auth (also part of this
+  finding) was already disabled by #672. `sslmode=disable` on the exporter connection is
+  unchanged — `notary-postgres` has no TLS configured, so flipping it now would break the
+  connection outright; tracked separately by #684.
+
+- **Prometheus ran as root with the host's docker.sock mounted** (issue #674): `infra/docker-compose.yml`
+  gave the `prometheus` container `user: root` plus a read-write bind mount of
+  `/var/run/docker.sock`, even though `prometheus.yml` only ever scrapes static targets (no
+  `docker_sd_configs`) — a compromised container had a direct path to full host compromise for
+  no operational benefit. Removed both; the image's built-in non-root user is sufficient.
+
+- **Wildcard `Authorization` header in CORS config allowed credential theft** (issue #673):
+  `SecurityAndCorsConfig` hardcoded `.allowedHeaders("*")`, silently ignoring the existing (but
+  unwired) `cors.allowed-headers` property, so any origin could read the `Authorization` header
+  back via a CORS preflight response. Wired the property through with an explicit default
+  (`Content-Type,Authorization,X-Notaire-User`), and added a startup guard that refuses to boot
+  in production if `cors.allowed-headers` or `cors.allowed-origins` still resolve to `*`.
+
 - **Swagger/OpenAPI publicly accessible in production** (issue #671): `SecurityAndCorsConfig`
   now denies `/swagger-ui/**`, `/swagger-ui.html`, and `/v3/api-docs/**` when
   `app.environment=production` (the same signal `ProductionCredentialsGuard` already uses),

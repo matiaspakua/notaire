@@ -103,7 +103,10 @@ This document describes the complete monitoring and observability infrastructure
 **Metrics Collection:** postgres-exporter
 - **Endpoint:** `http://localhost:9187/metrics`
 - **Configuration:** `infra/prometheus/postgres_exporter.yml`
-- **Connection:** `postgresql://admin:admin@postgres:5432/notaire`
+- **Connection:** `postgresql://<POSTGRES_EXPORTER_USER>:<POSTGRES_EXPORTER_PASSWORD>@postgres:5432/notaire`
+  — connects as a dedicated least-privilege role (granted only `pg_monitor`, created by Flyway
+  migration `V12`), **not** the application's own admin datasource credentials (issue #675).
+  Set `POSTGRES_EXPORTER_USER`/`POSTGRES_EXPORTER_PASSWORD` in `.env`.
 
 **Metrics Exposed:**
 - Database size and connection count
