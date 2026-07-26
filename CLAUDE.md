@@ -102,8 +102,9 @@ Runs alongside the app and is wired to it (see `infra/README.md`):
 
 **Business audit:** the `AuditoriaAspect` records create/update/delete
 operations (and logins) into `registro_auditoria`, attributing the acting user
-via the `X-Notaire-User` header sent by the frontend `api-client`. Read-only
-GETs are not audited. Surfaced in the UI at `/dashboard/auditoria`.
+from the authenticated JWT identity (`SecurityContextHolder`), not from any
+client-supplied header. Read-only GETs are not audited. Surfaced in the UI at
+`/dashboard/auditoria`.
 
 **Ports:** Backend API `8080`, PostgreSQL `5432`, pgAdmin `5050`
 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
