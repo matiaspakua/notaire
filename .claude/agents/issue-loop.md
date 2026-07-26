@@ -32,9 +32,29 @@ Repeat until no open issues remain OR `status: blocked` is written.
   - See "## GitHub access fallback" below for the concrete command mapping.
 - Do not treat a disconnected MCP server as a reason to stop the loop — retry the cheap call once, then fall back per above. Only write `status=blocked` if BOTH the MCP tools and the curl/gh fallback fail.
 
+### 0.5. LESSONS — read before triaging
+- Read `.claude/loop-lessons.md` in full. It records concrete operational failures and
+  their fixes from prior runs. Apply them — don't repeat a documented mistake.
+
 ### 1. TRIAGE — select next issue
-- Use GitHub MCP to call: list_issues(owner=matiaspakua, repo=notaire, state=OPEN, orderBy=CREATED_AT, direction=ASC, perPage=1)
-- Skip issues already in `completed[]` from loop-state.md
+- **Diagnosed 2026-07-26 (issue #728): never triage with `perPage=1`.** This repo has
+  290 open issues, and the oldest ~100 (by CREATED_AT) are legacy `RF-XX`/`RNF-XX`
+  requirement-tracking issues — exactly what the skip-policy below excludes. Fetching
+  one issue at a time and re-querying after each skip burns a whole cycle's budget
+  paging through the backlog and can produce a silent no-op run (no branch, no PR, no
+  blocked-email — just nothing). Always batch-fetch instead.
+- Call list_issues(owner=matiaspakua, repo=notaire, state=OPEN, orderBy=CREATED_AT, direction=ASC, perPage=100)
+- On that page, filter out, in order:
+  - Any issue number already in `completed[]` from loop-state.md
+  - Skip-policy matches from loop-state.md's `## Policy` section (RF-XX/RNF-XX,
+    CU-*/UC-* use-case issues, TAREA-labeled, large architectural issues, pure
+    docs-only guides, 25+ file / multi-week cleanup issues)
+- Pick the FIRST remaining issue on the page (still oldest-first).
+- If the ENTIRE page is filtered out, fetch the next page (same call, advancing the
+  cursor) and repeat — cap this at 5 pages (500 issues) per cycle. If nothing
+  qualifies after 5 pages, write status=blocked,
+  blocked_reason="backlog exhausted — all remaining open issues are policy-skipped",
+  STOP rather than looping forever.
 - Read the full issue body with issue_read(method=get)
 - Determine: type (bug/refactor/test/a11y/design-system), affected layer (frontend/backend/e2e), priority label
 - Write current_issue and status=in_progress to loop-state.md
@@ -44,6 +64,21 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - Identify: what is broken or missing, what files change, what tests must pass
 - Define a concrete acceptance condition (e.g. "linter passes, no hardcoded px values in auditoria/page.tsx")
 - If the issue is ambiguous and cannot be resolved without human input → write status=blocked, blocked_reason, STOP
+
+### 2.5. DISCOVER — file issues for anything else you notice (bounded)
+- While analyzing/implementing the current issue you'll often notice unrelated problems
+  (a bug, a security smell, a missing test, tech debt) or genuinely good feature ideas.
+  Don't fix them now — stay scoped to the current issue's acceptance condition.
+- File at most 2 new issues per cycle for genuinely new findings. Skip this step
+  entirely if you didn't find anything new — never manufacture an issue to hit a quota.
+- `search_issues` first to confirm it isn't already filed (open or closed) before
+  creating one.
+- Each new issue must: have a concrete, falsifiable description and acceptance
+  criteria; reference a Use Case (CU-XX) if one genuinely fits, or explicitly state
+  "no matching Use Case — needs one before implementation" per
+  `.claude/rules/general.md` rule 4 if none does; use this repo's real label
+  conventions (bug/DEVOPS/BACKEND/FRONTEND/TEST + priority:low|medium|high|critical —
+  check a handful of recent issues if unsure which apply).
 
 ### 3. BRANCH — isolate work
 - Branch name: fix/<issue-number>-<short-slug>  (e.g. fix/617-spacing-tokens-auditoria)
@@ -134,6 +169,18 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - Return to step 1
 - Do not pause between issues unless status=blocked
 
+### 11. REFLECT — capture what this cycle actually taught you (feedback loop)
+- If this cycle hit real, observed friction — a wrong assumption, a tool quirk, a
+  process gap, a mistake you had to correct, or a concrete improvement you made to
+  how the loop operates — and it isn't already written down in
+  `.claude/loop-lessons.md`, append a dated entry there before ending the cycle.
+  Only record things that actually happened this run; never invent hypothetical
+  process changes.
+- This file change rides along in the SAME PR as the issue you just fixed. If the
+  lesson doesn't belong to any single issue, give it its own tiny `chore` PR against
+  a small tracking issue you file for it — never edit `.claude/loop-lessons.md` or
+  `.claude/agents/issue-loop.md` directly on main.
+
 ---
 
 ## Rules
@@ -143,6 +190,8 @@ Repeat until no open issues remain OR `status: blocked` is written.
 - The memory file is the single source of truth; always sync it
 - Token cost awareness: skip step 8 polling delay if CI completes in under 30s
 - If the same test fails on 3 consecutive issues → write status=blocked, reason="recurring test failure", STOP and report
+- Read `.claude/loop-lessons.md` at the start of every cycle (step 0.5); it exists so
+  the loop stops repeating its own past mistakes — treat it as load-bearing, not optional
 
 ## Sub-agent split (optional, invoke when issue complexity > medium)
 - Maker agent: runs steps 2–6 (analyze → implement → test → commit)
