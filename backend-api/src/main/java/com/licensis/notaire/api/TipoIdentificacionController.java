@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class TipoIdentificacionController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo tipo de identificacion")
-    public ResponseEntity<Object> create(@RequestBody TipoIdentificacion entity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody TipoIdentificacion entity) {
         try {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity);
@@ -78,7 +79,7 @@ public class TipoIdentificacionController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de identificacion")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TipoIdentificacion entity) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody TipoIdentificacion entity) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

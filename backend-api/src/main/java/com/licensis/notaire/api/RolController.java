@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,7 +41,7 @@ public class RolController {
 
     record RolResponse(Integer idRol, String nombre, String descripcion, boolean activo, List<String> modulos) {}
 
-    record RolRequest(String nombre, String descripcion, boolean activo, List<String> modulos) {}
+    record RolRequest(@NotBlank String nombre, String descripcion, boolean activo, List<String> modulos) {}
 
     private RolResponse toResponse(Rol rol) {
         return new RolResponse(rol.getIdRol(), rol.getNombre(), rol.getDescripcion(),
@@ -74,7 +76,7 @@ public class RolController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo rol")
-    public ResponseEntity<Object> createRol(@RequestBody RolRequest request) {
+    public ResponseEntity<Object> createRol(@Valid @RequestBody RolRequest request) {
         if (rolRepository.findByNombre(request.nombre()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Ya existe un rol con el nombre: " + request.nombre()));
@@ -94,7 +96,7 @@ public class RolController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar rol")
-    public ResponseEntity<RolResponse> updateRol(@PathVariable Integer id, @RequestBody RolRequest request) {
+    public ResponseEntity<RolResponse> updateRol(@PathVariable Integer id, @Valid @RequestBody RolRequest request) {
         Optional<Rol> existing = rolRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
