@@ -53,6 +53,21 @@ describe("Authorization header (issue #552)", () => {
   });
 });
 
+describe("X-Notaire-User header removal (issue #678)", () => {
+  it("does not send X-Notaire-User even when a user is persisted", async () => {
+    window.localStorage.setItem(
+      "notaire-auth",
+      JSON.stringify({ state: { user: { nombre: "admin" }, token: "fake-jwt-token" } })
+    );
+    mockFetch.mockReturnValueOnce(makeResponse([]));
+
+    await apiGet("/gestiones");
+
+    const headers = mockFetch.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers["X-Notaire-User"]).toBeUndefined();
+  });
+});
+
 describe("apiGet()", () => {
   it("fetches and returns parsed JSON", async () => {
     mockFetch.mockReturnValueOnce(makeResponse([{ idGestion: 1 }]));

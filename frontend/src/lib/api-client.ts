@@ -26,36 +26,22 @@ function readPersistedAuthState(): PersistedAuthState | null {
 }
 
 /**
- * Name of the currently logged-in application user, read from the persisted
- * auth store (zustand `persist` writes `{ state: { user } }` to localStorage).
- * Sent to the backend on every request so business operations can be
- * attributed to a user in the audit module.
- */
-function actingUser(): string | null {
-  return readPersistedAuthState()?.state?.user?.nombre ?? null;
-}
-
-/**
  * JWT issued at login, read from the persisted auth store. Sent as a Bearer
  * token on every request since the backend's /api/** security chain requires
- * authentication for all endpoints except login.
+ * authentication for all endpoints except login. The backend's audit aspect
+ * attributes the acting user from this token's verified identity, not from
+ * any client-supplied header (issue #678).
  */
 function authToken(): string | null {
   return readPersistedAuthState()?.state?.token ?? null;
 }
 
 /**
- * Builds request headers, always including the acting-user header when a user
- * is logged in so the backend audit aspect can record who performed the action,
- * and the Bearer token so the backend's security filter chain authenticates
- * the request.
+ * Builds request headers, including the Bearer token so the backend's
+ * security filter chain authenticates the request.
  */
 function buildHeaders(base: Record<string, string> = {}): Record<string, string> {
   const headers: Record<string, string> = { ...base };
-  const user = actingUser();
-  if (user) {
-    headers["X-Notaire-User"] = user;
-  }
   const token = authToken();
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;

@@ -46,7 +46,8 @@ stack and shows real data.
 **Business audit trail** (create / update / delete operations and logins) is
 recorded by the backend `AuditoriaAspect` into the `registro_auditoria` table
 and surfaced in the application UI at **`/dashboard/auditoria`**. The acting
-user is propagated from the frontend via the `X-Notaire-User` header.
+user is attributed from the authenticated JWT identity, not from a
+client-supplied header.
 
 ---
 
