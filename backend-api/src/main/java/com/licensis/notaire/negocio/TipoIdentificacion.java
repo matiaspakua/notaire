@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -51,6 +52,7 @@ public class TipoIdentificacion implements Serializable {
     private Integer idTipoIdentificacion;
     @Basic(optional = false)
     @Column(name = "nombre")
+    @NotBlank
     private String nombre;
     // Column is NOT NULL in the schema; map it so inserts populate it
     // (previously missing → "null value in column caracteres" 500 on create).
