@@ -1,19 +1,27 @@
 package com.licensis.notaire.unit;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.observability.ApplicationHealthIndicator;
 import com.licensis.notaire.observability.MetricsUtil;
 import com.licensis.notaire.observability.SharedModuleMetrics;
 import com.licensis.notaire.observability.StructuredLogger;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.Status;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -26,11 +34,32 @@ class ObservabilityTest {
     @DisplayName("StructuredLogger")
     class StructuredLoggerTests {
 
+        private final ObjectMapper objectMapper = new ObjectMapper();
+
         private StructuredLogger logger;
+        private Logger slf4jLogger;
+        private Level originalLevel;
+        private ListAppender<ILoggingEvent> logAppender;
 
         @BeforeEach
         void setUp() {
             logger = StructuredLogger.getInstance();
+            slf4jLogger = (Logger) LoggerFactory.getLogger(StructuredLogger.class);
+            originalLevel = slf4jLogger.getLevel();
+            slf4jLogger.setLevel(Level.TRACE);
+            logAppender = new ListAppender<>();
+            logAppender.start();
+            slf4jLogger.addAppender(logAppender);
+        }
+
+        @AfterEach
+        void tearDown() {
+            slf4jLogger.detachAppender(logAppender);
+            slf4jLogger.setLevel(originalLevel);
+        }
+
+        private Map<String, Object> loggedJson(int index) throws Exception {
+            return objectMapper.readValue(logAppender.list.get(index).getFormattedMessage(), Map.class);
         }
 
         @Test
@@ -40,67 +69,135 @@ class ObservabilityTest {
         }
 
         @Test
-        @DisplayName("logTrace should not throw with valid context")
-        void logTraceShouldNotThrow() {
+        @DisplayName("logTrace should emit a TRACE event carrying the message and context")
+        void logTraceShouldEmitTraceEvent() throws Exception {
             logger.logTrace("trace msg", Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.TRACE);
+            assertThat(loggedJson(0)).containsEntry("level", "TRACE")
+                    .containsEntry("message", "trace msg")
+                    .containsEntry("k", "v");
         }
 
         @Test
-        @DisplayName("logDebug should not throw with valid context")
-        void logDebugShouldNotThrow() {
+        @DisplayName("logDebug should emit a DEBUG event carrying the message and context")
+        void logDebugShouldEmitDebugEvent() throws Exception {
             logger.logDebug("debug msg", Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.DEBUG);
+            assertThat(loggedJson(0)).containsEntry("level", "DEBUG")
+                    .containsEntry("message", "debug msg")
+                    .containsEntry("k", "v");
         }
 
         @Test
-        @DisplayName("logInfo should not throw")
-        void logInfoShouldNotThrow() {
+        @DisplayName("logInfo should emit an INFO event carrying the message and context")
+        void logInfoShouldEmitInfoEvent() throws Exception {
             logger.logInfo("info msg", Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.INFO);
+            assertThat(loggedJson(0)).containsEntry("level", "INFO")
+                    .containsEntry("message", "info msg")
+                    .containsEntry("k", "v");
         }
 
         @Test
-        @DisplayName("logInfo should accept null context")
-        void logInfoShouldAcceptNullContext() {
+        @DisplayName("logInfo should accept null context and still log the message")
+        void logInfoShouldAcceptNullContext() throws Exception {
             logger.logInfo("info msg null", null);
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(loggedJson(0)).containsEntry("level", "INFO")
+                    .containsEntry("message", "info msg null");
         }
 
         @Test
-        @DisplayName("logWarn should not throw")
-        void logWarnShouldNotThrow() {
+        @DisplayName("logWarn should emit a WARN event carrying the message and context")
+        void logWarnShouldEmitWarnEvent() throws Exception {
             logger.logWarn("warn msg", Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.WARN);
+            assertThat(loggedJson(0)).containsEntry("level", "WARN")
+                    .containsEntry("message", "warn msg")
+                    .containsEntry("k", "v");
         }
 
         @Test
-        @DisplayName("logError should not throw with throwable")
-        void logErrorShouldNotThrowWithThrowable() {
-            logger.logError("err msg", new RuntimeException("boom"), Map.of("k", "v"));
+        @DisplayName("logError should emit an ERROR event carrying the exception details")
+        void logErrorShouldEmitErrorEventWithThrowable() throws Exception {
+            RuntimeException ex = new RuntimeException("boom");
+
+            logger.logError("err msg", ex, Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            ILoggingEvent event = logAppender.list.get(0);
+            assertThat(event.getLevel()).isEqualTo(Level.ERROR);
+            assertThat(event.getThrowableProxy().getMessage()).isEqualTo("boom");
+            assertThat(loggedJson(0)).containsEntry("level", "ERROR")
+                    .containsEntry("message", "err msg")
+                    .containsEntry("exception", "RuntimeException")
+                    .containsEntry("exceptionMessage", "boom")
+                    .containsKey("stackTrace");
         }
 
         @Test
-        @DisplayName("logError with empty stacktrace should not fail")
-        void logErrorWithEmptyStackShouldNotFail() {
+        @DisplayName("logError with an empty stacktrace should log an empty stackTrace array without failing")
+        void logErrorWithEmptyStackShouldNotFail() throws Exception {
             RuntimeException ex = new RuntimeException("no stack");
             ex.setStackTrace(new StackTraceElement[0]);
+
             logger.logError("err", ex, Map.of("k", "v"));
+
+            assertThat(logAppender.list).hasSize(1);
+            List<?> stackTrace = (List<?>) loggedJson(0).get("stackTrace");
+            assertThat(stackTrace).isEmpty();
         }
 
         @Test
-        @DisplayName("logMetric should not throw")
-        void logMetricShouldNotThrow() {
+        @DisplayName("logMetric should emit an INFO event carrying the metric name, value, and tags")
+        void logMetricShouldEmitMetricEvent() throws Exception {
             Map<String, Object> tags = new HashMap<>();
             tags.put("region", "us-east");
+
             logger.logMetric("request_count", 42.0, tags);
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.INFO);
+            assertThat(loggedJson(0)).containsEntry("type", "METRIC")
+                    .containsEntry("metric", "request_count")
+                    .containsEntry("value", 42.0)
+                    .containsEntry("region", "us-east");
         }
 
         @Test
-        @DisplayName("logAudit should not throw")
-        void logAuditShouldNotThrow() {
+        @DisplayName("logAudit should emit an INFO event carrying the action, actor, resource, and details")
+        void logAuditShouldEmitAuditEvent() throws Exception {
             logger.logAudit("LOGIN", "admin", "user-1", Map.of("ip", "127.0.0.1"));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.INFO);
+            assertThat(loggedJson(0)).containsEntry("level", "AUDIT")
+                    .containsEntry("message", "LOGIN")
+                    .containsEntry("actor", "admin")
+                    .containsEntry("resource", "user-1")
+                    .containsEntry("ip", "127.0.0.1");
         }
 
         @Test
-        @DisplayName("logHealthProbe should not throw")
-        void logHealthProbeShouldNotThrow() {
+        @DisplayName("logHealthProbe should emit an INFO event carrying the probe name, status, and details")
+        void logHealthProbeShouldEmitProbeEvent() throws Exception {
             logger.logHealthProbe("db", "UP", Map.of("latency", 12));
+
+            assertThat(logAppender.list).hasSize(1);
+            assertThat(logAppender.list.get(0).getLevel()).isEqualTo(Level.INFO);
+            assertThat(loggedJson(0)).containsEntry("level", "PROBE")
+                    .containsEntry("message", "db")
+                    .containsEntry("status", "UP")
+                    .containsEntry("latency", 12);
         }
     }
 
