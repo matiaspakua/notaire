@@ -49,6 +49,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Dead `X-Notaire-User` header removed from the frontend** (issue #678): the backend's
+  `AuditoriaAspect` has attributed audit records from the verified JWT identity
+  (`SecurityContextHolder`), not from any client-supplied header, since #555 — but
+  `frontend/src/lib/api-client.ts` kept sending `X-Notaire-User` on every request anyway, with
+  no effect. Removed the dead header and its `actingUser()` helper, and corrected `CLAUDE.md`/
+  `infra/README.md`, which still described audit attribution as header-based.
+
 - **postgres-exporter reused the app's own admin DB credentials** (issue #675): `infra/docker-compose.yml`'s
   `postgres-exporter` service connected with `POSTGRES_USER`/`POSTGRES_PASSWORD` — the same
   credentials as the application itself — so a compromised metrics exporter had full read/write
