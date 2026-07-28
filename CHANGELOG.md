@@ -78,8 +78,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `SecurityAndCorsConfig` hardcoded `.allowedHeaders("*")`, silently ignoring the existing (but
   unwired) `cors.allowed-headers` property, so any origin could read the `Authorization` header
   back via a CORS preflight response. Wired the property through with an explicit default
-  (`Content-Type,Authorization,X-Notaire-User`), and added a startup guard that refuses to boot
+  (`Content-Type,Authorization`), and added a startup guard that refuses to boot
   in production if `cors.allowed-headers` or `cors.allowed-origins` still resolve to `*`.
+
+- **Dead `X-Notaire-User` left in the `cors.allowed-headers` default** (issue #731): #673's
+  default (above) originally included `X-Notaire-User`, which #678 had already removed from the
+  frontend (and #555 from the backend's audit attribution) — an unused allow-listed header that
+  no client actually sends. Dropped it from both `SecurityAndCorsConfig`'s `@Value` default and
+  `application.properties`; no functional change.
 
 - **Swagger/OpenAPI publicly accessible in production** (issue #671): `SecurityAndCorsConfig`
   now denies `/swagger-ui/**`, `/swagger-ui.html`, and `/v3/api-docs/**` when

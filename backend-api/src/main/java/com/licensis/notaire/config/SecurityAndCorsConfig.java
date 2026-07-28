@@ -51,7 +51,7 @@ public class SecurityAndCorsConfig {
     @Value("${cors.max-age:3600}")
     private long maxAge;
 
-    @Value("${cors.allowed-headers:Content-Type,Authorization,X-Notaire-User}")
+    @Value("${cors.allowed-headers:Content-Type,Authorization}")
     private String[] allowedHeaders;
 
     @Value("${actuator.security.username}")

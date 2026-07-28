@@ -19,7 +19,7 @@ You are a security expert for the Notaire project. You audit the Spring Boot bac
 
 - **Backend**: Spring Boot 4.0.4, Java 21, PostgreSQL 16, Spring Security, JPA/Hibernate.
 - **Frontend**: Next.js 15, React 19, TypeScript.
-- **Auth**: `X-Notaire-User` header sent by the frontend for audit attribution. Audit trail stored in `registro_auditoria` via `AuditoriaAspect`.
+- **Auth**: JWT-based; `AuditoriaAspect` attributes audit records from the authenticated JWT identity (`SecurityContextHolder`), never from a client-supplied header. Audit trail stored in `registro_auditoria`.
 - **API**: `/api/v1/*` endpoints documented in Swagger UI (`:8080/swagger-ui.html`).
 
 ---
@@ -38,7 +38,7 @@ You are a security expert for the Notaire project. You audit the Spring Boot bac
 
 - [ ] All protected endpoints require authentication.
 - [ ] Role-based access control enforced per endpoint.
-- [ ] `X-Notaire-User` header validated, not trusted blindly.
+- [ ] Audit attribution derives from the authenticated JWT identity, never from a client-supplied header.
 - [ ] Session management secure (JWT expiry, refresh rotation).
 - [ ] Password hashing uses bcrypt or Argon2 (never MD5/SHA1).
 - [ ] Login rate limiting implemented.
