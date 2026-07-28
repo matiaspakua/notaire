@@ -1,0 +1,25 @@
+info:
+  name: Login with mixed-case username (case-insensitive)
+  type: http
+  seq: 12
+  description: "## AUTH-001 Gap B-04 — username lookup must be case-insensitive"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "CaseTest-Usuario", "contrasenia": "Test1234!" }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Mixed-case username logs in successfully, same as lowercase/uppercase", function () {
+            expect(res.getBody().valido).to.equal(true);
+          });
