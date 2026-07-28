@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Case-insensitive username and JWT structure HTTP tests** (issues #692, #693): closed two
+  gaps in the AUTH-001 HTTP/Bruno test coverage. `backend-api/api-test/usuarios/09-13-*.yml`
+  verifies `POST /api/v1/usuarios/login` treats a username the same regardless of case
+  (lowercase/uppercase/mixed), matching `UsuarioController`'s existing `equalsIgnoreCase`
+  lookup. `14-16-*.yml` verifies the returned `token` is a well-formed
+  `header.payload.signature` JWT whose decoded payload has `sub` (the username) and a future
+  `exp` claim, matching `JwtTokenService.generateToken()`. No production code changed.
+
 - **k6 load-test suite** (issue #594): no performance/load testing existed anywhere in the
   repository. Added `performance-test/k6/load-test.js`, covering the highest-traffic read
   endpoints (`gestiones`, `presupuestos`, `tramites`) with baseline thresholds (`p(95)<500ms`,
@@ -48,6 +56,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   320px after login.
 
 ### Fixed
+
+- **Dashboard sidebar overflowed horizontally below 768px** (issue #699): `AppSidebar` rendered
+  as a fixed 288px-wide `<aside>` with no responsive behavior, leaving no room for content at
+  mobile widths (e.g. 320px). It now collapses to a hamburger-triggered off-canvas drawer below
+  the `md` (768px) breakpoint, with a backdrop that dismisses it; desktop behavior (static,
+  always visible) is unchanged. Un-skips the `test.fixme()` this issue tracked in
+  `tests/e2e/mobile-viewport.spec.ts` and adds two more covering the drawer open/close cycle
+  and the desktop no-hamburger case.
 
 - **Dead `X-Notaire-User` header removed from the frontend** (issue #678): the backend's
   `AuditoriaAspect` has attributed audit records from the verified JWT identity
