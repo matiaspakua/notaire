@@ -5,10 +5,13 @@ import com.licensis.notaire.config.SecurityAndCorsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -92,5 +95,14 @@ class SecurityAndCorsConfigTest {
 
         org.assertj.core.api.Assertions.assertThatCode(config::validateProductionCorsConfig)
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("cors.allowed-headers default should not allow-list the dead X-Notaire-User header (issue #731)")
+    void allowedHeadersDefaultShouldNotIncludeDeadNotaireUserHeader() throws NoSuchFieldException {
+        Field field = SecurityAndCorsConfig.class.getDeclaredField("allowedHeaders");
+        Value value = field.getAnnotation(Value.class);
+
+        assertThat(value.value()).doesNotContain("X-Notaire-User");
     }
 }
