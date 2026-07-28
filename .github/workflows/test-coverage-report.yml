@@ -36,7 +36,7 @@ jobs:
         run: bash integration-test/scripts/generate-coverage-report.sh
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-reports
           path: coverage-reports/
