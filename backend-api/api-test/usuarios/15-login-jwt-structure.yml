@@ -1,0 +1,49 @@
+info:
+  name: Login returns well-formed JWT (structure validation)
+  type: http
+  seq: 15
+  description: "## AUTH-001 Gap B-08 — validate JWT shape and claims returned by login"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "jwttest-usuario", "contrasenia": "Test1234!" }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+
+          test("Response contains a token field", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('token');
+            expect(b.token).to.be.a('string');
+            expect(b.token.length).to.be.greaterThan(0);
+          });
+
+          test("Token has header.payload.signature JWT format", function () {
+            const token = res.getBody().token;
+            const parts = token.split('.');
+            expect(parts.length).to.equal(3);
+            parts.forEach(function (part) {
+              expect(part.length).to.be.greaterThan(0);
+            });
+          });
+
+          test("Token payload contains sub and exp claims matching the user", function () {
+            const token = res.getBody().token;
+            const payloadJson = Buffer.from(token.split('.')[1], 'base64').toString('utf-8');
+            const payload = JSON.parse(payloadJson);
+            expect(payload).to.have.property('sub');
+            expect(payload.sub).to.equal('jwttest-usuario');
+            expect(payload).to.have.property('exp');
+            expect(payload.exp).to.be.a('number');
+            expect(payload.exp * 1000).to.be.greaterThan(Date.now());
+          });

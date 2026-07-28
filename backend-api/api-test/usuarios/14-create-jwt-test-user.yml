@@ -1,0 +1,32 @@
+info:
+  name: Create Usuario (JWT structure fixture)
+  type: http
+  seq: 14
+  description: "## Setup for JWT structure validation — POST /api/v1/usuarios"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "jwttest-usuario",
+          "contrasenia": "Test1234!",
+          "tipo": "EMPLEADO",
+          "activo": true
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idUsuario", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idUsuario');
+            bru.setVar('jwt_test_usuario_id', b.idUsuario);
+          });
