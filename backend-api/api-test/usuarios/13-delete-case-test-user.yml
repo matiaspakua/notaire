@@ -1,0 +1,17 @@
+info:
+  name: Delete Usuario (case-insensitive login fixture cleanup)
+  type: http
+  seq: 13
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/usuarios/{{case_test_usuario_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });
