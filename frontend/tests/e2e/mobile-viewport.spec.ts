@@ -9,7 +9,9 @@
 import { type Page, test, expect } from "@playwright/test";
 
 async function hasNoHorizontalOverflow(page: Page): Promise<boolean> {
-  return page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+  return page.evaluate(
+    () => document.documentElement.scrollWidth <= window.innerWidth,
+  );
 }
 
 async function loginAsAdmin(page: Page) {
@@ -32,25 +34,50 @@ test.describe("Mobile/responsive viewport @mobile", () => {
     expect(await hasNoHorizontalOverflow(page)).toBe(true);
   });
 
-  test("login page has no horizontal overflow at 768px (tablet)", async ({ page }) => {
+  test("login page has no horizontal overflow at 768px (tablet)", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto("/login");
 
     expect(await hasNoHorizontalOverflow(page)).toBe(true);
   });
 
-  test("dashboard has no horizontal overflow at 320px after login", async ({ page }) => {
-    // Known pre-existing gap, not caused by CI hardening: AppSidebar renders as a
-    // fixed w-72 (288px) <aside> with no responsive collapse/hamburger behavior,
-    // so any dashboard page overflows at 320px. Tracked in #699.
-    test.fixme(
-      true,
-      "AppSidebar doesn't collapse below 768px — https://github.com/matiaspakua/notaire/issues/699"
-    );
+  test("dashboard has no horizontal overflow at 320px after login", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await loginAsAdmin(page);
 
     await page.setViewportSize({ width: 320, height: 568 });
     expect(await hasNoHorizontalOverflow(page)).toBe(true);
+  });
+
+  test("sidebar is hidden by default and opens via hamburger below 768px", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await loginAsAdmin(page);
+
+    await page.setViewportSize({ width: 320, height: 568 });
+    await expect(page.getByTestId("sidebar")).not.toBeVisible();
+    await expect(page.getByTestId("btn-sidebar-toggle")).toBeVisible();
+
+    await page.getByTestId("btn-sidebar-toggle").click();
+    await expect(page.getByTestId("sidebar")).toBeVisible();
+    expect(await hasNoHorizontalOverflow(page)).toBe(true);
+
+    await page.getByTestId("sidebar-backdrop").click();
+    await expect(page.getByTestId("sidebar")).not.toBeVisible();
+  });
+
+  test("sidebar is always visible with no hamburger at desktop widths", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await loginAsAdmin(page);
+
+    await expect(page.getByTestId("sidebar")).toBeVisible();
+    await expect(page.getByTestId("btn-sidebar-toggle")).not.toBeVisible();
   });
 });
