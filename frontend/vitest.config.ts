@@ -22,6 +22,15 @@ export default defineConfig({
         "src/app/layout.tsx",
         "src/app/providers.tsx",
       ],
+      // Enforced ratchet floor (see backend-api's JaCoCo gate for the same pattern):
+      // raise these as coverage improves, never lower them. Set below the actual
+      // measured coverage at introduction time (2026-07-29) to leave headroom.
+      thresholds: {
+        statements: 10,
+        branches: 6,
+        functions: 9,
+        lines: 10,
+      },
     },
   },
   resolve: {
