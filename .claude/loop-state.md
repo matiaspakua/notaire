@@ -5,9 +5,13 @@ Read at the start of every cycle; write before ending every cycle.
 
 ## Current
 
-- current_issue: null
-- status: idle
-- branch: null
+- current_issue: 592
+- status: in_progress
+- branch: fix/592-split-monolithic-e2e-tour
+- pr_url: null
+- blocked_reason: null
+
+## Completed (most recent first)
 - pr_url: null
 - blocked_reason: null
 
