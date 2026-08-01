@@ -5,17 +5,9 @@ Read at the start of every cycle; write before ending every cycle.
 
 ## Current
 
-- current_issue: 592
-- status: pr_open
-- branch: fix/592-split-monolithic-e2e-tour
-- pr_url: https://github.com/matiaspakua/notaire/pull/749
-- blocked_reason: null
-
-## Completed (most recent first)
-- pr_url: null
-- blocked_reason: null
-
-## Completed (most recent first)
+- current_issue: null
+- status: idle
+- branch: null
 - pr_url: null
 - blocked_reason: null
 
@@ -29,17 +21,9 @@ again (see `.claude/loop-lessons.md`, 2026-07-26 entry). Don't hand-write histor
 for old cycles — `git log --oneline main` and closed issues on GitHub already have
 the full record.
 
-675, 674, 673 — infra/security hardening (postgres-exporter creds, Prometheus
-root+docker.sock, CORS wildcard Authorization) — PRs #724, #723, #722, merged
-2026-07-24/25.
-720, 717, 661, 672, 671 — test/security fixes (HTTP integration auth, Swagger
-prod-test context, H2 test isolation, default creds, Swagger prod guard) — PRs
-#721, #718, #709, #708, #707, merged 2026-07-24.
-705, 703 — CI pipeline hardening, scheduled-loop settings fix — PRs #706, #704,
-merged 2026-07-24.
-715, 713 — agent-loop lessons + changelog docs — PRs #716, #714, merged 2026-07-24.
-701 — ESLint circular crash fix — PR #702, merged 2026-07-23.
-651, 650, 648-649 and earlier — see git log / closed issues on GitHub.
+592 and many others (#591, #661, #671-675, #692-693, #699, #703-731 range) —
+completed 2026-07-24 through 2026-07-30, see git log / closed issues on GitHub for
+the full list; not hand-transcribed here per the lesson above.
 
 688 — CI/CD hardening umbrella issue — closed 2026-07-23 (scope split into
 671-675/661 above, each completed individually). A later cycle mistakenly reused
