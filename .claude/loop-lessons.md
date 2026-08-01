@@ -9,6 +9,36 @@ directly on main.
 
 ---
 
+## 2026-08-01 — Corrupted loop-state.md from two parallel Routines (issue #750)
+
+**What happened:** `.claude/loop-state.md` on `main` was found with a duplicated,
+malformed `## Completed` section (repeated 3 times, two copies were just orphaned
+`pr_url`/`blocked_reason` lines) and a `## Current` block claiming issue #592/PR
+#749 was still `pr_open` — two days after that PR had actually merged. Root cause:
+two Routines have been running against this repo in parallel since 2026-07-26 (the
+every-8h one from #728, and an older twice-daily one that couldn't be disabled via
+available tooling) — two independent processes doing read-modify-write on the same
+file with no locking produces exactly this kind of interleaved/duplicated content.
+Despite the corruption, the loop kept working overall (a long streak of clean
+merges, #700-#749) — this was a real but non-fatal bug, not something that stopped
+the loop.
+
+**Fix applied:** Cleaned up the file (removed duplication, reset `## Current` to
+idle since nothing was actually in flight — confirmed via a live GitHub check, zero
+open PRs at the time).
+
+**Lesson:** Don't trust `## Current`/`## Completed` blindly if they look
+inconsistent with GitHub reality (e.g. `status: pr_open` for a PR that's actually
+already merged, or a section header that appears more than once). At the start of
+a cycle (step 0/0.5), if `loop-state.md` looks malformed or its `Current` block
+references a PR/issue that GitHub shows as already closed/merged, treat that as
+corruption from a concurrent writer rather than real in-flight state — verify
+against GitHub directly (which is always the source of truth for issue/PR state
+per the 2026-07-26 lesson above) and self-heal the file rather than propagating
+the stale pointer forward. This can't be fully prevented without a real locking
+mechanism the loop doesn't have; the deeper fix is ensuring only one Routine runs
+against this repo at a time, which is outside what any single cycle can enforce.
+
 ## 2026-07-26 — Triage stalled on legacy backlog (issue #728)
 
 **What happened:** Two consecutive scheduled cycles (after the run that merged PR

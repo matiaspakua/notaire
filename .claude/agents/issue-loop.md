@@ -18,6 +18,15 @@ Schema:
 Always read this file at the start of each cycle.
 Always write to it before ending a cycle.
 
+**Sanity-check before trusting it (diagnosed 2026-08-01, issue #750):** if the file
+looks malformed (e.g. a section header appearing more than once) or its `## Current`
+block references a PR/issue, verify that reference against GitHub first —
+`pull_request_read`/`issue_read` on the referenced number. If GitHub shows it
+already merged/closed while the file still claims `pr_open`/`in_progress`, the file
+is stale (most likely from a concurrent writer, e.g. another Routine running against
+this repo at the same time). Reset `## Current` to idle and proceed with normal
+TRIAGE rather than trying to "finish" work that's actually already done.
+
 ## Loop condition
 Repeat until no open issues remain OR `status: blocked` is written.
 
