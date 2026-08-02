@@ -102,7 +102,7 @@ Package root: `com.licensis.notaire`
 | `jpa` | Legacy data-access — being replaced |
 | `config` | Spring configuration |
 
-**Frontend** (`frontend`): Next.js 15, React 19, TypeScript, Tailwind CSS.
+**Frontend** (`frontend`): Next.js 16, React 19, TypeScript, Tailwind CSS.
 - Design system: `src/theme/tokens.ts` (single source of truth).
 - Forms: `FormContainer → FormSection → FormField → FormActions`.
 

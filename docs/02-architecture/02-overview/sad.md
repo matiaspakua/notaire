@@ -103,7 +103,7 @@ El producto original era un sistema monolítico Java Swing que combinaba:
 1. **Evaluación y análisis**: documentar arquitectura legacy, casos de uso y datos.
 2. **Módulo compartido**: crear `notaire-shared` para DTOs y contratos comunes.
 3. **Backend REST**: desarrollar `backend-api` con Spring Boot 4, JPA/Hibernate y PostgreSQL.
-4. **Modernización del frontend**: desarrollar `frontend` con Next.js 15, TypeScript y Tailwind CSS.
+4. **Modernización del frontend**: desarrollar `frontend` con Next.js 16, TypeScript y Tailwind CSS.
 5. **Migración de datos**: implementar Flyway como sistema de versionado de schema (inicialmente con scripts `init-db` como base, ahora archivados en `docs/archive/init-db/`).
 6. **Deprecación**: eliminar el código legacy y el frontend Swing transicional.
 
@@ -112,7 +112,7 @@ El producto original era un sistema monolítico Java Swing que combinaba:
 Actualmente el repositorio contiene:
 
 - `backend-api/`: API REST Spring Boot 4 con `api`, `service`, `repository`, `negocio`, `config` y soporte de Spring Data JPA.
-- `frontend/`: aplicación web moderna en Next.js 15 que consume la API REST.
+- `frontend/`: aplicación web moderna en Next.js 16 que consume la API REST.
 - `notaire-shared/`: módulo compartido con DTOs, excepciones y contratos comunes.
 - `docs/archive/init-db/`: scripts PostgreSQL históricos (reemplazados por Flyway como fuente única de verdad).
 - `docker-compose.yml`: orquesta `postgres`, backend, frontend y herramientas de soporte.

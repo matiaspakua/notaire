@@ -22,7 +22,7 @@ docker-compose ps
 |---------|-----|-------------|
 | PostgreSQL | `localhost:5432` | Database (notaire DB) |
 | Backend API | `http://localhost:8080` | Spring Boot REST API |
-| Frontend | `http://localhost:3000` | Next.js 15 UI |
+| Frontend | `http://localhost:3000` | Next.js 16 UI |
 | pgAdmin | `http://localhost:5050` | Database management UI |
 
 ## Default Credentials

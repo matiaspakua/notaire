@@ -147,7 +147,7 @@ k3d (Kubernetes local)
 ### Stack Frontend
 
 ```
-Next.js 15 (App Router)
+Next.js 16 (App Router)
 ├── TypeScript
 ├── Tailwind CSS
 ├── shadcn/ui components
@@ -267,7 +267,7 @@ Cada issue debe tener:
 | Monitoring | Prometheus + Grafana | Metrics |
 | Tracing | OpenTelemetry + Jaeger | Distributed tracing |
 | Logging | ELK / Loki + Grafana | Log aggregation |
-| Frontend | Next.js 15 + TypeScript | Modern UI |
+| Frontend | Next.js 16 + TypeScript | Modern UI |
 | UI Library | shadcn/ui + Tailwind | Components |
 | Frontend Tests | Vitest + Testing Library | Unit tests |
 | E2E Tests | Playwright | Browser automation |
