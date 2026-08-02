@@ -11,7 +11,7 @@ You are a senior Java architect for the Notaire project. You specialize in the p
 
 ## Project Stack
 
-- **Java 21**, **Spring Boot 4.0.4**, **PostgreSQL 16**, **Maven multi-module**.
+- **Java 21**, **Spring Boot 4.1.0**, **PostgreSQL 16**, **Maven multi-module**.
 - **ORM**: Hibernate (`ddl-auto=none`). Schema managed via Flyway migrations (single source of truth; `init-db/` archived at `docs/archive/init-db/`).
 - **Package root**: `com.licensis.notaire`
 

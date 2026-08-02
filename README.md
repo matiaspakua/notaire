@@ -4,7 +4,7 @@
 <div align="center">
 
 [![Java](https://img.shields.io/badge/Java-21-%23ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.6-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.0-%236DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Next.js](https://img.shields.io/badge/Next.js-16-%23000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-%2361DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-%234169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -99,7 +99,7 @@ El sistema original era un **monolito Java 1.6 con Swing** que había servido fi
 
 **Notaire** es el resultado de una migración completa hacia una arquitectura moderna:
 
-- **Backend**: API REST con **Spring Boot 4.0.6** y **Java 21**
+- **Backend**: API REST con **Spring Boot 4.1.0** y **Java 21**
 - **Frontend Moderno**: **Next.js 16** con **React 19**, **TypeScript** y **Tailwind CSS 4**
 - **Cliente Transicional**: Swing refactorizado como REST client (coexistencia durante la migración)
 - **Base de Datos**: **PostgreSQL 16** con **Flyway** para migraciones versionadas
@@ -148,7 +148,7 @@ flowchart TD
   BROWSER["🌐 Navegador / Usuario<br/>:3000"]:::client
 
   %% ── BACKEND ──
-  subgraph BACKEND ["⚙️ Backend API — Spring Boot 4.0.6 · Java 21 · :8080"]
+  subgraph BACKEND ["⚙️ Backend API — Spring Boot 4.1.0 · Java 21 · :8080"]
     direction TB
 
     subgraph API ["API Layer"]
@@ -310,7 +310,7 @@ notaire/
 | Capa | Tecnología | Versión | Propósito |
 |:-----|:-----------|:--------|:----------|
 | **Runtime** | Java | 21 LTS | Plataforma principal del backend |
-| **Framework Backend** | Spring Boot | 4.0.6 | IoC, REST, Data JPA, Security, Actuator |
+| **Framework Backend** | Spring Boot | 4.1.0 | IoC, REST, Data JPA, Security, Actuator |
 | **API Documentation** | SpringDoc OpenAPI | 3.0.3 | Swagger UI interactiva |
 | **ORM** | Spring Data JPA / Hibernate | — | Persistencia y acceso a datos |
 | **Base de Datos** | PostgreSQL | 16 | Base de datos relacional principal |

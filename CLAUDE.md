@@ -50,7 +50,7 @@ See `.claude/rules/ai-agent-workflow.md` for complete workflow with:
 
 ## Project Overview
 
-Multi-module Maven project refactoring a Java Swing monolith to microservices. Spring Boot 4.0.4, Java 21, PostgreSQL 16.
+Multi-module Maven project refactoring a Java Swing monolith to microservices. Spring Boot 4.1.0, Java 21, PostgreSQL 16.
 
 **Modules:**
 - `backend-api` — Spring Boot REST API (main development target)

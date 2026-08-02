@@ -35,7 +35,7 @@ Welcome to the Notaire notarial management system documentation. This guide cove
 - **Data Model** — Entity definitions, relationships, schemas
 
 ### Technical Stack
-- **Backend**: Spring Boot 3.x, Java 21, PostgreSQL 16
+- **Backend**: Spring Boot 4.1.0, Java 21, PostgreSQL 16
 - **Frontend**: Next.js 15, React 19, TypeScript
 - **Infrastructure**: Docker, Kubernetes, Prometheus/Grafana, Loki
 - **Testing**: JUnit 5, Mockito, Playwright E2E

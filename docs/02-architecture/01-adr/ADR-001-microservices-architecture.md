@@ -26,7 +26,7 @@ El sistema Notaire era originalmente una aplicación monolítica desarrollada en
 
 Migrar a una arquitectura de tres capas con separación clara:
 
-1. **Backend REST API** (Spring Boot 4.0.4, Java 21, PostgreSQL 16)
+1. **Backend REST API** (Spring Boot 4.1.0, Java 21, PostgreSQL 16)
    - Centraliza toda lógica de negocio
    - Proporciona API REST estándar
    - Gestiona persistencia de datos
@@ -47,7 +47,7 @@ Migrar a una arquitectura de tres capas con separación clara:
    - Facilita versionado de contratos
 
 **Tecnologías elegidas:**
-- **Backend**: Spring Boot 4.0.4, Java 21
+- **Backend**: Spring Boot 4.1.0, Java 21
 - **Database**: PostgreSQL 16, Hibernate
 - **Build**: Maven 3.x
 - **Deploy**: Docker + Docker Compose
