@@ -67,6 +67,18 @@ Contains old planning documents and proposals that are no longer active.
 
 ---
 
+### ERROR-HANDLING-STRATEGY-code-standards.md — Superseded API Error Doc
+**Status**: 🔴 **SUPERSEDED** (as of 2026-08-02)
+
+Formerly `docs/03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md`.
+Described only the legacy ad-hoc `try/catch` error pattern and a narrower
+`{"error": "..."}` response shape, which conflicted with the parallel
+`docs/05-api/ERROR-HANDLING-STRATEGY.md` (issue #600).
+
+**What replaced it?**: [`docs/05-api/ERROR-HANDLING-STRATEGY.md`](../05-api/ERROR-HANDLING-STRATEGY.md) — merges both documents against the actual `GlobalExceptionHandler`/`ErrorResponse` implementation.
+
+---
+
 ### Other Archived Content
 
 Additional deprecated documents may be found here. When encountering archived documentation:

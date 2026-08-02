@@ -77,7 +77,7 @@
 **A**: See [03-development/01-setup/README.md](03-development/01-setup/README.md) — build commands section.
 
 ### Q: How do I handle errors?
-**A**: [03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md](03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md) — patterns and anti-patterns.
+**A**: [05-api/ERROR-HANDLING-STRATEGY.md](05-api/ERROR-HANDLING-STRATEGY.md) — patterns and anti-patterns.
 
 ### Q: How do database migrations work?
 **A**: [03-development/04-code-standards/DATABASE-MIGRATIONS.md](03-development/04-code-standards/DATABASE-MIGRATIONS.md) — Flyway guide.
@@ -209,7 +209,7 @@
 1. Check backend logs: `bash scripts/logs.sh backend`
 2. Check database: Is it accessible? Are migrations applied?
 3. Check recent PRs that touched the endpoint
-4. See [03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md](03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md)
+4. See [05-api/ERROR-HANDLING-STRATEGY.md](05-api/ERROR-HANDLING-STRATEGY.md)
 
 ### Q: Performance is slow. What do I check?
 **A**:
