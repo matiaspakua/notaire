@@ -37,7 +37,7 @@ Use this guide to find exactly what you need.
 ### API Documentation
 - **I need REST API reference** → [05-api/REST-API-REFERENCE.md](05-api/REST-API-REFERENCE.md)
 - **I need API examples** → [05-api/](05-api/) (browse examples)
-- **I need error handling details** → [03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md](03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md)
+- **I need error handling details** → [05-api/ERROR-HANDLING-STRATEGY.md](05-api/ERROR-HANDLING-STRATEGY.md)
 
 ### Learning & Onboarding
 - **I'm new to the project** → [GETTING-STARTED.md](GETTING-STARTED.md)

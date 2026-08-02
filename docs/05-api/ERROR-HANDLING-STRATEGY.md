@@ -1,129 +1,158 @@
 # API Error Handling Strategy
 
-This document defines the error response format, HTTP status code mapping, and error-handling patterns for the Notaire REST API.
+This document defines the error response format, HTTP status code mapping, and
+error-handling patterns for the Notaire REST API. It is the single canonical
+source for this topic — see the note at the bottom for the prior duplicate.
 
-## Error response format
+## Error response format (`GlobalExceptionHandler` / `ErrorResponse`)
 
-All error responses use a consistent JSON structure:
+Controllers that throw `NotaireException` (or its subclasses
+`ResourceNotFoundException`, `BusinessValidationException`) or trigger Bean
+Validation (`@Valid`/`@Validated`) get a response built by
+`com.licensis.notaire.config.GlobalExceptionHandler` from the
+`com.licensis.notaire.exception.ErrorResponse` DTO:
 
 ```json
 {
-  "error": "RESOURCE_NOT_FOUND",
+  "timestamp": "2026-06-10T14:00:00.123456",
+  "status": 404,
+  "error": "Not Found",
   "message": "GestionDeEscritura with id 42 not found",
-  "timestamp": "2026-06-10T14:00:00Z",
-  "path": "/api/v1/gestiones/42",
-  "status": 404
+  "path": "/api/v1/gestiones/42"
 }
 ```
 
 | Field | Type | Description |
-|-------|------|-------------|
-| `error` | string | Machine-readable error code (UPPER_SNAKE_CASE) |
-| `message` | string | Human-readable description of the problem |
-| `timestamp` | ISO-8601 | When the error occurred |
-| `path` | string | Request URI that caused the error |
+|-------|------|--------------|
+| `timestamp` | string | `LocalDateTime.now().toString()` — **not** offset/`Z`-suffixed ISO-8601, no timezone |
 | `status` | int | HTTP status code (mirrors the response code) |
+| `error` | string | The HTTP reason phrase (e.g. `"Not Found"`, `"Bad Request"`) — **not** a machine-readable code like `RESOURCE_NOT_FOUND`; there is no error-code taxonomy today |
+| `message` | string | Human-readable description of the problem |
+| `path` | string | Request URI that caused the error |
+| `traceId`, `details` | string, map | Declared on the DTO but never populated by any handler today — reserved for future use |
 
 ## HTTP status code mapping
 
-| Scenario | Code | Error code |
-|----------|------|------------|
-| Resource not found | 404 | `RESOURCE_NOT_FOUND` |
-| Validation failed (missing/invalid field) | 400 | `VALIDATION_ERROR` |
-| Constraint violation (FK, unique) | 409 | `CONSTRAINT_VIOLATION` |
-| Unauthorized (future: token missing) | 401 | `UNAUTHORIZED` |
-| Forbidden (future: insufficient role) | 403 | `FORBIDDEN` |
-| Unexpected server error | 500 | `INTERNAL_ERROR` |
-| Method not allowed | 405 | `METHOD_NOT_ALLOWED` |
+| Scenario | Code | Thrown by |
+|----------|------|-----------|
+| Resource not found | 404 | `ResourceNotFoundException` |
+| Business rule violation | 400 | `BusinessValidationException` |
+| Bean Validation failure (`@Valid` body, `@Validated` params) | 400 | `MethodArgumentNotValidException` / `ConstraintViolationException` |
+| Any other `NotaireException` subclass | per `ex.getStatusCode()` | `NotaireException` |
+| Unexpected server error | 500 | any other `Exception` |
 
-## Current implementation patterns
+## Known gap: most controllers don't go through `GlobalExceptionHandler` yet
 
-Controllers follow a consistent try/catch pattern:
+As of this writing, only a handful of controllers actually throw
+`NotaireException`/`ResourceNotFoundException`/`BusinessValidationException`.
+The remaining majority (tracked in issue **#579**) use ad-hoc
+`try { ... } catch (Exception e) { ... }` blocks that bypass
+`GlobalExceptionHandler` entirely and return inconsistent bodies — anything
+from a raw `e.getMessage()` string to a bare `Map.of("error", "...")`, with no
+`status`/`timestamp`/`path` envelope. **Do not assume every endpoint returns
+the `ErrorResponse` shape above** — check the specific controller, or treat
+#579 as the tracking issue for closing this gap.
+
+### Legacy ad-hoc pattern (still the majority — see #579)
 
 ```java
-@GetMapping("/{id}")
-public ResponseEntity<?> getById(@PathVariable Integer id) {
-    return repo.findById(id)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-}
-
 @PostMapping
-public ResponseEntity<?> create(@RequestBody Entity entity) {
+public ResponseEntity<Object> create(@RequestBody Entity entity) {
     try {
         return ResponseEntity.status(HttpStatus.CREATED).body(repo.save(entity));
     } catch (Exception e) {
-        log.error("Failed to create entity", e);
-        return ResponseEntity.internalServerError().build();
-    }
-}
-
-@DeleteMapping("/{id}")
-public ResponseEntity<Void> delete(@PathVariable Integer id) {
-    if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-    try {
-        repo.deleteById(id);
-        return ResponseEntity.noContent().build();
-    } catch (Exception e) {
-        log.error("Failed to delete id {}", id, e);
-        return ResponseEntity.status(HttpStatus.CONFLICT).build(); // FK constraint
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 }
 ```
 
-## Validation error format
+### Target pattern (new/refactored code should use this)
 
-When `@Valid` / `@Validated` rejects input, the response must include field-level detail:
+```java
+@GetMapping("/{id}")
+public ResponseEntity<Entity> getById(@PathVariable Integer id) {
+    return ResponseEntity.ok(repo.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Entity with id " + id + " not found")));
+}
+```
+
+`GlobalExceptionHandler` converts `NotaireException`/`ResourceNotFoundException`/
+`BusinessValidationException` into the `ErrorResponse` envelope automatically —
+controllers using this pattern don't need their own try/catch for these cases.
+
+## Bean Validation error format
+
+When `@Valid`/`@Validated` rejects input, `GlobalExceptionHandler` still
+returns the same `ErrorResponse` shape, with `message` holding a
+semicolon-joined `field: reason` list (see
+`GlobalExceptionHandler.handleMethodArgumentNotValid` /
+`handleConstraintViolationException`):
 
 ```json
 {
-  "error": "VALIDATION_ERROR",
-  "message": "Request validation failed",
-  "timestamp": "2026-06-10T14:00:00Z",
-  "path": "/api/v1/gestiones",
+  "timestamp": "2026-06-10T14:00:00.123456",
   "status": 400,
-  "violations": [
-    { "field": "nombre", "message": "must not be blank" },
-    { "field": "fechaInicio", "message": "must not be null" }
-  ]
-}
-```
-
-To produce this, add a `@RestControllerAdvice` that catches `MethodArgumentNotValidException`:
-
-```java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(
-            MethodArgumentNotValidException ex, HttpServletRequest req) {
-        List<Map<String, String>> violations = ex.getBindingResult().getFieldErrors().stream()
-            .map(fe -> Map.of("field", fe.getField(), "message", fe.getDefaultMessage()))
-            .toList();
-        return ResponseEntity.badRequest().body(Map.of(
-            "error", "VALIDATION_ERROR",
-            "message", "Request validation failed",
-            "path", req.getRequestURI(),
-            "violations", violations
-        ));
-    }
+  "error": "Bad Request",
+  "message": "nombre: must not be blank; fechaInicio: must not be null",
+  "path": "/api/v1/gestiones"
 }
 ```
 
 ## Login endpoint special case
 
-The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 in all cases, using the `valido` field to signal success or failure. This intentional design prevents HTTP-level information leakage (an attacker cannot distinguish "user not found" from "wrong password" by status code alone).
+The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 in all
+cases (credential failure and lockout included), using the `valido` field to
+signal success or failure. This intentional design prevents HTTP-level
+information leakage (an attacker cannot distinguish "user not found" from
+"wrong password" by status code alone). This is a deliberate exception to the
+mapping above — do not "fix" it to return 401/423 without a reviewed API
+contract change (see issues #685/#686, which document why an autonomous test
+addition asserting 401/423 here would contradict the current, intentional
+contract).
 
 ## Error logging standards
 
 | Severity | When to use |
 |----------|-------------|
 | `log.error(msg, e)` | Unexpected exceptions (500-level) |
-| `log.warn(msg)` | Business rule violations (wrong password, inactive user) |
+| `log.warn(msg)` | Business rule violations (wrong password, inactive user, 404/409) |
 | `log.debug(msg)` | Diagnostic detail (query results, param values) |
 
-Never log passwords, tokens, or PII. Always include the entity ID and operation in the message context.
+Never log passwords, tokens, or PII. Always include the entity ID and
+operation in the message context.
+
+## Frontend error handling
+
+The React frontend handles error responses via React Query mutation
+callbacks. `apiPost`/`apiPut`/`apiDelete` in `frontend/src/lib/api-client.ts`
+throw `Error` objects on any non-2xx response; callers branch on the message,
+not on structured fields, since many endpoints don't yet return the
+`ErrorResponse` envelope (see the gap above):
+
+```typescript
+try {
+  await mutation.mutateAsync(data);
+  toast.success("Operación exitosa");
+} catch (error) {
+  const message = error instanceof Error ? error.message : "Error desconocido";
+  toast.error(`Error: ${message}`);
+}
+```
+
+## Optimistic locking
+
+Entities with concurrent modification risk use `@Version`:
+
+```java
+@Version
+@Column(name = "version")
+private int version = 0;
+```
+
+**Key rule**: never pass the raw client request body directly to an update
+method — always fetch the current entity first and apply changes onto it, so
+the correct `@Version` is carried. See `PlantillaPresupuestoController.java`
+for the reference implementation (fix for issue #340).
 
 ## Testing error paths
 
@@ -140,3 +169,12 @@ See `AdditionalControllersTest` for the established test pattern.
 - `docs/04-operations/03-security/INPUT-VALIDATION-STRATEGY.md`
 - `docs/04-operations/03-security/API-AUTHENTICATION-GUIDE.md`
 - `.claude/rules/programming.md` — Error Handling section
+- Issue #579 — tracks migrating the remaining ad-hoc controllers onto `GlobalExceptionHandler`
+
+---
+
+_This document merges and supersedes the former
+`docs/03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md`, which
+described only the legacy ad-hoc pattern above and used a different, narrower
+response shape (`{"error": "..."}`). That file is archived at
+`docs/archive/ERROR-HANDLING-STRATEGY-code-standards.md`. See issue #600._
