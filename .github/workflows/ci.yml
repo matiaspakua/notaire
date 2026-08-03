@@ -554,11 +554,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Downloading latest Playwright report from playwright-e2e.yml..."
+          echo "Downloading latest Playwright report..."
           mkdir -p github-page/public/playwright
+          # `gh run download` has no --workflow flag (confirmed against the CLI
+          # manual, issue #758) -- it was silently failing to parse and always
+          # falling into the placeholder branch below. Without a run-id, --name
+          # alone already downloads the latest artifact matching that name across
+          # the whole repo, which is what we want here.
           if gh run download --repo "${{ github.repository }}" \
             --name playwright-report \
-            --workflow playwright-e2e.yml \
             --dir playwright-report-dl 2>/dev/null; then
             if [ -d "playwright-report-dl" ] && [ "$(ls -A playwright-report-dl 2>/dev/null)" ]; then
               cp -r playwright-report-dl/* github-page/public/playwright/
@@ -574,59 +578,25 @@ jobs:
               > github-page/public/playwright/index.html
           fi
 
+      - name: Download frontend coverage report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Downloading latest frontend unit test coverage..."
+          if gh run download --repo "${{ github.repository }}" \
+            --name frontend-unit-test-report \
+            --dir frontend-coverage-dl 2>/dev/null; then
+            echo "Downloaded frontend coverage artifact"
+          else
+            echo "No frontend coverage artifact available yet"
+          fi
+
       - name: Generate metrics.json from fresh data
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          REPO="${{ github.repository }}"
-          COMMIT_COUNT=$(git rev-list --count HEAD)
-          PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || echo "0")
-          MD_COUNT=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | wc -l | tr -d ' ')
-          BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
-          FRONTEND_TEST_COUNT=$(find frontend/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
-          TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT ))
-          ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
-          UC_COUNT=$(find docs/01-business/02-use-cases -type f -name "CU*.md" 2>/dev/null | wc -l | tr -d ' ')
-          RF_FILE="docs/01-business/01-requirements/01_RF - Requerimientos Funcionales/requerimientos.csv"
-          RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | wc -l | tr -d ' ')
-          DC1=$(yq '.services | length' docker-compose.yml 2>/dev/null || echo "0")
-          DC2=$(yq '.services | length' infra/docker-compose.yml 2>/dev/null || echo "0")
-          DOCKER_COUNT=$(( DC1 + DC2 ))
-          GRAFANA_COUNT=$(find infra/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-          CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
-          FIRST_COMMIT=$(git log --reverse --format="%aI" | head -1)
-
-          COVERAGE_FILE="coverage-snapshot/coverage-snapshot.json"
-          if [ -f "$COVERAGE_FILE" ]; then
-            COVERAGE_JSON=$(cat "$COVERAGE_FILE")
-          else
-            COVERAGE_JSON='{"backendInstruction":0,"backendBranch":0,"frontendComponent":0,"e2eTests":0,"apiEndpoints":0,"lastUpdated":"unknown"}'
-          fi
-
-          mkdir -p github-page/public
-          GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          {
-            printf '%s\n' '{'
-            printf '  "generatedAt": "%s",\n' "${GENERATED_AT}"
-            printf '  "commits": %s,\n' "${COMMIT_COUNT}"
-            printf '  "pullRequests": %s,\n' "${PR_COUNT}"
-            printf '  "markdownFiles": %s,\n' "${MD_COUNT}"
-            printf '  "testClasses": %s,\n' "${TEST_COUNT}"
-            printf '  "adrCount": %s,\n' "${ADR_COUNT}"
-            printf '  "useCases": %s,\n' "${UC_COUNT}"
-            printf '  "functionalRequirements": %s,\n' "${RF_COUNT}"
-            printf '  "dockerServices": %s,\n' "${DOCKER_COUNT}"
-            printf '  "grafanaDashboards": %s,\n' "${GRAFANA_COUNT}"
-            printf '  "aiTools": 4,\n'
-            printf '  "contributors": %s,\n' "${CONTRIBUTORS}"
-            printf '  "firstCommitDate": "%s",\n' "${FIRST_COMMIT}"
-            printf '  "coverage": %s\n' "${COVERAGE_JSON}"
-            printf '%s\n' '}'
-          } > github-page/public/metrics.json
-
-          echo "=== metrics.json ==="
-          cat github-page/public/metrics.json
+          GH_REPO: ${{ github.repository }}
+        run: bash scripts/generate-github-page-metrics.sh
 
       - name: Install dependencies
         working-directory: github-page

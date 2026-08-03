@@ -1,44 +1,47 @@
 "use client";
 import { useEffect, useRef } from "react";
+import type { SiteMetrics } from "@/lib/metrics";
 
-const facts = [
-  {
-    emoji: "😴",
-    title: "3 Years of Sleep",
-    desc: "The project was dormant from mid-2015 to late 2018. Not a single commit. Then life happened, then AI happened.",
-    color: "#64748b",
-  },
-  {
-    emoji: "🤯",
-    title: "226 commits in 60 days",
-    desc: "March–April 2026: the most intense development sprint. AI agents wrote tests, reviewed code, and updated docs continuously.",
-    color: "var(--ai-purple)",
-  },
-  {
-    emoji: "🏆",
-    title: "159 / 159 PRs Merged",
-    desc: "100% PR merge rate. Every single pull request made it in — thanks to mandatory TDD, E2E coverage, and automated quality gates.",
-    color: "var(--spring-green)",
-  },
-  {
-    emoji: "📚",
-    title: "545 Markdown Files",
-    desc: "Documentation grew from zero to 545 .md files. Use cases, ADRs, guides, runbooks, API references — all kept in sync by AI.",
-    color: "#f59e0b",
-  },
-  {
-    emoji: "☕",
-    title: "Java 1.6 → Java 21",
-    desc: "15 major Java versions. From brittle Swing event handlers to records, sealed classes, and virtual threads.",
-    color: "var(--java-orange)",
-  },
-  {
-    emoji: "🧪",
-    title: "Zero Tests → 80% Coverage",
-    desc: "The original project had no tests at all. Today, JaCoCo enforces an 80% coverage ratchet and CI fails if it drops.",
-    color: "var(--ai-cyan)",
-  },
-];
+function buildFacts(metrics: SiteMetrics) {
+  return [
+    {
+      emoji: "😴",
+      title: "3 Years of Sleep",
+      desc: "The project was dormant from mid-2015 to late 2018. Not a single commit. Then life happened, then AI happened.",
+      color: "#64748b",
+    },
+    {
+      emoji: "🤯",
+      title: "226 commits in 60 days",
+      desc: "March–April 2026: the most intense development sprint. AI agents wrote tests, reviewed code, and updated docs continuously.",
+      color: "var(--ai-purple)",
+    },
+    {
+      emoji: "🏆",
+      title: `${metrics.pullRequests}+ Pull Requests Merged`,
+      desc: "A steady, ongoing stream of merged PRs — thanks to mandatory TDD, E2E coverage, and automated quality gates that never let a red build through.",
+      color: "var(--spring-green)",
+    },
+    {
+      emoji: "📚",
+      title: `${metrics.markdownFiles} Markdown Files`,
+      desc: "Documentation grew from zero to hundreds of .md files. Use cases, ADRs, guides, runbooks, API references — all kept in sync by AI.",
+      color: "#f59e0b",
+    },
+    {
+      emoji: "☕",
+      title: "Java 1.6 → Java 21",
+      desc: "15 major Java versions. From brittle Swing event handlers to records, sealed classes, and virtual threads.",
+      color: "var(--java-orange)",
+    },
+    {
+      emoji: "🧪",
+      title: "Zero Tests → JaCoCo-Enforced",
+      desc: "The original project had no tests at all. Today, JaCoCo enforces a rising coverage ratchet and CI fails if it drops.",
+      color: "var(--ai-cyan)",
+    },
+  ];
+}
 
 const challenges = [
   {
@@ -65,9 +68,16 @@ const challenges = [
     desc: "Workflow rule: every GitHub issue must reference a Use Case (CU-XX). After auditing all 233 open issues, 131 were missing this link. Batch-fixed via gh CLI scripting.",
     color: "#06b6d4",
   },
+  {
+    title: "The Autonomous Loop Corrupted Its Own Memory",
+    severity: "MED",
+    desc: "Two scheduled AI agent Routines ran against the repo in parallel, both writing to the same loop-state.md with no locking — it got corrupted, and a stale pointer claimed an already-merged PR was still open two days later. Fixed by making the loop verify its own memory against live GitHub state before trusting it, instead of assuming the file is always right.",
+    color: "#a78bfa",
+  },
 ];
 
-export function FunFacts() {
+export function FunFacts({ metrics }: { metrics: SiteMetrics }) {
+  const facts = buildFacts(metrics);
   const factsRef = useRef<HTMLDivElement>(null);
   const challengesRef = useRef<HTMLDivElement>(null);
 

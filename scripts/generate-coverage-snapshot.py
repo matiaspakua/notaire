@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Generate coverage-snapshot.json from JaCoCo XML report."""
+"""Generate coverage-snapshot.json (backend numbers only) from JaCoCo XML report.
+
+Deliberately fails loudly (nonzero exit, no output file) rather than writing
+fabricated numbers when the JaCoCo XML is missing -- a prior version wrote
+hardcoded 0% on failure, which silently deployed a misleading "0% coverage"
+to the live GitHub Pages site while the actual coverage was 83%+ (issue #758).
+The caller (CI) is responsible for falling back to the last known-good
+deployed values when this script fails, instead of trusting a fabricated
+default.
+"""
 
 import xml.etree.ElementTree as ET
 import json
@@ -14,20 +23,8 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, "coverage-snapshot.json")
 
 def main():
     if not os.path.isfile(JACOCO_XML):
-        print(f"JaCoCo XML not found: {JACOCO_XML}", file=sys.stderr)
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        snapshot = {
-            "backendInstruction": 0,
-            "backendBranch": 0,
-            "frontendComponent": 45,
-            "e2eTests": 85,
-            "apiEndpoints": 78,
-            "lastUpdated": datetime.date.today().isoformat(),
-        }
-        with open(OUTPUT_FILE, "w") as f:
-            json.dump(snapshot, f, indent=2)
-        print("Snapshot (empty):", json.dumps(snapshot))
-        return
+        print(f"JaCoCo XML not found: {JACOCO_XML} -- not writing a snapshot", file=sys.stderr)
+        return 1
 
     tree = ET.parse(JACOCO_XML)
     root = tree.getroot()
@@ -40,12 +37,13 @@ def main():
         pct = round(covered * 100 / total) if total > 0 else 0
         counters[ct] = pct
 
+    if "INSTRUCTION" not in counters or "BRANCH" not in counters:
+        print("JaCoCo XML present but missing INSTRUCTION/BRANCH counters -- not writing a snapshot", file=sys.stderr)
+        return 1
+
     snapshot = {
-        "backendInstruction": counters.get("INSTRUCTION", 0),
-        "backendBranch": counters.get("BRANCH", 0),
-        "frontendComponent": 45,
-        "e2eTests": 85,
-        "apiEndpoints": 78,
+        "backendInstruction": counters["INSTRUCTION"],
+        "backendBranch": counters["BRANCH"],
         "lastUpdated": datetime.date.today().isoformat(),
     }
 
@@ -54,7 +52,8 @@ def main():
         json.dump(snapshot, f, indent=2)
 
     print("Snapshot:", json.dumps(snapshot))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

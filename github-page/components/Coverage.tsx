@@ -205,16 +205,16 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
               <h4 className="text-cyan-400 text-sm font-semibold mb-4">Backend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Unit Tests (JUnit 5)</span>
-                  <span className="text-cyan-400 font-mono">{metrics.testClasses} classes</span>
+                  <span className="text-slate-400">Unit + Integration (JUnit 5)</span>
+                  <span className="text-cyan-400 font-mono">{metrics.backendTestClasses} classes</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Integration Tests (H2 DB)</span>
-                  <span className="text-cyan-400 font-mono">H2 + Pg</span>
+                  <span className="text-slate-400">Integration Tests</span>
+                  <span className="text-cyan-400 font-mono">H2 + Postgres</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">JaCoCo Enforcement</span>
-                  <span className="text-cyan-400 font-mono">28% floor</span>
+                  <span className="text-cyan-400 font-mono">70% line / 25% branch floor</span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-slate-400">Target Coverage</span>
@@ -227,20 +227,16 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
               <h4 className="text-green-400 text-sm font-semibold mb-4">Frontend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Component Tests (React)</span>
-                  <span className="text-green-400 font-mono">3+ suites</span>
+                  <span className="text-slate-400">Component Coverage (Vitest)</span>
+                  <span className="text-green-400 font-mono">{metrics.coverage.frontendComponent}%</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">E2E Tests (Playwright)</span>
-                  <span className="text-green-400 font-mono">28 suites</span>
+                  <span className="text-slate-400">E2E Suites (Playwright)</span>
+                  <span className="text-green-400 font-mono">{metrics.frontendTestClasses} spec files</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">E2E Test Cases</span>
-                  <span className="text-green-400 font-mono">163 tests</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span className="text-slate-400">API Tests (Bruno)</span>
-                  <span className="text-green-400 font-mono">86 tests</span>
+                  <span className="text-slate-400">API Tests</span>
+                  <span className="text-green-400 font-mono">{metrics.apiTestFiles} request files</span>
                 </li>
               </ul>
             </div>

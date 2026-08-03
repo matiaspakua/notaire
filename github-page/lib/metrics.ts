@@ -16,6 +16,9 @@ export interface SiteMetrics {
   pullRequests: number;
   markdownFiles: number;
   testClasses: number;
+  backendTestClasses: number;
+  frontendTestClasses: number;
+  apiTestFiles: number;
   adrCount: number;
   useCases: number;
   functionalRequirements: number;
@@ -33,6 +36,9 @@ const DEFAULTS: SiteMetrics = {
   pullRequests: 210,
   markdownFiles: 260,
   testClasses: 422,
+  backendTestClasses: 300,
+  frontendTestClasses: 122,
+  apiTestFiles: 99,
   adrCount: 18,
   useCases: 96,
   functionalRequirements: 112,

@@ -39,11 +39,17 @@ jobs:
       - name: Run tests with coverage
         run: |
           echo "Running tests to generate JaCoCo reports..."
-          mvn clean test jacoco:report -pl backend-api -am -q 2>/dev/null || true
+          if ! mvn clean test jacoco:report -pl backend-api -am -q; then
+            echo "::warning::mvn test failed -- coverage snapshot will fall back to last deployed values"
+          fi
 
       - name: Generate coverage snapshot
         run: |
-          python3 scripts/generate-coverage-snapshot.py
+          # generate-coverage-snapshot.py exits nonzero and writes nothing when
+          # jacoco.xml is missing (issue #758) -- that's expected here if the
+          # mvn run above failed; the shared metrics script falls back to the
+          # last deployed values in that case rather than fabricating zeros.
+          python3 scripts/generate-coverage-snapshot.py || true
           if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
             mkdir -p jacoco-report
             cp -r backend-api/target/site/jacoco/* jacoco-report/
@@ -68,11 +74,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Downloading latest Playwright report from playwright-e2e.yml..."
+          echo "Downloading latest Playwright report..."
           mkdir -p github-page/public/playwright
+          # `gh run download` has no --workflow flag (confirmed against the CLI
+          # manual, issue #758) -- it was silently failing to parse and always
+          # falling into the placeholder branch below. Without a run-id, --name
+          # alone already downloads the latest artifact matching that name across
+          # the whole repo, which is what we want here.
           if gh run download --repo "${{ github.repository }}" \
             --name playwright-report \
-            --workflow playwright-e2e.yml \
             --dir playwright-report-dl 2>/dev/null; then
             if [ -d "playwright-report-dl" ] && [ "$(ls -A playwright-report-dl 2>/dev/null)" ]; then
               cp -r playwright-report-dl/* github-page/public/playwright/
@@ -88,57 +98,26 @@ jobs:
               > github-page/public/playwright/index.html
           fi
 
+      - name: Download frontend coverage report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Downloading latest frontend unit test coverage..."
+          if gh run download --repo "${{ github.repository }}" \
+            --name frontend-unit-test-report \
+            --dir frontend-coverage-dl 2>/dev/null; then
+            echo "Downloaded frontend coverage artifact"
+          else
+            echo "No frontend coverage artifact available yet"
+          fi
+
       # ── Generate metrics.json ──
       - name: Generate metrics.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          REPO="${{ github.repository }}"
-          COMMIT_COUNT=$(git rev-list --count HEAD)
-          PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || echo "0")
-          MD_COUNT=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | wc -l | tr -d ' ')
-          BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
-          FRONTEND_TEST_COUNT=$(find frontend/tests -name "*.spec.*" 2>/dev/null | wc -l | tr -d ' ')
-          TEST_COUNT=$(( BACKEND_TEST_COUNT + FRONTEND_TEST_COUNT ))
-          ADR_COUNT=$(find docs -name "ADR-*.md" 2>/dev/null | wc -l | tr -d ' ')
-          UC_COUNT=$(find docs/01-business/02-use-cases -type f -name "CU*.md" 2>/dev/null | wc -l | tr -d ' ')
-          RF_FILE="docs/01-business/01-requirements/01_RF - Requerimientos Funcionales/requerimientos.csv"
-          RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | wc -l | tr -d ' ')
-          DC1=$(yq '.services | length' docker-compose.yml 2>/dev/null || echo "0")
-          DC2=$(yq '.services | length' infra/docker-compose.yml 2>/dev/null || echo "0")
-          DOCKER_COUNT=$(( DC1 + DC2 ))
-          GRAFANA_COUNT=$(find infra/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
-          CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
-          FIRST_COMMIT=$(git log --reverse --format="%aI" | head -1)
-
-          COVERAGE_FILE="coverage-snapshot/coverage-snapshot.json"
-          if [ -f "$COVERAGE_FILE" ]; then
-            COVERAGE_JSON=$(cat "$COVERAGE_FILE")
-          else
-            COVERAGE_JSON='{"backendInstruction":0,"backendBranch":0,"frontendComponent":0,"e2eTests":0,"apiEndpoints":0,"lastUpdated":"unknown"}'
-          fi
-
-          mkdir -p github-page/public
-          GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          cat > github-page/public/metrics.json << METRICS_EOF
-          {
-            "generatedAt": "${GENERATED_AT}",
-            "commits": ${COMMIT_COUNT},
-            "pullRequests": ${PR_COUNT},
-            "markdownFiles": ${MD_COUNT},
-            "testClasses": ${TEST_COUNT},
-            "adrCount": ${ADR_COUNT},
-            "useCases": ${UC_COUNT},
-            "functionalRequirements": ${RF_COUNT},
-            "dockerServices": ${DOCKER_COUNT},
-            "grafanaDashboards": ${GRAFANA_COUNT},
-            "aiTools": 4,
-            "contributors": ${CONTRIBUTORS},
-            "firstCommitDate": "${FIRST_COMMIT}",
-            "coverage": ${COVERAGE_JSON}
-          }
-          METRICS_EOF
+          GH_REPO: ${{ github.repository }}
+        run: bash scripts/generate-github-page-metrics.sh
 
       - name: Install dependencies
         working-directory: github-page

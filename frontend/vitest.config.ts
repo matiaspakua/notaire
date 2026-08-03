@@ -12,7 +12,10 @@ export default defineConfig({
     exclude: ["tests/e2e/**", "node_modules/**"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "html", "lcov"],
+      // json-summary produces coverage/coverage-summary.json, which the
+      // GitHub Pages metrics pipeline reads for a real frontend coverage
+      // number instead of a hardcoded constant (issue #758).
+      reporter: ["text", "html", "lcov", "json-summary"],
       reportsDirectory: "./coverage",
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
