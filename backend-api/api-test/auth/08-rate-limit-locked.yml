@@ -1,0 +1,37 @@
+info:
+  name: Rate limit - account locked (429)
+  type: http
+  seq: 8
+  description: |-
+      ## Login rate limiting (issue #685) — 6th attempt, account now locked
+      The backend returns HTTP 429 (Too Many Requests) for a locked account —
+      see `UsuarioController.login()` — not 423 (Locked) as originally assumed
+      when this issue was filed. This test asserts the actual, already
+      integration-tested behavior (`LoginRateLimitIntegrationTest`).
+      Unlocking after the lockout duration elapses is covered at the unit level
+      (`LoginAttemptServiceTest`, injectable clock) rather than here: the
+      default lockout duration is 15 minutes, which is impractical to wait out
+      in an HTTP-level/CI test.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "{{rate_limit_user}}", "contrasenia": "wrong" }
+  headers:
+    - name: Content-Type
+      value: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 429 (Too Many Requests)", function () { expect(res.getStatus()).to.equal(429); });
+          test("valido is false", function () { expect(res.getBody().valido).to.equal(false); });
+          test("Response has an error message", function () {
+            expect(res.getBody()).to.have.property('message');
+            expect(res.getBody().message).to.be.a('string').that.is.not.empty;
+          });
+          test("No JWT token is issued", function () {
+            expect(res.getBody()).to.not.have.property('token');
+          });
