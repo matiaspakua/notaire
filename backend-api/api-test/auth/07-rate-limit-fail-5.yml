@@ -1,0 +1,29 @@
+info:
+  name: Rate limit - failed attempt 5/5 (reaches max-attempts)
+  type: http
+  seq: 7
+  description: |-
+      ## Login rate limiting (issue #685) — failed attempt 5 of 5
+      This is the attempt that reaches `security.login.max-attempts` (default 5).
+      The lockout is recorded server-side AFTER this response is sent, so this
+      request itself still observes the normal 200/valido:false outcome — the
+      lockout only becomes externally visible on the NEXT request (see
+      `08-rate-limit-locked.yml`).
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "{{rate_limit_user}}", "contrasenia": "wrong" }
+  headers:
+    - name: Content-Type
+      value: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 (lockout recorded after this response)", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("valido is false", function () { expect(res.getBody().valido).to.equal(false); });

@@ -1,0 +1,21 @@
+info:
+  name: Rate limit - failed attempt 3/5
+  type: http
+  seq: 5
+  description: "## Login rate limiting (issue #685) — failed attempt 3 of 5"
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "{{rate_limit_user}}", "contrasenia": "wrong" }
+  headers:
+    - name: Content-Type
+      value: application/json
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 (not yet locked)", function () { expect(res.getStatus()).to.equal(200); });
+          test("valido is false", function () { expect(res.getBody().valido).to.equal(false); });

@@ -1,0 +1,27 @@
+info:
+  name: Rate limit - failed attempt 1/5
+  type: http
+  seq: 3
+  description: |-
+      ## Login rate limiting (issue #685) — failed attempt 1 of 5
+      Uses a dedicated, non-existent username so this scenario never touches the
+      shared `admin` account used by other requests in this suite.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        { "nombre": "{{rate_limit_user}}", "contrasenia": "wrong" }
+  headers:
+    - name: Content-Type
+      value: application/json
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('rate_limit_user', 'rate-limit-test-user-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 200 (not yet locked)", function () { expect(res.getStatus()).to.equal(200); });
+          test("valido is false", function () { expect(res.getBody().valido).to.equal(false); });
