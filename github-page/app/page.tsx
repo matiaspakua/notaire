@@ -30,7 +30,7 @@ export default function Home() {
           <AITools />
           <Architecture />
           <InfraStack />
-          <FunFacts />
+          <FunFacts metrics={metrics} />
           <Coverage metrics={metrics} />
           <Stats metrics={metrics} />
         </main>
