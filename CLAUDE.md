@@ -197,7 +197,7 @@ Package root: `com.licensis.notaire`
 
 ## Frontend Architecture (`frontend`)
 
-**Stack:** Next.js 15, React 19, TypeScript, Tailwind CSS
+**Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS
 
 **Key Directories:**
 - `src/components/ui/` — Base UI components (Button, Input, Card, etc.)

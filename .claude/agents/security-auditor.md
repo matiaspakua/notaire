@@ -18,7 +18,7 @@ You are a security expert for the Notaire project. You audit the Spring Boot bac
 ## Project Context
 
 - **Backend**: Spring Boot 4.1.0, Java 21, PostgreSQL 16, Spring Security, JPA/Hibernate.
-- **Frontend**: Next.js 15, React 19, TypeScript.
+- **Frontend**: Next.js 16, React 19, TypeScript.
 - **Auth**: JWT-based; `AuditoriaAspect` attributes audit records from the authenticated JWT identity (`SecurityContextHolder`), never from a client-supplied header. Audit trail stored in `registro_auditoria`.
 - **API**: `/api/v1/*` endpoints documented in Swagger UI (`:8080/swagger-ui.html`).
 

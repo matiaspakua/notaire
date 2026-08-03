@@ -171,7 +171,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 - REST URLs: `/api/v1/resource` (plural nouns).
 - DB schema source of truth: Flyway migrations (init-db archived at `docs/archive/init-db/`).
 
-**Frontend**: `frontend/src/` — Next.js 15, React 19, TypeScript, Tailwind CSS.
+**Frontend**: `frontend/src/` — Next.js 16, React 19, TypeScript, Tailwind CSS.
 - Theme: `src/theme/tokens.ts` — single source of truth, no hardcoded values.
 - Forms: `FormContainer → FormSection → FormField` pattern from `src/theme/form-patterns.tsx`.
 
