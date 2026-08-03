@@ -89,7 +89,7 @@ bash infra/scripts/run-sonar.sh                         # SonarQube
 
 ## Architecture Summary
 
-**Backend** (`backend-api`): Spring Boot 4.0.4, Java 21, PostgreSQL 16.
+**Backend** (`backend-api`): Spring Boot 4.1.0, Java 21, PostgreSQL 16.
 
 Package root: `com.licensis.notaire`
 

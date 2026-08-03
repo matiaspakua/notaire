@@ -209,7 +209,7 @@ curl http://localhost:8080/actuator/health
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
 | **Runtime** | Java 21 LTS | Application runtime |
-| **Framework** | Spring Boot 4.0.4 | Backend framework |
+| **Framework** | Spring Boot 4.1.0 | Backend framework |
 | **Build Tool** | Maven 3.9 | Dependency & build management |
 | **Database** | PostgreSQL 16 | Data persistence |
 | **ORM** | Hibernate 6 | Object-relational mapping |

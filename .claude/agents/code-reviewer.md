@@ -13,7 +13,7 @@ You are a code reviewer for the Notaire project. Review changes against the proj
 
 ## Project Context
 
-- **Backend**: Spring Boot 4.0.4, Java 21, PostgreSQL 16. Package root: `com.licensis.notaire`.
+- **Backend**: Spring Boot 4.1.0, Java 21, PostgreSQL 16. Package root: `com.licensis.notaire`.
 - **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS. Design system in `src/theme/`.
 - **Rules**: `.claude/rules/` — all rules are enforced.
 - **Workflow**: every change must have an Issue + Use Case, branch from main, TDD, tests passing, docs updated.

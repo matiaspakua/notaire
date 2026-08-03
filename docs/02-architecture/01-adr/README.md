@@ -90,7 +90,7 @@ Basados en los ADRs implementados:
 
 ### 4. Modern Technology Stack
 - Java 21 LTS (long-term support)
-- Spring Boot 4.0.4 (framework moderno)
+- Spring Boot 4.1.0 (framework moderno)
 - PostgreSQL 16 (robust RDBMS)
 - Docker (containerization)
 

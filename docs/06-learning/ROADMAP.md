@@ -255,7 +255,7 @@ Cada issue debe tener:
 
 | Category | Tool | Purpose |
 |----------|------|---------|
-| Backend | Spring Boot 4.0.4 + Java 21 | REST API |
+| Backend | Spring Boot 4.1.0 + Java 21 | REST API |
 | Database | PostgreSQL 16 | Persistence |
 | ORM | Hibernate 6 + Flyway | DB access + migrations |
 | Security | Spring Security + JWT | Authentication |
