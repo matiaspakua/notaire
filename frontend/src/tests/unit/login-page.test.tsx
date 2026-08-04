@@ -15,9 +15,19 @@ vi.mock("next/navigation", () => ({
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 // Mock api-client
-vi.mock("@/lib/api-client", () => ({
-  apiPost: vi.fn(),
-}));
+vi.mock("@/lib/api-client", () => {
+  class ApiError extends Error {
+    status: number;
+    body: string;
+    constructor(status: number, path: string, body: string) {
+      super(`[${status}] ${path}: ${body}`);
+      this.name = "ApiError";
+      this.status = status;
+      this.body = body;
+    }
+  }
+  return { apiPost: vi.fn(), ApiError };
+});
 
 // Mock next-intl so LoginPage doesn't need NextIntlClientProvider
 vi.mock("next-intl", () => ({
@@ -38,7 +48,7 @@ vi.mock("next-intl", () => ({
 }));
 
 import LoginPage from "@/app/login/page";
-import { apiPost } from "@/lib/api-client";
+import { apiPost, ApiError } from "@/lib/api-client";
 import { useAuthStore } from "@/store/auth-store";
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -149,6 +159,61 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Complete usuario y contraseña");
+    });
+  });
+
+  it("shows the backend's lockout message on a 429 response (issue #756)", async () => {
+    const mockPost = vi.mocked(apiPost);
+    const lockoutMessage = "Cuenta bloqueada temporalmente por demasiados intentos fallidos.";
+    mockPost.mockRejectedValueOnce(
+      new ApiError(429, "/usuarios/login", JSON.stringify({ valido: false, message: lockoutMessage }))
+    );
+
+    const { toast } = await import("sonner");
+    render(<LoginPage />, { wrapper });
+
+    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByTestId("btn-ingresar"));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(lockoutMessage);
+    });
+  });
+
+  it("falls back to a generic lockout message when a 429 body has no message field (issue #756)", async () => {
+    const mockPost = vi.mocked(apiPost);
+    mockPost.mockRejectedValueOnce(new ApiError(429, "/usuarios/login", ""));
+
+    const { toast } = await import("sonner");
+    render(<LoginPage />, { wrapper });
+
+    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByTestId("btn-ingresar"));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Cuenta bloqueada temporalmente por demasiados intentos fallidos."
+      );
+    });
+  });
+
+  it("still shows the generic connection-error message for a genuine network failure (issue #756)", async () => {
+    const mockPost = vi.mocked(apiPost);
+    mockPost.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    const { toast } = await import("sonner");
+    render(<LoginPage />, { wrapper });
+
+    fireEvent.change(screen.getByTestId("input-usuario"), { target: { value: "admin" } });
+    fireEvent.change(screen.getByTestId("input-contrasenia"), { target: { value: "admin" } });
+    fireEvent.click(screen.getByTestId("btn-ingresar"));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "No se pudo conectar al servidor. Verifique que el backend esté en ejecución."
+      );
     });
   });
 });

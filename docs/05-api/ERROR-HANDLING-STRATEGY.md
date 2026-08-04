@@ -100,15 +100,22 @@ semicolon-joined `field: reason` list (see
 
 ## Login endpoint special case
 
-The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 in all
-cases (credential failure and lockout included), using the `valido` field to
-signal success or failure. This intentional design prevents HTTP-level
+The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 for both
+a successful and a credential-failure attempt, using the `valido` field to
+signal which one occurred. This intentional design prevents HTTP-level
 information leakage (an attacker cannot distinguish "user not found" from
 "wrong password" by status code alone). This is a deliberate exception to the
-mapping above — do not "fix" it to return 401/423 without a reviewed API
-contract change (see issues #685/#686, which document why an autonomous test
-addition asserting 401/423 here would contradict the current, intentional
-contract).
+mapping above — do not "fix" it to return 401 without a reviewed API contract
+change (see issues #685/#686, which document why an autonomous test addition
+asserting 401 here would contradict the current, intentional contract).
+
+Rate limiting is a separate case with its own distinct status: once
+`LoginAttemptService` locks an account out, the endpoint returns **429** (Too
+Many Requests) with a `message` field describing the lockout — not 200 and
+not 423 (Locked), which issue #685 originally assumed before its own
+verification against `UsuarioController.login()` corrected it. The frontend
+reads this `message` field to show a lockout-specific error instead of a
+generic one (issue #756).
 
 ## Error logging standards
 

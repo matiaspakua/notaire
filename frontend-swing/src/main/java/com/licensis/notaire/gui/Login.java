@@ -261,6 +261,12 @@ public class Login extends javax.swing.JFrame {
                         "Error Fatal", JOptionPane.ERROR_MESSAGE);
             }
         } else {
+            // Known limitation (issue #756): AdministradorSesion.validarUsuario() collapses a
+            // network/IOException failure, a bad-credentials response, and a 429 account-lockout
+            // response into the same valido=false result, so this single generic message is shown
+            // for all three. Distinguishing them would require validarUsuario() to propagate the
+            // HTTP status/response body instead of swallowing it, mirroring the fix already applied
+            // to the Next.js frontend (frontend/src/app/login/page.tsx, frontend/src/lib/api-client.ts).
             log.warning("Login fallido - credenciales invalidas para usuario: " + usuarioIngresado);
             JOptionPane.showMessageDialog(this, "Alguno de los datos ingresados no es valido", "Advertencia",
                     JOptionPane.WARNING_MESSAGE);
