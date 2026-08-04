@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **AUTH-001 HTTP/integration test gaps closed: rate limiting, wrong password, expired token**
+  (issues #685, #686, #687): `backend-api/api-test/auth/` gained a chained rate-limit test
+  (5 failed logins against a per-run-randomized username, then asserts the lockout response)
+  and a tightened wrong-password test; `JwtAuthIntegrationTest` gained an expired-token test
+  using a genuinely expired, validly-signed JWT generated via the real `JwtTokenService`. Along
+  the way, corrected two of the issues' own assumptions against verified real behavior: the
+  login endpoint never returns 401 for bad credentials or 423 for lockout — it returns
+  `200 {valido:false}` and `429 {valido:false, message}` respectively (see
+  `docs/05-api/ERROR-HANDLING-STRATEGY.md`), matching the already-passing
+  `LoginRateLimitIntegrationTest`/`JwtAuthIntegrationTest`. No production code changed.
+
+- **Status-aware login error messages** (issue #756): the login page previously showed the
+  same generic "can't connect to server" toast for a 429 account lockout, a genuine network
+  failure, and (separately) invalid credentials, even though the backend already returns a
+  distinct status and `message` field for the lockout case. Added `ApiError` (status + body) to
+  `frontend/src/lib/api-client.ts`; the login page now reads the 429 response's `message` and
+  shows it instead of the generic error. `frontend-swing`'s `Login.java` has the identical
+  (worse) problem — documented in place rather than fixed, since propagating the HTTP status
+  through that Swing/`RestClient` call chain is a larger change than this issue scoped.
+
 - **Case-insensitive username and JWT structure HTTP tests** (issues #692, #693): closed two
   gaps in the AUTH-001 HTTP/Bruno test coverage. `backend-api/api-test/usuarios/09-13-*.yml`
   verifies `POST /api/v1/usuarios/login` treats a username the same regardless of case
