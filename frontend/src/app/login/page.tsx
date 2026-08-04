@@ -11,8 +11,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth-store";
-import { apiPost } from "@/lib/api-client";
+import { apiPost, ApiError } from "@/lib/api-client";
 import type { DtoUsuario } from "@/types";
+
+const GENERIC_CONNECTION_ERROR =
+  "No se pudo conectar al servidor. Verifique que el backend esté en ejecución.";
+const GENERIC_LOCKOUT_ERROR = "Cuenta bloqueada temporalmente por demasiados intentos fallidos.";
+
+/** Reads the backend's `message` field from a lockout response body, if present. */
+function lockoutMessage(body: string): string {
+  try {
+    const parsed = JSON.parse(body) as { message?: string };
+    return parsed.message?.trim() || GENERIC_LOCKOUT_ERROR;
+  } catch {
+    return GENERIC_LOCKOUT_ERROR;
+  }
+}
 
 export default function LoginPage() {
   const t = useTranslations("login");
@@ -43,8 +57,12 @@ export default function LoginPage() {
       } else {
         toast.error(t("error"));
       }
-    } catch {
-      toast.error("No se pudo conectar al servidor. Verifique que el backend esté en ejecución.");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 429) {
+        toast.error(lockoutMessage(error.body));
+      } else {
+        toast.error(GENERIC_CONNECTION_ERROR);
+      }
     } finally {
       setLoading(false);
     }

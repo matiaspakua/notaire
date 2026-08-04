@@ -49,6 +49,23 @@ function buildHeaders(base: Record<string, string> = {}): Record<string, string>
   return headers;
 }
 
+/**
+ * Thrown for any non-2xx response, carrying the HTTP status and raw response
+ * body so callers can distinguish e.g. a 429 lockout from a generic failure
+ * instead of collapsing every error into the same message (issue #756).
+ */
+export class ApiError extends Error {
+  readonly status: number;
+  readonly body: string;
+
+  constructor(status: number, path: string, body: string) {
+    super(`[${status}] ${path}: ${body}`);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
 async function handleResponse<T>(res: Response, path: string, method: string): Promise<T> {
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -58,7 +75,7 @@ async function handleResponse<T>(res: Response, path: string, method: string): P
       status: res.status,
       body: text.slice(0, 500),
     });
-    throw new Error(`[${res.status}] ${path}: ${text}`);
+    throw new ApiError(res.status, path, text);
   }
   const text = await res.text();
   return text ? (JSON.parse(text) as T) : ({} as T);
