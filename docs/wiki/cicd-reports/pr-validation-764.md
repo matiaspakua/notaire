@@ -4,7 +4,7 @@ title: PR #764 Validation Report
 
 # PR Validation Report
 
-**Generated:** 2026-08-04 00:29:27  
+**Generated:** 2026-08-04 00:30:56  
 **PR:** #764  
 **Branch:** fix/756_status-aware-login-errors
 
