@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+import com.licensis.notaire.config.JwtTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,6 +26,9 @@ class JwtAuthIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private JwtTokenService jwtTokenService;
 
     private MockMvc mockMvc;
 
@@ -84,6 +89,24 @@ class JwtAuthIntegrationTest {
     void shouldRejectApiRequestWithInvalidToken() throws Exception {
         mockMvc.perform(get("/api/v1/usuarios")
                         .header("Authorization", "Bearer not-a-real-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("API request with an expired Bearer token is rejected with 401 (issue #687)")
+    void shouldRejectApiRequestWithExpiredToken() throws Exception {
+        Object originalExpirationMs = ReflectionTestUtils.getField(jwtTokenService, "expirationMs");
+        String expiredToken;
+        try {
+            ReflectionTestUtils.setField(jwtTokenService, "expirationMs", 1L);
+            expiredToken = jwtTokenService.generateToken("admin");
+            Thread.sleep(10);
+        } finally {
+            ReflectionTestUtils.setField(jwtTokenService, "expirationMs", originalExpirationMs);
+        }
+
+        mockMvc.perform(get("/api/v1/usuarios")
+                        .header("Authorization", "Bearer " + expiredToken))
                 .andExpect(status().isUnauthorized());
     }
 
