@@ -2,7 +2,13 @@ info:
   name: Login invalid credentials
   type: http
   seq: 2
-  description: "## Negative login — wrong password returns valido:false"
+  description: |-
+      ## Negative login — wrong password (issue #686)
+      The backend never returns 401 for a bad password on this endpoint — see
+      `UsuarioController.login()`, which always responds 200 with
+      `valido:false` (or 429 once locked out) so the client can distinguish
+      "wrong credentials" from a network/server failure. `JwtAuthIntegrationTest
+      .shouldRejectLoginWithWrongPassword` asserts the same contract.
 http:
   method: POST
   url: "{{base_url}}/api/v1/usuarios/login"
@@ -17,8 +23,8 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 or 400", function () { expect([200,400]).to.include(res.getStatus()); });
-          test("valido is false", function () {
-            const b = res.getBody();
-            if (b && b.valido !== undefined) expect(b.valido).to.equal(false);
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("valido is false", function () { expect(res.getBody().valido).to.equal(false); });
+          test("No JWT token is issued", function () {
+            expect(res.getBody()).to.not.have.property('token');
           });
