@@ -67,7 +67,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -783,6 +782,9 @@ class SimpleControllersTest {
         void all() throws Exception {
             Persona p = new Persona();
             p.setIdPersona(1);
+            p.setNombre("Juan");
+            p.setApellido("Perez");
+            p.setNumeroIdentificacion("12345678");
             TipoIdentificacion tipo = new TipoIdentificacion(1, "DNI");
             p.setFkIdTipoIdentificacion(tipo);
 
@@ -810,6 +812,9 @@ class SimpleControllersTest {
             // POST with missing tipo identificacion should use default
             Persona persona2 = new Persona();
             persona2.setIdPersona(2);
+            persona2.setNombre("Ana");
+            persona2.setApellido("Gomez");
+            persona2.setNumeroIdentificacion("87654321");
             mvc.perform(post("/api/v1/personas").contentType("application/json")
                     .content(mapper.writeValueAsString(persona2))).andExpect(status().isCreated());
 
@@ -823,6 +828,9 @@ class SimpleControllersTest {
         @DisplayName("POST should create default tipo identificacion when missing in DB")
         void postShouldCreateDefaultTipo() throws Exception {
             Persona p = new Persona();
+            p.setNombre("Juan");
+            p.setApellido("Perez");
+            p.setNumeroIdentificacion("12345678");
             when(tipoRepo.findById(1)).thenReturn(Optional.empty());
             TipoIdentificacion created = new TipoIdentificacion();
             created.setIdTipoIdentificacion(1);

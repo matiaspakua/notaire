@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,7 @@ public class PersonaController {
 })
     @PostMapping
     @Operation(summary = "Crear nueva persona")
-    public ResponseEntity<Object> createPersona(@RequestBody Persona persona) {
+    public ResponseEntity<Object> createPersona(@Valid @RequestBody Persona persona) {
         try {
             if (persona.getFkIdTipoIdentificacion() == null) {
                 TipoIdentificacion defaultTipo = tipoIdentificacionRepository.findById(1)
@@ -88,7 +89,7 @@ public class PersonaController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar persona")
-    public ResponseEntity<Persona> updatePersona(@PathVariable Integer id, @RequestBody Persona persona) {
+    public ResponseEntity<Persona> updatePersona(@PathVariable Integer id, @Valid @RequestBody Persona persona) {
         return personaService.findById(id)
                 .map(existing -> {
                     persona.setIdPersona(id);
@@ -132,7 +133,7 @@ public class PersonaController {
             @RequestParam(required = false) String numeroIdentificacion,
             @RequestParam(required = false) Integer idTipoIdentificacion,
             @RequestParam(required = false) Boolean esCliente) {
-        
+
         List<Persona> personas = personaService.buscar(nombre, apellido, numeroIdentificacion, idTipoIdentificacion, esCliente);
         return ResponseEntity.ok(personas);
     }

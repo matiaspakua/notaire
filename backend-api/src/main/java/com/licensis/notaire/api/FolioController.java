@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,7 +43,7 @@ public class FolioController {
     record FolioRequest(
             int numero,
             int anio,
-            String estado,
+            @NotBlank String estado,
             String observaciones,
             Integer tipoFolioId,
             Integer escribanoId
@@ -109,7 +111,7 @@ public class FolioController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo folio")
-    public ResponseEntity<DtoFolio> create(@RequestBody FolioRequest request) {
+    public ResponseEntity<DtoFolio> create(@Valid @RequestBody FolioRequest request) {
         if (request.tipoFolioId() == null || request.escribanoId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -140,7 +142,7 @@ public class FolioController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar folio")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FolioRequest request) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioRequest request) {
         Optional<Folio> existing = folioRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
