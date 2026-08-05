@@ -54,7 +54,9 @@ async function chooseLast(page: Page, triggerTestId: string): Promise<void> {
 
 async function saveDialog(page: Page): Promise<void> {
   await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-  await expect(page.getByRole("dialog")).toBeHidden();
+  // Longer timeout: on CI PR runs the backend is shared with the parallel E2E
+  // workers, so the save round-trip can exceed the default 5s (see #778).
+  await expect(page.getByRole("dialog")).toBeHidden({ timeout: 15000 });
   await pause(page);
 }
 
@@ -124,7 +126,8 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await page.getByTestId("input-nombre-tipo-folio").fill(tipoFolio);
       await pause(page);
       await page.getByTestId("btn-save-tipo-folio").click();
-      await expect(page.getByRole("dialog")).toBeHidden();
+      // Longer timeout: same CI-load consideration as saveDialog() (see #778).
+      await expect(page.getByRole("dialog")).toBeHidden({ timeout: 15000 });
       await pause(page);
 
       await page.getByTestId("btn-nuevo-folio").click();
