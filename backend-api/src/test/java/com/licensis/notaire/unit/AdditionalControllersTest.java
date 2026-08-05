@@ -137,6 +137,7 @@ class AdditionalControllersTest {
             var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
             var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                    .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
 
             GestionDeEscritura g = new GestionDeEscritura(1);

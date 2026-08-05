@@ -12,7 +12,6 @@ import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -115,13 +114,8 @@ public class GestionController {
     @PostMapping
     @Operation(summary = "Crear nueva gestion")
     public ResponseEntity<Object> create(@RequestBody GestionDeEscritura entity) {
-        try {
-            entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
-        } catch (Exception e) {
-            log.error("Failed to create gestion", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        entity = repository.save(entity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
     }
 
     @ApiResponses({

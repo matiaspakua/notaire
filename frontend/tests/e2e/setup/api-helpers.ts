@@ -134,16 +134,6 @@ export interface PresupuestoPayload {
   observaciones?: string;
 }
 
-export interface GestionPayload {
-  idPersona?: number;
-  detalle?: string;
-  fechaInicio?: string;
-  idTipoDeTramite?: number;
-  idEstadoDeGestion?: number;
-  idEscritura?: number;
-  idPresupuesto?: number;
-}
-
 export interface EscrituraPayload {
   fecha?: string;
   cuerpo?: string;
@@ -260,24 +250,6 @@ export async function createPresupuesto(
     encabezado: `Presupuesto E2E ${uniqueId()}`,
     estado: "Pendiente",
     observaciones: `Presupuesto E2E ${uniqueId()}`,
-    ...overrides,
-  });
-}
-
-/**
- * Gestión helpers
- */
-export async function createGestion(
-  page: Page,
-  personaId: number,
-  tipoTramiteId: number,
-  overrides: Partial<GestionPayload> = {},
-): Promise<ApiResult<{ idGestion: number }>> {
-  return apiPost(page, "/gestiones", {
-    detalle: `Gestion E2E ${uniqueId()}`,
-    fechaInicio: new Date().toISOString().split("T")[0],
-    idPersona: personaId,
-    idTipoDeTramite: tipoTramiteId,
     ...overrides,
   });
 }

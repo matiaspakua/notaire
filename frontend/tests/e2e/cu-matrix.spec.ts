@@ -10,7 +10,7 @@
  */
 
 import { test, expect, type Page } from "@playwright/test";
-import { apiGet, apiPost, apiPut, apiDelete, createPersona, createPresupuesto, createGestion } from "./setup/api-helpers";
+import { apiGet, apiPost, apiPut, apiDelete, createPersona, createPresupuesto } from "./setup/api-helpers";
 
 /**
  * CU health check configuration
@@ -178,8 +178,11 @@ test.describe("CU Coverage Matrix — Health Check", () => {
           result = await apiGet(page, resolvedPath);
       }
 
-      // Accept both 200 and 4xx as "alive" (e.g., 404 means endpoint exists but ID not found)
-      const validStatuses = [200, 201, 204, 400, 404, 409];
+      // Accept both 200 and 4xx as "alive" (e.g., 404 means endpoint exists but ID not found).
+      // 429 is included because repeated fake-credential POSTs to /usuarios/login across test
+      // runs share the backend's in-memory LoginAttemptService state and can trip the documented
+      // lockout — that's a legitimate, non-broken response, not an endpoint failure.
+      const validStatuses = [200, 201, 204, 400, 404, 409, 429];
       // But flag 500 as a failure
       const expectedStatus = cu.expectStatus || 200;
 
