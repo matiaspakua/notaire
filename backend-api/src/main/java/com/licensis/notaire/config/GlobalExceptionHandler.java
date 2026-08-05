@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -179,6 +180,35 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Map.of(
                 "path", request.getRequestURI(),
                 "message", message
+            )
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle constraint violations raised by the persistence layer (e.g. NOT NULL,
+     * unique, or foreign key violations) as a client error rather than a bare 500,
+     * since they stem from the request payload, not a server fault.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return 400 error response entity
+     */
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            400,
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            "Los datos enviados no cumplen las restricciones de la base de datos",
+            request.getRequestURI()
+        );
+        STRUCTURED_LOG.logWarn(
+            "Data integrity violation",
+            Map.of(
+                "path", request.getRequestURI(),
+                "method", request.getMethod()
             )
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
