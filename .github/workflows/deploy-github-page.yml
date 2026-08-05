@@ -1,6 +1,14 @@
-name: Deploy GitHub Page (Manual)
+name: Deploy GitHub Page
 
+# Single source of truth for the GitHub Pages deployment (see issue #778).
+# Auto-deploys after the CI pipeline (ci.yml) completes successfully on main,
+# so the page is always up to date with every merge — the deploy only runs
+# when CI passed. Manual dispatch is kept for on-demand rebuilds.
 on:
+  workflow_run:
+    workflows: [ "CI - Build, Test & Security" ]
+    branches: [ main ]
+    types: [ completed ]
   workflow_dispatch:
 
 permissions:
@@ -15,6 +23,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Run on manual dispatch, or only after the CI workflow on main succeeded.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

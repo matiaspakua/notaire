@@ -70,7 +70,7 @@ class ReportJobNeedsDependenciesTest(unittest.TestCase):
         publish_report = jobs["publish-report"]
         self.assertEqual(
             declared_needs(publish_report),
-            {"validate-pr", "quick-build", "dependency-analysis", "lint", "branch-protection", "generate-report"},
+            {"validate-pr", "quick-build", "dependency-analysis", "lint", "branch-naming", "generate-report"},
         )
 
     def test_generate_reports_depends_on_every_job_it_reports_on(self):

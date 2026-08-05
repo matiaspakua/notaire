@@ -6,9 +6,13 @@ name: CI - Build, Test & Security
 # allows modules (notaire-shared) that have no tests matching a filter; it
 # never masks a failing test.
 #
-# The report/wiki-publishing jobs (generate-reports/publish-reports/deploy-pages)
+# The report/wiki-publishing jobs (generate-reports/publish-reports)
 # are guarded to only run on push-to-main or workflow_dispatch — a PR run must
 # never publish reports or push commits to main. See each job's `if:`.
+#
+# GitHub Pages deployment no longer lives here (see issue #778): the single
+# source of truth is deploy-github-page.yml, which auto-runs after this
+# workflow completes successfully on main.
 on:
   pull_request:
     branches: [ main ]
@@ -20,8 +24,6 @@ permissions:
   contents: read
   checks: write
   pull-requests: write
-  pages: write
-  id-token: write
 
 env:
   JAVA_VERSION: '21'
@@ -497,132 +499,3 @@ jobs:
             git push origin ${{ github.ref_name }}
           fi
 
-  # ==========================================
-  # JOB 10: Deploy GitHub Pages (last — runs with fresh coverage data)
-  # ==========================================
-  deploy-pages:
-    name: Deploy GitHub Pages
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: [build, coverage]
-    if: >
-      (github.event_name == 'push' && github.ref == 'refs/heads/main')
-      || github.event_name == 'workflow_dispatch'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: github-page/package-lock.json
-
-      - name: Download coverage snapshot
-        uses: actions/download-artifact@v8
-        with:
-          name: coverage-snapshot
-          path: coverage-snapshot
-
-      - name: Download JaCoCo report
-        uses: actions/download-artifact@v8
-        with:
-          name: jacoco-report
-          path: jacoco-report
-
-      - name: Copy coverage reports to public/coverage/
-        run: |
-          mkdir -p github-page/public/coverage
-          if [ -d "jacoco-report" ] && [ "$(ls -A jacoco-report 2>/dev/null)" ]; then
-            cp -r jacoco-report/* github-page/public/coverage/
-            echo "Copied JaCoCo reports from CI artifacts"
-          else
-            echo "Creating placeholder coverage page"
-            printf '%s\n' \
-              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Coverage Reports</title>' \
-              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
-              '<body><p>Coverage reports not available. <a href="/notaire/">Back to home</a></p></body></html>' \
-              > github-page/public/coverage/index.html
-          fi
-          ls -la github-page/public/coverage/ || true
-
-      - name: Download Playwright E2E report
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Downloading latest Playwright report..."
-          mkdir -p github-page/public/playwright
-          # `gh run download` has no --workflow flag (confirmed against the CLI
-          # manual, issue #758) -- it was silently failing to parse and always
-          # falling into the placeholder branch below. Without a run-id, --name
-          # alone already downloads the latest artifact matching that name across
-          # the whole repo, which is what we want here.
-          if gh run download --repo "${{ github.repository }}" \
-            --name playwright-report \
-            --dir playwright-report-dl 2>/dev/null; then
-            if [ -d "playwright-report-dl" ] && [ "$(ls -A playwright-report-dl 2>/dev/null)" ]; then
-              cp -r playwright-report-dl/* github-page/public/playwright/
-              echo "Copied Playwright report to public/playwright/"
-              ls -la github-page/public/playwright/ || true
-            fi
-          else
-            echo "No Playwright report available (workflow may not have run yet)"
-            printf '%s\n' \
-              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Playwright E2E Report</title>' \
-              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
-              '<body><p>Playwright E2E report not available. <a href="/notaire/">Back to home</a></p></body></html>' \
-              > github-page/public/playwright/index.html
-          fi
-
-      - name: Download frontend coverage report
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Downloading latest frontend unit test coverage..."
-          if gh run download --repo "${{ github.repository }}" \
-            --name frontend-unit-test-report \
-            --dir frontend-coverage-dl 2>/dev/null; then
-            echo "Downloaded frontend coverage artifact"
-          else
-            echo "No frontend coverage artifact available yet"
-          fi
-
-      - name: Generate metrics.json from fresh data
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: bash scripts/generate-github-page-metrics.sh
-
-      - name: Install dependencies
-        working-directory: github-page
-        run: npm ci
-
-      - name: Build static site
-        working-directory: github-page
-        run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Validate build output
-        working-directory: github-page
-        run: |
-          if [ ! -f out/index.html ]; then
-            echo "ERROR: Static build did not generate out/index.html" >&2
-            ls -la out || true
-            exit 1
-          fi
-          ls -la out/
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: github-page/out
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
