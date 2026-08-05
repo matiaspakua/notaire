@@ -7,7 +7,6 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
-import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.hibernate.LazyInitializationException;
@@ -112,14 +112,17 @@ public class Persona implements Serializable {
     private Integer idPersona;
     @Basic(optional = false)
     @Column(name = "nombre")
+    @NotBlank
     private String nombre;
     @Basic(optional = false)
     @Column(name = "apellido")
+    @NotBlank
     private String apellido;
     @Column(name = "nacionalidad")
     private String nacionalidad;
     @Basic(optional = false)
     @Column(name = "numero_identificacion")
+    @NotBlank
     private String numeroIdentificacion;
     @Column(name = "cuit")
     private String cuit;
