@@ -178,7 +178,9 @@
       "escribano": "Notary",
       "persona": "Person",
       "folio": "Folio",
-      "observaciones": "Observations"
+      "observaciones": "Observations",
+      "presupuesto": "Quote",
+      "inmueble": "Property"
     }
   },
   "escrituras": {

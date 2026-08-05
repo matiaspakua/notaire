@@ -128,6 +128,17 @@ export interface GestionDeEscritura {
   tramiteCount?: number;
 }
 
+export interface CreateCompleteGestionInput {
+  numero: number;
+  encabezado?: string;
+  observaciones?: string;
+  presupuestoId: number;
+  escribanoId: number;
+  estadoGestionId: number;
+  tipoTramiteId: number;
+  inmuebleId?: number;
+}
+
 export interface Item {
   idItem?: number;
   concepto?: Concepto;

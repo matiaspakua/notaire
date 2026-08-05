@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { GestionDeEscritura } from "@/types";
+import type { CreateCompleteGestionInput, GestionDeEscritura } from "@/types";
 
 export const gestionesKeys = {
   all: ["gestiones"] as const,
@@ -38,6 +38,15 @@ export function useCreateGestion() {
   return useMutation({
     mutationFn: (data: Partial<GestionDeEscritura>) =>
       apiPost<void>("/gestiones", data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
+  });
+}
+
+export function useCreateCompleteGestion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateCompleteGestionInput) =>
+      apiPost<GestionDeEscritura>("/gestiones/complete-case", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
   });
 }

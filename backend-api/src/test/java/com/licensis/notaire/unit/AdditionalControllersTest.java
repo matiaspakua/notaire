@@ -135,7 +135,13 @@ class AdditionalControllersTest {
             HistorialRepository histRepo = mock(HistorialRepository.class);
             var traceService = mock(com.licensis.notaire.service.WorkflowTraceService.class);
             var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
-            var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService))
+            var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService,
+                    mock(com.licensis.notaire.repository.PersonaRepository.class),
+                    mock(com.licensis.notaire.repository.EstadoDeGestionRepository.class),
+                    mock(com.licensis.notaire.repository.PresupuestoRepository.class),
+                    mock(com.licensis.notaire.repository.TipoDeTramiteRepository.class),
+                    mock(com.licensis.notaire.repository.TramiteRepository.class),
+                    mock(com.licensis.notaire.repository.InmuebleRepository.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
