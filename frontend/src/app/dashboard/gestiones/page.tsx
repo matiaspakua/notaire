@@ -15,11 +15,15 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import {
   useGestiones,
   useGestionesByCliente,
-  useCreateGestion,
+  useCreateCompleteGestion,
   useUpdateGestion,
   useDeleteGestion,
 } from "@/hooks/useGestiones";
 import { usePersonas } from "@/hooks/usePersonas";
+import { usePresupuestos } from "@/hooks/usePresupuestos";
+import { useEstadosGestion } from "@/hooks/useEstadosGestion";
+import { useTiposTramite } from "@/hooks/useTiposTramite";
+import { useInmuebles } from "@/hooks/useInmuebles";
 import { fullName } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 
@@ -28,7 +32,11 @@ export default function GestionesPage() {
   const tc = useTranslations("common");
   const { data: gestiones = [], isLoading } = useGestiones();
   const { data: personas = [] } = usePersonas();
-  const createMutation = useCreateGestion();
+  const { data: presupuestos = [] } = usePresupuestos();
+  const { data: estados = [] } = useEstadosGestion();
+  const { data: tiposTramite = [] } = useTiposTramite();
+  const { data: inmuebles = [] } = useInmuebles();
+  const createCompleteMutation = useCreateCompleteGestion();
   const updateMutation = useUpdateGestion();
   const deleteMutation = useDeleteGestion();
 
@@ -37,6 +45,11 @@ export default function GestionesPage() {
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
+  const [presupuestoId, setPresupuestoId] = useState("");
+  const [escribanoId, setEscribanoId] = useState("");
+  const [estadoId, setEstadoId] = useState("");
+  const [tipoTramiteId, setTipoTramiteId] = useState("");
+  const [inmuebleId, setInmuebleId] = useState("");
 
   const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useGestionesByCliente(
     clienteFilter ? Number(clienteFilter) : 0
@@ -48,6 +61,11 @@ export default function GestionesPage() {
   function openCreate() {
     setEditing(null);
     setNumero("");
+    setPresupuestoId("");
+    setEscribanoId("");
+    setEstadoId("");
+    setTipoTramiteId("");
+    setInmuebleId("");
     setModalOpen(true);
   }
 
@@ -58,15 +76,22 @@ export default function GestionesPage() {
   }
 
   async function handleSave() {
-    const data: Partial<GestionDeEscritura> = {
-      numero: numero ? Number(numero) : undefined,
-    };
     try {
       if (editing?.idGestion) {
-        await updateMutation.mutateAsync({ id: editing.idGestion, data });
+        await updateMutation.mutateAsync({
+          id: editing.idGestion,
+          data: { numero: numero ? Number(numero) : undefined },
+        });
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(data);
+        await createCompleteMutation.mutateAsync({
+          numero: Number(numero),
+          presupuestoId: Number(presupuestoId),
+          escribanoId: Number(escribanoId),
+          estadoGestionId: Number(estadoId),
+          tipoTramiteId: Number(tipoTramiteId),
+          inmuebleId: inmuebleId ? Number(inmuebleId) : undefined,
+        });
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -174,6 +199,40 @@ export default function GestionesPage() {
                   data-testid="input-numero-gestion"
                 />
               </FormField>
+              {!editing && (
+                <>
+                  <FormField label={t("fields.presupuesto")} required>
+                    <Select value={presupuestoId} onValueChange={setPresupuestoId}>
+                      <SelectTrigger data-testid="select-presupuesto-gestion"><SelectValue placeholder="Seleccionar presupuesto..." /></SelectTrigger>
+                      <SelectContent>{presupuestos.map((p) => <SelectItem key={p.idPresupuesto} value={String(p.idPresupuesto)}>Presupuesto #{p.idPresupuesto}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.escribano")} required>
+                    <Select value={escribanoId} onValueChange={setEscribanoId}>
+                      <SelectTrigger data-testid="select-escribano-gestion"><SelectValue placeholder="Seleccionar escribano..." /></SelectTrigger>
+                      <SelectContent>{personas.map((p) => <SelectItem key={p.idPersona} value={String(p.idPersona)}>{fullName(p)}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.estado")} required>
+                    <Select value={estadoId} onValueChange={setEstadoId}>
+                      <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder="Seleccionar estado..." /></SelectTrigger>
+                      <SelectContent>{estados.map((e) => <SelectItem key={e.idEstadoGestion} value={String(e.idEstadoGestion)}>{e.nombre}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.tipo")} required>
+                    <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
+                      <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder="Seleccionar trámite..." /></SelectTrigger>
+                      <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>{tt.nombre}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.inmueble")}>
+                    <Select value={inmuebleId} onValueChange={setInmuebleId}>
+                      <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder="Seleccionar inmueble..." /></SelectTrigger>
+                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idInmueble} value={String(i.idInmueble)}>{i.domicilio ?? `Inmueble #${i.idInmueble}`}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                </>
+              )}
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
@@ -181,7 +240,7 @@ export default function GestionesPage() {
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={createMutation.isPending || updateMutation.isPending}
+                disabled={createCompleteMutation.isPending || updateMutation.isPending}
                 data-testid="btn-guardar-gestion"
               >
                 {editing ? tc("update") : tc("create")}

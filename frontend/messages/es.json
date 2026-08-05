@@ -178,7 +178,9 @@
       "escribano": "Escribano",
       "persona": "Persona",
       "folio": "Folio",
-      "observaciones": "Observaciones"
+      "observaciones": "Observaciones",
+      "presupuesto": "Presupuesto",
+      "inmueble": "Inmueble"
     }
   },
   "escrituras": {
