@@ -136,3 +136,7 @@ Package root: `com.licensis.notaire`
 - ❌ Push without creating PR
 - ❌ Skip E2E Playwright tests for UI changes
 - ❌ Schema change without creating a new Flyway migration
+
+## Imported Claude Cowork project instructions
+
+java-based modernization project
