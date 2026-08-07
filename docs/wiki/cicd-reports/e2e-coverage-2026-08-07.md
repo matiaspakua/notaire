@@ -5,7 +5,7 @@ title: E2E Coverage Report - 2026-08-07
 # E2E Coverage Report
 
 **Date:** 2026-08-07
-**Trigger:** schedule
+**Trigger:** push
 
 ## Playwright E2E Results
 
