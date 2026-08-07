@@ -57,7 +57,8 @@ infra/tests/e2e/node_modules/**
 .env
 infra/.env
 
-# Local-machine AI tooling runtime state (rtk/headroom token-optimization
-# caches) — never shared repo state, belongs in .claude/settings.local.json
+# Local-machine AI tooling runtime state (rtk/headroom/tokensave token
+# caches) — never shared repo state
 headroom_memory.db
 .rtk/
+.tokensave/
