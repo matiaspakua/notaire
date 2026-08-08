@@ -191,10 +191,19 @@ Technical Notes, Definition of Done, and appropriate labels.
 affected areas. Confirm the Use Case is accurate or must be created/updated.
 
 **3. Specification.** Produce a written Specification describing **only this
-change**: behavior, boundary, inputs/outputs, and constraints. Small changes
-may keep it as the Specification section of the Issue; complex or
-architecture-affecting changes must write a Specification file using
-`docs/03-development/templates/specification-template.md`. → **Gate 1.**
+change**: behavior, boundary, inputs/outputs, and constraints. Specifications
+are produced with **OpenSpec** using the project schema `notaire-sdlc`, which
+encodes this Constitution:
+
+```bash
+openspec new change "<kebab-case-name>"      # scaffolds the mandatory artifacts
+bash scripts/validate-sdlc-plan.sh "<name>"  # rejects an incomplete plan
+```
+
+The schema produces `proposal.md`, `traceability.md`, `specs/<capability>/spec.md`,
+`design.md` and `tasks.md`. `docs/03-development/templates/specification-template.md`
+maps every requirement of this Constitution to the artifact that carries it.
+Acceptance Criteria are the delta spec's `#### Scenario:` blocks. → **Gate 1.**
 
 **4. Impact Analysis.** Identify affected modules (backend-api, frontend,
 frontend-swing, notaire-shared), entities, endpoints, database schema, tests,
@@ -404,10 +413,19 @@ An AI agent **must**:
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
 
+**Spec-Driven Development is the mechanism.** This Constitution is wired into
+OpenSpec through the project schema `openspec/schemas/notaire-sdlc` and
+`openspec/config.yaml`. Because both are read by the `openspec` CLI rather than
+by any one assistant, every agent receives the same context, the same mandatory
+sections and the same task groups — no agent-proprietary feature is involved.
+An agent that never reads `CLAUDE.md` still gets this Constitution.
+
 Agent-specific entry points:
 - **Claude Code** → `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md`
 - **OpenCode** → `opencode.json` (loads `CLAUDE.md` and `.claude/rules/*`)
-- **Any agent** → `AGENTS.md` at repo root
+- **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
+- **Any agent** → `AGENTS.md` at repo root; `.agents/skills/openspec-*`
+- **Any agent, via the CLI** → `openspec instructions <artifact> --change <name>`
 
 ---
 
@@ -454,7 +472,11 @@ drift.
 | Process step / gate | Tooling |
 |---------------------|---------|
 | Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI |
-| Specification | `.github/ISSUE_TEMPLATE/issue.md`; `docs/03-development/templates/specification-template.md` |
+| Specification | OpenSpec, schema `openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/03-development/templates/specification-template.md` |
+| Constitution as agent context | `openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
+| Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
+| Spec structure | `openspec validate <change> --strict` |
+| Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `openspec/specs/` |
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |

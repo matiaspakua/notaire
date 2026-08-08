@@ -4,17 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## ⚠️ MANDATORY WORKFLOW
 
+**`CONSTITUTION.md` at the repo root is the highest authority for this process.**
+It is agent-agnostic and prevails over this file. Read it before any change.
+
 **Before ANY code change, READ and FOLLOW the AI Agent Development Workflow:**
 
 ```
+@CONSTITUTION.md
 @.claude/rules/ai-agent-workflow.md
 @.claude/skills/ai-agent-workflow/SKILL.md
 ```
+
+Specifications are produced with OpenSpec (schema `notaire-sdlc`, which encodes
+the Constitution): `openspec new change "<name>"`, then
+`bash scripts/validate-sdlc-plan.sh` to reject an incomplete plan.
 
 ### Quick Workflow Summary
 
 ```
 0. Verify Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
+0.5 Specification via OpenSpec (Gate 1) — proposal, traceability, specs, design, tasks
 1. Create branch from updated main: <type>/<#>_<description>
 1.5 Move issue to IN PROGRESS
 2. TDD — write failing tests FIRST, then implement

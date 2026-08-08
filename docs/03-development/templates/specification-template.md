@@ -1,114 +1,78 @@
-# Specification Template
+# Specification — how it is produced
 
-> **Mandatory artifact of the SDLC workflow** (see `CONSTITUTION.md`, step 3 —
-> *Specification*). A Specification describes **only the change** in scope. It
-> is **not** permanent documentation: it lives with the Issue (small changes)
-> or as a file under `docs/03-development/specifications/` (complex or
-> architecture-affecting changes) and does not replace README/ADR/API docs.
+> **Mandatory artifact of the SDLC workflow** (see `CONSTITUTION.md` §5 step 3 —
+> *Specification*). A Specification describes **only the change** in scope. It is
+> **not** permanent documentation and never replaces README / ADR / API docs.
 >
-> **Gate 1** — no implementation starts without this document (or the
-> Specification section of the Issue) plus Acceptance Criteria.
+> **Gate 1** — no implementation starts without a Specification plus Acceptance
+> Criteria.
 
----
+Specifications in this repository are produced with **OpenSpec**, using the
+project schema `notaire-sdlc`, which encodes this Constitution. There is no
+separate markdown specification format: this document is the map from the
+Constitution's requirements to the artifact that carries each one.
 
-## Specification: `<issue-number> - <title>`
+## Producing a Specification
 
-| Field | Value |
-|-------|-------|
-| **Issue** | #`<issue-number>` |
-| **Use Case (Caso de Uso)** | `CU-XX` / `RF-XX` / `RNF-XX` |
-| **Type** | `feat` / `fix` / `refactor` / `test` / `docs` / `chore` / `ci` |
-| **Status** | Draft / Refined / Approved |
-| **Author** | `<name or agent>` |
-| **Date** | `YYYY-MM-DD` |
+```bash
+openspec new change "<kebab-case-name>"     # scaffolds with the notaire-sdlc schema
+openspec status  --change "<name>"          # artifact build order
+openspec instructions <artifact> --change "<name>"
+openspec validate "<name>" --strict         # OpenSpec's own structural checks
+bash scripts/validate-sdlc-plan.sh "<name>" # this Constitution's checks
+```
 
----
+Any agent may drive this — Claude Code, OpenCode, GitHub Copilot, Codex, Cursor —
+through its generated `opsx` commands, or a human may write the files directly.
+The contract is the same for all of them because it lives in the CLI, not in the
+agent.
 
-## 1. Problem / Motivation
+## Where each mandatory section lives
 
-<!-- Why is this change needed? What requirement or defect does it address?
-Reference the Use Case / Requirement ID. -->
+| Constitution requirement | Artifact | Section |
+|--------------------------|----------|---------|
+| GitHub Issue | `proposal.md` + `traceability.md` | Header table / Chain |
+| Use Case (`CU-XX`) | `proposal.md` + `traceability.md` | Header table / Chain |
+| Objetivo (problem / motivation) | `proposal.md` | Objetivo |
+| Scope and out of scope | `proposal.md` | What Changes / Out of Scope |
+| Reglas de negocio | `proposal.md` (named) + delta spec (normative) | Reglas de negocio / Requirements |
+| Proposed behavior | `specs/<capability>/spec.md` | Requirements + Scenarios |
+| Acceptance Criteria | `specs/<capability>/spec.md` | `#### Scenario:` blocks |
+| Constraints & compatibility | `design.md` | Context / Decisions |
+| Impact Analysis | `proposal.md` | Impact Analysis |
+| Módulos afectados | `proposal.md` | Impact Analysis → Módulos afectados |
+| Architecture review / ADR | `proposal.md` | Impact Analysis → Architecture review |
+| Riesgos | `design.md` | Riesgos / Trade-offs |
+| Test cases | `design.md` | Testing Strategy |
+| Regression Strategy | `design.md` | Regression Strategy |
+| Playwright Strategy | `design.md` | Playwright Strategy |
+| Deployment Strategy | `design.md` | Deployment Strategy |
+| Rollback Strategy | `design.md` | Rollback Strategy |
+| Documentation Impact | `proposal.md` | Documentation Impact |
+| Definition of Done | `tasks.md` | Definition of Done |
+| Traceability chain | `traceability.md` | Chain / Gate log |
 
-## 2. Scope
+Acceptance Criteria are the delta spec's `#### Scenario:` blocks — the same text
+is the test contract, so a criterion cannot drift from its test. They must match
+the Acceptance Criteria in the GitHub Issue.
 
-### In scope
-<!-- The exact behavior this change delivers. -->
+## Approvals
 
-### Out of scope
-<!-- Explicitly what this change does NOT do (avoid scope creep). -->
+OpenSpec does not model approvals. They are recorded where they are enforced:
 
-## 3. Proposed Behavior
+- **Architecture** — the ADR under `docs/02-architecture/01-adr/`, when required.
+- **Engineering** — Pull Request review by the code owner (`CODEOWNERS`), Gate 4.
+- **Product / Business** — the GitHub Issue, before Gate 1.
 
-<!-- Describe only this change:
-- Functional behavior / rules
-- Inputs, outputs, error cases
-- Affected endpoints / entities / UI screens -->
+## Where the artifacts live
 
-## 4. Constraints & Compatibility
+Active changes are in `openspec/changes/<change-name>/`; once Gate 5 passes,
+`openspec archive <change-name>` moves the change to `openspec/changes/archive/`
+and folds its delta into `openspec/specs/`, which is the accumulated behavior
+contract of the system.
 
-<!-- Non-negotiable constraints: database (Flyway migration required?),
-backwards compatibility, security, performance, design-system rules. -->
+## Related
 
-## 5. Impact Analysis
-
-<!-- Affected modules, files, tests, and documentation. Dependencies on other
-issues. Risks. -->
-
-| Area | Impact |
-|------|--------|
-| Backend (`backend-api`) | ... |
-| Frontend (`frontend`) | ... |
-| Swing client (`frontend-swing`) | ... |
-| Shared (`notaire-shared`) | ... |
-| Database (Flyway) | ... |
-| API contract / OpenAPI | ... |
-| Tests (unit/integration/E2E) | ... |
-| Documentation | ... |
-
-## 6. Architecture Review
-
-<!-- Confirm the design follows existing architecture. If architectural,
-reference the new or updated ADR. -->
-
-- [ ] Follows existing package/module architecture
-- [ ] Follows project conventions (DTOs, REST, design system, Flyway)
-- [ ] ADR required? Yes / No → (ADR number if yes)
-
-## 7. Acceptance Criteria
-
-<!-- Testable, ideally Given-When-Then. These MUST match the GitHub Issue. -->
-
-- [ ] AC1: ...
-- [ ] AC2: ...
-- [ ] AC3: ...
-
-## 8. Test Cases
-
-<!-- Cases to be implemented as Unit / Integration / E2E tests (Gate 2). -->
-
-| # | Level | Case | Expected result |
-|---|-------|------|-----------------|
-| 1 | Unit | ... | ... |
-| 2 | Integration | ... | ... |
-| 3 | E2E | ... | ... |
-
-## 9. Documentation Changes
-
-<!-- Which permanent documentation changes with this change (README, docs/,
-ADR, API, runbooks, diagrams, business rules, CHANGELOG)? -->
-
-- [ ] `CHANGELOG.md`
-- [ ] `docs/...`
-- [ ] OpenAPI / Swagger
-- [ ] ADR
-- [ ] None (documented why)
-
----
-
-**Approvals**
-
-| Role | Name | Date |
-|------|------|------|
-| Product / Business | | |
-| Architecture | | |
-| Engineering | | |
+- `CONSTITUTION.md` — the process this implements
+- `openspec/schemas/notaire-sdlc/` — templates and agent instructions
+- `scripts/validate-sdlc-plan.sh` — the mechanical gate (`--list` explains each check)

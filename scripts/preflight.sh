@@ -42,6 +42,7 @@ for arg in "$@"; do
 Local check                     CI job                          Workflow
 ------------------------------  ------------------------------  --------------------
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
+sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 backend compile                 Build & Compile / Quick Build    ci.yml, pr-validation.yml
@@ -112,6 +113,10 @@ if [[ "$BRANCH" =~ ^(main|develop|feature/|bugfix/|hotfix/|release/|[0-9]+/(feat
 else
     warn "branch naming: '$BRANCH' does not match a documented pattern"
 fi
+
+# Engineering Constitution: every active OpenSpec change must carry a complete
+# SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
+run "sdlc plan validation" bash scripts/validate-sdlc-plan.sh
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"
