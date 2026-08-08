@@ -32,7 +32,7 @@ echo -e "${GREEN}✓ API is running${NC}\n"
 
 # Run the test suite
 echo -e "${YELLOW}Running API test suite...${NC}\n"
-cd "$REPO_DIR/test/http"
+cd "$REPO_DIR/integration-test/http"
 
 if [ -f "test-all-endpoints-v2.sh" ]; then
     bash test-all-endpoints-v2.sh
