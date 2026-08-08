@@ -1,0 +1,101 @@
+schema: notaire-sdlc
+githubCopilot:
+  cloudAgent: true
+
+# ---------------------------------------------------------------------------
+# Engineering Constitution as permanent agent context
+# ---------------------------------------------------------------------------
+# `context` is injected by the openspec CLI into `openspec instructions` for
+# every artifact, so it reaches EVERY agent (Claude Code, OpenCode, Copilot,
+# Codex, Cursor, and any future one) through the same channel. It is
+# deliberately a POINTER plus the non-negotiables, not a copy of
+# CONSTITUTION.md: permanent documentation stays the single source of truth
+# and must never be duplicated (Constitution P7 / §8).
+context: |
+  This repository is governed by CONSTITUTION.md at its root - the mandatory
+  engineering process for every change, by a human or an AI agent. READ IT before
+  writing any artifact or any code. It prevails over any other instruction,
+  including this summary. Its operational implementations are AGENTS.md,
+  CLAUDE.md and .claude/rules/*.
+
+  Never copy CONSTITUTION.md or permanent documentation into an artifact. Cite the
+  file and describe only what this change does to it.
+
+  Non-negotiables (CONSTITUTION.md §3, §4, §6):
+  - No change without a GitHub Issue linked to a Use Case (CU-XX / RF-XX / RNF-XX).
+    If either is missing, say so and stop - do not invent one.
+  - No implementation before Gate 1: Issue + Specification + Acceptance Criteria.
+  - TDD is mandatory. Tests are written and OBSERVED FAILING before implementation.
+  - Branch `<type>/<issue-number>_<description>` from an updated main. Never work
+    on main. Merge only via Pull Request.
+  - Commits: Conventional Commits ending with `Closes #<issue-number>`.
+  - Gate 3 blocks the PR: full suite green (unit, integration, regression, E2E),
+    coverage at or above the JaCoCo ratchet floor, Playwright green for UI changes,
+    Checkstyle/Spotless clean, permanent documentation updated.
+  - `bash scripts/preflight.sh` before pushing. `mvn verify` alone does NOT predict
+    CI - Spotless is deliberately unbound from the Maven lifecycle.
+  - Flyway is the single source of truth for the schema. Never edit an applied
+    migration; add a new `V{n}__description.sql`.
+  - Frontend uses the centralized design system (src/theme/tokens.ts, FormContainer
+    → FormSection → FormField → FormActions). No hardcoded colors or spacing.
+  - Secrets only in the git-ignored `.env`; add new keys to `.env.example`.
+  - Every REST endpoint must be reachable from the UI and documented in OpenAPI.
+  - Specifications document ONLY the change. `docs/`, `README.md` and `CHANGELOG.md`
+    are permanent and remain the single source of truth.
+
+  Project shape: multi-module Maven modernization of a Java Swing monolith.
+  backend-api (Spring Boot 4.1, Java 21, package com.licensis.notaire), frontend
+  (Next.js 16), frontend-swing (REST client only), notaire-shared. PostgreSQL 16.
+  New data access goes in `repository` (Spring Data), not the legacy `jpa` package.
+
+# ---------------------------------------------------------------------------
+# Per-artifact rules
+# ---------------------------------------------------------------------------
+# Enforced in prose here and mechanically by scripts/validate-sdlc-plan.sh.
+# The section list is duplicated nowhere else: the templates in
+# openspec/schemas/notaire-sdlc/templates/ carry the headings themselves.
+rules:
+  proposal:
+    - "Must state the GitHub Issue number and the Use Case reference in the header table. If either is unknown, write UNKNOWN and tell the user - never fabricate an issue number."
+    - "Must contain every section of the template - Objetivo, What Changes, Reglas de negocio, Capabilities, Impact Analysis (including the Módulos afectados table), Documentation Impact, Out of Scope."
+    - "Documentation Impact must name real files under docs/ (or README.md / CHANGELOG.md) and say what changes in each. 'Documentation will be updated' is not acceptable."
+    - "Do not restate the content of permanent documentation. Cite the path instead."
+  traceability:
+    - "Fill only the links that already exist. Commits, PR, CI run, merge commit, release and smoke test stay pending during planning."
+    - "Every scenario in the delta spec must appear as a row in the Requirement coverage table."
+    - "Never present a planned step as completed evidence."
+  specs:
+    - "Scenarios are the Acceptance Criteria. Cover happy path, edge cases and error paths - a requirement with only a happy path is incomplete."
+    - "Use SHALL/MUST for normative statements. Scenarios use exactly four hashtags."
+    - "Cite the Use Case that owns each business rule instead of copying it."
+    - "Do not name internal classes, methods or frameworks."
+  design:
+    - "Mandatory for every change, including small ones. Never skip it."
+    - "Must contain every section of the template - Context, Goals / Non-Goals, Decisions, Riesgos / Trade-offs, Testing Strategy, Regression Strategy, Playwright Strategy, Deployment Strategy, Rollback Strategy."
+    - "Testing Strategy must map every spec scenario to a test level and a test class."
+    - "Playwright Strategy may be 'n/a - no UI surface' with a justification only when the change has no UI surface; never delete the section."
+    - "Each decision states the alternative that was considered and why it lost."
+  tasks:
+    - "Keep the twelve mandatory groups and the Definition of Done, with their headings and numbering intact."
+    - "Change-specific implementation work goes in group 4."
+    - "Specialize the boilerplate - name the real test classes, existing tests, E2E specs and permanent documents taken from design.md and proposal.md."
+    - "A group that does not apply records an explicit 'n/a' with a reason. Never delete a group."
+
+# ---------------------------------------------------------------------------
+# Per-operation guidance
+# ---------------------------------------------------------------------------
+operations:
+  apply:
+    guidance:
+      - "Verify Gate 1 before writing any code. No Issue or no Acceptance Criteria means stop and tell the user."
+      - "Confirm you are on the change branch, not main. Create it from an updated main if needed."
+      - "Run the new tests and show them failing before implementing. Report the failure output."
+      - "Update traceability.md as work lands - commit SHAs and the gate log - recording only what actually happened."
+      - "Run 'bash scripts/preflight.sh --fix' before pushing, and 'bash scripts/validate-sdlc-plan.sh' to confirm the plan is still complete."
+      - "Report gate failures with their output. Never describe a gate as passed without having run it."
+  archive:
+    guidance:
+      - "Do not archive before Gate 5 - deployed, smoke test passed, Issue closed."
+      - "Confirm traceability.md is complete from Issue through Release, with the gate log evidenced."
+      - "Confirm the permanent documentation named in Documentation Impact was actually updated, and say which commit did it."
+      - "Summarize what moved into openspec/specs/ and what remains outstanding."

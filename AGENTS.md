@@ -17,10 +17,35 @@ Coding agents for the Notaire project. All agents enforce the mandatory developm
 
 ---
 
+## Engineering Constitution (read this first)
+
+`CONSTITUTION.md` at the repository root is the mandatory engineering process for
+every change, human or agent. It prevails over this file and over every other
+rule document. Read it before writing any artifact or any code.
+
+Specifications are produced with **OpenSpec** using the project schema
+`notaire-sdlc`, which encodes the Constitution:
+
+```bash
+openspec new change "<kebab-case-name>"      # scaffolds the mandatory artifacts
+openspec status --change "<name>"            # artifact build order
+openspec instructions <artifact> --change "<name>"
+openspec validate "<name>" --strict          # structural checks
+bash scripts/validate-sdlc-plan.sh           # Constitution checks (--list explains them)
+```
+
+The Constitution reaches you through the `openspec` CLI itself
+(`openspec/config.yaml` → `context` and `rules`), so this works identically for
+Claude Code, OpenCode, GitHub Copilot, Codex, Cursor and any future agent. No
+change is Done until the plan is complete and every Quality Gate has passed.
+
+---
+
 ## Mandatory Development Workflow (all agents follow this)
 
 ```
 0. Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
+0.5 Specification via OpenSpec (Gate 1) — proposal, traceability, specs, design, tasks
 1. Branch from updated main: <type>/<issue-number>_<description>
 1.5 Move issue to IN PROGRESS
 2. TDD — write failing tests first (watch them fail)

@@ -239,6 +239,24 @@ jobs:
           fi
 
   # ==========================================
+  # JOB 5b: SDLC Plan Validation
+  # ==========================================
+  # Enforces CONSTITUTION.md on every active OpenSpec change: mandatory sections,
+  # a real Issue and Use Case, the twelve SDLC task groups, and the traceability
+  # ledger. Mirrored locally by `bash scripts/validate-sdlc-plan.sh`, which
+  # preflight.sh runs — keep the two in sync (see scripts/preflight.sh --list).
+  sdlc-plan:
+    name: SDLC Plan Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate OpenSpec changes against the Engineering Constitution
+        run: bash scripts/validate-sdlc-plan.sh
+
+  # ==========================================
   # JOB 6: Generate PR Report
   # ==========================================
   generate-report:
