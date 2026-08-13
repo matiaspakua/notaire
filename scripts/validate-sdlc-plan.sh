@@ -13,6 +13,8 @@
 #
 # WHAT IT CHECKS
 #   proposal.md      mandatory sections + a real Issue and Use Case
+#   proposal.md      the Issue number exists and is open on GitHub (live check via
+#                     `gh`, when available — see "Explore → Issue → Propose" below)
 #   traceability.md  the Issue → ... → Release chain is present and not pre-filled
 #   specs/**.md      at least one delta (unless skip_specs), scenarios well-formed
 #   design.md        testing / regression / Playwright / deployment / rollback
@@ -20,6 +22,20 @@
 #
 # Changes created with a different schema are skipped: this policy applies to the
 # notaire-sdlc workflow only.
+#
+# EXPLORE → ISSUE → PROPOSE
+# --------------------------
+# `openspec new change` will scaffold a proposal for any Issue number an agent
+# types into the header table — including one that does not exist. The Issue
+# format check below (§4/Gate 1) only validates that a `#<number>` is present,
+# not that it is real. When the `gh` CLI is installed and authenticated, this
+# script additionally resolves the Issue live: it must exist and be open. This
+# is what makes the process in docs/03-development/OPENSPEC-CONSTITUTION-BRIDGE.md
+# mechanically enforced rather than advisory: an exploration report (`opsx:explore`)
+# must be triaged into real GitHub Issues before `opsx:propose` scaffolds a plan
+# around one, because this gate — run by `preflight.sh` and `pr-validation.yml` —
+# rejects a plan whose Issue does not actually exist. Without `gh` available this
+# check is skipped with a note, never silently passed as "verified".
 #
 # USAGE
 #   bash scripts/validate-sdlc-plan.sh                 # every active change
@@ -67,11 +83,36 @@ need_section() {
   return 1
 }
 
+# gh_available — true if the gh CLI is installed and authenticated
+gh_available() {
+  command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1
+}
+
+# check_issue_live <issue-number>
+# Resolves the Issue on GitHub and requires it to exist and be open.
+# Caller must confirm gh_available first; this only queries.
+check_issue_live() {
+  local number="$1"
+  local state
+  state="$(gh issue view "$number" --json state --jq '.state' 2>/dev/null)"
+  if [ -z "$state" ]; then
+    bad "proposal: Issue #$number was not found on GitHub (Explore → Issue → Propose, Gate 1)"
+    return 1
+  fi
+  if [ "$state" != "OPEN" ]; then
+    bad "proposal: Issue #$number exists but is $state, not OPEN"
+    return 1
+  fi
+  ok "proposal: Issue #$number verified live on GitHub (OPEN)"
+  return 0
+}
+
 usage_list() {
   cat <<'EOF'
 Local check                          Constitution reference
 -----------------------------------  ------------------------------------------
 proposal: Issue + Use Case            §4 Mandatory Conventions / Gate 1
+proposal: Issue exists + is open      Explore → Issue → Propose / Gate 1 (needs gh)
 proposal: Objetivo, What Changes      §5 step 3 Specification
 proposal: Reglas de negocio           §5 step 3 / §8 (cite, never duplicate)
 proposal: Impact Analysis + módulos   §5 step 4 Impact Analysis
@@ -114,8 +155,16 @@ validate_change() {
     need_section "$proposal" '^## Documentation Impact' 'Documentation Impact'
 
     # A real issue number, not the template placeholder.
-    if grep -qE '^\|[[:space:]]*GitHub Issue[[:space:]]*\|[[:space:]]*#[0-9]+' "$proposal"; then
-      ok "proposal: GitHub Issue referenced"
+    local issue_number
+    issue_number="$(grep -oE '^\|[[:space:]]*GitHub Issue[[:space:]]*\|[[:space:]]*#[0-9]+' "$proposal" \
+      | grep -oE '#[0-9]+' | tr -d '#')"
+    if [ -n "$issue_number" ]; then
+      ok "proposal: GitHub Issue referenced (#$issue_number)"
+      if gh_available; then
+        check_issue_live "$issue_number"
+      else
+        note "proposal: gh CLI not available/authenticated — Issue #$issue_number not live-verified"
+      fi
     else
       bad "proposal: no GitHub Issue number (Gate 1 — every change needs an Issue)"
     fi
