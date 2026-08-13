@@ -48,6 +48,17 @@ context: |
   (Next.js 16), frontend-swing (REST client only), notaire-shared. PostgreSQL 16.
   New data access goes in `repository` (Spring Data), not the legacy `jpa` package.
 
+  Explore -> Issue -> Propose (mandatory sequence, see
+  docs/03-development/OPENSPEC-CONSTITUTION-BRIDGE.md): open-ended exploration
+  (`opsx:explore`) is a thinking stance, not a plan - it must never scaffold a
+  change directly. When exploration produces a candidate feature/gap list (e.g. a
+  functional gap report), run the `openspec-triage` skill first: it turns that
+  report into real, estimated, prioritized GitHub Issues, each linked to a Use
+  Case. Only once a real Issue exists may `opsx:propose` scaffold a change around
+  it. `scripts/validate-sdlc-plan.sh` enforces the "real" part mechanically: when
+  `gh` is available it resolves the Issue live and fails the plan if it does not
+  exist or is not open - an invented issue number cannot pass Gate 1.
+
 # ---------------------------------------------------------------------------
 # Per-artifact rules
 # ---------------------------------------------------------------------------
@@ -57,6 +68,7 @@ context: |
 rules:
   proposal:
     - "Must state the GitHub Issue number and the Use Case reference in the header table. If either is unknown, write UNKNOWN and tell the user - never fabricate an issue number."
+    - "The Issue must already exist and be open on GitHub before this artifact is written - verify with 'gh issue view <number>' rather than trusting the number the user typed. If it came from an exploration report, it must have been triaged into a real Issue first (see the openspec-triage skill); do not scaffold a proposal directly from a report line."
     - "Must contain every section of the template - Objetivo, What Changes, Reglas de negocio, Capabilities, Impact Analysis (including the Módulos afectados table), Documentation Impact, Out of Scope."
     - "Documentation Impact must name real files under docs/ (or README.md / CHANGELOG.md) and say what changes in each. 'Documentation will be updated' is not acceptable."
     - "Do not restate the content of permanent documentation. Cite the path instead."
