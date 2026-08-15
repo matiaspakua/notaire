@@ -77,6 +77,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **BREAKING: Contradictory Presupuesto↔Tramite cardinality resolved** (issue #798):
+  `Presupuesto` and `Tramite` declared foreign keys to each other —
+  `presupuestos.fk_id_tramite` (`Presupuesto.fkIdTramite`) and
+  `tramites.fk_id_presupuesto` (`Tramite.fkIdPresupuesto`) — but only the latter was
+  ever written by the live modern path (`GestionController.applyTramiteDependencies`,
+  CU02); `Presupuesto.fkIdTramite` was set only by the deprecated `ControllerNegocio`
+  god class and its `PresupuestoJpaController`/`TramiteJpaController` helpers. Removed
+  `Presupuesto.fkIdTramite` (field, getter/setter, `DtoPresupuesto.tramite` and its
+  accessors) and every legacy call site that wrote it, leaving the single, consistent
+  relation: one Presupuesto has many Tramites, each Tramite belongs to at most one
+  Presupuesto (`Presupuesto.tramiteList` / `Tramite.fkIdPresupuesto`). Flyway `V14`
+  drops `presupuestos.fk_id_tramite`, refusing to run if any row still holds a
+  non-null value (data-loss guard); paired `R14` rollback script restores the column.
+  Consumers of `DtoPresupuesto`'s removed `tramite` field must migrate to reading a
+  Tramite's own `fkIdPresupuesto` instead. Discovered mid-implementation that
+  `frontend-swing` (~6 Swing screens) also read/wrote this field; per existing
+  project-wide direction to deprecate that module rather than invest in it, it is now
+  excluded from the root Maven reactor (`pom.xml`) and CI (`ci.yml`,
+  `scripts/preflight.sh`) instead of migrated.
+
 - **Dashboard sidebar overflowed horizontally below 768px** (issue #699): `AppSidebar` rendered
   as a fixed 288px-wide `<aside>` with no responsive behavior, leaving no room for content at
   mobile widths (e.g. 320px). It now collapses to a hamburger-triggered off-canvas drawer below

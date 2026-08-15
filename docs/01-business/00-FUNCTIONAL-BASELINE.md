@@ -228,7 +228,7 @@ erDiagram
 
     presupuestos ||--o{ items : "compone"
     presupuestos ||--o{ pagos : "recibe"
-    presupuestos ||--o| tramites : "asociado"
+    presupuestos ||--o{ tramites : "asociado"
 
     gestiones_de_escrituras ||--o{ tramites : "agrupa"
     gestiones_de_escrituras ||--o{ historial : "registra"
