@@ -1,5 +1,11 @@
 # Frontend Swing - Notaire
 
+> ⚠️ **DEPRECATED**: This module is no longer maintained and is excluded from the
+> root Maven reactor build and CI (see `pom.xml`, `.github/workflows/ci.yml`,
+> `scripts/preflight.sh`). Do not build new features here or update it to track
+> `backend-api`/`notaire-shared` changes — it may not compile against current DTOs.
+> New client work belongs in `frontend/` (Next.js).
+
 `frontend-swing` es la aplicación cliente de escritorio en Java Swing que consume la API REST de Notaire.
 
 - Interfaz de usuario basada en Swing

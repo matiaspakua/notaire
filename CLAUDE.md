@@ -63,8 +63,11 @@ Multi-module Maven project refactoring a Java Swing monolith to microservices. S
 
 **Modules:**
 - `backend-api` — Spring Boot REST API (main development target)
-- `frontend-swing` — Swing GUI client (REST client only, no business logic)
 - `notaire-shared` — Shared DTOs and common code
+- `frontend-swing` — **DEPRECATED.** Legacy Swing GUI client, excluded from the root
+  Maven reactor and CI. Do not build new features here or adapt it to track
+  `backend-api`/`notaire-shared` changes; see `frontend-swing/README.md`. New client
+  work belongs in `frontend/` (Next.js).
 
 ## Build & Run Commands
 
