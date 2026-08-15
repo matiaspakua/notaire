@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU01 – Preparar Presupuesto, CU45 – Modificar presupuesto | exists |
 | Specification | `openspec/changes/resolve-presupuesto-tramite-cardinality/` | drafted |
 | Branch | `fix/798_resolve-presupuesto-tramite-cardinality` | created |
-| Tasks | `tasks.md` | groups 1-8 complete; 9-12 in progress |
-| Commits | `62754f7` (style: LF normalize), `b72d07f` (fix: cardinality), `f5a34f3` (chore: exclude frontend-swing), `cfc5743` (docs: baseline + changelog) | done |
+| Tasks | `tasks.md` | groups 1-9 complete; 10-12 in progress |
+| Commits | `62754f7` (style: LF normalize), `b72d07f` (fix: cardinality), `f5a34f3` (chore: exclude frontend-swing), `cfc5743` (docs: baseline + changelog), `1782ab4` (test: complete-case Tramite->Presupuesto assertion), `863c2b8` (docs: OpenSpec change artifacts) | done |
 | Pull Request | | pending |
 | CI run | | pending |
 | Merge commit | | pending |
