@@ -49,7 +49,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "Presupuesto.findByNumero", query = "SELECT p FROM Presupuesto p WHERE p.numero = :numero"),
         @NamedQuery(name = "Presupuesto.findByEstado", query = "SELECT p FROM Presupuesto p WHERE p.estado = :estado"),
         @NamedQuery(name = "Presupuesto.findByPersona", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona"),
-        @NamedQuery(name = "Presupuesto.findByPersonaTramie", query = "SELECT p FROM Presupuesto p WHERE p.fkIdPersona.idPersona = :idPersona AND p.fkIdTramite.idTramite = :fkIdTramite"),
 })
 public class Presupuesto implements Serializable {
 
@@ -92,10 +91,6 @@ public class Presupuesto implements Serializable {
     @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
     @ManyToOne(fetch = FetchType.EAGER)
     private Persona fkIdPersona;
-
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Tramite fkIdTramite;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.EAGER)
     private java.util.Set<Pago> pagoList;
@@ -164,16 +159,6 @@ public class Presupuesto implements Serializable {
         this.fkIdPersona = fkIdPersona;
     }
 
-    @JsonIgnore
-    public Tramite getFkIdTramite() {
-        return fkIdTramite;
-    }
-
-    @JsonProperty
-    public void setFkIdTramite(Tramite fkIdTramite) {
-        this.fkIdTramite = fkIdTramite;
-    }
-
     @XmlTransient
     @JsonIgnore
     public List<Tramite> getTramiteList() {
@@ -205,12 +190,6 @@ public class Presupuesto implements Serializable {
         miDto.setEstado(estado);
         miDto.setMontoInmueble(montoInmueble);
         miDto.setObservaciones(observaciones);
-
-        if (fkIdTramite != null) {
-            miDto.setTramite(fkIdTramite.getDto());
-        } else {
-            miDto.setTramite(null);
-        }
 
         if (fkIdPersona != null) {
             try {

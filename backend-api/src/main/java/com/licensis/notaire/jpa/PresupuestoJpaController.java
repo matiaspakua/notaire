@@ -61,11 +61,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
                 fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getIdPersona());
                 presupuesto.setFkIdPersona(fkIdPersona);
             }
-            Tramite fkIdTramite = presupuesto.getFkIdTramite();
-            if (fkIdTramite != null) {
-                fkIdTramite = em.getReference(fkIdTramite.getClass(), fkIdTramite.getIdTramite());
-                presupuesto.setFkIdTramite(fkIdTramite);
-            }
             java.util.Set<Pago> attachedPagoList = new java.util.HashSet<Pago>();
             for (Pago pagoListPagoToAttach : presupuesto.getPagoList()) {
                 pagoListPagoToAttach = em.getReference(pagoListPagoToAttach.getClass(),
@@ -91,10 +86,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
             if (fkIdPersona != null) {
                 fkIdPersona.getPresupuestoList().add(presupuesto);
                 fkIdPersona = em.merge(fkIdPersona);
-            }
-            if (fkIdTramite != null) {
-                fkIdTramite.getPresupuestoList().add(presupuesto);
-                fkIdTramite = em.merge(fkIdTramite);
             }
             for (Pago pagoListPago : presupuesto.getPagoList()) {
                 Presupuesto oldFkIdPresupuestoOfPagoListPago = pagoListPago.getPresupuesto();
@@ -159,8 +150,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
 
                 Persona fkIdPersonaOld = persistentPresupuesto.getFkIdPersona();
                 Persona fkIdPersonaNew = presupuesto.getFkIdPersona();
-                Tramite fkIdTramiteOld = persistentPresupuesto.getFkIdTramite();
-                Tramite fkIdTramiteNew = presupuesto.getFkIdTramite();
                 java.util.Set<Pago> pagoListOld = persistentPresupuesto.getPagoList();
                 java.util.Set<Pago> pagoListNew = presupuesto.getPagoList();
                 List<Tramite> tramiteListOld = persistentPresupuesto.getTramiteList();
@@ -202,10 +191,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
                     fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getIdPersona());
                     presupuesto.setFkIdPersona(fkIdPersonaNew);
                 }
-                if (fkIdTramiteNew != null) {
-                    fkIdTramiteNew = em.getReference(fkIdTramiteNew.getClass(), fkIdTramiteNew.getIdTramite());
-                    presupuesto.setFkIdTramite(fkIdTramiteNew);
-                }
                 java.util.Set<Pago> attachedPagoListNew = new java.util.HashSet<Pago>();
                 for (Pago pagoListNewPagoToAttach : pagoListNew) {
                     pagoListNewPagoToAttach = em.getReference(pagoListNewPagoToAttach.getClass(),
@@ -238,14 +223,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
                 if (fkIdPersonaNew != null && !fkIdPersonaNew.equals(fkIdPersonaOld)) {
                     fkIdPersonaNew.getPresupuestoList().add(presupuesto);
                     fkIdPersonaNew = em.merge(fkIdPersonaNew);
-                }
-                if (fkIdTramiteOld != null && !fkIdTramiteOld.equals(fkIdTramiteNew)) {
-                    fkIdTramiteOld.getPresupuestoList().remove(presupuesto);
-                    fkIdTramiteOld = em.merge(fkIdTramiteOld);
-                }
-                if (fkIdTramiteNew != null && !fkIdTramiteNew.equals(fkIdTramiteOld)) {
-                    fkIdTramiteNew.getPresupuestoList().add(presupuesto);
-                    fkIdTramiteNew = em.merge(fkIdTramiteNew);
                 }
                 for (Pago pagoListNewPago : pagoListNew) {
                     if (!pagoListOld.contains(pagoListNewPago)) {
@@ -341,11 +318,6 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
             if (fkIdPersona != null) {
                 fkIdPersona.getPresupuestoList().remove(presupuesto);
                 fkIdPersona = em.merge(fkIdPersona);
-            }
-            Tramite fkIdTramite = presupuesto.getFkIdTramite();
-            if (fkIdTramite != null) {
-                fkIdTramite.getPresupuestoList().remove(presupuesto);
-                fkIdTramite = em.merge(fkIdTramite);
             }
             em.remove(presupuesto);
             em.getTransaction().commit();

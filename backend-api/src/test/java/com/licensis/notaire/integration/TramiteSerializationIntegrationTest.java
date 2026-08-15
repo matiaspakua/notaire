@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * {@code Tramite} has two bidirectional EAGER/LAZY relationships that Jackson recurses through
  * unless the back-reference side is excluded:
  * <ul>
- *   <li>{@code Tramite.presupuestoList} (EAGER) &lt;-&gt; {@code Presupuesto.fkIdTramite} (EAGER)</li>
+ *   <li>{@code Tramite.fkIdPresupuesto} (EAGER) &lt;-&gt; {@code Presupuesto.tramiteList} (LAZY)</li>
  *   <li>{@code Tramite.fkIdGestion} (EAGER) &lt;-&gt; {@code GestionDeEscritura.tramiteList} (LAZY)</li>
  * </ul>
  * Both previously 500'd GET /api/v1/tramites ("Failed to write request") as soon as production
@@ -78,10 +78,23 @@ class TramiteSerializationIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idTipoTramite").asInt();
     }
 
-    private Integer createTramite(Integer tipoTramiteId) throws Exception {
+    private Integer createPresupuesto() throws Exception {
+        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"numero": 1, "encabezado": "presupuesto ciclo IT", "estado": "PENDIENTE",
+                                 "fecha": "2026-07-24"}
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("idPresupuesto").asInt();
+    }
+
+    private Integer createTramiteForPresupuesto(Integer tipoTramiteId, Integer presupuestoId) throws Exception {
         String body = """
-                {"observaciones": "tramite ciclo IT", "fkIdTipoTramite": {"idTipoTramite": %d}}
-                """.formatted(tipoTramiteId);
+                {"observaciones": "tramite ciclo IT", "fkIdTipoTramite": {"idTipoTramite": %d},
+                 "fkIdPresupuesto": {"idPresupuesto": %d}}
+                """.formatted(tipoTramiteId, presupuestoId);
         MvcResult result = mockMvc.perform(post("/api/v1/tramites")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -90,23 +103,12 @@ class TramiteSerializationIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idTramite").asInt();
     }
 
-    private void createPresupuestoForTramite(Integer tramiteId) throws Exception {
-        String body = """
-                {"numero": 1, "encabezado": "presupuesto ciclo IT", "estado": "PENDIENTE",
-                 "fecha": "2026-07-24", "fkIdTramite": {"idTramite": %d}}
-                """.formatted(tramiteId);
-        mockMvc.perform(post("/api/v1/presupuestos")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isCreated());
-    }
-
     @Test
-    @DisplayName("Should list tramites as valid JSON when a presupuesto references the tramite")
+    @DisplayName("Should list tramites as valid JSON when a tramite references its presupuesto")
     void shouldListTramitesWithoutCyclicRecursion() throws Exception {
         Integer tipoTramiteId = createTipoTramite();
-        Integer tramiteId = createTramite(tipoTramiteId);
-        createPresupuestoForTramite(tramiteId);
+        Integer presupuestoId = createPresupuesto();
+        Integer tramiteId = createTramiteForPresupuesto(tipoTramiteId, presupuestoId);
 
         MvcResult result = mockMvc.perform(get("/api/v1/tramites"))
                 .andExpect(status().isOk())
@@ -125,11 +127,11 @@ class TramiteSerializationIntegrationTest {
         }
         assertThat(tramite).as("created tramite should be in the list").isNotNull();
 
-        JsonNode presupuestoList = tramite.get("presupuestoList");
-        assertThat(presupuestoList).as("tramite should embed its presupuestoList").isNotNull();
-        assertThat(presupuestoList).isNotEmpty();
-        assertThat(presupuestoList.get(0).has("fkIdTramite"))
-                .as("presupuesto must not embed its fkIdTramite (cyclic reference)")
+        JsonNode presupuesto = tramite.get("fkIdPresupuesto");
+        assertThat(presupuesto).as("tramite should embed its fkIdPresupuesto").isNotNull();
+        assertThat(presupuesto.get("idPresupuesto").asInt()).isEqualTo(presupuestoId);
+        assertThat(presupuesto.has("tramiteList"))
+                .as("presupuesto must not embed its tramiteList (cyclic reference)")
                 .isFalse();
     }
 

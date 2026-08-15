@@ -2,7 +2,6 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Persona;
-import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -70,21 +69,24 @@ class PresupuestoEntityTest {
         }
 
         @Test
-        @DisplayName("Should link presupuesto to tramite")
-        void shouldLinkPresupuestoToTramite() {
-            Tramite tramite = new Tramite();
-            tramite.setIdTramite(1);
-            
-            TipoDeTramite tipoTramite = new TipoDeTramite();
-            tipoTramite.setNombre("Compraventa");
-            tramite.setFkIdTipoTramite(tipoTramite);
-
+        @DisplayName("Should associate presupuesto with more than one tramite")
+        void shouldAssociatePresupuestoWithMultipleTramites() {
             Presupuesto presupuesto = new Presupuesto();
             presupuesto.setIdPresupuesto(1);
-            presupuesto.setFkIdTramite(tramite);
 
-            assertThat(presupuesto.getFkIdTramite()).isNotNull();
-            assertThat(presupuesto.getFkIdTramite().getFkIdTipoTramite().getNombre()).isEqualTo("Compraventa");
+            Tramite tramite1 = new Tramite();
+            tramite1.setIdTramite(1);
+            tramite1.setFkIdPresupuesto(presupuesto);
+
+            Tramite tramite2 = new Tramite();
+            tramite2.setIdTramite(2);
+            tramite2.setFkIdPresupuesto(presupuesto);
+
+            presupuesto.setTramiteList(List.of(tramite1, tramite2));
+
+            assertThat(presupuesto.getTramiteList()).containsExactly(tramite1, tramite2);
+            assertThat(tramite1.getFkIdPresupuesto()).isEqualTo(presupuesto);
+            assertThat(tramite2.getFkIdPresupuesto()).isEqualTo(presupuesto);
         }
 
         @Test
@@ -102,7 +104,7 @@ class PresupuestoEntityTest {
         @DisplayName("Should initialize lists in constructor")
         void shouldInitializeListsInConstructor() {
             Presupuesto presupuesto = new Presupuesto();
-            
+
             assertThat(presupuesto.getItemList()).isNotNull();
             assertThat(presupuesto.getItemList()).isEmpty();
             assertThat(presupuesto.getPagoList()).isNotNull();
@@ -121,7 +123,7 @@ class PresupuestoEntityTest {
 
             Presupuesto presupuesto1 = new Presupuesto(1);
             presupuesto1.setFkIdPersona(persona1);
-            
+
             Presupuesto presupuesto2 = new Presupuesto(2);
             presupuesto2.setFkIdPersona(persona2);
 
@@ -142,7 +144,7 @@ class PresupuestoEntityTest {
         void shouldFilterPresupuestosByEstado() {
             Presupuesto presupuesto1 = new Presupuesto(1);
             presupuesto1.setEstado("pendiente");
-            
+
             Presupuesto presupuesto2 = new Presupuesto(2);
             presupuesto2.setEstado("aprobado");
 

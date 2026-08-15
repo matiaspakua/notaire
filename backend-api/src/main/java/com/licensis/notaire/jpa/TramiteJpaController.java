@@ -60,10 +60,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
         {
             tramite.setTramitesPersonasList(new ArrayList<TramitesPersonas>());
         }
-        if (tramite.getPresupuestoList() == null)
-        {
-            tramite.setPresupuestoList(new ArrayList<Presupuesto>());
-        }
         EntityManager em = null;
         try
         {
@@ -113,29 +109,11 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
                 attachedTramitesPersonasList.add(tramitesPersonasListTramitesPersonasToAttach);
             }
             tramite.setTramitesPersonasList(attachedTramitesPersonasList);
-            List<Presupuesto> attachedPresupuestoList = new ArrayList<Presupuesto>();
-            for (Presupuesto presupuestoListPresupuestoToAttach : tramite.getPresupuestoList())
-            {
-                presupuestoListPresupuestoToAttach = em.getReference(presupuestoListPresupuestoToAttach.getClass(), presupuestoListPresupuestoToAttach.getIdPresupuesto());
-                attachedPresupuestoList.add(presupuestoListPresupuestoToAttach);
-            }
-            tramite.setPresupuestoList(attachedPresupuestoList);
             em.persist(tramite);
             if (fkIdInmueble != null)
             {
                 fkIdInmueble.getTramiteList().add(tramite);
                 fkIdInmueble = em.merge(fkIdInmueble);
-            }
-            if (fkIdPresupuesto != null)
-            {
-                Tramite oldFkIdTramiteOfFkIdPresupuesto = fkIdPresupuesto.getFkIdTramite();
-                if (oldFkIdTramiteOfFkIdPresupuesto != null)
-                {
-                    oldFkIdTramiteOfFkIdPresupuesto.setFkIdPresupuesto(null);
-                    oldFkIdTramiteOfFkIdPresupuesto = em.merge(oldFkIdTramiteOfFkIdPresupuesto);
-                }
-                fkIdPresupuesto.setFkIdTramite(tramite);
-                fkIdPresupuesto = em.merge(fkIdPresupuesto);
             }
             if (fkIdEscritura != null)
             {
@@ -174,17 +152,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
                     oldTramiteOfTramitesPersonasListTramitesPersonas = em.merge(oldTramiteOfTramitesPersonasListTramitesPersonas);
                 }
             }
-            for (Presupuesto presupuestoListPresupuesto : tramite.getPresupuestoList())
-            {
-                Tramite oldFkIdTramiteOfPresupuestoListPresupuesto = presupuestoListPresupuesto.getFkIdTramite();
-                presupuestoListPresupuesto.setFkIdTramite(tramite);
-                presupuestoListPresupuesto = em.merge(presupuestoListPresupuesto);
-                if (oldFkIdTramiteOfPresupuestoListPresupuesto != null)
-                {
-                    oldFkIdTramiteOfPresupuestoListPresupuesto.getPresupuestoList().remove(presupuestoListPresupuesto);
-                    oldFkIdTramiteOfPresupuestoListPresupuesto = em.merge(oldFkIdTramiteOfPresupuestoListPresupuesto);
-                }
-            }
             em.getTransaction().commit();
             id = tramite.getIdTramite();
         }
@@ -221,8 +188,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
             List<DocumentoPresentado> documentosPresentadoListNew = tramite.getDocumentoPresentadoList();
             List<TramitesPersonas> tramitesPersonasListOld = persistentTramite.getTramitesPersonasList();
             List<TramitesPersonas> tramitesPersonasListNew = tramite.getTramitesPersonasList();
-            List<Presupuesto> presupuestoListOld = persistentTramite.getPresupuestoList();
-            List<Presupuesto> presupuestoListNew = tramite.getPresupuestoList();
             List<String> illegalOrphanMessages = null;
             if (fkIdPresupuestoOld != null && !fkIdPresupuestoOld.equals(fkIdPresupuestoNew))
             {
@@ -252,17 +217,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain TramitesPersonas " + tramitesPersonasListOldTramitesPersonas + " since its tramite field is not nullable.");
-                }
-            }
-            for (Presupuesto presupuestoListOldPresupuesto : presupuestoListOld)
-            {
-                if (!presupuestoListNew.contains(presupuestoListOldPresupuesto))
-                {
-                    if (illegalOrphanMessages == null)
-                    {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Presupuesto " + presupuestoListOldPresupuesto + " since its fkIdTramite field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -310,14 +264,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
             }
             tramitesPersonasListNew = attachedTramitesPersonasListNew;
             tramite.setTramitesPersonasList(tramitesPersonasListNew);
-            List<Presupuesto> attachedPresupuestoListNew = new ArrayList<Presupuesto>();
-            for (Presupuesto presupuestoListNewPresupuestoToAttach : presupuestoListNew)
-            {
-                presupuestoListNewPresupuestoToAttach = em.getReference(presupuestoListNewPresupuestoToAttach.getClass(), presupuestoListNewPresupuestoToAttach.getIdPresupuesto());
-                attachedPresupuestoListNew.add(presupuestoListNewPresupuestoToAttach);
-            }
-            presupuestoListNew = attachedPresupuestoListNew;
-            tramite.setPresupuestoList(presupuestoListNew);
             tramite = em.merge(tramite);
             if (fkIdInmuebleOld != null && !fkIdInmuebleOld.equals(fkIdInmuebleNew))
             {
@@ -328,17 +274,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
             {
                 fkIdInmuebleNew.getTramiteList().add(tramite);
                 fkIdInmuebleNew = em.merge(fkIdInmuebleNew);
-            }
-            if (fkIdPresupuestoNew != null && !fkIdPresupuestoNew.equals(fkIdPresupuestoOld))
-            {
-                Tramite oldFkIdTramiteOfFkIdPresupuesto = fkIdPresupuestoNew.getFkIdTramite();
-                if (oldFkIdTramiteOfFkIdPresupuesto != null)
-                {
-                    oldFkIdTramiteOfFkIdPresupuesto.setFkIdPresupuesto(null);
-                    oldFkIdTramiteOfFkIdPresupuesto = em.merge(oldFkIdTramiteOfFkIdPresupuesto);
-                }
-                fkIdPresupuestoNew.setFkIdTramite(tramite);
-                fkIdPresupuestoNew = em.merge(fkIdPresupuestoNew);
             }
             if (fkIdEscrituraOld != null && !fkIdEscrituraOld.equals(fkIdEscrituraNew))
             {
@@ -395,20 +330,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
                     {
                         oldTramiteOfTramitesPersonasListNewTramitesPersonas.getTramitesPersonasList().remove(tramitesPersonasListNewTramitesPersonas);
                         oldTramiteOfTramitesPersonasListNewTramitesPersonas = em.merge(oldTramiteOfTramitesPersonasListNewTramitesPersonas);
-                    }
-                }
-            }
-            for (Presupuesto presupuestoListNewPresupuesto : presupuestoListNew)
-            {
-                if (!presupuestoListOld.contains(presupuestoListNewPresupuesto))
-                {
-                    Tramite oldFkIdTramiteOfPresupuestoListNewPresupuesto = presupuestoListNewPresupuesto.getFkIdTramite();
-                    presupuestoListNewPresupuesto.setFkIdTramite(tramite);
-                    presupuestoListNewPresupuesto = em.merge(presupuestoListNewPresupuesto);
-                    if (oldFkIdTramiteOfPresupuestoListNewPresupuesto != null && !oldFkIdTramiteOfPresupuestoListNewPresupuesto.equals(tramite))
-                    {
-                        oldFkIdTramiteOfPresupuestoListNewPresupuesto.getPresupuestoList().remove(presupuestoListNewPresupuesto);
-                        oldFkIdTramiteOfPresupuestoListNewPresupuesto = em.merge(oldFkIdTramiteOfPresupuestoListNewPresupuesto);
                     }
                 }
             }
@@ -533,15 +454,6 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Tramite (" + tramite + ") cannot be destroyed since the TramitesPersonas " + tramitesPersonasListOrphanCheckTramitesPersonas + " in its tramitesPersonasList field has a non-nullable tramite field.");
-            }
-            List<Presupuesto> presupuestoListOrphanCheck = tramite.getPresupuestoList();
-            for (Presupuesto presupuestoListOrphanCheckPresupuesto : presupuestoListOrphanCheck)
-            {
-                if (illegalOrphanMessages == null)
-                {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Tramite (" + tramite + ") cannot be destroyed since the Presupuesto " + presupuestoListOrphanCheckPresupuesto + " in its presupuestoList field has a non-nullable fkIdTramite field.");
             }
             if (illegalOrphanMessages != null)
             {

@@ -102,8 +102,6 @@ public class Tramite implements Serializable {
     private List<Persona> personaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTramite", fetch = FetchType.LAZY)
     private List<DocumentoPresentado> documentoPresentadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTramite", fetch = FetchType.EAGER)
-    private List<Presupuesto> presupuestoList;
     @JoinColumn(name = "fk_id_inmueble", referencedColumnName = "id_inmueble")
     @ManyToOne(fetch = FetchType.EAGER)
     private Inmueble fkIdInmueble;
@@ -129,7 +127,6 @@ public class Tramite implements Serializable {
         this.idTramite = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
         this.documentoPresentadoList = new ArrayList<>();
         this.personaList = new ArrayList<>();
-        this.presupuestoList = new ArrayList<>();
     }
 
     public Tramite(Integer idTramite) {
@@ -170,15 +167,6 @@ public class Tramite implements Serializable {
 
     public void setDocumentoPresentadoList(List<DocumentoPresentado> documentoPresentadoList) {
         this.documentoPresentadoList = documentoPresentadoList;
-    }
-
-    @XmlTransient
-    public List<Presupuesto> getPresupuestoList() {
-        return presupuestoList;
-    }
-
-    public void setPresupuestoList(List<Presupuesto> presupuestoList) {
-        this.presupuestoList = presupuestoList;
     }
 
     public Inmueble getFkIdInmueble() {

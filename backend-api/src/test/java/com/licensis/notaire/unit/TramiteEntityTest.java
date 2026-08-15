@@ -39,7 +39,6 @@ class TramiteEntityTest {
             assertThat(tramite.getIdTramite()).isNotNull();
             assertThat(tramite.getDocumentoPresentadoList()).isNotNull().isEmpty();
             assertThat(tramite.getPersonaList()).isNotNull().isEmpty();
-            assertThat(tramite.getPresupuestoList()).isNotNull().isEmpty();
         }
 
         @Test

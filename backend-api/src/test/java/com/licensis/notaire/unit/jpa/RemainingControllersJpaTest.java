@@ -1,7 +1,6 @@
 package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.*;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.negocio.*;
 import jakarta.persistence.EntityManager;
@@ -18,12 +17,9 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -1410,7 +1406,6 @@ class RemainingControllersJpaTest {
             Tramite entity = new Tramite();
             entity.setDocumentoPresentadoList(new ArrayList<>());
             entity.setTramitesPersonasList(new ArrayList<>());
-            entity.setPresupuestoList(new ArrayList<>());
             when(mockEm.getReference(Tramite.class, 1)).thenReturn(entity);
             controller.destroy(1);
             verify(mockEm).remove(entity);
