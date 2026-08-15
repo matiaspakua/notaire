@@ -737,7 +737,6 @@ public class ControllerNegocio
                     Presupuesto miPresupuesto = new Presupuesto();
 
                     miPresupuesto.setFecha(Calendar.getInstance().getTime());
-                    miPresupuesto.setFkIdTramite(miTramite);
                     miPresupuesto.setSaldo(dtoPresupuesto.getSaldo());
                     miPresupuesto.setTotal(dtoPresupuesto.getTotal());
                     miPresupuesto.setFkIdPersona(miPersona);
@@ -817,7 +816,6 @@ public class ControllerNegocio
             Presupuesto miPresupuesto = new Presupuesto();
 
             miPresupuesto.setFecha(Calendar.getInstance().getTime());
-            miPresupuesto.setFkIdTramite(miTramite);
             miPresupuesto.setSaldo(dtoPresupuesto.getSaldo());
             miPresupuesto.setTotal(dtoPresupuesto.getTotal());
             miPresupuesto.setFkIdPersona(miPersona);
@@ -974,15 +972,6 @@ public class ControllerNegocio
                 //Set persona con su red d objetos
                 presupuesto.setFkIdPersona(persona);
 
-                if (presupuesto.getFkIdTramite() != null)
-                {
-                    Tramite tramitePresupuesto = new Tramite();
-                    tramitePresupuesto.setIdTramite(presupuesto.getFkIdTramite().getIdTramite());
-
-                    tramitePresupuesto = miJpaTramite.encontrarTramite(tramitePresupuesto.getIdTramite());
-
-                    presupuesto.setFkIdTramite(tramitePresupuesto);
-                }
                 DtoPresupuesto miDto = presupuesto.getDto();
                 dtosPresupuestosEncontrados.add(miDto);
             }
@@ -1105,15 +1094,6 @@ public class ControllerNegocio
                     miPresupuesto.setSaldo(miDtoPresupuesto.getSaldo());
                     miPresupuesto.setTotal(miDtoPresupuesto.getTotal());
                     miPresupuesto.setVersion(miDtoPresupuesto.getVersion());
-
-                    Tramite miTramite = new Tramite();
-                    miTramite.setAtributos(miDtoPresupuesto.getTramite());
-                    miTramite.setFkIdPresupuesto(miPresupuesto);
-
-                    ArrayList<Tramite> tramites = new ArrayList<>();
-                    tramites.add(miTramite);
-
-                    miPresupuesto.setTramiteList(tramites);
 
                     ArrayList<Item> itemsViejos = new ArrayList<Item>();
                     for (int i = 0; i < dtosItems.size(); i++)
@@ -1269,16 +1249,16 @@ public class ControllerNegocio
             if (gestionExistente.getNumero() == ConstantesPersistencia.VERSION_INICIAL)
             {
                 //  gesiton -> estado iniciaL
-                //  gestion -> escribano             
+                //  gestion -> escribano
                 //  gestion -> datos de la gestion
                 nuevaGestion.setAtributos(dtoNuevaGestion);
 
-                //  gestion -> cliente referencia        
-                //  gestion -> lista clientes involucrados        
+                //  gestion -> cliente referencia
+                //  gestion -> lista clientes involucrados
                 //  gestion <- tramites_personas (relacional)
                 List<TramitesPersonas> relaciones = new ArrayList<>();
 
-                // Para el cliente de referencia.                
+                // Para el cliente de referencia.
                 Persona clienteReferencia = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoNuevaGestion.getClienteReferencia());
 
                 //  gestion -> lista tramites asociados
@@ -1304,7 +1284,7 @@ public class ControllerNegocio
                     relaciones.add(relacionClienteReferencia);
                 }
 
-                // Para la lista de clientes involucrados.                
+                // Para la lista de clientes involucrados.
                 for (Iterator<DtoPersona> itClientes = dtoNuevaGestion.getListaClientesInvolucrados().iterator(); itClientes.hasNext();)
                 {
                     DtoPersona dtoPersona = itClientes.next();
@@ -1421,7 +1401,7 @@ public class ControllerNegocio
 
                 List<TramitesPersonas> relaciones = new ArrayList<>();
 
-                //  agregar clientes a la lista de clientes involucrados.                
+                //  agregar clientes a la lista de clientes involucrados.
                 for (Iterator<DtoPersona> itClientes = listaDtoClientesAgregados.iterator(); itClientes.hasNext();)
                 {
                     DtoPersona dtoPersona = itClientes.next();
@@ -2144,7 +2124,7 @@ public class ControllerNegocio
             listaDtoTramitesDeGestion.add(dtoTramite);
         }
 
-        //Busco documentos necesarios para los tramites de la gestion, que obtuve  
+        //Busco documentos necesarios para los tramites de la gestion, que obtuve
         //listaTramitesConSusDocumentosNecesarios Contiene el tramite, sus documentos y su gestion
         listaDtoTramitesConEstadoDeDocumentacion = this.obtenerDocumentosNecesariosPorTramite(listaDtoTramitesDeGestion);
 
@@ -4732,7 +4712,7 @@ public class ControllerNegocio
                     this.registrarAuditoria(nuevoConcepto, ConstantesGui.MODIFICAR_CONCEPTO);
 
                 }
-//                }                
+//                }
 //                else
 //                {
 //                    throw new PreexistingEntityException("El concepto indica ya existe");

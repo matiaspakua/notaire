@@ -16,10 +16,11 @@
 
     <name>Notaire Root</name>
 
+    <!-- frontend-swing is deprecated: excluded from the default reactor build.
+         See frontend-swing/README.md. -->
     <modules>
         <module>notaire-shared</module>
         <module>backend-api</module>
-        <module>frontend-swing</module>
     </modules>
 
     <properties>

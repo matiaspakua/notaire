@@ -98,11 +98,6 @@ jobs:
           -Dtest='!**/integration/**'
           -Dsurefire.failIfNoSpecifiedTests=false
 
-      - name: Run Unit Tests (Frontend Swing)
-        run: >
-          mvn test -pl frontend-swing -am
-          -Dsurefire.failIfNoSpecifiedTests=false
-
       - name: Upload Unit Test Report (surefire + JaCoCo coverage)
         uses: actions/upload-artifact@v7
         if: always()
@@ -111,7 +106,6 @@ jobs:
           path: |
             backend-api/target/surefire-reports/
             backend-api/target/site/jacoco/
-            frontend-swing/target/surefire-reports/
           retention-days: 30
 
       - name: Publish Unit Test Results

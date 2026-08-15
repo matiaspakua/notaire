@@ -49,7 +49,6 @@ backend compile                 Build & Compile / Quick Build    ci.yml, pr-vali
 backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml
                                 Coverage Gate (mvn verify)
 backend pg-integration          Integration Tests (Testcontainers) ci.yml
-frontend-swing unit tests       Unit Tests (Frontend Swing)      ci.yml
 frontend typecheck              TypeScript Check                 frontend-ci.yml
 frontend eslint                 ESLint                           frontend-ci.yml
 frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
@@ -151,7 +150,6 @@ run "backend compile" mvn clean compile -DskipTests "${MVN_FLAGS[@]}"
 if [ "$MODE_FAST" = "0" ]; then
     # `mvn verify` covers Unit Tests + Integration Tests (H2) + Coverage Gate.
     run "backend verify (tests + coverage gate)" mvn verify -pl backend-api -am "${MVN_FLAGS[@]}"
-    run "frontend-swing unit tests" mvn test -pl frontend-swing -am "${MVN_FLAGS[@]}"
 
     # Testcontainers-backed; needs a working Docker daemon.
     if docker info >/dev/null 2>&1; then
