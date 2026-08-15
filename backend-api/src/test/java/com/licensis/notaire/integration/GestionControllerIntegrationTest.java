@@ -1,10 +1,12 @@
 package com.licensis.notaire.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.TipoDeTramite;
+import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
+import com.licensis.notaire.repository.TramiteRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
@@ -36,6 +40,9 @@ class GestionControllerIntegrationTest {
 
     @Autowired
     private TipoDeTramiteRepository tipoDeTramiteRepository;
+
+    @Autowired
+    private TramiteRepository tramiteRepository;
 
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -150,11 +157,21 @@ class GestionControllerIntegrationTest {
                  "escribanoId": %d, "estadoGestionId": %d, "tipoTramiteId": %d}
                 """.formatted(presupuestoId, escribanoId, estadoId, tipoTramiteId);
 
-        mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult result = mockMvc.perform(post("/api/v1/gestiones/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idGestion").isNumber());
+                .andExpect(jsonPath("$.idGestion").isNumber())
+                .andReturn();
+        Integer gestionId = mapper.readTree(result.getResponse().getContentAsString()).get("idGestion").asInt();
+
+        List<Tramite> tramites = tramiteRepository.findByFkIdGestionIdGestion(gestionId);
+        assertThat(tramites).as("complete-case should persist a tramite linked to the gestion").hasSize(1);
+        assertThat(tramites.get(0).getFkIdPresupuesto())
+                .as("the persisted tramite should carry the requested presupuestoId as its fkIdPresupuesto")
+                .isNotNull()
+                .extracting("idPresupuesto")
+                .isEqualTo(presupuestoId);
     }
 
     @Test
