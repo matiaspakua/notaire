@@ -1,71 +1,44 @@
-# CU-78: Security and Compliance
+# CU78 – Seguridad, Privacidad y Cumplimiento (Security and Compliance)
 
-## Overview
+## Información del Caso de Uso
 
-This Use Case covers security policies, compliance requirements, vulnerability management, and secure development practices to protect all business use cases (CU-01 through CU-73) and maintain regulatory compliance.
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU78 – Seguridad, Privacidad y Cumplimiento |
+| **Actores** | Oficial de Seguridad, Administrador del Sistema, Equipo de Desarrollo |
+| **Propósito** | Garantizar la confidencialidad, integridad y disponibilidad de la información notarial mediante autenticación robusta, cifrado de contraseñas, encriptación en tránsito (HTTPS/TLS), control de acceso a base de datos y cumplimiento de normativas de privacidad. |
+| **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
+| **Tipo** | Soporte / Seguridad |
+| **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309 |
 
-## Scope
+## Alcance Técnico
 
-- Security policy as code
-- OWASP Top 10 compliance
-- Secrets management
-- Dependency vulnerability scanning
-- Rate limiting and API security
-- HTTPS/TLS configuration
-- Security testing (OWASP ZAP)
-- Compliance requirements and audit trails
-- Password encryption standards
-- Data privacy and access control
+- Autenticación segura basada en tokens JWT y hash robusto de contraseñas (BCrypt con salt).
+- Encriptación de todas las comunicaciones cliente-servidor mediante HTTPS/TLS 1.3.
+- Políticas de control de acceso basado en roles (RBAC) para todas las funciones del sistema.
+- Aislamiento estricto de la base de datos (sin acceso público directo, solo red interna protegida).
+- Escaneo continuo de vulnerabilidades en dependencias y código fuente.
 
-## Primary Actor
+## Procedimiento de Seguridad y Control de Acceso
 
-- Security Team
-- Compliance Officer
-- Development Team
-- DevOps Team
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El usuario ingresa sus credenciales (nombre de usuario y contraseña). | Valida las credenciales contra el hash seguro en base de datos cifrada. |
+| 2 | Si las credenciales son válidas, se genera una sesión autenticada con token firmado. | Transmite el token seguro mediante canal cifrado HTTPS/TLS. |
+| 3 | El usuario solicita ejecutar una operación sobre un trámite o cliente. | Valida los permisos de rol del usuario y autoriza la ejecución. |
+| 4 | El sistema procesa la operación. | Registra la acción en el log de auditoría inmutable indicando usuario, fecha, hora e IP. |
 
-## Related Use Cases
+## Excepciones / Flujos Alternativos
 
-- All CU-01 through CU-73 (all must be secure)
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 1.1 | Credenciales incorrectas o usuario inactivo | El sistema rechaza el acceso, incrementa el contador de intentos fallidos y no revela detalles sensibles. |
+| 3.1 | Usuario sin permisos para la operación solicitada | El sistema bloquea la acción con código HTTP 403 Forbidden y registra el evento de seguridad en auditoría. |
 
-## Key Activities
+## Criterios de Aceptación
 
-1. Define security policies and standards
-2. Implement OWASP Top 10 protections
-3. Configure secrets management
-4. Set up dependency scanning
-5. Implement rate limiting
-6. Configure HTTPS/TLS
-7. Set up security testing
-8. Document compliance requirements
-9. Implement audit logging
-10. Configure password encryption
-
-## Acceptance Criteria
-
-- [ ] Security policy documented
-- [ ] OWASP compliance checklist created
-- [ ] Secrets management implemented
-- [ ] Dependency scanning automated
-- [ ] Rate limiting configured
-- [ ] HTTPS/TLS configured
-- [ ] Security testing procedures defined
-- [ ] Compliance requirements documented
-- [ ] Audit logging implemented
-- [ ] Password encryption standards defined
-
-## Documentation References
-
-- Issue #254: Configure HTTPS/TLS for production
-- Issue #267: Create OWASP Top 10 compliance checklist
-- Issue #280: Create rate limiting configuration guide
-- Issue #281: Create OWASP ZAP API security testing guide
-- Issue #282: Create dependency vulnerability management strategy
-- Issue #283: Create secrets management best practices guide
-- Issue #307: Define security policy as code
-- Issue #309: Create compliance requirements and audit trail
-
-## Status
-
-In Development
-
+- [x] Contraseñas almacenadas con cifrado fuerte (BCrypt).
+- [x] Canal de comunicación seguro HTTPS/TLS obligatorio en producción.
+- [x] Control de acceso basado en roles (RBAC) verificado en todos los endpoints.
+- [x] Auditoría de seguridad y eventos de acceso registrada permanentemente.

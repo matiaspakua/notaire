@@ -1,70 +1,29 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu40-modificar-tipo-de-folio">CU40 – Modificar tipo de folio</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Permite modificar un tipo de folio.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El escribano decide modificar el nombre y/o observaciones de un tipo de folio existente, para lo cual solicita al sistema la lista de todos los tipos de folios registrados. El sistema presenta la lista de folios disponibles, el escribano selecciona uno de ellos y cambia el nombre y/o observaciones del mismo. Luego el sistema registra los cambios indicados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU68</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/193">#193</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU40 – Modificar tipo de folio
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El escribano decide cambiar el nombre y/o observaciones de un tipo de folios.</p>
-<p>3. El escribano selecciona uno de ellos y modifica el nombre y/o observaciones, y guarda los cambios realizados.</p></td>
-<td><p>2. Presenta una lista de todos los tipos de folios registrados.</p>
-<p>4. Registra los cambios realizados.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                             |
-|-----------------|---------------------------------------------|
-| **Excepciones** |                                             |
-| **Actor**       | **Sistema**                                 |
-|                 | 2.1. No existen tipo de folios registrados. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU40 – Modificar tipo de folio |
+| **Actores** | Escribano |
+| **Propósito** | Permite modificar un tipo de folio. |
+| **Descripción** | El escribano decide modificar el nombre y/o observaciones de un tipo de folio existente, para lo cual solicita al sistema la lista de todos los tipos de folios registrados. El sistema presenta la lista de folios disponibles, el escribano selecciona uno de ellos y cambia el nombre y/o observaciones del mismo. Luego el sistema registra los cambios indicados. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #55 (Administrar tablas base), RF #94 (Administrar folios), RF #119 (Diferencias entre protocolo principal y auxiliar); CU68 |
+| **GitHub ID** | #193 |
 
-|                 |                                                  |
-|-----------------|--------------------------------------------------|
-| **Excepciones** |                                                  |
-| **Actor**       | **Sistema**                                      |
-|                 | 4.1. Alguno de los datos indicados no es válido. |
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El escribano decide cambiar el nombre y/o observaciones de un tipo de folios. |  |
+| 2 |  | Presenta una lista de todos los tipos de folios registrados. |
+| 3 | El escribano selecciona uno de ellos y modifica el nombre y/o observaciones, y guarda los cambios realizados. |  |
+| 4 |  | Registra los cambios realizados. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | No existen tipo de folios registrados. | El sistema gestiona la excepción y notifica al usuario. |
+| 4.1 | Alguno de los datos indicados no es válido. | El sistema gestiona la excepción y notifica al usuario. |

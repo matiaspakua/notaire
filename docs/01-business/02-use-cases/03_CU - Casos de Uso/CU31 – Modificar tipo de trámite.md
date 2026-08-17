@@ -1,81 +1,30 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu31-modificar-tipo-de-trámite">CU31 – Modificar tipo de trámite</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Modifica un tipo de trámite.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano decide modificar un tipo de trámite. El sistema presenta una lista de todos los tipos de trámite disponibles. El Escribano selecciona un tipo de trámite y el sistema presenta los datos del mismo. El Escribano modifica alguno de los datos del tipo de trámite seleccionado. Luego guarda los cambios realizados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>RF 6.7, CU64</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/184">#184</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU31 – Modificar tipo de trámite
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano decide modificar un tipo de trámite.</p>
-<p>3. El Escribano selecciona un tipo de trámite.</p>
-<p>5. El Escribano modifica:</p>
-<ul>
-<li><p>Si requiere inscripción o no</p></li>
-<li><p>Si se archiva o no</p></li>
-<li><p>Si se asocia con inmuebles</p></li>
-<li><p>Tipos de documento asociados y/o</p></li>
-<li><p>Observaciones</p></li>
-</ul></td>
-<td><p>2. Presenta una lista de todos los tipos de trámite disponibles.</p>
-<p>4. Presenta:</p>
-<ul>
-<li><p>Nombre del trámite</p></li>
-<li><p>Si requiere inscripción o no</p></li>
-<li><p>Si se archiva o no</p></li>
-<li><p>Si se asocia con inmuebles</p></li>
-<li><p>Observaciones</p></li>
-<li><p>Muestra además, una lista de todos los tipos de documento asociados.</p></li>
-</ul>
-<p>6. Guarda los cambios realizados.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                               |
-|-----------------|-----------------------------------------------|
-| **Excepciones** |                                               |
-| **Actor**       | **Sistema**                                   |
-|                 | 2.1. No existen tipos de trámite disponibles. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU31 – Modificar tipo de trámite |
+| **Actores** | Escribano |
+| **Propósito** | Modifica un tipo de trámite. |
+| **Descripción** | El Escribano decide modificar un tipo de trámite. El sistema presenta una lista de todos los tipos de trámite disponibles. El Escribano selecciona un tipo de trámite y el sistema presenta los datos del mismo. El Escribano modifica alguno de los datos del tipo de trámite seleccionado. Luego guarda los cambios realizados. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #55 (Administrar tablas base), RF #56 (Ingresar nuevos trámites); CU64 |
+| **GitHub ID** | #184 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano decide modificar un tipo de trámite. |  |
+| 2 |  | Presenta una lista de todos los tipos de trámite disponibles. |
+| 3 | El Escribano selecciona un tipo de trámite. |  |
+| 4 |  | Presenta: (Nombre del trámite; Si requiere inscripción o no; Si se archiva o no; Si se asocia con inmuebles; Observaciones; Muestra además, una lista de todos los tipos de documento asociados.) |
+| 5 | El Escribano modifica: (Si requiere inscripción o no; Si se archiva o no; Si se asocia con inmuebles; Tipos de documento asociados y/o; Observaciones) |  |
+| 6 |  | Guarda los cambios realizados. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | No existen tipos de trámite disponibles. | El sistema gestiona la excepción y notifica al usuario. |

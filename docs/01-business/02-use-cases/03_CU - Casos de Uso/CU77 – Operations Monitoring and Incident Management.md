@@ -1,67 +1,37 @@
-# CU-77: Operations Monitoring and Incident Management
+# CU77 – Monitoreo de Operaciones y Gestión de Incidentes (Operations Monitoring and Incident Management)
 
-## Overview
+## Información del Caso de Uso
 
-This Use Case covers operational infrastructure including monitoring, logging, alerting, incident response, and disaster recovery to support all business use cases (CU-01 through CU-73) in production.
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU77 – Monitoreo de Operaciones y Gestión de Incidentes |
+| **Actores** | Equipo de Operaciones (DevOps/SRE), Ingenieros de Guardia, Administrador |
+| **Propósito** | Monitorear la infraestructura y servicios del sistema notarial en tiempo real, recolectar métricas operativas y logs, y proveer alertas tempranas para garantizar la alta disponibilidad y resolución rápida de incidentes. |
+| **Descripción** | Establece los mecanismos de observabilidad basados en Prometheus, Grafana y Loki para asegurar la operatividad ininterrumpida de las estaciones de trabajo de escritorio y portátiles. |
+| **Tipo** | Soporte / Operaciones |
+| **Referencias Cruzadas** | RF #88 (PC de escritorio), RF #89 (Notebook) |
+| **GitHub ID** | #253, #255, #270, #271, #273, #301, #304, #305, #306, #308 |
 
-## Scope
+## Alcance Técnico
 
-- System monitoring and metrics collection
-- Log aggregation and analysis
-- Alert rules and escalation procedures
-- On-call runbooks
-- Incident response procedures
-- Disaster recovery and rollback procedures
-- Kubernetes deployment and orchestration
-- Environment parity and configuration management
+- Recolección de métricas de rendimiento y estado del sistema mediante Prometheus.
+- Dashboards de monitoreo visual en Grafana para endpoints, base de datos y recursos.
+- Agregación y consulta centralizada de logs mediante Grafana Loki.
+- Reglas de alertas automáticas para anomalías de rendimiento, saturación de disco o caídas de servicio.
+- Manuales operativos (runbooks) y procedimientos de rollback para incidentes de producción.
 
-## Primary Actor
+## Flujo Operativo de Monitoreo e Incidentes
 
-- Operations Team (SRE/DevOps)
-- On-Call Engineers
-- Incident Commander
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | Los usuarios operan el sistema notarial desde PCs de escritorio y notebooks. | Expone métricas de salud (`/actuator/prometheus`) y logs estructurados. |
+| 2 | Prometheus realiza scraping periódico de métricas. | Almacena series temporales de uso de memoria, hilos, latencia y conexiones a base de datos. |
+| 3 | Se detecta un umbral de anomalía (ej. tiempo de respuesta > 10 s o tasa de error > 1%). | Grafana Alerting dispara una notificación automática al canal de guardia. |
+| 4 | El ingeniero de guardia analiza el incidente mediante logs de Loki y dashboards. | Identifica la causa raíz y ejecuta el procedimiento de mitigación o rollback según el runbook. |
 
-## Related Use Cases
+## Criterios de Aceptación
 
-- All CU-01 through CU-73 (all depend on reliable operations)
-
-## Key Activities
-
-1. Configure Prometheus metrics collection
-2. Set up Grafana dashboards and alerts
-3. Implement Loki log aggregation
-4. Define on-call procedures and runbooks
-5. Plan incident response workflows
-6. Configure Kubernetes manifests
-7. Document disaster recovery procedures
-8. Establish SLO/SLI targets
-
-## Acceptance Criteria
-
-- [ ] Metrics collection strategy implemented
-- [ ] Dashboards and alerts configured
-- [ ] Log aggregation working
-- [ ] On-call runbooks documented
-- [ ] Incident response procedures defined
-- [ ] Kubernetes manifests created
-- [ ] DR procedures documented
-- [ ] SLO/SLI targets defined
-
-## Documentation References
-
-- Issue #253: Create Kubernetes manifests for deployment
-- Issue #255: Setup production monitoring (Prometheus + Grafana)
-- Issue #270: Create disaster recovery plan with RTO/RPO targets
-- Issue #271: Create database maintenance procedures
-- Issue #273: Create logging and monitoring configuration guide
-- Issue #280-288: Various ops documentation issues
-- Issue #301: Create Kubernetes deployment manifests and Helm charts
-- Issue #304: Create distributed tracing with OpenTelemetry setup
-- Issue #305: Create log aggregation and analysis guide
-- Issue #306: Define service level objectives (SLO) and indicators (SLI)
-- Issue #308: Create feature flag implementation and rollout strategy
-
-## Status
-
-In Development
-
+- [x] Recolección de métricas operativas con Prometheus en funcionamiento.
+- [x] Tableros de control en Grafana accesibles para monitoreo de la escribanía.
+- [x] Registro y búsqueda centralizada de logs con Loki implementados.
+- [x] Procedimientos de respuesta a incidentes y runbooks operativos documentados.

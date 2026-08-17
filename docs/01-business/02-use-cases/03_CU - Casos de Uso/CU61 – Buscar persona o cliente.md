@@ -1,68 +1,28 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu61-buscar-persona-o-cliente">CU61 – Buscar persona o cliente</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Gestor/Recepcionista/Escribano, Persona/Cliente</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Permite buscar una persona o cliente.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>Un usuario necesita buscar una persona o cliente, por lo tanto indica el nombre y apellido ó el tipo y número de identificación de la persona que desea buscar. El sistema busca y devuelve el ó las personas (ya sean “personas” o “clientes”) que concuerdan con los datos indicados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Secundario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>n/a</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/214">#214</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU61 – Buscar persona o cliente
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. Un usuario necesita buscar una persona o cliente.</p>
-<p>3. El usuario indica alguno de los datos solicitados.</p></td>
-<td><p>2. Solicita que se indique alguno de los siguientes datos:</p>
-<ul>
-<li><p>el nombre y apellido</p></li>
-<li><p>el tipo y número de identificación</p></li>
-</ul>
-<p>4. Busca y devuelve el o las personas o clientes que concuerdan con los datos indicados.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                                             |
-|-----------------|-----------------------------------------------------------------------------|
-| **Excepciones** |                                                                             |
-| **Actor**       | **Sistema**                                                                 |
-|                 | 4.1. No existen personas o clientes que concuerden con los datos indicados. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU61 – Buscar persona o cliente |
+| **Actores** | Gestor/Recepcionista/Escribano, Persona/Cliente |
+| **Propósito** | Permite buscar una persona o cliente. |
+| **Descripción** | Un usuario necesita buscar una persona o cliente, por lo tanto indica el nombre y apellido o el tipo y número de identificación de la persona que desea buscar. El sistema busca y devuelve el o las personas (ya sean “personas” o “clientes”) que concuerdan con los datos indicados. |
+| **Tipo** | Secundario |
+| **Referencias Cruzadas** | RF #38 (Administrar clientes), RF #41 (Buscar y ver detalle de clientes) |
+| **GitHub ID** | #214 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | Un usuario necesita buscar una persona o cliente. |  |
+| 2 |  | Solicita que se indique alguno de los siguientes datos: (el nombre y apellido; el tipo y número de identificación) |
+| 3 | El usuario indica alguno de los datos solicitados. |  |
+| 4 |  | Busca y devuelve el o las personas o clientes que concuerdan con los datos indicados. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 4.1 | No existen personas o clientes que concuerden con los datos indicados. | El sistema gestiona la excepción y notifica al usuario. |

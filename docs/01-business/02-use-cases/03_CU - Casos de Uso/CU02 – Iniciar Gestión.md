@@ -1,116 +1,43 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu02-iniciar-gestión">CU02 – Iniciar Gestión</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Recepcionista/Gestor, Cliente</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Inicia una nueva gestión en la escribanía.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>Un Cliente se acerca a la escribanía y solicita iniciar una gestión en base a un/os presupuestos. El Gestor/Recepcionista busca los presupuestos por su número ó nombre y apellido ó tipo y número de identificación del Cliente. El sistema muestra los trámites asociados a cada presupuesto. El Gestor/Recepcionista procede al inicio de una gestión, indicando fecha de inicio de la misma, el número de gestión, un detalle de encabezado y confirma los trámites a realizar. Finalmente, selecciona un escribano para dicha gestión, generando una lista de documentos, certificados necesarios para cada trámite (ver CU03), indica / selecciona un numero de la nueva gestión, las observaciones adicionales, y si van a haber otros clientes involucrados en la gestión.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>RF 1.2.1, RF 1.2.2, RF 1.2.3, RF 1.3.2, CU60</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/155">#155</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU02 – Iniciar Gestión
 
-<table>
-<colgroup>
-<col style="width: 49%" />
-<col style="width: 50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. Un Cliente se acerca a la escribanía y solicita iniciar una gestión en base a un/os presupuestos.</p>
-<p>2. El Gestor/Recepcionista solicita el número de presupuesto ó nombre y apellido ó tipo y número de identificación del Cliente.</p>
-<p>3. El cliente brinda los datos correspondientes.</p>
-<p>4. El Gestor/Recepcionista procede a la búsqueda del presupuesto, ingresando los datos en el sistema.</p>
-<p>6. El Gestor/Recepcionista, selecciona uno de los prepuestos y procede al inicio de la Gestión de dicho presupuesto.</p>
-<p>8. El Gestor/ Recepcionista ingresa los datos solicitados.</p>
-<p>11. El Gestor/Recepcionista selecciona un escribano.</p>
-<p>14. EL Gestor/Recepcionista confirma la Gestión, indicando o seleccionando un número de gestión y un detalle para el encabezado.</p></td>
-<td><p>5. El sistema busca el presupuesto solicitado. Se muestra una lista con la descripción del/los presupuesto, asociados al cliente.</p>
-<p>7. Solicita al Gestor/Recepcionista fecha de inicio de la gestión, y trámites que deben ser confirmados, para la gestión.</p>
-<p>9. Registra, el cliente, fecha de inicio de la gestión, y trámites que deben ser confirmados.</p>
-<p>10. Solicita que se indique un escribano para ser asociado a la gestión y se muestra una lista de Escribanos para su selección.</p>
-<p>12. Asocia el Escribano a la Gestión.</p>
-<p>13. Solicita la confirmación final del trámite.</p>
-<p>15. Se registra la nueva Gestión.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                   |
-|-----------------|---------------------------------------------------|
-| **Excepciones** |                                                   |
-| **Actor**       | **Sistema**                                       |
-|                 | 5.1. El número de presupuesto indicado no existe. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU02 – Iniciar Gestión |
+| **Actores** | Recepcionista/Gestor, Cliente |
+| **Propósito** | Inicia una nueva gestión en la escribanía. |
+| **Descripción** | Un Cliente se acerca a la escribanía y solicita iniciar una gestión en base a uno o varios presupuestos. El Gestor/Recepcionista busca los presupuestos por su número o nombre y apellido o tipo y número de identificación del Cliente. El sistema muestra los trámites asociados a cada presupuesto. El Gestor/Recepcionista procede al inicio de una gestión, indicando fecha de inicio de la misma, el número de gestión, un detalle de encabezado y confirma los trámites a realizar. Finalmente, selecciona un escribano para dicha gestión, generando una lista de documentos, certificados necesarios para cada trámite (ver CU03), indica / selecciona un número de la nueva gestión, las observaciones adicionales, y si van a haber otros clientes involucrados en la gestión. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #10 (Iniciar trámites), RF #11 (Verificar presupuestos), RF #12 (Verificar clientes), RF #13 (Registrar inicio de gestión de trámites), RF #104 (Administrar carpetas de trámite), RF #105 (Generar carpeta de trámite), RF #106 (Estados de carpeta), RF #115 (Asignar suplente a una gestión), RF #119 (Diferencias entre protocolo principal y auxiliar); CU60 |
+| **GitHub ID** | #155 |
 
-|                 |                                                                         |
-|-----------------|-------------------------------------------------------------------------|
-| **Excepciones** |                                                                         |
-| **Actor**       | **Sistema**                                                             |
-|                 | 5.2. El presupuesto indicado ya se encuentra registrado en una gestión. |
+## Curso de Eventos
 
-|                 |                                                    |
-|-----------------|----------------------------------------------------|
-| **Excepciones** |                                                    |
-| **Actor**       | **Sistema**                                        |
-|                 | 9.1. La persona no esta dada de alta como cliente. |
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | Un Cliente se acerca a la escribanía y solicita iniciar una gestión en base a uno o varios presupuestos. |  |
+| 2 | El Gestor/Recepcionista solicita el número de presupuesto o nombre y apellido o tipo y número de identificación del Cliente. |  |
+| 3 | El cliente brinda los datos correspondientes. |  |
+| 4 | El Gestor/Recepcionista procede a la búsqueda del presupuesto, ingresando los datos en el sistema. |  |
+| 5 |  | El sistema busca el presupuesto solicitado. Se muestra una lista con la descripción del/los presupuesto, asociados al cliente. |
+| 6 | El Gestor/Recepcionista, selecciona uno de los presupuestos y procede al inicio de la Gestión de dicho presupuesto. |  |
+| 7 |  | Solicita al Gestor/Recepcionista fecha de inicio de la gestión, y trámites que deben ser confirmados, para la gestión. |
+| 8 | El Gestor/ Recepcionista ingresa los datos solicitados. |  |
+| 9 |  | Registra, el cliente, fecha de inicio de la gestión, y trámites que deben ser confirmados. |
+| 10 |  | Solicita que se indique un escribano para ser asociado a la gestión y se muestra una lista de Escribanos para su selección. |
+| 11 | El Gestor/Recepcionista selecciona un escribano. |  |
+| 12 |  | Asocia el Escribano a la Gestión. |
+| 13 |  | Solicita la confirmación final del trámite. |
+| 14 | El Gestor/Recepcionista confirma la Gestión, indicando o seleccionando un número de gestión y un detalle para el encabezado. |  |
+| 15 |  | Se registra la nueva Gestión. |
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Excepciones</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>14.1. El cliente indica que van a haber otros clientes involucrados en la gestión.</p>
-<p>14.2. El Gestor/Recepcionista solicita que se indiquen los nombres de los clientes involucrados para ser registrados en la gestión.</p>
-<p>14.3. El cliente brinda los datos solicitados.</p></td>
-<td><p>14.4. Se buscan y asocian los clientes indicados a la nueva gestión.</p>
-<p>14.5. Vuelve al paso 15.</p></td>
-</tr>
-</tbody>
-</table>
+## Excepciones / Flujos Alternativos
 
-|                 |                                                                                                                                               |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| **Excepciones** |                                                                                                                                               |
-| **Actor**       | **Sistema**                                                                                                                                   |
-|                 | 15.1 El número de gestión indicado por el usuario no es válido o ya se encuentra registrado. Se solicita ingresar un nuevo número de gestión. |
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 14.1 | El cliente indica que van a haber otros clientes involucrados en la gestión. El Gestor/Recepcionista solicita que se indiquen los nombres de los clientes involucrados para ser registrados en la gestión. El cliente brinda los datos solicitados. | Se buscan y asocian los clientes indicados a la nueva gestión. Vuelve al paso 15. |
+| 5.1 | El número de presupuesto indicado no existe. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.2 | El presupuesto indicado ya se encuentra registrado en una gestión. | El sistema gestiona la excepción y notifica al usuario. |
+| 9.1 | La persona no está dada de alta como cliente. | El sistema gestiona la excepción y notifica al usuario. |
+| 15.1 | El número de gestión indicado por el usuario no es válido o ya se encuentra registrado. Se solicita ingresar un nuevo número de gestión. | El sistema gestiona la excepción y notifica al usuario. |

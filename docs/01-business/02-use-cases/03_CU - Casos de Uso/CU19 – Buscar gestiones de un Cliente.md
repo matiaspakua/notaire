@@ -1,86 +1,30 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu19-buscar-gestiones-de-un-cliente">CU19 – Buscar gestiones de un Cliente</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano, Recepcionista/Gestor, Cliente.</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Presenta una lista de las gestiones realizadas por un Cliente.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano/Recepcionista busca todas las gestiones asociadas a un Cliente, indicando al sistema nombre, apellido ó tipo y número de identificación del mismo. El sistema muestra las gestiones encontradas. El Escribano/Recepcionista selecciona una gestión en particular, y el sistema muestra el detalle de la misma.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Secundario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>RF 2.4, CU61</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/172">#172</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU19 – Buscar gestiones de un Cliente
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano/Recepcionista solicita una gestión asociada a un cliente en particular.</p>
-<p>3. El Escribano/Recepcionista indica los datos solicitados.</p>
-<p>5. El Escribano/Recepcionista selecciona una gestión en particular.</p></td>
-<td><p>2. Solicita que se indique el cliente por: nombre, apellido ó tipo y número de identificación del mismo.</p>
-<p>4. El sistema muestra las gestiones encontradas asociadas al cliente, indicando:</p>
-<ul>
-<li><p>Número de gestión</p></li>
-<li><p>Encabezado</p></li>
-<li><p>Fecha de inicio</p></li>
-<li><p>Estado</p></li>
-<li><p>Numero de bibliorato</p></li>
-<li><p>Observaciones.</p></li>
-</ul>
-<p>6. El sistema muestra el detalle de la gestión, indicando:</p>
-<ul>
-<li><p>Numero de gestión</p></li>
-<li><p>Encabezado</p></li>
-<li><p>Fecha de inicio</p></li>
-<li><p>Escribano a cargo</p></li>
-<li><p>Estado actual</p></li>
-<li><p>Número de bibliorato</p></li>
-<li><p>Trámites asociados</p></li>
-<li><p>Clientes involucrados</p></li>
-<li><p>Escrituras asociadas</p></li>
-<li><p>Observaciones.</p></li>
-</ul></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                 |
-|-----------------|-------------------------------------------------|
-| **Excepciones** |                                                 |
-| **Actor**       | **Sistema**                                     |
-|                 | 4.1. No existen gestiones asociadas al Cliente. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU19 – Buscar gestiones de un Cliente |
+| **Actores** | Escribano, Recepcionista/Gestor, Cliente. |
+| **Propósito** | Presenta una lista de las gestiones realizadas por un Cliente. |
+| **Descripción** | El Escribano/Recepcionista busca todas las gestiones asociadas a un Cliente, indicando al sistema nombre, apellido o tipo y número de identificación del mismo. El sistema muestra las gestiones encontradas. El Escribano/Recepcionista selecciona una gestión en particular, y el sistema muestra el detalle de la misma. |
+| **Tipo** | Secundario |
+| **Referencias Cruzadas** | RF #38 (Administrar clientes), RF #42 (Buscar gestiones de cliente); CU61 |
+| **GitHub ID** | #172 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano/Recepcionista solicita una gestión asociada a un cliente en particular. |  |
+| 2 |  | Solicita que se indique el cliente por: nombre, apellido o tipo y número de identificación del mismo. |
+| 3 | El Escribano/Recepcionista indica los datos solicitados. |  |
+| 4 |  | El sistema muestra las gestiones encontradas asociadas al cliente, indicando: (Número de gestión; Encabezado; Fecha de inicio; Estado; Número de bibliorato; Observaciones.) |
+| 5 | El Escribano/Recepcionista selecciona una gestión en particular. |  |
+| 6 |  | El sistema muestra el detalle de la gestión, indicando: (Número de gestión; Encabezado; Fecha de inicio; Escribano a cargo; Estado actual; Número de bibliorato; Trámites asociados; Clientes involucrados; Escrituras asociadas; Observaciones.) |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 4.1 | No existen gestiones asociadas al Cliente. | El sistema gestiona la excepción y notifica al usuario. |

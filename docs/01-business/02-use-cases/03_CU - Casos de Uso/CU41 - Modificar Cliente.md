@@ -1,86 +1,30 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu41-modificar-cliente">CU41 – Modificar Cliente</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano/Recepcionista, Cliente</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Permite modificar los datos de un Cliente.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano/Recepcionista solicita al Cliente su nombre y apellido ó tipo y número de identificación, para buscarlo en el sistema. El sistema muestra los datos pertenecientes al Cliente, y éste indica que alguno es incorrecto o ha cambiado. El Escribano/Recepcionista procede a modificar los datos incorrectos y guarda los cambios.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario.</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU61</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/194">#194</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU41 – Modificar Cliente
 
-<table>
-<colgroup>
-<col style="width: 49%" />
-<col style="width: 50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano/Recepcionista solicita al Cliente su nombre y apellido ó tipo y número de identificación.</p>
-<p>2. El cliente aporta los datos solicitados.</p>
-<p>3. EL cliente indica que algunos de los datos son incorrectos o han cambiado.</p>
-<p>4. El Escribano/Recepcionista procede a modificar los datos indicados y confirma los cambios.</p></td>
-<td><p>2. Busca el Cliente, asociado a los datos ingresados y muestra los datos pertenecientes al Cliente.</p>
-<ul>
-<li><p>Nombre</p></li>
-<li><p>Apellido</p></li>
-<li><p>Tipo y número de identificación</p></li>
-<li><p>Teléfono</p></li>
-<li><p>correo electrónico</p></li>
-<li><p>Nacionalidad</p></li>
-<li><p>Fecha de nacimiento estado civil</p></li>
-<li><p>Cuit/Cuil</p></li>
-<li><p>En caso de ser casado/divorciado, número de nupcias</p></li>
-<li><p>Sexo</p></li>
-<li><p>Ocupación</p></li>
-<li><p>Domicilio</p></li>
-</ul>
-<p>5. Registra los cambios realizados.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                       |
-|-----------------|-------------------------------------------------------|
-| **Excepciones** |                                                       |
-| **Actor**       | **Sistema**                                           |
-|                 | 2.1. La persona no se encuentra cargada como Cliente. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU41 – Modificar Cliente |
+| **Actores** | Escribano/Recepcionista, Cliente |
+| **Propósito** | Permite modificar los datos de un Cliente. |
+| **Descripción** | El Escribano/Recepcionista solicita al Cliente su nombre y apellido o tipo y número de identificación, para buscarlo en el sistema. El sistema muestra los datos pertenecientes al Cliente, y éste indica que alguno es incorrecto o ha cambiado. El Escribano/Recepcionista procede a modificar los datos incorrectos y guarda los cambios. |
+| **Tipo** | Primario. |
+| **Referencias Cruzadas** | RF #38 (Administrar clientes), RF #40 (Modificación de clientes); CU61 |
+| **GitHub ID** | #194 |
 
-|                 |                                           |
-|-----------------|-------------------------------------------|
-| **Excepciones** |                                           |
-| **Actor**       | **Sistema**                               |
-|                 | 5.1. Alguno de los datos son incorrectos. |
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano/Recepcionista solicita al Cliente su nombre y apellido o tipo y número de identificación. |  |
+| 2 | El cliente aporta los datos solicitados. | Busca el Cliente, asociado a los datos ingresados y muestra los datos pertenecientes al Cliente. (Nombre; Apellido; Tipo y número de identificación; Teléfono; correo electrónico; Nacionalidad; Fecha de nacimiento estado civil; Cuit/Cuil; En caso de ser casado/divorciado, número de nupcias; Sexo; Ocupación; Domicilio) |
+| 3 | EL cliente indica que algunos de los datos son incorrectos o han cambiado. |  |
+| 4 | El Escribano/Recepcionista procede a modificar los datos indicados y confirma los cambios. |  |
+| 5 |  | Registra los cambios realizados. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | La persona no se encuentra cargada como Cliente. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.1 | Alguno de los datos son incorrectos. | El sistema gestiona la excepción y notifica al usuario. |

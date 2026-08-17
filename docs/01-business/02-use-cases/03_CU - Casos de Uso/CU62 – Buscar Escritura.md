@@ -1,69 +1,27 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu62-buscar-escritura">CU62 – Buscar Escritura</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Gestor/Recepcionista/Escribano, Cliente</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Busca una escritura en particular.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>Un cliente se acerca a la escribanía para consultar algún dato de una escritura que realizó. El Gestor/Recepcionista/Escribano solicita que se indique qué escribano realizó la misma o el número de escritura. El sistema busca y muestra una lista de todas las escrituras realizadas por el escribano indicado y muestra el detalle de una de las escrituras seleccionadas (si se indico el número de escritura, simplemente se muestra el detalle de esa escritura), donde se indica: el número de escritura, la fecha de escrituración, un detalle del cuerpo, el estado y las observaciones.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Secundario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>n/a</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/215">#215</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU62 – Buscar Escritura
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. Un cliente se acerca a la escribanía para consultar algún dato de una escritura que realizó.</p>
-<p>2. Gestor/Recepcionista/Escribano solicita que se indique qué escribano realizó la misma o el número de escritura.</p></td>
-<td>3. Busca y retorna una lista con las escrituras del escribano indicado (o el detalle correspondiente al número de escritura indicado).</td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                             |
-|-----------------|-------------------------------------------------------------|
-| **Excepciones** |                                                             |
-| **Actor**       | **Sistema**                                                 |
-|                 | 3.1. El escribano indicado no posee escrituras registradas. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU62 – Buscar Escritura |
+| **Actores** | Gestor/Recepcionista/Escribano, Cliente |
+| **Propósito** | Busca una escritura en particular. |
+| **Descripción** | Un cliente se acerca a la escribanía para consultar algún dato de una escritura que realizó. El Gestor/Recepcionista/Escribano solicita que se indique qué escribano realizó la misma o el número de escritura. El sistema busca y muestra una lista de todas las escrituras realizadas por el escribano indicado y muestra el detalle de una de las escrituras seleccionadas (si se indico el número de escritura, simplemente se muestra el detalle de esa escritura), donde se indica: el número de escritura, la fecha de escrituración, un detalle del cuerpo, el estado y las observaciones. |
+| **Tipo** | Secundario |
+| **Referencias Cruzadas** | RF #27 (Generar escrituras), RF #28 (Preparar escrituras), RF #30 (Informar qué escritura(s) conforman un trámite) |
+| **GitHub ID** | #215 |
 
-|                 |                                                                |
-|-----------------|----------------------------------------------------------------|
-| **Excepciones** |                                                                |
-| **Actor**       | **Sistema**                                                    |
-|                 | 3.2. El número de escritura indicado no es valido o no existe. |
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | Un cliente se acerca a la escribanía para consultar algún dato de una escritura que realizó. |  |
+| 2 | Gestor/Recepcionista/Escribano solicita que se indique qué escribano realizó la misma o el número de escritura. |  |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 3.1 | El escribano indicado no posee escrituras registradas. | El sistema gestiona la excepción y notifica al usuario. |
+| 3.2 | El número de escritura indicado no es válido o no existe. | El sistema gestiona la excepción y notifica al usuario. |

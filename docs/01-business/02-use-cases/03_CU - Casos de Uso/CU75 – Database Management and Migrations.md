@@ -1,54 +1,36 @@
-# CU-75: Database Management and Migrations
+# CU75 – Gestión de Base de Datos y Migraciones (Database Management and Migrations)
 
-## Overview
+## Información del Caso de Uso
 
-This Use Case covers database schema management, migrations from legacy systems, and documentation to support all business use cases (CU-01 through CU-73).
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU75 – Gestión de Base de Datos y Migraciones (Database Management and Migrations) |
+| **Actores** | Administrador de Base de Datos, Equipo DevOps, Equipo de Desarrollo |
+| **Propósito** | Gestionar el versionado del esquema de base de datos, migraciones estructurales con Flyway, integridad referencial y procedimientos de respaldo y recuperación para la persistencia notarial. |
+| **Descripción** | Asegura que la evolución del modelo de datos de la escribanía se realice de manera determinista, segura y reproducible, garantizando la integridad de datos de clientes, escrituras, folios y trámites. |
+| **Tipo** | Soporte / Arquitectura |
+| **Referencias Cruzadas** | RF #85 (Acceso a la base de datos), RF #86 (Java VM), RF #87 (Sistema operativo), RF #92 (Lenguaje de programación), RF #93 (Motor de base de datos) |
+| **GitHub ID** | #264, #275, #292, #271, #270 |
 
-## Scope
+## Alcance Técnico
 
-- Database schema versioning with Flyway
-- Schema documentation and ER diagrams
-- Data migration from MySQL to PostgreSQL
-- Database administration procedures
-- Maintenance and backup strategies
+- Versionado secuencial e inmutable del esquema con scripts Flyway (V1..V11+).
+- Restricción de acceso directo a la base de datos exclusivamente a cuentas administrativas seguras.
+- Documentación de diagramas entidad-relación (ERD) y diccionarios de datos.
+- Políticas de backup periódico y procedimientos de recuperación ante desastres (DRP) con objetivos RTO/RPO.
 
-## Primary Actor
+## Procedimiento de Migración y Mantenimiento
 
-- Database Administrator
-- DevOps Team
-- Development Team
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El desarrollador o DBA crea un script de migración Flyway versionado (ej. `V12__add_index.sql`). | Valida la sintaxis del script y el checksum de migraciones previas. |
+| 2 | La aplicación inicia en el entorno de ejecución Java. | Flyway aplica automáticamente las migraciones pendientes en una transacción única. |
+| 3 | El sistema verifica la integridad referencial y las restricciones de negocio. | Registra la versión aplicada en la tabla `flyway_schema_history` y habilita el arranque de la API. |
+| 4 | El DBA ejecuta rutinas de mantenimiento (vacuum, reindex, backups). | Genera respaldos encriptados y reporta el estado de salud de la base de datos. |
 
-## Related Use Cases
+## Criterios de Aceptación
 
-- All CU-01 through CU-73 (depend on database)
-
-## Key Activities
-
-1. Document database schema and relationships
-2. Manage schema migrations with Flyway
-3. Plan and execute data migrations
-4. Document database maintenance procedures
-5. Configure and test backup strategies
-6. Define disaster recovery procedures
-
-## Acceptance Criteria
-
-- [ ] Database schema documentation complete
-- [ ] ER diagrams generated and documented
-- [ ] Migration procedures documented
-- [ ] Maintenance procedures documented
-- [ ] Backup strategy implemented
-- [ ] Disaster recovery plan defined
-
-## Documentation References
-
-- Issue #264: Create comprehensive data migration guide (MySQL to PostgreSQL)
-- Issue #275: Create database schema migration (Flyway/Liquibase) guide
-- Issue #292: Create database schema documentation and ER diagram
-- Issue #271: Create database maintenance procedures
-- Issue #270: Create disaster recovery plan with RTO/RPO targets
-
-## Status
-
-In Development
-
+- [x] Esquema de base de datos versionado mediante migraciones Flyway reproducibles.
+- [x] Restricción de acceso directo a base de datos implementada (solo credenciales autorizadas).
+- [x] Procedimientos de respaldo automatizados y plan de recuperación ante desastres definido.
+- [x] Compatibilidad verificada con Java 21 y PostgreSQL 16.

@@ -1,78 +1,32 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu55-modificar-plantilla-presupuesto">CU55 – Modificar Plantilla Presupuesto</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Modificar plantilla de presupuesto</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano decide modificar una plantilla de presupuesto, para un tipo trámite en particular. El sistema presenta una lista de los tipos de trámite disponibles. El Escribano selecciona un tipo de trámite, y el sistema muestra la lista de conceptos asociados a ese tipo de trámite en la plantilla. El Escribano modifica los conceptos que se deben abonar para el mismo. Luego guarda los cambios realizados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU64, CU66</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/208">#208</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU55 – Modificar Plantilla Presupuesto
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano decide modificar una plantilla de presupuesto, para un tipo de trámite en particular.</p>
-<p>3. El Escribano selecciona un tipo de trámite de la lista.</p>
-<p>5. El Escribano modifica los conceptos que se deben abonar para el mismo, confirmando los datos ingresados.</p></td>
-<td><p>2. Presenta una lista de todos los tipos de trámite disponibles.</p>
-<p>4. Muestra la lista de conceptos disponibles para el tipo de trámite.</p>
-<p>6. Registra la modificación de la plantilla de presupuesto.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                                           |
-|-----------------|---------------------------------------------------------------------------|
-| **Excepciones** |                                                                           |
-| **Actor**       | **Sistema**                                                               |
-|                 | 2.1. No existen tipos de trámite con plantillas de presupuesto asociadas. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU55 – Modificar Plantilla Presupuesto |
+| **Actores** | Escribano |
+| **Propósito** | Modificar plantilla de presupuesto |
+| **Descripción** | El Escribano decide modificar una plantilla de presupuesto, para un tipo trámite en particular. El sistema presenta una lista de los tipos de trámite disponibles. El Escribano selecciona un tipo de trámite, y el sistema muestra la lista de conceptos asociados a ese tipo de trámite en la plantilla. El Escribano modifica los conceptos que se deben abonar para el mismo. Luego guarda los cambios realizados. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #6 (Editar plantillas de presupuestos), RF #61 (Administrar plantillas), RF #66 (Plantillas de presupuestos), RF #68 (Modificar plantillas de presupuestos); CU64, CU66 |
+| **GitHub ID** | #208 |
 
-|                 |                                        |
-|-----------------|----------------------------------------|
-| **Excepciones** |                                        |
-| **Actor**       | **Sistema**                            |
-|                 | 2.2. No existen conceptos disponibles. |
+## Curso de Eventos
 
-|                 |                                        |
-|-----------------|----------------------------------------|
-| **Excepciones** |                                        |
-| **Actor**       | **Sistema**                            |
-|                 | 4.1. No existen conceptos registrados. |
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano decide modificar una plantilla de presupuesto, para un tipo de trámite en particular. |  |
+| 2 |  | Presenta una lista de todos los tipos de trámite disponibles. |
+| 3 | El Escribano selecciona un tipo de trámite de la lista. |  |
+| 4 |  | Muestra la lista de conceptos disponibles para el tipo de trámite. |
+| 5 | El Escribano modifica los conceptos que se deben abonar para el mismo, confirmando los datos ingresados. |  |
+| 6 |  | Registra la modificación de la plantilla de presupuesto. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | No existen tipos de trámite con plantillas de presupuesto asociadas. | El sistema gestiona la excepción y notifica al usuario. |
+| 2.2 | No existen conceptos disponibles. | El sistema gestiona la excepción y notifica al usuario. |
+| 4.1 | No existen conceptos registrados. | El sistema gestiona la excepción y notifica al usuario. |

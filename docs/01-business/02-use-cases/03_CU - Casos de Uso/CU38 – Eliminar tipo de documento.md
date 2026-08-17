@@ -1,64 +1,28 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu38-eliminar-tipo-de-documento">CU38 – Eliminar tipo de documento</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Elimina un tipo de documento.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano decide eliminar un tipo de documento. El sistema presenta una lista de todos los tipos de documento disponibles. El Escribano selecciona uno de ellos y confirma su eliminación.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>RF 6.14, CU65</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/191">#191</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU38 – Eliminar tipo de documento
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano decide eliminar un tipo de documento en particular.</p>
-<p>3. Selecciona un tipo de documento y confirma su eliminación.</p></td>
-<td><p>2. Muestra una lista de todos los tipos de documento disponibles.</p>
-<p>4. Elimina el documento seleccionado.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                         |
-|-----------------|-----------------------------------------|
-| **Excepciones** |                                         |
-| **Actor**       | **Sistema**                             |
-|                 | 2.1. No existen documentos disponibles. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU38 – Eliminar tipo de documento |
+| **Actores** | Escribano |
+| **Propósito** | Elimina un tipo de documento. |
+| **Descripción** | El Escribano decide eliminar un tipo de documento. El sistema presenta una lista de todos los tipos de documento disponibles. El Escribano selecciona uno de ellos y confirma su eliminación. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #55 (Administrar tablas base), RF #57 (Ingresar nuevos documentos); CU65 |
+| **GitHub ID** | #191 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano decide eliminar un tipo de documento en particular. |  |
+| 2 |  | Muestra una lista de todos los tipos de documento disponibles. |
+| 3 | Selecciona un tipo de documento y confirma su eliminación. |  |
+| 4 |  | Elimina el documento seleccionado. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | No existen documentos disponibles. | El sistema gestiona la excepción y notifica al usuario. |

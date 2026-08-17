@@ -1,70 +1,29 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu22-registrar-suplencia">CU22 – Registrar Suplencia</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Registra la licencia de un escribano.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>Un Escribano inicia una licencia, por lo tanto, solicita al sistema los escribanos habilitados para poder suplantarlo. Luego selecciona uno de los escribanos habilitados, e indica el período de la licencia a realizar. El Escribano confirma los datos indicados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>RF 3.3, CU61</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/175">#175</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU22 – Registrar Suplencia
 
-<table>
-<colgroup>
-<col style="width: 49%" />
-<col style="width: 50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. Un Escribano inicia una licencia, por lo tanto, solicita al sistema los escribanos habilitados para poder suplantarlo.</p>
-<p>3. El Escribano selecciona a un suplente, de la lista presentada e indica el período de la licencia y algunas observaciones.</p></td>
-<td><p>2. Busca y presenta la lista de escribanos habilitados para realizar suplencias.</p>
-<p>4. Se registra la nueva suplencia para el período indicado.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                         |
-|-----------------|-----------------------------------------|
-| **Excepciones** |                                         |
-| **Actor**       | **Sistema**                             |
-|                 | 2.1. No existen escribanos registrados. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU22 – Registrar Suplencia |
+| **Actores** | Escribano |
+| **Propósito** | Registra la licencia de un escribano. |
+| **Descripción** | Un Escribano inicia una licencia, por lo tanto, solicita al sistema los escribanos habilitados para poder suplantarlo. Luego selecciona uno de los escribanos habilitados, e indica el período de la licencia a realizar. El Escribano confirma los datos indicados. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #43 (Administrar usuarios), RF #113 (Administrar suplencias), RF #114 (Registrar suplentes del escribano), RF #115 (Asignar suplente a una gestión); CU61 |
+| **GitHub ID** | #175 |
 
-|                 |                                        |
-|-----------------|----------------------------------------|
-| **Excepciones** |                                        |
-| **Actor**       | **Sistema**                            |
-|                 | 4.1. El periodo indicado no es válido. |
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | Un Escribano inicia una licencia, por lo tanto, solicita al sistema los escribanos habilitados para poder suplantarlo. |  |
+| 2 |  | Busca y presenta la lista de escribanos habilitados para realizar suplencias. |
+| 3 | El Escribano selecciona a un suplente, de la lista presentada e indica el período de la licencia y algunas observaciones. |  |
+| 4 |  | Se registra la nueva suplencia para el período indicado. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 2.1 | No existen escribanos registrados. | El sistema gestiona la excepción y notifica al usuario. |
+| 4.1 | El periodo indicado no es válido. | El sistema gestiona la excepción y notifica al usuario. |

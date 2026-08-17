@@ -1,57 +1,37 @@
-# CU-74: Performance and Caching Strategy
+# CU74 – Estrategia de Rendimiento y Caché (Performance and Caching Strategy)
 
-## Overview
+## Información del Caso de Uso
 
-This Use Case covers non-functional requirements for system performance optimization, including caching strategies, query optimization, lazy loading patterns, and transaction management to support all business use cases (CU-01 through CU-73).
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU74 – Estrategia de Rendimiento y Caché (Performance and Caching Strategy) |
+| **Actores** | Administrador del Sistema, Equipo de Desarrollo, Equipo de Operaciones |
+| **Propósito** | Optimizar el rendimiento del sistema mediante estrategias de caché, optimización de consultas JPA/SQL, gestión de transacciones y pools de conexión para garantizar tiempos de respuesta menores a 10 segundos y uso eficiente de CPU y memoria RAM. |
+| **Descripción** | Cubre los requerimientos no funcionales de rendimiento y sistema, optimizando la latencia de las transacciones notariales, consultas de carpetas, búsqueda de personas y generación de documentos en entornos de múltiples usuarios concurrentes. |
+| **Tipo** | Soporte / Arquitectura |
+| **Referencias Cruzadas** | RF #70 (Uso de memoria RAM), RF #71 (Uso de CPU), RF #72 (Tiempo de respuesta), RF #73 (Múltiples usuarios), RF #88 (PC de escritorio), RF #89 (Notebook); CU70, CU72 |
+| **GitHub ID** | #298, #278, #277, #290, #303 |
 
-## Scope
+## Alcance Técnico
 
-- Application-level caching (Spring Cache)
-- Database query optimization
-- JPA lazy/eager loading strategies
-- Transaction management and isolation levels
-- Connection pooling configuration
-- Database and application performance tuning
+- Caché a nivel de aplicación (Spring Cache con Caffeine/Redis) para tablas maestras y catálogos (tipos de trámite, folios, conceptos).
+- Optimización de consultas JPA con estrategias Lazy/Eager y prevención de problemas N+1.
+- Configuración de pool de conexiones (HikariCP) y límites de aislamiento transaccional.
+- Establecimiento de líneas base de rendimiento y pruebas de carga automatizadas.
 
-## Primary Actor
+## Procedimiento de Ejecución y Monitoreo
 
-- System Administrator
-- Development Team
-- Operations Team
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El equipo técnico configura las políticas de caché en memoria para catálogos y consultas frecuentes. | Aplica los interceptores de caché y almacena los resultados de lecturas repetitivas. |
+| 2 | El usuario realiza consultas complejas (búsqueda de gestiones, historial o escrituras). | Recupera datos desde caché o ejecuta consultas indexadas optimizadas en PostgreSQL. |
+| 3 | El sistema procesa la solicitud bajo carga concurrente. | Mantiene el consumo de memoria RAM por debajo de 300 MB por proceso y uso de CPU inferior al 50%. |
+| 4 | El equipo de operaciones ejecuta pruebas de carga y monitoreo. | Valida que todos los endpoints respondan en menos de 10 segundos (objetivo p95 < 2 segundos). |
 
-## Related Use Cases
+## Criterios de Aceptación
 
-- CU-70: Gestión de Copias (depends on performance)
-- CU-72: Gestión de Documentos Presentados (depends on performance)
-- All CU-01 through CU-73 (performance impacts all)
-
-## Key Activities
-
-1. Define caching strategy for frequently accessed data
-2. Configure Spring Cache with appropriate backing store
-3. Implement JPA lazy/eager loading optimization
-4. Configure Spring transaction management
-5. Implement database connection pooling
-6. Create performance baselines and monitoring
-
-## Acceptance Criteria
-
-- [ ] Caching strategy documented
-- [ ] JPA optimization guide implemented
-- [ ] Spring transaction guide documented
-- [ ] Database performance tuning procedures defined
-- [ ] Performance baselines established
-- [ ] Load testing procedures documented
-
-## Documentation References
-
-- Issue #298: Create caching strategy and implementation guide
-- Issue #278: Create JPA lazy/eager loading optimization guide
-- Issue #277: Create Spring transaction management guide
-- Issue #290: Create database and application performance tuning guide
-- Issue #303: Create load testing procedures and baseline
-
-## Status
-
-In Development
-
+- [x] Estrategia de caché documentada e implementada.
+- [x] Optimización de carga JPA (Lazy/Eager) validada sin consultas N+1.
+- [x] Gestión de transacciones Spring configurada con aislamiento apropiado.
+- [x] Pool de conexiones de base de datos ajustado y probado bajo concurrencia.
+- [x] Pruebas de carga ejecutadas con cumplimiento de SLAs (< 10 s tiempo de respuesta).

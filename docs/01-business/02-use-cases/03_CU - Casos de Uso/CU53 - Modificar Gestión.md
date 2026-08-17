@@ -1,103 +1,34 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu53-modificar-gestión">CU53 – Modificar Gestión</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Recepcionista/Gestor, Cliente</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Modifica una gestión en particular.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Gestor/Recepcionista decide modificar una gestión en particular. Busca la gestión deseada. El sistema muestra los trámites asociados a cada presupuesto, el encabezado de la gestión, las observaciones, el escribano a cargo, el cliente de referencia y los clientes asociados a la gestión. El Gestor/Recepcionista procede a modificar alguno de los datos de la gestión encontrada: El encabezado, las observaciones o los clientes asociados. Finalmente, confirma los cambios realizados.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario y esencial.</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/206">#206</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU53 – Modificar Gestión
 
-<table>
-<colgroup>
-<col style="width: 49%" />
-<col style="width: 50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Gestor/Recepcionista decide modificar una gestión en particular.</p>
-<p>3. El Gestor/Recepcionista ingresa alguno de los datos solicitados.</p>
-<p>5. El Gestor/Recepcionista puede modificar:</p>
-<ul>
-<li><p>Modificar el detalle del encabezado,</p></li>
-<li><p>Modificar el detalle de las observaciones,</p></li>
-<li><p>Agregar o quitar Clientes asociados</p></li>
-</ul>
-<p>Y confirma los cambios realizados.</p></td>
-<td><p>2. Solicita número de gestión, ó tipo y número de identificación, ó nombre y apellido del cliente asociado a la gestión, para realizar la búsqueda de la misma.</p>
-<p>4. Busca y muestra los datos de la gestión encontrada:</p>
-<ul>
-<li><p>Nombre cliente asociado</p></li>
-<li><p>Presupuestos asociados</p></li>
-<li><p>Fecha de inicio</p></li>
-<li><p>Escribano a cargo</p></li>
-<li><p>Clientes asociados</p></li>
-</ul>
-<p>6. Registra los cambios realizados.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                            |
-|-----------------|----------------------------|
-| **Excepciones** |                            |
-| **Actor**       | **Sistema**                |
-|                 | 4.1. La gestión no existe. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU53 – Modificar Gestión |
+| **Actores** | Recepcionista/Gestor, Cliente |
+| **Propósito** | Modifica una gestión en particular. |
+| **Descripción** | El Gestor/Recepcionista decide modificar una gestión en particular. Busca la gestión deseada. El sistema muestra los trámites asociados a cada presupuesto, el encabezado de la gestión, las observaciones, el escribano a cargo, el cliente de referencia y los clientes asociados a la gestión. El Gestor/Recepcionista procede a modificar alguno de los datos de la gestión encontrada: El encabezado, las observaciones o los clientes asociados. Finalmente, confirma los cambios realizados. |
+| **Tipo** | Primario y esencial. |
+| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #13 (Registrar inicio de gestión de trámites), RF #104 (Administrar carpetas de trámite), RF #106 (Estados de carpeta), RF #110 (Registrar historial de cambios de estado), RF #115 (Asignar suplente a una gestión) |
+| **GitHub ID** | #206 |
 
-|                 |                                                                                            |
-|-----------------|--------------------------------------------------------------------------------------------|
-| **Excepciones** |                                                                                            |
-| **Actor**       | **Sistema**                                                                                |
-|                 | 4.2. La gestión indicada ya se encuentra archivada, por lo tanto, no puede ser modificada. |
+## Curso de Eventos
 
-|                                                                              |             |
-|------------------------------------------------------------------------------|-------------|
-| **Excepciones**                                                              |             |
-| **Actor**                                                                    | **Sistema** |
-| 5.1. No se encuentran registrados más presupuestos para el cliente indicado. |             |
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Gestor/Recepcionista decide modificar una gestión en particular. |  |
+| 2 |  | Solicita número de gestión, o tipo y número de identificación, o nombre y apellido del cliente asociado a la gestión, para realizar la búsqueda de la misma. |
+| 3 | El Gestor/Recepcionista ingresa alguno de los datos solicitados. |  |
+| 4 |  | Busca y muestra los datos de la gestión encontrada: (Nombre cliente asociado; Presupuestos asociados; Fecha de inicio; Escribano a cargo; Clientes asociados) |
+| 5 | El Gestor/Recepcionista puede modificar: (Modificar el detalle del encabezado,; Modificar el detalle de las observaciones,; Agregar o quitar Clientes asociados) Y confirma los cambios realizados. |  |
+| 6 |  | Registra los cambios realizados. |
 
-|                                                           |             |
-|-----------------------------------------------------------|-------------|
-| **Excepciones**                                           |             |
-| **Actor**                                                 | **Sistema** |
-| 5.1. La gestión no puede no tener presupuestos asociados. |             |
+## Excepciones / Flujos Alternativos
 
-|                                                       |             |
-|-------------------------------------------------------|-------------|
-| **Excepciones**                                       |             |
-| **Actor**                                             | **Sistema** |
-| 5.1. La gestión no puede no tener clientes asociados. |             |
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 4.1 | La gestión no existe. | El sistema gestiona la excepción y notifica al usuario. |
+| 4.2 | La gestión indicada ya se encuentra archivada, por lo tanto, no puede ser modificada. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.1 | No se encuentran registrados más presupuestos para el cliente indicado. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.1 | La gestión no puede no tener presupuestos asociados. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.1 | La gestión no puede no tener clientes asociados. | El sistema gestiona la excepción y notifica al usuario. |

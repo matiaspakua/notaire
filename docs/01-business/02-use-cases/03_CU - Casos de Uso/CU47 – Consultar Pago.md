@@ -1,77 +1,30 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu47--consultar-pago">CU47- Consultar pago</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Recepcionista/Escribano</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Consulta los pagos realizados, por gestión.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Recepcionista/Escribano decide consultar los pagos realizados, hasta el momento, en base a una gestión en particular. El Recepcionista/Escribano busca la gestión por número de presupuesto, ó por nombre y apellido, ó tipo y número de identificación. El sistema presenta la lista de presupuestos asociados al cliente buscado. El Recepcionista/Escribano selecciona un presupuesto en particular, y el sistema detalla el mismo.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU19, CU60</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/200">#200</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU47- Consultar pago
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Recepcionista/Escribano decide consultar los pagos realizados por un cliente.</p>
-<p>3. El Recepcionista/Escribano ingresa los datos solicitados.</p>
-<p>5. El Recepcionista/Escribano selecciona un presupuesto.</p></td>
-<td><p>2. El sistema solicita, número de presupuesto, ó nombre y apellido, ó tipo y número de identificación del cliente, para la búsqueda.</p>
-<p>4. Presenta la lista de presupuestos asociados al cliente.</p>
-<p>6. Presenta:</p>
-<ul>
-<li><p>Número de gestión</p></li>
-<li><p>Encabezado</p></li>
-<li><p>Número de presupuesto</p></li>
-<li><p>Total</p></li>
-<li><p>Saldo</p></li>
-<li><p>Número de pago</p></li>
-<li><p>Monto de pago</p></li>
-<li><p>Fecha de pago</p></li>
-<li><p>Observaciones</p></li>
-</ul></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                       |
-|-----------------|-------------------------------------------------------|
-| **Excepciones** |                                                       |
-| **Actor**       | **Sistema**                                           |
-|                 | 4.1. No existen presupuestos asociados a la búsqueda. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU47- Consultar pago |
+| **Actores** | Recepcionista/Escribano |
+| **Propósito** | Consulta los pagos realizados, por gestión. |
+| **Descripción** | El Recepcionista/Escribano decide consultar los pagos realizados, hasta el momento, en base a una gestión en particular. El Recepcionista/Escribano busca la gestión por número de presupuesto, o por nombre y apellido, o tipo y número de identificación. El sistema presenta la lista de presupuestos asociados al cliente buscado. El Recepcionista/Escribano selecciona un presupuesto en particular, y el sistema detalla el mismo. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #20 (Abonar trámite), RF #22 (Abonar presupuestos en cuotas); CU19, CU60 |
+| **GitHub ID** | #200 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Recepcionista/Escribano decide consultar los pagos realizados por un cliente. |  |
+| 2 |  | El sistema solicita, número de presupuesto, o nombre y apellido, o tipo y número de identificación del cliente, para la búsqueda. |
+| 3 | El Recepcionista/Escribano ingresa los datos solicitados. |  |
+| 4 |  | Presenta la lista de presupuestos asociados al cliente. |
+| 5 | El Recepcionista/Escribano selecciona un presupuesto. |  |
+| 6 |  | Presenta: (Número de gestión; Encabezado; Número de presupuesto; Total; Saldo; Número de pago; Monto de pago; Fecha de pago; Observaciones) |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 4.1 | No existen presupuestos asociados a la búsqueda. | El sistema gestiona la excepción y notifica al usuario. |

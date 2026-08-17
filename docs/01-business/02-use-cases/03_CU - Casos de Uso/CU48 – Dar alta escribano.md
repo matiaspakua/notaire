@@ -1,69 +1,32 @@
-<table>
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 82%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Caso de Uso:</strong></td>
-<td><h3 id="cu48-dar-alta-escribano">CU48 – Dar alta escribano</h3></td>
-</tr>
-<tr class="even">
-<td><strong>Actores:</strong></td>
-<td>Escribano/Administrador</td>
-</tr>
-<tr class="odd">
-<td><strong>Propósito:</strong></td>
-<td>Permite dar de alta un nuevo escribano.</td>
-</tr>
-<tr class="even">
-<td><strong>Descripción:</strong></td>
-<td>El Escribano/Administrador decide dar de alta un nuevo escribano, por lo tanto ingresa el nombre y apellido ó tipo y número de identificación para buscar a la Persona a ser registrada como Escribano. El sistema muestra los datos de la Persona encontrada y solicita el registro del escribano. El Escribano/Administrador ingresa los datos solicitados, y registra el nuevo Escribano.</td>
-</tr>
-<tr class="odd">
-<td><strong>Tipo:</strong></td>
-<td>Primario</td>
-</tr>
-<tr class="even">
-<td><strong>Referencias Cruzadas:</strong></td>
-<td>CU61</td>
-<tr class="odd">
-<td><strong>GitHub_ID:</strong></td>
-<td><a href="https://github.com/matiaspakua/notaire/issues/201">#201</a></td>
-</tr>
-</tr>
-</tbody>
-</table>
+# CU48 – Dar alta escribano
 
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 49%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td colspan="2"><strong>Curso de Eventos</strong></td>
-</tr>
-<tr class="even">
-<td><strong>Actor</strong></td>
-<td><strong>Sistema</strong></td>
-</tr>
-<tr class="odd">
-<td><p>1. El Escribano decide dar de alta un nuevo escribano.</p>
-<p>3. Ingresa el nombre y apellido ó tipo y número de identificación de la persona.</p>
-<p>5. Confirma, que es la persona indicada.</p>
-<p>7. Ingresa los datos solicitados y confirma la operación.</p></td>
-<td><p>2. Solicita nombre y apellido ó tipo y número de identificación de la persona.</p>
-<p>4. Busca la persona asociada a los datos ingresados.</p>
-<p>Muestra los datos de la persona encontrada.</p>
-<p>6. Solicita registro de escribano.</p>
-<p>8.Registra el nuevo escribano.</p></td>
-</tr>
-</tbody>
-</table>
+## Información del Caso de Uso
 
-|                 |                                                   |
-|-----------------|---------------------------------------------------|
-| **Excepciones** |                                                   |
-| **Actor**       | **Sistema**                                       |
-|                 | 4.1. La persona no esta registrada en el sistema. |
+| Atributo | Detalle |
+|---|---|
+| **Caso de Uso** | CU48 – Dar alta escribano |
+| **Actores** | Escribano/Administrador |
+| **Propósito** | Permite dar de alta un nuevo escribano. |
+| **Descripción** | El Escribano/Administrador decide dar de alta un nuevo escribano, por lo tanto ingresa el nombre y apellido o tipo y número de identificación para buscar a la Persona a ser registrada como Escribano. El sistema muestra los datos de la Persona encontrada y solicita el registro del escribano. El Escribano/Administrador ingresa los datos solicitados, y registra el nuevo Escribano. |
+| **Tipo** | Primario |
+| **Referencias Cruzadas** | RF #43 (Administrar usuarios), RF #113 (Administrar suplencias), RF #114 (Registrar suplentes del escribano); CU61 |
+| **GitHub ID** | #201 |
+
+## Curso de Eventos
+
+| Paso | Actor | Sistema |
+|---|---|---|
+| 1 | El Escribano decide dar de alta un nuevo escribano. |  |
+| 2 |  | Solicita nombre y apellido o tipo y número de identificación de la persona. |
+| 3 | Ingresa el nombre y apellido o tipo y número de identificación de la persona. |  |
+| 4 |  | Busca la persona asociada a los datos ingresados. Muestra los datos de la persona encontrada. |
+| 5 | Confirma, que es la persona indicada. |  |
+| 6 |  | Solicita registro de escribano. |
+| 7 | Ingresa los datos solicitados y confirma la operación. |  |
+| 8 |  | Registra el nuevo escribano. |
+
+## Excepciones / Flujos Alternativos
+
+| Paso | Condición / Evento | Acción del Sistema / Actor |
+|---|---|---|
+| 4.1 | La persona no esta registrada en el sistema. | El sistema gestiona la excepción y notifica al usuario. |
