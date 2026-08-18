@@ -147,7 +147,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 mvn verify -pl backend-api  # all checks
 
 # HTTP integration tests (requires running API)
-bash integration-test/scripts/test.sh
+bash testing/scripts/test.sh
 ```
 
 ## ⚠️ CI Preflight — run BEFORE every push

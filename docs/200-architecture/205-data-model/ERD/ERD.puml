@@ -36,7 +36,6 @@ package "Sujetos, Personas y Seguridad" {
     entity "Tipos de Identificación" as tipos_identificacion
   }
   together {
-    entity "Identificaciones" as identificaciones
     entity "Suplencias" as suplencias
   }
   together {
@@ -104,9 +103,7 @@ package "Protocolos, Escrituración y Registración" {
 ' RELACIONES Y CARDINALIDADES
 ' =============================================================================
 
-' Sujetos e Identificaciones (3FN)
-personas ||--o{ identificaciones : "posee"
-tipos_identificacion ||--o{ identificaciones : "clasifica"
+' Sujetos e Identificación
 personas }o--o| tipos_identificacion : "doc principal"
 
 ' Seguridad y Roles (Flyway V9)

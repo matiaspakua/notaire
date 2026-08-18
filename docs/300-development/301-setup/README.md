@@ -51,19 +51,38 @@ bash scripts/stop.sh
 mvn clean install
 ```
 
+### 5. Iniciar Frontend (Next.js)
+
+El cliente web activo vive en `frontend/` (no confundir con `deprecated-frontend-swing/`, el
+cliente Swing legacy). Requiere el backend corriendo en `http://localhost:8080`.
+
+```bash
+cd frontend
+cp .env.local.example .env.local   # ajustar API URL si es necesario
+npm install
+npm run dev                         # http://localhost:3000
+```
+
+Ver [`frontend/README.md`](../../../frontend/README.md) para stack completo, scripts disponibles
+y cobertura de módulos por Caso de Uso.
+
 ## Estructura de Módulos
 
 ```bash
 notaire/
-├── backend-api/           # API REST (Spring Boot)
+├── backend-api/                # API REST (Spring Boot) — módulo del reactor Maven
 │   ├── src/main/java/
 │   └── pom.xml
-├── frontend-swing/        # Cliente Swing
+├── notaire-shared/              # DTOs y código compartido — módulo del reactor Maven
 │   └── pom.xml
-├── notaire-shared/        # DTOs compartidos
+├── frontend/                    # Cliente web (Next.js) — desarrollo activo, ver frontend/README.md
+├── deprecated-frontend-swing/   # Cliente Swing legacy — DEPRECATED, excluido del reactor Maven/CI
 │   └── pom.xml
-└── pom.xml              # Parent POM
+└── pom.xml                      # Parent POM (solo backend-api + notaire-shared)
 ```
+
+`deprecated-frontend-swing/` no recibe funcionalidad nueva; todo cliente nuevo se desarrolla en
+`frontend/`. Ver [`deprecated-frontend-swing/README.md`](../../../deprecated-frontend-swing/README.md).
 
 ## Comandos de Desarrollo
 
@@ -130,7 +149,7 @@ com.licensis.notaire/
 
 ### Schema
 
-El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resources/db/migration/`). Los scripts históricos `init-db/` están archivados en `docs/archive/init-db/`.
+El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resources/db/migration/`). Los scripts históricos `init-db/` están archivados en `docs/000-archive/init-db/`.
 
 ### Índices
 

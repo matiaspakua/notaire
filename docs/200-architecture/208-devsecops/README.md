@@ -35,8 +35,9 @@ The pipeline is divided into two main workflows:
 - Extracts project version for downstream jobs
 
 #### 2. Unit Tests (with coverage)
-- Backend: everything outside the `integration` package
-  (`-Dtest='!**/integration/**'`) plus the `frontend-swing` module
+- Backend API only: everything outside the `integration` package
+  (`-Dtest='!**/integration/**'`); `deprecated-frontend-swing` is excluded from
+  the root Maven reactor and not built by this pipeline
 - Uploads `unit-test-report` artifact: surefire XML + JaCoCo coverage report
 - Publishes test results with dorny/test-reporter
 
@@ -128,7 +129,6 @@ permissions:
 | Module | Path |
 |--------|------|
 | Backend API | `backend-api/target/surefire-reports/*.xml` |
-| Frontend Swing | `frontend-swing/target/surefire-reports/*.xml` |
 
 ### Coverage Reports
 

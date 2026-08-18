@@ -1,4 +1,4 @@
-@startuml ERD_Escribania_Actualizado
+@startuml ERD_Escribania_completo
 !theme plain
 skinparam linetype ortho
 skinparam roundcorner 5
@@ -7,11 +7,20 @@ skinparam class {
     BackgroundColor White
     ArrowColor #2C3E50
     BorderColor #34495E
+    FontSize 12
+}
+skinparam package {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+    FontStyle bold
+    FontSize 13
 }
 
 ' =============================================================================
-' SISTEMA DE GESTIÓN NOTARIAL (NOTAIRE) - MODELO ENTIDAD RELACIÓN ACTUALIZADO (3FN)
-' Alineado con PostgreSQL 16 y Flyway Migrations (V1 a V14)
+' SISTEMA DE GESTION NOTARIAL (NOTAIRE) - MODELO ENTIDAD RELACION COMPLETO
+' Fuente de verdad: backend-api/src/main/resources/db/migration/V1..V14, R14
+' (Flyway es la unica fuente de verdad del esquema; ver ADR-007)
 ' =============================================================================
 
 package "Sujetos, Identificación y Seguridad" {
@@ -19,27 +28,27 @@ package "Sujetos, Identificación y Seguridad" {
   entity "personas" as personas {
     * id_persona : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(100)
-    * apellido : VARCHAR(100)
-    numero_identificacion : VARCHAR(50)
-    cuit : VARCHAR(30)
-    nacionalidad : VARCHAR(50)
-    sexo : VARCHAR(20)
+    * apellido : TEXT
+    * nombre : TEXT
+    * numero_identificacion : TEXT
+    cuit : TEXT
+    sexo : TEXT
     fecha_nacimiento : DATE
-    estado_civil : VARCHAR(50)
+    estado_civil : TEXT
     numero_nupcias : INT
-    ocupacion : VARCHAR(100)
-    profesion : VARCHAR(100)
-    domicilio : VARCHAR(255)
-    localidad : VARCHAR(100)
-    provincia : VARCHAR(100)
-    telefono : VARCHAR(50)
-    celular : VARCHAR(50)
-    email : VARCHAR(100)
-    e_mail : VARCHAR(100)
+    ocupacion : TEXT
+    domicilio : TEXT
+    e_mail : TEXT
+    email : TEXT
     registro_escribano : INT
-    * es_escribano : BOOLEAN
     * es_cliente : BOOLEAN
+    * es_escribano : BOOLEAN
+    localidad : TEXT
+    provincia : TEXT
+    telefono : TEXT
+    celular : TEXT
+    nacionalidad : TEXT
+    profesion : TEXT
     observaciones : TEXT
     fk_id_tipo_identificacion : INT <<FK>>
     version : INT
@@ -48,26 +57,19 @@ package "Sujetos, Identificación y Seguridad" {
   entity "tipos_identificacion" as tipos_identificacion {
     * id_tipo_identificacion : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(50)
-    * caracteres : VARCHAR(50)
+    * nombre : TEXT
+    * caracteres : TEXT
     version : INT
-  }
-
-  entity "identificaciones" as identificaciones {
-    * fk_id_tipo_identificacion : INT <<PK, FK>>
-    * fk_id_persona : INT <<PK, FK>>
-    --
-    * numero : VARCHAR(50)
   }
 
   entity "usuarios" as usuarios {
     * id_usuario : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(50)
-    * contrasenia : VARCHAR(255)
+    * nombre : TEXT
+    * contrasenia : TEXT
+    * tipo : TEXT
     * estado : BOOLEAN
-    * tipo : VARCHAR(50)
-    * fk_id_persona : INT <<FK>>
+    fk_id_persona : INT <<FK>>
     fk_id_rol : INT <<FK>>
     version : INT
   }
@@ -75,7 +77,7 @@ package "Sujetos, Identificación y Seguridad" {
   entity "roles" as roles {
     * id_rol : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(50) <<UNIQUE>>
+    * nombre : TEXT <<UNIQUE>>
     descripcion : TEXT
     * activo : BOOLEAN
     version : INT
@@ -83,16 +85,16 @@ package "Sujetos, Identificación y Seguridad" {
 
   entity "roles_permisos" as roles_permisos {
     * fk_id_rol : INT <<PK, FK>>
-    * modulo : VARCHAR(100) <<PK>>
+    * modulo : TEXT <<PK>>
   }
 
   entity "registro_auditoria" as registro_auditoria {
     * id_registro_auditoria : INT <<PK, generated>>
     --
     * fecha : TIMESTAMP
-    * modulo : VARCHAR(100)
+    * modulo : TEXT
     * detalle_operacion : TEXT
-    * fk_id_usuario : INT <<FK>>
+    fk_id_usuario : INT <<FK>>
     version : INT
   }
 
@@ -102,11 +104,10 @@ package "Sujetos, Identificación y Seguridad" {
     * fecha_inicio : DATE
     fecha_fin : DATE
     observaciones : TEXT
-    * fk_id_suplantado : INT <<FK>>
-    * fk_id_suplente : INT <<FK>>
+    fk_id_suplantado : INT <<FK>>
+    fk_id_suplente : INT <<FK>>
     version : INT
   }
-
 }
 
 package "Gestión Notarial, Estados y Workflows" {
@@ -114,7 +115,7 @@ package "Gestión Notarial, Estados y Workflows" {
   entity "estados_de_gestion" as estados_de_gestion {
     * id_estado_gestion : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(50)
+    * nombre : TEXT
     observaciones : TEXT
     version : INT
   }
@@ -122,7 +123,7 @@ package "Gestión Notarial, Estados y Workflows" {
   entity "workflow_definition" as workflow_definition {
     * id_workflow_definition : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(100)
+    * nombre : TEXT
     descripcion : TEXT
     * activo : BOOLEAN
     version : INT
@@ -133,7 +134,7 @@ package "Gestión Notarial, Estados y Workflows" {
     --
     * fk_workflow_definition_id : INT <<FK>>
     * fk_estado_gestion_id : INT <<FK>>
-    * tipo : VARCHAR(20) <<INITIAL | INTERMEDIATE | FINAL>>
+    * tipo : TEXT <<INITIAL | INTERMEDIATE | FINAL>>
     posicion_x : REAL
     posicion_y : REAL
     version : INT
@@ -155,11 +156,9 @@ package "Gestión Notarial, Estados y Workflows" {
     --
     * numero : INT
     * fecha_inicio : DATE
-    * encabezado : VARCHAR(255)
+    * encabezado : TEXT
     observaciones : TEXT
-    numero_bibliorato : INT
-    numero_archivo : INT
-    * fk_id_persona_escribano : INT <<FK>>
+    fk_id_persona_escribano : INT <<FK>>
     fk_id_estado_de_gestion : INT <<FK>>
     version : INT
   }
@@ -167,22 +166,22 @@ package "Gestión Notarial, Estados y Workflows" {
   entity "historial" as historial {
     * id_historial : INT <<PK, generated>>
     --
-    * fecha : TIMESTAMP
+    * fecha : DATE
     observaciones : TEXT
-    * fk_id_gestion : INT <<FK>>
-    * fk_id_estado_gestion : INT <<FK>>
+    fk_id_gestion : INT <<FK>>
+    fk_id_estado_gestion : INT <<FK>>
     version : INT
   }
 
   entity "tipos_de_tramite" as tipos_de_tramite {
     * id_tipo_tramite : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(100)
+    * nombre : TEXT
+    observaciones : TEXT
+    * habilitado : BOOLEAN
     * se_archiva : BOOLEAN
     * se_inscribe : BOOLEAN
     * asocia_inmuebles : BOOLEAN
-    * habilitado : BOOLEAN
-    observaciones : TEXT
     fk_workflow_definition_id : INT <<FK>>
     version : INT
   }
@@ -191,12 +190,12 @@ package "Gestión Notarial, Estados y Workflows" {
     * id_tramite : INT <<PK, generated>>
     --
     numero : INT
-    nombre : VARCHAR(200)
+    nombre : TEXT
     observaciones : TEXT
-    * fk_id_tipo_tramite : INT <<FK>>
+    fk_id_tipo_tramite : INT <<FK>>
     fk_id_gestion : INT <<FK>>
     fk_id_escritura : INT <<FK>>
-    * fk_id_presupuesto : INT <<FK>>
+    fk_id_presupuesto : INT <<FK>>
     fk_id_inmueble : INT <<FK>>
     version : INT
   }
@@ -205,46 +204,28 @@ package "Gestión Notarial, Estados y Workflows" {
     * fk_id_tramite : INT <<PK, FK>>
     * fk_id_persona_cliente : INT <<PK, FK>>
     --
-    * observaciones : VARCHAR(255)
+    * observaciones : TEXT
     version : INT
   }
 
   entity "inmuebles" as inmuebles {
     * id_inmueble : INT <<PK, generated>>
     --
-    * nomenclatura : VARCHAR(100)
-    matricula : VARCHAR(50)
+    nomenclatura : TEXT
+    matricula : TEXT
     valuacion_anio : INT
     valuacion_fiscal : REAL
     partida : INT
-    circunscripcion : VARCHAR(20)
-    seccion : VARCHAR(20)
-    zona : VARCHAR(20)
-    manzana : VARCHAR(20)
-    parcela : VARCHAR(20)
-    poligono : VARCHAR(20)
-    unidad_funcional : VARCHAR(20)
-    * domicilio : VARCHAR(255)
-    localidad : VARCHAR(100)
-    tipo_inmueble : VARCHAR(50)
+    circunscripcion : TEXT
+    seccion : TEXT
+    zona : TEXT
+    manzana : TEXT
+    parcela : TEXT
+    poligono : TEXT
+    unidad_funcional : TEXT
+    domicilio : TEXT
+    localidad : TEXT
     observaciones : TEXT
-    version : INT
-  }
-
-}
-
-package "Documentación y Certificados" {
-
-  entity "tipos_de_documento" as tipos_de_documento {
-    * id_tipo_documento : INT <<PK, generated>>
-    --
-    * nombre : VARCHAR(150)
-    * devuelto : BOOLEAN
-    * vence : BOOLEAN
-    dias_vencimiento : INT
-    importe_a_pagar : REAL
-    * habilitado : BOOLEAN
-    * quien_entrega : VARCHAR(50)
     version : INT
   }
 
@@ -256,10 +237,23 @@ package "Documentación y Certificados" {
     version : INT
   }
 
+  entity "tipos_de_documento" as tipos_de_documento {
+    * id_tipo_documento : INT <<PK, generated>>
+    --
+    * nombre : TEXT
+    * devuelto : BOOLEAN
+    * vence : BOOLEAN
+    dias_vencimiento : INT
+    importe_a_pagar : REAL
+    * habilitado : BOOLEAN
+    * quien_entrega : TEXT
+    version : INT
+  }
+
   entity "documentos_presentados" as documentos_presentados {
     * id_documento_presentado : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(150)
+    * nombre : TEXT
     numero_carton : INT
     fecha_ingreso : DATE
     fecha_salida : DATE
@@ -275,12 +269,11 @@ package "Documentación y Certificados" {
     observaciones : TEXT
     entregado : BOOLEAN
     reingresado : BOOLEAN
-    * quien_entrega : VARCHAR(50)
+    * quien_entrega : TEXT
     fk_id_tramite : INT <<FK>>
     fk_id_tipo_documento : INT <<FK>>
     version : INT
   }
-
 }
 
 package "Presupuestación y Cobranzas" {
@@ -288,7 +281,7 @@ package "Presupuestación y Cobranzas" {
   entity "conceptos" as conceptos {
     * id_concepto : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(150)
+    * nombre : TEXT
     * valor : REAL
     * porcentaje : INT
     * habilitado : BOOLEAN
@@ -309,25 +302,23 @@ package "Presupuestación y Cobranzas" {
     --
     * numero : INT
     * fecha : DATE
-    * encabezado : VARCHAR(255)
-    * total : REAL
-    * saldo : REAL
-    * estado : VARCHAR(50)
-    monto_inmueble : REAL
+    * encabezado : TEXT
     observaciones : TEXT
-    * fk_id_persona : INT <<FK>>
+    * estado : TEXT
+    monto_inmueble : REAL
+    fk_id_persona : INT <<FK>>
     version : INT
   }
 
   entity "items" as items {
     * id_item : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(150)
+    * nombre : TEXT
     * valor : REAL
     * porcentaje : INT
     * concepto_fijo : BOOLEAN
     observaciones : TEXT
-    * fk_id_presupuesto : INT <<FK>>
+    fk_id_presupuesto : INT <<FK>>
     version : INT
   }
 
@@ -336,11 +327,10 @@ package "Presupuestación y Cobranzas" {
     --
     * fecha : DATE
     * monto : REAL
-    * observaciones : TEXT
-    * fk_id_presupuesto : INT <<FK>>
+    observaciones : TEXT
+    fk_id_presupuesto : INT <<FK>>
     version : INT
   }
-
 }
 
 package "Protocolos, Escrituración y Registración" {
@@ -351,8 +341,8 @@ package "Protocolos, Escrituración y Registración" {
     * numero : INT
     * fecha_escrituracion : DATE
     * cuerpo : TEXT
-    * estado : VARCHAR(50)
-    matricula_inscripcion : VARCHAR(100)
+    * estado : TEXT
+    matricula_inscripcion : TEXT
     fecha_inscripcion : DATE
     observaciones : TEXT
     version : INT
@@ -361,7 +351,7 @@ package "Protocolos, Escrituración y Registración" {
   entity "tipos_de_folio" as tipos_de_folio {
     * id_tipo_folio : INT <<PK, generated>>
     --
-    * nombre : VARCHAR(100)
+    * nombre : TEXT
     observaciones : TEXT
     * habilitado : BOOLEAN
     version : INT
@@ -372,11 +362,11 @@ package "Protocolos, Escrituración y Registración" {
     --
     * numero : INT
     * anio : INT
-    * estado : VARCHAR(50)
+    * estado : TEXT
     observaciones : TEXT
-    * fk_id_persona_escribano : INT <<FK>>
-    * fk_id_tipo_folio : INT <<FK>>
     fk_id_escritura : INT <<FK>>
+    fk_id_tipo_folio : INT <<FK>>
+    fk_id_persona_escribano : INT <<FK>>
     version : INT
   }
 
@@ -384,15 +374,15 @@ package "Protocolos, Escrituración y Registración" {
     * id_testimonio : INT <<PK, generated>>
     --
     * numero : INT
+    observaciones : TEXT
     fecha_inscripcion : DATE
     fecha_retiro : DATE
     fecha_ingreso_libro : DATE
     numero_carpeta : INT
     numero_expediente : INT
-    * observado : BOOLEAN
     * reingresado : BOOLEAN
-    observaciones : TEXT
-    * fk_id_escritura : INT <<FK>>
+    * observado : BOOLEAN
+    fk_id_escritura : INT <<FK>>
     version : INT
   }
 
@@ -405,7 +395,7 @@ package "Protocolos, Escrituración y Registración" {
     * inscripta : BOOLEAN
     * numero_carton : INT
     observaciones : TEXT
-    * fk_id_testimonio : INT <<FK>>
+    fk_id_testimonio : INT <<FK>>
     version : INT
   }
 
@@ -416,8 +406,8 @@ package "Protocolos, Escrituración y Registración" {
     * fecha_impresion : DATE
     fecha_retiro : DATE
     observaciones : TEXT
-    * fk_id_testimonio : INT <<FK>>
-    * fk_id_persona : INT <<FK>>
+    fk_id_testimonio : INT <<FK>>
+    fk_id_persona : INT <<FK>>
     version : INT
   }
 
@@ -426,29 +416,22 @@ package "Protocolos, Escrituración y Registración" {
     * fk_id_copia : INT <<PK, FK>>
     version : INT
   }
-
 }
 
 ' =============================================================================
-' RELACIONES
+' RELACIONES Y CARDINALIDADES
 ' =============================================================================
 
-' Identificaciones y Personas
-personas ||--o{ identificaciones : "posee"
-tipos_identificacion ||--o{ identificaciones : "clasifica"
-personas }o--|| tipos_identificacion : "identificación principal"
-
-' Seguridad y Usuarios
+' Sujetos, Identificación y Seguridad
+personas }o--|| tipos_identificacion : "tipo de identificación"
 personas ||--o{ usuarios : "identifica"
 roles ||--o{ usuarios : "asigna rol"
 roles ||--o{ roles_permisos : "concede permisos"
 usuarios ||--o{ registro_auditoria : "ejecuta"
-
-' Suplencias entre Escribanos
 personas ||--o{ suplencias : "suplantado"
 personas ||--o{ suplencias : "suplente"
 
-' Workflow y Estados
+' Workflow y Estados de Gestión
 estados_de_gestion ||--o{ workflow_node : "asocia estado"
 workflow_definition ||--o{ workflow_node : "contiene nodos"
 workflow_definition ||--o{ workflow_transition : "contiene transiciones"
@@ -459,29 +442,28 @@ workflow_definition ||--o{ tipos_de_tramite : "workflow asignado"
 ' Gestiones, Estados e Historial
 personas ||--o{ gestiones_de_escrituras : "escribano responsable"
 estados_de_gestion ||--o{ gestiones_de_escrituras : "estado actual"
-gestiones_de_escrituras ||--o{ historial : "registra historial"
+gestiones_de_escrituras ||--o{ historial : "registra"
 estados_de_gestion ||--o{ historial : "estado histórico"
 
-' Tipos de Trámite y Plantillas
-tipos_de_tramite ||--o{ plantilla_tramites : "define requisitos"
-tipos_de_documento ||--o{ plantilla_tramites : "documento requerido"
-tipos_de_tramite ||--o{ plantilla_presupuestos : "define aranceles"
-conceptos ||--o{ plantilla_presupuestos : "concepto arancelario"
-
-' Trámites y sus relaciones
-tipos_de_tramite ||--o{ tramites : "tipifica"
+' Trámites, Tipos e Inmuebles
+tipos_de_tramite ||--o{ tramites : "clasifica"
 gestiones_de_escrituras ||--o{ tramites : "agrupa"
-inmuebles ||--o{ tramites : "objeto del acto"
-tramites ||--o{ tramites_personas : "participantes"
-personas ||--o{ tramites_personas : "interviene en"
-
-' Documentación Presentada
-tramites ||--o{ documentos_presentados : "requiere presentación"
-tipos_de_documento ||--o{ documentos_presentados : "tipo de documento"
-
-' Presupuestos, Items y Pagos (V14: Un Presupuesto tiene 1..N Trámites)
-personas ||--o{ presupuestos : "solicitante"
+escrituras ||--o{ tramites : "instrumenta"
 presupuestos ||--o{ tramites : "presupuesta"
+inmuebles ||--o{ tramites : "asociado a"
+tramites ||--o{ tramites_personas : "involucra"
+personas ||--o{ tramites_personas : "cliente en"
+
+' Plantillas y Documentación requerida
+tipos_de_tramite ||--o{ plantilla_tramites : "requiere"
+tipos_de_documento ||--o{ plantilla_tramites : "documento base"
+tramites ||--o{ documentos_presentados : "presenta"
+tipos_de_documento ||--o{ documentos_presentados : "tipo documento"
+
+' Presupuestación y Cobranzas
+tipos_de_tramite ||--o{ plantilla_presupuestos : "aranceles base"
+conceptos ||--o{ plantilla_presupuestos : "incluido"
+personas ||--o{ presupuestos : "solicitante"
 presupuestos ||--o{ items : "compuesto por"
 presupuestos ||--o{ pagos : "abona"
 
@@ -489,7 +471,6 @@ presupuestos ||--o{ pagos : "abona"
 personas ||--o{ folios : "custodia"
 tipos_de_folio ||--o{ folios : "tipo de folio"
 escrituras ||--o{ folios : "asienta en"
-escrituras ||--o{ tramites : "instrumenta"
 
 ' Testimonios, Copias y Movimientos
 escrituras ||--o{ testimonios : "expide"
