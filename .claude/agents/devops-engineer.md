@@ -78,7 +78,7 @@ Validate alignment: `mvn test -Ppg-integration`
 
 ## Workflow Compliance
 
-All infrastructure changes follow the AUDITORIA.md workflow:
+All infrastructure changes follow the CONSTITUTION.md workflow:
 1. GitHub issue + Use Case reference.
 2. Branch from updated main (`<type>/<issue-number>_<description>`).
 3. Move issue to IN PROGRESS.

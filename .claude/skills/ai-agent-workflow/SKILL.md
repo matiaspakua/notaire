@@ -2,7 +2,7 @@
 
 ## Overview
 
-This skill provides comprehensive guidance for AI coding agents (OpenCode, Claude Code, GitHub Copilot) to implement changes in the Notaire project following the mandatory development process defined in `AUDITORIA.md`.
+This skill provides comprehensive guidance for AI coding agents (OpenCode, Claude Code, GitHub Copilot) to implement changes in the Notaire project following the mandatory development process defined in `CONSTITUTION.md`.
 
 ## When to Use This Skill
 

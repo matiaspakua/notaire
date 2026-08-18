@@ -1,7 +1,7 @@
 # Custom Exception and Error Handling Strategy
 
 > **DEPRECATED (2026-08-02)**: superseded by
-> [`docs/05-api/ERROR-HANDLING-STRATEGY.md`](../05-api/ERROR-HANDLING-STRATEGY.md),
+> [`docs/200-architecture/203-design/BACKEND-ERROR-HANDLING-STRATEGY.md`](../../200-architecture/203-design/BACKEND-ERROR-HANDLING-STRATEGY.md),
 > which merges this document's content with the actual `GlobalExceptionHandler`
 > implementation and corrects the response shape below (it describes only the
 > legacy ad-hoc `try/catch` pattern, not the target `ErrorResponse` envelope).

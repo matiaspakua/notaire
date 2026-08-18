@@ -1,5 +1,14 @@
 # AI Agent Development Workflow
 
+> **DEPRECATED**: superseded by
+> [`.claude/rules/ai-agent-workflow.md`](../../../.claude/rules/ai-agent-workflow.md),
+> which adds the mandatory Use Case (Caso de Uso) traceability step, the
+> "move issue to IN PROGRESS" step, correct TDD ordering (tests before
+> implementation), and the current Playwright-based E2E requirement (this
+> document predates that migration and still references the legacy
+> Robot Framework suite in `testing/e2e-swing/`). Kept for historical
+> reference.
+
 ## Overview
 
 This document describes the mandatory workflow that **ALL AI coding agents** must follow when implementing changes in the Notaire project. This applies to OpenCode, Claude Code, GitHub Copilot, and any other AI assistant modifying this codebase.
@@ -424,7 +433,7 @@ gh pr create --title "[253] feat: description" --body "Fixes #253"
 
 ## Related Documentation
 
-- [CLAUDE.md](CLAUDE.md) - Claude Code instructions
-- [AGENTS.md](AGENTS.md) - Agent coding guidelines
-- [.claude/rules/ai-agent-workflow.md](../.claude/rules/ai-agent-workflow.md) - Full workflow rules
-- [.claude/skills/ai-agent-workflow/](../.claude/skills/ai-agent-workflow/SKILL.md) - Workflow skill
+- [CLAUDE.md](../../../CLAUDE.md) - Claude Code instructions
+- [AGENTS.md](../../../AGENTS.md) - Agent coding guidelines
+- [.claude/rules/ai-agent-workflow.md](../../../.claude/rules/ai-agent-workflow.md) - Full workflow rules (canonical)
+- [.claude/skills/ai-agent-workflow/SKILL.md](../../../.claude/skills/ai-agent-workflow/SKILL.md) - Workflow skill

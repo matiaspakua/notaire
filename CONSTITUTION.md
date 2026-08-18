@@ -8,7 +8,7 @@
 > any other tool or person touching this codebase.
 >
 > Existing project documents (`.claude/rules/*`, `AGENTS.md`, `CLAUDE.md`,
-> `AUDITORIA.md`, `docs/`) implement this Constitution. Where a lower-level
+> `.claude/rules/`, `docs/`) implement this Constitution. Where a lower-level
 > document contradicts this Constitution, **this document prevails**.
 
 ---
@@ -486,11 +486,11 @@ drift.
 | Local preflight | `bash scripts/preflight.sh [--fix|--fast|--full]`; pre-push hook |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
-| Deploy + smoke | `cd.yml` → GHCR image; runbook in `docs/04-operations/` |
+| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
 | Agent rules | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/*`, `.claude/skills/*` |
 
 ---
 
 *Last reviewed: 2026-08-08. This Constitution supersedes the process
-summaries in `AUDITORIA.md` and `.claude/rules/ai-agent-workflow.md` where
-they conflict; those documents remain the operational implementations.*
+summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
+document remains the operational implementation.*

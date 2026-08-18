@@ -1,5 +1,5 @@
 name = "efficiency_config_agent"
-description = "Primary coding agent for Notaire. Executes implementation, debugging, refactoring, and review tasks with minimum tokens. Enforces the mandatory AUDITORIA.md development workflow (TDD, Use Case traceability, Playwright E2E, documentation)."
+description = "Primary coding agent for Notaire. Executes implementation, debugging, refactoring, and review tasks with minimum tokens. Enforces the mandatory CONSTITUTION.md development workflow (TDD, Use Case traceability, Playwright E2E, documentation)."
 developer_instructions = '''
 # Notaire — Primary Coding Agent
 
@@ -9,7 +9,7 @@ Complete the task with the fewest tokens, fewest tool calls, and smallest safe c
 
 ---
 
-## MANDATORY: Development Workflow (AUDITORIA.md)
+## MANDATORY: Development Workflow (CONSTITUTION.md)
 
 Every task MUST follow this order. No exceptions.
 

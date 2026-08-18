@@ -10,12 +10,15 @@ This document describes how Notaire maps between JPA entities and Data Transfer 
 
 Notaire uses **direct entity serialization** — JPA entities are serialized as JSON directly from the REST controllers, without a separate DTO layer for most endpoints. DTOs exist for specific use cases where the full entity should not be exposed.
 
+DTO classes live in the **`notaire-shared`** module (`com.licensis.notaire.dto`), not in `backend-api` itself. `backend-api` declares a Maven dependency on `notaire-shared` and imports the DTOs from there; `notaire-shared` has no dependency back on `backend-api`.
+
 ### Where DTOs Are Used
 
 | DTO class | Purpose | Endpoint |
 |-----------|---------|----------|
 | `DtoUsuario` | Login response — excludes password hash, includes `valido` flag | `POST /usuarios/login` |
 | `DtoPlantillaPresupuesto` | Composite PK mapping for budget templates | `GET/POST /plantilla-presupuestos` |
+| `DtoWorkflowNode`, `DtoWorkflowDefinition`, `DtoWorkflowTransition` | Workflow graph editor payloads | `/workflow-definitions`, `/workflow-nodes`, `/workflow-transitions` |
 
 ### Where Direct Entity Serialization Is Used
 
@@ -117,31 +120,39 @@ Some entities have `@ManyToOne` or `@OneToMany` with lazy loading. When Jackson 
 
 When a new endpoint should return a reduced view of an entity:
 
-1. Create the DTO class in `com.licensis.notaire.dto`
-2. Add a `toDtoXxx()` method to the entity class
+1. Create the DTO class in `notaire-shared`, package `com.licensis.notaire.dto`
+2. Add a `toDto()` method to the entity class (in `backend-api`)
 3. Return the DTO from the controller instead of the entity
 
+Real example, `WorkflowNode` → `DtoWorkflowNode`:
+
 ```java
-// In the entity class:
-public DtoPersona toDtoPersona() {
-    DtoPersona dto = new DtoPersona();
-    dto.setIdPersona(this.idPersona);
-    dto.setNombreCompleto(this.nombre + " " + this.apellido);
-    // Only include fields needed by the client
+// In the entity class (backend-api, negocio package):
+public DtoWorkflowNode toDto() {
+    DtoWorkflowNode dto = new DtoWorkflowNode();
+    dto.setId(this.id);
+    dto.setWorkflowDefinitionId(workflowDefinition != null ? workflowDefinition.getId() : null);
+    dto.setEstadoGestionId(estadoDeGestion != null ? estadoDeGestion.getIdEstadoGestion() : null);
+    dto.setEstadoGestionNombre(estadoDeGestion != null ? estadoDeGestion.getNombre() : null);
+    dto.setTipo(tipo != null ? tipo.name() : null);
+    dto.setPosicionX(this.posicionX);
+    dto.setPosicionY(this.posicionY);
+    dto.setVersion(this.version);
     return dto;
 }
 
 // In the controller:
-@GetMapping("/buscar")
-public ResponseEntity<List<DtoPersona>> buscar(@RequestParam String nombre) {
-    return ResponseEntity.ok(
-        personas.stream().map(Persona::toDtoPersona).toList()
-    );
+@GetMapping("/{id}")
+public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
+    return repository.findById(id)
+            .map(n -> ResponseEntity.ok(n.toDto()))
+            .orElse(ResponseEntity.notFound().build());
 }
 ```
 
 ## References
 
-- `DtoUsuario.java` — primary auth response DTO
-- `PlantillaPresupuesto.java` — composite PK entity example
+- `DtoUsuario.java` (`notaire-shared`) — primary auth response DTO
+- `PlantillaPresupuesto.java` (`backend-api`) — composite PK entity example
+- `WorkflowNode.java` / `WorkflowNodeController.java` (`backend-api`) — `toDto()` mapping pattern
 - `frontend/src/types/index.ts` — TypeScript mirrors of all entity types

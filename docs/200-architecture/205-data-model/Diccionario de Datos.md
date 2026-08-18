@@ -640,7 +640,7 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 
 ---
 
-## 4. Matriz de Integridad Referencial Consolidada
+## 5. Matriz de Integridad Referencial Consolidada
 
 | Tabla Origen | Columna FK | Tabla Destino | Columna PK | Acción ON DELETE |
 |---|---|---|---|---|

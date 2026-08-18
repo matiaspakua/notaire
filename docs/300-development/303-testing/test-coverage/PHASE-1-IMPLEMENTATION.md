@@ -342,7 +342,7 @@ Before committing tests:
 
 ## References
 
-- [AUDITORIA.md](../../AUDITORIA.md) — Mandatory test requirements
+- [CONSTITUTION.md](../../../../CONSTITUTION.md) — Mandatory test requirements
 - [TEST-COVERAGE-STRATEGY.md](TEST-COVERAGE-STRATEGY.md) — Overall coverage strategy
 - JUnit 5 docs: https://junit.org/junit5/
 - Mockito docs: https://javadoc.io/doc/org.mockito/mockito-core

@@ -21,7 +21,7 @@ The following entities have `FetchType.LAZY` associations that are accessed duri
 | `Usuario` | `registroAuditoriaList` | Entity returned directly | ✅ Fixed PR #506 |
 | `TipoDeTramite` | Multiple | Yes | ✅ Fixed PR #506 |
 
-All `@GetMapping` methods across all 30 controllers now have `@Transactional(readOnly = true)` applied.
+All `@GetMapping` methods that map entities with lazy collections now have `@Transactional(readOnly = true)` applied (29 of the 31 `api` controllers use `@Transactional`; `ReporteController` returns PDFs directly and `WorkflowValidationController` has no `@GetMapping`, so neither needs it).
 
 ## When to Use LAZY vs EAGER
 

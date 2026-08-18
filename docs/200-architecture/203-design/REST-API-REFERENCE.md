@@ -319,4 +319,4 @@ All error responses return a structured JSON body:
 | 409 Conflict | Duplicate entity or optimistic lock conflict |
 | 500 Internal Server Error | Unexpected server error |
 
-See [ERROR-HANDLING-STRATEGY.md](./ERROR-HANDLING-STRATEGY.md) for implementation details.
+See [BACKEND-ERROR-HANDLING-STRATEGY.md](./BACKEND-ERROR-HANDLING-STRATEGY.md) for implementation details.

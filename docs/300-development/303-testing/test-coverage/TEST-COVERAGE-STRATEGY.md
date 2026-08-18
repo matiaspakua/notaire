@@ -102,4 +102,4 @@ Automatically adds coverage summary to PRs showing:
 
 ---
 
-See also: [AUDITORIA.md](../../AUDITORIA.md) — Mandatory test requirements
+See also: [CONSTITUTION.md](../../../../CONSTITUTION.md) — Mandatory test requirements

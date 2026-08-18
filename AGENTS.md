@@ -1,6 +1,6 @@
 # AGENTS.md — Notaire Agent Reference
 
-Coding agents for the Notaire project. All agents enforce the mandatory development workflow defined in `AUDITORIA.md` and `.claude/rules/ai-agent-workflow.md`.
+Coding agents for the Notaire project. All agents enforce the mandatory development workflow defined in `CONSTITUTION.md` and `.claude/rules/ai-agent-workflow.md`.
 
 ---
 
@@ -8,7 +8,7 @@ Coding agents for the Notaire project. All agents enforce the mandatory developm
 
 | Agent | File | Role |
 |-------|------|------|
-| **efficiency_config_agent** | `.claude/agents/efficiency_config_agent.md` | **Primary coding agent.** Implementation, debugging, refactoring. Enforces AUDITORIA.md workflow. |
+| **efficiency_config_agent** | `.claude/agents/efficiency_config_agent.md` | **Primary coding agent.** Implementation, debugging, refactoring. Enforces the CONSTITUTION.md workflow. |
 | **Code Reviewers** | `.claude/agents/code-reviewer.md` | Code review: correctness, security, KIS/SRP, workflow compliance. |
 | **java-architect** | `.claude/agents/java-architect.md` | Java/Spring Boot architecture decisions, package structure, migration from legacy `jpa`. |
 | **devops-engineer** | `.claude/agents/devops-engineer.md` | Docker, CI/CD, observability (Prometheus/Grafana/Loki), scripts. |
@@ -131,7 +131,7 @@ Package root: `com.licensis.notaire`
 - Design system: `src/theme/tokens.ts` (single source of truth).
 - Forms: `FormContainer → FormSection → FormField → FormActions`.
 
-**Database**: Flyway is the single source of truth. Docker starts PostgreSQL empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/archive/init-db/`.
+**Database**: Flyway is the single source of truth. Docker starts PostgreSQL empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/000-archive/init-db/`.
 
 ---
 

@@ -112,7 +112,7 @@ void shouldReturnAll() throws Exception {
 
 ## History
 
-- **2026-06-16**: Fixed `LazyInitializationException` in 25 controllers (PR #504, PR #506). All `@GetMapping` methods in the `api` package now have `@Transactional(readOnly = true)`. Root cause: `spring.jpa.open-in-view=false` + `FetchType.LAZY` on entity associations + controller calling `.stream().map(Entity::getDto)` outside any transaction.
+- **2026-06-16**: Fixed `LazyInitializationException` in 25 controllers (PR #504, PR #506). All `@GetMapping` methods that map lazy-loaded entities now have `@Transactional(readOnly = true)` (see `JPA-LAZY-LOADING-GUIDE.md` for the two controllers that don't need it). Root cause: `spring.jpa.open-in-view=false` + `FetchType.LAZY` on entity associations + controller calling `.stream().map(Entity::getDto)` outside any transaction.
 
 ## Related
 
