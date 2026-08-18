@@ -492,7 +492,7 @@ EOF
 
 ### HTTP Integration Tests
 - **Type:** Shell Script / cURL
-- **Location:** `integration-test/http/`
+- **Location:** `testing/http/`
 - **Status:**
 EOF
         echo "${TEST_RESULTS["http"]:-⊘ NOT RUN}"
@@ -525,7 +525,7 @@ EOF
 
 ### E2E Tests (Robot Framework)
 - **Type:** Robot Framework (Python/Swing)
-- **Location:** `integration-test/e2e-swing/tests/`
+- **Location:** `testing/e2e-swing/tests/`
 - **Status:**
 EOF
         echo "${TEST_RESULTS["e2e"]:-⊘ NOT RUN}"
@@ -587,7 +587,7 @@ EOF
 
 ### Run All Tests
 \`\`\`bash
-cd integration-test && bash run-all-tests.sh
+cd testing && bash run-all-tests.sh
 \`\`\`
 
 ### Run Specific Test Types
@@ -620,7 +620,7 @@ mvn site -pl backend-api  # Full site including coverage
 
 ### Robot Framework
 \`\`\`bash
-cd integration-test/e2e-swing
+cd testing/e2e-swing
 source .venv/bin/activate
 robot tests/
 # Or specific test suite
@@ -726,7 +726,7 @@ psql -h localhost -U notaire -d notaire_db
 
 ### Robot Framework Tests Not Running
 \`\`\`bash
-cd integration-test/e2e-swing
+cd testing/e2e-swing
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

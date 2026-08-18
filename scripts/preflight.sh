@@ -192,7 +192,7 @@ section "Server-backed suites"
 if [ "$MODE_FULL" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
-        run "http integration suite" bash -c "cd integration-test/http && bash test-all-endpoints-v2.sh"
+        run "http integration suite" bash -c "cd testing/http && bash test-all-endpoints-v2.sh"
         run "playwright e2e" bash -c "cd frontend && ./node_modules/.bin/playwright test"
     else
         fail "server-backed suites: stack not reachable (need backend :8080 + frontend :3000 — run 'bash scripts/start.sh')"

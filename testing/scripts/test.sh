@@ -25,14 +25,14 @@ if ! curl -s http://localhost:8080/swagger-ui.html > /dev/null 2>&1; then
     echo -e "${YELLOW}Start the application first with: bash start.sh${NC}"
     echo ""
     echo -e "${YELLOW}Alternatively, run unit tests without API:${NC}"
-    echo -e "  bash integration-test/scripts/test-all.sh"
+    echo -e "  bash testing/scripts/test-all.sh"
     exit 1
 fi
 echo -e "${GREEN}✓ API is running${NC}\n"
 
 # Run the test suite
 echo -e "${YELLOW}Running API test suite...${NC}\n"
-cd "$REPO_DIR/integration-test/http"
+cd "$REPO_DIR/testing/http"
 
 if [ -f "test-all-endpoints-v2.sh" ]; then
     bash test-all-endpoints-v2.sh

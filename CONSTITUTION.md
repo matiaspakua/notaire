@@ -248,7 +248,7 @@ mvn verify -pl backend-api               # all quality checks
 ```
 
 **14. Regression completa.** Run the full suite, including HTTP/Bruno API tests
-(`bash integration-test/scripts/test.sh`) and any affected legacy paths. No
+(`bash testing/scripts/test.sh`) and any affected legacy paths. No
 `@Disabled` or skipped tests without documented, approved justification.
 
 **15. Playwright E2E.** For any UI change, run `cd frontend && npx playwright test`
@@ -333,7 +333,7 @@ Every modification must produce or update:
 |------------|--------------|----------|
 | **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` |
 | **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) |
-| **Contract Tests** | When a contract (API DTO/schema) changes and a contract suite exists | `integration-test/http/`, `backend-api/api-test/` (Bruno) |
+| **Contract Tests** | When a contract (API DTO/schema) changes and a contract suite exists | `testing/http/`, `backend-api/api-test/` (Bruno) |
 | **Playwright E2E** | Any UI change | `frontend/tests/e2e/` |
 | **Regression Tests** | All changes — full suite must stay green | entire suite |
 

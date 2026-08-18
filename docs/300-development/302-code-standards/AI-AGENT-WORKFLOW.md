@@ -179,7 +179,7 @@ git checkout -b <type>/<issue-number>_<description>
 #### Test Location
 - **Unit tests**: `src/test/java/.../unit/`
 - **Integration tests**: `src/test/java/.../integration/`
-- **E2E tests**: `integration-test/` (Robot Framework)
+- **E2E tests**: `testing/e2e-swing/` (Robot Framework)
 
 #### Test Naming Convention
 ```

@@ -955,7 +955,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 |-------|------|-------|--------|
 | Unit | JUnit 5 + Mockito | Service/repository logic | ≥ 80% coverage |
 | Integration | Spring Boot Test | Controller + DB (H2/PG) | API contract validation |
-| HTTP Integration | Shell scripts (`integration-test/`) | Full API endpoints | Smoke tests |
+| HTTP Integration | Shell scripts (`testing/`) | Full API endpoints | Smoke tests |
 | E2E | Playwright | Frontend user flows | Critical paths |
 | Static Analysis | Checkstyle + SpotBugs + SonarQube | Code quality | Zero critical issues |
 

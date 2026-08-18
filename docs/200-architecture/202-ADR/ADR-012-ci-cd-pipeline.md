@@ -7,7 +7,7 @@
 
 ## Context
 
-El proyecto necesita validar automáticamente cada cambio (build, tests, cobertura, seguridad, calidad de código) antes de fusionarlo a `main`, y publicar artefactos desplegables sin intervención manual. La suite de calidad incluye Checkstyle, SpotBugs, JaCoCo, Trivy y Spotless, además de tests unitarios, de integración, HTTP (`integration-test/`) y E2E Playwright — demasiados pasos para ejecutar consistentemente a mano en cada PR.
+El proyecto necesita validar automáticamente cada cambio (build, tests, cobertura, seguridad, calidad de código) antes de fusionarlo a `main`, y publicar artefactos desplegables sin intervención manual. La suite de calidad incluye Checkstyle, SpotBugs, JaCoCo, Trivy y Spotless, además de tests unitarios, de integración, HTTP (`testing/`) y E2E Playwright — demasiados pasos para ejecutar consistentemente a mano en cada PR.
 
 ## Decision
 

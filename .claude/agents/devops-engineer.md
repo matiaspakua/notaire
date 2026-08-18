@@ -38,7 +38,7 @@ bash scripts/logs.sh           # Tail logs
 bash scripts/start-all.sh      # App + observability infra (= start.sh + start-infra.sh)
 bash infra/scripts/start-infra.sh    # Infra only (app must be running first)
 bash infra/scripts/run-sonar.sh      # SonarQube analysis
-bash integration-test/scripts/test.sh           # HTTP integration tests (requires running API)
+bash testing/scripts/test.sh                    # HTTP integration tests (requires running API)
 ```
 
 ### Environment Variables

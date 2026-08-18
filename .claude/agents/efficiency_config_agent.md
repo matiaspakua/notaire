@@ -135,7 +135,7 @@ mvn test -pl backend-api
 mvn test -pl backend-api -Dtest=ClassName
 mvn jacoco:check -pl backend-api           # coverage ≥ 80%
 mvn verify -pl backend-api                 # all quality checks
-bash integration-test/scripts/test.sh                       # HTTP integration (needs running API)
+bash testing/scripts/test.sh                                # HTTP integration (needs running API)
 cd frontend && npx playwright test         # E2E
 ```
 

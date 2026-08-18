@@ -7,8 +7,8 @@ Centralized testing framework for the Notaire project, covering unit tests, inte
 ### Run All Tests in 3 Steps
 
 ```bash
-# 1. Navigate to integration-test directory
-cd integration-test
+# 1. Navigate to testing directory
+cd testing
 
 # 2. Execute centralized test runner
 bash run-all-tests.sh
@@ -113,7 +113,7 @@ mvn test -pl frontend-swing
 ### HTTP Integration Tests
 
 ```bash
-cd integration-test/http
+cd testing/http
 
 # Requires backend running on localhost:8080
 bash test-all-endpoints-v2.sh
@@ -127,7 +127,7 @@ bash 03-conceptos.sh
 ### E2E Tests (5-10 minutes)
 
 ```bash
-cd integration-test/e2e-swing
+cd testing/e2e-swing
 
 # Setup (one time)
 python -m venv .venv
@@ -191,7 +191,7 @@ open results/report.html
 After running tests, find reports at:
 
 ```
-integration-test/
+testing/
 ├── reports/
 │   ├── test-report-*.md           ← Consolidated markdown report
 │   ├── coverage-report.md         ← Code coverage analysis
@@ -269,22 +269,22 @@ mvn jacoco:check -pl backend-api
 mvn test -pl backend-api -X -e
 
 # View logs
-tail -f integration-test/reports/logs/*.log
+tail -f testing/reports/logs/*.log
 
 # Check screenshots (E2E)
-open integration-test/reports/logs/robot-output/FAIL_*.png
+open testing/reports/logs/robot-output/FAIL_*.png
 ```
 
 ### View Test Summary
 ```bash
 # Markdown report
-cat integration-test/reports/test-report-*.md
+cat testing/reports/test-report-*.md
 
 # HTML report (E2E)
-open integration-test/reports/logs/robot-output/report.html
+open testing/reports/logs/robot-output/report.html
 
 # Last line of output
-grep -E "PASSED|FAILED" integration-test/reports/logs/*.log
+grep -E "PASSED|FAILED" testing/reports/logs/*.log
 ```
 
 ---
@@ -384,8 +384,8 @@ For detailed information, see:
 ## Quick Links
 
 - **Coverage Report:** `open backend-api/target/site/jacoco/index.html`
-- **E2E Report:** `open integration-test/reports/logs/robot-output/report.html`
-- **API Guide:** `integration-test/http/API_TESTING_GUIDE.md`
+- **E2E Report:** `open testing/reports/logs/robot-output/report.html`
+- **API Guide:** [`api-test/API_TESTING_GUIDE.md`](api-test/API_TESTING_GUIDE.md)
 - **CLAUDE.md:** `../.claude.md` (project testing guidelines)
 
 ---
@@ -441,7 +441,7 @@ mvn jacoco:check -pl backend-api
 ## Getting Help
 
 1. Check `TEST_STRATEGY.md` for detailed guidance
-2. Review test logs: `integration-test/reports/logs/`
+2. Review test logs: `testing/reports/logs/`
 3. Search for similar tests in existing test files
 4. Check GitHub Issues for known problems
 5. Run with verbose flags: `-X`, `-v`, `--debug`

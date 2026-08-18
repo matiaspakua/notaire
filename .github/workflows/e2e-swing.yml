@@ -49,7 +49,7 @@ jobs:
 
       - name: Install Robot Framework dependencies
         run: |
-          cd integration-test/e2e-swing
+          cd testing/e2e-swing
           pip install -r requirements.txt
 
       - name: Start backend stack
@@ -75,7 +75,7 @@ jobs:
         env:
           DISPLAY: ':0'
         run: |
-          cd integration-test/e2e-swing
+          cd testing/e2e-swing
           mkdir -p results screenshots
 
           ARGS="--outputdir results --loglevel INFO"
@@ -94,10 +94,10 @@ jobs:
       - name: Parse test results
         if: always()
         run: |
-          if [ -f integration-test/e2e-swing/results/output.xml ]; then
+          if [ -f testing/e2e-swing/results/output.xml ]; then
             python3 - << 'PYEOF'
           import xml.etree.ElementTree as ET
-          tree = ET.parse('integration-test/e2e-swing/results/output.xml')
+          tree = ET.parse('testing/e2e-swing/results/output.xml')
           root = tree.getroot()
           stats = root.find('.//statistics/total/stat')
           if stats is not None:
@@ -117,8 +117,8 @@ jobs:
         with:
           name: e2e-swing-results-${{ github.run_number }}
           path: |
-            integration-test/e2e-swing/results/
-            integration-test/e2e-swing/screenshots/
+            testing/e2e-swing/results/
+            testing/e2e-swing/screenshots/
           retention-days: 14
 
       - name: Stop backend stack
@@ -136,7 +136,7 @@ jobs:
 
             try {
               const results = fs.readFileSync(
-                'integration-test/e2e-swing/results/output.xml', 'utf8'
+                'testing/e2e-swing/results/output.xml', 'utf8'
               );
               comment += '✅ Tests completed. See artifacts for full report.\n';
             } catch (e) {

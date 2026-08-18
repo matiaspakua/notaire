@@ -485,7 +485,7 @@ bash test.sh
 
 ### Run Individual Entity Tests
 ```bash
-cd integration-test/http
+cd testing/http
 bash 01-auth.sh
 bash 02-usuarios.sh
 bash 03-conceptos.sh

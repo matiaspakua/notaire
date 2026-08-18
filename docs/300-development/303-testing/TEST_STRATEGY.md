@@ -199,7 +199,7 @@ mvn test -pl frontend-swing -Dtest=RestClientTest
 ## 4. HTTP Integration Tests
 
 ### Location
-`integration-test/http/`
+`testing/http/`
 
 ### Test Scripts
 
@@ -230,7 +230,7 @@ mvn test -pl frontend-swing -Dtest=RestClientTest
 bash scripts/start.sh  # or: mvn spring-boot:run -pl backend-api
 
 # Run comprehensive tests
-cd integration-test/http
+cd testing/http
 bash test-all-endpoints-v2.sh
 
 # Run specific endpoint tests
@@ -266,7 +266,7 @@ cd backend-api && mvn spring-boot:run
 ## 5. E2E Tests (Robot Framework)
 
 ### Location
-`integration-test/e2e-swing/tests/`
+`testing/e2e-swing/tests/`
 
 ### Test Suites
 
@@ -313,7 +313,7 @@ Robot Framework (tests/*.robot)
 ### Setup & Prerequisites
 
 ```bash
-cd integration-test/e2e-swing
+cd testing/e2e-swing
 
 # 1. Create virtual environment
 python -m venv .venv
@@ -378,14 +378,14 @@ Robot Framework generates:
 
 ### Master Test Script
 
-Located at: `integration-test/run-all-tests.sh`
+Located at: `testing/run-all-tests.sh`
 
 **Purpose:** Execute all test suites in sequence and generate consolidated report
 
 ### Usage
 
 ```bash
-cd integration-test
+cd testing
 
 # Run all tests (unit, integration, client, HTTP, E2E)
 bash run-all-tests.sh
@@ -421,8 +421,8 @@ bash run-all-tests.sh --help
 ### Output
 
 ```
-📊 Full Report: integration-test/reports/test-report-20260414_165832.md
-📋 Logs Directory: integration-test/reports/logs/
+📊 Full Report: testing/reports/test-report-20260414_165832.md
+📋 Logs Directory: testing/reports/logs/
 
 Logs contain:
 - unit-tests.log
@@ -439,14 +439,14 @@ Logs contain:
 
 ### JaCoCo Coverage Reporting
 
-Located at: `integration-test/generate-coverage-report.sh`
+Located at: `testing/generate-coverage-report.sh`
 
 **Purpose:** Analyze code coverage by package/service
 
 ### Usage
 
 ```bash
-cd integration-test
+cd testing
 
 # Generate coverage report
 bash generate-coverage-report.sh
@@ -461,7 +461,7 @@ bash generate-coverage-report.sh --threshold 80
 ### Reports Generated
 
 ```
-integration-test/reports/
+testing/reports/
 ├── coverage-report.md       (Markdown analysis)
 ├── coverage.txt             (Coverage percentage)
 └── logs/
@@ -475,7 +475,7 @@ integration-test/reports/
 open backend-api/target/site/jacoco/index.html
 
 # View markdown report
-cat integration-test/reports/coverage-report.md
+cat testing/reports/coverage-report.md
 ```
 
 ### Coverage Requirements
@@ -526,7 +526,7 @@ mvn verify -pl backend-api
 mvn clean test jacoco:report -pl backend-api
 
 # All tests including E2E (~15m)
-cd integration-test && bash run-all-tests.sh
+cd testing && bash run-all-tests.sh
 ```
 
 ### View Results
@@ -535,17 +535,17 @@ cd integration-test && bash run-all-tests.sh
 open backend-api/target/site/jacoco/index.html
 
 # Test report HTML (Robot)
-open integration-test/reports/logs/robot-output/report.html
+open testing/reports/logs/robot-output/report.html
 
 # Consolidated markdown report
-cat integration-test/reports/test-report-*.md
+cat testing/reports/test-report-*.md
 ```
 
 ### Troubleshooting
 
 ```bash
 # Check test failures
-cat integration-test/reports/logs/unit-tests.log
+cat testing/reports/logs/unit-tests.log
 
 # Verify PostgreSQL running
 docker ps | grep postgres
@@ -601,7 +601,7 @@ grep -B2 "0.0%" backend-api/target/site/jacoco/index.html
 
 1. **Run full test suite:**
    ```bash
-   cd integration-test && bash run-all-tests.sh
+   cd testing && bash run-all-tests.sh
    ```
 
 2. **Review coverage report:**

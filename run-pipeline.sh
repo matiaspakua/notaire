@@ -425,11 +425,11 @@ if [[ "$BACKEND_ONLY" != "true" ]] && [[ "$FAST" != "true" ]]; then
   log_header "PHASE 10 — Bruno API Integration Tests"
 
   if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1; then
-    if [[ -d integration-test ]]; then
+    if [[ -d testing ]]; then
       run_cmd "Bruno API tests" \
-        bash integration-test/scripts/test.sh || true
+        bash testing/scripts/test.sh || true
     else
-      log_warn "integration-test/ directory not found — skipping"
+      log_warn "testing/ directory not found — skipping"
     fi
   else
     log_warn "Backend not running on :8080 — skipping Bruno API tests"

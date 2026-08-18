@@ -20,9 +20,9 @@ Comprehensive test coverage measurement and automated reporting across all layer
 - Runs daily at 02:00 UTC
 - Publishes reports to GitHub Pages
 
-**Coverage Script** (`integration-test/scripts/generate-coverage-report.sh`):
+**Coverage Script** (`testing/scripts/generate-coverage-report.sh`):
 ```bash
-bash integration-test/scripts/generate-coverage-report.sh
+bash testing/scripts/generate-coverage-report.sh
 ```
 
 ## Backend Testing (Spring Boot + JaCoCo)
