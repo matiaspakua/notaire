@@ -1,0 +1,105 @@
+@startuml
+title Backend Package Structure — com.licensis.notaire
+
+package "com.licensis.notaire" {
+  package "api\n(31 REST Controllers)" as api #LightCyan {
+    [GestionController]
+    [PersonaController]
+    [EscrituraController]
+    [PresupuestoController]
+    [UsuarioController]
+    [ReporteController]
+    [FolioController]
+    [PagoController]
+    [WorkflowDefinitionController]
+    [... +22 more]
+  }
+
+  package "service\n(Business Logic)" as svc #LightGreen {
+    [PagoService]
+    [PersonaService]
+    [EscrituraService]
+    [PresupuestoService]
+    [ReporteService]
+    [RegistroAuditoriaService]
+    [WorkflowTraceService]
+    [WorkflowValidationService]
+    [GestionQueryService]
+    [AdministradorJpa]
+    [AdministradorValidaciones]
+    package "mappers" {
+      [HistorialMapper]
+    }
+  }
+
+  package "repository\n(31 Spring Data JPA)" as repo #LightBlue {
+    [GestionDeEscrituraRepository]
+    [PersonaRepository]
+    [EscrituraRepository]
+    [PresupuestoRepository]
+    [UsuarioRepository]
+    [... +26 more]
+  }
+
+  package "negocio\n(40 Domain Entities)" as dom #LightYellow {
+    [GestionDeEscritura]
+    [Persona]
+    [Escritura]
+    [Presupuesto]
+    [Tramite]
+    [Usuario]
+    [WorkflowDefinition]
+    [... +33 more]
+  }
+
+  package "jpa\n(Legacy — being replaced)" as jpa #LightGray {
+    [27 JpaController classes]
+    [exceptions/]
+    [interfaz/]
+  }
+
+  package "config" as cfg #Wheat {
+    [SecurityAndCorsConfig]
+    [JwtAuthenticationFilter]
+    [JwtTokenService]
+    [GlobalExceptionHandler]
+    [OpenApiConfig]
+    [ObservabilityConfig]
+    [DataInitializer]
+    [ProductionCredentialsGuard]
+  }
+
+  package "security" as sec #MistyRose {
+    [LoginAttemptService]
+    [PasswordEncoderUtil]
+  }
+
+  package "exception" as exc #LavenderBlush {
+    [NotaireException]
+    [BusinessValidationException]
+    [ResourceNotFoundException]
+    [ErrorResponse]
+  }
+
+  package "audit" as aud #Honeydew {
+    [AuditoriaAspect]
+    [AuditModuleResolver]
+    [AuditOperationDescriber]
+  }
+
+  package "observability" as obs #Lavender {
+    [ApplicationHealthIndicator]
+    [MetricsUtil]
+    [SharedModuleMetrics]
+    [StructuredLogger]
+  }
+}
+
+api -down-> svc : delegates
+svc -down-> repo : persists
+repo -down-> dom : maps entities
+svc .right.> jpa : legacy fallback
+cfg -left-> sec : JWT config
+aud --> repo : audit trail
+obs ..> api : health/metrics
+@enduml

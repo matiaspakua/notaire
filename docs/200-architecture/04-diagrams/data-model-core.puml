@@ -1,0 +1,130 @@
+@startuml
+title Core Domain Model — Notaire
+
+entity "GestionDeEscritura" as gestion {
+  * id : Long <<PK>>
+  --
+  numero : String
+  fecha : Date
+  estado_id : Long <<FK>>
+  escritura_id : Long <<FK>>
+  workflow_id : Long <<FK>>
+}
+
+entity "Escritura" as escritura {
+  * id : Long <<PK>>
+  --
+  numero : Integer
+  fecha : Date
+}
+
+entity "Persona" as persona {
+  * id : Long <<PK>>
+  --
+  nombre : String
+  apellido : String
+  dni : String
+  email : String
+}
+
+entity "Presupuesto" as presupuesto {
+  * id : Long <<PK>>
+  --
+  monto : BigDecimal
+  fecha : Date
+}
+
+entity "Tramite" as tramite {
+  * id : Long <<PK>>
+  --
+  nombre : String
+  numero : String
+  tipo_tramite_id : Long <<FK>>
+}
+
+entity "TipoDeTramite" as tipoTramite {
+  * id : Long <<PK>>
+  --
+  nombre : String
+  workflow_id : Long <<FK>>
+}
+
+entity "Folio" as folio {
+  * id : Long <<PK>>
+  --
+  numero : String
+  tipo_id : Long <<FK>>
+}
+
+entity "Pago" as pago {
+  * id : Long <<PK>>
+  --
+  monto : BigDecimal
+  fecha : Date
+}
+
+entity "Testimonio" as testimonio {
+  * id : Long <<PK>>
+}
+
+entity "DocumentoPresentado" as doc {
+  * id : Long <<PK>>
+}
+
+entity "Usuario" as usuario {
+  * id : Long <<PK>>
+  --
+  username : String
+  password : String (BCrypt)
+}
+
+entity "Rol" as rol {
+  * id : Long <<PK>>
+  --
+  nombre : String
+}
+
+entity "RegistroAuditoria" as audit {
+  * id : Long <<PK>>
+  --
+  accion : String
+  modulo : String
+  usuario : String
+  timestamp : Timestamp
+}
+
+entity "WorkflowDefinition" as wfDef {
+  * id : Long <<PK>>
+  --
+  nombre : String
+}
+
+entity "WorkflowNode" as wfNode {
+  * id : Long <<PK>>
+  --
+  nombre : String
+  tipo : NodeType
+}
+
+entity "WorkflowTransition" as wfTrans {
+  * id : Long <<PK>>
+  --
+  from_node_id : Long <<FK>>
+  to_node_id : Long <<FK>>
+}
+
+gestion ||--o{ tramite
+gestion ||--o{ presupuesto
+gestion }o--|| escritura
+gestion ||--o{ folio
+gestion ||--o{ doc
+tramite }o--|| tipoTramite
+tramite }o--o{ persona
+presupuesto ||--o{ pago
+escritura ||--o{ testimonio
+usuario }o--|| rol
+usuario ||--o{ audit
+wfDef ||--o{ wfNode
+wfDef ||--o{ wfTrans
+tipoTramite }o--o| wfDef
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+title Workflow — Crear nueva Gestión de Escritura
+
+participant "Escribano / Gestor" as User
+participant "Frontend\n(Swing / Web)" as Client
+participant "REST API\n(Spring Boot)" as API
+participant "Spring Security" as Sec
+participant "GestionController" as Ctrl
+participant "Business Service" as Svc
+participant "PostgreSQL" as DB
+
+User -> Client : Iniciar nueva gestión
+Client -> API : POST /api/v1/gestion
+API -> Sec : Validar token JWT
+Sec --> API : OK (user context)
+API -> Ctrl : delegateRequest(dto)
+Ctrl -> Svc : createGestion(dto)
+Svc -> Svc : Validar datos de negocio
+Svc -> DB : INSERT INTO gestion_de_escritura
+DB --> Svc : OK (generatedId)
+Svc -> DB : INSERT INTO registro_auditoria
+DB --> Svc : OK
+Svc --> Ctrl : GestionDTO
+Ctrl --> API : 201 Created
+API --> Client : JSON response
+Client --> User : Mostrar éxito y número
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+title Migration Strategy — Notaire Modernization Phases
+left to right direction
+
+rectangle "Phase 1\nAnalysis" #LightBlue {
+  (Document legacy architecture) as P1A
+  (Catalog 73 use cases) as P1B
+  (Database schema analysis) as P1C
+}
+
+rectangle "Phase 2\nFoundation" #LightGreen {
+  (Create notaire-shared DTOs) as P2A
+  (Set up Maven multi-module) as P2B
+  (PostgreSQL + Docker Compose) as P2C
+}
+
+rectangle "Phase 3\nBackend API" #LightYellow {
+  (Spring Boot 4.1 REST API) as P3A
+  (Spring Data JPA repositories) as P3B
+  (JWT security + RBAC) as P3C
+  (Flyway schema versioning) as P3D
+}
+
+rectangle "Phase 4\nModern Frontend" #Orange {
+  (Next.js 16 + React 19) as P4A
+  (Design token system) as P4B
+  (TanStack Query integration) as P4C
+}
+
+rectangle "Phase 5\nObservability" #Pink {
+  (Prometheus + Grafana + Loki) as P5A
+  (SonarQube code quality) as P5B
+  (Structured logging) as P5C
+}
+
+rectangle "Phase 6\nDeprecation" #Gray {
+  (Retire frontend-swing) as P6A
+  (Remove legacy jpa package) as P6B
+  (Archive src.old) as P6C
+}
+
+P1A --> P2A
+P1B --> P2A
+P1C --> P2C
+P2A --> P3A
+P2B --> P3A
+P2C --> P3D
+P3A --> P4A
+P3C --> P4C
+P3A --> P5A
+P4A --> P6A
+P3B --> P6B
+@enduml

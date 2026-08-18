@@ -1,0 +1,29 @@
+@startuml
+title Legacy Notaire Architecture — Monolithic Java Swing
+left to right direction
+
+actor "Escribano / Gestor" as User
+
+package "Monolito Java Swing" {
+  [Java Swing GUI] as GUI
+  [Business Logic Classes] as BL
+  [JDBC Data Access] as DA
+  [JasperReports Engine] as Rpt
+}
+
+database "MySQL 5.7" as DB
+file "Local PDF Files" as PDF
+
+User --> GUI : Interacción de escritorio
+GUI --> BL : Eventos de interfaz
+BL --> DA : Consultas SQL directas
+DA --> DB : JDBC
+BL --> Rpt : Generación de reportes
+Rpt --> PDF : Archivos locales
+
+note right of GUI
+  Todo ejecuta en un único proceso JVM.
+  No hay separación de capas real.
+  No hay API REST ni autenticación.
+end note
+@enduml
