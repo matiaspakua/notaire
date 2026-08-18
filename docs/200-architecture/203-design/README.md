@@ -4,77 +4,69 @@ Referencia completa de la API REST del proyecto Notaire.
 
 ## 📋 Contents
 
-### [01. API Overview](01-overview/)
-**Visión general de la API**
-
-- Base URL: `http://localhost:8080/api/v1`
-- Authentication method
-- Response format
-- Error handling
-- Rate limiting
-
-### [02. Endpoints](02-endpoints/)
-**Referencia de todos los endpoints**
-
-- **Presupuestos**: CRUD operations
-- **Personas**: CRUD operations
-- **Escrituras**: CRUD operations
-- **Gestiones**: CRUD operations
-- **Usuarios**: CRUD operations
-- **Reportes**: Report generation
-
-### [03. Schemas](03-schemas/)
-**DTOs y estructuras de datos**
-
-- Request DTOs
-- Response DTOs
-- Error responses
+- **[REST-API-REFERENCE.md](REST-API-REFERENCE.md)** — Endpoint-by-endpoint reference with request/response examples and Use Case traceability.
+- **[REST-API-ENDPOINT_REGISTRY.md](REST-API-ENDPOINT_REGISTRY.md)** — Full inventory of all 189 REST endpoints, classified by frontend usage.
+- **[BACKEND-ERROR-HANDLING-STRATEGY.md](BACKEND-ERROR-HANDLING-STRATEGY.md)** — Exception handling and error response conventions.
+- **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, UI conventions.
+- **[FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md](FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md)** — Checklist for building new forms.
+- **[FRONTEND-QUICK-REFERENCE.md](FRONTEND-QUICK-REFERENCE.md)** — Common frontend snippets and conventions.
+- **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Workflow UI implementation status.
 
 ## 🚀 Quick Start
 
-### Get Swagger UI
+### Swagger UI
 ```
 http://localhost:8080/swagger-ui.html
 ```
 
-> Swagger UI and `/v3/api-docs` are only reachable when `ENVIRONMENT` (mapped to
+> Swagger UI and `/v3/api-docs` are only reachable when `ENVIRONMENT` (mapped from
 > `app.environment`) is **not** `production` — see `SecurityAndCorsConfig` (issue #671).
 
 ### Example Request
 ```bash
 curl -X GET "http://localhost:8080/api/v1/presupuestos" \
-  -H "Content-Type: application/json"
+  -H "Authorization: Bearer <token>"
 ```
 
 ### Example Response
+
+Endpoints return the entity/DTO directly (or a Spring `Page<T>` for paginated
+list endpoints) — there is no `{success, data, error}` envelope.
+
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "numero": "PRES-2024-001",
-      "estado": "ACTIVO"
-    }
-  ],
-  "error": null
+  "idPresupuesto": 1,
+  "numero": 2024001,
+  "fecha": "2024-03-15",
+  "estado": "ACTIVO",
+  "encabezado": "..."
 }
 ```
 
+### Error Response
+
+```json
+{
+  "error": "Descripción del error en español"
+}
+```
+
+See [REST-API-REFERENCE.md](REST-API-REFERENCE.md#error-responses) for the full status code table.
+
 ## 🔐 Authentication
 
-(Details in 01-overview/)
+`POST /api/v1/usuarios/login` authenticates a user and returns a JWT. Subsequent
+requests carry `Authorization: Bearer <token>`, validated by `JwtAuthenticationFilter`.
+Details in [REST-API-REFERENCE.md](REST-API-REFERENCE.md#authentication).
 
 ## 📊 API Status
 
 | Version | Status | Base URL |
 |---------|--------|----------|
 | **v1** | Stable | /api/v1 |
-| **v2** | Planning | - |
 
 ## 📖 Navigation
 
-- **[← Back to Docs](../../)** - Volver a índice principal
-- **[Development](../../300-development/)** - Cómo desarrollar endpoints
-- **[SAD](../201-SAD/sad.md)** - Decisiones de arquitectura
-
+- **[← Back to Docs](../../)** — Volver a índice principal
+- **[Development](../../300-development/)** — Cómo desarrollar endpoints
+- **[SAD](../201-SAD/sad.md)** — Decisiones de arquitectura

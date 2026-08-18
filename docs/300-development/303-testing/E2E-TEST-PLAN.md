@@ -34,7 +34,7 @@ Validate all 68 business use cases (CU) of the Notaire system end-to-end, from t
 |-----------|-------|-------|
 | Business Use Cases (CU) | 68 | Mapped in CU-API-MATRIX.csv |
 | REST API Endpoints | 155 | 26 controllers |
-| Bruno API Tests | 85+ | `.bru` files in `backend-api/api-test/` |
+| Bruno API Tests | 72 requests, 124/124 tests passing | `.yml` files in `backend-api/api-test/` (yml collection format — see [`COVERAGE.md`](../../../backend-api/api-test/COVERAGE.md) for current, authoritative status) |
 | Playwright E2E Tests | ~200 scenarios | 19 existing + ~180 new Gherkin scenarios |
 | Frontend Modules | 16 | Dashboard sub-routes |
 | Cross-browser | 1 | Chromium (Headless) |
@@ -195,7 +195,7 @@ const personas = {
 ### Bruno Sync Data
 Shared IDs between Bruno and Playwright are stored in environment variables:
 ```bash
-# Shared between Bruno (Developmen.bru) and Playwright (.env)
+# Shared between Bruno (Developmen.yml) and Playwright (.env)
 TEST_PERSONA_ID=    # Set by Bruno test, read by Playwright
 TEST_GESTION_ID=    # Set by Bruno test, read by Playwright
 TEST_PRESUPUESTO_ID= # Set by Playwright, read by Bruno
@@ -209,21 +209,21 @@ TEST_PRESUPUESTO_ID= # Set by Playwright, read by Bruno
 
 | Module | Use Cases | Bruno Tests | E2E Specs | Scenarios | Status |
 |--------|-----------|-------------|-----------|-----------|--------|
-| **Auth** | Login | `auth/login.bru` | `login.spec.ts` | 4 | ✅ |
+| **Auth** | Login | `auth/login.yml` | `login.spec.ts` | 4 | ✅ |
 | **Dashboard** | Navigation | - | `dashboard.spec.ts` | 6 | ✅ |
-| **Presupuestos** | CU01, CU45, CU60 | `presupuestos/*.bru` | `cu01-presupuesto.spec.ts` | 8 | 🔄 |
-| **Gestiones** | CU02, CU13, CU14, CU16, CU53, CU56 | `gestiones/*.bru` | `cu02-gestiones.spec.ts` | 10 | 🔄 |
-| **Personas/Clientes** | CU17, CU18, CU41, CU46, CU54, CU61 | `personas/*.bru` | `cu17-18-personas-clientes.spec.ts` | 12 | ✅ |
-| **Escrituras** | CU05, CU06, CU52, CU63 | `escrituras/*.bru` | `cu05-escrituras.spec.ts` | 8 | 🔄 |
+| **Presupuestos** | CU01, CU45, CU60 | `presupuestos/*.yml` | `cu01-presupuesto.spec.ts` | 8 | 🔄 |
+| **Gestiones** | CU02, CU13, CU14, CU16, CU53, CU56 | `gestiones/*.yml` | `cu02-gestiones.spec.ts` | 10 | 🔄 |
+| **Personas/Clientes** | CU17, CU18, CU41, CU46, CU54, CU61 | `personas/*.yml` | `cu17-18-personas-clientes.spec.ts` | 12 | ✅ |
+| **Escrituras** | CU05, CU06, CU52, CU63 | `escrituras/*.yml` | `cu05-escrituras.spec.ts` | 8 | 🔄 |
 | **Documentos** | CU03, CU04, CU09, CU42, CU43 | - | `cu03-04-documentos.spec.ts` | 8 | 🔄 |
 | **Testimonios** | CU07, CU08, CU10, CU11, CU12, CU44 | - | `cu07-testimonios.spec.ts` | 10 | 🔄 |
-| **Pagos** | CU15, CU47 | `pagos/*.bru` | `cu15-pagos.spec.ts` | 6 | 🔄 |
-| **Usuarios** | CU20, CU21, CU23, CU48, CU51 | `usuarios/*.bru` | `cu20-21-usuarios.spec.ts` | 8 | 🔄 |
-| **Catálogos** | CU26-CU40, CU57-CU68 | `catalogos/*.bru`, `conceptos/*.bru` | `admin.spec.ts` + `cu24-40-reportes.spec.ts` | 20 | 🔄 |
+| **Pagos** | CU15, CU47 | `pagos/*.yml` | `cu15-pagos.spec.ts` | 6 | 🔄 |
+| **Usuarios** | CU20, CU21, CU23, CU48, CU51 | `usuarios/*.yml` | `cu20-21-usuarios.spec.ts` | 8 | 🔄 |
+| **Catálogos** | CU26-CU40, CU57-CU68 | `catalogos/*.yml`, `conceptos/*.yml` | `admin.spec.ts` + `cu24-40-reportes.spec.ts` | 20 | 🔄 |
 | **Suplencias** | CU22, CU59 | - | `cu22-suplencias.spec.ts` | 6 | 🔄 |
-| **Protocolos** | CU28, CU33, CU40, CU58, CU63, CU68 | `catalogos/*.bru` | `admin.spec.ts` | 8 | 🔄 |
-| **Reportes** | CU24, CU25, CU50 | `reportes/*.bru` | `cu24-40-reportes.spec.ts` | 6 | 🔄 |
-| **Auditoría** | CU23 | `auditoria/*.bru` | `admin.spec.ts` | 4 | 🔄 |
+| **Protocolos** | CU28, CU33, CU40, CU58, CU63, CU68 | `catalogos/*.yml` | `admin.spec.ts` | 8 | 🔄 |
+| **Reportes** | CU24, CU25, CU50 | `reportes/*.yml` | `cu24-40-reportes.spec.ts` | 6 | 🔄 |
+| **Auditoría** | CU23 | `auditoria/*.yml` | `admin.spec.ts` | 4 | 🔄 |
 | **Health Check** | ALL | ALL | `api-cycle.spec.ts` | 25 | ✅ |
 | **Coverage Matrix** | ALL | ALL | `cu-matrix.spec.ts` | 68 | 🔄 |
 | **UI/UX** | - | - | `icons-ux.spec.ts` | 5 | ✅ |
@@ -235,7 +235,7 @@ TEST_PRESUPUESTO_ID= # Set by Playwright, read by Bruno
 #### Auth (login.spec.ts)
 ```
 CU: Authentication
-Bruno sync: auth/login.bru
+Bruno sync: auth/login.yml
 Scenarios:
   │ CU-AUTH-01: Display login form
   │ CU-AUTH-02: Show error for empty submission
@@ -246,7 +246,7 @@ Scenarios:
 #### Presupuestos (cu01-presupuesto.spec.ts)
 ```
 CU: CU01 (Preparar Presupuesto), CU45 (Modificar), CU60 (Buscar)
-Bruno sync: presupuestos/post-presupuesto.bru, presupuestos/put-presupuesto.bru
+Bruno sync: presupuestos/post-presupuesto.yml, presupuestos/put-presupuesto.yml
 Scenarios:
   │ CU01-GW01: Open create presupuesto modal [@smoke @cu-01]
   │ CU01-GW02: Create presupuesto with valid data [@smoke @cu-01]
@@ -261,7 +261,7 @@ Scenarios:
 #### Gestiones (cu02-gestiones.spec.ts)
 ```
 CU: CU02 (Iniciar), CU13 (Historial), CU14 (Estado), CU16 (Archivar), CU53 (Modificar)
-Bruno sync: gestiones/post-gestion.bru, gestiones/put-gestion.bru
+Bruno sync: gestiones/post-gestion.yml, gestiones/put-gestion.yml
 Scenarios:
   │ CU02-GW01: Open create gestion modal [@smoke @cu-02]
   │ CU02-GW02: Create gestion with valid data [@smoke @cu-02]
@@ -276,7 +276,7 @@ Scenarios:
 ```
 CU: CU17 (Alta Persona), CU18 (Alta Cliente), CU41 (Modificar Cliente),
     CU46 (Ver detalle), CU54 (Modificar Persona), CU61 (Buscar)
-Bruno sync: personas/*.bru
+Bruno sync: personas/*.yml
 Scenarios:
   │ CU17-GW01: Open create persona modal [@smoke @cu-17]
   │ CU17-GW02: Create persona with all fields [@smoke @cu-17]
@@ -294,7 +294,7 @@ Scenarios:
 #### Escrituras (cu05-escrituras.spec.ts)
 ```
 CU: CU05 (Preparar), CU06 (Firmar), CU52 (Modificar), CU63 (Buscar)
-Bruno sync: escrituras/*.bru
+Bruno sync: escrituras/*.yml
 Scenarios:
   │ CU05-GW01: Open create escritura modal [@smoke @cu-05]
   │ CU05-GW02: Create escritura with valid data [@smoke @cu-05]
@@ -332,7 +332,7 @@ Scenarios:
 #### Pagos (cu15-pagos.spec.ts)
 ```
 CU: CU15 (Procesar Pago), CU47 (Consultar Pago)
-Bruno sync: pagos/*.bru
+Bruno sync: pagos/*.yml
 Scenarios:
   │ CU15-GW01: Open register pago modal [@smoke @cu-15]
   │ CU15-GW02: Process pago with valid data [@smoke @cu-15]
@@ -344,7 +344,7 @@ Scenarios:
 ```
 CU: CU20 (Alta Usuario), CU21 (Modificar), CU23 (Actividades),
     CU48 (Alta Escribano), CU51 (Modificar Escribano)
-Bruno sync: usuarios/*.bru
+Bruno sync: usuarios/*.yml
 Scenarios:
   │ CU20-GW01: Open create usuario modal [@smoke @cu-20]
   │ CU20-GW02: Create usuario with all fields [@smoke @cu-20]
@@ -368,7 +368,7 @@ Scenarios:
 #### Admin / Catálogos (cu24-40-reportes.spec.ts + admin.spec.ts)
 ```
 CU: CU26-CU40, CU57-CU68
-Bruno sync: catalogos/*.bru, conceptos/*.bru
+Bruno sync: catalogos/*.yml, conceptos/*.yml
 Scenarios:
   │ CU24-GW01: Generate libro de índices [@cu-24]
   │ CU25-GW01: Generate declaración jurada [@cu-25]
@@ -402,8 +402,13 @@ Iterates all 68 CU entries and verifies:
 
 ## 6. Sync Strategy: Bruno ↔ Playwright
 
+> **Coverage status:** this plan's per-module Bruno mappings describe the target design.
+> For which resources actually have a Bruno lifecycle authored today (vs. still TODO),
+> see [`backend-api/api-test/COVERAGE.md`](../../../backend-api/api-test/COVERAGE.md) —
+> the authoritative, current source of truth.
+
 ### Bijection Mapping
-Each Bruno `.bru` test maps to one or more Playwright scenarios:
+Each Bruno `.yml` test maps to one or more Playwright scenarios:
 
 ```mermaid
 graph LR
@@ -417,10 +422,10 @@ graph LR
 ### Concrete Examples
 | Bruno Test | Playwright Scenario | What Each Validates |
 |-----------|-------------------|-------------------|
-| `personas/post-persona.bru` | CU17-GW02 | Bruno: HTTP 201 + JSON schema. PW: Form fields → API call → table update |
-| `presupuestos/post-presupuesto.bru` | CU01-GW02 | Bruno: HTTP 201. PW: Modal interaction → success toast → list refresh |
-| `usuarios/login.bru` | CU-AUTH-04 | Bruno: HTTP 200 + user object. PW: Form → redirect → dashboard |
-| `gestiones/put-gestion.bru` | CU53-GW01 | Bruno: HTTP 200. PW: Edit button → modal → update → success |
+| `personas/post-persona.yml` | CU17-GW02 | Bruno: HTTP 201 + JSON schema. PW: Form fields → API call → table update |
+| `presupuestos/post-presupuesto.yml` | CU01-GW02 | Bruno: HTTP 201. PW: Modal interaction → success toast → list refresh |
+| `usuarios/login.yml` | CU-AUTH-04 | Bruno: HTTP 200 + user object. PW: Form → redirect → dashboard |
+| `gestiones/put-gestion.yml` | CU53-GW01 | Bruno: HTTP 200. PW: Edit button → modal → update → success |
 
 ### Validation Level Comparison
 | Aspect | Bruno Tests | Playwright E2E |

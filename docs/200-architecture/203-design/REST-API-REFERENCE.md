@@ -274,10 +274,19 @@ Authenticate a user.
 
 ## Reportes (PDF generation)
 
+All endpoints return `application/pdf` and are consumed via `downloadPdf()` in `frontend/src/hooks/useReportes.ts` (not the `apiGet` JSON wrapper).
+
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/reportes/presupuesto/{id}` | Download presupuesto PDF | CU01 |
-| GET | `/reportes/gestion/{id}` | Download gestión report | CU02 |
+| GET | `/reportes/presupuesto/{idPresupuesto}` | Download presupuesto PDF | CU01, CU39 |
+| GET | `/reportes/presupuesto-inmuebles/{idPresupuesto}` | Download presupuesto PDF with inmuebles detail | CU08 |
+| GET | `/reportes/lista-documentos-tramite` | List of documents required for a trámite type (`?nombreTipoTramite=`) | CU02 |
+| GET | `/reportes/historial-gestion/{idGestion}` | Gestión history report | CU13 |
+| GET | `/reportes/documentos-por-vencer/{idDocumentoPresentado}` | Documents nearing expiration | — |
+| GET | `/reportes/consultar-deuda-documentos` | Outstanding document debt report (`?numeroGestion=`) | CU16 |
+| GET | `/reportes/libro-indice` | Libro Índice report (`?anio=`) | CU24 |
+| GET | `/reportes/declaracion-jurada-mensual` | Monthly declaración jurada (`?anio=&mes=`) | CU25 |
+| GET | `/reportes/declaracion-jurada-rentas` | Rentas declaración jurada (`?anio=&mes=`) | CU50 |
 
 ---
 

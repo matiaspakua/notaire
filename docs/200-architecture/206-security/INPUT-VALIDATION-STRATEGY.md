@@ -46,7 +46,7 @@ public ResponseEntity<?> create(@Valid @RequestBody UsuarioRequest request) { ..
 Notaire does not render user input as HTML (the UI is Swing + REST JSON). There is no server-side HTML template engine. XSS risk exists only in:
 
 1. **Log entries** — use parameterized SLF4J calls (`log.warn("msg {}", value)`), never string concatenation.
-2. **Future web frontend** — if a Next.js/React frontend is added, React's default JSX escaping handles XSS. Never use `dangerouslySetInnerHTML` with user data.
+2. **Next.js frontend** — React's default JSX escaping handles XSS for rendered user data. Never use `dangerouslySetInnerHTML` with user data.
 3. **PDF reports** — JasperReports renders user-supplied field values into PDF; ensure field values are sanitized before being passed to JasperFillManager.
 
 For any field that might be reflected back, apply:
@@ -58,7 +58,7 @@ String safe = HtmlUtils.htmlEscape(userInput);  // Spring's HtmlUtils
 
 CSRF attacks target state-changing requests from authenticated sessions. Notaire's threat model:
 
-- **Current** — Stateless REST API with MD5 password login; no session cookie. CSRF does not apply to cookie-less JSON APIs.
+- **Current** — Stateless REST API with JWT bearer tokens (BCrypt password verification); no session cookie. CSRF does not apply to cookie-less JSON APIs.
 - **Future (if session/cookie auth is added)** — Enable Spring Security's CSRF filter and send the `X-CSRF-TOKEN` header from the frontend.
 
 Current Spring Security configuration explicitly disables CSRF:
@@ -113,6 +113,6 @@ See `EdgeCaseBoundaryConditionsTest` for the established test patterns.
 
 ## Related documentation
 
-- `docs/04-operations/03-security/SQL-INJECTION-PREVENTION.md`
-- `docs/04-operations/03-security/API-AUTHENTICATION-GUIDE.md`
-- `docs/05-api/ERROR-HANDLING-STRATEGY.md`
+- [`SQL-INJECTION-PREVENTION.md`](SQL-INJECTION-PREVENTION.md)
+- [`API-AUTHENTICATION-GUIDE.md`](API-AUTHENTICATION-GUIDE.md)
+- [`BACKEND-ERROR-HANDLING-STRATEGY.md`](../203-design/BACKEND-ERROR-HANDLING-STRATEGY.md)

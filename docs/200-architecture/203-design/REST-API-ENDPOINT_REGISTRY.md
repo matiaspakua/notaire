@@ -1,7 +1,8 @@
 # REST API Endpoint Registry
 
-**Generated**: 2026-06-16  
-**Status**: 184 Total Endpoints | 68 Frontend Used | 116 Unused/Reserved
+**Generated**: 2026-06-16
+**Last Regenerated**: 2026-08-18
+**Status**: 189 Total Endpoints | 121 Frontend Used | 68 Unused/Reserved
 
 ---
 
@@ -9,281 +10,338 @@
 
 | Status | Count | % | Notes |
 |--------|-------|---|-------|
-| **Used by Frontend** | 68 | 37% | Core functionality endpoints |
-| **Unused/Reserved** | 116 | 63% | Internal, future features, or planned |
-| **TOTAL** | **184** | **100%** | All REST endpoints |
+| **Used by Frontend** | 121 | 64% | Called via `apiGet`/`apiPost`/`apiPut`/`apiDelete`/`apiGetPaged` in `frontend/src/lib/api-client.ts` wrappers, or `downloadPdf` in `useReportes.ts` |
+| **Unused/Reserved** | 68 | 36% | Not called by any frontend code path (internal, future, or superseded by list-endpoint client-side filtering) |
+| **TOTAL** | **189** | **100%** | All REST endpoints under `com.licensis.notaire.api` (31 controllers) |
+
+> Classification method: static regex scan of `frontend/src/**/*.{ts,tsx}` (excluding `*.test.*`) for `api(Get|Post|Put|Delete|GetBytes|GetPaged)<...>(path)` and `downloadPdf(path)` call sites, matched against every `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping`/`@PatchMapping` in `backend-api/src/main/java/com/licensis/notaire/api/*.java`. Path variables and query strings are normalized before comparison. This will miss dynamically constructed paths and any client call added outside the `api-client.ts` wrapper/`downloadPdf` conventions.
 
 ---
 
-## Frontend-Used Endpoints (68)
+## Frontend-Used Endpoints (121)
 
-These endpoints are actively called from the Next.js frontend:
+These endpoints are actively called by the Next.js frontend:
 
-### Concepto Management
-- `GET /api/v1/conceptos` - List all concepts (used by plantillas)
-- `GET /api/v1/conceptos/{id}` - Get concept by ID
-- `POST /api/v1/conceptos` - Create new concept
-- `PUT /api/v1/conceptos/{id}` - Update concept
-- `DELETE /api/v1/conceptos/{id}` - Delete concept
+### ConceptoController
+- `GET /api/v1/conceptos`
+- `GET /api/v1/conceptos/search`
+- `GET /api/v1/conceptos/{id}/in-use`
+- `POST /api/v1/conceptos`
+- `PUT /api/v1/conceptos/{id}`
+- `DELETE /api/v1/conceptos/{id}`
 
-### Copia Management
-- `GET /api/v1/copia` - List all copias
-- `GET /api/v1/copia/{id}` - Get copia by ID
-- `POST /api/v1/copia` - Create new copia
-- `PUT /api/v1/copia/{id}` - Update copia
-- `DELETE /api/v1/copia/{id}` - Delete copia
+### CopiaController
+- `GET /api/v1/copia`
+- `POST /api/v1/copia`
+- `PUT /api/v1/copia/{id}`
+- `DELETE /api/v1/copia/{id}`
 
-### Documento Presentado
-- `GET /api/v1/documento-presentado` - List documents
-- `GET /api/v1/documento-presentado/{id}` - Get document
-- `POST /api/v1/documento-presentado` - Create document
-- `PUT /api/v1/documento-presentado/{id}` - Update document
-- `DELETE /api/v1/documento-presentado/{id}` - Delete document
+### DocumentoPresentadoController
+- `GET /api/v1/documento-presentado`
+- `POST /api/v1/documento-presentado`
+- `PUT /api/v1/documento-presentado/{id}`
+- `DELETE /api/v1/documento-presentado/{id}`
 
-### Escritura Management
-- `GET /api/v1/escrituras` - List escrituras
-- `GET /api/v1/escrituras/{id}` - Get escritura by ID
-- `POST /api/v1/escrituras` - Create escritura
-- `PUT /api/v1/escrituras/{id}` - Update escritura
-- `DELETE /api/v1/escrituras/{id}` - Delete escritura
-- `GET /api/v1/escrituras/escribanos-disponibles` - List available notaries
+### EscrituraController
+- `GET /api/v1/escrituras`
+- `POST /api/v1/escrituras`
+- `PUT /api/v1/escrituras/{id}`
+- `DELETE /api/v1/escrituras/{id}`
+- `GET /api/v1/escrituras/escribanos-disponibles`
+- `GET /api/v1/escrituras/buscar`
 
-### Estado de Gestión
-- `GET /api/v1/estado-gestion` - List estados
-- `GET /api/v1/estado-gestion/{id}` - Get estado by ID
-- `POST /api/v1/estado-gestion` - Create estado
-- `PUT /api/v1/estado-gestion/{id}` - Update estado
-- `DELETE /api/v1/estado-gestion/{id}` - Delete estado
+### EstadoDeGestionController
+- `GET /api/v1/estado-gestion`
+- `GET /api/v1/estado-gestion/search`
+- `GET /api/v1/estado-gestion/{id}/in-use`
+- `POST /api/v1/estado-gestion`
+- `PUT /api/v1/estado-gestion/{id}`
+- `DELETE /api/v1/estado-gestion/{id}`
 
-### Folio Management
-- `GET /api/v1/folio` - List folios
-- `GET /api/v1/folio/{id}` - Get folio by ID
-- `POST /api/v1/folio` - Create folio
-- `PUT /api/v1/folio/{id}` - Update folio
-- `DELETE /api/v1/folio/{id}` - Delete folio
+### FolioController
+- `GET /api/v1/folio`
+- `GET /api/v1/folio/search`
+- `POST /api/v1/folio`
+- `PUT /api/v1/folio/{id}`
+- `DELETE /api/v1/folio/{id}`
 
-### Gestión Management
-- `GET /api/v1/gestiones` - List gestiones
-- `GET /api/v1/gestiones/{id}` - Get gestión by ID
-- `POST /api/v1/gestiones` - Create gestión
-- `PUT /api/v1/gestiones/{id}` - Update gestión
-- `DELETE /api/v1/gestiones/{id}` - Delete gestión
-- `GET /api/v1/gestiones/cliente/{idPersona}` - Get gestiones by client
-- `GET /api/v1/gestiones/numero/{numero}` - Get gestión by number
-- `GET /api/v1/gestiones/{gestionId}/workflow-trace` - Get workflow trace
+### GestionController
+- `POST /api/v1/gestiones/complete-case`
+- `GET /api/v1/gestiones`
+- `GET /api/v1/gestiones/numero/{numero}`
+- `GET /api/v1/gestiones/cliente/{idPersona}`
+- `POST /api/v1/gestiones`
+- `PUT /api/v1/gestiones/{id}`
+- `DELETE /api/v1/gestiones/{id}`
+- `GET /api/v1/gestiones/{id}/workflow-trace`
 
-### Historial
-- `GET /api/v1/historial` - List records
-- `GET /api/v1/historial/{id}` - Get record by ID
-- `GET /api/v1/historial/gestion/{idGestion}` - Get gestión history
-- `DELETE /api/v1/historial/{id}` - Delete record
+### InmuebleController
+- `GET /api/v1/inmueble`
+- `POST /api/v1/inmueble`
+- `PUT /api/v1/inmueble/{id}`
+- `DELETE /api/v1/inmueble/{id}`
 
-### Inmueble Management
-- `GET /api/v1/inmueble` - List properties
-- `GET /api/v1/inmueble/{id}` - Get property by ID
-- `POST /api/v1/inmueble` - Create property
-- `PUT /api/v1/inmueble/{id}` - Update property
-- `DELETE /api/v1/inmueble/{id}` - Delete property
+### ItemController
+- `GET /api/v1/items`
+- `POST /api/v1/items`
+- `PUT /api/v1/items/{id}`
+- `DELETE /api/v1/items/{id}`
 
-### Items & Presupuestos
-- `GET /api/v1/items` - List items
-- `GET /api/v1/items/{id}` - Get item by ID
-- `POST /api/v1/items` - Create item
-- `PUT /api/v1/items/{id}` - Update item
-- `DELETE /api/v1/items/{id}` - Delete item
-- `GET /api/v1/items/presupuesto/{idPresupuesto}` - Get items by presupuesto
+### PagoController
+- `GET /api/v1/pagos`
+- `POST /api/v1/pagos`
+- `PUT /api/v1/pagos/{id}`
+- `DELETE /api/v1/pagos/{id}`
 
-### Pagos
-- `GET /api/v1/pagos` - List payments
-- `GET /api/v1/pagos/{id}` - Get payment by ID
-- `POST /api/v1/pagos` - Create payment
-- `PUT /api/v1/pagos/{id}` - Update payment
-- `DELETE /api/v1/pagos/{id}` - Delete payment
+### PersonaController
+- `GET /api/v1/personas`
+- `POST /api/v1/personas`
+- `PUT /api/v1/personas/{id}`
+- `DELETE /api/v1/personas/{id}`
+- `GET /api/v1/personas/buscar`
 
-### Personas
-- `GET /api/v1/personas` - List persons
-- `GET /api/v1/personas/{id}` - Get person by ID
-- `POST /api/v1/personas` - Create person
-- `PUT /api/v1/personas/{id}` - Update person
-- `DELETE /api/v1/personas/{id}` - Delete person
+### PlantillaPresupuestoController
+- `GET /api/v1/plantilla-presupuestos`
+- `POST /api/v1/plantilla-presupuestos`
+- `PUT /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}`
+- `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}`
 
-### Plantilla Presupuestos
-- `GET /api/v1/plantilla-presupuestos` - List templates
-- `GET /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}` - Get templates by transaction type
-- `POST /api/v1/plantilla-presupuestos` - Create template
-- `PUT /api/v1/plantilla-presupuestos/tipo-tramite/{tt}/concepto/{cc}` - Update template
-- `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{tt}/concepto/{cc}` - Delete template
+### PresupuestoController
+- `GET /api/v1/presupuestos`
+- `GET /api/v1/presupuestos/buscar`
+- `POST /api/v1/presupuestos`
+- `PUT /api/v1/presupuestos/{id}`
+- `DELETE /api/v1/presupuestos/{id}`
 
-### Presupuestos
-- `GET /api/v1/presupuestos` - List budgets
-- `GET /api/v1/presupuestos/{id}` - Get budget by ID
-- `POST /api/v1/presupuestos` - Create budget
-- `PUT /api/v1/presupuestos/{id}` - Update budget
-- `DELETE /api/v1/presupuestos/{id}` - Delete budget
-- `GET /api/v1/presupuestos/persona/{idPersona}` - Get budgets by person
+### RegistroAuditoriaController
+- `GET /api/v1/registro-auditoria`
+- `GET /api/v1/registro-auditoria/usuario/{idUsuario}`
 
-### Registro Auditoría
-- `GET /api/v1/registro-auditoria` - List audit records
-- `GET /api/v1/registro-auditoria/usuario/{idUsuario}` - Get records by user
-- `GET /api/v1/registro-auditoria/{id}` - Get audit record
-- `POST /api/v1/registro-auditoria` - Create audit record
+### ReporteController
+- `GET /api/v1/reportes/presupuesto/{idPresupuesto}`
+- `GET /api/v1/reportes/presupuesto-inmuebles/{idPresupuesto}`
+- `GET /api/v1/reportes/lista-documentos-tramite`
+- `GET /api/v1/reportes/historial-gestion/{idGestion}`
+- `GET /api/v1/reportes/consultar-deuda-documentos`
+- `GET /api/v1/reportes/libro-indice`
+- `GET /api/v1/reportes/declaracion-jurada-mensual`
+- `GET /api/v1/reportes/declaracion-jurada-rentas`
 
-Audit records are append-only: no DELETE endpoint exists (see issue #556).
+### RolController
+- `GET /api/v1/roles`
+- `POST /api/v1/roles`
+- `PUT /api/v1/roles/{id}`
+- `DELETE /api/v1/roles/{id}`
+- `PUT /api/v1/roles/{idRol}/usuarios/{idUsuario}`
+- `DELETE /api/v1/roles/usuarios/{idUsuario}`
 
-### Roles & Usuarios
-- `GET /api/v1/roles` - List roles
-- `GET /api/v1/roles/{id}` - Get role by ID
-- `POST /api/v1/roles` - Create role
-- `PUT /api/v1/roles/{id}` - Update role
-- `DELETE /api/v1/roles/{id}` - Delete role
-- `PUT /api/v1/roles/{idRol}/usuarios/{idUsuario}` - Assign user to role
-- `DELETE /api/v1/roles/usuarios/{idUsuario}` - Unassign user from role
-- `GET /api/v1/usuarios` - List users
-- `GET /api/v1/usuarios/{id}` - Get user by ID
-- `POST /api/v1/usuarios` - Create user
-- `PUT /api/v1/usuarios/{id}` - Update user
-- `DELETE /api/v1/usuarios/{id}` - Delete user
-- `POST /api/v1/usuarios/login` - User login
-- `GET /api/v1/usuarios/persona/{idPersona}` - Get user by person
+### SuplenciaController
+- `GET /api/v1/suplencia`
+- `POST /api/v1/suplencia`
+- `PUT /api/v1/suplencia/{id}`
+- `DELETE /api/v1/suplencia/{id}`
 
-### Suplencia
-- `GET /api/v1/suplencia` - List deputations
-- `GET /api/v1/suplencia/{id}` - Get deputation by ID
-- `POST /api/v1/suplencia` - Create deputation
-- `PUT /api/v1/suplencia/{id}` - Update deputation
-- `DELETE /api/v1/suplencia/{id}` - Delete deputation
+### TipoDeDocumentoController
+- `GET /api/v1/tipo-de-documento`
+- `GET /api/v1/tipo-de-documento/search`
+- `GET /api/v1/tipo-de-documento/{id}/in-use`
+- `POST /api/v1/tipo-de-documento`
+- `PUT /api/v1/tipo-de-documento/{id}`
+- `DELETE /api/v1/tipo-de-documento/{id}`
 
-### Tipo de Documento, Folio, Tramite
-- `GET /api/v1/tipo-de-documento` - List document types
-- `GET /api/v1/tipo-de-documento/{id}` - Get document type
-- `POST /api/v1/tipo-de-documento` - Create document type
-- `PUT /api/v1/tipo-de-documento/{id}` - Update document type
-- `DELETE /api/v1/tipo-de-documento/{id}` - Delete document type
-- `GET /api/v1/tipo-folio` - List folio types
-- `GET /api/v1/tipo-folio/{id}` - Get folio type
-- `POST /api/v1/tipo-folio` - Create folio type
-- `PUT /api/v1/tipo-folio/{id}` - Update folio type
-- `DELETE /api/v1/tipo-folio/{id}` - Delete folio type
-- `GET /api/v1/tipo-tramite` - List transaction types
-- `GET /api/v1/tipo-tramite/{id}` - Get transaction type
-- `POST /api/v1/tipo-tramite` - Create transaction type
-- `PUT /api/v1/tipo-tramite/{id}` - Update transaction type
-- `DELETE /api/v1/tipo-tramite/{id}` - Delete transaction type
-- `PUT /api/v1/tipo-tramite/{id}/workflow` - Set workflow for transaction type
+### TipoDeFolioController
+- `GET /api/v1/tipo-folio`
+- `GET /api/v1/tipo-folio/search`
+- `GET /api/v1/tipo-folio/{id}/in-use`
+- `POST /api/v1/tipo-folio`
+- `PUT /api/v1/tipo-folio/{id}`
+- `DELETE /api/v1/tipo-folio/{id}`
 
-### Workflow Management
-- `GET /api/v1/workflow-definition` - List workflow definitions
-- `GET /api/v1/workflow-definition/{id}` - Get workflow definition
-- `POST /api/v1/workflow-definition` - Create workflow
-- `PUT /api/v1/workflow-definition/{id}` - Update workflow
-- `DELETE /api/v1/workflow-definition/{id}` - Delete workflow
-- `POST /api/v1/workflow-definition/{workflowId}/validate` - Validate workflow
-- `GET /api/v1/workflow-node` - List workflow nodes
-- `GET /api/v1/workflow-node/{id}` - Get workflow node
-- `POST /api/v1/workflow-node` - Create node
-- `PUT /api/v1/workflow-node/{id}` - Update node
-- `DELETE /api/v1/workflow-node/{id}` - Delete node
-- `GET /api/v1/workflow-node/by-workflow/{workflowId}` - Get nodes by workflow
-- `GET /api/v1/workflow-transition` - List transitions
-- `GET /api/v1/workflow-transition/{id}` - Get transition
-- `POST /api/v1/workflow-transition` - Create transition
-- `PUT /api/v1/workflow-transition/{id}` - Update transition
-- `DELETE /api/v1/workflow-transition/{id}` - Delete transition
-- `GET /api/v1/workflow-transition/by-workflow/{workflowId}` - Get transitions by workflow
+### TipoDeTramiteController
+- `GET /api/v1/tipo-tramite`
+- `GET /api/v1/tipo-tramite/search`
+- `GET /api/v1/tipo-tramite/{id}/in-use`
+- `POST /api/v1/tipo-tramite`
+- `PUT /api/v1/tipo-tramite/{id}`
+- `DELETE /api/v1/tipo-tramite/{id}`
+- `PUT /api/v1/tipo-tramite/{id}/workflow`
 
----
+### UsuarioController
+- `GET /api/v1/usuarios`
+- `POST /api/v1/usuarios`
+- `PUT /api/v1/usuarios/{id}`
+- `DELETE /api/v1/usuarios/{id}`
+- `POST /api/v1/usuarios/login`
 
-## Unused Endpoints (116)
+### WorkflowDefinitionController
+- `GET /api/v1/workflow-definition`
+- `POST /api/v1/workflow-definition`
+- `PUT /api/v1/workflow-definition/{id}`
+- `DELETE /api/v1/workflow-definition/{id}`
 
-These endpoints exist in the backend but are not currently called from the frontend. They are reserved for:
-- Future UI screens under development
-- Internal/system-only operations
-- Legacy functionality awaiting deprecation
+### WorkflowNodeController
+- `GET /api/v1/workflow-node/by-workflow/{workflowId}`
+- `POST /api/v1/workflow-node`
+- `PUT /api/v1/workflow-node/{id}`
+- `DELETE /api/v1/workflow-node/{id}`
 
-### Search & Filter Endpoints (12)
-- `GET /api/v1/conceptos/*/in-use` - Check if concept is in use
-- `GET /api/v1/conceptos/search` - Search concepts
-- `GET /api/v1/estado-gestion/*/in-use` - Check if estado is in use
-- `GET /api/v1/estado-gestion/search` - Search estados
-- `GET /api/v1/escrituras/buscar` - Search escrituras
-- `GET /api/v1/pagos/fecha` - Get pagos by date
-- `GET /api/v1/personas/buscar` - Search persons
-- `GET /api/v1/presupuestos/buscar` - Search presupuestos
-- `GET /api/v1/tipo-de-documento/*/in-use` - Check if document type in use
-- `GET /api/v1/tipo-de-documento/search` - Search document types
-- `GET /api/v1/tipo-folio/*/in-use` - Check if folio type in use (STATUS: VERIFY)
-- `GET /api/v1/tipo-tramite/*/in-use` - Check if transaction type in use
-- `GET /api/v1/tipo-tramite/search` - Search transaction types
+### WorkflowTransitionController
+- `GET /api/v1/workflow-transition/by-workflow/{workflowId}`
+- `POST /api/v1/workflow-transition`
+- `DELETE /api/v1/workflow-transition/{id}`
 
-### Specialized Operations (12)
-- `POST /api/v1/pagos/params` - Get pago parameters
-- `GET /api/v1/pagos/presupuesto/*` - Get pagos by presupuesto
-- `GET /api/v1/pagos/presupuesto/*/saldo` - Get presupuesto balance
-- `GET /api/v1/plantilla-tramite/*/*` - Get plantilla templates (AMBIGUOUS PATH)
-- `GET /api/v1/plantilla-tramite/tipo-tramite/*` - Get plantilla by transaction type
-- `PUT /api/v1/tipo-tramite/*/workflow` - Assign workflow (DUPLICATE: also GET version)
-- `GET /api/v1/gestiones/*/estado-actual` - Get current estado
-- `POST /api/v1/copia/testimonio/*` - Link copia to testimonio (STATUS: NOT FOUND IN FRONTEND)
-- `GET /api/v1/movimiento-testimonio` - List movements
-- `GET /api/v1/movimiento-testimonio/*` - Get movement
-- `POST /api/v1/movimiento-testimonio` - Create movement
-- `PUT /api/v1/movimiento-testimonio/*` - Update movement
-
-### Type Reference Endpoints (9)
-- `GET /api/v1/tipo-identificacion` - List identification types
-- `GET /api/v1/tipo-identificacion/*` - Get identification type
-- `POST /api/v1/tipo-identificacion` - Create identification type
-- `PUT /api/v1/tipo-identificacion/*` - Update identification type
-- `DELETE /api/v1/tipo-identificacion/*` - Delete identification type
-- `GET /api/v1/testimonio` - List testimonios
-- `GET /api/v1/testimonio/*` - Get testimonio
-- `POST /api/v1/testimonio` - Create testimonio
-- `DELETE /api/v1/testimonio/*` - Delete testimonio
-
-### Transaction-Type Endpoints (8)
-- `GET /api/v1/tramites` - List transactions
-- `GET /api/v1/tramites/*` - Get transaction
-- `POST /api/v1/tramites` - Create transaction
-- `PUT /api/v1/tramites/*` - Update transaction
-- `DELETE /api/v1/tramites/*` - Delete transaction
-- And various related operations
+### WorkflowValidationController
+- `POST /api/v1/workflow-definition/{id}/validate`
 
 ---
 
-## Audit Notes
+## Unused/Reserved Endpoints (68)
 
-### Issues Found & Fixed
+Not reached by any current frontend call site. May be used by reports, background jobs, other internal callers, tests, or reserved for future UI work.
 
-✅ **Fixed**: `/folios` → `/folio` (Frontend endpoint mismatch)
-- Frontend protokolo page was calling `/folios` but backend expects `/folio`
-- Status: RESOLVED - Updated protocolo/page.tsx
+### ConceptoController
+- `GET /api/v1/conceptos/{id}`
 
-⚠️ **Investigation Needed**:
-- `POST /api/v1/copia/testimonio/*` — Not found in frontend code extraction; verify if endpoint should exist
-- `GET /api/v1/plantilla-tramite/*/*` — Ambiguous path; verify correct structure
-- `/tipo-folio/*/in-use` — Consider if needed by UI
+### CopiaController
+- `GET /api/v1/copia/{id}`
 
-⏳ **Test Data Calls** (Not real endpoints):
-- `/gestiones/1` - Unit test mock (api-client.test.ts)
-- `/gestiones/999` - Unit test mock (api-client.test.ts)
+### DocumentoPresentadoController
+- `GET /api/v1/documento-presentado/{id}`
+
+### EscrituraController
+- `GET /api/v1/escrituras/{id}`
+
+### EstadoDeGestionController
+- `GET /api/v1/estado-gestion/{id}`
+
+### FolioController
+- `GET /api/v1/folio/{id}/in-use`
+- `GET /api/v1/folio/{id}`
+
+### GestionController
+- `PUT /api/v1/gestiones/{id}/complete-case`
+- `GET /api/v1/gestiones/{id}`
+- `GET /api/v1/gestiones/{id}/estado-actual`
+
+### HistorialController
+- `GET /api/v1/historial`
+- `GET /api/v1/historial/{id}`
+- `GET /api/v1/historial/gestion/{idGestion}`
+- `POST /api/v1/historial`
+- `PUT /api/v1/historial/{id}`
+- `DELETE /api/v1/historial/{id}`
+
+### InmuebleController
+- `GET /api/v1/inmueble/{id}`
+
+### ItemController
+- `GET /api/v1/items/{id}`
+- `GET /api/v1/items/presupuesto/{idPresupuesto}`
+
+### MovimientoTestimonioController
+- `GET /api/v1/movimiento-testimonio`
+- `GET /api/v1/movimiento-testimonio/{id}`
+- `POST /api/v1/movimiento-testimonio`
+- `PUT /api/v1/movimiento-testimonio/{id}`
+- `DELETE /api/v1/movimiento-testimonio/{id}`
+
+### PagoController
+- `GET /api/v1/pagos/{id}`
+- `GET /api/v1/pagos/presupuesto/{idPresupuesto}`
+- `GET /api/v1/pagos/presupuesto/{idPresupuesto}/saldo`
+- `GET /api/v1/pagos/fecha`
+- `POST /api/v1/pagos/params`
+
+### PersonaController
+- `GET /api/v1/personas/{id}`
+
+### PlantillaPresupuestoController
+- `GET /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}`
+
+### PlantillaTramiteController
+- `GET /api/v1/plantilla-tramite`
+- `GET /api/v1/plantilla-tramite/tipo-tramite/{idTipoTramite}`
+- `GET /api/v1/plantilla-tramite/{idTipoTramite}/{idTipoDocumento}`
+- `POST /api/v1/plantilla-tramite`
+- `PUT /api/v1/plantilla-tramite/{idTipoTramite}/{idTipoDocumento}`
+- `DELETE /api/v1/plantilla-tramite/{idTipoTramite}/{idTipoDocumento}`
+
+### PresupuestoController
+- `GET /api/v1/presupuestos/{id}`
+- `GET /api/v1/presupuestos/persona/{idPersona}`
+
+### RegistroAuditoriaController
+- `GET /api/v1/registro-auditoria/{id}`
+- `POST /api/v1/registro-auditoria`
+
+### ReporteController
+- `GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}`
+
+### RolController
+- `GET /api/v1/roles/{id}`
+
+### SuplenciaController
+- `GET /api/v1/suplencia/{id}`
+
+### TestimonioController
+- `GET /api/v1/testimonio`
+- `GET /api/v1/testimonio/{id}`
+- `POST /api/v1/testimonio`
+- `PUT /api/v1/testimonio/{id}`
+- `DELETE /api/v1/testimonio/{id}`
+
+### TipoDeDocumentoController
+- `GET /api/v1/tipo-de-documento/{id}`
+
+### TipoDeFolioController
+- `GET /api/v1/tipo-folio/{id}`
+
+### TipoDeTramiteController
+- `GET /api/v1/tipo-tramite/{id}`
+
+### TipoIdentificacionController
+- `GET /api/v1/tipo-identificacion`
+- `GET /api/v1/tipo-identificacion/{id}`
+- `POST /api/v1/tipo-identificacion`
+- `PUT /api/v1/tipo-identificacion/{id}`
+- `DELETE /api/v1/tipo-identificacion/{id}`
+
+### TramiteController
+- `GET /api/v1/tramites`
+- `GET /api/v1/tramites/{id}`
+- `POST /api/v1/tramites`
+- `PUT /api/v1/tramites/{id}`
+- `DELETE /api/v1/tramites/{id}`
+
+### UsuarioController
+- `GET /api/v1/usuarios/persona/{idPersona}`
+- `GET /api/v1/usuarios/{id}`
+
+### WorkflowDefinitionController
+- `GET /api/v1/workflow-definition/{id}`
+
+### WorkflowNodeController
+- `GET /api/v1/workflow-node/{id}`
+
+### WorkflowTransitionController
+- `GET /api/v1/workflow-transition/{id}`
+- `PUT /api/v1/workflow-transition/{id}`
 
 ---
 
-## Next Steps
+## Notes
 
-### Phase 7 Actions
-1. **Document Intent** for each unused endpoint
-2. **Plan Implementation** for future features
-3. **Deprecate Unused** endpoints that won't be needed
-4. **Add Type Contract** validation to CI/CD
+- `RegistroAuditoriaController`: audit records are append-only, no DELETE endpoint exists by design (see issue #556).
+- `ReporteController` endpoints are consumed via `downloadPdf()` in `frontend/src/hooks/useReportes.ts`, not the `apiGet`/`apiPost` wrapper family, since they return `application/pdf` rather than JSON.
+- `GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}` is the one `ReporteController` endpoint with no frontend caller found.
 
 ### Ongoing Maintenance
-- Update this registry with each new endpoint
-- Document when endpoints move from "unused" to "used"
-- Remove endpoints that are deprecated
+- Update registry when a new endpoint is added.
+- Document when endpoints move from "unused" to "used".
+- Remove endpoints once deprecated.
 
 ---
 
-**Last Updated**: 2026-06-16  
-**Source**: Automated extraction + manual audit review  
-**Coverage**: 184 total endpoints analyzed
+**Last Updated**: 2026-08-18
+**Source**: Regenerated by static analysis of `backend-api/src/main/java/com/licensis/notaire/api/*.java` cross-referenced with `frontend/src/**/*.{ts,tsx}`
+**Coverage**: 189 total endpoints analyzed

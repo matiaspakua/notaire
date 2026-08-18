@@ -44,7 +44,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |----------|-------------|----------|
 | 1 | **Maintainability** | New features delivered in < 6 months; developers onboard in < 2 weeks |
 | 2 | **Testability** | ≥ 80% code coverage; all changes validated by unit, integration, and E2E tests |
-| 3 | **Security** | JWT authentication, RBAC authorization, full audit trail for legal compliance |
+| 3 | **Security** | JWT authentication, coarse-grained authorization (authenticated-only; no per-role enforcement yet), full audit trail for legal compliance |
 | 4 | **Scalability** | Backend scales horizontally via stateless containers |
 | 5 | **Observability** | Real-time metrics, structured logs, and alerts via LPG stack |
 
@@ -90,7 +90,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |-----------|-------------|
 | Audit trail | All CRUD operations must be recorded for legal compliance |
 | Data retention | Notarial records must be preserved indefinitely |
-| Access control | Role-based access to sensitive notarial data |
+| Access control | Authenticated access to sensitive notarial data (per-role enforcement not yet implemented) |
 
 ---
 
@@ -221,7 +221,6 @@ rectangle "Phase 5\nObservability" #Pink {
 rectangle "Phase 6\nDeprecation" #Gray {
   (Retire Swing)
   (Remove jpa package)
-  (Archive src.old)
 }
 
 "Phase 1\nAnalysis" -right-> "Phase 2\nFoundation"
@@ -236,12 +235,12 @@ rectangle "Phase 6\nDeprecation" #Gray {
 
 | Phase | Status | Details |
 |-------|--------|---------|
-| Phase 1: Analysis | ✅ Complete | Legacy documented in `src.old/`, 73 use cases cataloged |
+| Phase 1: Analysis | ✅ Complete | Legacy documented in `deprecated-frontend-swing/`, 73 use cases cataloged in `docs/100-business/102-use-cases/` |
 | Phase 2: Foundation | ✅ Complete | `notaire-shared`, Maven multi-module, Docker Compose |
-| Phase 3: Backend API | ✅ Complete | 31 controllers, 31 repositories, 40 entities, Flyway V1→V14 |
+| Phase 3: Backend API | ✅ Complete | 31 controllers, 31 repositories, 32 entities, Flyway V1→V14 |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app with login, dashboard, auditoria pages |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
-| Phase 6: Deprecation | ⬜ Planned | `frontend-swing` excluded from Maven build, `jpa` package targeted |
+| Phase 6: Deprecation | ⬜ Planned | `deprecated-frontend-swing` excluded from Maven build, `jpa` package targeted |
 
 ---
 
@@ -330,7 +329,7 @@ package "com.licensis.notaire" {
     [... +26 more]
   }
 
-  package "negocio\n(40 Domain Entities)" as dom #LightYellow {
+  package "negocio\n(32 Domain Entities)" as dom #LightYellow {
     [GestionDeEscritura]
     [Persona]
     [Escritura]
@@ -344,7 +343,7 @@ package "com.licensis.notaire" {
   }
 
   package "jpa\n(Legacy — being replaced)" as jpa #LightGray {
-    [27 JpaController classes]
+    [26 JpaController classes]
     [exceptions/]
     [interfaz/]
   }
@@ -642,33 +641,34 @@ participant "Browser" as B
 participant "Next.js\nFrontend" as FE
 participant "SecurityAndCorsConfig\n+ JwtAuthenticationFilter" as Sec
 participant "UsuarioController" as Ctrl
+participant "LoginAttemptService\n(in-memory, per-username)" as Login
+participant "AuditoriaAspect" as Audit
 participant "JwtTokenService" as JWT
-participant "LoginAttemptService" as Login
 participant "PostgreSQL" as DB
 
 B -> FE : Login form submit
-FE -> Sec : POST /api/v1/usuario/login\n{username, password}
+FE -> Sec : POST /api/v1/usuario/login\n{nombre, contrasenia}
 Sec -> Ctrl : Pass through (public endpoint)
-Ctrl -> Login : Check rate limiting
-Login -> DB : Count recent failed attempts
-DB --> Login : count
-alt Too many attempts
-  Login --> Ctrl : LOCKED
+Ctrl -> Login : isLocked(nombre)
+Login --> Ctrl : locked? (ConcurrentHashMap lookup, no DB access)
+alt Too many attempts (5 failures / 15 min lockout)
   Ctrl --> FE : 429 Too Many Requests
 else
-  Ctrl -> DB : Find user by username
+  Ctrl -> DB : findByNombre(nombre)
   DB --> Ctrl : Usuario entity
-  Ctrl -> Ctrl : BCrypt.matches(password)
+  Ctrl -> Ctrl : BCrypt.matches(contrasenia)\n(or legacy MD5 auto-migration)
   alt Valid credentials
-    Ctrl -> JWT : generateToken(user, roles)
+    Ctrl -> Login : onLoginSucceeded(nombre)
+    Ctrl -> JWT : generateToken(nombre)
     JWT --> Ctrl : JWT string
-    Ctrl -> DB : INSERT registro_auditoria (LOGIN)
-    Ctrl --> FE : 200 {token, user, roles}
-    FE -> FE : Store token (HTTP-only cookie)
+    Ctrl -> Audit : AOP around login() —\nINSERT registro_auditoria (LOGIN)
+    Audit -> DB : INSERT registro_auditoria
+    Ctrl --> FE : 200 {valido, token, idUsuario,\nnombre, estado, tipo, version, personas}
+    FE -> FE : Store token in localStorage\n(Zustand persist, useAuthStore)
     FE --> B : Redirect to /dashboard
   else Invalid credentials
-    Ctrl -> Login : recordFailedAttempt()
-    Ctrl --> FE : 401 Unauthorized
+    Ctrl -> Login : onLoginFailed(nombre)
+    Ctrl --> FE : 200 {valido: false}
   end
 end
 @enduml
@@ -684,7 +684,6 @@ participant "Escribano" as User
 participant "Frontend\n(Next.js)" as Client
 participant "JwtAuthFilter" as Auth
 participant "GestionController" as Ctrl
-participant "AdministradorJpa" as Svc
 participant "AuditoriaAspect" as Audit
 participant "GestionDeEscrituraRepository" as Repo
 participant "PostgreSQL" as DB
@@ -693,16 +692,13 @@ User -> Client : Fill gestión form + submit
 Client -> Auth : POST /api/v1/gestion\nAuthorization: Bearer <jwt>
 Auth -> Auth : Validate JWT signature + expiry
 Auth -> Ctrl : Authorized request (user context)
-Ctrl -> Ctrl : Validate request DTO
-Ctrl -> Svc : createGestion(dto)
-Svc -> Svc : Apply business rules
-Svc -> Repo : save(gestionEntity)
+Ctrl -> Repo : save(entity)\n(controller calls repository directly —\nno intermediate service layer for this endpoint)
 Repo -> DB : INSERT INTO gestion_de_escritura
 DB --> Repo : Generated ID
-Repo --> Svc : Saved entity
-Svc --> Ctrl : GestionDTO
-Audit -> DB : INSERT INTO registro_auditoria\n(CREATE, gestion, user, timestamp)
-Ctrl --> Client : 201 Created {GestionDTO}
+Repo --> Ctrl : Saved entity
+Ctrl -> Audit : AOP around create() —\nINSERT INTO registro_auditoria\n(CREATE, gestion, user, timestamp)
+Audit -> DB : INSERT INTO registro_auditoria
+Ctrl --> Client : 201 Created {entity}
 Client --> User : Show success + gestión number
 @enduml
 ```
@@ -717,21 +713,19 @@ participant "User" as U
 participant "Frontend" as FE
 participant "ReporteController" as Ctrl
 participant "ReporteService" as Svc
-participant "Multiple Repositories" as Repos
-participant "PostgreSQL" as DB
+participant "JasperReports\n(JasperFillManager/ExportManager)" as Jasper
+participant "PostgreSQL\n(via DataSource, JDBC)" as DB
 
-U -> FE : Select report type + parameters
-FE -> Ctrl : GET /api/v1/reportes/{type}?params
-Ctrl -> Svc : generateReport(type, params)
-Svc -> Repos : Query relevant entities
-Repos -> DB : Complex JOIN queries
-DB --> Repos : Result sets
-Repos --> Svc : Entity collections
-Svc -> Svc : Aggregate and format data
-Svc --> Ctrl : ReportDTO
-Ctrl --> FE : 200 JSON report data
-FE -> FE : Render report in UI
-FE --> U : Display report
+U -> FE : Select report + parameters
+FE -> Ctrl : GET /api/v1/reportes/{report-name}/{params}\n(one endpoint per report, e.g. /presupuesto/{id})
+Ctrl -> Svc : generarReporte...(params)
+Svc -> DB : JDBC query via .jasper template\n(src/main/resources/reportes/)
+DB --> Svc : Result set
+Svc -> Jasper : JasperFillManager.fillReport() +\nJasperExportManager.exportReportToPdf()
+Jasper --> Svc : byte[] (PDF)
+Svc --> Ctrl : byte[] (PDF)
+Ctrl --> FE : 200 application/pdf
+FE --> U : Open/download PDF
 @enduml
 ```
 
@@ -837,14 +831,21 @@ Loki --> Graf : depends_on
 **Authentication:**
 - JWT tokens issued by `JwtTokenService` upon successful login.
 - `JwtAuthenticationFilter` validates tokens on every request.
-- Token storage: HTTP-only secure cookies (Next.js), in-memory (Swing).
-- `LoginAttemptService` rate-limits failed authentication attempts.
+- Token storage: `localStorage` via Zustand `persist` middleware (`useAuthStore`,
+  Next.js); a separate non-JWT `notaire-auth-status` cookie exists only so the
+  Next.js middleware can route-guard pages. Swing client stores the token in-memory
+  (`RestClient`, static field).
+- `LoginAttemptService` locks out a username after repeated failed attempts
+  (in-memory, single-instance — not a general API rate limiter).
 - `ProductionCredentialsGuard` blocks startup if default passwords are used in production.
 
 **Authorization:**
-- Role-Based Access Control (RBAC) via `Rol` entity.
-- `@PreAuthorize` annotations on controller methods.
-- Roles include: ADMIN, ESCRIBANO, GESTOR.
+- Coarse-grained only: every `/api/**` request must be authenticated (valid JWT);
+  there is no per-role authorization yet — no `@PreAuthorize` annotations exist in
+  the codebase.
+- The `Rol` entity/table exists for future RBAC; extending enforcement means
+  replacing `.anyRequest().authenticated()` with per-route role checks in
+  `SecurityAndCorsConfig` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
 **API Security:**
 - CORS configured in `SecurityAndCorsConfig`.
@@ -931,7 +932,8 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 **Code Quality (SonarQube :9000):**
 - Static analysis on every build.
-- Quality gates: coverage ≥ 80%, no critical/blocker issues.
+- Coverage: enforced ratchet floor via JaCoCo (raised as coverage improves; long-term
+  target 80% line / 80% branch — see [Code Quality](../../300-development/303-testing/README.md)).
 
 ### 8.6 Design System (Frontend)
 
@@ -953,15 +955,19 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 | Level | Tool | Scope | Target |
 |-------|------|-------|--------|
-| Unit | JUnit 5 + Mockito | Service/repository logic | ≥ 80% coverage |
+| Unit (backend) | JUnit 5 + Mockito | Service/repository logic | Enforced ratchet floor (target 80%) |
+| Unit / Component (frontend) | Vitest + Testing Library | `frontend/src/**/*.test.ts(x)` | 19+ test files |
 | Integration | Spring Boot Test | Controller + DB (H2/PG) | API contract validation |
-| HTTP Integration | Shell scripts (`testing/`) | Full API endpoints | Smoke tests |
-| E2E | Playwright | Frontend user flows | Critical paths |
+| API | Bruno, yml collection format (`backend-api/api-test/`) | Full API endpoints, per use case | See `CU-API-MATRIX.csv` |
+| E2E (UI/UX) | Playwright | Frontend user flows, per use case (`cuNN-*.spec.ts`) | 33+ specs, critical paths |
 | Static Analysis | Checkstyle + SpotBugs + SonarQube | Code quality | Zero critical issues |
+
+Full pyramid and use-case traceability documented in
+[`docs/300-development/303-testing/README.md`](../../300-development/303-testing/README.md).
 
 ### 8.9 Legacy Coexistence (`jpa` package)
 
-The `jpa` package contains 27 `*JpaController` classes — a legacy data-access layer from the original Swing application. These classes contain raw EntityManager operations and are being incrementally replaced by:
+The `jpa` package contains 26 `*JpaController` classes — a legacy data-access layer from the original Swing application. These classes contain raw EntityManager operations and are being incrementally replaced by:
 
 1. **Spring Data JPA Repositories** (`repository` package) — declarative query methods.
 2. **Service classes** (`service` package) — business logic extracted from JPA controllers.
@@ -1018,7 +1024,7 @@ R --> (Availability 99.5%)
 R --> (Fault Tolerance)
 
 S --> (Authentication JWT)
-S --> (Authorization RBAC)
+S --> (Authorization: authenticated-only)
 S --> (Audit Trail)
 
 M --> (Modularity)
@@ -1040,8 +1046,8 @@ O --> (Deployability Docker)
 | QS-01 | Performance | API response for single-entity CRUD | < 500ms avg |
 | QS-02 | Performance | Report generation with complex queries | < 3s |
 | QS-03 | Availability | System uptime during business hours | 99.5% |
-| QS-04 | Security | All CRUD operations logged in audit trail | 100% coverage |
-| QS-05 | Security | Failed login attempts rate-limited | Max 5 attempts / 15 min |
+| QS-04 | Security | All create/update/delete operations (and logins) logged in audit trail; read-only GETs excluded | 100% coverage of mutating operations |
+| QS-05 | Security | Failed login attempts trigger a per-username lockout (`LoginAttemptService`, single-instance, not a general API rate limiter) | 5 failed attempts → 15 min lockout |
 | QS-06 | Testability | Code coverage across backend | ≥ 80% |
 | QS-07 | Maintainability | New feature development time | < 6 months |
 | QS-08 | Maintainability | Developer onboarding time | < 2 weeks |
@@ -1057,9 +1063,8 @@ O --> (Deployability Docker)
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
 | Legacy `jpa` package coexists with modern `repository` | High — code duplication, inconsistent patterns | Certain | Incremental migration per entity; new code uses only `repository` |
-| `ControllerNegocio.java` (197 KB) — God class in `negocio` | High — unmaintainable, untestable | Certain | Extract to service classes; scheduled for refactoring |
-| `frontend-swing` still referenced but excluded from build | Low — confusion for new developers | Low | Document deprecation; remove after Next.js frontend is complete |
-| `src.old/` directory in repository root | Low — disk space, confusion | Low | Archive or remove after migration validation |
+| `ControllerNegocio.java` (5,337 lines, ~193 KB) — God class in `negocio` | High — unmaintainable, untestable | Certain | Extract to service classes; scheduled for refactoring |
+| `deprecated-frontend-swing` still referenced but excluded from build | Low — confusion for new developers | Low | Document deprecation; remove after Next.js frontend is complete |
 | No production deployment target defined | Medium — no deployment pipeline to production | Medium | Define production Docker Compose or Kubernetes manifests |
 | Default credentials in `.env` | Critical — security risk if deployed as-is | Medium | `ProductionCredentialsGuard` blocks startup with defaults |
 
@@ -1067,12 +1072,12 @@ O --> (Deployability Docker)
 
 | Item | Location | Severity | Effort |
 |------|----------|----------|--------|
-| 27 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
-| `ControllerNegocio.java` God class | `negocio/ControllerNegocio.java` | Critical | Large |
+| 26 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
+| `ControllerNegocio.java` God class (5,337 lines, ~193 KB) | `negocio/ControllerNegocio.java` | Critical | Large |
 | `AdministradorJpa` in service layer | `service/AdministradorJpa.java` | Medium | Medium |
 | `AdministradorValidaciones` mixed concerns | `service/AdministradorValidaciones.java` | Medium | Medium |
 | Missing service classes for some entities | `service/` | Medium | Medium |
-| `frontend-swing` module deprecated but present | `frontend-swing/` | Low | Small |
+| `deprecated-frontend-swing` module deprecated but present | `deprecated-frontend-swing/` | Low | Small |
 | `ConstantesGui.java` in audit package | `audit/ConstantesGui.java` | Low | Small |
 
 ### 11.3 Evolution Roadmap
@@ -1080,7 +1085,7 @@ O --> (Deployability Docker)
 1. **Short term** — Complete Next.js frontend pages for all 73 use cases.
 2. **Short term** — Extract `ControllerNegocio` logic into dedicated service classes.
 3. **Medium term** — Replace all `jpa` package controllers with `repository` + `service`.
-4. **Medium term** — Remove `frontend-swing` module and `src.old/` directory.
+4. **Medium term** — Remove `deprecated-frontend-swing` module.
 5. **Long term** — Add Kubernetes deployment manifests for production.
 6. **Long term** — Implement WebSocket support for real-time workflow updates.
 7. **Long term** — Add batch processing for report generation.
@@ -1138,7 +1143,7 @@ All PlantUML diagram sources are in `docs/200-architecture/204-diagrams/`:
 - `architecture-legacy.puml` — Legacy monolithic architecture
 - `architecture-target.puml` — Target three-tier architecture
 - `deployment-docker.puml` — Docker Compose deployment
-- `workflow-gestion.puml` — Gestión creation sequence
 - `backend-package-structure.puml` — Backend internal structure
 - `data-model-core.puml` — Core entity relationships
 - `migration-phases.puml` — Migration phases overview
+- [`Casos de Uso/`](../204-diagrams/Casos%20de%20Uso/) — Use-case diagrams grouped by module (gestiones, administración, clientes, pagos, protocolos, presupuestos)

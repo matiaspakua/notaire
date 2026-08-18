@@ -74,9 +74,10 @@ When deploying Notaire:
    - Restrict network access
 
 3. **API Security**
-   - Implement authentication (JWT recommended)
+   - JWT authentication on every `/api/**` endpoint (see [API Authentication Guide](API-AUTHENTICATION-GUIDE.md))
+   - Login brute-force lockout per username (`LoginAttemptService`, in-memory, single-instance)
    - Enable HTTPS in production
-   - Rate limiting
+   - General API rate limiting (not yet implemented — only login attempts are throttled)
 
 4. **Docker**
    - Run containers as non-root

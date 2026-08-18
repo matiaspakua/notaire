@@ -169,7 +169,7 @@ mvn test -pl backend-api -Dtest=ApiH2IntegrationTest
 ## 3. Frontend Client Tests
 
 ### Location
-`frontend-swing/src/test/java/com/licensis/notaire/api/client/`
+`deprecated-frontend-swing/src/test/java/com/licensis/notaire/api/client/`
 
 ### Test Classes
 
@@ -187,11 +187,11 @@ mvn test -pl backend-api -Dtest=ApiH2IntegrationTest
 ### Running Client Tests
 
 ```bash
-# Run all client tests
-mvn test -pl frontend-swing
+# Run all client tests (module excluded from root reactor; build standalone)
+cd deprecated-frontend-swing && mvn test
 
 # Run specific test
-mvn test -pl frontend-swing -Dtest=RestClientTest
+cd deprecated-frontend-swing && mvn test -Dtest=RestClientTest
 ```
 
 ---
@@ -329,8 +329,8 @@ pip install -r requirements.txt
 # 4. Ensure backend is running
 bash ../../scripts/start.sh
 
-# 5. Build Swing frontend JAR
-mvn package -pl frontend-swing -DskipTests
+# 5. Build Swing frontend JAR (module excluded from root reactor; build standalone)
+cd ../../deprecated-frontend-swing && mvn package -DskipTests
 ```
 
 ### Running E2E Tests

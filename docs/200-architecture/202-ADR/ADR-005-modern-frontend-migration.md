@@ -12,6 +12,11 @@ El módulo `frontend-swing` fue creado como paso intermedio en la migración del
 fue refactorizado para usar el backend REST en lugar de acceso directo a la base de datos,
 pero sigue siendo una aplicación Java Swing de escritorio.
 
+> **Estado actual:** la migración a Next.js está implementada en el directorio `frontend/`
+> (no `frontend-nextjs/` como se planteaba originalmente en este ADR). El módulo Swing fue
+> renombrado a `deprecated-frontend-swing/` y excluido del reactor Maven raíz; ver
+> `deprecated-frontend-swing/README.md`.
+
 ### Problemas actuales con Java Swing
 
 - **Tecnología deprecated:** Java Swing no recibe mejoras activas desde Java 8. Oracle no lo desarrolla activamente para uso moderno.
@@ -54,6 +59,10 @@ pero sigue siendo una aplicación Java Swing de escritorio.
 
 ### Arquitectura del Nuevo Frontend
 
+> El árbol siguiente refleja el diseño original de este ADR. La estructura real
+> implementada vive en `frontend/` (no `frontend-nextjs/`) bajo un directorio `src/`, con
+> algunas carpetas renombradas — ver estructura actual más abajo.
+
 ```
 frontend-nextjs/
 ├── app/                    # Next.js App Router
@@ -83,6 +92,24 @@ frontend-nextjs/
 │   ├── unit/               # Vitest tests
 │   └── e2e/                # Playwright tests
 └── public/                 # Static assets
+```
+
+**Estructura actual (`frontend/`):**
+
+```
+frontend/
+├── src/
+│   ├── app/                # Next.js App Router (dashboard/, login/, auditoria/)
+│   ├── components/         # ui/, layout/, motion/, shared/
+│   ├── hooks/               # Custom React hooks
+│   ├── lib/                 # api-client, utils
+│   ├── store/                # Zustand stores (auth-store, etc.)
+│   ├── theme/                 # Design tokens + form patterns (tokens.ts, form-patterns.tsx)
+│   ├── i18n/                  # Internationalization
+│   ├── types/                 # TypeScript types (mirrors backend DTOs)
+│   └── tests/                 # Vitest unit/component tests
+├── tests/e2e/               # Playwright E2E tests (cuNN-*.spec.ts, per Caso de Uso)
+└── public/                  # Static assets
 ```
 
 ### Estrategia de Migración (Backend For Frontend)
@@ -122,9 +149,17 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 
 - Usar `openapi-typescript` para generar types automáticamente desde la spec de Swagger
 - Migración incremental: un módulo de CUs por sprint
-- El módulo `frontend-swing` se mantiene durante la transición hasta que cada CU sea validado
+- El módulo `frontend-swing` (hoy `deprecated-frontend-swing`) se mantiene durante la
+  transición hasta que cada CU sea validado
 
 ## Implementation Plan
+
+> **Nota de estado:** este plan de sprints refleja la intención original del ADR. La
+> migración está sustancialmente implementada en `frontend/` (Next.js 16, no un módulo
+> Maven — ver [Solution Strategy](../201-SAD/sad.md)). Para el estado real de cobertura
+> por Caso de Uso, ver la matriz de trazabilidad
+> [`CU-API-MATRIX.csv`](../../300-development/303-testing/CU-API-MATRIX.csv) en vez de
+> los checkboxes por sprint a continuación, que no se han mantenido actualizados.
 
 ### Sprint 1: Setup Base
 - [ ] Crear módulo `frontend-nextjs` en el mono-repo Maven
@@ -150,8 +185,9 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 - [ ] Migrar CU28, CU33, CU36, CU40, CU63-CU68
 
 ### Sprint 10: E2E & Deprecation
-- [ ] Playwright E2E para todos los flujos
-- [ ] Deprecar y eliminar `frontend-swing`
+- [x] Playwright E2E para todos los flujos (`frontend/tests/e2e/`, 33+ `cuNN-*.spec.ts`)
+- [x] Deprecar `frontend-swing` (renombrado a `deprecated-frontend-swing`, excluido del
+      reactor Maven raíz — eliminación completa aún pendiente, ver issue #811)
 
 ## References
 

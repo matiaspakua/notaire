@@ -3,8 +3,13 @@
 **Status:** Accepted  
 **Date:** 2024-03-20  
 **Deciders:** Matías Miguez  
-**Related:** ADR-001  
+**Related:** ADR-001, ADR-005  
 **Supersedes:** Legacy monolithic structure  
+
+> **Update (see ADR-005):** the `frontend-swing` module referenced below was later
+> renamed to `deprecated-frontend-swing` and excluded from the root Maven reactor.
+> `mvn clean install -pl frontend-swing -am` no longer works — see the corrected
+> command in [Build Commands](#build-commands).
 
 ## Context
 
@@ -271,8 +276,8 @@ mvn clean install
 # Build backend solo
 mvn clean install -pl backend-api -am
 
-# Build frontend solo
-mvn clean install -pl frontend-swing -am
+# Build frontend solo (module excluded from root reactor; build standalone)
+cd deprecated-frontend-swing && mvn clean install
 
 # Build shared solo
 mvn clean install -pl notaire-shared

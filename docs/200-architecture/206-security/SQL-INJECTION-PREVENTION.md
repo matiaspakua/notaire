@@ -132,6 +132,6 @@ The test must remain green. If it ever returns `valido: true` or a 5xx, a regres
 
 ## Related documentation
 
-- `docs/04-operations/03-security/INPUT-VALIDATION-STRATEGY.md`
-- `docs/04-operations/03-security/API-AUTHENTICATION-GUIDE.md`
+- [`INPUT-VALIDATION-STRATEGY.md`](INPUT-VALIDATION-STRATEGY.md)
+- [`API-AUTHENTICATION-GUIDE.md`](API-AUTHENTICATION-GUIDE.md)
 - `.claude/rules/programming.md` — Security section

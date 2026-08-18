@@ -12,8 +12,9 @@ Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, impleme
 Client ──POST /api/v1/usuarios/login──► UsuarioController
                                               │
                                     ──────────▼──────────
-                                    │ validateCredentials │
-                                    │ MD5(password) check │
+                                    │ passwordMatches()   │
+                                    │ BCrypt (legacy MD5  │
+                                    │ auto-migrated)      │
                                     └──────────┬──────────┘
                                                │
                                     ──────────▼──────────
@@ -80,7 +81,7 @@ Both clients capture the `token` field from the login response and attach it as
 | Client | Token capture | Header attachment |
 |--------|---------------|--------------------|
 | Next.js dashboard | `useAuthStore` (`frontend/src/store/auth-store.ts`) persists `token` alongside the user | `frontend/src/lib/api-client.ts`'s `buildHeaders()` reads the persisted token and sets `Authorization` |
-| Swing desktop client | `RestClient.login()` (`frontend-swing/.../api/client/RestClient.java`) stores the token from the response DTO in a static field via `setAuthToken()` | `RestClient`'s private request builders (`makeGetRequest`, `makePostRequest`, `makePutRequest`, `makeDeleteRequest`, `makeGetRequestBytes`) call `applyAuthHeader()` before connecting |
+| Swing desktop client (deprecated) | `RestClient.login()` (`deprecated-frontend-swing/.../api/client/RestClient.java`) stores the token from the response DTO in a static field via `setAuthToken()` | `RestClient`'s private request builders (`makeGetRequest`, `makePostRequest`, `makePutRequest`, `makeDeleteRequest`, `makeGetRequestBytes`) call `applyAuthHeader()` before connecting |
 
 The shared `DtoUsuario` (`notaire-shared`) and the TypeScript `DtoUsuario` type
 both carry an optional `token` field, populated only in the login response.
@@ -157,14 +158,14 @@ Currently tokens are single-use with a 24-hour TTL (configurable). There is no r
 ## Security checklist
 
 - [ ] Change `jwt.secret` before deploying to production
-- [ ] Use HTTPS in production (see HTTPS/TLS guide)
+- [ ] Use HTTPS in production (see [Deployment Guide — Production Considerations](../209-deployment/README.md#production-considerations))
 - [ ] Set `jwt.expiration-ms` appropriate for your threat model
 - [ ] Log all login failures (done via Micrometer + Prometheus)
 - [ ] Monitor `notaire_operation_total{operation="login",status="bad_credentials"}` for brute-force
 
 ## Related documentation
 
-- `docs/04-operations/03-security/SQL-INJECTION-PREVENTION.md`
-- `docs/04-operations/03-security/INPUT-VALIDATION-STRATEGY.md`
+- [`SQL-INJECTION-PREVENTION.md`](SQL-INJECTION-PREVENTION.md)
+- [`INPUT-VALIDATION-STRATEGY.md`](INPUT-VALIDATION-STRATEGY.md)
 - `infra/grafana/provisioning/dashboards/notaire-auth.json` — login metrics dashboard
 - `infra/prometheus/alert-rules.yml` — brute-force alert rules
