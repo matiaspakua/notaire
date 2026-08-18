@@ -1,0 +1,41 @@
+@startuml clientes
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Clientes
+
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Escribano
+actor Persona
+actor Cliente
+
+rectangle "Módulo Clientes" {
+  usecase "CU17 - Dar Alta persona" as CU17
+  usecase "CU54 - Modificar Persona" as CU54
+  usecase "CU18 - Dar Alta Cliente" as CU18
+  usecase "CU41 - Modificar Cliente" as CU41
+  usecase "CU46 - Ver detalle cliente" as CU46
+  usecase "CU61 - Buscar persona o cliente" as CU61
+  usecase "CU19 - Buscar gestiones de un Cliente" as CU19
+}
+
+RecepcionistaGestor --> CU17 : solicita
+RecepcionistaGestor --> CU18 : solicita
+RecepcionistaGestor --> CU41 : requiere
+RecepcionistaGestor --> CU46 : requiere
+Escribano --> CU46 : requiere
+Escribano --> CU19 : solicita
+
+Persona --> CU17 : aporta datos
+Persona --> CU54 : aporta datos
+Persona --> CU18 : aporta datos
+Cliente --> CU41 : aporta datos
+Cliente --> CU61 : solicita
+Cliente --> CU19 : solicita
+
+CU18 ..> CU61 : <<include>>
+CU54 ..> CU61 : <<include>>
+CU41 ..> CU61 : <<include>>
+CU46 ..> CU61 : <<include>>
+CU19 ..> CU61 : <<include>>
+
+@enduml

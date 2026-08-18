@@ -1,0 +1,22 @@
+@startuml administracion-tramites
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Trámites (Administración)
+
+actor Escribano
+
+rectangle "Módulo Trámites" {
+  usecase "CU26 - Ingresar nuevo tipo de trámite" as CU26
+  usecase "CU31 - Modificar tipo de trámite" as CU31
+  usecase "CU57 - Eliminar tipo de trámite" as CU57
+  usecase "CU64 - Buscar Tipo de trámite" as CU64
+}
+
+Escribano --> CU26 : requiere
+Escribano --> CU31 : requiere
+Escribano --> CU57 : requiere
+
+CU31 ..> CU64 : <<include>>
+CU57 ..> CU64 : <<include>>
+
+@enduml

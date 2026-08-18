@@ -1,0 +1,31 @@
+@startuml administracion-escribanos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Escribanos (Administración)
+
+actor Administrador
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+
+rectangle "Módulo Escribanos" {
+  usecase "CU48 - Dar alta escribano" as CU48
+  usecase "CU51 - Modificar escribano" as CU51
+  usecase "CU22 - Registrar Suplencia" as CU22
+  usecase "CU59 - Consultar Suplencias" as CU59
+}
+
+usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+
+Administrador --> CU48 : requiere
+Administrador --> CU51 : requiere
+Escribano --> CU51 : requiere
+Escribano --> CU22 : solicita
+Escribano --> CU59 : solicita
+RecepcionistaGestor --> CU59 : solicita
+
+CU48 ..> CU61 : <<include>>
+CU51 ..> CU61 : <<include>>
+CU22 ..> CU61 : <<include>>
+CU59 ..> CU61 : <<include>>
+
+@enduml

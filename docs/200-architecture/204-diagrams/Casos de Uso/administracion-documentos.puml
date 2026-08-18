@@ -1,0 +1,22 @@
+@startuml administracion-documentos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Documentos (Administración)
+
+actor Escribano
+
+rectangle "Módulo Documentos" {
+  usecase "CU27 - Ingresar nuevo tipo de documento" as CU27
+  usecase "CU32 - Modificar tipo de documento" as CU32
+  usecase "CU38 - Eliminar tipo de documento" as CU38
+  usecase "CU65 - Buscar Tipos de documentos" as CU65
+}
+
+Escribano --> CU27 : requiere
+Escribano --> CU32 : requiere
+Escribano --> CU38 : requiere
+
+CU32 ..> CU65 : <<include>>
+CU38 ..> CU65 : <<include>>
+
+@enduml

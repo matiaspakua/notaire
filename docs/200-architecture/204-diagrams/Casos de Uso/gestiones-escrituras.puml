@@ -1,0 +1,34 @@
+@startuml gestiones-escrituras
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Escrituras
+
+actor Escribano
+actor Cliente
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+
+rectangle "Módulo Escrituras" {
+  usecase "CU05 - Preparar escritura" as CU05
+  usecase "CU06 - Firmar escritura" as CU06
+  usecase "CU62 - Buscar Escritura" as CU62
+  usecase "CU52 - Modificar Escritura" as CU52
+}
+
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+usecase "CU63 - Buscar Folios\n(from Folios)" as CU63
+
+Escribano --> CU05 : prepara
+Escribano --> CU06 : requiere
+Escribano --> CU62 : requiere
+Cliente --> CU05 : aporta datos
+Cliente --> CU06 : participa
+Cliente --> CU52 : participa
+RecepcionistaGestor --> CU62 : requiere
+RecepcionistaGestor --> CU52 : requiere
+
+CU05 ..> CU19 : <<include>>
+CU05 ..> CU06 : <<extend>>
+CU52 ..> CU62 : <<include>>
+CU52 ..> CU63 : <<include>>
+
+@enduml

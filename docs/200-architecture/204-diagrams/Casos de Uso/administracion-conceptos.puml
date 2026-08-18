@@ -1,0 +1,22 @@
+@startuml administracion-conceptos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Conceptos (Administración)
+
+actor Escribano
+
+rectangle "Módulo Conceptos" {
+  usecase "CU29 - Ingresar nuevo concepto" as CU29
+  usecase "CU34 - Modificar concepto" as CU34
+  usecase "CU37 - Eliminar concepto" as CU37
+  usecase "CU66 - Buscar Conceptos" as CU66
+}
+
+Escribano --> CU29 : requiere
+Escribano --> CU34 : requiere
+Escribano --> CU37 : requiere
+
+CU34 ..> CU66 : <<include>>
+CU37 ..> CU66 : <<include>>
+
+@enduml

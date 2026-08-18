@@ -1,0 +1,27 @@
+@startuml administracion-plantilla-presupuestos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Plantillas de Presupuestos (Administración)
+
+actor Escribano
+
+rectangle "Módulo Plantillas de Presupuestos" {
+  usecase "CU39 - Crear Plantilla Presupuesto" as CU39
+  usecase "CU55 - Modificar Plantilla Presupuesto" as CU55
+  usecase "CU49 - Eliminar Plantilla Presupuesto" as CU49
+}
+
+usecase "CU66 - Buscar Conceptos\n(from Conceptos)" as CU66
+usecase "CU64 - Buscar Tipo de trámite\n(from Trámites)" as CU64
+
+Escribano --> CU39 : requiere
+Escribano --> CU55 : requiere
+Escribano --> CU49 : requiere
+
+CU39 ..> CU66 : <<include>>
+CU39 ..> CU64 : <<include>>
+CU55 ..> CU66 : <<include>>
+CU55 ..> CU64 : <<include>>
+CU49 ..> CU64 : <<include>>
+
+@enduml

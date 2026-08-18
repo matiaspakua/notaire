@@ -1,0 +1,24 @@
+@startuml actores
+!theme plain
+title Actores del Sistema Notaire
+
+actor Persona
+actor Cliente
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Administrador
+
+Cliente --|> Persona
+Escribano --|> Persona
+RecepcionistaGestor --|> Persona
+Administrador --|> Persona
+
+note right of Persona
+  Actor abstracto: agrupa los atributos y
+  casos de uso comunes a toda persona
+  registrada en el sistema. Cliente,
+  Escribano, Recepcionista/Gestor y
+  Administrador especializan a Persona.
+end note
+
+@enduml

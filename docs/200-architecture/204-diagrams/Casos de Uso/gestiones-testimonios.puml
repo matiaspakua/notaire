@@ -1,0 +1,27 @@
+@startuml gestiones-testimonios
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Testimonios
+
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Cliente
+
+rectangle "Módulo Testimonios" {
+  usecase "CU07 - Generar testimonio" as CU07
+  usecase "CU08 - Verificar Testimonio" as CU08
+  usecase "CU12 - Retirar testimonio" as CU12
+}
+
+usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
+
+Escribano --> CU07 : requiere
+Escribano --> CU08 : requiere
+RecepcionistaGestor --> CU12 : registra
+Cliente --> CU12 : solicita
+
+CU07 ..> CU62 : <<include>>
+CU08 ..> CU62 : <<include>>
+CU12 ..> CU62 : <<include>>
+
+@enduml

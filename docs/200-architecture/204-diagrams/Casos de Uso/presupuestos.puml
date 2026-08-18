@@ -1,0 +1,29 @@
+@startuml presupuestos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Presupuesto
+
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Persona
+
+rectangle "Módulo Presupuesto" {
+  usecase "CU01 - Preparar Presupuesto" as CU01
+  usecase "CU60 - Buscar Presupuesto" as CU60
+  usecase "CU45 - Modificar presupuesto" as CU45
+}
+
+usecase "CU64 - Buscar Tipo de trámite\n(from Trámites)" as CU64
+usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+
+RecepcionistaGestor --> CU01 : prepara
+RecepcionistaGestor --> CU60 : busca / necesita
+RecepcionistaGestor --> CU45 : requiere
+Persona --> CU01 : aporta datos
+Persona --> CU45 : aporta datos
+
+CU01 ..> CU64 : <<include>>
+CU01 ..> CU61 : <<include>>
+CU60 ..> CU61 : <<include>>
+CU45 ..> CU60 : <<include>>
+
+@enduml

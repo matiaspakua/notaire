@@ -1,0 +1,41 @@
+@startuml gestiones-documentacion
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Documentación
+
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Escribano
+actor Cliente
+actor Persona
+
+rectangle "Módulo Documentación" {
+  usecase "CU42 - Informar próximos vencimientos" as CU42
+  usecase "CU04 - Registrar documentación cliente" as CU04
+  usecase "CU03 - Lista documentos y certificados necesarios" as CU03
+  usecase "CU09 - Registrar deudas documentos de Cliente" as CU09
+  usecase "CU10 - Registrar movimientos de documentación de entidades externas" as CU10
+  usecase "CU43 - Reingresar documentación" as CU43
+}
+
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+
+RecepcionistaGestor --> CU42 : se le informa
+RecepcionistaGestor --> CU04 : registra
+RecepcionistaGestor --> CU03 : solicita
+RecepcionistaGestor --> CU09 : requiere
+
+Escribano --> CU42 : se le informa
+Escribano --> CU09 : registra
+Escribano --> CU10 : requiere
+Escribano --> CU43 : registra
+
+Cliente --> CU04 : hace entrega
+Cliente --> CU03 : requiere
+Persona --> CU03 : requiere
+
+CU04 ..> CU19 : <<include>>
+CU09 ..> CU19 : <<include>>
+CU10 ..> CU19 : <<include>>
+CU43 ..> CU19 : <<include>>
+
+@enduml
