@@ -972,25 +972,25 @@ The `jpa` package contains 27 `*JpaController` classes — a legacy data-access 
 
 ## 9. Architectural Decisions
 
-All decisions are documented as Architecture Decision Records (ADRs) in `docs/02-architecture/01-adr/`.
+All decisions are documented as Architecture Decision Records (ADRs) in `docs/200-architecture/202-ADR/`.
 
 | ADR | Title | Status | Scope |
 |-----|-------|--------|-------|
-| [ADR-001](../01-adr/ADR-001-microservices-architecture.md) | Microservices Architecture | Accepted | System architecture |
-| [ADR-002](../01-adr/ADR-002-module-structure.md) | Module Structure | Accepted | Code organization |
-| [ADR-003](../01-adr/ADR-003-rest-api-versioning.md) | REST API Versioning | Accepted | API evolution |
-| [ADR-004](../01-adr/ADR-004-database-migration.md) | Database Migration | Accepted | Data persistence |
-| [ADR-005](../01-adr/ADR-005-modern-frontend-migration.md) | Modern Frontend Migration | Accepted | Frontend architecture |
-| [ADR-006](../01-adr/ADR-006-testing-strategy.md) | Testing Strategy | Accepted | QA & validation |
-| [ADR-007](../01-adr/ADR-007-database-schema-versioning-flyway.md) | Database Schema Versioning (Flyway) | Accepted | Data persistence |
-| [ADR-008](../01-adr/ADR-008-security-authentication.md) | Security & Authentication | Accepted | Security |
-| [ADR-009](../01-adr/ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | Observability |
-| [ADR-010](../01-adr/ADR-010-error-handling.md) | Error Handling | Accepted | Resilience |
-| [ADR-011](../01-adr/ADR-011-centralized-design-system.md) | Centralized Design System | Accepted | UI/UX |
-| [ADR-012](../01-adr/ADR-012-ci-cd-pipeline.md) | CI/CD Pipeline Strategy | Accepted | DevOps |
-| [ADR-013](../01-adr/ADR-013-audit-trail.md) | Audit Trail Implementation | Accepted | Compliance |
-| [ADR-014](../01-adr/ADR-014-workflow-engine.md) | Workflow Engine | Accepted | Business logic |
-| [ADR-015](../01-adr/ADR-015-internationalization.md) | Internationalization | Accepted | UX |
+| [ADR-001](../202-ADR/ADR-001-microservices-architecture.md) | Microservices Architecture | Accepted | System architecture |
+| [ADR-002](../202-ADR/ADR-002-module-structure.md) | Module Structure | Accepted | Code organization |
+| [ADR-003](../202-ADR/ADR-003-rest-api-versioning.md) | REST API Versioning | Accepted | API evolution |
+| [ADR-004](../202-ADR/ADR-004-database-migration.md) | Database Migration | Accepted | Data persistence |
+| [ADR-005](../202-ADR/ADR-005-modern-frontend-migration.md) | Modern Frontend Migration | Accepted | Frontend architecture |
+| [ADR-006](../202-ADR/ADR-006-testing-strategy.md) | Testing Strategy | Accepted | QA & validation |
+| [ADR-007](../202-ADR/ADR-007-database-schema-versioning-flyway.md) | Database Schema Versioning (Flyway) | Accepted | Data persistence |
+| [ADR-008](../202-ADR/ADR-008-security-authentication.md) | Security & Authentication | Accepted | Security |
+| [ADR-009](../202-ADR/ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | Observability |
+| [ADR-010](../202-ADR/ADR-010-error-handling.md) | Error Handling | Accepted | Resilience |
+| [ADR-011](../202-ADR/ADR-011-centralized-design-system.md) | Centralized Design System | Accepted | UI/UX |
+| [ADR-012](../202-ADR/ADR-012-ci-cd-pipeline.md) | CI/CD Pipeline Strategy | Accepted | DevOps |
+| [ADR-013](../202-ADR/ADR-013-audit-trail.md) | Audit Trail Implementation | Accepted | Compliance |
+| [ADR-014](../202-ADR/ADR-014-workflow-engine.md) | Workflow Engine | Accepted | Business logic |
+| [ADR-015](../202-ADR/ADR-015-internationalization.md) | Internationalization | Accepted | UX |
 
 ---
 
@@ -1122,9 +1122,9 @@ O --> (Deployability Docker)
 - [CONSTITUTION.md](../../../CONSTITUTION.md) — Engineering process
 - [AGENTS.md](../../../AGENTS.md) — Agent configuration
 - [CHANGELOG.md](../../../CHANGELOG.md) — Version history
-- [ADR Index](../01-adr/README.md) — All architectural decisions
-- [Design System](../03-design/DESIGN-SYSTEM.md) — Frontend design guide
-- [SAR-007](../SAR-007-flyway-implementation.md) — Flyway implementation details
+- [ADR Index](../202-ADR/README.md) — All architectural decisions
+- [Design System](../203-design/FRONTEND-DESIGN-SYSTEM.md) — Frontend design guide
+- [ADR-007](../202-ADR/ADR-007-database-schema-versioning-flyway.md) — Flyway implementation details
 
 ### External References
 - [arc42 Template](https://docs.arc42.org/home/)
@@ -1134,7 +1134,7 @@ O --> (Deployability Docker)
 - [PostgreSQL 16 Documentation](https://www.postgresql.org/docs/16/)
 
 ### Diagram Sources
-All PlantUML diagram sources are in `docs/02-architecture/03-diagrams/`:
+All PlantUML diagram sources are in `docs/200-architecture/204-diagrams/`:
 - `architecture-legacy.puml` — Legacy monolithic architecture
 - `architecture-target.puml` — Target three-tier architecture
 - `deployment-docker.puml` — Docker Compose deployment

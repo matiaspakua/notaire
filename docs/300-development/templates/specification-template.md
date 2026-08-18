@@ -60,7 +60,7 @@ the Acceptance Criteria in the GitHub Issue.
 
 OpenSpec does not model approvals. They are recorded where they are enforced:
 
-- **Architecture** — the ADR under `docs/02-architecture/01-adr/`, when required.
+- **Architecture** — the ADR under `docs/200-architecture/202-ADR/`, when required.
 - **Engineering** — Pull Request review by the code owner (`CODEOWNERS`), Gate 4.
 - **Product / Business** — the GitHub Issue, before Gate 1.
 

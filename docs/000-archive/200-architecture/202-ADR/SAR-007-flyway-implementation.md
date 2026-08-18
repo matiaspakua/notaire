@@ -1,3 +1,9 @@
+> **Archived:** this Solution Architecture Report was previously misfiled as
+> `docs/200-architecture/202-ADR/ADR-012-flyway-implementation.md`. It duplicated the decision already
+> recorded in [ADR-007](../../../../200-architecture/202-ADR/ADR-007-database-schema-versioning-flyway.md),
+> which now includes this document's unique "AI Agent Guidelines" section. Kept here for historical
+> reference only.
+
 # SAR-007: Flyway Implementation for Database Schema Versioning
 
 **Date:** 2026-04-14

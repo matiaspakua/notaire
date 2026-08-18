@@ -74,7 +74,7 @@ curl -X GET "http://localhost:8080/api/v1/presupuestos" \
 
 ## 📖 Navigation
 
-- **[← Back to Docs](../)** - Volver a índice principal
-- **[Development](../03-development/)** - Cómo desarrollar endpoints
-- **[Architecture](../02-architecture/)** - Decisiones de API
+- **[← Back to Docs](../../)** - Volver a índice principal
+- **[Development](../../300-development/)** - Cómo desarrollar endpoints
+- **[SAD](../201-SAD/sad.md)** - Decisiones de arquitectura
 

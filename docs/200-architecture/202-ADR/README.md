@@ -17,6 +17,10 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [009](ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | 2024-04-28 | Observability |
 | [010](ADR-010-error-handling.md) | Error Handling | Accepted | 2024-04-28 | Resilience |
 | [011](ADR-011-centralized-design-system.md) | Centralized Design System | Accepted | 2026-05-12 | UI/UX |
+| [012](ADR-012-ci-cd-pipeline.md) | CI/CD Pipeline (GitHub Actions) | Accepted | 2026-03-24 | DevOps |
+| [013](ADR-013-audit-trail.md) | Audit Trail (Spring AOP) | Accepted | 2026-05-12 | Security & Compliance |
+| [014](ADR-014-workflow-engine.md) | Workflow Engine (data-driven) | Accepted | 2026-06-09 | Domain model |
+| [015](ADR-015-internationalization.md) | Internationalization (next-intl) | Accepted | 2026-05-23 | Frontend |
 
 ## ADR Status Legend
 
@@ -68,6 +72,18 @@ Cada ADR sigue esta estructura:
 
 ### Observability (1 ADR)
 - **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
+
+### DevOps (1 ADR)
+- **ADR-012**: Pipeline CI/CD con GitHub Actions
+
+### Security & Compliance (1 ADR)
+- **ADR-013**: Auditoría transversal con Spring AOP
+
+### Domain Model (1 ADR)
+- **ADR-014**: Motor de workflow configurable para gestiones
+
+### Frontend (1 ADR adicional)
+- **ADR-015**: Internacionalización con next-intl
 
 ## Key Architectural Principles
 
@@ -159,7 +175,6 @@ Para evaluar si nuestras decisiones fueron correctas, monitorearemos:
 
 ## Navigation
 
-- [← Back to Architecture](../README.md)
-- [Overview](../02-overview/)
-- [Diagrams](../03-diagrams/)
-- [Patterns](../04-patterns/)
+- [SAD (Software Architecture Document)](../201-SAD/sad.md)
+- [Diagrams](../204-diagrams/)
+- [Design System](../203-design/)

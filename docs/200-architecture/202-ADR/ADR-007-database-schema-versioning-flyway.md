@@ -322,6 +322,25 @@ public class NotaireBackendApplication {
 - ADR-004: Database Migration MySQL → PostgreSQL
 - Issue #252: Implement Flyway for database schema migration
 
+## AI Agent Guidelines
+
+Reference files AI coding agents must consult before writing a migration:
+
+| File | Description |
+|------|-------------|
+| `.claude/skills/flyway/SKILL.md` | Complete Flyway skill with examples |
+| `.claude/rules/database-migrations.md` | Mandatory rules for migrations |
+
+Mandatory rules for agents:
+
+1. **Never modify existing migrations** — always create a new one.
+2. **Always version** — format `V{n}__{description}.sql`.
+3. **Mandatory location** — `backend-api/src/main/resources/db/migration/`.
+4. **Idempotent SQL** — use `IF EXISTS` / `IF NOT EXISTS`.
+5. **Sequences** — include `setval` after any `INSERT` with an explicit ID.
+
+Agent workflow: analyze the required schema change → check the current version (`ls db/migration/`) → create `V{n+1}__{description}.sql` with the standard header template (see [Migration Scripts Templates](#migration-scripts-templates) above) → validate with `mvn flyway:validate` → commit referencing the issue.
+
 ## Related ADRs
 
 - ADR-001: Microservices Architecture

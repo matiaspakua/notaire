@@ -699,4 +699,4 @@ open backend-api/api-test/results.html
 | API Reference | `docs/05-api/REST-API-REFERENCE.md` |
 | Bruno Tests | `backend-api/api-test/` |
 | Frontend Docs | `docs/FRONTEND-QUICK-REFERENCE.md` |
-| Design System | `docs/02-architecture/03-design/DESIGN-SYSTEM.md` |
+| Design System | `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` |

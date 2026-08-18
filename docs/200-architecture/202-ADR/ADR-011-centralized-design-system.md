@@ -28,7 +28,7 @@ We will implement a **centralized, token-based design system** inspired by Apple
 - `frontend/src/theme/form-patterns.tsx` — Reusable form component patterns
 
 **Design System Documentation:**
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Complete design system guide
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Complete design system guide
 
 **AI Agent Guidance:**
 - `rules/ui-ux-design.md` — Mandatory UI/UX rules
@@ -131,7 +131,7 @@ All forms must follow this structure:
 
 - `.claude/rules/ui-ux-design.md` — Mandatory UI/UX rules
 - `.claude/skills/frontend-design/SKILL.md` — Design system implementation skill
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Complete design system documentation
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Complete design system documentation
 
 ## Verification
 

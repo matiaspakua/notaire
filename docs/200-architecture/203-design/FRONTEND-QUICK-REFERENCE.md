@@ -8,7 +8,7 @@
 |------|---------|
 | `frontend/src/theme/tokens.ts` | Design tokens (colors, spacing, typography) |
 | `frontend/src/theme/form-patterns.tsx` | Form components (FormContainer, FormField, etc.) |
-| `docs/02-architecture/03-design/DESIGN-SYSTEM.md` | Full documentation |
+| `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` | Full documentation |
 | `.claude/rules/ui-ux-design.md` | Mandatory rules |
 
 ## Form Template
@@ -447,7 +447,7 @@ import { theme } from "@/theme/tokens";
 
 ## Quick Links
 
-- **Design System**: `docs/02-architecture/03-design/DESIGN-SYSTEM.md`
+- **Design System**: `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md`
 - **Theme Source**: `frontend/src/theme/tokens.ts`
 - **Form Patterns**: `frontend/src/theme/form-patterns.tsx`
 - **UI/UX Rules**: `.claude/rules/ui-ux-design.md`

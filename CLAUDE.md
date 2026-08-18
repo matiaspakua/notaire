@@ -233,7 +233,7 @@ When working on frontend forms:
 - `src/theme/tokens.ts` — Design tokens (colors, spacing, typography, shadows, etc.)
 - `src/theme/index.ts` — Utilities and hooks for using tokens
 - `src/theme/form-patterns.tsx` — Reusable form component patterns
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Full design system documentation
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Full design system documentation
 
 **Form Development Pattern:**
 ```tsx
