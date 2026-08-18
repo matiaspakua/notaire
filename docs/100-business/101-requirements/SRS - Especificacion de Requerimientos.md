@@ -47,7 +47,7 @@ Este documento especifica los requisitos funcionales y no funcionales del sistem
 | Documento | Ubicación | Propósito |
 |-----------|-----------|----------|
 | Relevamiento del Sistema (RS) | `RS - Relevamiento del Sistema.md` | Información de negocio, procesos y contexto |
-| Catálogo de Requisitos | `requerimientos.csv` | Listado estructurado de 121 requisitos |
+| Catálogo de Requisitos | `requerimientos.csv` | Listado estructurado de 119 requisitos (#3-#121) |
 | Especificación de Requerimientos (SRS) | Este documento | Especificación detallada con trazabilidad |
 
 ---
@@ -132,7 +132,7 @@ La presente especificación fue validada contra el archivo fuente `requerimiento
 | #88-#89 | Requerimientos de Hardware | 8 | 2 |
 | #90-#93 | Requerimientos para el Desarrollo | 9 | 4 |
 
-**Total de requisitos:** 121 (100% cubierta)
+**Total de requisitos:** 119 (#3-#121, 100% cubierta)
 
 ---
 
@@ -749,8 +749,8 @@ Tipos de trámite del Protocolo Auxiliar incluyen: actas de certificaciones, act
 
 ### Verificación cruzada
 
-- **Cobertura total:** Todos los 121 requisitos del CSV están representados en el SRS
-- **Trazabilidad completa:** Cada requisito tiene un ID único (#1-#121) y es referenciable
+- **Cobertura total:** Todos los 119 requisitos del CSV están representados en el SRS
+- **Trazabilidad completa:** Cada requisito tiene un ID único (#3-#121, sin huecos) y es referenciable
 - **Alineación de contenido:** El contenido del SRS permanece consistente con la fuente original (CSV y RS)
 - **No hay requisitos adicionales:** Solo se incluyen los requisitos definidos en la matriz de trazabilidad
 
@@ -758,7 +758,7 @@ Tipos de trámite del Protocolo Auxiliar incluyen: actas de certificaciones, act
 
 | Aspecto | Estado | Evidencia |
 |---------|--------|-----------|
-| Cobertura de requisitos | ✓ Completa | 121/121 requisitos documentados |
+| Cobertura de requisitos | ✓ Completa | 119/119 requisitos documentados |
 | Trazabilidad | ✓ Completa | Cada requisito vinculado a CSV |
 | Consistencia | ✓ Verificada | Contenido alineado entre SRS-CSV-RS |
 | Descripciones | ✓ Extendidas | Especificaciones detalladas por requisito |

@@ -45,7 +45,7 @@ CU43 – Reingresar documentación,Gestiones,Esencial,Terminado,100,Terminado,10
 CU44 – Reingresar testimonio,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#197
 CU45 – Modificar presupuesto,Presupuestos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#198
 CU46 – Ver detalle cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#199
-CU47- Consultar pago,Pagos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#200
+CU47 – Consultar Pago,Pagos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#200
 CU48 – Dar alta escribano,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#201
 CU49 – Eliminar Plantilla Presupuesto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#202
 CU50 – Generar Declaración Jurada de Rentas,Protocolos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#203

@@ -23,10 +23,10 @@ GitHub_ID,Titulo,Tipo,Descripción
 #24,Consultar estado e historial de los trámites,Requerimientos Funcionales,Requerimientos asociados a consultar el estado actual de un trámite y el historial (cambios de estado) del mismo
 #25,Saber el estado de un trámite en un momento determinado,Requerimientos Funcionales,Permitir consultar el estado actual de un trámite en cualquier momento
 #26,Informar el historial de un trámite,Requerimientos Funcionales,"Permitir visualizar la cronología del trámite, indicando todos los cambios de estado, las fechas, las observaciones y los documentos/certificados asociados. Incluir fechas de solicitud, entrega y documentos pendientes."
-#27,Generar escrituras,Requerimientos Funcionales,Requerimientos asociados con la creación, modificación y cambios de estado de las escrituras
+#27,Generar escrituras,Requerimientos Funcionales,"Requerimientos asociados con la creación, modificación y cambios de estado de las escrituras"
 #28,Preparar escrituras,Requerimientos Funcionales,"Permitir registrar nuevas escrituras en la gestión de trámites. Se deberá registrar: número de escritura, fecha, números de folio utilizados, trámites involucrados, cuerpo de escritura y rol de cada cliente interviniente."
 #29,Firmar escrituras,Requerimientos Funcionales,Todas las escrituras deben estar firmadas por el escribano y por el cliente o los clientes intervinientes para poder ser aprobadas
-#30,Informar qué escritura(s) conforman un trámite,Requerimientos Funcionales,Permitir indicar qué escrituras forman parte de un trámite con número de escritura, folios que la componen, fecha y registro al cual pertenece
+#30,Informar qué escritura(s) conforman un trámite,Requerimientos Funcionales,"Permitir indicar qué escrituras forman parte de un trámite con número de escritura, folios que la componen, fecha y registro al cual pertenece"
 #31,Modificar escritura,Requerimientos Funcionales,Permitir modificar alguno de los datos de una escritura previamente generada
 #32,Administrar inscripciones,Requerimientos Funcionales,Requerimientos asociados con la inscripción de los trámites
 #33,Generar y registrar testimonios de escrituras,Requerimientos Funcionales,"Se deberá registrar los folios utilizados, la fecha de creación del testimonio, el número del testimonio, copias generadas, fecha de presentación para inscripción si corresponde, e indicar si fueron liberadas todas las deudas."
@@ -37,7 +37,7 @@ GitHub_ID,Titulo,Tipo,Descripción
 #38,Administrar clientes,Requerimientos Funcionales,Requerimientos asociados con la administración de clientes
 #39,Registrar nuevos clientes,Requerimientos Funcionales,"Registrar nuevos clientes de la escribanía con los siguientes datos: nombre y apellido completos, nacionalidad, tipo y número de identificación, CUIT/CUIL, estado civil/número de nupcias, ocupación, domicilio, teléfono y correo electrónico."
 #40,Modificación de clientes,Requerimientos Funcionales,Permitir a los usuarios modificar cualquier dato de los clientes
-#41,Buscar y ver detalle de clientes,Requerimientos Funcionales,Permitir buscar clientes y visualizar sus datos personales, trámites y carpetas asociados, así como trámites inconclusos o deudas
+#41,Buscar y ver detalle de clientes,Requerimientos Funcionales,"Permitir buscar clientes y visualizar sus datos personales, trámites y carpetas asociados, así como trámites inconclusos o deudas"
 #42,Buscar gestiones de cliente,Requerimientos Funcionales,Permitir buscar y presentar la lista de gestiones asociadas a un cliente
 #43,Administrar usuarios,Requerimientos Funcionales,Requerimientos asociados con la gestión de usuarios del sistema
 #44,Crear nuevos usuarios,Requerimientos Funcionales,Permitir la creación y modificación de usuarios del sistema con asociación de permisos correspondientes
@@ -58,22 +58,22 @@ GitHub_ID,Titulo,Tipo,Descripción
 #59,Ingresar nuevos estados,Requerimientos Funcionales,Proveer la capacidad de definir nuevos estados para la gestión de trámites
 #60,Ingresar nuevos conceptos,Requerimientos Funcionales,Proveer la capacidad de definir nuevos conceptos para su inclusión en presupuestos
 #61,Administrar plantillas,Requerimientos Funcionales,Requerimientos asociados con la administración de plantillas de presupuestos y trámites
-#62,Plantillas de trámites,Requerimientos Funcionales,Permitir crear, modificar y eliminar plantillas de trámites
+#62,Plantillas de trámites,Requerimientos Funcionales,"Permitir crear, modificar y eliminar plantillas de trámites"
 #63,Crear nuevas plantillas de trámites,Requerimientos Funcionales,Permitir seleccionar documentos y certificados necesarios para un trámite según una lista predefinida
 #64,Modificar plantillas de trámites,Requerimientos Funcionales,Permitir editar la composición de documentos y certificados asociados a una plantilla existente
 #65,Eliminar plantillas de trámites,Requerimientos Funcionales,Permitir eliminar o deshabilitar una plantilla de trámites para su uso futuro
-#66,Plantillas de presupuestos,Requerimientos Funcionales,Permitir crear, modificar y eliminar plantillas de presupuestos
+#66,Plantillas de presupuestos,Requerimientos Funcionales,"Permitir crear, modificar y eliminar plantillas de presupuestos"
 #67,Crear nuevas plantillas de presupuestos,Requerimientos Funcionales,Permitir seleccionar conceptos necesarios para una plantilla de presupuestos según una lista predefinida
 #68,Modificar plantillas de presupuestos,Requerimientos Funcionales,Permitir editar la composición de conceptos asociados a una plantilla de presupuestos existente
 #69,Eliminar plantillas de presupuestos,Requerimientos Funcionales,Permitir eliminar o deshabilitar una plantilla de presupuestos para su uso futuro
 #70,Uso de memoria RAM,Requerimientos de Rendimiento y Sistema,"El sistema no deberá consumir más de 300 MB de memoria RAM, ya que esto puede ralentizar la computadora"
-#71,Uso de CPU,Requerimientos de Rendimiento y Sistema,"No se deberá utilizar más del 50% de la capacidad del procesador por el mismo motivo que el anterior"
+#71,Uso de CPU,Requerimientos de Rendimiento y Sistema,No se deberá utilizar más del 50% de la capacidad del procesador por el mismo motivo que el anterior
 #72,Tiempo de respuesta,Requerimientos de Rendimiento y Sistema,"Ninguna operación puede demorar más de 10 segundos en completarse, ya que tiempos mayores pueden generar desagrado a los usuarios"
 #73,Múltiples usuarios,Requerimientos de Rendimiento y Sistema,El sistema deberá soportar múltiples usuarios conectados simultáneamente
 #74,Aspecto visual,Requerimientos de Interfaz,Requerimientos asociados con la implementación de aspectos visuales y diseño de ventanas
-#75,Diseño de ventanas,Requerimientos de Interfaz,"El software deberá contar con una interfaz gráfica capaz de visualizar todos los formularios de manera secuencial. La navegación entre campos se deberá poder realizar haciendo clic o presionando la tecla de tabulación."
-#76,Diseño de campos y combos,Requerimientos de Interfaz,"Todos los campos con valores predefinidos se deberán presentar como listas desplegables o cajas de verificación según corresponda"
-#77,Especificación de campos a completar,Requerimientos de Interfaz,"Los nombres de los campos a completar deberán ser lo suficientemente significativos para evitar confusiones o ambigüedades"
+#75,Diseño de ventanas,Requerimientos de Interfaz,El software deberá contar con una interfaz gráfica capaz de visualizar todos los formularios de manera secuencial. La navegación entre campos se deberá poder realizar haciendo clic o presionando la tecla de tabulación.
+#76,Diseño de campos y combos,Requerimientos de Interfaz,Todos los campos con valores predefinidos se deberán presentar como listas desplegables o cajas de verificación según corresponda
+#77,Especificación de campos a completar,Requerimientos de Interfaz,Los nombres de los campos a completar deberán ser lo suficientemente significativos para evitar confusiones o ambigüedades
 #78,Uso de colores en la GUI,Requerimientos de Interfaz,No se deberán utilizar colores que dificulten la correcta visualización de los datos
 #79,Seguimiento del trabajo sobre ventanas,Requerimientos de Interfaz,"En cada pantalla se deberá identificar el proceso que se está realizando y el estado actual del mismo, permitiendo al usuario visualizar su ubicación en todo momento"
 #80,Identificación de sesión,Requerimientos de Interfaz,En todo momento se debe conocer el nombre del usuario que está trabajando en la sesión actual
@@ -87,7 +87,7 @@ GitHub_ID,Titulo,Tipo,Descripción
 #88,PC de escritorio,Requerimientos de Hardware para el Sistema,Requisitos mínimos para PC de escritorio a definir conforme al entorno de despliegue final
 #89,Notebook,Requerimientos de Hardware para el Sistema,Requisitos mínimos para notebook a definir conforme al entorno de despliegue final
 #90,Metodología de desarrollo,Requerimientos para el Desarrollo,Se utilizará la metodología del paradigma de orientación a objetos
-#91,Modelo de desarrollo,Requerimientos para el Desarrollo,"Se utilizará un modelo incremental con iteraciones. Cada iteración constará de la entrega de una versión funcional del software y documentación de los cambios implementados."
+#91,Modelo de desarrollo,Requerimientos para el Desarrollo,Se utilizará un modelo incremental con iteraciones. Cada iteración constará de la entrega de una versión funcional del software y documentación de los cambios implementados.
 #92,Lenguaje de programación,Requerimientos para el Desarrollo,"Se utilizará el lenguaje de programación Java en su última versión estable, siendo uno de los lenguajes más utilizados para desarrollos orientados a objetos y de uso libre"
 #93,Motor de base de datos,Requerimientos para el Desarrollo,"Se utilizará el motor de base de datos libre MySQL en su última versión estable, por su compatibilidad y disponibilidad de información en conjunto con Java"
 #94,Administrar folios,Requerimientos Funcionales,Requerimientos asociados con la gestión de folios del protocolo
@@ -95,18 +95,18 @@ GitHub_ID,Titulo,Tipo,Descripción
 #96,Control de numeración correlativa de folios,Requerimientos Funcionales,Controlar que la numeración de los folios sea correlativa sin faltantes dentro de cada pedido y a lo largo del año
 #97,Manejo de folios dañados (errose),Requerimientos Funcionales,Permitir registrar folios dañados durante la impresión y etiquetarlos como errose
 #98,Manejo de folios no usados (no pasó),Requerimientos Funcionales,Permitir registrar folios impresos pero no utilizados y etiquetarlos como no pasó
-#99,Seguimiento de disponibilidad de folios,Requerimientos Funcionales,Permitir conocer qué folios están disponibles, usados, dañados o marcados como no usados
+#99,Seguimiento de disponibilidad de folios,Requerimientos Funcionales,"Permitir conocer qué folios están disponibles, usados, dañados o marcados como no usados"
 #100,Administrar cuadernos,Requerimientos Funcionales,Requerimientos asociados con la organización de folios en cuadernos
 #101,Generar cuadernos,Requerimientos Funcionales,Permitir agrupar los folios de a diez en cuadernos de forma consecutiva
 #102,Numerar cuadernos,Requerimientos Funcionales,Permitir numerar los cuadernos de forma correlativa de 1 a N
-#103,Generar carátula de cuaderno,Requerimientos Funcionales,Permitir generar la carátula de cuaderno con año, registro, número de cuaderno y descripción de los trámites
+#103,Generar carátula de cuaderno,Requerimientos Funcionales,"Permitir generar la carátula de cuaderno con año, registro, número de cuaderno y descripción de los trámites"
 #104,Administrar carpetas de trámite,Requerimientos Funcionales,Requerimientos asociados con la gestión de carpetas de trámite
 #105,Generar carpeta de trámite,Requerimientos Funcionales,Permitir generar una carpeta con número único cuando un cliente solicita un trámite
-#106,Estados de carpeta,Requerimientos Funcionales,Permitir gestionar los estados de la carpeta: activa, espera y archivada
+#106,Estados de carpeta,Requerimientos Funcionales,"Permitir gestionar los estados de la carpeta: activa, espera y archivada"
 #107,Estados y transiciones del trámite,Requerimientos Funcionales,Requerimientos asociados con la gestión de estados y transiciones del trámite durante su ciclo de vida
 #108,Definir estados del trámite,Requerimientos Funcionales,Permitir definir los estados que puede adoptar un trámite durante su ciclo de vida
 #109,Definir transiciones válidas de estado,Requerimientos Funcionales,Permitir definir qué transiciones de estado son válidas para cada tipo de trámite
-#110,Registrar historial de cambios de estado,Requerimientos Funcionales,Permitir registrar cada cambio de estado con fecha, hora, usuario y observaciones
+#110,Registrar historial de cambios de estado,Requerimientos Funcionales,"Permitir registrar cada cambio de estado con fecha, hora, usuario y observaciones"
 #111,Protocolo auxiliar,Requerimientos Funcionales,Requerimientos específicos para gestionar trámites del protocolo auxiliar donde no se generan carpetas
 #112,Flujo de trámite protocolo auxiliar,Requerimientos Funcionales,Permitir gestionar el flujo simplificado de cinco pasos del protocolo auxiliar
 #113,Administrar suplencias,Requerimientos Funcionales,Requerimientos asociados con la gestión de suplencias de escribanos
@@ -114,7 +114,7 @@ GitHub_ID,Titulo,Tipo,Descripción
 #115,Asignar suplente a una gestión,Requerimientos Funcionales,Permitir asignar un escribano suplente a una gestión específica cuando el titular no pueda actuar
 #116,Historial de suplencias,Requerimientos Funcionales,Permitir mantener un historial completo de las suplencias de cada escribano
 #117,Generar minuta de inscripción,Requerimientos Funcionales,Permitir generar el certificado minuta de inscripción para operaciones con inmuebles
-#118,Seguimiento de presentación para inscripción,Requerimientos Funcionales,Permitir registrar presentación del testimonio, devolución e inscripción del mismo
+#118,Seguimiento de presentación para inscripción,Requerimientos Funcionales,"Permitir registrar presentación del testimonio, devolución e inscripción del mismo"
 #119,Diferencias entre protocolo principal y auxiliar,Requerimientos Funcionales,Permitir definir y gestionar las diferencias entre protocolo principal y auxiliar
 #120,Impresión de testimonios,Requerimientos Funcionales,Permitir la impresión del testimonio en hojas especiales firmado por el escribano
 #121,Control de numeración de escrituras,Requerimientos Funcionales,Permitir garantizar que la numeración de las escrituras sea única y correlativa
