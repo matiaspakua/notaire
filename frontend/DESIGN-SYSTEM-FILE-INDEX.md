@@ -3,16 +3,16 @@
 ## Quick Navigation
 
 **Want to get started quickly?** 
-→ Start with [Frontend Quick Reference](docs/FRONTEND-QUICK-REFERENCE.md)
+→ Start with [Frontend Quick Reference](../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md)
 
 **Want to understand the architecture?**
-→ Read [Design System Architecture](docs/02-architecture/03-design/DESIGN-SYSTEM.md)
+→ Read [Design System Architecture](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)
 
 **Want implementation patterns?**
-→ Check [Frontend Design Skill](.claude/skills/frontend-design/SKILL.md)
+→ Check [Frontend Design Skill](../.claude/skills/frontend-design/SKILL.md)
 
 **Want AI agent guidance?**
-→ Review [UI/UX Rules](.claude/rules/ui-ux-design.md)
+→ Review [UI/UX Rules](../.claude/rules/ui-ux-design.md)
 
 ---
 
@@ -45,7 +45,7 @@
 **Usage:** `import { useTheme } from "@/theme"`
 
 ### 3. Form Component Patterns
-**File:** `frontend/src/theme/form-patterns.tsx`  
+**File:** `src/theme/form-patterns.tsx`  
 **Content:**
 - `FormContainer` - Form wrapper
 - `FormField` - Field component
@@ -76,7 +76,7 @@
 ## Documentation Files
 
 ### 1. Design System Guide
-**File:** `docs/02-architecture/03-design/DESIGN-SYSTEM.md`  
+**File:** `../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md`  
 **Length:** ~1000 lines  
 **Content:**
 - Overview and benefits
@@ -93,7 +93,7 @@
 **Purpose:** Complete, authoritative design system documentation
 
 ### 2. Architecture Decision Record
-**File:** `docs/02-architecture/01-adr/ADR-009-centralized-design-system.md`  
+**File:** `../docs/200-architecture/202-ADR/ADR-011-centralized-design-system.md`  
 **Content:**
 - Context and problem statement
 - Decision and implementation
@@ -106,7 +106,7 @@
 **Purpose:** Document why this design system was chosen
 
 ### 3. Form Implementation Checklist
-**File:** `docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md`  
+**File:** `../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md`  
 **Length:** ~500 items  
 **Content:**
 - Pre-implementation checks
@@ -127,7 +127,7 @@
 **Purpose:** Comprehensive checklist for form developers
 
 ### 4. Frontend Quick Reference
-**File:** `docs/FRONTEND-QUICK-REFERENCE.md`  
+**File:** `../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md`  
 **Length:** ~400 lines  
 **Content:**
 - Essential files
@@ -176,7 +176,7 @@
 ## Rules & Standards Files
 
 ### 1. UI/UX Design Rules
-**File:** `.claude/rules/ui-ux-design.md`  
+**File:** `../.claude/rules/ui-ux-design.md`  
 **Length:** ~900 lines  
 **Content:**
 - Core principles (user-centered, consistency, simplicity, accessibility)
@@ -229,7 +229,7 @@
 ## Skill Files
 
 ### 1. Frontend Design System Skill
-**File:** `.claude/skills/frontend-design/SKILL.md`  
+**File:** `../.claude/skills/frontend-design/SKILL.md`  
 **Length:** ~800 lines  
 **Content:**
 - Skill overview
@@ -264,14 +264,14 @@
 ### Files Created
 1. ✅ `frontend/src/theme/tokens.ts` - Core design tokens
 2. ✅ `frontend/src/theme/index.ts` - Theme utilities
-3. ✅ `frontend/src/theme/form-patterns.tsx` - Form components
+3. ✅ `src/theme/form-patterns.tsx` - Form components
 4. ✅ `frontend/src/theme/README.md` - Theme guide
-5. ✅ `docs/02-architecture/03-design/DESIGN-SYSTEM.md` - Design system guide
+5. ✅ `../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` - Design system guide
 6. ✅ `docs/02-architecture/01-adr/ADR-009-*.md` - Architecture decision
-7. ✅ `docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md` - Implementation checklist
-8. ✅ `docs/FRONTEND-QUICK-REFERENCE.md` - Quick reference
-9. ✅ `.claude/rules/ui-ux-design.md` - Mandatory UI/UX rules
-10. ✅ `.claude/skills/frontend-design/SKILL.md` - Implementation skill
+7. ✅ `../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md` - Implementation checklist
+8. ✅ `../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md` - Quick reference
+9. ✅ `../.claude/rules/ui-ux-design.md` - Mandatory UI/UX rules
+10. ✅ `../.claude/skills/frontend-design/SKILL.md` - Implementation skill
 11. ✅ `DESIGN-SYSTEM-SUMMARY.md` - Implementation summary
 
 ### Files Updated
@@ -283,27 +283,27 @@
 ## How to Use This Documentation
 
 ### For New Developers
-1. Start with [Frontend Quick Reference](docs/FRONTEND-QUICK-REFERENCE.md)
-2. Review [Form Implementation Checklist](docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md)
-3. Read [Design System Guide](docs/02-architecture/03-design/DESIGN-SYSTEM.md) for deep understanding
+1. Start with [Frontend Quick Reference](../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md)
+2. Review [Form Implementation Checklist](../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md)
+3. Read [Design System Guide](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md) for deep understanding
 
 ### For Existing Developers (Migration)
-1. Read [Migration Guide](docs/02-architecture/03-design/DESIGN-SYSTEM.md#migration-guide)
-2. Use [Implementation Checklist](docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md)
-3. Reference [Quick Reference](docs/FRONTEND-QUICK-REFERENCE.md) while coding
+1. Read [Migration Guide](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md#migration-guide)
+2. Use [Implementation Checklist](../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md)
+3. Reference [Quick Reference](../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md) while coding
 
 ### For AI Agents (Claude, Gemini, OpenCode)
-1. Follow [UI/UX Rules](.claude/rules/ui-ux-design.md)
-2. Use [Frontend Design Skill](.claude/skills/frontend-design/SKILL.md)
-3. Reference [Form Patterns](frontend/src/theme/form-patterns.tsx) for examples
+1. Follow [UI/UX Rules](../.claude/rules/ui-ux-design.md)
+2. Use [Frontend Design Skill](../.claude/skills/frontend-design/SKILL.md)
+3. Reference [Form Patterns](src/theme/form-patterns.tsx) for examples
 
 ### For Team Leads
-1. Review [Architecture Decision](docs/02-architecture/01-adr/ADR-009-centralized-design-system.md)
+1. Review [Architecture Decision](../docs/200-architecture/202-ADR/ADR-011-centralized-design-system.md)
 2. Understand [Design System Overview](DESIGN-SYSTEM-SUMMARY.md)
-3. Use [Implementation Checklist](docs/02-architecture/03-design/DESIGN-SYSTEM.md#phase-1-foundation) to track progress
+3. Use [Implementation Checklist](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md#phase-1-foundation) to track progress
 
 ### For Designers (Figma, etc.)
-1. Review [Design System Guide](docs/02-architecture/03-design/DESIGN-SYSTEM.md)
+1. Review [Design System Guide](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)
 2. Extract tokens from `theme/tokens.ts`
 3. Create Figma tokens from `colors`, `typography`, `spacing`, etc.
 
@@ -347,7 +347,7 @@
 
 ### Immediate (Week 1)
 1. ✅ Review this file index
-2. ✅ Read [Design System Guide](docs/02-architecture/03-design/DESIGN-SYSTEM.md)
+2. ✅ Read [Design System Guide](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)
 3. ⏳ Test theme tokens in a simple component
 4. ⏳ Create one form using patterns
 
@@ -374,10 +374,10 @@
 ## Support & Questions
 
 ### Documentation Hierarchy (Best to Check)
-1. **Quick answers**: [Frontend Quick Reference](docs/FRONTEND-QUICK-REFERENCE.md)
-2. **Implementation help**: [Frontend Design Skill](.claude/skills/frontend-design/SKILL.md)
-3. **Detailed info**: [Design System Guide](docs/02-architecture/03-design/DESIGN-SYSTEM.md)
-4. **Rules & standards**: [UI/UX Rules](.claude/rules/ui-ux-design.md)
+1. **Quick answers**: [Frontend Quick Reference](../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md)
+2. **Implementation help**: [Frontend Design Skill](../.claude/skills/frontend-design/SKILL.md)
+3. **Detailed info**: [Design System Guide](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)
+4. **Rules & standards**: [UI/UX Rules](../.claude/rules/ui-ux-design.md)
 5. **Deep dive**: Read the source code in `theme/tokens.ts`
 
 ### Getting Help
@@ -436,8 +436,8 @@ DESIGN-SYSTEM-SUMMARY.md          # 📄 Summary
 
 ## Print-Friendly Links
 
-- 🚀 Quick Start: `docs/FRONTEND-QUICK-REFERENCE.md`
-- 📚 Full Guide: `docs/02-architecture/03-design/DESIGN-SYSTEM.md`
-- ✅ Checklist: `docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md`
-- 🛠️ Implementation: `.claude/skills/frontend-design/SKILL.md`
-- 📝 Rules: `.claude/rules/ui-ux-design.md`
+- 🚀 Quick Start: `../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md`
+- 📚 Full Guide: `../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md`
+- ✅ Checklist: `../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md`
+- 🛠️ Implementation: `../.claude/skills/frontend-design/SKILL.md`
+- 📝 Rules: `../.claude/rules/ui-ux-design.md`

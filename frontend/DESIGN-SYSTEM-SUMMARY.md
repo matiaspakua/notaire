@@ -339,12 +339,12 @@ export function NewForm() {
 
 ## References
 
-- [Design System Documentation](../../docs/02-architecture/03-design/DESIGN-SYSTEM.md)
-- [UI/UX Rules](./../rules/ui-ux-design.md)
-- [Frontend Design Skill](./../skills/frontend-design/SKILL.md)
-- [Form Implementation Checklist](../../docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md)
-- [Theme Source Code](../../frontend/src/theme/)
-- [ADR-009: Centralized Design System](../../docs/02-architecture/01-adr/ADR-009-centralized-design-system.md)
+- [Design System Documentation](../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)
+- [UI/UX Rules](../.claude/rules/ui-ux-design.md)
+- [Frontend Design Skill](../.claude/skills/frontend-design/SKILL.md)
+- [Form Implementation Checklist](../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md)
+- [Theme Source Code](src/theme/)
+- [ADR-011: Centralized Design System](../docs/200-architecture/202-ADR/ADR-011-centralized-design-system.md)
 
 ---
 
