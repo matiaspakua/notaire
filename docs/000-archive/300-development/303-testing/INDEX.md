@@ -9,12 +9,12 @@ Complete guide to Notaire's centralized testing framework.
 2. **[EXAMPLE_REPORT.md](EXAMPLE_REPORT.md)** — Sample test execution report
 
 ### 📋 Detailed Documentation
-3. **[TEST_STRATEGY.md](TEST_STRATEGY.md)** — Comprehensive testing strategy
-4. **[http/API_TESTING_GUIDE.md](http/API_TESTING_GUIDE.md)** — HTTP API testing details
+3. **[TEST_STRATEGY.md](../../../300-development/303-testing/TEST_STRATEGY.md)** (current version; superseded this archived copy) — Comprehensive testing strategy
+4. **[api-test/API_TESTING_GUIDE.md](../../../300-development/303-testing/api-test/API_TESTING_GUIDE.md)** (current version; superseded this archived copy) — HTTP API testing details
 
 ### 🛠️ Scripts & Tools
-5. **[run-all-tests.sh](run-all-tests.sh)** — Master test runner (22.7 KB)
-6. **[generate-coverage-report.sh](generate-coverage-report.sh)** — Coverage analyzer
+5. **[run-all-tests.sh](../../../../testing/run-all-tests.sh)** — Master test runner (22.7 KB)
+6. **[generate-coverage-report.sh](../../../../testing/generate-coverage-report.sh)** — Coverage analyzer
 
 ---
 
