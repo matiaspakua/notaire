@@ -1,6 +1,6 @@
 > **Archived:** this Solution Architecture Report was previously misfiled as
 > `docs/200-architecture/202-ADR/ADR-012-flyway-implementation.md`. It duplicated the decision already
-> recorded in [ADR-007](../../../../200-architecture/202-ADR/ADR-007-database-schema-versioning-flyway.md),
+> recorded in [ADR-007](../../../200-architecture/202-ADR/ADR-007-database-schema-versioning-flyway.md),
 > which now includes this document's unique "AI Agent Guidelines" section. Kept here for historical
 > reference only.
 
@@ -177,7 +177,7 @@ Before committing, verify:
 For more information, see:
 - **Skill**: `.claude/skills/flyway/SKILL.md`
 - **Rules**: `.claude/rules/database-migrations.md`
-- **ADR**: `docs/02-architecture/01-adr/ADR-007-database-schema-versioning-flyway.md`
+- **ADR**: `docs/200-architecture/202-ADR/ADR-007-database-schema-versioning-flyway.md`
 
 ---
 
