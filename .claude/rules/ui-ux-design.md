@@ -611,4 +611,4 @@ Every UI component must pass:
 - [Apple Design Guidelines](https://developer.apple.com/design/)
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Web Content Accessibility Guidelines](https://www.w3.org/WAI/fundamentals/)
-- [Notaire Design System](../03-design/DESIGN-SYSTEM.md)
+- [Notaire Design System](../../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md)

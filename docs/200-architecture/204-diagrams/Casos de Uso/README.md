@@ -3,7 +3,7 @@
 Diagramas de casos de uso UML, agrupados por módulo de negocio, transcritos fielmente desde los
 diagramas legacy (`.jpg`) que se generaron con la herramienta de modelado del monolito original.
 Los `.jpg` originales fueron archivados en
-[`docs/000-archive/200-architecture/204-diagrams/Casos de Uso/`](../../../../000-archive/200-architecture/204-diagrams/Casos%20de%20Uso/)
+[`docs/000-archive/200-architecture/204-diagrams/Casos de Uso/`](../../../000-archive/200-architecture/204-diagrams/Casos%20de%20Uso/)
 tras verificar que eran totalmente legibles y transcribirlos sin pérdida de información.
 
 Cada caso de uso está identificado con su número `CUxx`, coherente con el catálogo de casos de uso

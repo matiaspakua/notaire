@@ -2,7 +2,7 @@
 
 Los diagramas de clases originales (`dto.jpg`, `gui.jpg`, `jpa.jpg`, `negocio.jpg`, `servicios.jpg`) documentaban
 la estructura de clases del monolito Java Swing legacy. Se archivaron en
-[`docs/000-archive/200-architecture/204-diagrams/Diagrama de Clases/`](../../../../000-archive/200-architecture/204-diagrams/Diagrama%20de%20Clases/)
+[`docs/000-archive/200-architecture/204-diagrams/Diagrama de Clases/`](../../../000-archive/200-architecture/204-diagrams/Diagrama%20de%20Clases/)
 por dos motivos:
 
 - **`dto.jpg` y `negocio.jpg`** son ilegibles a cualquier resolución disponible (exportación de una

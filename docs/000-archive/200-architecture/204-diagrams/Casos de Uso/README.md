@@ -2,7 +2,7 @@
 
 Los 19 diagramas de casos de uso originales (`.jpg`) fueron exportados con la herramienta de
 modelado UML usada en el monolito Java Swing legacy. A diferencia de los diagramas de clases
-(ver [`docs/000-archive/200-architecture/204-diagrams/Diagrama de Clases/README.md`](../Diagrama%20de%20Clases/README.md)),
+(ver [`docs/000-archive/200-architecture/204-diagrams/Diagrama de Clases/`](../Diagrama%20de%20Clases/)),
 estas imágenes eran completamente legibles, por lo que se transcribieron fielmente a PlantUML en
 lugar de descartarse.
 
