@@ -26,20 +26,32 @@ npm run test:e2e -- --headed   # with browser visible
 
 ## Unit Test Structure
 
-All unit tests live under `frontend/src/tests/unit/`:
+All unit tests live under `frontend/src/tests/unit/` (19 files):
 
 ```
 src/tests/unit/
-├── utils.test.ts          # formatDate, formatCurrency, cn(), fullName()
-├── api-client.test.ts     # apiGet, apiPost, apiPut, apiDelete (fetch mocked)
-├── auth-store.test.ts     # Zustand auth store (login, logout, isAdmin)
-├── data-table.test.tsx    # DataTable component (render, empty, loading states)
-├── login-page.test.tsx    # LoginPage component (form, submit, error handling)
-├── hooks.test.ts          # Query key contracts, type shapes, API path contracts
-└── pages.test.tsx         # Display helpers and form validation per use case
+├── api-client.test.ts               # Authorization header propagation (issue #552)
+├── auth-store.test.ts               # Zustand auth store (login, logout, isAdmin)
+├── business-logic-hooks.test.ts     # gestionesKeys and related query-key contracts (CU02, CU13, CU24)
+├── hooks.test.ts                    # React Query key contracts, type shapes, API path contracts
+├── i18n.test.ts                     # isSupportedLocale and locale helpers
+├── items-historial.test.ts          # itemsKeys query-key contracts
+├── next-config-security-headers.test.ts  # next.config security headers
+├── suplencias-reportes.test.ts      # suplenciasKeys query-key contracts
+├── utils.test.ts                    # cn(), formatDate, formatCurrency, fullName()
+├── workflow-node-meta.test.ts       # Workflow node metadata (issue #646)
+├── app-header.test.tsx              # AppHeader component
+├── breadcrumb.test.tsx              # Breadcrumb component
+├── confirm-dialog.test.tsx          # ConfirmDialog component
+├── data-table.test.tsx              # DataTable component (render, empty, loading states)
+├── language-switcher.test.tsx       # LanguageSwitcher component
+├── login-page.test.tsx              # LoginPage component (form, submit, error handling)
+├── pages.test.tsx                   # Display helpers and form validation per use case (CU02)
+├── select.test.tsx                  # Select keyboard accessibility (issue #607)
+└── workflow-viewer.test.tsx         # WorkflowViewer node styling (issue #613)
 ```
 
-**Total: 80 unit tests (all passing)**
+**Total: 244 unit tests across 19 files (all passing as of 2026-08-19)**
 
 ### Writing a New Unit Test
 
@@ -92,17 +104,29 @@ describe("MyComponent", () => {
 
 ## E2E Test Structure
 
-All Playwright E2E tests live under `frontend/tests/e2e/`:
+All Playwright E2E tests live under `frontend/tests/e2e/` (34 spec files as of 2026-08-19,
+plus `gherkin-helpers.ts` shared step helpers, `reporters/`, and `setup/`). Most files map
+to one or more Use Cases and are named accordingly (`cu01-presupuesto.spec.ts`,
+`cu17-18-personas-clientes.spec.ts`, `cu70-workflow-editor.spec.ts`, etc.); a handful cover
+cross-cutting concerns instead of a single CU:
 
-```
-tests/e2e/
-├── login.spec.ts          # CU03 — Login / auth flow
-├── dashboard.spec.ts      # Dashboard navigation and route guards
-├── crud-gestiones.spec.ts # CU02 — Gestiones CRUD
-├── personas.spec.ts       # CU17, CU18 — Personas CRUD
-├── presupuestos.spec.ts   # CU01, CU15, CU47 — Presupuestos + Pagos
-└── admin.spec.ts          # CU26/27/28/29/39/49/55/57/64/67 — Admin modules
-```
+| File | Covers |
+|------|--------|
+| `00-supervised-tour.spec.ts` | Full-system smoke tour: login → every module → logout |
+| `01-first-case-tutorial.spec.ts` | End-to-end tutorial: setup through a full notarial case |
+| `login.spec.ts` / `logout.spec.ts` | Auth flow |
+| `dashboard.spec.ts` | Dashboard navigation and route guards |
+| `admin.spec.ts` | Administración hub (ADMIN-only modules) |
+| `api-cycle.spec.ts` | Backend proxy connectivity/health |
+| `cu-matrix.spec.ts` | CU coverage matrix health check |
+| `a11y-search-inputs.spec.ts` | Accessibility — search input labels |
+| `mobile-viewport.spec.ts` | Responsive/mobile layout |
+| `l10n-language-switcher.spec.ts` | Localization / language switcher |
+| `security-csrf-cors.spec.ts` | CSRF/CORS security headers |
+| `icons-ux.spec.ts` | Icon usage/UX consistency |
+
+See the directory itself for the full, current list — it changes often enough that a
+complete static copy here would go stale quickly.
 
 ### Auth Setup in E2E Tests
 
@@ -163,16 +187,26 @@ test.describe("MyModule (CUxx)", () => {
 
 ## CI Configuration
 
-The frontend CI (`.github/workflows/frontend-ci.yml`) runs:
+The frontend CI (`.github/workflows/frontend-ci.yml`) runs on every PR/push touching the
+frontend:
 
-1. **Lint** — TypeScript type-check + ESLint
+1. **TypeScript Check** — type-check (blocking); ESLint step (`continue-on-error: true` —
+   not yet a blocking gate)
 2. **Unit Tests (Vitest)** — must pass (blocking)
 3. **Build (Next.js)** — must compile cleanly (blocking)
-4. **E2E Tests (Playwright)** — `continue-on-error: true` (requires backend — non-blocking in CI)
+
+E2E is **not** part of `frontend-ci.yml`. Playwright runs in a separate workflow,
+`.github/workflows/playwright-e2e.yml`, on every PR into `main`, every push to `main`, a
+weekday schedule (06:00 UTC), and manual dispatch. Its jobs (`backend-build`,
+`frontend-build`, `api-tests` (Bruno), `e2e-tests` (Playwright UI)) run against a live
+stack (PostgreSQL + backend + frontend) and **test failures fail the pipeline** — see
+[DevSecOps Pipeline](../../200-architecture/208-devsecops/README.md#other-workflows).
 
 ### E2E in CI
 
-E2E tests require a running backend on `http://localhost:8080`. In CI without a full Docker stack, they are expected to fail. The job uses `continue-on-error: true` to keep the PR green.
+E2E tests require a running backend and frontend, which `playwright-e2e.yml` builds and
+starts as part of the job — no local setup is needed to run in CI. Unlike the frontend
+unit-test/build gates, a failing E2E test blocks the PR.
 
 To run E2E locally:
 ```bash
@@ -189,8 +223,12 @@ npm run test:e2e
 Unit tests use mocked data via `vi.mock()` and direct object construction. E2E tests rely on the backend's seeded test data (initial Flyway migrations).
 
 Key default test data:
-- Admin user: `nombre=admin`, `contrasenia=admin`, `tipo=ADMIN`
+- Seeded user (`V2__initial_data.sql`): `nombre=admin`, `contrasenia=admin` (plaintext
+  login value; stored as an MD5 hash), `tipo=Escribano`
 - The login endpoint validates against the `usuarios` table in the database
+- The `tipo: "ADMIN"` value in the `beforeEach` example above is injected directly into
+  `localStorage` for tests that need admin-only UI without a real backend round-trip — it
+  does not reflect the seeded user's actual `tipo`
 
 ## Test Coverage
 

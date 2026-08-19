@@ -207,7 +207,7 @@ env:
 |----------|---------|---------|
 | `pr-validation.yml` | PR opened/synchronized, manual dispatch | Fast-feedback gate: Spotless format check (`mvn spotless:check`, job "Code Lint"), Checkstyle, other PR-blocking checks — this is the only place Spotless runs (see [CI Preflight](../../300-development/CI-PREFLIGHT.md)) |
 | `frontend-ci.yml` | PR into `main`, push to `main`, manual dispatch | Next.js build, typecheck, unit tests |
-| `playwright-e2e.yml` | Schedule (weekdays 06:00 UTC), manual dispatch | Full Playwright E2E suite against a running stack |
+| `playwright-e2e.yml` | PR into `main`, push to `main`, schedule (weekdays 06:00 UTC), manual dispatch | API tests (Bruno) + full Playwright UI E2E suite against a live stack (PostgreSQL + backend + frontend); test failures **fail the pipeline** (blocking on PRs, not report-only) |
 | `e2e-swing.yml` | Manual dispatch (optional `suite` input) | Robot Framework E2E tests for the deprecated Swing client |
 | `test-coverage-report.yml` | Daily schedule (02:00 UTC), manual dispatch | Publishes a standalone coverage report artifact |
 | `performance-test.yml` | Weekly schedule (Mondays 04:00 UTC) | k6 load test |
