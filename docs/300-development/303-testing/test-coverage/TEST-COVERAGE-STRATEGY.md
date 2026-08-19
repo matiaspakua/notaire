@@ -6,11 +6,15 @@ Comprehensive test coverage measurement and automated reporting across all layer
 
 | Layer | Type | Coverage | Target |
 |-------|------|----------|--------|
-| Backend (Java) | JaCoCo Instructions | 31% | 80% |
-| Backend (Java) | JaCoCo Branches | 18% | 80% |
-| Frontend (React) | Jest/Vitest | 45% | 70% |
-| E2E (UI) | Playwright | 85% | 95% |
-| API | Bruno CLI | 78% | 100% |
+| Backend (Java) | JaCoCo Lines | ~84% | 80% |
+| Backend (Java) | JaCoCo Branches | ~74% | 80% |
+| Frontend (React) | Vitest | see `frontend/vitest.config.ts` | see `frontend/vitest.config.ts` |
+| E2E (UI) | Playwright | 33 spec files, per Caso de Uso | — |
+| API | Bruno (YAML suite) | 104 requests, 16 resources | — |
+
+Current figures per `.claude/rules/code-quality.md` (backend) and
+[`backend-api/api-test/COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md) (API). Re-verify
+before quoting exact numbers elsewhere — they drift.
 
 ## Automation
 
@@ -35,50 +39,49 @@ open backend-api/target/site/jacoco/index.html
 ```
 
 ### Coverage Enforcement
-- Ratchet floor: 28% line, 14% branch (enforced via `mvn verify`)
-- Target: 80% (aspirational)
-- Excluded: Legacy `jpa` package
+- Ratchet floor: 70% line, 25% branch (enforced via `mvn verify`; raised as coverage improves, never lowered)
+- Target: 80% line / 80% branch (aspirational)
+- Excluded: legacy `jpa` and `service.Administrador*` packages
 
-## Frontend Testing (React + Jest)
+## Frontend Testing (React + Vitest)
 
 ### Running Tests
 ```bash
-npm test -- --coverage
-npm test Button.test.tsx
-open coverage/lcov-report/index.html
+cd frontend
+npm run test:coverage
+npm test -- Button.test.tsx
+open coverage/index.html
 ```
 
 ### Thresholds
-- Branches: 70%
-- Functions: 70%
-- Lines: 70%
-- Statements: 70%
+See `frontend/vitest.config.ts` for current thresholds.
 
 ## E2E Testing (Playwright)
 
 ### Running Tests
 ```bash
-npx playwright test
-npx playwright show-report
+cd frontend
+npm run test:e2e
+npm run test:e2e:headed   # watch mode
 ```
 
 ### Coverage
-- **85%** of critical user flows
-- Multi-browser: Chromium, Firefox, WebKit
-- Interactive debugging: `--debug` flag
+- 33 spec files under `frontend/tests/e2e/`, mostly one per Caso de Uso (`cuNN-*.spec.ts`)
+- Full stack must be running (`bash scripts/start.sh`)
 
 ## API Testing (Bruno)
 
 ### Running Tests
 ```bash
-bru run tests/api/bruno
-bru run tests/api/bruno --json > results.json
+cd backend-api/api-test
+bru run . -r --env Developmen
 ```
 
 ### Coverage
-- **50+ endpoints** tested
-- **78%** coverage of all API routes
-- **100%** coverage of critical flows (auth, CRUD)
+See [`backend-api/api-test/COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md)
+for the current request count and per-resource breakdown — re-run `bru run`
+against a live backend for up-to-date pass/fail totals rather than quoting a
+historical snapshot here.
 
 ## Reports
 

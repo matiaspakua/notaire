@@ -11,9 +11,12 @@ trazabilidad histórica, pero no se mantienen actualizados.
 - `GAP-ANALYSIS.md` — análisis de gaps CU↔API del issue #335
 - `INDEX.md` — índice de navegación de la antigua carpeta `integration-test/`, redundante con la
   documentación vigente
+- `TEST_STRATEGY.md` — guía de testing previa a Playwright/Bruno; su contenido vigente fue
+  absorbido por `303-testing/README.md`
+- `PHASE-1-IMPLEMENTATION.md` — guía de implementación de una campaña puntual de cobertura
+  (31%→50%), superada por la cobertura actual
 
 ## Documentación vigente
 
 Para la guía de testing actual del proyecto, ver
-[`docs/300-development/303-testing/README.md`](../../../300-development/303-testing/README.md) y
-[`TEST_STRATEGY.md`](../../../300-development/303-testing/TEST_STRATEGY.md).
+[`docs/300-development/303-testing/README.md`](../../../300-development/303-testing/README.md).

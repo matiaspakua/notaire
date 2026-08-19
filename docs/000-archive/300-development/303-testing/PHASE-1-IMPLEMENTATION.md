@@ -1,5 +1,10 @@
 # Phase 1: Service Layer Tests (31% → 50% Coverage)
 
+> **ARCHIVED (2026-08-19)**: one-off implementation guide for a past coverage
+> push. Coverage now sits well above this doc's 50% target (see
+> [`test-coverage/TEST-COVERAGE-STRATEGY.md`](../../../300-development/303-testing/test-coverage/TEST-COVERAGE-STRATEGY.md)
+> for current numbers). Kept for historical reference.
+
 **Timeline**: Q2-Q3 2026
 **Target**: 50% code coverage through service layer unit tests
 **Tests Needed**: 200+ new service layer tests

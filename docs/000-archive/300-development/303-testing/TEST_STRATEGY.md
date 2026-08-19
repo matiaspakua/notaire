@@ -1,5 +1,11 @@
 # Notaire - Comprehensive Testing Strategy
 
+> **ARCHIVED (2026-08-19)**: superseded by
+> [`docs/300-development/303-testing/README.md`](../../../300-development/303-testing/README.md).
+> This document predates Playwright E2E and the Bruno API suite — it documents
+> only unit/integration/HTTP tests plus the deprecated Swing client and Robot
+> Framework E2E. Kept for historical reference.
+
 This document describes the testing approach for the Notaire project across all layers: backend APIs, frontend clients, and end-to-end workflows.
 
 ## Overview

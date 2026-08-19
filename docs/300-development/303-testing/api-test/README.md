@@ -1,135 +1,92 @@
-# Notaire API - HTTP Tests
+# Notaire API — HTTP Tests
 
-Los scripts que prueban los endpoints de la API REST de Notaire viven en `testing/http/`
-(no en este directorio de documentación). Todos los comandos de este documento asumen que
-estás parado en `testing/http/`.
+Guía de pruebas manuales de la API REST de Notaire con `curl`. Los scripts
+automatizados viven en `testing/http/` (no en este directorio de
+documentación); todos los comandos de este documento asumen backend
+corriendo en `http://localhost:8080`.
 
 ## Estructura (`testing/http/`)
 
-- `test-all-endpoints.sh` / `test-all-endpoints-v2.sh` - Scripts master que ejecutan todos los tests
-- `01-auth.sh` - Tests de autenticación
-- `02-usuarios.sh` - Tests de usuarios
-- `03-conceptos.sh` - Tests de conceptos
-- `04-personas.sh` - Tests de personas
-- `05-tramites.sh` - Tests de trámites
-- `06-escrituras.sh` - Tests de escrituras
-- `07-presupuestos.sh` - Tests de presupuestos
-- `08-items.sh` - Tests de items
+- `test-all-endpoints.sh` / `test-all-endpoints-v2.sh` — scripts master que ejecutan todos los tests
+- `01-auth.sh` … `08-items.sh` — tests por entidad (auth, usuarios, conceptos, personas, trámites, escrituras, presupuestos, items)
+
+Para pruebas de API con **colecciones Bruno** (105 requests) y su estado
+actual de cobertura, ver [`backend-api/api-test/`](../../../../backend-api/api-test/README.md)
+y [`COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md).
 
 ## Requisitos
 
-- `curl` instalado
-- Backend ejecutándose en `http://localhost:8080`
-- Base de datos PostgreSQL levantada con Docker Compose
+- `curl` (y opcionalmente `jq` para formatear salida)
+- Backend ejecutándose en `http://localhost:8080` (`bash scripts/start.sh`)
+- PostgreSQL levantado vía Docker Compose
 
 ## Uso
 
-### Opción 1: Ejecutar todos los tests
-
 ```bash
-chmod +x test-all-endpoints.sh
-./test-all-endpoints.sh
+# Todos los tests
+cd testing/http
+chmod +x test-all-endpoints.sh && ./test-all-endpoints.sh
+
+# Test individual
+chmod +x 01-auth.sh && ./01-auth.sh
 ```
-
-### Opción 2: Ejecutar tests individuales
-
-```bash
-chmod +x 01-auth.sh
-./01-auth.sh
-
-chmod +x 02-usuarios.sh
-./02-usuarios.sh
-
-# etc...
-```
-
-### Opción 3: Tests manuales con curl
-
-```bash
-# Obtener todos los conceptos
-curl -X GET "http://localhost:8080/api/v1/conceptos" \
-  -H "Content-Type: application/json"
-
-# Crear un nuevo concepto
-curl -X POST "http://localhost:8080/api/v1/conceptos" \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Test", "monto": 100}'
-
-# Obtener concepto por ID
-curl -X GET "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json"
-
-# Actualizar concepto
-curl -X PUT "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json" \
-  -d '{"descripcion": "Updated", "monto": 150}'
-
-# Eliminar concepto
-curl -X DELETE "http://localhost:8080/api/v1/conceptos/1" \
-  -H "Content-Type: application/json"
-```
-
-## Endpoints Disponibles
-
-### Authentication
-- `POST /api/v1/auth/login` - Login con usuario y contraseña
-
-### Usuarios
-- `GET /api/v1/usuarios` - Obtener todos los usuarios
-- `GET /api/v1/usuarios/{id}` - Obtener usuario por ID
-
-### Conceptos
-- `GET /api/v1/conceptos` - Obtener todos los conceptos
-- `GET /api/v1/conceptos/{id}` - Obtener concepto por ID
-- `POST /api/v1/conceptos` - Crear nuevo concepto
-- `PUT /api/v1/conceptos/{id}` - Actualizar concepto
-- `DELETE /api/v1/conceptos/{id}` - Eliminar concepto
-
-### Personas
-- `GET /api/v1/personas` - Obtener todas las personas
-- `GET /api/v1/personas/{id}` - Obtener persona por ID
-- `POST /api/v1/personas` - Crear nueva persona
-- `PUT /api/v1/personas/{id}` - Actualizar persona
-- `DELETE /api/v1/personas/{id}` - Eliminar persona
-
-### Trámites
-- `GET /api/v1/tramites` - Obtener todos los trámites
-- `GET /api/v1/tramites/{id}` - Obtener trámite por ID
-- `POST /api/v1/tramites` - Crear nuevo trámite
-- `PUT /api/v1/tramites/{id}` - Actualizar trámite
-- `DELETE /api/v1/tramites/{id}` - Eliminar trámite
-
-### Escrituras
-- `GET /api/v1/escrituras` - Obtener todas las escrituras
-- `GET /api/v1/escrituras/{id}` - Obtener escritura por ID
-- `POST /api/v1/escrituras` - Crear nueva escritura
-- `PUT /api/v1/escrituras/{id}` - Actualizar escritura
-- `DELETE /api/v1/escrituras/{id}` - Eliminar escritura
-
-### Presupuestos
-- `GET /api/v1/presupuestos` - Obtener todos los presupuestos
-- `GET /api/v1/presupuestos/{id}` - Obtener presupuesto por ID
-- `POST /api/v1/presupuestos` - Crear nuevo presupuesto
-- `PUT /api/v1/presupuestos/{id}` - Actualizar presupuesto
-- `DELETE /api/v1/presupuestos/{id}` - Eliminar presupuesto
 
 ## Documentación Swagger
-
-Una vez que la aplicación esté ejecutándose, accede a:
 
 - **Swagger UI**: `http://localhost:8080/swagger-ui.html`
 - **API Docs (JSON)**: `http://localhost:8080/v3/api-docs`
 
+## Ejemplos manuales con curl
+
+```bash
+# Listar
+curl -X GET "http://localhost:8080/api/v1/conceptos" -H "Content-Type: application/json"
+
+# Crear
+curl -X POST "http://localhost:8080/api/v1/conceptos" \
+  -H "Content-Type: application/json" \
+  -d '{"descripcion": "Test", "codigo": "TEST001"}'
+
+# Obtener por ID / actualizar / eliminar
+curl -X GET "http://localhost:8080/api/v1/conceptos/1"
+curl -X PUT "http://localhost:8080/api/v1/conceptos/1" -H "Content-Type: application/json" -d '{"descripcion": "Test", "codigo": "TEST001"}'
+curl -X DELETE "http://localhost:8080/api/v1/conceptos/1"
+```
+
+El mismo patrón CRUD aplica a todas las entidades. Endpoints principales
+(verificados contra `@RequestMapping` de cada controller):
+
+```
+/api/v1/auth  /api/v1/usuarios  /api/v1/personas  /api/v1/tramites
+/api/v1/escrituras  /api/v1/presupuestos  /api/v1/items  /api/v1/folio
+/api/v1/testimonio  /api/v1/pagos  /api/v1/inmueble  /api/v1/copia
+/api/v1/historial  /api/v1/tipo-de-documento  /api/v1/tipo-identificacion
+/api/v1/suplencia  /api/v1/documento-presentado  /api/v1/movimiento-testimonio
+/api/v1/registro-auditoria  /api/v1/estado-gestion  /api/v1/gestiones
+/api/v1/plantilla-presupuestos  /api/v1/plantilla-tramite  /api/v1/reportes
+/api/v1/roles  /api/v1/tipo-folio  /api/v1/tipo-tramite
+/api/v1/workflow-definition  /api/v1/workflow-node  /api/v1/workflow-transition
+```
+
+Nota: `usuarios` no tiene campo `email` en `DtoUsuario`; `contrasenia` es
+write-only.
+
+## Patrones útiles
+
+```bash
+# Paginación
+curl "http://localhost:8080/api/v1/conceptos?page=0&size=10&sort=id,desc"
+
+# Formatear con jq
+curl -s "http://localhost:8080/api/v1/conceptos" | jq '.'
+
+# Casos de error
+curl -X GET "http://localhost:8080/api/v1/conceptos/99999"   # 404
+curl -X POST "http://localhost:8080/api/v1/conceptos" -H "Content-Type: application/json" -d '{ invalid json }'  # 400
+```
+
 ## Troubleshooting
 
-### Error: Connection refused
-- Verificar que el backend está ejecutándose en puerto 8080
-- Verificar que Docker Compose está levantado: `docker-compose ps`
-
-### Error: Database connection
-- Verificar PostgreSQL está corriendo: `docker-compose logs postgres`
-- Verificar credenciales en `application.properties`
-
-### Error: 404 Not Found
-- Verificar que el endpoint existe en los controladores
-- Verificar que el servicio Tomcat está completamente iniciado
+- **Connection refused**: verificar que el backend corre en :8080 (`docker-compose ps`)
+- **Database connection**: `docker-compose logs postgres`, revisar credenciales en `application.properties`
+- **404 Not Found**: verificar el `@RequestMapping` del controller y que Tomcat terminó de iniciar
