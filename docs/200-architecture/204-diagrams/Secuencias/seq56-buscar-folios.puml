@@ -1,0 +1,21 @@
+@startuml cu56
+!theme plain
+title CU56 — Buscar Folios
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano requiere utilizar o modificar un folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Número de registro de escribano; Año)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y devuelve una lista de folios.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno o varios folios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Indica: (Número de folios; Año; Estado actual)
+Sistema -> Sistema : Sistema
+
+@enduml

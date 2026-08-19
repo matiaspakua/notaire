@@ -1,0 +1,21 @@
+@startuml cu55
+!theme plain
+title CU55 — Buscar Escritura
+
+actor "Gestor" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un cliente consulta datos de una escritura.
+Sistema -> Sistema : Cliente
+Actor -> Actor : El Gestor/Recepcionista/Escribano solicita: (Escribano; Número de escritura)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Recepcionista/Escribano ingresa los datos.
+Sistema -> Sistema : Cliente
+Actor -> Actor : Busca y muestra una lista de escrituras.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Recepcionista/Escribano selecciona una escritura.
+Sistema -> Sistema : Cliente
+Actor -> Actor : Muestra el detalle de la escritura.
+Sistema -> Sistema : Sistema
+
+@enduml

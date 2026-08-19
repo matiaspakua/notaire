@@ -1,0 +1,29 @@
+@startuml cu82
+!theme plain
+title CU82 — Generar Minuta de Inscripción
+
+actor "Gestor" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Gestor solicita generar la minuta de inscripción para una gestión de inmuebles.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Recupera los datos de la escritura, partes e inmuebles (CU69).
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor verifica los datos registrales (matrícula, tomo/folio, nomenclatura, valuación).
+Sistema -> Sistema : Gestor
+Actor -> Actor : Valida la completitud de los campos requeridos por la autoridad registral.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor confirma la generación de la Minuta de Inscripción.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Genera el documento oficial con número identificador y habilita impresión en formulario normalizado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor presenta el testimonio junto con la minuta ante el Registro de la Propiedad.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Registra la fecha de presentación y número de entrada registral, cambia estado a "Presentado".
+Sistema -> Sistema : Sistema
+Actor -> Actor : El organismo registral procesa y devuelve el testimonio inscripto.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor registra fecha de recepción, número de inscripción y observaciones del registro (CU56).
+Sistema -> Sistema : Gestor
+
+@enduml

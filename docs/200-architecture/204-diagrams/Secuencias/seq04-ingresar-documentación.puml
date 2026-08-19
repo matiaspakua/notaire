@@ -1,0 +1,21 @@
+@startuml cu04
+!theme plain
+title CU04 — Ingresar documentación
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano busca una gestión abierta.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de gestiones disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona una gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la documentación requerida y presentada.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los documentos presentados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los documentos presentados.
+Sistema -> Sistema : Sistema
+
+@enduml

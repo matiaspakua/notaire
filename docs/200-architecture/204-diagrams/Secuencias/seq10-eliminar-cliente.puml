@@ -1,0 +1,21 @@
+@startuml cu10
+!theme plain
+title CU10 — Eliminar cliente
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide eliminar un cliente.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos de búsqueda.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta una lista de clientes.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un cliente y confirma la eliminación.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Elimina el cliente seleccionado.
+Sistema -> Sistema : Sistema
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml cu37
+!theme plain
+title CU37 — Eliminar concepto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide eliminar un concepto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta una lista de todos los conceptos disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno y confirma su eliminación.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Elimina el concepto indicado.
+Sistema -> Sistema : Sistema
+
+@enduml

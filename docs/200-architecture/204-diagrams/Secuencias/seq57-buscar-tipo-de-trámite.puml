@@ -1,0 +1,17 @@
+@startuml cu57
+!theme plain
+title CU57 — Buscar Tipo de trámite
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano/Gestor/Recepcionista requiere utilizar un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta la lista de tipos de trámites.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Gestor/Recepcionista selecciona un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle del tipo de trámite.
+Sistema -> Sistema : Sistema
+
+@enduml

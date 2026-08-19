@@ -1,0 +1,17 @@
+@startuml cu28
+!theme plain
+title CU28 — Ingresar nuevos folios
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un Escribano decide registrar el ingreso de nuevos folios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Número primer folio; Número último folio; Número de registro; Año)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos indicados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra el nuevo conjunto de folios.
+Sistema -> Sistema : Sistema
+
+@enduml

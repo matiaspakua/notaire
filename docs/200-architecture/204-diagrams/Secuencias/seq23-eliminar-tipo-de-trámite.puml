@@ -1,0 +1,21 @@
+@startuml cu23
+!theme plain
+title CU23 — Eliminar tipo de trámite
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide eliminar un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra una lista de todos los tipos de trámite disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la información del tipo de trámite seleccionado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la eliminación.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Elimina el tipo de trámite seleccionado.
+Sistema -> Sistema : Sistema
+
+@enduml

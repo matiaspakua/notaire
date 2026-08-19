@@ -1,0 +1,25 @@
+@startuml cu33
+!theme plain
+title CU33 — Modificar folio
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar los datos de un folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Año; Número de registro de escribano)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano indica el año y número de registro.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta una lista de folios.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta: (Número de folio; Tipo; Estado; Fecha último estado; Observaciones)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica el estado.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml

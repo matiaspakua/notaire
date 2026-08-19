@@ -1,0 +1,61 @@
+@startuml login-traceability-matrix
+!theme plain
+title Traceability Matrix — Login Authentication (CU-78)
+
+left to right direction
+
+package "CU-78 Requirements" {
+  package "Authentication" {
+    [R-AUTH-01: Credentials validated\nagainst BCrypt hash] as RAUTH01
+    [R-AUTH-02: JWT token generated\non valid login] as RAUTH02
+    [R-AUTH-03: Account lockout\nafter 5 failed attempts] as RAUTH03
+    [R-AUTH-04: Token via HTTPS/TLS] as RAUTH04
+  }
+  package "Authorization" {
+    [R-AUTHZ-01: Role-based\naccess control] as RAUTHZ01
+  }
+  package "Audit & Security" {
+    [R-AUDIT-01: Audit log of\naccess attempts] as RAUDIT01
+    [R-AUDIT-02: No sensitive info\nin error responses] as RAUDIT02
+  }
+}
+
+package "Test Cases" {
+  package "Integration Tests" {
+    [TC-LOGIN-01: Valid credentials\nreturn JWT token] as TC01
+    [TC-LOGIN-02: Wrong password\nreturn valido=false] as TC02
+    [TC-LOGIN-03: Unknown user\nreturn valido=false] as TC03
+    [TC-LOGIN-04: Locked account\nreturn 429] as TC04
+    [TC-LOGIN-05: Expired JWT\ntoken rejected] as TC05
+    [TC-LOGIN-06: Invalid JWT\ntoken rejected] as TC06
+    [TC-LOGIN-07: Missing Bearer\ntoken rejected] as TC07
+    [TC-LOGIN-08: Valid token\naccepted for API] as TC08
+    [TC-LOGIN-12: Empty username/\npassword handled] as TC12
+    [TC-LOGIN-13: Case-insensitive\nusername matching] as TC13
+    [TC-LOGIN-14: Inactive user\ncannot login] as TC14
+  }
+  package "Unit Tests" {
+    [TC-LOGIN-09: BCrypt\npassword matching] as TC09
+    [TC-LOGIN-10: LoginAttemptService\nlockout logic] as TC10
+    [TC-LOGIN-11: LoginAttemptService\nreset on success] as TC11
+  }
+}
+
+RAUTH01 ..> TC01 : validates
+RAUTH01 ..> TC02 : validates
+RAUTH01 ..> TC09 : validates
+RAUTH02 ..> TC01 : validates
+RAUTH02 ..> TC08 : validates
+RAUTH03 ..> TC04 : validates
+RAUTH03 ..> TC10 : validates
+RAUTH04 ..> TC01 : validates
+RAUTH04 ..> TC05 : validates
+RAUTHZ01 ..> TC08 : validates
+RAUDIT01 ..> TC01 : validates
+RAUDIT01 ..> TC02 : validates
+RAUDIT01 ..> TC03 : validates
+RAUDIT02 ..> TC02 : validates
+RAUDIT02 ..> TC03 : validates
+RAUDIT02 ..> TC12 : validates
+
+@enduml

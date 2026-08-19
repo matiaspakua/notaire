@@ -1,0 +1,23 @@
+@startuml cu43
+!theme plain
+title CU43 — Reingresar testimonio
+
+actor "Gestor" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un testimonio ha sido devuelto observado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano decide registrar el reingreso.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Muestra una lista de escrituras disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano selecciona una escritura.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Muestra: (Número; Fecha; Folios; Nomenclaturas) y solicita: (Fecha salida; Fecha reingreso; Número cartón; Si observado; Observaciones)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano ingresa los datos y confirma.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Registra el reingreso del testimonio.
+Sistema -> Sistema : Sistema
+
+@enduml

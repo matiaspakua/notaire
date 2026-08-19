@@ -1,0 +1,25 @@
+@startuml cu47
+!theme plain
+title CU47 — Dar alta escribano
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta un nuevo escribano.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca la persona y muestra sus datos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita registro de escribano.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos y confirma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra el nuevo escribano.
+Sistema -> Sistema : Sistema
+
+@enduml

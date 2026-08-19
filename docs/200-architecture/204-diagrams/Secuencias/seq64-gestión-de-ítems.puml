@@ -1,0 +1,21 @@
+@startuml cu64
+!theme plain
+title CU64 — Gestión de Ítems
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Administrador selecciona la opción de gestión de ítems.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Muestra la lista de ítems existentes.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador ingresa: (Nombre; Descripción; Valor base)
+Sistema -> Sistema : Administrador
+Actor -> Actor : Valida los datos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador confirma el registro.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Guarda el ítem y lo habilita.
+Sistema -> Sistema : Sistema
+
+@enduml

@@ -127,4 +127,63 @@ class JwtAuthIntegrationTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("TC-LOGIN-12: Login with empty username and password returns valido=false")
+    void shouldRejectLoginWithEmptyCredentials() throws Exception {
+        mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "", "contrasenia": ""}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valido").value(false));
+    }
+
+    @Test
+    @DisplayName("TC-LOGIN-13: Login with case-insensitive username succeeds")
+    void shouldLoginWithCaseInsensitiveUsername() throws Exception {
+        mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "ADMIN", "contrasenia": "admin"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valido").value(true))
+                .andExpect(jsonPath("$.token").isString())
+                .andExpect(jsonPath("$.token").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("TC-LOGIN-14: Inactive user cannot login even with correct password")
+    void shouldRejectLoginForInactiveUser() throws Exception {
+        // First login as admin to get a token for creating a user
+        String loginResponse = mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "admin", "contrasenia": "admin"}
+                                """))
+                .andReturn().getResponse().getContentAsString();
+
+        String token = com.fasterxml.jackson.databind.json.JsonMapper.builder().build()
+                .readTree(loginResponse).get("token").asText();
+
+        // Create an inactive user using the admin token
+        mockMvc.perform(post("/api/v1/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .content("""
+                        {"nombre": "inactive_user", "contrasenia": "password123", "tipo": "EMPLEADO", "activo": false}
+                        """))
+                .andExpect(status().isCreated());
+
+        // Attempt login with the inactive user — should fail even with correct password
+        mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "inactive_user", "contrasenia": "password123"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valido").value(false));
+    }
 }

@@ -1,0 +1,21 @@
+@startuml cu39
+!theme plain
+title CU39 — Crear Plantilla Presupuesto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide crear la plantilla de un presupuesto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta una lista de todos los tipos de trámite disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de conceptos disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona los conceptos y confirma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra una nueva plantilla de presupuesto.
+Sistema -> Sistema : Sistema
+
+@enduml

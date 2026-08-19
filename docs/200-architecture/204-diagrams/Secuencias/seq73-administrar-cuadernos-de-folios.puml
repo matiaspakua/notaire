@@ -1,0 +1,29 @@
+@startuml cu73
+!theme plain
+title CU73 — Administrar Cuadernos de Folios
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita generar nuevos cuadernos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta los folios disponibles ordenados.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano indica cantidad o rango de folios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Verifica múltiplo de 10 y numeración continua.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la generación.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Agrupa folios de a 10 y asigna numeración.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano solicita la carátula de un cuaderno.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Genera el formato de carátula oficial.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano procede a imprimir.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Habilita impresión o exportación a PDF.
+Sistema -> Sistema : Sistema
+
+@enduml

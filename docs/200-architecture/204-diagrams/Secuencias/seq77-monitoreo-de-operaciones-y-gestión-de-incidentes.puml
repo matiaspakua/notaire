@@ -1,0 +1,25 @@
+@startuml cu77
+!theme plain
+title CU77 — Monitoreo de Operaciones y Gestión de Incidentes
+
+actor "Equipo de Operaciones" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Los usuarios operan el sistema notarial desde PCs y notebooks.
+Sistema -> Sistema : Equipo de Operaciones
+Actor -> Actor : El sistema expone métricas de salud y logs estructurados.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Prometheus realiza scraping periódico de métricas.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Almacena series temporales de uso de memoria, hilos, latencia y conexiones.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Se detecta un umbral de anomalía (ej. respuesta > 10s o error > 1%).
+Sistema -> Sistema : Sistema
+Actor -> Actor : Grafana Alerting dispara una notificación al canal de guardia.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El ingeniero de guardia analiza el incidente mediante logs de Loki y dashboards.
+Sistema -> Sistema : Ingeniero de Guardia
+Actor -> Actor : Identifica la causa raíz y ejecuta el procedimiento de mitigación o rollback.
+Sistema -> Sistema : Ingeniero de Guardia
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml cu75
+!theme plain
+title CU75 — Generar Minuta de Inscripción
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Gestor solicita generar la minuta de inscripción.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Recupera datos de la escritura y partes.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor verifica datos registrales.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Valida la completitud de campos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor confirma la generación.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Genera el documento oficial de minuta.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor presenta el testimonio y minuta.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Registra la fecha de presentación y número de entrada.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El organismo registral procesa y devuelve.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor registra fecha de recepción e inscripción.
+Sistema -> Sistema : Gestor
+
+@enduml

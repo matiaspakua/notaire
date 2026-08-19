@@ -1,0 +1,17 @@
+@startuml cu49
+!theme plain
+title CU49 — Generar Declaración Jurada de Rentas
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano/Recepcionista decide generar las DDJJ.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Mes; Año; Registro de Escribano)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Recepcionista ingresa los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta la declaración jurada.
+Sistema -> Sistema : Sistema
+
+@enduml

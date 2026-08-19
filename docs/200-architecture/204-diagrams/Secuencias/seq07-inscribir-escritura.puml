@@ -1,0 +1,21 @@
+@startuml cu07
+!theme plain
+title CU07 — Inscribir escritura
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano busca una escritura firmada.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de escrituras disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona una escritura.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra los datos de la escritura y solicita inscribir.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la inscripción.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra la inscripción de la escritura.
+Sistema -> Sistema : Sistema
+
+@enduml

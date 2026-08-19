@@ -1,0 +1,21 @@
+@startuml cu63
+!theme plain
+title CU63 — Gestión de Copias
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano selecciona una escritura.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle de la escritura y sus copias.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano indica la generación de una nueva copia.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Tipo de copia; Solicitante)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la emisión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra la copia y permite impresión.
+Sistema -> Sistema : Sistema
+
+@enduml

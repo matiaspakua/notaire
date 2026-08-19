@@ -1,0 +1,17 @@
+@startuml cu36
+!theme plain
+title CU36 — Ingresar tipos de folio
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide agregar un nuevo tipo de folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre del tipo de folio; Observaciones)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos indicados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra el nuevo tipo de folio.
+Sistema -> Sistema : Sistema
+
+@enduml

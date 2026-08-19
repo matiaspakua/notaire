@@ -1,0 +1,17 @@
+@startuml cu30
+!theme plain
+title CU30 — Ingresar nuevo estado de Gestión
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta un nuevo estado de gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita que se ingrese el nombre del estado y observaciones.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano indica el nombre del nuevo estado y observaciones.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra el nuevo estado.
+Sistema -> Sistema : Sistema
+
+@enduml

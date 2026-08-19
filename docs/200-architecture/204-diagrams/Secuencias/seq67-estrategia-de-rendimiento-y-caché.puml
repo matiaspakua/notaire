@@ -1,0 +1,25 @@
+@startuml cu67
+!theme plain
+title CU67 — Estrategia de Rendimiento y Caché
+
+actor "Administrador" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El equipo técnico configura las políticas de caché.
+Sistema -> Sistema : Equipo de Desarrollo
+Actor -> Actor : Aplica los interceptores de caché.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El usuario realiza consultas complejas.
+Sistema -> Sistema : Usuario
+Actor -> Actor : Recupera datos desde caché o base de datos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El sistema procesa la solicitud bajo carga.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Mantiene consumo de memoria y CPU dentro de límites.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El equipo de operaciones ejecuta pruebas de carga.
+Sistema -> Sistema : Equipo de Operaciones
+Actor -> Actor : Valida tiempos de respuesta.
+Sistema -> Sistema : Sistema
+
+@enduml

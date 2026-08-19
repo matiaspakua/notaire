@@ -1,0 +1,21 @@
+@startuml cu25
+!theme plain
+title CU25 — Modificar tipo de documento
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar los datos de un tipo de documento.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra una lista de todos los tipos de documento disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno de ellos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta: (Nombre; Si posee vencimiento; Días de validez; Quién lo entrega)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml

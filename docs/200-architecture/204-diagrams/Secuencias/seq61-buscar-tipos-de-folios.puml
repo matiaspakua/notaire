@@ -1,0 +1,17 @@
+@startuml cu61
+!theme plain
+title CU61 — Buscar tipos de folios
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita la lista de tipos de folios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y devuelve la lista de tipos de folios.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle del tipo de folio.
+Sistema -> Sistema : Sistema
+
+@enduml

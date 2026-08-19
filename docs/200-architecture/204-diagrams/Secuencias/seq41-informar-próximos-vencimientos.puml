@@ -1,0 +1,13 @@
+@startuml cu41
+!theme plain
+title CU41 — Informar próximos vencimientos
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El sistema busca documentos próximos a vencer.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Informa: (Nombre de documento; Número de gestión; Encabezado; Si fue preparado; Fechas; Monto deuda; Observaciones)
+Sistema -> Sistema : Sistema
+
+@enduml

@@ -1,0 +1,69 @@
+@startuml login-test-suite-overview
+!theme plain
+title Test Suite Overview — Login Authentication (CU-78)
+
+package "Test Suite: Login Authentication" {
+  [TC-LOGIN-01\nValid credentials\nreturn JWT token] as TC01
+  [TC-LOGIN-02\nWrong password\nreturn valido=false] as TC02
+  [TC-LOGIN-03\nUnknown user\nreturn valido=false] as TC03
+  [TC-LOGIN-04\nLocked account\nreturn 429] as TC04
+  [TC-LOGIN-05\nExpired JWT\ntoken rejected] as TC05
+  [TC-LOGIN-06\nInvalid JWT\ntoken rejected] as TC06
+  [TC-LOGIN-07\nMissing Bearer\ntoken rejected] as TC07
+  [TC-LOGIN-08\nValid token\naccepted for API] as TC08
+  [TC-LOGIN-09\nBCrypt\npassword matching] as TC09
+  [TC-LOGIN-10\nLoginAttemptService\nlockout logic] as TC10
+  [TC-LOGIN-11\nLoginAttemptService\nreset on success] as TC11
+  [TC-LOGIN-12\nEmpty username/\npassword handled] as TC12
+  [TC-LOGIN-13\nCase-insensitive\nusername matching] as TC13
+  [TC-LOGIN-14\nInactive user\ncannot login] as TC14
+}
+
+package "Test Levels" {
+  [Unit Tests] as UT
+  [Integration Tests] as IT
+}
+
+package "Requirements (CU-78)" {
+  [Credential validation\nagainst secure hash] as R1
+  [JWT token generation\non valid login] as R2
+  [Account lockout\nafter failed attempts] as R3
+  [Token via HTTPS/TLS] as R4
+  [Role-based authorization] as R5
+  [Audit logging\nof access attempts] as R6
+  [No sensitive info\nin errors] as R7
+}
+
+TC01 --> IT
+TC02 --> IT
+TC03 --> IT
+TC04 --> IT
+TC05 --> IT
+TC06 --> IT
+TC07 --> IT
+TC08 --> IT
+TC09 --> UT
+TC10 --> UT
+TC11 --> UT
+TC12 --> IT
+TC13 --> IT
+TC14 --> IT
+
+R1 ..> TC01
+R1 ..> TC02
+R1 ..> TC09
+R2 ..> TC01
+R2 ..> TC08
+R3 ..> TC04
+R3 ..> TC10
+R4 ..> TC01
+R4 ..> TC05
+R5 ..> TC08
+R6 ..> TC01
+R6 ..> TC02
+R6 ..> TC03
+R7 ..> TC02
+R7 ..> TC03
+R7 ..> TC12
+
+@enduml

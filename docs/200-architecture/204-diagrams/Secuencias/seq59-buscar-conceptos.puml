@@ -1,0 +1,17 @@
+@startuml cu59
+!theme plain
+title CU59 — Buscar Conceptos
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita la lista de conceptos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y devuelve una lista de conceptos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle del concepto.
+Sistema -> Sistema : Sistema
+
+@enduml

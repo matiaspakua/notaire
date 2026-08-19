@@ -1,0 +1,66 @@
+@startuml login-token-validation
+!theme plain
+title TC-LOGIN-05/06/07/08: Token Validation and API Access
+
+actor "User" as User
+participant "Frontend" as FE
+participant "JwtAuthenticationFilter" as Filter
+participant "JwtTokenService" as JWT
+participant "SecurityContext" as SecCtx
+participant "UsuarioController" as Ctrl
+
+== Token Validation ==
+
+User -> FE: Access protected resource
+FE -> Filter: GET /api/v1/usuarios (with Bearer token)
+activate Filter
+
+alt TC-07: Missing token
+  Filter -> Filter: No Authorization header
+  Filter --> FE: 401 Unauthorized
+  deactivate Filter
+  stop
+end
+
+alt TC-06: Invalid token
+  Filter -> JWT: validate(token)
+  activate JWT
+  JWT --> Filter: false (invalid signature)
+  deactivate JWT
+  Filter --> FE: 401 Unauthorized
+  deactivate Filter
+  stop
+end
+
+alt TC-05: Expired token
+  Filter -> JWT: validate(token)
+  activate JWT
+  JWT --> Filter: false (expired)
+  deactivate JWT
+  Filter --> FE: 401 Unauthorized
+  deactivate Filter
+  stop
+end
+
+alt TC-08: Valid token
+  Filter -> JWT: validate(token)
+  activate JWT
+  JWT --> Filter: true
+  deactivate JWT
+  Filter -> SecCtx: Set Authentication
+  activate SecCtx
+  SecCtx --> Filter: void
+  deactivate SecCtx
+  Filter --> FE: Forward to controller
+  deactivate Filter
+
+  == API Access ==
+  FE -> Ctrl: GET /api/v1/usuarios
+  activate Ctrl
+  Ctrl -> Ctrl: Process request
+  Ctrl --> FE: 200 OK {users list}
+  deactivate Ctrl
+  FE -> User: Display data
+end
+
+@enduml

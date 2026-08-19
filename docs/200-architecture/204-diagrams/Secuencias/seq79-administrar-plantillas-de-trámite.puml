@@ -1,0 +1,25 @@
+@startuml cu79
+!theme plain
+title CU79 — Administrar Plantillas de Trámite
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita administrar las plantillas de trámites.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de plantillas existentes con tipos y estado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona crear una nueva plantilla o editar una existente.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita seleccionar el tipo de trámite y muestra el catálogo de documentos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona el tipo de trámite y compone la lista de documentos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Valida la selección y presenta los documentos con opciones de obligatoriedad y vigencia.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la configuración de la plantilla.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda la plantilla, valida duplicados y emite confirmación de registro exitoso.
+Sistema -> Sistema : Sistema
+
+@enduml

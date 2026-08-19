@@ -1,0 +1,23 @@
+@startuml cu76
+!theme plain
+title CU76 — Definir Workflow de Estados y Transiciones
+
+actor "Administrador" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Administrador crea una nueva WorkflowDefinition.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Registra la definición y la habilita para edición.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador agrega WorkflowNodes.
+Sistema -> Sistema : Administrador
+Actor -> Actor : El Administrador agrega WorkflowTransitions.
+Sistema -> Sistema : Administrador
+Actor -> Actor : El Administrador solicita validar el workflow.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Verifica consistencia del grafo.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Persiste la definición validada.
+Sistema -> Sistema : Sistema
+
+@enduml

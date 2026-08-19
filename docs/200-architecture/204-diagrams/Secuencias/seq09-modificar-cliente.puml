@@ -1,0 +1,21 @@
+@startuml cu09
+!theme plain
+title CU09 — Modificar cliente
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar un cliente.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos de búsqueda.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta los datos del cliente encontrado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml
