@@ -3,6 +3,10 @@
 Framework de testing centralizado del proyecto: unit, integración, API,
 frontend, E2E UI (Playwright) y trazabilidad por Caso de Uso.
 
+Para el plan maestro de testing (niveles de test, catálogo por caso de uso,
+proceso de reporting), ver [`TEST-PLAN.md`](TEST-PLAN.md). Este README es el
+inventario de suites y comandos.
+
 ```
 Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwright, por Caso de Uso)
 ```
@@ -99,4 +103,5 @@ legacy; no se amplían con nueva cobertura (ver `CLAUDE.md`).
 ## Navigation
 
 - [← Desarrollo](../)
+- [Test Plan](TEST-PLAN.md)
 - [Arquitectura](../../200-architecture/)
