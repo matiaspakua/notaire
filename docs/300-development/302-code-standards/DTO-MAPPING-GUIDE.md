@@ -101,20 +101,9 @@ DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idC
 
 ## Lazy Loading and JSON Serialization
 
-Some entities have `@ManyToOne` or `@OneToMany` with lazy loading. When Jackson tries to serialize a lazy proxy, it may throw a `LazyInitializationException`.
+Some entities have `@ManyToOne` or `@OneToMany` with lazy loading. When Jackson tries to serialize a lazy proxy outside an open Hibernate session, it throws a `LazyInitializationException`.
 
-**Current mitigation**: `spring.jpa.open-in-view=false` is configured. Controllers use a fresh `EntityManager` per request via `getEntityManager()` from `JpaControllerProvider`.
-
-**Risk**: Endpoints that serialize entities with `@OneToMany` lists (e.g., `GestionDeEscritura.tramiteList`) may fail if the relationship is lazy and the session is closed. Some integration tests are disabled pending a lazy loading fix.
-
-**Recommended fix**: Add `@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})` to entity classes, or use Jackson's Hibernate module:
-
-```xml
-<dependency>
-  <groupId>com.fasterxml.jackson.datatype</groupId>
-  <artifactId>jackson-datatype-hibernate6</artifactId>
-</dependency>
-```
+**Current mitigation**: `spring.jpa.open-in-view=false` is configured, and controller/service methods that touch lazy-loaded associations are annotated `@Transactional(readOnly = true)` so the session stays open through the full `.map(Entity::getDto)` call. See `JPA-LAZY-LOADING-GUIDE.md` for the entity-by-entity breakdown and `SPRING-TRANSACTION-GUIDE.md` for the transaction-boundary rules.
 
 ## Adding a New DTO
 
@@ -156,3 +145,5 @@ public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
 - `PlantillaPresupuesto.java` (`backend-api`) — composite PK entity example
 - `WorkflowNode.java` / `WorkflowNodeController.java` (`backend-api`) — `toDto()` mapping pattern
 - `frontend/src/types/index.ts` — TypeScript mirrors of all entity types
+- `JPA-LAZY-LOADING-GUIDE.md` — which entities have lazy associations and why
+- `SPRING-TRANSACTION-GUIDE.md` — transaction boundary management
