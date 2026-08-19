@@ -14,14 +14,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class UseCaseRouteCatalogUnitTest {
 
     @Test
-    void shouldContainAllUseCasesWithoutDuplicates() {
+    void shouldContainAllRoutesWithoutDuplicates() {
         List<UseCaseRouteCatalog.UseCaseRoute> routes = UseCaseRouteCatalog.all();
-        assertEquals(72, routes.size(), "The catalog must contain all 72 use cases.");
+        assertEquals(72, routes.size(), "The catalog must contain all 72 routes.");
 
-        Set<String> ids = routes.stream()
-                .map(UseCaseRouteCatalog.UseCaseRoute::useCaseId)
+        Set<String> routeKeys = routes.stream()
+                .map(route -> route.useCaseId() + " " + route.method() + " " + route.pathPattern())
                 .collect(Collectors.toSet());
-        assertEquals(72, ids.size(), "Use case IDs must be unique.");
+        assertEquals(72, routeKeys.size(),
+                "Each use case route (ID + method + path) must be unique; "
+                        + "one use case may legitimately cover several routes (e.g. CU83).");
     }
 
     @Test

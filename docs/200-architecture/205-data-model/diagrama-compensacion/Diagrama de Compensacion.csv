@@ -1,0 +1,42 @@
+Id,Entidad_Padre,Entidad_Hija,Clave_Foranea,Insertar,Modificar,Borrar,Regla_Negocio
+1,Personas,Identificaciones,fk_id_persona,Impedir,Impedir,Cascada,Toda identificación pertenece a una persona
+2,Tipos de Identificación,Identificaciones,fk_id_tipo_identificacion,Impedir,Impedir,Impedir,No borrar tipo de identificación en uso
+3,Personas,Usuarios,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona con cuenta de usuario
+4,Roles,Usuarios,fk_id_rol,Null,Impedir,Null,Usuario puede crearse sin rol asignado
+5,Roles,Roles-Permisos,fk_id_rol,Impedir,Impedir,Cascada,Al borrar rol se eliminan sus permisos
+6,Usuarios,Registro Auditoria,fk_id_usuario,Impedir,Impedir,Impedir,No borrar usuario con bitácora de auditoría
+7,Personas,Suplencias,fk_id_suplantado / fk_id_suplente,Impedir,Impedir,Impedir,No borrar escribanos con suplencias
+8,Workflow Definition,Workflow Node,fk_workflow_definition_id,Impedir,Impedir,Cascada,Al borrar workflow se eliminan sus nodos
+9,Workflow Definition,Workflow Transition,fk_workflow_definition_id,Impedir,Impedir,Cascada,Al borrar workflow se eliminan sus transiciones
+10,Estados de Gestión,Workflow Node,fk_estado_gestion_id,Impedir,Impedir,Impedir,No borrar estado asociado a nodos
+11,Workflow Node,Workflow Transition,fk_nodo_origen / fk_nodo_destino,Impedir,Impedir,Cascada,Al borrar nodo se eliminan transiciones
+12,Workflow Definition,Tipos de Trámite,fk_workflow_definition_id,Null,Impedir,Null,Tipo de trámite puede no tener workflow asignado
+13,Personas,Gestiones de Escrituras,fk_id_persona_escribano,Impedir,Impedir,Impedir,Toda gestión requiere escribano responsable
+14,Estados de Gestión,Gestiones de Escrituras,fk_id_estado_de_gestion,Null,Impedir,Null,Gestión puede crearse sin estado consolidado
+15,Gestiones de Escrituras,Historial,fk_id_gestion,Impedir,Impedir,Cascada,Al borrar gestión se borra su historial
+16,Estados de Gestión,Historial,fk_id_estado_gestion,Impedir,Impedir,Impedir,No borrar estado con historial registrado
+17,Tipos de Trámite,Plantillas Trámites,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula plantilla
+18,Tipos de Documento,Plantillas Trámites,fk_id_tipo_documento,Impedir,Impedir,Cascada,Al borrar tipo de doc se desvincula plantilla
+19,Tipos de Trámite,Plantillas Presupuestos,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula arancel
+20,Conceptos,Plantillas Presupuestos,fk_id_concepto,Impedir,Impedir,Cascada,Al borrar concepto se desvincula arancel
+21,Personas,Presupuestos,fk_id_persona,Impedir,Impedir,Impedir,No borrar cliente con cotizaciones emitidas
+22,Presupuestos,Items,fk_id_presupuesto,Impedir,Impedir,Cascada,Al borrar presupuesto se eliminan sus líneas
+23,Presupuestos,Pagos,fk_id_presupuesto,Impedir,Impedir,Impedir,No existen pagos sin presupuesto. No borrar presupuesto con pagos
+24,Presupuestos,Trámites,fk_id_presupuesto,Impedir,Impedir,Impedir,V14: Todo trámite requiere presupuesto base
+25,Tipos de Trámite,Trámites,fk_id_tipo_tramite,Impedir,Impedir,Impedir,No borrar tipo de trámite con trámites en curso
+26,Gestiones de Escrituras,Trámites,fk_id_gestion,Null,Impedir,Null,Protocolo Auxiliar no requiere carpeta de gestión
+27,Escrituras,Trámites,fk_id_escritura,Null,Impedir,Null,El trámite nace sin escritura hasta su otorgamiento
+28,Inmuebles,Trámites,fk_id_inmueble,Null,Impedir,Null,Trámites que no involucran inmuebles tienen FK nula
+29,Trámites,Trámites-Personas,fk_id_tramite,Impedir,Impedir,Cascada,Al borrar trámite se desvinculan las partes
+30,Personas,Trámites-Personas,fk_id_persona_cliente,Impedir,Impedir,Impedir,No borrar persona que interviene en actos
+31,Trámites,Documentos Presentados,fk_id_tramite,Null,Impedir,Cascada,V6: Permite documentos autónomos previo a asignación
+32,Tipos de Documento,Documentos Presentados,fk_id_tipo_documento,Null,Impedir,Impedir,Tipo de documento maestro
+33,Personas,Folios,fk_id_persona_escribano,Impedir,Impedir,Impedir,No borrar escribano con folios asignados
+34,Tipos de Folio,Folios,fk_id_tipo_folio,Impedir,Impedir,Impedir,No borrar tipo de folio en uso
+35,Escrituras,Folios,fk_id_escritura,Null,Impedir,Null,Folios disponibles o Errose/No Pasó no tienen escritura
+36,Escrituras,Testimonios,fk_id_escritura,Impedir,Impedir,Cascada,No existe testimonio sin escritura matriz
+37,Testimonios,Movimientos Testimonio,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan movimientos
+38,Testimonios,Copias,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan sus copias
+39,Personas,Copias,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona destinataria de copia
+40,Folios,Folios-Copias,fk_id_folio,Impedir,Impedir,Impedir,Folio de testimonio asignado
+41,Copias,Folios-Copias,fk_id_copia,Impedir,Impedir,Cascada,Al borrar copia se desasocia el folio

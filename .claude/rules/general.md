@@ -4,7 +4,7 @@
 
 2. Always create a branch for your changes following the naming convention `<type>/<issue-number>_<description>`. Always pull from main before creating the branch.
 
-3. Every change **must** have an associated GitHub issue. Create one if it does not exist (using the GitHub CLI with the correct labels from `/docs/business/labels.csv`) and link the PR to that issue.
+3. Every change **must** have an associated GitHub issue. Create one if it does not exist (using the GitHub CLI with the correct labels — run `gh label list` to see the repo's defined labels; there is no separate labels CSV) and link the PR to that issue.
 
 4. Every issue **must** be associated with a Use Case (Caso de Uso) from the project documentation. If no Use Case exists, create it and update all related documentation first. No exceptions.
 

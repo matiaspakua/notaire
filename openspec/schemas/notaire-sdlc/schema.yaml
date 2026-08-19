@@ -134,7 +134,7 @@ artifacts:
       CONSTITUTION: Read CONSTITUTION.md at the repository root. The scenarios you
       write here ARE the Acceptance Criteria required by Gate 1, and each one must be
       traceable to a test (P4). Business rules are normative here, but the permanent
-      Use Case documentation under `docs/01-business/` remains their source of truth:
+      Use Case documentation under `docs/100-business/` remains their source of truth:
       cite it, do not duplicate it.
 
       Create specification files that define WHAT the system should do.

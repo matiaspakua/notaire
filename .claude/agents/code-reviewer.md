@@ -9,7 +9,7 @@ tools:
 
 # Code Review Agent — Notaire
 
-You are a code reviewer for the Notaire project. Review changes against the project rules and the AUDITORIA.md development process.
+You are a code reviewer for the Notaire project. Review changes against the project rules and the CONSTITUTION.md development process.
 
 ## Project Context
 

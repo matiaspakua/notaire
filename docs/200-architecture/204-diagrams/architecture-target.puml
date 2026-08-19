@@ -1,0 +1,61 @@
+@startuml
+title Target Notaire Architecture — Modern Three-Tier
+left to right direction
+
+actor "Usuario final" as User
+
+node "Frontend Web\n(Next.js 16 / React 19)" {
+  [React UI + Design Tokens] as WebUI
+  [TanStack Query + API Client] as WebClient
+}
+
+node "Frontend Swing (Deprecated)" #LightGray {
+  [Swing UI] as SwingUI
+  [REST Client] as SwingClient
+}
+
+node "Backend API\n(Spring Boot 4.1 / Java 21)" {
+  [REST Controllers] as API
+  [Spring Security + JWT] as Sec
+  [Business Services] as Svc
+  [Spring Data JPA Repositories] as Repo
+  [Domain Entities (negocio)] as Domain
+  [Audit Aspect] as Audit
+}
+
+database "PostgreSQL 16\n(Flyway-managed)" as Postgres
+cloud "Shared Contracts\n(notaire-shared DTOs)" as Shared
+
+node "Observability Stack" {
+  [Prometheus] as Prom
+  [Grafana] as Graf
+  [Loki + Promtail] as Loki
+}
+
+node "DevSecOps" {
+  [SonarQube] as Sonar
+  [Homer Dashboard] as Homer
+}
+
+User --> WebUI : HTTPS
+WebUI --> WebClient
+WebClient --> API : HTTP/JSON (JWT)
+
+User ..> SwingUI : Legacy access
+SwingUI --> SwingClient
+SwingClient --> API : HTTP/JSON (JWT)
+
+API --> Sec : Authentication
+Sec --> Svc : Authorized requests
+Svc --> Repo : Persistence
+Repo --> Postgres : SQL / Hibernate
+Svc --> Audit : Auditable
+Audit --> Postgres : INSERT audit trail
+
+API ..> Shared : DTO contracts
+
+Prom --> API : /actuator/prometheus
+Loki --> API : Log collection
+Graf --> Prom : Dashboards
+Graf --> Loki : Log queries
+@enduml

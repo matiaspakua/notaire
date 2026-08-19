@@ -1,0 +1,68 @@
+@startuml
+title Transición de estados de una gestión
+
+skinparam shadowing true
+skinparam defaultFontName Arial
+skinparam activity {
+  BackgroundColor #F6EBD8
+  BorderColor #333333
+  FontColor #111111
+  DiamondBackgroundColor #F6EBD8
+  DiamondBorderColor #333333
+}
+
+start
+
+:Solicita iniciar una gestión;
+
+if (¿Es cliente?) then (sí)
+  :Buscar cliente;
+else (no)
+  if (¿Requiere alta de persona?) then (sí)
+    :Dar alta persona;
+  endif
+  :Dar alta cliente;
+endif
+
+if (¿Existe presupuesto?) then (sí)
+  :Buscar presupuesto;
+else (no)
+  :Crear presupuesto;
+endif
+
+:Iniciar gestión;
+
+repeat
+  :En espera de documentación;
+repeat while (¿Documentación completa?) is (no) not (sí)
+
+repeat
+  :Preparar escritura;
+
+  if (Resultado de la escritura) then (firmar)
+    :Firmar escritura;
+    :Generar testimonio;
+
+    if (¿Requiere inscripción?) then (sí)
+      :Ingresar para inscripción;
+
+      while (¿Volvió observado?) is (sí)
+        :Registrar reingreso;
+        :Ingresar para inscripción;
+      endwhile (no)
+    endif
+
+    repeat
+      :Retirar testimonio;
+    repeat while (¿Todos los testimonios retirados?) is (no) not (sí)
+  elseif (anular)
+    :Escritura anulada;
+  else (no pasó)
+    :Escritura no pasó;
+  endif
+
+repeat while (¿Existen más trámites en la gestión?) is (sí) not (no)
+
+:Archivar gestión;
+stop
+@enduml

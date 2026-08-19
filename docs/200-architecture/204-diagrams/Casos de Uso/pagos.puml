@@ -1,0 +1,28 @@
+@startuml pagos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Pagos
+
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Cliente
+
+rectangle "Módulo pagos" {
+  usecase "CU15 - Procesar pago" as CU15
+  usecase "CU47 - Consultar Pago" as CU47
+}
+
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+usecase "CU60 - Buscar Presupuesto\n(from Presupuesto)" as CU60
+
+Escribano --> CU15 : requiere
+Escribano --> CU47 : requiere
+RecepcionistaGestor --> CU47 : requiere
+Cliente --> CU15 : solicita
+
+CU15 ..> CU19 : <<include>>
+CU15 ..> CU60 : <<include>>
+CU47 ..> CU19 : <<include>>
+CU47 ..> CU60 : <<include>>
+
+@enduml

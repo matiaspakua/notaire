@@ -148,6 +148,6 @@ Start the application first so the network exists. `infra/scripts/start-infra.sh
 verifies this and fails fast with guidance if it is missing.
 
 ## 📖 Additional Documentation
-- [Monitoring Guide](../docs/04-operations/04-monitoring/README.md)
-- [Operations README](../docs/04-operations/README.md)
+- [Monitoring Guide](../docs/200-architecture/207-monitoring/README.md)
+- [Deployment Guide](../docs/200-architecture/209-deployment/README.md)
 - Credentials reference: [`CREDENTIALS.md`](CREDENTIALS.md)

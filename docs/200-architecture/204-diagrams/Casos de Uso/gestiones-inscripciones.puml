@@ -1,0 +1,26 @@
+@startuml gestiones-inscripciones
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Inscripciones
+
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+
+rectangle "Módulo Inscripciones" {
+  usecase "CU11 - Ingresar para inscripción" as CU11
+  usecase "CU56 - Registrar inscripción" as CU56
+  usecase "CU44 - Reingresar testimonio" as CU44
+}
+
+usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
+
+Escribano --> CU11 : registra
+Escribano --> CU56 : registra
+RecepcionistaGestor --> CU56 : requiere
+RecepcionistaGestor --> CU44 : registra
+
+CU11 ..> CU62 : <<include>>
+CU56 ..> CU62 : <<include>>
+CU44 ..> CU62 : <<include>>
+
+@enduml

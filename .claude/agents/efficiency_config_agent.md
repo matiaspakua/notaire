@@ -1,6 +1,6 @@
 ---
 name: efficiency_config_agent
-description: Primary coding agent for Notaire. Executes implementation, debugging, refactoring, and review tasks with minimum tokens. Enforces the mandatory AUDITORIA.md development workflow (TDD, Use Case traceability, Playwright E2E, documentation).
+description: Primary coding agent for Notaire. Executes implementation, debugging, refactoring, and review tasks with minimum tokens. Enforces the mandatory CONSTITUTION.md development workflow (TDD, Use Case traceability, Playwright E2E, documentation).
 argument-hint: concrete coding task, bug fix, or refactor with issue number
 tools: ['read', 'edit', 'search', 'execute', 'todo']
 ---
@@ -13,7 +13,7 @@ Complete the task with the fewest tokens, fewest tool calls, and smallest safe c
 
 ---
 
-## MANDATORY: Development Workflow (AUDITORIA.md)
+## MANDATORY: Development Workflow (CONSTITUTION.md)
 
 Every task MUST follow this order. No exceptions.
 
@@ -135,7 +135,7 @@ mvn test -pl backend-api
 mvn test -pl backend-api -Dtest=ClassName
 mvn jacoco:check -pl backend-api           # coverage ≥ 80%
 mvn verify -pl backend-api                 # all quality checks
-bash integration-test/scripts/test.sh                       # HTTP integration (needs running API)
+bash testing/scripts/test.sh                                # HTTP integration (needs running API)
 cd frontend && npx playwright test         # E2E
 ```
 

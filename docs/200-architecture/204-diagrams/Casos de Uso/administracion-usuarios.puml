@@ -1,0 +1,24 @@
+@startuml administracion-usuarios
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Usuarios (Administración)
+
+actor Escribano
+
+rectangle "Módulo Usuarios" {
+  usecase "CU20 - Dar alta usuario" as CU20
+  usecase "CU21 - Modificar Usuario" as CU21
+  usecase "CU23 - Ver registro de actividades de usuario" as CU23
+}
+
+usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+
+Escribano --> CU20 : requiere
+Escribano --> CU21 : requiere
+Escribano --> CU23 : requiere
+
+CU20 ..> CU61 : <<include>>
+CU21 ..> CU61 : <<include>>
+CU23 ..> CU61 : <<include>>
+
+@enduml

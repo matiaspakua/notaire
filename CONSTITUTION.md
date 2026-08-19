@@ -8,7 +8,7 @@
 > any other tool or person touching this codebase.
 >
 > Existing project documents (`.claude/rules/*`, `AGENTS.md`, `CLAUDE.md`,
-> `AUDITORIA.md`, `docs/`) implement this Constitution. Where a lower-level
+> `.claude/rules/`, `docs/`) implement this Constitution. Where a lower-level
 > document contradicts this Constitution, **this document prevails**.
 
 ---
@@ -201,7 +201,7 @@ bash scripts/validate-sdlc-plan.sh "<name>"  # rejects an incomplete plan
 ```
 
 The schema produces `proposal.md`, `traceability.md`, `specs/<capability>/spec.md`,
-`design.md` and `tasks.md`. `docs/03-development/templates/specification-template.md`
+`design.md` and `tasks.md`. `docs/300-development/templates/specification-template.md`
 maps every requirement of this Constitution to the artifact that carries it.
 Acceptance Criteria are the delta spec's `#### Scenario:` blocks. → **Gate 1.**
 
@@ -211,7 +211,7 @@ and documentation. List risks and dependencies.
 
 **5. Architecture Review.** Verify the design follows the existing
 architecture and conventions. If the change is architectural, record it in an
-ADR (`docs/02-architecture/01-adr/`).
+ADR (`docs/200-architecture/202-ADR/`).
 
 **6. Crear Branch.** From an updated `main`:
 
@@ -248,7 +248,7 @@ mvn verify -pl backend-api               # all quality checks
 ```
 
 **14. Regression completa.** Run the full suite, including HTTP/Bruno API tests
-(`bash integration-test/scripts/test.sh`) and any affected legacy paths. No
+(`bash testing/scripts/test.sh`) and any affected legacy paths. No
 `@Disabled` or skipped tests without documented, approved justification.
 
 **15. Playwright E2E.** For any UI change, run `cd frontend && npx playwright test`
@@ -333,7 +333,7 @@ Every modification must produce or update:
 |------------|--------------|----------|
 | **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` |
 | **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) |
-| **Contract Tests** | When a contract (API DTO/schema) changes and a contract suite exists | `integration-test/http/`, `backend-api/api-test/` (Bruno) |
+| **Contract Tests** | When a contract (API DTO/schema) changes and a contract suite exists | `testing/http/`, `backend-api/api-test/` (Bruno) |
 | **Playwright E2E** | Any UI change | `frontend/tests/e2e/` |
 | **Regression Tests** | All changes — full suite must stay green | entire suite |
 
@@ -355,23 +355,23 @@ Rules:
 Every change must declare which permanent documentation it affects. Update the
 permanent documentation **before merge**. Never duplicate documentation —
 centralize information in the most coherent place; move outdated documents to
-`docs/archive/`.
+`docs/000-archive/`.
 
 | Type | Where it lives | When it changes |
 |------|----------------|-----------------|
 | README | `README.md` | Project-level overview, quick start, badges |
-| Architecture | `docs/02-architecture/` (SAD, PROJECT-STRUCTURE, DESIGN) | Architectural or structural changes |
-| ADRs | `docs/02-architecture/01-adr/` | Architectural decisions |
-| Business rules & Use Cases | `docs/01-business/` (`CU-XX`, `RF-XX`, `RNF-XX`) | Business behavior changes; new Use Cases |
-| API | `docs/05-api/` + OpenAPI/Swagger | Endpoint changes |
-| Development | `docs/03-development/` | Build, test, contribution process |
-| Operations / Runbooks | `docs/04-operations/` | Deploy, monitoring, security |
-| Diagrams | `docs/02-architecture/03-diagrams/` | Architecture or data-model changes |
+| Architecture | `docs/200-architecture/` (SAD, ADRs, design, diagrams) | Architectural or structural changes |
+| ADRs | `docs/200-architecture/202-ADR/` | Architectural decisions |
+| Business rules & Use Cases | `docs/100-business/` (`CU-XX`, `RF-XX`, `RNF-XX`) | Business behavior changes; new Use Cases |
+| API | `docs/200-architecture/203-design/` + OpenAPI/Swagger | Endpoint changes |
+| Development | `docs/300-development/` | Build, test, contribution process |
+| Operations / Runbooks | `docs/200-architecture/` (`206-security`, `207-monitoring`, `208-devsecops`, `209-deployment`) | Deploy, monitoring, security |
+| Diagrams | `docs/200-architecture/204-diagrams/` | Architecture or data-model changes |
 | Changelog | `CHANGELOG.md` (Keep a Changelog) | Every user-visible change |
 
 Specifications describe **only the change** (they are not permanent
 documentation) and are stored with the Issue or under
-`docs/03-development/specifications/`.
+`docs/300-development/specifications/`.
 
 ---
 
@@ -472,7 +472,7 @@ drift.
 | Process step / gate | Tooling |
 |---------------------|---------|
 | Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI |
-| Specification | OpenSpec, schema `openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/03-development/templates/specification-template.md` |
+| Specification | OpenSpec, schema `openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
 | Constitution as agent context | `openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
 | Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
@@ -486,11 +486,11 @@ drift.
 | Local preflight | `bash scripts/preflight.sh [--fix|--fast|--full]`; pre-push hook |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
-| Deploy + smoke | `cd.yml` → GHCR image; runbook in `docs/04-operations/` |
+| Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
 | Agent rules | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/*`, `.claude/skills/*` |
 
 ---
 
 *Last reviewed: 2026-08-08. This Constitution supersedes the process
-summaries in `AUDITORIA.md` and `.claude/rules/ai-agent-workflow.md` where
-they conflict; those documents remain the operational implementations.*
+summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
+document remains the operational implementation.*

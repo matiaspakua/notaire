@@ -83,7 +83,7 @@
 
 <!-- Does this follow the existing architecture (repository over legacy jpa, design
      system tokens, Flyway as single source of truth)? If the change is
-     architectural, an ADR under docs/02-architecture/01-adr/ is required - name it
+     architectural, an ADR under docs/200-architecture/202-ADR/ is required - name it
      here. -->
 
 ## Documentation Impact
@@ -95,7 +95,7 @@
 
 | Permanent document | What must change |
 |--------------------|------------------|
-| <!-- e.g. docs/01-business/02-use-cases/CU15....md --> | <!-- --> |
+| <!-- e.g. docs/100-business/102-use-cases/CU15....md --> | <!-- --> |
 | `CHANGELOG.md` | <!-- user-visible change entry, or "n/a - not user visible" --> |
 
 ## Out of Scope

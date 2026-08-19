@@ -11,7 +11,7 @@ metadata:
 Triage an exploration report into real GitHub Issues. This is the mandatory bridge
 between `opsx:explore` (open-ended thinking, produces a report, never scaffolds a
 change) and `opsx:propose` (scaffolds a change around a real Issue). See
-`docs/03-development/OPENSPEC-CONSTITUTION-BRIDGE.md` for why this step exists:
+`docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` for why this step exists:
 `scripts/validate-sdlc-plan.sh` mechanically rejects a proposal whose Issue number
 does not resolve to a real, open GitHub Issue, so a report entry that never went
 through triage cannot reach Gate 1.
@@ -43,7 +43,7 @@ OpenSpec change scaffolding.
    `gh issue create` with minimal editing:
    - Title (imperative, specific)
    - Use Case reference(s) — CU-XX / RF-XX / RNF-XX from
-     `docs/01-business/02-use-cases/`. If a candidate has none, say so explicitly
+     `docs/100-business/102-use-cases/`. If a candidate has none, say so explicitly
      and either find/create the Use Case first (Constitution §1/§12 — no
      exceptions) or exclude the candidate and tell the user why.
    - Description (what's broken/missing, with file/line evidence from the report)

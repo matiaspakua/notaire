@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
-@RequirementCoverage({"CU70", "CU71", "CU72"})
+@RequirementCoverage({"CU83"})
 @DisplayName("Workflow Entity Tests")
 class WorkflowEntityTest {
 
     @Nested
-    @DisplayName("CU70 - WorkflowDefinition entity")
+    @DisplayName("CU83 - WorkflowDefinition entity")
     class WorkflowDefinitionTests {
 
         @Test
@@ -69,7 +69,7 @@ class WorkflowEntityTest {
     }
 
     @Nested
-    @DisplayName("CU70 - WorkflowNode entity")
+    @DisplayName("CU83 - WorkflowNode entity")
     class WorkflowNodeTests {
 
         @Test
@@ -123,7 +123,7 @@ class WorkflowEntityTest {
     }
 
     @Nested
-    @DisplayName("CU71 - WorkflowTransition entity")
+    @DisplayName("CU83 - WorkflowTransition entity")
     class WorkflowTransitionTests {
 
         @Test

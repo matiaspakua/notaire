@@ -1,0 +1,44 @@
+@startuml protocolos
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Protocolos (incluye submódulo Folios)
+
+actor Escribano
+actor "Recepcionista / Gestor" as RecepcionistaGestor
+
+rectangle "Módulo Protocolos" {
+  usecase "CU24 - Generar libro de índices" as CU24
+  usecase "CU25 - Generar Declaración Jurada del mes" as CU25
+  usecase "CU50 - Generar Declaración Jurada de Rentas" as CU50
+}
+
+usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+
+Escribano --> CU24 : requiere
+Escribano --> CU25 : requiere
+Escribano --> CU50 : requiere
+RecepcionistaGestor --> CU24 : requiere
+RecepcionistaGestor --> CU25 : requiere
+RecepcionistaGestor --> CU50 : requiere
+
+CU24 ..> CU62 : <<include>>
+CU24 ..> CU19 : <<include>>
+CU25 ..> CU62 : <<include>>
+CU25 ..> CU19 : <<include>>
+CU50 ..> CU62 : <<include>>
+CU50 ..> CU19 : <<include>>
+
+rectangle "Submódulo Folios" {
+  usecase "CU28 - Ingresar nuevos folios" as CU28
+  usecase "CU63 - Buscar Folios" as CU63
+  usecase "CU33 - Modificar folio" as CU33
+}
+
+Escribano --> CU28 : requiere
+Escribano --> CU63 : requiere
+Escribano --> CU33 : requiere
+
+CU33 ..> CU63 : <<include>>
+
+@enduml

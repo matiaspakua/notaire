@@ -64,10 +64,9 @@ Multi-module Maven project refactoring a Java Swing monolith to microservices. S
 **Modules:**
 - `backend-api` — Spring Boot REST API (main development target)
 - `notaire-shared` — Shared DTOs and common code
-- `frontend-swing` — **DEPRECATED.** Legacy Swing GUI client, excluded from the root
-  Maven reactor and CI. Do not build new features here or adapt it to track
-  `backend-api`/`notaire-shared` changes; see `frontend-swing/README.md`. New client
-  work belongs in `frontend/` (Next.js).
+- `frontend-swing` — **Removed.** The legacy Swing GUI client was deprecated and
+  deleted from the repository; do not recreate it. All new client work belongs
+  in `frontend/` (Next.js).
 
 ## Build & Run Commands
 
@@ -147,7 +146,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 mvn verify -pl backend-api  # all checks
 
 # HTTP integration tests (requires running API)
-bash integration-test/scripts/test.sh
+bash testing/scripts/test.sh
 ```
 
 ## ⚠️ CI Preflight — run BEFORE every push
@@ -162,14 +161,14 @@ Always validate with the preflight script, which mirrors every CI gate:
 bash scripts/install-git-hooks.sh   # once per clone: pre-push runs the gates automatically
 bash scripts/preflight.sh --fix     # auto-fix formatting/lint, then verify
 bash scripts/preflight.sh           # all blocking gates except server-backed suites
-bash scripts/preflight.sh --full    # adds Playwright E2E + HTTP API suite (needs stack up)
+bash scripts/preflight.sh --full    # adds Playwright E2E + Bruno API tests + Docker build/smoke test (needs stack up)
 bash scripts/preflight.sh --list    # local check -> CI job mapping
 ```
 
 **When you add or change a gate in `.github/workflows/`, update
 `scripts/preflight.sh` in the same PR** — otherwise the local/CI gap reopens.
 
-Full details: `docs/03-development/CI-PREFLIGHT.md`
+Full details: `docs/300-development/CI-PREFLIGHT.md`
 
 ## Backend Architecture (`backend-api`)
 
@@ -233,7 +232,7 @@ When working on frontend forms:
 - `src/theme/tokens.ts` — Design tokens (colors, spacing, typography, shadows, etc.)
 - `src/theme/index.ts` — Utilities and hooks for using tokens
 - `src/theme/form-patterns.tsx` — Reusable form component patterns
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Full design system documentation
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Full design system documentation
 
 **Form Development Pattern:**
 ```tsx

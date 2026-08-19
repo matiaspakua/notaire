@@ -1,7 +1,6 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
 import com.licensis.notaire.negocio.WorkflowNode;
 import com.licensis.notaire.negocio.WorkflowNodeType;
 import com.licensis.notaire.negocio.WorkflowTransition;
@@ -16,7 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CU72 - WorkflowValidationService unit tests")
+@DisplayName("CU83 - WorkflowValidationService unit tests")
 class WorkflowValidationServiceTest {
 
     private WorkflowValidationService service;

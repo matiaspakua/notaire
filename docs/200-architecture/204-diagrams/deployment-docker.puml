@@ -1,0 +1,43 @@
+@startuml
+title Deployment View — Docker Compose (Development)
+
+node "Docker Host" {
+  node "docker-compose.yml\n(Application Stack)" {
+    artifact "notaire-frontend\n:3000" as FE <<Next.js 16>>
+    artifact "notaire-backend\n:8080" as BE <<Spring Boot 4.1>>
+    database "notary-postgres\n:5432" as DB <<PostgreSQL 16>>
+    artifact "notary-pgadmin\n:5050" as PGA <<pgAdmin 4>>
+  }
+
+  node "infra/docker-compose.yml\n(DevSecOps Stack)" {
+    artifact "devsecops-prometheus\n:9090" as Prom <<Prometheus>>
+    artifact "devsecops-grafana\n:3001" as Graf <<Grafana>>
+    artifact "devsecops-loki\n:3100" as Loki <<Loki>>
+    artifact "devsecops-promtail" as Tail <<Promtail>>
+    artifact "devsecops-sonarqube\n:9000" as Sonar <<SonarQube>>
+    artifact "devsecops-postgres-exporter\n:9187" as PGExp <<postgres-exporter>>
+    artifact "devsecops-dashboard\n:8888" as Homer <<Homer>>
+  }
+}
+
+actor "Developer / User" as Dev
+
+Dev --> FE : http://localhost:3000
+Dev --> BE : http://localhost:8080
+Dev --> PGA : http://localhost:5050
+Dev --> Graf : http://localhost:3001
+Dev --> Prom : http://localhost:9090
+Dev --> Sonar : http://localhost:9000
+Dev --> Homer : http://localhost:8888
+
+FE --> BE : NEXT_PUBLIC_API_URL
+BE --> DB : JDBC / Flyway
+PGA --> DB : Admin
+
+Prom --> BE : /actuator/prometheus
+Prom --> PGExp : :9187/metrics
+PGExp --> DB : pg_monitor role
+Tail --> Loki : Push logs
+Graf --> Prom : Metrics dashboards
+Graf --> Loki : Log queries
+@enduml

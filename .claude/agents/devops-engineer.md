@@ -38,7 +38,7 @@ bash scripts/logs.sh           # Tail logs
 bash scripts/start-all.sh      # App + observability infra (= start.sh + start-infra.sh)
 bash infra/scripts/start-infra.sh    # Infra only (app must be running first)
 bash infra/scripts/run-sonar.sh      # SonarQube analysis
-bash integration-test/scripts/test.sh           # HTTP integration tests (requires running API)
+bash testing/scripts/test.sh                    # HTTP integration tests (requires running API)
 ```
 
 ### Environment Variables
@@ -78,7 +78,7 @@ Validate alignment: `mvn test -Ppg-integration`
 
 ## Workflow Compliance
 
-All infrastructure changes follow the AUDITORIA.md workflow:
+All infrastructure changes follow the CONSTITUTION.md workflow:
 1. GitHub issue + Use Case reference.
 2. Branch from updated main (`<type>/<issue-number>_<description>`).
 3. Move issue to IN PROGRESS.

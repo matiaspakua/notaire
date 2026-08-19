@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("CU70/CU71 - WorkflowNodeController unit tests")
+@DisplayName("CU83 - WorkflowNodeController unit tests")
 @ExtendWith(MockitoExtension.class)
 class WorkflowNodeControllerTest {
 

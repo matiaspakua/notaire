@@ -1,7 +1,6 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.WorkflowValidationController;
-import com.licensis.notaire.negocio.WorkflowDefinition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -24,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("CU72 - WorkflowValidationController unit tests")
+@DisplayName("CU83 - WorkflowValidationController unit tests")
 @ExtendWith(MockitoExtension.class)
 class WorkflowValidationControllerTest {
 

@@ -49,7 +49,7 @@ context: |
   New data access goes in `repository` (Spring Data), not the legacy `jpa` package.
 
   Explore -> Issue -> Propose (mandatory sequence, see
-  docs/03-development/OPENSPEC-CONSTITUTION-BRIDGE.md): open-ended exploration
+  docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md): open-ended exploration
   (`opsx:explore`) is a thinking stance, not a plan - it must never scaffold a
   change directly. When exploration produces a candidate feature/gap list (e.g. a
   functional gap report), run the `openspec-triage` skill first: it turns that

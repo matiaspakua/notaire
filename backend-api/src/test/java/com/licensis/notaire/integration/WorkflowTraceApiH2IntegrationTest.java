@@ -44,11 +44,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * uses that workflow's tipo, and historial entries covering the first two
  * estados, then asserts the aggregated trace and computed node statuses.
  */
-@RequirementCoverage({"CU70", "CU71"})
+@RequirementCoverage({"CU83"})
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("CU70/CU71 — Workflow trace endpoint integration tests (H2)")
+@DisplayName("CU83 — Workflow trace endpoint integration tests (H2)")
 class WorkflowTraceApiH2IntegrationTest {
 
     @Autowired

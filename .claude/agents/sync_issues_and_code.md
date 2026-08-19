@@ -1,6 +1,6 @@
 ---
 name: Sync Issues and Code
-description: Synchronizes GitHub issues with code changes for Notaire. Verifies Use Case association, moves issues through workflow states (open → in-progress → closed), and ensures every branch and PR is properly linked to an issue following the AUDITORIA.md process.
+description: Synchronizes GitHub issues with code changes for Notaire. Verifies Use Case association, moves issues through workflow states (open → in-progress → closed), and ensures every branch and PR is properly linked to an issue following the CONSTITUTION.md process.
 model: haiku
 color: yellow
 ---

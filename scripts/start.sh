@@ -310,7 +310,7 @@ fi
 echo -e "${BLUE}Useful Commands:${NC}"
 echo -e "  View logs:        ${YELLOW}bash scripts/logs.sh [backend|frontend|postgres|pgadmin]${NC}"
 echo -e "  Stop services:    ${YELLOW}bash scripts/stop.sh${NC}"
-echo -e "  Run tests:        ${YELLOW}cd integration-test/http && bash test-all-endpoints-v2.sh${NC}"
+echo -e "  Run tests:        ${YELLOW}cd testing/http && bash test-all-endpoints-v2.sh${NC}"
 if [ "$WITH_ADMIN" = true ]; then
     echo -e "  pgAdmin setup:   ${YELLOW}bash scripts/setup-pgadmin.sh${NC}"
 fi

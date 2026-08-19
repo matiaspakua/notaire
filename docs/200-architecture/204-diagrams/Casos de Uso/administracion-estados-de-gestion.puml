@@ -1,0 +1,19 @@
+@startuml administracion-estados-de-gestion
+!theme plain
+left to right direction
+title Casos de Uso — Módulo Estados de Gestión (Administración)
+
+actor Escribano
+
+rectangle "Módulo Estados de Gestión" {
+  usecase "CU30 - Ingresar nuevo estado de Gestión" as CU30
+  usecase "CU35 - Modificar estado de Gestión" as CU35
+  usecase "CU67 - Buscar Estados de Gestión" as CU67
+}
+
+Escribano --> CU30 : requiere
+Escribano --> CU35 : requiere
+
+CU35 ..> CU67 : <<include>>
+
+@enduml

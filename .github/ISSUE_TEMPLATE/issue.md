@@ -13,7 +13,7 @@ assignees: ''
 ## Use Case (Mandatory)
 
 <!-- Reference the Use Case this issue supports. Options:
-- Business: CU-01 to CU-73 (see docs/01-business/02-use-cases/03_CU*)
+- Business: CU-01 to CU-73, CU-79 to CU-82 (see docs/100-business/102-use-cases/)
 - Infrastructure: CU-74 to CU-78 (Performance, Database, QA, Ops, Security)
 - Requirements: RF-01 to RF-95 (Functional) or RNF-01 to RNF-24 (Non-functional)
 

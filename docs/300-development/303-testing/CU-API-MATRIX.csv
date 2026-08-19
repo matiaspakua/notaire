@@ -1,0 +1,89 @@
+CU_ID,CU_Nombre,Modulo,Grado,Entidad,Operacion,Controller,HTTP_Method,Endpoint,Bruno_Test,Endpoint_Status,Bruno_Status,Notas,GitHub_Issue
+CU01,Preparar Presupuesto,Presupuestos,Esencial,Presupuesto,Create,PresupuestoController,POST,/api/v1/presupuestos,presupuestos/01-create.yml,OK,OK,,#154
+CU01,Preparar Presupuesto (reporte),Presupuestos,Esencial,Presupuesto,Report,ReporteController,GET,/api/v1/reportes/presupuesto/{id},MISSING,OK,NO-TEST,Requiere ID existente,#154
+CU02,Iniciar Gestión,Gestiones,Esencial,GestionDeEscritura,Create,GestionController,POST,/api/v1/gestiones,MISSING,OK,NO-TEST,,#155
+CU03,Lista documentos y certificados necesarios,Gestiones,Esencial,PlantillaTramite,Read,PlantillaTramiteController,GET,/api/v1/plantilla-tramite/tipo-tramite/{id},MISSING,OK,NO-TEST,Sin test Bruno,#156
+CU04,Registrar documentación cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,MISSING,OK,NO-TEST,,#157
+CU05,Preparar escritura,Gestiones,Esencial,Escritura,Create,EscrituraController,POST,/api/v1/escrituras,MISSING,OK,NO-TEST,,#158
+CU06,Firmar escritura,Gestiones,Esencial,Escritura,Update,EscrituraController,PUT,/api/v1/escrituras/{id},MISSING,OK,NO-TEST,Actualiza estado firma,#159
+CU07,Generar testimonio,Gestiones,Esencial,Testimonio,Create,TestimonioController,POST,/api/v1/testimonio,MISSING,500-ERROR,NO-TEST,GET devuelve 500,#160
+CU08,Verificar Testimonio,Gestiones,Necesario,Testimonio,Read,TestimonioController,GET,/api/v1/testimonio/{id},MISSING,500-ERROR,NO-TEST,GET /testimonio devuelve 500,#161
+CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Flag deuda en documento,#162
+CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,MovimientoTestimonio,Create,MovimientoTestimonioController,POST,/api/v1/movimiento-testimonio,MISSING,500-ERROR,NO-TEST,GET devuelve 500 / sin test POST,#163
+CU11,Ingresar para inscripción,Gestiones,Esencial,Historial,Create,HistorialController,POST,/api/v1/historial,MISSING,OK,NO-TEST,Estado inscripcion,#164
+CU12,Retirar testimonio,Gestiones,Necesario,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#165
+CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},MISSING,OK,NO-TEST,,#166
+CU14,Consultar estado gestión,Gestiones,Necesario,GestionDeEscritura,Read,GestionController,GET,/api/v1/gestiones/{id}/estado-actual,MISSING,OK,NO-TEST,Reemplazado por Ver Detalle,#167
+CU15,Procesar pago,Pagos,Estaría Bueno,Pago,Business-Op,PagoController,POST,/api/v1/pagos,MISSING,OK,NO-TEST,0% doc - lógica de negocio incompleta,#168
+CU16,Archivar Gestión,Gestiones,Necesario,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,Actualiza estado a archivado,#169
+CU17,Dar Alta persona,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,,#170
+CU18,Dar Alta Cliente,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,esCliente=true,#171
+CU19,Buscar gestiones de un Cliente,Clientes,Necesario,GestionDeEscritura,Search,GestionController,GET,/api/v1/gestiones/cliente/{idPersona},MISSING,OK,NO-TEST,,#172
+CU20,Dar alta usuario,Administracion,Esencial,Usuario,Create,UsuarioController,POST,/api/v1/usuarios,usuarios/01-create.yml,OK,OK,,#173
+CU21,Modificar Usuario,Administracion,Esencial,Usuario,Update,UsuarioController,PUT,/api/v1/usuarios/{id},usuarios/07-update.yml,OK,FAIL,PUT 404 - ID inexistente en test,#174
+CU22,Registrar Suplencia,Administracion,Esencial,Suplencia,Create,SuplenciaController,POST,/api/v1/suplencia,MISSING,OK,NO-TEST,Solo test GET existe,#175
+CU23,Ver registro de actividades de usuario,Administracion,Necesario,RegistroAuditoria,Read,RegistroAuditoriaController,GET,/api/v1/registro-auditoria/usuario/{id},auditoria/get-registros-auditoria.yml,OK,OK,Test cubre GET all no by-user,#176
+CU24,Generar libro de índices,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/libro-indice,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#177
+CU25,Generar Declaración Jurada del mes,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/declaracion-jurada-mensual,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#178
+CU26,Ingresar nuevo tipo de trámite,Administracion,Esencial,TipoDeTramite,Create,TipoDeTramiteController,POST,/api/v1/tipo-tramite,tipo-tramite/01-create.yml,OK,OK,,#179
+CU27,Ingresar nuevo tipo de documento,Administracion,Esencial,TipoDeDocumento,Create,TipoDeDocumentoController,POST,/api/v1/tipo-de-documento,tipo-documento/01-create.yml,500-ERROR,FAIL,GET /tipo-de-documento devuelve 500,#180
+CU28,Ingresar nuevos folios,Protocolos,Esencial,Folio,Create,FolioController,POST,/api/v1/folio,folios/01-create.yml,OK,OK,,#181
+CU29,Ingresar nuevo concepto,Administracion,Esencial,Concepto,Create,ConceptoController,POST,/api/v1/conceptos,conceptos/post-concepto.yml,OK,OK,,#182
+CU30,Ingresar nuevo estado de Gestión,Administracion,Esencial,EstadoDeGestion,Create,EstadoDeGestionController,POST,/api/v1/estado-gestion,estado-gestion/01-create.yml,500-ERROR,FAIL,GET /estado-gestion devuelve 500,#183
+CU31,Modificar tipo de trámite,Administracion,Esencial,TipoDeTramite,Update,TipoDeTramiteController,PUT,/api/v1/tipo-tramite/{id},tipo-tramite/04-update.yml,OK,OK,,#184
+CU32,Modificar tipo de documento,Administracion,Esencial,TipoDeDocumento,Update,TipoDeDocumentoController,PUT,/api/v1/tipo-de-documento/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#185
+CU33,Modificar folio,Protocolos,Esencial,Folio,Update,FolioController,PUT,/api/v1/folio/{id},MISSING,OK,NO-TEST,Sin test PUT,#186
+CU34,Modificar concepto,Administracion,Esencial,Concepto,Update,ConceptoController,PUT,/api/v1/conceptos/{id},conceptos/put-concepto.yml,OK,OK,,#187
+CU35,Modificar estado de Gestión,Administracion,Esencial,EstadoDeGestion,Update,EstadoDeGestionController,PUT,/api/v1/estado-gestion/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#188
+CU36,Ingresar tipos de folio,Administracion,Esencial,TipoDeFolio,Create,TipoDeFolioController,POST,/api/v1/tipo-folio,tipo-folio/01-create.yml,500-ERROR,FAIL,GET /tipo-folio devuelve 500,#189
+CU37,Eliminar concepto,Administracion,Esencial,Concepto,Delete,ConceptoController,DELETE,/api/v1/conceptos/{id},conceptos/delete-concepto.yml,OK,OK,,#190
+CU38,Eliminar tipo de documento,Administracion,Esencial,TipoDeDocumento,Delete,TipoDeDocumentoController,DELETE,/api/v1/tipo-de-documento/{id},tipo-documento/06-delete.yml,500-ERROR,FAIL,FK constraint o GET base 500,#191
+CU39,Crear Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Create,PlantillaPresupuestoController,POST,/api/v1/plantilla-presupuestos,MISSING,OK,NO-TEST,ERROR en concurrencia - sin test POST,#192
+CU40,Modificar Tipo de folio,Administracion,Esencial,TipoDeFolio,Update,TipoDeFolioController,PUT,/api/v1/tipo-folio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#193
+CU41,Modificar Cliente,Clientes,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/05-update.yml,OK,FAIL,PUT 404 - ID inexistente en test,#194
+CU42,Informar próximos vencimientos,Gestiones,Necesario,DocumentoPresentado,Read,DocumentoPresentadoController,GET,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Sin filtro vencimiento específico,#195
+CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Update,DocumentoPresentadoController,PUT,/api/v1/documento-presentado/{id},MISSING,OK,NO-TEST,Sin test PUT,#196
+CU44,Reingresar testimonio,Gestiones,Esencial,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#197
+CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,PresupuestoController,PUT,/api/v1/presupuestos/{id},presupuestos/06-update.yml,OK,OK,,#198
+CU46,Ver detalle cliente,Clientes,Esencial,Persona,Read,PersonaController,GET,/api/v1/personas/{id},personas/03-get-by-id.yml,OK,FAIL,GET 404 - ID inexistente en test,#199
+CU47,Consultar Pago,Pagos,Estaría Bueno,Pago,Read,PagoController,GET,/api/v1/pagos/{id},MISSING,OK,NO-TEST,0% doc - endpoint existe,#200
+CU48,Dar alta escribano,Administracion,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,registroEscribano != null en body,#201
+CU48,Dar alta escribano (disponibles),Administracion,Esencial,Escritura,Read,EscrituraController,GET,/api/v1/escrituras/escribanos-disponibles,MISSING,500-ERROR,NO-TEST,GET devuelve 500,#201
+CU49,Eliminar Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Delete,PlantillaPresupuestoController,DELETE,/api/v1/plantilla-presupuestos/tipo-tramite/{t}/concepto/{c},MISSING,OK,NO-TEST,ERROR en concurrencia - sin test DELETE,#202
+CU50,Generar Declaración Jurada de Rentas,Protocolos,Estaría Bueno,Reporte,Report,ReporteController,GET,/api/v1/reportes/declaracion-jurada-rentas,MISSING,OK,NO-TEST,0% doc - endpoint existe sin test,#203
+CU51,Modificar escribano,Administracion,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/05-update.yml,OK,FAIL,Mismo endpoint que Modificar Persona / PUT 404,#204
+CU52,Modificar Escritura,Gestiones,Esencial,Escritura,Update,EscrituraController,PUT,/api/v1/escrituras/{id},MISSING,OK,NO-TEST,ERROR de concurrencia reportado,#205
+CU53,Modificar Gestión,Gestiones,Esencial,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,,#206
+CU54,Modificar Persona,Clientes,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/05-update.yml,OK,FAIL,PUT 404 - ID inexistente en test,#207
+CU55,Modificar Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Update,PlantillaPresupuestoController,PUT,/api/v1/plantilla-presupuestos/tipo-tramite/{t}/concepto/{c},MISSING,OK,NO-TEST,ERROR de concurrencia - sin test PUT,#208
+CU56,Registrar inscripción,Gestiones,Esencial,GestionDeEscritura,Business-Op,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,Actualiza estado a inscripto,#209
+CU57,Eliminar tipo de trámite,Administracion,Esencial,TipoDeTramite,Delete,TipoDeTramiteController,DELETE,/api/v1/tipo-tramite/{id},tipo-tramite/06-delete.yml,OK,FAIL,FK constraint - 500 si tiene referencias,#210
+CU58,Eliminar Tipo de folio,Administracion,Esencial,TipoDeFolio,Delete,TipoDeFolioController,DELETE,/api/v1/tipo-folio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#211
+CU59,Consultar Suplencias,Administracion,Necesario,Suplencia,Read,SuplenciaController,GET,/api/v1/suplencia,suplencias/02-list.yml,OK,OK,Test en carpeta escrituras (mover),#212
+CU60,Buscar Presupuesto,Presupuestos,Necesario,Presupuesto,Search,PresupuestoController,GET,/api/v1/presupuestos/persona/{idPersona},presupuestos/04-by-persona.yml,OK,OK,,#213
+CU61,Buscar persona o cliente,Clientes,Necesario,Persona,Search,PersonaController,GET,/api/v1/personas/buscar,personas/04-search.yml,OK,OK,,#214
+CU62,Buscar Escritura,Gestiones,Necesario,Escritura,Search,EscrituraController,GET,/api/v1/escrituras/buscar,MISSING,OK,NO-TEST,Sin test Bruno,#215
+CU63,Buscar Folios,Protocolos,Necesario,Folio,Search,FolioController,GET,/api/v1/folio,folios/02-list.yml,OK,OK,Sin query params de filtro,#216
+CU64,Buscar Tipo de tramite,Administracion,Necesario,TipoDeTramite,Search,TipoDeTramiteController,GET,/api/v1/tipo-tramite,tipo-tramite/02-list.yml,OK,OK,,#217
+CU65,Buscar Tipos de documentos,Administracion,Necesario,TipoDeDocumento,Search,TipoDeDocumentoController,GET,/api/v1/tipo-de-documento,tipo-documento/02-list.yml,500-ERROR,FAIL,GET devuelve 500,#218
+CU66,Buscar Conceptos,Administracion,Necesario,Concepto,Search,ConceptoController,GET,/api/v1/conceptos,conceptos/get-conceptos.yml,OK,OK,,#219
+CU67,Buscar Estados de Gestión,Administracion,Necesario,EstadoDeGestion,Search,EstadoDeGestionController,GET,/api/v1/estado-gestion,estado-gestion/02-list.yml,500-ERROR,FAIL,GET devuelve 500,#220
+CU68,Buscar tipos de folios,Administracion,Necesario,TipoDeFolio,Search,TipoDeFolioController,GET,/api/v1/tipo-folio,tipo-folio/02-list.yml,500-ERROR,FAIL,GET devuelve 500,#221
+CU69,Gestión de Inmuebles,Gestiones,Necesario,Inmueble,CRUD,InmuebleController,GET,/api/v1/inmueble,MISSING,500-ERROR,NO-TEST,POST /inmueble devuelve 500 sin investigar (ver COVERAGE.md); CRUD completo GET/POST/PUT/DELETE sin test Bruno,#292
+CU70,Gestión de Copias,Gestiones,Necesario,Copia,CRUD,CopiaController,GET,/api/v1/copia,MISSING,NOT-TESTED,NO-TEST,"CRUD completo sin test Bruno (create requiere fkIdTestimonio, ver COVERAGE.md)",#243
+CU71,Gestión de Ítems,Presupuestos,Necesario,Item,CRUD,ItemController,GET,/api/v1/items,MISSING,NOT-TESTED,NO-TEST,CRUD completo + /presupuesto/{idPresupuesto} sin test Bruno,#300
+CU72,Gestión de Documentos Presentados,Gestiones,Necesario,DocumentoPresentado,CRUD,DocumentoPresentadoController,GET,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Endpoints ya verificados OK via filas CU04/CU09/CU42/CU43; sin test Bruno dedicado,#163
+CU73,Registro de Auditoría,Administracion,Necesario,RegistroAuditoria,Search,RegistroAuditoriaController,GET,/api/v1/registro-auditoria,auditoria/get-registros-auditoria.yml,OK,OK,Distinto de CU23 (filtra por usuario); este CU cubre el listado general,#309
+CU74,Estrategia de Rendimiento y Caché,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Requisito no funcional transversal, no mapea a un endpoint unico. Ver SAD paragraph 8 Cross-cutting Concepts","#298, #278, #277, #290, #303"
+CU75,Gestión de Base de Datos y Migraciones,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Requisito no funcional transversal. Ver ADR-004, ADR-007 y .claude/rules/database-migrations.md","#264, #275, #292, #271, #270"
+CU76,Aseguramiento de Calidad e Infraestructura de Pruebas,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-006 y docs/300-development/303-testing/,"#276, #295, #296"
+CU77,Monitoreo de Operaciones y Gestión de Incidentes,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-009 y docs/200-architecture/207-monitoring/,"#253, #255, #270, #271, #273, #301, #304, #305, #306, #308"
+CU78,"Seguridad, Privacidad y Cumplimiento",Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-008 y docs/200-architecture/206-security/,"#254, #267, #280, #281, #282, #283, #307, #309"
+CU79,Administrar Plantillas de Trámite,Administracion,Esencial,PlantillaTramite,Search,PlantillaTramiteController,GET,/api/v1/plantilla-tramite,plantilla-tramite/01-list.yml,OK,OK,"Solo lectura cubierta (list, get-by-tipo-tramite); create/update/delete sin test Bruno",#310
+CU80,Administrar Cuadernos de Folios,Protocolos,Esencial,N/A,N/A,N/A,N/A,N/A,MISSING,NOT-IMPLEMENTED,NO-TEST,Feature no implementada: sin controller REST ni entidad Cuaderno en el backend,#311
+CU81,Gestión de Trámites en Protocolo Auxiliar,Gestiones,Esencial,N/A,N/A,N/A,N/A,N/A,MISSING,NOT-IMPLEMENTED,NO-TEST,Feature no implementada: sin controller/flujo dedicado (solo referencia legacy en ConstantesGui),#312
+CU82,Generar Minuta de Inscripción,Gestiones,Esencial,N/A,N/A,N/A,N/A,N/A,MISSING,NOT-IMPLEMENTED,NO-TEST,Feature no implementada: sin endpoint de minuta en ReporteController,#313
+CU83,Definir Workflow de Estados,Administracion,Necesario,WorkflowDefinition,CRUD,WorkflowDefinitionController,GET,/api/v1/workflow-definition,MISSING,NOT-TESTED,NO-TEST,"CRUD completo GET/POST/PUT/DELETE; cubierto por WorkflowDefinitionControllerTest (unit), sin test Bruno manual",#451
+CU83,Definir Nodos de Workflow,Administracion,Necesario,WorkflowNode,CRUD,WorkflowNodeController,GET,/api/v1/workflow-node/by-workflow/{workflowId},MISSING,NOT-TESTED,NO-TEST,"CRUD completo; cubierto por WorkflowNodeControllerTest (unit), sin test Bruno manual",#451
+CU83,Definir Transiciones de Workflow,Administracion,Necesario,WorkflowTransition,CRUD,WorkflowTransitionController,GET,/api/v1/workflow-transition/by-workflow/{workflowId},MISSING,NOT-TESTED,NO-TEST,"CRUD completo; cubierto por WorkflowTransitionControllerTest (unit), sin test Bruno manual",#451
+CU83,Validar Consistencia de Workflow,Administracion,Necesario,WorkflowDefinition,Validate,WorkflowValidationController,POST,/api/v1/workflow-definition/{id}/validate,MISSING,NOT-TESTED,NO-TEST,"Cubierto por WorkflowValidationControllerTest/ServiceTest (unit) y WorkflowTraceApiH2IntegrationTest, sin test Bruno manual",#454

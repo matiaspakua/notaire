@@ -9,7 +9,7 @@
 - [ ] 1.2 Use Case documentation exists and is accurate — create or update it first if not
 - [ ] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [ ] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [ ] 1.5 ADR recorded under `docs/02-architecture/01-adr/` if the change is architectural
+- [ ] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
 - [ ] 1.6 Move the Issue to IN PROGRESS (`gh issue edit <n> --add-label "in-progress"`)
 
 ## 2. Crear branch

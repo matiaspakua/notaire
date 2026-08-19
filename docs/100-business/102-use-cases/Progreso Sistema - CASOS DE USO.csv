@@ -1,0 +1,83 @@
+CU,Modulo,Grado,Estado,% Progreso,Doc Sistema,% Progreso,Doc. Código,% Progreso,Auditoria,Concurrencia,Observaciones,GitHub_ID
+CU01 – Preparar Presupuesto,Presupuestos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,no aplicable,,#154
+CU02 – Iniciar Gestión,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#155
+CU03 – Lista documentos y certificados necesarios,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#156
+CU04 – Registrar documentación cliente,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#157
+CU05 – Preparar escritura,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#158
+CU06 – Firmar escritura,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#159
+CU07 – Generar testimonio,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Deberia controlarse que no se genere el mismo testimonio para la misma escritura a la vez?,#160,#160
+CU08 – Verificar Testimonio,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,no aplicable,,#161
+CU09 – Registrar deudas documentos de Cliente,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#162
+CU10 – Registrar movimientos de documentación de entidades externas,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#163
+CU11 – Ingresar para inscripción,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#164
+CU12 – Retirar testimonio,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,,,#165,#165
+CU13 – Ver historial de gestión,Gestiones,Estaría Bueno,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#166
+CU14 – Consultar estado gestión (ELIMINADO *),Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,"Este CU quedó eliminado/reemplazado por Ver Detalle Gestion, debido a que en esta pantalla ya se muestra el estado actual de la gestión",#167
+CU15 – Procesar pago,Pagos,Estaria Bueno,,,,,,,,,#168,#168
+CU16 – Archivar Gestión,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#169
+CU17 – Dar Alta persona,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#170
+CU18 – Dar de Alta Cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#171
+CU19 – Buscar gestiones de un Cliente,Clientes,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#172
+CU20 – Dar alta usuario,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#173
+CU21 – Modificar Usuario,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#174
+CU22 – Registrar Suplencia,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#175
+CU23 – Ver registro de actividades de Usuario,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#176
+CU24 – Generar libro de índice,Protocolos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#177
+CU25 – Generar Declaración Jurada del mes,Protocolos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#178
+CU26 – Ingresar nuevo tipo de trámite,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#179
+CU27 – Ingresar nuevo tipo de documento,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#180
+CU28 – Ingresar nuevos folios,Protocolos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#181
+CU29 – Ingresar nuevo concepto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#182
+CU30 – Ingresar nuevo estado de Gestión,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#183
+CU31 – Modificar tipo de trámite,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#184
+CU32 – Modificar tipo de documento,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#185
+CU33 – Modificar folio,Protocolos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#186
+CU34 – Modificar concepto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#187
+CU35 – Modificar estado de Gestión,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#188
+CU36 – Ingresar tipos de folio,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#189
+CU37 – Eliminar concepto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#190
+CU38 – Eliminar tipo de documento,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#191
+CU39 – Crear Plantilla Presupuesto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#192
+CU40 – Modificar tipo de folio,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#193
+CU41 – Modificar Cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#194
+CU42 – Informar próximos vencimientos,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#195
+CU43 – Reingresar documentación,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#196
+CU44 – Reingresar testimonio,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#197
+CU45 – Modificar presupuesto,Presupuestos,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#198
+CU46 – Ver detalle cliente,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#199
+CU47 – Consultar Pago,Pagos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#200
+CU48 – Dar alta escribano,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#201
+CU49 – Eliminar Plantilla Presupuesto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#202
+CU50 – Generar Declaración Jurada de Rentas,Protocolos,Estaria Bueno,,,,,,,No Aplicable,No Aplicable,,#203
+CU51 – Modificar escribano,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#204
+CU52 – Modificar Escritura,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#205
+CU53 – Modificar Gestión,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#206
+CU54 – Modificar Persona,Clientes,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#207
+CU55 – Modificar Plantilla Presupuesto,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,ERROR,,#208
+CU56 – Registrar inscripción,Gestiones,Esencial,Terminado,100,Terminado,100,Terminado,100,,,#209,#209
+CU57 – Eliminar tipo de trámite,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#210
+CU58 – Eliminar tipo de folio,Administración,Esencial,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#211
+CU59 – Consultar Suplencias,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#212
+CU60 – Buscar Presupuesto,Presupuestos,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#213
+CU61 – Buscar persona o cliente,Clientes,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#214
+CU62 – Buscar Escritura,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#215
+CU63 – Buscar Folios,Protocolos,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#216
+CU64 – Buscar Tipo de trámite,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#217
+CU65 – Buscar Tipos de documentos,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#218
+CU66 – Buscar Conceptos,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#219
+CU67 – Buscar Estados de Gestión,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#220
+CU68 – Buscar tipos de folios.,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#221
+CU69 – Gestión de Inmuebles,Inmuebles,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#292
+CU70 – Gestión de Copias,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,No Aplicable,,#243
+CU71 – Gestión de Ítems,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#300
+CU72 – Gestión de Documentos Presentados,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#163
+CU73 – Registro de Auditoría,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,No Aplicable,No Aplicable,,#309
+CU74 – Estrategia de Rendimiento y Caché (Performance and Caching Strategy),Arquitectura / Soporte,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,"#298, #278, #277, #290, #303"
+CU75 – Gestión de Base de Datos y Migraciones (Database Management and Migrations),Arquitectura / Soporte,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,"#264, #275, #292, #271, #270"
+CU76 – Aseguramiento de Calidad e Infraestructura de Pruebas (Quality Assurance and Testing Infrastructure),Calidad / QA,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,"#276, #295, #296"
+CU77 – Monitoreo de Operaciones y Gestión de Incidentes (Operations Monitoring and Incident Management),Operaciones / SRE,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,"#253, #255, #270, #271, #273, #301, #304, #305, #306, #308"
+"CU78 – Seguridad, Privacidad y Cumplimiento (Security and Compliance)",Seguridad,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,"#254, #267, #280, #281, #282, #283, #307, #309"
+CU79 – Administrar Plantillas de Trámite,Administración,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#310
+CU80 – Administrar Cuadernos de Folios,Protocolos,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#311
+CU81 – Gestión de Trámites en Protocolo Auxiliar,Protocolos,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#312
+CU82 – Generar Minuta de Inscripción,Gestiones,Necesario,Terminado,100,Terminado,100,Terminado,100,Listo,Listo,,#313

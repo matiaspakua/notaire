@@ -1,0 +1,168 @@
+@startuml ERD_Escribania
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 90
+skinparam ranksep 90
+skinparam packagePadding 35
+skinparam minClassWidth 135
+skinparam roundcorner 6
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    ArrowColor #2C3E50
+    BorderColor #34495E
+    FontSize 12
+}
+
+skinparam package {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+    FontStyle bold
+    FontSize 13
+}
+
+' =============================================================================
+' SISTEMA DE GESTIÓN NOTARIAL (NOTAIRE) — DIAGRAMA ERD SIMPLIFICADO
+' Entidades, Relaciones y Cardinalidades Actualizadas (3FN & PostgreSQL/Flyway)
+' =============================================================================
+
+package "Sujetos, Personas y Seguridad" {
+  together {
+    entity "Personas" as personas
+    entity "Tipos de Identificación" as tipos_identificacion
+  }
+  together {
+    entity "Suplencias" as suplencias
+  }
+  together {
+    entity "Usuarios" as usuarios
+    entity "Roles" as roles
+    entity "Roles-Permisos" as roles_permisos
+    entity "Registros de Auditoría" as registros_auditoria
+  }
+}
+
+package "Presupuestación y Cobranzas" {
+  together {
+    entity "Presupuestos" as presupuestos
+    entity "Conceptos" as conceptos
+    entity "Plantillas de Presupuesto" as plantillas_presupuestos
+  }
+  together {
+    entity "Items" as items
+    entity "Pagos" as pagos
+  }
+}
+
+package "Gestión Notarial y Workflows" {
+  together {
+    entity "Gestiones de Escrituras" as gestiones_escrituras
+    entity "Estados de Gestión" as estados_de_gestion
+    entity "Historial" as historial
+  }
+  together {
+    entity "Tipos de Trámite" as tipos_tramite
+    entity "Trámites" as tramites
+    entity "Trámites-Personas" as tramites_personas
+    entity "Inmuebles" as inmuebles
+  }
+  together {
+    entity "Definición de Workflow" as workflow_definition
+    entity "Nodos de Workflow" as workflow_node
+    entity "Transiciones de Workflow" as workflow_transition
+  }
+}
+
+package "Documentación y Certificados" {
+  together {
+    entity "Tipos de Documento" as tipos_documentos
+    entity "Plantillas de Trámites" as plantillas_tramites
+    entity "Documentos Presentados" as documentos_presentados
+  }
+}
+
+package "Protocolos, Escrituración y Registración" {
+  together {
+    entity "Escrituras" as escrituras
+    entity "Tipos de Folio" as tipos_folio
+    entity "Folios" as folios
+  }
+  together {
+    entity "Testimonios" as testimonios
+    entity "Movimientos Testimonio" as movimientos_testimonio
+    entity "Copias" as copias
+    entity "Folios-Copias" as folios_copias
+  }
+}
+
+' =============================================================================
+' RELACIONES Y CARDINALIDADES
+' =============================================================================
+
+' Sujetos e Identificación
+personas }o--o| tipos_identificacion : "doc principal"
+
+' Seguridad y Roles (Flyway V9)
+personas ||--o{ usuarios : "identifica"
+roles ||--o{ usuarios : "asigna rol"
+roles ||--o{ roles_permisos : "concede"
+usuarios ||--o{ registros_auditoria : "ejecuta"
+
+' Suplencias entre Escribanos
+personas ||--o{ suplencias : "suplantado"
+personas ||--o{ suplencias : "suplente"
+
+' Presupuestación y Cobranzas (Flyway V14: 1 Presupuesto -> 1..N Trámites)
+personas ||--o{ presupuestos : "solicitante"
+presupuestos ||--o{ tramites : "presupuesta"
+presupuestos ||--o{ items : "compuesto por"
+presupuestos ||--o{ pagos : "abona"
+conceptos ||--o{ plantillas_presupuestos : "incluido"
+tipos_tramite ||--o{ plantillas_presupuestos : "aranceles base"
+
+' Workflows y Estados (Flyway V7 y V8)
+estados_de_gestion ||--o{ workflow_node : "asocia estado"
+workflow_definition ||--o{ workflow_node : "contiene nodos"
+workflow_definition ||--o{ workflow_transition : "contiene reglas"
+workflow_node ||--o{ workflow_transition : "origen"
+workflow_node ||--o{ workflow_transition : "destino"
+workflow_definition ||--o{ tipos_tramite : "aplica a"
+
+' Gestiones, Estados e Historial
+personas ||--o{ gestiones_escrituras : "escribano resp."
+estados_de_gestion ||--o{ gestiones_escrituras : "estado actual"
+gestiones_escrituras ||--o{ historial : "registra cambios"
+estados_de_gestion ||--o{ historial : "estado hist."
+
+' Trámites y Personas
+tipos_tramite ||--o{ tramites : "tipifica"
+gestiones_escrituras ||--o{ tramites : "agrupa carpeta"
+inmuebles ||--o{ tramites : "objeto del acto"
+tramites ||--o{ tramites_personas : "participantes"
+personas ||--o{ tramites_personas : "interviene"
+
+' Documentación y Certificados (Flyway V6)
+tipos_tramite ||--o{ plantillas_tramites : "requisitos"
+tipos_documentos ||--o{ plantillas_tramites : "requerido"
+tramites ||--o{ documentos_presentados : "requiere"
+tipos_documentos ||--o{ documentos_presentados : "tipo documento"
+
+' Protocolos, Folios y Escrituras
+personas ||--o{ folios : "custodia"
+tipos_folio ||--o{ folios : "tipo folio"
+escrituras ||--o{ folios : "asienta en"
+escrituras ||--o{ tramites : "instrumenta"
+
+' Testimonios, Copias y Movimientos (Flyway V3, V4, V5)
+escrituras ||--o{ testimonios : "expide"
+testimonios ||--o{ movimientos_testimonio : "tracto registral"
+testimonios ||--o{ copias : "emite copias"
+personas ||--o{ copias : "recibe"
+folios ||--o{ folios_copias : "emplea"
+copias ||--o{ folios_copias : "consta de"
+
+@enduml
