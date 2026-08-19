@@ -27,13 +27,14 @@ authoritative, up-to-date service list, ports, and credentials.
 └──────────┬──────────────────────────────────────┬─────────────┘
            │                                        │
            ▼                                        │
-┌────────────────────┐                              │
-│   Grafana :3001     │◄─────────────────────────────┘
-│   Dashboards:        │
-│   - notaire-backend  │        ┌──────────────────────┐
-│   - notaire-postgres │◄───────┤   Loki :3100          │
-│   - notaire-logs     │        │   (log storage)       │
-└──────────────────────┘        └───────────┬────────────┘
+┌───────────────────────┐                            │
+│   Grafana :3001       │◄────────────────────────────┘
+│   Dashboards:         │
+│   - notaire-backend   │        ┌──────────────────────┐
+│   - notaire-postgres  │◄───────┤   Loki :3100          │
+│   - notaire-logs      │        │   (log storage)       │
+│   - notaire-auth      │        └───────────┬────────────┘
+└───────────────────────┘                    ▲
                                              ▲
                                              │
                                   ┌──────────┴──────────┐
@@ -103,6 +104,24 @@ authoritative, up-to-date service list, ports, and credentials.
 **Grafana Dashboard:** `notaire-logs` (pre-provisioned) — query in Grafana → Explore →
 Loki datasource: `{container_name="notary-backend"} | json`.
 
+### 4. Auth & Security Monitoring
+
+**Metrics Source:** the same backend Micrometer registry as section 1 (custom login
+counters), plus Loki for raw log lines.
+
+**Grafana Dashboard:** `notaire-auth` (pre-provisioned)
+- Login attempts — total rate
+- Successful logins
+- Failed logins (bad credentials)
+- Inactive user attempts
+- Login outcomes over time
+- Login failure rate (% of attempts)
+- All operations (login by status)
+- Recent login errors (from logs)
+
+Backs the `HighLoginFailureRate` and `SuspiciousLoginActivity` alerts (see
+[Alerting Rules](#alerting-rules) below).
+
 ## Access Credentials
 
 See [`infra/CREDENTIALS.md`](../../../infra/CREDENTIALS.md) for the full, current list.
@@ -115,7 +134,7 @@ Summary:
 | **Prometheus** | http://localhost:9090 | – |
 | **Loki** | http://localhost:3100 | – |
 | **SonarQube** | http://localhost:9000 | `$SONAR_ADMIN_USER` / `$SONAR_ADMIN_PASSWORD` |
-| **pgAdmin** | http://localhost:5050 | `$PGADMIN_EMAIL` / `$PGADMIN_PASSWORD` |
+| **pgAdmin** | http://localhost:5050 | `$PGADMIN_DEFAULT_EMAIL` / `$PGADMIN_DEFAULT_PASSWORD` |
 | **Backend API** | http://localhost:8080 | JWT bearer (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md)) |
 
 ## Getting Started
@@ -136,6 +155,7 @@ bash infra/scripts/check-infra.sh
 - **Homer Dashboard:** http://localhost:8888 (central hub)
 - **Backend Metrics:** http://localhost:3001/d/notaire-backend
 - **PostgreSQL Metrics:** http://localhost:3001/d/notaire-postgres
+- **Auth & Security:** http://localhost:3001/d/notaire-auth
 - **Logs:** http://localhost:3001/explore (select Loki datasource)
 
 ## Troubleshooting
@@ -168,11 +188,10 @@ Configured in `infra/prometheus/alert-rules.yml`:
 
 | Alert Name | Condition | Severity |
 |------------|-----------|----------|
-| BackendDown | backend health probe fails | Critical |
-| SuspiciousLoginActivity | bad-credential login rate exceeds 30/min | Warning |
-| HighErrorRate | HTTP 5xx rate exceeds threshold | Warning |
-| HighMemoryUsage | JVM heap usage exceeds threshold | Warning |
-| DatabaseDown | postgres-exporter target down | Critical |
+| HighLoginFailureRate | >50% of login attempts fail over 2m | Warning |
+| SuspiciousLoginActivity | bad-credential login rate exceeds ~30/min for 1m | Critical |
+| BackendDown | `up{job="notaire-backend"}` is 0 for 1m | Critical |
+| HighJvmHeapUsage | JVM heap usage exceeds 85% for 5m | Warning |
 
 ## Code Quality (SonarQube)
 
