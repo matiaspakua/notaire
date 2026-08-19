@@ -3,7 +3,10 @@
 Bruno YAML suite — run with `bru run . -r --env Developmen` from this directory
 (backend must be up at `localhost:8080`).
 
-**Current status:** `72 requests · 124/124 tests passing` across 12 resources.
+**Current status:** 104 requests across 16 resource directories (file count as of
+2026-08-19). The `72 requests · 124/124 tests passing` figure dates to PR #416 and
+predates the collection's later growth (issue #688) — run the `bru run` command
+above against a live backend for current pass/fail totals.
 
 ## Backend defects found and fixed via this suite
 
@@ -41,6 +44,10 @@ the value but update did not. Hardened in `setAtributos`.
 | folios | ✅ (no PUT) | regression for #416 serialization |
 | auth | n/a | login + negative |
 | auditoria | read-only | list |
+| suplencias | ✅ | fixture setup (`create-suplente`, `create-suplantado`) |
+| plantilla-presupuesto | ✅ | `get-by-tipo-tramite` |
+| plantilla-tramite | read-only | list, `get-by-tipo-tramite` |
+| escrituras | search only | `buscar` (CU62) — no create/update/delete |
 
 ## TODO — resources not yet covered (and known issues)
 
@@ -51,14 +58,12 @@ These were removed as malformed stubs; they need lifecycle authoring. Several
 | Resource | Endpoints | Notes |
 |----------|-----------|-------|
 | gestiones | CRUD + `cliente/{id}`, `numero/{n}`, `{id}/estado-actual` | create needs `numero, fechaInicio, encabezado, fkIdPersonaEscribano, fkIdEstadoGestion` |
-| escrituras | CRUD + `buscar`, `escribanos-disponibles` | create needs `numero, fechaEscrituracion, cuerpo, estado` |
-| suplencia | CRUD | create needs `fechaInicio, fkIdSuplantado, fkIdSuplente` |
+| escrituras | CRUD + `escribanos-disponibles` | `buscar` is already covered (see above); create needs `numero, fechaEscrituracion, cuerpo, estado` |
 | inmueble | CRUD | create 500 to investigate |
 | copia | CRUD | needs `fkIdTestimonio` (→ testimonio → escritura chain) |
 | items | CRUD + `presupuesto/{id}` | needs presupuesto + concepto |
 | pagos | CRUD + `fecha`, `presupuesto/{id}`, `saldo` | needs presupuesto |
-| plantilla-presupuestos | CRUD (composite key) | covered in UI; add API lifecycle |
-| plantilla-tramite, tramites, historial, testimonio, movimiento-testimonio, documento-presentado, reportes | list/CRUD | |
+| tramites, historial, testimonio, movimiento-testimonio, documento-presentado, reportes | list/CRUD | |
 
 **Recommendation:** add input validation (`@Valid` + `400`) so missing-field
 `POST`s return `400` instead of `500`, then author the lifecycles above.
