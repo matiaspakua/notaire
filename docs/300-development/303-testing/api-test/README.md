@@ -1,10 +1,12 @@
 # Notaire API - HTTP Tests
 
-Este directorio contiene scripts para probar todos los endpoints de la API REST de Notaire.
+Los scripts que prueban los endpoints de la API REST de Notaire viven en `testing/http/`
+(no en este directorio de documentación). Todos los comandos de este documento asumen que
+estás parado en `testing/http/`.
 
-## Estructura
+## Estructura (`testing/http/`)
 
-- `test-all-endpoints.sh` - Script master que ejecuta todos los tests
+- `test-all-endpoints.sh` / `test-all-endpoints-v2.sh` - Scripts master que ejecutan todos los tests
 - `01-auth.sh` - Tests de autenticación
 - `02-usuarios.sh` - Tests de usuarios
 - `03-conceptos.sh` - Tests de conceptos
@@ -12,6 +14,7 @@ Este directorio contiene scripts para probar todos los endpoints de la API REST 
 - `05-tramites.sh` - Tests de trámites
 - `06-escrituras.sh` - Tests de escrituras
 - `07-presupuestos.sh` - Tests de presupuestos
+- `08-items.sh` - Tests de items
 
 ## Requisitos
 
