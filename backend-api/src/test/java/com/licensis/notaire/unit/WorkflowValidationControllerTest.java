@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("CU72 - WorkflowValidationController unit tests")
+@DisplayName("CU83 - WorkflowValidationController unit tests")
 @ExtendWith(MockitoExtension.class)
 class WorkflowValidationControllerTest {
 

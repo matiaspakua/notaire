@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("CU73 - TipoDeTramite workflow assignment tests")
+@DisplayName("CU83 - TipoDeTramite workflow assignment tests")
 @ExtendWith(MockitoExtension.class)
 class TipoDeTramiteWorkflowAssignmentTest {
 

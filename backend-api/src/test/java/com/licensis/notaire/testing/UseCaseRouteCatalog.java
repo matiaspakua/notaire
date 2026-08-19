@@ -82,10 +82,10 @@ public final class UseCaseRouteCatalog {
                 new UseCaseRoute("CU66", "Buscar Conceptos", RequestMethod.GET, "/api/v1/conceptos"),
                 new UseCaseRoute("CU67", "Buscar Estados de Gestion", RequestMethod.GET, "/api/v1/estado-gestion"),
                 new UseCaseRoute("CU68", "Buscar tipos de folios", RequestMethod.GET, "/api/v1/tipo-folio"),
-                new UseCaseRoute("CU70", "Gestionar Workflow", RequestMethod.POST, "/api/v1/workflow-definition"),
-                new UseCaseRoute("CU71", "Gestionar Transiciones Workflow", RequestMethod.POST, "/api/v1/workflow-transition"),
-                new UseCaseRoute("CU72", "Validar Consistencia Workflow", RequestMethod.POST, "/api/v1/workflow-definition/{id}/validate"),
-                new UseCaseRoute("CU73", "Asignar Workflow a Tipo de Tramite", RequestMethod.PUT, "/api/v1/tipo-tramite/{id}/workflow")
+                new UseCaseRoute("CU83", "Gestionar Workflow", RequestMethod.POST, "/api/v1/workflow-definition"),
+                new UseCaseRoute("CU83", "Gestionar Transiciones Workflow", RequestMethod.POST, "/api/v1/workflow-transition"),
+                new UseCaseRoute("CU83", "Validar Consistencia Workflow", RequestMethod.POST, "/api/v1/workflow-definition/{id}/validate"),
+                new UseCaseRoute("CU83", "Asignar Workflow a Tipo de Tramite", RequestMethod.PUT, "/api/v1/tipo-tramite/{id}/workflow")
         );
     }
 }

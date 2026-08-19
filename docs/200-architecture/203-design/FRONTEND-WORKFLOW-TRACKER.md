@@ -1,7 +1,7 @@
 # Workflow Tracker — Animated Gestión Workflow on the Dashboard
 
 **Issue:** [#453](https://github.com/matiaspakua/notaire/issues/453) (parent #436)
-**Use Cases:** CU70 – Definir Workflow de Estados de Gestión, CU71 – Definir Transiciones entre Estados
+**Use Cases:** [CU83 – Definir Workflow de Estados y Transiciones](../../100-business/102-use-cases/CU83%20%E2%80%93%20Definir%20Workflow%20de%20Estados%20y%20Transiciones.md)
 **Concept:** `frontend/poc_motion_js/poc.md`
 
 ## Overview
@@ -94,5 +94,5 @@ class's other lazy associations; API consumers use `workflowDefinitionId` /
 | Layer | Location |
 |-------|----------|
 | Unit | `backend-api/src/test/java/.../unit/WorkflowTraceServiceTest.java` |
-| Integration (H2) | `backend-api/src/test/java/.../integration/WorkflowTraceApiH2IntegrationTest.java` (`@RequirementCoverage({"CU70","CU71"})`) |
+| Integration (H2) | `backend-api/src/test/java/.../integration/WorkflowTraceApiH2IntegrationTest.java` (`@RequirementCoverage({"CU83"})`) |
 | E2E | `frontend/tests/e2e/workflow-tracker.spec.ts` |

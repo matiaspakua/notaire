@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RequirementCoverage({"CU01", "CU02", "CU03", "CU04", "CU17", "CU45", "CU58", "CU70", "CU71"})
+@RequirementCoverage({"CU01", "CU02", "CU03", "CU04", "CU17", "CU45", "CU58", "CU83"})
 @DisplayName("Entity equality/hashCode edge cases")
 class EntityEqualityEdgeCaseTest {
 

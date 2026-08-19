@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("CU70/CU71 - WorkflowTraceService unit tests")
+@DisplayName("CU83 - WorkflowTraceService unit tests")
 class WorkflowTraceServiceTest {
 
     private WorkflowNode makeNode(int id, int estadoId, WorkflowNodeType tipo) {

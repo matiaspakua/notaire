@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CU72 - WorkflowValidationService unit tests")
+@DisplayName("CU83 - WorkflowValidationService unit tests")
 class WorkflowValidationServiceTest {
 
     private WorkflowValidationService service;
