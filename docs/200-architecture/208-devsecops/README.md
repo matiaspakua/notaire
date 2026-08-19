@@ -119,6 +119,16 @@ permissions:
 - Requires DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets
 - Conditional execution (skipped if secrets not configured)
 
+#### 4. Generate CD Report
+- Runs after build-and-publish, release, and update-description complete (always,
+  unless the build job itself was skipped)
+- Aggregates their outcomes into a Markdown summary (`reports/cd-report.md`)
+
+#### 5. Publish CD Report to Wiki
+- Runs only when report generation succeeded, on `workflow_run` success or manual
+  dispatch
+- Publishes the report to `docs/wiki/cicd-reports/cd-report.md` on `main`
+
 ---
 
 ## Security Features

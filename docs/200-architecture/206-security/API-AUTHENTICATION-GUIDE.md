@@ -4,7 +4,7 @@ This guide documents the authentication and authorization mechanisms implemented
 
 ## Overview
 
-Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.12.6 and Spring Security 6.x. Clients (the Next.js dashboard and the Swing desktop client) authenticate via the `/api/v1/usuarios/login` endpoint and receive a JWT token on success. Every other `/api/**` request **must** include that token as a Bearer header — requests without a valid token are rejected with `401 Unauthorized` (see issue #552).
+Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.13.0 and Spring Security 6.x. Clients (the Next.js dashboard and the Swing desktop client) authenticate via the `/api/v1/usuarios/login` endpoint and receive a JWT token on success. Every other `/api/**` request **must** include that token as a Bearer header — requests without a valid token are rejected with `401 Unauthorized` (see issue #552).
 
 ## Architecture
 
