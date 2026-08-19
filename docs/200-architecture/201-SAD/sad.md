@@ -693,7 +693,7 @@ Client -> Auth : POST /api/v1/gestion\nAuthorization: Bearer <jwt>
 Auth -> Auth : Validate JWT signature + expiry
 Auth -> Ctrl : Authorized request (user context)
 Ctrl -> Repo : save(entity)\n(controller calls repository directly —\nno intermediate service layer for this endpoint)
-Repo -> DB : INSERT INTO gestion_de_escritura
+Repo -> DB : INSERT INTO gestiones_de_escrituras
 DB --> Repo : Generated ID
 Repo --> Ctrl : Saved entity
 Ctrl -> Audit : AOP around create() —\nINSERT INTO registro_auditoria\n(CREATE, gestion, user, timestamp)

@@ -42,6 +42,22 @@ legacy correspondiente.
 > Folios ya incluido íntegramente en `Protocolos.jpg` / `protocolos.puml`; no generó un `.puml`
 > independiente.
 
+## ¿Por qué no hay un diagrama de secuencia por módulo?
+
+Se evaluó agregar un diagrama de secuencia por módulo (uno por cada `.puml`
+de esta carpeta), pero se verificó contra el código fuente real
+(`EscrituraController`, `WorkflowTransitionController`,
+`WorkflowValidationController`, etc.) que casi todos los controladores del
+backend siguen el mismo patrón CRUD genérico ya documentado en
+[SAD §6.2](../../201-SAD/sad.md#62-create-gestión-de-escritura)
+(`Controller` → `Repository`/`Service` → `AuditoriaAspect` → PostgreSQL).
+Duplicar ese mismo patrón en 19 diagramas adicionales no aportaría
+información nueva. El único subsistema con un flujo estructuralmente
+distinto es el motor de workflow (CU70-72: definición y validación de
+grafos de estados, no ejecución en caliente de una transición), ya cubierto
+por [`workflow-gestion.puml`](../Diagrama%20de%20Estados/workflow-gestion.puml)
+y [`transicion-de-estados.puml`](../Diagrama%20de%20Estados/transicion-de-estados.puml).
+
 ## Renderizar
 
 ```bash

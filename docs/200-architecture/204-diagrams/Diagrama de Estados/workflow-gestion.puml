@@ -16,7 +16,7 @@ Sec --> API : OK (user context)
 API -> Ctrl : delegateRequest(dto)
 Ctrl -> Svc : createGestion(dto)
 Svc -> Svc : Validar datos de negocio
-Svc -> DB : INSERT INTO gestion_de_escritura
+Svc -> DB : INSERT INTO gestiones_de_escrituras
 DB --> Svc : OK (generatedId)
 Svc -> DB : INSERT INTO registro_auditoria
 DB --> Svc : OK
