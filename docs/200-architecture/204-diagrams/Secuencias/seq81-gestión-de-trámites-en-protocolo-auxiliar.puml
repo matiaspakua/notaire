@@ -1,0 +1,37 @@
+@startuml cu81
+!theme plain
+title CU81 — Gestión de Trámites en Protocolo Auxiliar
+
+actor "Cliente" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un cliente solicita un trámite de protocolo auxiliar.
+Sistema -> Sistema : Cliente
+Actor -> Actor : Solicita los datos de identificación y tipo de trámite.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El recepcionista ingresa los datos del cliente.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Busca al cliente o permite registro rápido si es nuevo.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano inicia la confección de la escritura en Protocolo Auxiliar.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta folios de Protocolo Auxiliar y asigna número correlativo.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano redacta el cuerpo del acta/documento y lo asocia a los folios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Valida la integridad del texto y la correlatividad del folio.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El cliente y el Escribano firman la escritura auxiliar en soporte papel.
+Sistema -> Sistema : Cliente
+Actor -> Actor : El Escribano registra que la escritura ha sido firmada por todas las partes.
+Sistema -> Sistema : Escribano
+Actor -> Actor : El Escribano solicita la generación del testimonio en hoja notarial.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Genera el testimonio numerado y registra la expedición del documento.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano hace entrega del testimonio al cliente.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Actualiza el estado del trámite a "Finalizado / Entregado" sin generar carpeta física.
+Sistema -> Sistema : Sistema
+
+@enduml

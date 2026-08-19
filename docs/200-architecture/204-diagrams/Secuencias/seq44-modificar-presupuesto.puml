@@ -1,0 +1,31 @@
+@startuml cu44
+!theme plain
+title CU44 — Modificar presupuesto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano/Recepcionista busca un presupuesto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Recepcionista ingresa los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta una lista de presupuestos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Recepcionista selecciona un presupuesto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra: (Nombre; Trámite; Ítems; Total; Observaciones)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Recepcionista modifica los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita calcular el nuevo total.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Calcula el nuevo total.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma los cambios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los cambios.
+Sistema -> Sistema : Sistema
+
+@enduml

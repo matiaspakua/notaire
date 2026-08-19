@@ -1,0 +1,21 @@
+@startuml cu34
+!theme plain
+title CU34 — Modificar concepto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar los datos de un concepto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta la lista de conceptos disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno de ellos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta: (Nombre; Valor; Porcentaje; Si es valor fijo o variable)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda el concepto modificado.
+Sistema -> Sistema : Sistema
+
+@enduml

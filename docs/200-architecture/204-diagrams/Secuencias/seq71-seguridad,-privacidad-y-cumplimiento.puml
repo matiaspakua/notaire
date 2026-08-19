@@ -1,0 +1,25 @@
+@startuml cu71
+!theme plain
+title CU71 — Seguridad, Privacidad y Cumplimiento
+
+actor "Oficial de Seguridad" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El usuario ingresa sus credenciales.
+Sistema -> Sistema : Usuario
+Actor -> Actor : Valida las credenciales contra hash seguro.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Si válidas, genera sesión con token firmado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Transmite el token mediante HTTPS/TLS.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El usuario solicita ejecutar una operación.
+Sistema -> Sistema : Usuario
+Actor -> Actor : Valida los permisos de rol.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Autoriza la ejecución.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Registra la acción en log de auditoría.
+Sistema -> Sistema : Sistema
+
+@enduml

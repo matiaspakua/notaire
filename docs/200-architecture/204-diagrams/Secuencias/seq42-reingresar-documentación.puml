@@ -1,0 +1,25 @@
+@startuml cu42
+!theme plain
+title CU42 — Reingresar documentación
+
+actor "Gestor" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Gestor/Escribano solicita la lista de gestiones.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Presenta la lista de gestiones.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano selecciona una gestión.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Muestra los trámites y documentación.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano selecciona un trámite.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Muestra la documentación necesaria.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Gestor/Escribano indica el tipo de documento a reingresar.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Agrega el documento a la lista de documentos presentados.
+Sistema -> Sistema : Sistema
+
+@enduml

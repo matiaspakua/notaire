@@ -1,0 +1,21 @@
+@startuml cu35
+!theme plain
+title CU35 — Modificar estado de Gestión
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar el nombre de un estado de gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra una lista de todos los estados disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un estado.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra: (Nombre del estado; Observaciones)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra la modificación.
+Sistema -> Sistema : Sistema
+
+@enduml

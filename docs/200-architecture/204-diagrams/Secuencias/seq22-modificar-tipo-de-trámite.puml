@@ -1,0 +1,21 @@
+@startuml cu22
+!theme plain
+title CU22 — Modificar tipo de trámite
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta una lista de todos los tipos de trámite disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta: (Nombre; Si requiere inscripción; Si se archiva; Si se asocia con inmuebles; Observaciones; Tipos de documento asociados)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml

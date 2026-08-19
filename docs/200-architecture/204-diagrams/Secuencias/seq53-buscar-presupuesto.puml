@@ -1,0 +1,21 @@
+@startuml cu53
+!theme plain
+title CU53 — Buscar Presupuesto
+
+actor "Recepcionista" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Recepcionista/Gestor requiere un presupuesto.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Recepcionista/Gestor indica los datos.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Busca y retorna el/los presupuesto.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Recepcionista/Gestor selecciona un presupuesto.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Presenta un reporte del presupuesto.
+Sistema -> Sistema : Sistema
+
+@enduml

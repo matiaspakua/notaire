@@ -1,0 +1,25 @@
+@startuml cu68
+!theme plain
+title CU68 — Gestión de Base de Datos y Migraciones
+
+actor "Administrador de Base de Datos" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El desarrollador crea un script de migración Flyway.
+Sistema -> Sistema : Equipo de Desarrollo
+Actor -> Actor : Valida la sintaxis del script.
+Sistema -> Sistema : Sistema
+Actor -> Actor : La aplicación inicia en runtime Java.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Flyway aplica las migraciones pendientes.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Verifica la integridad referencial.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Registra la versión aplicada.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El DBA ejecuta rutinas de mantenimiento.
+Sistema -> Sistema : Administrador de Base de Datos
+Actor -> Actor : Genera respaldos encriptados.
+Sistema -> Sistema : Sistema
+
+@enduml

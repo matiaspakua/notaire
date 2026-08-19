@@ -1,0 +1,56 @@
+@startuml login-happy-path
+!theme plain
+title TC-LOGIN-01: Happy Path — Valid Credentials Return JWT Token
+
+actor "User" as User
+participant "Frontend" as FE
+participant "UsuarioController" as Ctrl
+participant "LoginAttemptService" as LAS
+participant "UsuarioRepository" as Repo
+participant "PasswordEncoder" as PE
+participant "JwtTokenService" as JWT
+participant "MetricsUtil" as Metrics
+
+User -> FE: Enter credentials (nombre, contrasenia)
+FE -> Ctrl: POST /api/v1/usuarios/login
+activate Ctrl
+
+Ctrl -> LAS: isLocked(nombre)
+activate LAS
+LAS --> Ctrl: false (not locked)
+deactivate LAS
+
+Ctrl -> Repo: findAll()
+activate Repo
+Repo --> Ctrl: List<Usuario>
+deactivate Repo
+
+Ctrl -> Ctrl: Iterate usuarios, find by nombre (case-insensitive)
+activate Ctrl
+Ctrl -> PE: matches(contrasenia, usuario)
+activate PE
+PE --> Ctrl: true
+deactivate PE
+deactivate Ctrl
+
+Ctrl -> LAS: onLoginSucceeded(nombre)
+activate LAS
+LAS --> Ctrl: void
+deactivate LAS
+
+Ctrl -> Metrics: incrementCounter("login", "success")
+activate Metrics
+Metrics --> Ctrl: void
+deactivate Metrics
+
+Ctrl -> JWT: generateToken(nombre)
+activate JWT
+JWT --> Ctrl: signed JWT token
+deactivate JWT
+
+Ctrl --> FE: 200 OK {valido: true, token: "...", ...}
+deactivate Ctrl
+
+FE -> User: Store token, redirect to dashboard
+
+@enduml

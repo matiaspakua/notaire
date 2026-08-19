@@ -1,0 +1,17 @@
+@startuml cu26
+!theme plain
+title CU26 — Ingresar nuevo tipo de trámite
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta un nuevo tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Si requiere inscripción; Si se archiva; Si se asocia con inmuebles; Observaciones; Lista de documentos)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos solicitados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los datos ingresados, creando un nuevo tipo de trámite.
+Sistema -> Sistema : Sistema
+
+@enduml

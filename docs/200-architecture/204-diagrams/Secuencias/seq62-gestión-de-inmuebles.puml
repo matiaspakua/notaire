@@ -1,0 +1,21 @@
+@startuml cu62
+!theme plain
+title CU62 — Gestión de Inmuebles
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano selecciona la opción de gestión de inmuebles.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la interfaz de gestión de inmuebles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos del inmueble.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Valida los datos ingresados.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma el registro.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda la información y confirma.
+Sistema -> Sistema : Sistema
+
+@enduml

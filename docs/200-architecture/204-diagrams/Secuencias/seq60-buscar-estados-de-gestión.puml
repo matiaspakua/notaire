@@ -1,0 +1,17 @@
+@startuml cu60
+!theme plain
+title CU60 — Buscar Estados de Gestión
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita la lista de estados de gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y devuelve una lista de estados.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona uno.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle del estado.
+Sistema -> Sistema : Sistema
+
+@enduml

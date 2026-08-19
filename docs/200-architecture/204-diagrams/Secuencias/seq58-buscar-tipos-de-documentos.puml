@@ -1,0 +1,17 @@
+@startuml cu58
+!theme plain
+title CU58 — Buscar Tipos de documentos
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano/Gestor/Recepcionista solicita un tipo de documento.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y devuelve una lista de tipos de documentos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano/Gestor/Recepcionista selecciona uno.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra el detalle del tipo de documento.
+Sistema -> Sistema : Sistema
+
+@enduml

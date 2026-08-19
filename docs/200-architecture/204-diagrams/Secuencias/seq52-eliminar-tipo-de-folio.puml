@@ -1,0 +1,17 @@
+@startuml cu52
+!theme plain
+title CU52 — Eliminar tipo de folio
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide deshabilitar un tipo de folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta una lista de tipos de folios.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un tipo de folio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Cambia el estado a deshabilitado.
+Sistema -> Sistema : Sistema
+
+@enduml

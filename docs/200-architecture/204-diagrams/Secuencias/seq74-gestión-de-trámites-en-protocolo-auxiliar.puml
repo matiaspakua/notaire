@@ -1,0 +1,37 @@
+@startuml cu74
+!theme plain
+title CU74 — Gestión de Trámites en Protocolo Auxiliar
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un cliente solicita un trámite de protocolo auxiliar.
+Sistema -> Sistema : Cliente
+Actor -> Actor : Solicita datos de identificación y tipo de trámite.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El recepcionista ingresa los datos del cliente.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Busca al cliente o permite registro rápido.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano inicia la confección de la escritura.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta folios de Protocolo Auxiliar y asigna número.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano redacta el cuerpo del acta.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Valida la integridad del texto y correlatividad.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El cliente y el Escribano firman.
+Sistema -> Sistema : Cliente
+Actor -> Actor : El Escribano registra la firma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : El Escribano solicita generación del testimonio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Genera el testimonio numerado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano entrega el testimonio.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Actualiza el estado a Finalizado/Entregado.
+Sistema -> Sistema : Sistema
+
+@enduml

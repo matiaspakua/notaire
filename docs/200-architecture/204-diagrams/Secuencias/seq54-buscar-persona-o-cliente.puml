@@ -1,0 +1,17 @@
+@startuml cu54
+!theme plain
+title CU54 — Buscar persona o cliente
+
+actor "Gestor" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Un usuario necesita buscar una persona o cliente.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Solicita: (Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El usuario indica los datos.
+Sistema -> Sistema : Gestor
+Actor -> Actor : Busca y devuelve el/las personas o clientes.
+Sistema -> Sistema : Sistema
+
+@enduml

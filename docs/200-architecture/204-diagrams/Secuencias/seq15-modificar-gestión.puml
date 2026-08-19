@@ -1,0 +1,21 @@
+@startuml cu15
+!theme plain
+title CU15 — Modificar gestión
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano busca una gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de gestiones disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona una gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra los datos de la gestión.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml

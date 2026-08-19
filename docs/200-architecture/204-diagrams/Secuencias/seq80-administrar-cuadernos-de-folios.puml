@@ -1,0 +1,29 @@
+@startuml cu80
+!theme plain
+title CU80 — Administrar Cuadernos de Folios
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano solicita generar nuevos cuadernos de folios para un protocolo y año.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta los folios disponibles ordenados por numeración correlativa.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano indica la cantidad de folios o el rango a agrupar.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Verifica que la cantidad sea múltiplo de 10 y la numeración continua sin faltantes.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la generación de los cuadernos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Agrupa los folios de a 10, asigna numeración correlativa y actualiza estado a "Asignados a cuaderno".
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano solicita la emisión de la carátula de un cuaderno específico.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Genera el formato de carátula oficial con año, registro, número de cuaderno, rango y detalle.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano procede a la impresión de la carátula.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Habilita la impresión en papel oficial o exportación a PDF de la carátula.
+Sistema -> Sistema : Sistema
+
+@enduml

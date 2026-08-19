@@ -1,0 +1,17 @@
+@startuml cu11
+!theme plain
+title CU11 — Ingresar nueva persona
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta una nueva persona.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Apellido; Tipo y número de identificación; Nacionalidad; Fecha de nacimiento; Estado civil; Ocupación; Domicilio; Teléfono; E-mail)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos solicitados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los datos ingresados, creando una nueva persona.
+Sistema -> Sistema : Sistema
+
+@enduml

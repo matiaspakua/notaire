@@ -1,0 +1,21 @@
+@startuml cu66
+!theme plain
+title CU66 — Registro de Auditoría
+
+actor "Administrador" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Administrador selecciona la opción de Auditoría.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Muestra la lista general de eventos de auditoría.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador aplica filtros.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Filtra la lista y la presenta.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador visualiza el detalle de una operación.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Muestra los datos técnicos del cambio.
+Sistema -> Sistema : Sistema
+
+@enduml

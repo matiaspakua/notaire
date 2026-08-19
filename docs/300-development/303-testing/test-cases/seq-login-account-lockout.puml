@@ -1,0 +1,33 @@
+@startuml login-account-lockout
+!theme plain
+title TC-LOGIN-04: Locked Account Returns 429
+
+actor "User" as User
+participant "Frontend" as FE
+participant "UsuarioController" as Ctrl
+participant "LoginAttemptService" as LAS
+
+User -> FE: Enter credentials (5th failed attempt)
+FE -> Ctrl: POST /api/v1/usuarios/login
+activate Ctrl
+
+Ctrl -> LAS: isLocked(nombre)
+activate LAS
+LAS --> Ctrl: true (locked after 5 failures)
+deactivate LAS
+
+Ctrl -> Ctrl: Log warning
+activate Ctrl
+Ctrl -> Ctrl: Return 429 Too Many Requests
+Ctrl --> FE: 429 {valido: false, message: "Cuenta bloqueada..."}
+deactivate Ctrl
+
+FE -> User: Show "Account temporarily locked" message
+
+note right of LAS
+  Lockout threshold: 5 failed attempts
+  Lockout duration: 30 minutes
+  Reset on successful login
+end note
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml cu48
+!theme plain
+title CU48 — Eliminar Plantilla Presupuesto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide eliminar una plantilla de presupuesto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Presenta una lista de tipos de trámite con plantillas.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona un tipo de trámite.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita confirmación para eliminar.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra eliminación.
+Sistema -> Sistema : Sistema
+
+@enduml

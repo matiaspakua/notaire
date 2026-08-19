@@ -1,0 +1,23 @@
+@startuml cu69
+!theme plain
+title CU69 — Aseguramiento de Calidad e Infraestructura de Pruebas
+
+actor "Equipo de QA" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El desarrollador implementa pruebas unitarias e integración.
+Sistema -> Sistema : Equipo de Desarrollo
+Actor -> Actor : Ejecuta la suite de pruebas locales.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Se realiza un cambio en la interfaz.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Ejecutan las pruebas E2E con Playwright.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El pipeline de CI/CD procesa la integración.
+Sistema -> Sistema : Pipeline CI/CD
+Actor -> Actor : Valida Checkstyle, SpotBugs, cobertura JaCoCo.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Verifica consistencia visual y de sesión.
+Sistema -> Sistema : Sistema
+
+@enduml

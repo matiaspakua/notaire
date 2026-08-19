@@ -1,0 +1,21 @@
+@startuml cu12
+!theme plain
+title CU12 — Modificar persona
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar una persona.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos de búsqueda.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca y presenta los datos de la persona encontrada.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica los datos necesarios.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Guarda los cambios realizados.
+Sistema -> Sistema : Sistema
+
+@enduml

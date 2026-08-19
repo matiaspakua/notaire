@@ -1,0 +1,17 @@
+@startuml cu45
+!theme plain
+title CU45 — Ver detalle cliente
+
+actor "Recepcionista" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El recepcionista necesita ver la información de un cliente.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Solicita: (Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El recepcionista ingresa los datos.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Busca y presenta la información del cliente.
+Sistema -> Sistema : Sistema
+
+@enduml

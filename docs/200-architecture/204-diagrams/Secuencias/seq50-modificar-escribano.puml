@@ -1,0 +1,21 @@
+@startuml cu50
+!theme plain
+title CU50 — Modificar escribano
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide modificar un escribano.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Busca la persona y permite modificar.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano modifica y confirma.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los cambios.
+Sistema -> Sistema : Sistema
+
+@enduml

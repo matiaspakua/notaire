@@ -1,0 +1,17 @@
+@startuml cu29
+!theme plain
+title CU29 — Ingresar nuevo concepto
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta un nuevo concepto.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre; Valor; Porcentaje; Si es valor fijo o variable)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos solicitados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra los datos ingresados, registrando un nuevo concepto.
+Sistema -> Sistema : Sistema
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml cu05
+!theme plain
+title CU05 — Preparar escritura
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano busca una gestión de escritura.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra la lista de gestiones disponibles.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano selecciona una gestión.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Muestra los datos de la gestión y solicita preparar la escritura.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano confirma la preparación.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra la preparación de la escritura.
+Sistema -> Sistema : Sistema
+
+@enduml

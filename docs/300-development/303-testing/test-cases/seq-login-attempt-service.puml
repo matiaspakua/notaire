@@ -1,0 +1,63 @@
+@startuml login-attempt-service
+!theme plain
+title TC-LOGIN-10/11: LoginAttemptService Lockout and Reset Logic
+
+participant "UsuarioController" as Ctrl
+participant "LoginAttemptService" as LAS
+database "Cache\n(free for 5 min)" as Cache
+
+== Failed Login Attempts ==
+
+loop 5 failed login attempts
+  Ctrl -> LAS: onLoginFailed(nombre)
+  activate LAS
+  LAS -> Cache: increment(nombre)
+  activate Cache
+  Cache --> LAS: count
+  deactivate Cache
+  LAS -> LAS: Check if count >= 5
+  alt count >= 5
+    LAS -> Cache: setLocked(nombre, 30min)
+    activate Cache
+    Cache --> LAS: void
+    deactivate Cache
+  end
+  LAS --> Ctrl: void
+  deactivate LAS
+end
+
+== Lock Check ==
+
+Ctrl -> LAS: isLocked(nombre)
+activate LAS
+LAS -> Cache: getLockedUntil(nombre)
+activate Cache
+alt locked and not expired
+  Cache --> LAS: timestamp (future)
+  LAS --> Ctrl: true (locked)
+else not locked or expired
+  Cache --> LAS: null or expired
+  LAS --> Ctrl: false (not locked)
+end
+deactivate Cache
+deactivate LAS
+
+== Successful Login Resets Counter ==
+
+Ctrl -> LAS: onLoginSucceeded(nombre)
+activate LAS
+LAS -> Cache: remove(nombre)
+activate Cache
+Cache --> LAS: void
+deactivate Cache
+LAS --> Ctrl: void
+deactivate LAS
+
+note right of LAS
+  Lockout threshold: 5 failed attempts
+  Lockout duration: 30 minutes
+  Cache TTL: 5 minutes (free for 5 min)
+  Reset: on successful login
+end note
+
+@enduml

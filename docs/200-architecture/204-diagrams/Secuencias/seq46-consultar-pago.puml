@@ -1,0 +1,21 @@
+@startuml cu46
+!theme plain
+title CU46 — Consultar pago
+
+actor "Recepcionista" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Recepcionista/Escribano decide consultar pagos.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Recepcionista/Escribano ingresa los datos.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Presenta la lista de presupuestos.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Recepcionista/Escribano selecciona un presupuesto.
+Sistema -> Sistema : Recepcionista
+Actor -> Actor : Presenta: (Número de gestión; Número de presupuesto; Total; Saldo; Número de pago; Monto; Fecha; Observaciones)
+Sistema -> Sistema : Sistema
+
+@enduml

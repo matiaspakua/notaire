@@ -1,0 +1,25 @@
+@startuml cu83
+!theme plain
+title CU83 — Definir Workflow de Estados y Transiciones
+
+actor "Administrador" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Administrador crea una nueva WorkflowDefinition y la asocia a uno o más TipoDeTramite.
+Sistema -> Sistema : Administrador
+Actor -> Actor : El sistema registra la definición y la habilita para edición del grafo.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Administrador agrega WorkflowNodes, cada uno vinculado a un EstadoDeGestion existente.
+Sistema -> Sistema : Administrador
+Actor -> Actor : Marca el nodo inicial y el/los nodo(s) final(es).
+Sistema -> Sistema : Administrador
+Actor -> Actor : El Administrador agrega WorkflowTransitions dirigidas entre nodos, opcionalmente con condición.
+Sistema -> Sistema : Administrador
+Actor -> Actor : El Administrador solicita validar el workflow.
+Sistema -> Sistema : Administrador
+Actor -> Actor : El sistema verifica la consistencia del grafo (nodo inicial único, nodo FINAL alcanzable).
+Sistema -> Sistema : Sistema
+Actor -> Actor : El sistema persiste la definición validada, disponible para gestiones del tipo de trámite asociado.
+Sistema -> Sistema : Sistema
+
+@enduml

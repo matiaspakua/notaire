@@ -1,0 +1,25 @@
+@startuml cu70
+!theme plain
+title CU70 — Monitoreo de Operaciones y Gestión de Incidentes
+
+actor "Equipo de Operaciones" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : Los usuarios operan el sistema.
+Sistema -> Sistema : Usuarios
+Actor -> Actor : Expone métricas de salud y logs estructurados.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Prometheus realiza scraping de métricas.
+Sistema -> Sistema : Prometheus
+Actor -> Actor : Almacena series temporales.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Se detecta un umbral de anomalía.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Grafana Alerting dispara notificación.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El ingeniero de guardia analiza el incidente.
+Sistema -> Sistema : Ingenieros de Guardia
+Actor -> Actor : Identifica causa raíz y ejecuta mitigación.
+Sistema -> Sistema : Ingenieros de Guardia
+
+@enduml

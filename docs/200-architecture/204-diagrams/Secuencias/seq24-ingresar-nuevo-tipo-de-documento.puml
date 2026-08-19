@@ -1,0 +1,17 @@
+@startuml cu24
+!theme plain
+title CU24 — Ingresar nuevo tipo de documento
+
+actor "Escribano" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El Escribano decide dar de alta un nuevo tipo de documento.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Solicita: (Nombre del documento; Si posee vencimiento; Días de validez; Quién lo entrega)
+Sistema -> Sistema : Sistema
+Actor -> Actor : El Escribano ingresa los datos solicitados.
+Sistema -> Sistema : Escribano
+Actor -> Actor : Registra un nuevo documento en el sistema.
+Sistema -> Sistema : Sistema
+
+@enduml

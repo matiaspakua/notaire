@@ -1,0 +1,25 @@
+@startuml cu78
+!theme plain
+title CU78 — Seguridad, Privacidad y Cumplimiento
+
+actor "Usuario" as Actor
+participant "Sistema Notaire" as Sistema
+
+Actor -> Actor : El usuario ingresa sus credenciales (nombre de usuario y contraseña).
+Sistema -> Sistema : Usuario
+Actor -> Actor : Valida las credenciales contra el hash seguro en base de datos cifrada.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Si las credenciales son válidas, se genera una sesión autenticada con token firmado.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Transmite el token seguro mediante canal cifrado HTTPS/TLS.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El usuario solicita ejecutar una operación sobre un trámite o cliente.
+Sistema -> Sistema : Usuario
+Actor -> Actor : Valida los permisos de rol del usuario y autoriza la ejecución.
+Sistema -> Sistema : Sistema
+Actor -> Actor : El sistema procesa la operación.
+Sistema -> Sistema : Sistema
+Actor -> Actor : Registra la acción en el log de auditoría inmutable indicando usuario, fecha, hora e IP.
+Sistema -> Sistema : Sistema
+
+@enduml
