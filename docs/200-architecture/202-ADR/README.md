@@ -21,6 +21,11 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [013](ADR-013-audit-trail.md) | Audit Trail (Spring AOP) | Accepted | 2026-05-12 | Security & Compliance |
 | [014](ADR-014-workflow-engine.md) | Workflow Engine (data-driven) | Accepted | 2026-06-09 | Domain model |
 | [015](ADR-015-internationalization.md) | Internationalization (next-intl) | Accepted | 2026-05-23 | Frontend |
+| [016](ADR-016-observability-stack.md) | Observability Stack Topology | Accepted | 2026-08-19 | Observability |
+| [017](ADR-017-container-base-images.md) | Container / Base-Image Strategy | Accepted | 2026-08-19 | DevOps |
+| [018](ADR-018-rate-limiting-policy.md) | Rate-Limiting Policy | Accepted | 2026-08-19 | Security |
+| [019](ADR-019-secrets-management.md) | Secrets Management | Accepted | 2026-08-19 | Security |
+| [020](ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | 2026-08-19 | Security & API |
 
 ## ADR Status Legend
 
@@ -70,14 +75,19 @@ Cada ADR sigue esta estructura:
 - **ADR-008**: Seguridad y autenticación (JWT, RBAC)
 - **ADR-010**: Manejo de errores global
 
-### Observability (1 ADR)
+### Observability (2 ADRs)
 - **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
+- **ADR-016**: Topología del stack de observabilidad (Prometheus/Grafana/Loki/SonarQube)
 
-### DevOps (1 ADR)
+### DevOps (2 ADRs)
 - **ADR-012**: Pipeline CI/CD con GitHub Actions
+- **ADR-017**: Estrategia de imágenes base de contenedores (Alpine, multi-stage, non-root)
 
-### Security & Compliance (1 ADR)
+### Security & Compliance (4 ADRs)
 - **ADR-013**: Auditoría transversal con Spring AOP
+- **ADR-018**: Política de rate-limiting (solo login lockout, sin límite general de API)
+- **ADR-019**: Gestión de secretos (.env único, ProductionCredentialsGuard)
+- **ADR-020**: Política de exposición de OpenAPI/Swagger (público salvo producción)
 
 ### Domain Model (1 ADR)
 - **ADR-014**: Motor de workflow configurable para gestiones

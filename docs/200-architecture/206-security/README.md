@@ -22,6 +22,37 @@ Please include the following information:
 - Proof-of-concept or exploit code (if possible)
 - Impact of the issue, including how an attacker might exploit it
 
+## Data Classification & Threat Model
+
+Notaire manages **notarial deeds and personal data** (`Persona` records
+include DNI, email, and legal-act involvement) subject to Argentine legal
+retention requirements (see the SAD's Legal Constraints, §2.3) — a breach
+exposes both PII and legally-binding document metadata, not just
+application data.
+
+### Data sensitivity
+| Category | Examples | Sensitivity |
+|----------|----------|--------------|
+| PII | `Persona` (DNI, email, nombre/apellido) | High — regulated personal data |
+| Legal/notarial records | `Escritura`, `Testimonio`, `Folio`, `DocumentoPresentado` | High — legally binding, indefinite retention |
+| Financial | `Presupuesto`, `Pago` | Medium — budget/payment amounts, no card data stored |
+| Operational | `RegistroAuditoria`, `Historial` | Medium — who-did-what audit trail, itself a control |
+| Credentials | `Usuario.password` (BCrypt hash) | Critical |
+
+### Primary threats and current mitigations
+| Threat | Mitigation | Gap |
+|--------|-----------|-----|
+| Credential stuffing / brute force on login | `LoginAttemptService` lockout (5 attempts / 15 min) | Single-instance only — see [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md) |
+| Unauthorized data access | JWT required on all `/api/**` (except login) | Coarse-grained only — no per-role authorization yet (see ADR-008, SAD §8.1) |
+| Credential leakage via defaults | `ProductionCredentialsGuard` blocks startup on default `.env` values in production | Only catches the literal `"admin"` default, not weak passwords generally — see [ADR-019](../202-ADR/ADR-019-secrets-management.md) |
+| API surface reconnaissance | Swagger UI/spec denied in production | Non-production environments remain fully open — see [ADR-020](../202-ADR/ADR-020-openapi-exposure-policy.md) |
+| SQL injection | JPA/Hibernate parameterized queries throughout (see [SQL Injection Prevention](SQL-INJECTION-PREVENTION.md)) | None known |
+| Tampering with audit trail | `RegistroAuditoriaService` records acting user from `SecurityContextHolder` (JWT identity), never a client-supplied header | GETs are not audited (read access to PII is not logged) |
+
+This is a lightweight risk register, not a formal STRIDE exercise — revisit
+with a fuller threat model before any production deployment (none is
+currently defined; see the SAD's Risks and Technical Debt, §11.1).
+
 ## Security Features
 
 ### Implemented Security Measures
