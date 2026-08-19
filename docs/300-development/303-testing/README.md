@@ -51,14 +51,12 @@ cat reports/test-report-*.md
 
 ### 1. **Unit Tests** (Java/JUnit5)
 - **Location:** `backend-api/src/test/java/.../unit/`
-- **Count:** 8+ test classes
-- **Duration:** ~5 seconds
+- **Count:** 66 test classes, 900+ test methods
 - **Command:** `mvn test -pl backend-api -Dtest="**/unit/*"`
 
 ### 2. **Integration Tests** (Spring Boot/TestContainers)
 - **Location:** `backend-api/src/test/java/.../integration/`
-- **Count:** ~40 test cases
-- **Duration:** ~30 seconds
+- **Count:** 59 test classes, 450+ test methods
 - **Command:** `mvn test -pl backend-api -Dtest="**/integration/*"`
 - **Databases:** H2 (fast) + PostgreSQL (production-like)
 
@@ -209,14 +207,16 @@ open results/report.html
 
 ## Test Counts & Coverage
 
-| Type | Count | Coverage | Duration |
-|------|-------|----------|----------|
-| Unit | 8+ classes | Service logic | ~5s |
-| Integration | ~40 cases | APIs, database | ~30s |
-| Client | 2 classes | REST client | ~2s |
-| HTTP | 8 scripts | REST endpoints | ~15s |
-| E2E | ~30-40 cases | GUI workflows | ~10m |
-| **Total** | **100+** | **Full stack** | **~15m** |
+| Type | Count | Coverage |
+|------|-------|----------|
+| Unit | 66 classes, 900+ methods | Service logic |
+| Integration | 59 classes, 450+ methods | APIs, database |
+| Client | 2 classes | REST client |
+| HTTP | 8 scripts | REST endpoints |
+| Frontend (Vitest) | 19+ files | Component/hook logic |
+| E2E (Playwright) | 33+ spec files, per Caso de Uso | GUI + API integration |
+| E2E (Robot/Swing, deprecated) | 7 suites | Legacy GUI workflows |
+| **Total** | **1,500+ test methods/cases across all layers** | **Full stack** |
 
 **Coverage Requirement:** Enforced ratchet floor via JaCoCo (`jacoco:check`, bound to `mvn verify`; raised as coverage improves, never lowered — see `.claude/rules/code-quality.md`). Long-term target: 80% line / 80% branch.
 
@@ -376,10 +376,12 @@ grep -E "PASSED|FAILED" testing/reports/logs/*.log
 Tests run automatically in GitHub Actions:
 
 **On Pull Request:**
-- Unit tests (5s)
-- Integration tests with H2 (30s)
-- Code style (Checkstyle)
-- Bug detection (SpotBugs)
+- Unit tests
+- Integration tests (H2 + PostgreSQL)
+- Code style (Checkstyle, bound to `mvn verify`)
+- Formatting lint (Spotless, `pr-validation.yml` "Code Lint" job — **not** bound to
+  the Maven lifecycle; see [CI Preflight](../CI-PREFLIGHT.md))
+- Bug detection (SpotBugs, report-only)
 
 **On Merge to Main:**
 - All unit + integration tests
@@ -398,10 +400,10 @@ Tests run automatically in GitHub Actions:
 For detailed information, see:
 
 - `TEST_STRATEGY.md` — Comprehensive testing guide
-- `API_TESTING_GUIDE.md` — HTTP API testing details
+- `api-test/API_TESTING_GUIDE.md` — HTTP API testing details
 - `backend-api/pom.xml` — Maven test configuration
 - `deprecated-frontend-swing/pom.xml` — Client test configuration
-- `e2e-swing/README.md` — E2E setup instructions
+- `testing/e2e-swing/setup_env.sh` — E2E setup instructions
 
 ---
 
@@ -422,7 +424,7 @@ For detailed information, see:
 - **Coverage Report:** `open backend-api/target/site/jacoco/index.html`
 - **E2E Report:** `open testing/reports/logs/robot-output/report.html`
 - **API Guide:** [`api-test/API_TESTING_GUIDE.md`](api-test/API_TESTING_GUIDE.md)
-- **CLAUDE.md:** `../.claude.md` (project testing guidelines)
+- **CLAUDE.md:** `../../../CLAUDE.md` (project testing guidelines)
 
 ---
 
@@ -484,6 +486,6 @@ mvn jacoco:check -pl backend-api
 
 ---
 
-**Last Updated:** 2026-04-14  
+**Last Updated:** 2026-08-19  
 **Maintained By:** Development Team  
 **Version:** 1.0
