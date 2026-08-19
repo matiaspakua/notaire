@@ -150,8 +150,8 @@ mvn flyway:info
 AI agents should consult:
 - **Skill**: `.claude/skills/flyway/SKILL.md`
 - **Rules**: `.claude/rules/database-migrations.md`
-- **ADR**: `docs/02-architecture/01-adr/ADR-007-database-schema-versioning-flyway.md`
-- **SAR**: `docs/02-architecture/SAR-007-flyway-implementation.md`
+- **ADR**: `docs/200-architecture/202-ADR/ADR-007-database-schema-versioning-flyway.md`
+- **SAR**: `docs/000-archive/200-architecture/202-ADR/SAR-007-flyway-implementation.md` (archived)
 
 ## Related Documentation
 

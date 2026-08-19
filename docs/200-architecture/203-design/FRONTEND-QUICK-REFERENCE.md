@@ -452,7 +452,7 @@ import { theme } from "@/theme/tokens";
 - **Form Patterns**: `frontend/src/theme/form-patterns.tsx`
 - **UI/UX Rules**: `.claude/rules/ui-ux-design.md`
 - **Implementation Skill**: `.claude/skills/frontend-design/SKILL.md`
-- **Form Checklist**: `docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md`
+- **Form Checklist**: `docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md`
 
 ---
 

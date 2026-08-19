@@ -40,6 +40,5 @@ en la raíz porque el contexto de build y la orquestación son a nivel de repo.
 
 ## Documentación relevante
 
-- `/docs/02-architecture/` — diseño de arquitectura
-- `/docs/05-api/` — documentación de la API REST
-- `/docs/03-development/` — guías de desarrollo y pruebas
+- `/docs/200-architecture/` — diseño de arquitectura y documentación de la API REST (`203-design/`)
+- `/docs/300-development/` — guías de desarrollo y pruebas

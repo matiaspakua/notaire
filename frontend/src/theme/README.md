@@ -414,7 +414,7 @@ import { theme, type Theme } from "@/theme/tokens";
 ## Related Files
 
 - `frontend/src/components/ui/` — UI components that should use theme
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` — Full design system documentation
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Full design system documentation
 - `.claude/rules/ui-ux-design.md` — Mandatory UI/UX rules
 - `.claude/skills/frontend-design/SKILL.md` — Implementation patterns
 

@@ -86,7 +86,7 @@ jobs:
             echo "  - 'Supports infrastructure CU-74 (Performance)'"
             echo ""
             echo "Use Cases are documented in:"
-            echo "  docs/01-business/02-use-cases/03_CU\\ -\\ Casos\\ de\\ Uso/"
+            echo "  docs/100-business/102-use-cases/"
             echo ""
             echo "Note: This is a warning, not a blocker. Please address in the next commit."
           fi

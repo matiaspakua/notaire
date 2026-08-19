@@ -173,15 +173,15 @@ See `AdditionalControllersTest` for the established test pattern.
 
 ## Related documentation
 
-- `docs/04-operations/03-security/INPUT-VALIDATION-STRATEGY.md`
-- `docs/04-operations/03-security/API-AUTHENTICATION-GUIDE.md`
+- `docs/200-architecture/206-security/INPUT-VALIDATION-STRATEGY.md`
+- `docs/200-architecture/206-security/API-AUTHENTICATION-GUIDE.md`
 - `.claude/rules/programming.md` — Error Handling section
 - Issue #579 — tracks migrating the remaining ad-hoc controllers onto `GlobalExceptionHandler`
 
 ---
 
 _This document merges and supersedes the former
-`docs/03-development/04-code-standards/ERROR-HANDLING-STRATEGY.md`, which
+`docs/300-development/302-code-standards/ERROR-HANDLING-STRATEGY-code-standards.md`, which
 described only the legacy ad-hoc pattern above and used a different, narrower
-response shape (`{"error": "..."}`). That file is archived at
-`docs/archive/ERROR-HANDLING-STRATEGY-code-standards.md`. See issue #600._
+response shape (`{"error": "..."}`). That file is kept in place, marked
+deprecated, for historical reference. See issue #600._

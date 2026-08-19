@@ -267,7 +267,7 @@
 3. ✅ `src/theme/form-patterns.tsx` - Form components
 4. ✅ `frontend/src/theme/README.md` - Theme guide
 5. ✅ `../docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` - Design system guide
-6. ✅ `docs/02-architecture/01-adr/ADR-009-*.md` - Architecture decision
+6. ✅ `docs/200-architecture/202-ADR/ADR-011-*.md` - Architecture decision
 7. ✅ `../docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md` - Implementation checklist
 8. ✅ `../docs/200-architecture/203-design/FRONTEND-QUICK-REFERENCE.md` - Quick reference
 9. ✅ `../.claude/rules/ui-ux-design.md` - Mandatory UI/UX rules

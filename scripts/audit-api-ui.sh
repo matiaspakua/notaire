@@ -220,11 +220,11 @@ $(cat "$AUDIT_DIR/form_files.txt" | sed 's|.*/||')
    Decision: Implement UI / Keep internal / Remove
 
 2. CREATE ENDPOINT REGISTRY
-   Create: docs/03-api/ENDPOINT_REGISTRY.json
+   Create: docs/200-architecture/203-design/ENDPOINT_REGISTRY.json
    Content: Map all endpoints with usage status
 
 3. VALIDATE TYPE MAPPINGS
-   Create: docs/03-api/TYPE_MAPPINGS.csv
+   Create: docs/200-architecture/203-design/TYPE_MAPPINGS.csv
    Content: DTO ↔ TypeScript type equivalence
 
 4. DOCUMENT GAPS

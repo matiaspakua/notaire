@@ -42,9 +42,9 @@
 ### 3. Documentation
 
 **Architecture Documentation:**
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` - Complete design system guide
-- `docs/02-architecture/01-adr/ADR-009-centralized-design-system.md` - Architecture Decision Record
-- `docs/03-development/FORM-IMPLEMENTATION-CHECKLIST.md` - Form development checklist
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` - Complete design system guide
+- `docs/200-architecture/202-ADR/ADR-011-centralized-design-system.md` - Architecture Decision Record
+- `docs/200-architecture/203-design/FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md` - Form development checklist
 
 **Quick Reference:**
 - `frontend/src/theme/README.md` - Theme usage guide
@@ -296,7 +296,7 @@ export function NewForm() {
 
 ### Documentation
 - `frontend/src/theme/README.md` - Quick reference
-- `docs/02-architecture/03-design/DESIGN-SYSTEM.md` - Complete guide
+- `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` - Complete guide
 - `.claude/rules/ui-ux-design.md` - Rules and standards
 - `.claude/skills/frontend-design/SKILL.md` - Implementation patterns
 

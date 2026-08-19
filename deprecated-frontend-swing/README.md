@@ -22,8 +22,8 @@ java -jar target/frontend-swing-*.jar
 
 ## Documentación relevante
 
-- `/docs/03-development/` — setup, build y pruebas
-- `/docs/05-api/` — especificación de endpoints
+- `/docs/300-development/` — setup, build y pruebas
+- `/docs/200-architecture/203-design/` — especificación de endpoints
 
 ## Nota
 

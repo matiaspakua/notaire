@@ -543,6 +543,6 @@ Every form implementation must verify:
 
 - **Theme Documentation**: `/frontend/src/theme/tokens.ts`
 - **Form Patterns**: `/frontend/src/theme/form-patterns.tsx`
-- **Design System Guide**: `/docs/02-architecture/03-design/DESIGN-SYSTEM.md`
+- **Design System Guide**: `/docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md`
 - **UI/UX Rules**: `/.Codex/rules/ui-ux-design.md`
 - **Component Examples**: `/frontend/src/components/`

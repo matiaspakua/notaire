@@ -169,7 +169,7 @@ bash scripts/preflight.sh --list    # local check -> CI job mapping
 **When you add or change a gate in `.github/workflows/`, update
 `scripts/preflight.sh` in the same PR** — otherwise the local/CI gap reopens.
 
-Full details: `docs/03-development/CI-PREFLIGHT.md`
+Full details: `docs/300-development/CI-PREFLIGHT.md`
 
 ## Backend Architecture (`backend-api`)
 
