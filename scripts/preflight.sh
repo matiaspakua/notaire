@@ -22,7 +22,7 @@
 #   bash scripts/preflight.sh            # everything except server-backed suites
 #   bash scripts/preflight.sh --fix      # auto-fix what is fixable, then verify
 #   bash scripts/preflight.sh --fast     # format/lint/compile/typecheck only
-#   bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests
+#   bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
 #   bash scripts/preflight.sh --list     # show local-check -> CI-job mapping
 #
 # Exit code is non-zero if any blocking check fails.
@@ -45,6 +45,9 @@ branch naming                   Branch Naming Convention Check   pr-validation.y
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
+dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
+spotbugs                        Code Quality / SpotBugs          ci.yml             (warn, report-only)
+trivy filesystem scan           Security Scan                    ci.yml             (warn, report-only)
 backend compile                 Build & Compile / Quick Build    ci.yml, pr-validation.yml
 backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml
                                 Coverage Gate (mvn verify)
@@ -53,8 +56,10 @@ frontend typecheck              TypeScript Check                 frontend-ci.yml
 frontend eslint                 ESLint                           frontend-ci.yml
 frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
-playwright e2e     (--full)     UI E2E Tests (Playwright)        playwright-e2e.yml
-bruno api tests    (--full)     API Tests (Bruno)                playwright-e2e.yml
+http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
+playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
+bruno api tests         (--full) API Tests (Bruno)               playwright-e2e.yml
+docker build/smoke      (--full) Build Docker Image              ci.yml             (image scan not replicated locally)
 MAP
             exit 0 ;;
         -h|--help) sed -n '3,28p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -143,6 +148,21 @@ fi
 run_warn "checkstyle" mvn checkstyle:check -pl backend-api "${MVN_FLAGS[@]}"
 
 # ---------------------------------------------------------------------------
+section "Report-only checks (mirror ci.yml/pr-validation.yml advisory jobs)"
+# ---------------------------------------------------------------------------
+if [ "$MODE_FAST" = "0" ]; then
+    run_warn "dependency analysis" mvn dependency:analyze -pl backend-api -am "${MVN_FLAGS[@]}"
+    run_warn "spotbugs" mvn compile com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false "${MVN_FLAGS[@]}"
+    if command -v trivy >/dev/null 2>&1; then
+        run_warn "trivy filesystem scan" trivy fs . --exit-code 0 --ignore-unfixed --quiet
+    else
+        skip "trivy filesystem scan" "trivy not installed — CI WILL run this"
+    fi
+else
+    skip "dependency analysis / spotbugs / trivy fs" "--fast"
+fi
+
+# ---------------------------------------------------------------------------
 section "Backend"
 # ---------------------------------------------------------------------------
 run "backend compile" mvn clean compile -DskipTests "${MVN_FLAGS[@]}"
@@ -194,11 +214,32 @@ if [ "$MODE_FULL" = "1" ]; then
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/http && bash test-all-endpoints-v2.sh"
         run "playwright e2e" bash -c "cd frontend && ./node_modules/.bin/playwright test"
+
+        # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
+        # front (the collection sends it on every request; folders run
+        # alphabetically so it can't be captured mid-run) and run the real
+        # Bruno collection, not the legacy testing/http suite above.
+        BRUNO_TOKEN="$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
+            -H 'Content-Type: application/json' \
+            -d '{"nombre":"admin","contrasenia":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
+        if [ -n "$BRUNO_TOKEN" ]; then
+            run "bruno api tests" bash -c "cd backend-api/api-test && npx @usebruno/cli run --env Developmen --env-var token=$BRUNO_TOKEN"
+        else
+            fail "bruno api tests: could not obtain JWT token from login endpoint"
+        fi
     else
         fail "server-backed suites: stack not reachable (need backend :8080 + frontend :3000 — run 'bash scripts/start.sh')"
     fi
+
+    if docker info >/dev/null 2>&1; then
+        run "docker compose build" docker compose build --no-cache
+        run "docker compose smoke test" bash -c \
+            'docker compose up -d && sleep 10 && docker compose ps && docker compose down'
+    else
+        skip "docker build/smoke test" "docker not running — CI WILL run this (docker-build job)"
+    fi
 else
-    skip "playwright e2e / bruno api" "not --full; CI WILL run these"
+    skip "playwright e2e / bruno api / docker build" "not --full; CI WILL run these"
 fi
 
 # ---------------------------------------------------------------------------

@@ -162,7 +162,7 @@ Always validate with the preflight script, which mirrors every CI gate:
 bash scripts/install-git-hooks.sh   # once per clone: pre-push runs the gates automatically
 bash scripts/preflight.sh --fix     # auto-fix formatting/lint, then verify
 bash scripts/preflight.sh           # all blocking gates except server-backed suites
-bash scripts/preflight.sh --full    # adds Playwright E2E + HTTP API suite (needs stack up)
+bash scripts/preflight.sh --full    # adds Playwright E2E + Bruno API tests + Docker build/smoke test (needs stack up)
 bash scripts/preflight.sh --list    # local check -> CI job mapping
 ```
 

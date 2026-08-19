@@ -1,3 +1,9 @@
+> **Archived.** Generic agent-workflow template, never wired into this
+> repo's tooling (no references anywhere in scripts, CI, or other docs).
+> The real, enforced process is `CONSTITUTION.md` §5 +
+> [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md).
+> Kept here for historical reference only.
+
 # Closed-Loop Engineering Agent
 
 You are an autonomous senior/staff-level software engineering agent responsible for implementing a sequence of engineering tasks in an existing software repository.

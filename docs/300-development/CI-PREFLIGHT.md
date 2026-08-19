@@ -6,8 +6,8 @@ CI spreads its gates across four workflows:
 
 | Workflow | Gates |
 |---|---|
-| `ci.yml` | Build & Compile, Unit Tests, Integration Tests, Coverage Gate, Security Scan |
-| `pr-validation.yml` | Validate PR, Quick Build, Dependency Analysis, **Code Lint (Checkstyle + Spotless)**, Branch Naming |
+| `ci.yml` | Build & Compile, Unit Tests, Integration Tests, Coverage Gate, Security Scan (Trivy fs, report-only), Docker Build (image build + Trivy image scan, report-only), Code Quality (SpotBugs, report-only) |
+| `pr-validation.yml` | Validate PR, Quick Build, Dependency Analysis (report-only), **Code Lint (Checkstyle + Spotless)**, Branch Naming |
 | `frontend-ci.yml` | TypeScript Check, ESLint, Unit Tests (Vitest), Build (Next.js) |
 | `playwright-e2e.yml` | Build Backend/Frontend, API Tests (Bruno), UI E2E Tests (Playwright) |
 
@@ -42,12 +42,22 @@ Run it by hand any time:
 bash scripts/preflight.sh            # every blocking gate except server-backed suites
 bash scripts/preflight.sh --fix      # auto-fix what is fixable, then verify
 bash scripts/preflight.sh --fast     # format/lint/compile/typecheck only
-bash scripts/preflight.sh --full     # adds Playwright E2E + HTTP API suite
+bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
 bash scripts/preflight.sh --list     # local check -> CI job mapping
 ```
 
 `--full` needs the stack running (`bash scripts/start.sh`): backend on `:8080`,
-frontend on `:3000`.
+frontend on `:3000`. It also runs a local Docker Compose build + smoke test
+(skipped with a warning if the Docker daemon isn't running) and the real
+Bruno API collection (`backend-api/api-test/`) — not just the legacy
+`testing/http/` cURL suite, which `--full` also still runs as an extra local
+smoke check with no corresponding CI job.
+
+`bash scripts/preflight.sh` (without `--fast`) also runs three report-only
+checks that mirror advisory CI jobs: `mvn dependency:analyze`, SpotBugs, and
+a Trivy filesystem scan (skipped with a warning if `trivy` isn't installed
+locally). None of these block the push — they match the report-only
+(`|| true` / `exit-code: '0'`) severity of their CI counterparts.
 
 ### What `--fix` fixes automatically
 
@@ -95,6 +105,15 @@ files CI flagged, with the same diff.
 Unused-import removal in the fallback is conservative: an import is dropped only
 when its simple name appears nowhere else in the file. Wildcard and static
 imports are never touched (`checkstyle.xml` already bans wildcards).
+
+## `run-pipeline.sh` is retired
+
+An earlier, parallel local pipeline script (`run-pipeline.sh`, 11 phases) existed
+at the repo root with zero references anywhere else in the repo — not wired into
+CLAUDE.md, CONSTITUTION.md, ADR-012, this doc, or the git hooks. `preflight.sh`
+is, and always was, the canonical one. Its two genuinely unique phases (Docker
+build/smoke test, advisory Trivy filesystem scan) were folded into `preflight.sh`
+above; the script itself has been removed.
 
 ## Keeping local and CI in sync
 
