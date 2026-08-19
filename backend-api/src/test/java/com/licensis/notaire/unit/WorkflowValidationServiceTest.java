@@ -1,7 +1,6 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
 import com.licensis.notaire.negocio.WorkflowNode;
 import com.licensis.notaire.negocio.WorkflowNodeType;
 import com.licensis.notaire.negocio.WorkflowTransition;

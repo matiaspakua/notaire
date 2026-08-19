@@ -1,7 +1,6 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.WorkflowValidationController;
-import com.licensis.notaire.negocio.WorkflowDefinition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
