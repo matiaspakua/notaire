@@ -82,8 +82,8 @@ big-bang rewrite). Its 7-phase implementation plan:
 | 2 | Migrate business entities and repositories | ✅ Done — `negocio`/`repository` packages |
 | 3 | Implement business services | 🔶 Partial — `service` package thin; legacy `jpa` package still does heavy data access (see `CLAUDE.md`'s architecture note) |
 | 4 | Create REST endpoints | ✅ Done — 189 endpoints, see [REST-API-ENDPOINT_REGISTRY.md](../200-architecture/203-design/REST-API-ENDPOINT_REGISTRY.md) |
-| 5 | Refactor GUI to consume the API | ✅ Done for the new Next.js frontend; the legacy `frontend-swing` client is deprecated and excluded from the root Maven reactor (see `pom.xml`'s reactor-exclusion comment) |
-| 6 | Deprecate legacy code | 🔶 Partial — `frontend-swing` deprecated; `jpa` package migration to `repository` ongoing |
+| 5 | Refactor GUI to consume the API | ✅ Done for the new Next.js frontend; the legacy `frontend-swing` Swing client was deprecated and has since been removed from the repository entirely |
+| 6 | Deprecate legacy code | 🔶 Partial — `frontend-swing` fully removed; `jpa` package migration to `repository` ongoing |
 | 7 | Monitoring and optimization | ✅ Done — see [ADR-016](../200-architecture/202-ADR/ADR-016-observability-stack.md) |
 
 Related decisions: [ADR-002](../200-architecture/202-ADR/ADR-002-module-structure.md)
@@ -91,9 +91,9 @@ Related decisions: [ADR-002](../200-architecture/202-ADR/ADR-002-module-structur
 (Next.js frontend migration).
 
 **New feature work targets `backend-api`/`notaire-shared` and the `frontend/`
-Next.js client. Do not build new features in `frontend-swing` (deprecated,
-excluded from the build) or the `jpa` package** — both are
-migration-targets-for-deprecation, not extension points.
+Next.js client. `frontend-swing` no longer exists in the repository — do not
+recreate it. Avoid extending the `jpa` package** — it is a
+migration-target-for-deprecation, not an extension point.
 
 ## Navigation
 

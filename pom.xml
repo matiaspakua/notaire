@@ -16,8 +16,8 @@
 
     <name>Notaire Root</name>
 
-    <!-- frontend-swing is deprecated: excluded from the default reactor build.
-         See frontend-swing/README.md. -->
+    <!-- The legacy frontend-swing Swing GUI client was deprecated and removed
+         from the repository; new client work belongs in frontend/ (Next.js). -->
     <modules>
         <module>notaire-shared</module>
         <module>backend-api</module>
