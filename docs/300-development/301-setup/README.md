@@ -139,11 +139,15 @@ com.licensis.notaire/
 │   └── PersonaRepository.java
 ├── negocio/             # Entidades
 │   └── Persona.java
-├── dto/                 # DTOs
-│   └── DtoPersona.java
+├── security/            # JWT y filtros de seguridad
+├── config/              # Configuración de beans
 ├── jpa/                 # Legacy (a eliminar)
 └── exception/           # Excepciones
 ```
+
+Los DTOs (`DtoPersona`, etc.) viven en el módulo `notaire-shared`
+(`com.licensis.notaire.dto`), no en `backend-api` — ver
+[DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
 
 ## Base de Datos
 
