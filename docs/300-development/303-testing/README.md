@@ -15,7 +15,6 @@ Unit  ->  Component  ->  API (Bruno)  ->  Integration  ->  Playwright UI/UX  -> 
 | Document | Defines |
 |----------|---------|
 | [TEST_STRATEGY.md](TEST_STRATEGY.md) | The comprehensive test suite: unit, integration, frontend client, and HTTP/API tests, with commands, coverage targets, and CI wiring |
-| [E2E-TEST-PLAN.md](E2E-TEST-PLAN.md) | Playwright + Bruno E2E test plan: architecture, test data strategy, and suite organization **per use case** (`cuNN-*.spec.ts`) |
 | [CU-API-MATRIX.csv](CU-API-MATRIX.csv) | Traceability matrix: Caso de Uso ID -> module -> entity/operation -> controller/endpoint -> Bruno test -> GitHub issue. `Endpoint_Status`/`Bruno_Status` are a historical snapshot from initial bug-hunting (issues #154-#221); for current Bruno pass/fail state see [`api-test/COVERAGE.md`](../../../backend-api/api-test/COVERAGE.md) |
 | [FRONTEND-TESTING-GUIDE.md](FRONTEND-TESTING-GUIDE.md) | Vitest unit/component testing conventions for `frontend/` |
 
@@ -82,11 +81,13 @@ cat reports/test-report-*.md
 
 ### 6. **Playwright E2E Tests** (UI/UX, use-case validation)
 - **Location:** `frontend/tests/e2e/`
-- **Count:** 33+ spec files, organized by use case (`cuNN-*.spec.ts`)
+- **Count:** 34 spec files, mostly organized by use case (`cuNN-*.spec.ts`) — see
+  [FRONTEND-TESTING-GUIDE.md](FRONTEND-TESTING-GUIDE.md#e2e-test-structure) for the full
+  structure
 - **Command:** `cd frontend && npm run test:e2e` (`npm run test:e2e:headed` to watch)
 - **Prerequisites:** Full stack running (`bash scripts/start.sh`)
-- **Test plan:** see [E2E-TEST-PLAN.md](E2E-TEST-PLAN.md) for suite organization,
-  test data strategy, and the CI schedule (`playwright-e2e.yml`)
+- **CI:** runs on every PR/push to `main`, weekday schedule, and manual dispatch
+  (`playwright-e2e.yml`); failures block the pipeline
 
 ### 7. **E2E Tests** (Robot Framework/Swing, deprecated client)
 - **Location:** `e2e-swing/tests/` directory

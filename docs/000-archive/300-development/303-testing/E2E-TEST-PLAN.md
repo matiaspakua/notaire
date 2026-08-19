@@ -3,7 +3,13 @@
 > **Issue:** [#400](https://github.com/matiaspakua/notaire/issues/400)
 > **Branch:** `test/400_playwright-e2e-suite`
 > **Date:** 2026-05-21
-> **Status:** Active
+> **Status:** Archived — issue #400 is closed and the planned suite was built. Several
+> `Bruno sync` paths below (`catalogos/*.yml`, `gestiones/*.yml`, `pagos/*.yml`) point at
+> directories that no longer exist in `backend-api/api-test/` (restructured since this plan
+> was written). For the current, accurate E2E test structure and Bruno collection layout,
+> see [FRONTEND-TESTING-GUIDE.md](../../../300-development/303-testing/FRONTEND-TESTING-GUIDE.md)
+> and [CU-API-MATRIX.csv](../../../300-development/303-testing/CU-API-MATRIX.csv). Kept here
+> for its design rationale (CU-to-spec mapping strategy, GWT scenario catalog).
 
 ---
 
