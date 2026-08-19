@@ -627,6 +627,14 @@ tipoTramite }o--o| wfDef
 @enduml
 ```
 
+This is a simplified view of the 6 most-referenced entities. The full 32-table
+schema — every column, type, FK, and its Flyway migration provenance (V1–V14)
+— is maintained in the
+[Diccionario de Datos](../205-data-model/Diccionario%20de%20Datos.md), with the
+complete ERD at
+[`205-data-model/ERD/`](../205-data-model/ERD/). Both are kept in sync with
+Flyway on every migration (see the dictionary's §6.3 validation log).
+
 ---
 
 ## 6. Runtime View
