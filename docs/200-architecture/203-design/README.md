@@ -7,10 +7,8 @@ Referencia completa de la API REST del proyecto Notaire.
 - **[REST-API-REFERENCE.md](REST-API-REFERENCE.md)** — Endpoint-by-endpoint reference with request/response examples and Use Case traceability.
 - **[REST-API-ENDPOINT_REGISTRY.md](REST-API-ENDPOINT_REGISTRY.md)** — Full inventory of all 189 REST endpoints, classified by frontend usage.
 - **[BACKEND-ERROR-HANDLING-STRATEGY.md](BACKEND-ERROR-HANDLING-STRATEGY.md)** — Exception handling and error response conventions.
-- **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, UI conventions.
-- **[FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md](FRONTEND-FORM-IMPLEMENTATION-CHECKLIST.md)** — Checklist for building new forms.
-- **[FRONTEND-QUICK-REFERENCE.md](FRONTEND-QUICK-REFERENCE.md)** — Common frontend snippets and conventions.
-- **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Workflow UI implementation status.
+- **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, quick reference, form checklist, and UI conventions.
+- **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Dashboard animated gestión-workflow visualization (backend endpoint, DTOs, frontend components, tests).
 
 ## 🚀 Quick Start
 
