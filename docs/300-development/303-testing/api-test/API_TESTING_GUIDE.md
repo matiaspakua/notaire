@@ -10,13 +10,17 @@ This guide provides curl examples for testing all API endpoints manually.
 
 ```bash
 # Start the API
-bash start.sh
+bash scripts/start.sh
 
 # In another terminal, run tests
-bash test.sh
+bash testing/scripts/test.sh
 
 # Or test manually with examples below
 ```
+
+> Request bodies below are illustrative. For the exact, current field names of any DTO,
+> check `notaire-shared/src/main/java/com/licensis/notaire/dto/` or the live schema at
+> [Swagger UI](http://localhost:8080/swagger-ui.html) — DTOs evolve independently of this guide.
 
 ## Base URL
 ```
@@ -79,8 +83,8 @@ curl -X POST "http://localhost:8080/api/v1/personas" \
   -d '{
     "nombre": "Juan Pérez",
     "apellido": "García",
-    "cedula": "12345678",
-    "email": "juan@example.com"
+    "numeroidentificacion": "12345678",
+    "eMail": "juan@example.com"
   }'
 
 # Update persona
@@ -89,8 +93,8 @@ curl -X PUT "http://localhost:8080/api/v1/personas/1" \
   -d '{
     "nombre": "Juan Carlos",
     "apellido": "García López",
-    "cedula": "12345678",
-    "email": "juan.carlos@example.com"
+    "numeroidentificacion": "12345678",
+    "eMail": "juan.carlos@example.com"
   }'
 
 # Delete persona
@@ -228,13 +232,13 @@ curl -X GET "http://localhost:8080/api/v1/usuarios"
 # Get single usuario
 curl -X GET "http://localhost:8080/api/v1/usuarios/1"
 
-# Create new usuario
+# Create new usuario (no email field exists on DtoUsuario; contrasenia is write-only)
 curl -X POST "http://localhost:8080/api/v1/usuarios" \
   -H "Content-Type: application/json" \
   -d '{
     "nombre": "admin",
-    "password": "admin123",
-    "email": "admin@notaire.com"
+    "contrasenia": "admin123",
+    "tipo": "Escribano"
   }'
 
 # Update usuario
@@ -242,8 +246,8 @@ curl -X PUT "http://localhost:8080/api/v1/usuarios/1" \
   -H "Content-Type: application/json" \
   -d '{
     "nombre": "admin",
-    "password": "newpassword123",
-    "email": "admin@notaire.com"
+    "contrasenia": "newpassword123",
+    "tipo": "Escribano"
   }'
 
 # Delete usuario
@@ -252,19 +256,31 @@ curl -X DELETE "http://localhost:8080/api/v1/usuarios/1"
 
 ### Other Entities
 
-Similar patterns apply to all other entities:
-- `/api/v1/folios`
-- `/api/v1/testimonios`
+Similar patterns apply to all other entities (paths verified against each controller's
+`@RequestMapping`):
+- `/api/v1/folio`
+- `/api/v1/testimonio`
 - `/api/v1/pagos`
-- `/api/v1/inmuebles`
-- `/api/v1/copias`
+- `/api/v1/inmueble`
+- `/api/v1/copia`
 - `/api/v1/historial`
-- `/api/v1/tipodedocumento`
-- `/api/v1/tipoidentificacion`
-- `/api/v1/suplencias`
-- `/api/v1/documentospresentados`
-- `/api/v1/movimientotestimonio`
-- `/api/v1/registroauditoria`
+- `/api/v1/tipo-de-documento`
+- `/api/v1/tipo-identificacion`
+- `/api/v1/suplencia`
+- `/api/v1/documento-presentado`
+- `/api/v1/movimiento-testimonio`
+- `/api/v1/registro-auditoria`
+- `/api/v1/estado-gestion`
+- `/api/v1/gestiones`
+- `/api/v1/plantilla-presupuestos`
+- `/api/v1/plantilla-tramite`
+- `/api/v1/reportes`
+- `/api/v1/roles`
+- `/api/v1/tipo-folio`
+- `/api/v1/tipo-tramite`
+- `/api/v1/workflow-definition`
+- `/api/v1/workflow-node`
+- `/api/v1/workflow-transition`
 
 ---
 
@@ -314,7 +330,7 @@ curl -X POST "http://localhost:8080/api/v1/conceptos" \
 
 ### 1. Start Application
 ```bash
-bash start.sh
+bash scripts/start.sh
 # Wait for "✓ Notaire Application is running!"
 ```
 
@@ -422,7 +438,7 @@ docker-compose logs -f backend
 docker-compose ps
 
 # Test database connection
-docker-compose exec postgres psql -U notaire -d notaire -c "SELECT 1"
+docker-compose exec postgres psql -U admin -d notaire -c "SELECT 1"
 ```
 
 ### Port Already in Use
@@ -431,9 +447,9 @@ docker-compose exec postgres psql -U notaire -d notaire -c "SELECT 1"
 netstat -tlnp | grep 8080
 
 # Kill process and restart
-bash stop.sh
+bash scripts/stop.sh
 sleep 2
-bash start.sh
+bash scripts/start.sh
 ```
 
 ### JSON Parse Error
@@ -471,7 +487,7 @@ wait
 ### Monitor Resource Usage
 ```bash
 # In another terminal
-docker stats backend postgres
+docker stats notary-backend notary-postgres
 ```
 
 ---
@@ -480,7 +496,7 @@ docker stats backend postgres
 
 ### Run Full Test Suite
 ```bash
-bash test.sh
+bash testing/scripts/test.sh
 ```
 
 ### Run Individual Entity Tests
