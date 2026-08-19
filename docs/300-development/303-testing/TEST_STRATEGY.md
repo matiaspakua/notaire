@@ -23,35 +23,35 @@ The project employs a **test pyramid** approach with multiple test types:
              / \     / \
             /   \   /   \
            /     \ /     \
-      ┌─────────────────────────────┐
-      │ Integration Tests (~40)      │  Spring Boot TestContainers
-      │ - API endpoints              │  H2 + PostgreSQL
-      │ - Use case coverage          │
-      │ - Report generation          │
-      └─────────────────────────────┘
+      ┌──────────────────────────────────────────────┐
+      │ Integration Tests (59 classes, 450+ methods) │  Spring Boot TestContainers
+      │ - API endpoints                              │  H2 + PostgreSQL
+      │ - Use case coverage                          │
+      │ - Report generation                          │
+      └──────────────────────────────────────────────┘
               ▲       ▲       ▲
              / \     / \     / \
             /   \   /   \   /   \
            /     \ /     \ /     \
-      ┌─────────────────────────────┐
-      │   Unit Tests (8+ classes)   │  JUnit 5
-      │   - Entity tests             │  AssertJ
-      │   - DTO mapping              │
-      │   - Security/hashing         │
-      └─────────────────────────────┘
+      ┌───────────────────────────────────────┐
+      │ Unit Tests (66 classes, 900+ methods) │  JUnit 5
+      │ - Entity tests                        │  AssertJ
+      │ - DTO mapping                         │
+      │ - Security/hashing                    │
+      └───────────────────────────────────────┘
 ```
 
 ---
 
 ## Test Distribution
 
-| Layer | Type | Count | Framework | Duration | Purpose |
-|-------|------|-------|-----------|----------|---------|
-| **Unit** | Java/JUnit5 | 8+ classes | Spring Test | ~5s | Logic validation, fast feedback |
-| **Integration** | Java/Spring | ~40 | TestContainers | ~30s | API contracts, database, transactions |
-| **HTTP** | Bash/cURL | ~8 scripts | curl + assertions | ~15s | REST endpoint validation |
-| **E2E** | Python/Robot | 7 suites | Robot Framework | ~5-10m | User workflows, GUI interaction |
-| **Total** | Mixed | **100+** | - | **~10m** | Full coverage |
+| Layer | Type | Count | Framework | Purpose |
+|-------|------|-------|-----------|---------|
+| **Unit** | Java/JUnit5 | 66 classes, 900+ methods | Spring Test | Logic validation, fast feedback |
+| **Integration** | Java/Spring | 59 classes, 450+ methods | TestContainers | API contracts, database, transactions |
+| **HTTP** | Bash/cURL | 8 scripts, ~40-50 cases | curl + assertions | REST endpoint validation |
+| **E2E** | Python/Robot | 7 suites, ~30-40 cases | Robot Framework | User workflows, GUI interaction |
+| **Total** | Mixed | **1,500+ methods/cases** | - | Full coverage |
 
 ---
 
@@ -60,7 +60,10 @@ The project employs a **test pyramid** approach with multiple test types:
 ### Location
 `backend-api/src/test/java/com/licensis/notaire/unit/`
 
-### Test Classes
+### Test Classes (representative examples)
+
+The unit suite has grown to 66 test classes (900+ methods); the table below lists a few
+representative examples, not the full surface.
 
 | Class | Domain | Tests | Purpose |
 |-------|--------|-------|---------|
@@ -90,9 +93,9 @@ mvn test -pl backend-api -X
 ```
 
 ### Coverage Target
-- **Minimum:** 80% line + branch coverage
+- **Enforced floor:** 70% line / 25% branch (JaCoCo ratchet, raised as coverage improves — never lowered)
+- **Aspirational target:** 80% line / 80% branch
 - **Services covered:** Entity models, DTOs, authentication
-- **Quick feedback:** ~5 seconds
 
 ---
 
@@ -160,9 +163,9 @@ mvn test -pl backend-api -Dtest=ApiH2IntegrationTest
 ```
 
 ### Coverage Target
-- **Minimum:** 80% line + branch coverage
+- **Enforced floor:** 70% line / 25% branch (JaCoCo ratchet, raised as coverage improves — never lowered)
+- **Aspirational target:** 80% line / 80% branch
 - **Services covered:** Controllers, services, repositories
-- **Slow but thorough:** ~30 seconds
 
 ---
 
@@ -481,11 +484,13 @@ cat testing/reports/coverage-report.md
 ### Coverage Requirements
 
 ```
-Minimum Thresholds:
-├── Line Coverage:   80%
-├── Branch Coverage: 80%
+Enforced Ratchet Floor (jacoco:check, bound to `mvn verify`):
+├── Line Coverage:   70%
+├── Branch Coverage: 25%
 ├── Packages:        All packages monitored
-└── Failures:        CI blocks merge if below threshold
+└── Failures:        CI blocks merge if below floor
+
+Aspirational Target: 80% line / 80% branch
 ```
 
 ---
@@ -495,14 +500,16 @@ Minimum Thresholds:
 Tests run automatically in GitHub Actions on:
 
 1. **Pull Requests**
-   - Unit tests (5s)
-   - Integration tests with H2 (30s)
-   - Code style checks (Checkstyle)
-   - Bug detection (SpotBugs)
+   - Unit tests
+   - Integration tests (H2 + PostgreSQL/TestContainers)
+   - Code style checks (Checkstyle, bound to `mvn verify`)
+   - Formatting lint (Spotless, `pr-validation.yml`'s "Code Lint" job — **not**
+     bound to the Maven lifecycle; see [CI Preflight](../CI-PREFLIGHT.md))
+   - Bug detection (SpotBugs, report-only)
 
 2. **Merge to Main**
    - All unit + integration tests
-   - Coverage report (must meet 80%)
+   - Coverage gate: JaCoCo ratchet floor (70% line / 25% branch; 80%/80% target)
    - Security scanning (Trivy)
 
 3. **Release Builds**
@@ -617,6 +624,6 @@ grep -B2 "0.0%" backend-api/target/site/jacoco/index.html
 
 ---
 
-**Last Updated:** 2026-04-14
+**Last Updated:** 2026-08-19
 **Maintained By:** Development Team
 **Version:** 1.0
