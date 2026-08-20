@@ -87,6 +87,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Payment method (`metodoPago`) was collected by CU15 but never persisted** (issue #792,
+  CU15): `PagoController.procesarPago` accepted `metodoPago` in the request body but
+  `PagoService`/`Pago` had no field to store it, so the value was silently dropped. Added
+  nullable `pagos.metodo_pago` column (`V16` migration), threaded `metodoPago` through
+  `Pago` (entity, `getDto()`/`setAtributos`), `DtoPago`, and `PagoService.procesarPago`/
+  `editarPago`, so it now round-trips on create, edit, and retrieval.
+
 - **BREAKING: Contradictory Presupuesto↔Tramite cardinality resolved** (issue #798):
   `Presupuesto` and `Tramite` declared foreign keys to each other —
   `presupuestos.fk_id_tramite` (`Presupuesto.fkIdTramite`) and

@@ -62,6 +62,8 @@ public class Pago implements Serializable
     private Integer idPago;
     @Column(name = "observaciones")
     private String observaciones;
+    @Column(name = "metodo_pago")
+    private String metodoPago;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -103,6 +105,16 @@ public class Pago implements Serializable
         this.observaciones = observaciones;
     }
 
+    public String getMetodoPago()
+    {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago)
+    {
+        this.metodoPago = metodoPago;
+    }
+
     @JsonIgnore
     public Presupuesto getPresupuesto()
     {
@@ -128,6 +140,11 @@ public class Pago implements Serializable
             miDtoPago.setObservaciones(observaciones);
         }
 
+        if (metodoPago != null)
+        {
+            miDtoPago.setMetodoPago(metodoPago);
+        }
+
         miDtoPago.setVersion(version);
 
         return miDtoPago;
@@ -143,6 +160,11 @@ public class Pago implements Serializable
         if (miDtoPago.getObservaciones() != null)
         {
             this.observaciones = miDtoPago.getObservaciones();
+        }
+
+        if (miDtoPago.getMetodoPago() != null)
+        {
+            this.metodoPago = miDtoPago.getMetodoPago();
         }
 
         if (miDtoPago.getPresupuesto() != null)
