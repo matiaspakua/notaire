@@ -95,6 +95,8 @@ public class GestionDeEscritura implements Serializable {
     private Persona fkIdPersonaEscribano;
     @OneToMany(mappedBy = "fkIdGestion")
     private List<Tramite> tramiteList;
+    @Column(name = "deuda_pendiente_al_archivar")
+    private Boolean deudaPendienteAlArchivar;
 
     /**
      * Constructor por default para gestion de escritura. Asigna al ID y al numero
@@ -185,6 +187,14 @@ public class GestionDeEscritura implements Serializable {
 
     public void setTramiteList(List<Tramite> tramiteList) {
         this.tramiteList = tramiteList;
+    }
+
+    public Boolean getDeudaPendienteAlArchivar() {
+        return deudaPendienteAlArchivar;
+    }
+
+    public void setDeudaPendienteAlArchivar(Boolean deudaPendienteAlArchivar) {
+        this.deudaPendienteAlArchivar = deudaPendienteAlArchivar;
     }
 
     @Override

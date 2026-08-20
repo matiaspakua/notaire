@@ -19,6 +19,7 @@ import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.service.GestionArchiveDebtService;
 import com.licensis.notaire.service.GestionQueryService;
 import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,6 +65,7 @@ public class GestionController {
     private final TipoDeTramiteRepository tipoTramiteRepository;
     private final TramiteRepository tramiteRepository;
     private final InmuebleRepository inmuebleRepository;
+    private final GestionArchiveDebtService gestionArchiveDebtService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -71,7 +73,8 @@ public class GestionController {
                              GestionQueryService gestionQueryService, PersonaRepository personaRepository,
                              EstadoDeGestionRepository estadoRepository, PresupuestoRepository presupuestoRepository,
                              TipoDeTramiteRepository tipoTramiteRepository, TramiteRepository tramiteRepository,
-                             InmuebleRepository inmuebleRepository) {
+                             InmuebleRepository inmuebleRepository,
+                             GestionArchiveDebtService gestionArchiveDebtService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -82,7 +85,12 @@ public class GestionController {
         this.tipoTramiteRepository = tipoTramiteRepository;
         this.tramiteRepository = tramiteRepository;
         this.inmuebleRepository = inmuebleRepository;
+        this.gestionArchiveDebtService = gestionArchiveDebtService;
     }
+
+    public record DtoSaldoPendiente(Float saldoPendiente) {}
+
+    public record DtoGestionArchivada(Integer idGestion, Float saldoPendiente, boolean deudaPendienteAlArchivar) {}
 
     public record CompleteCaseRequest(Integer numero, String encabezado, String observaciones,
             Integer presupuestoId, Integer escribanoId, Integer estadoGestionId, Integer tipoTramiteId,
@@ -313,6 +321,37 @@ public class GestionController {
         } catch (Exception e) {
             log.error("Failed to build workflow trace for gestion id {}", id, e);
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @GetMapping("/{id}/saldo-pendiente")
+    @Operation(summary = "CU16 - Calcular saldo pendiente agregado de una gestión (RF-22)")
+    public ResponseEntity<DtoSaldoPendiente> getSaldoPendiente(@PathVariable Integer id) {
+        try {
+            Float saldo = gestionArchiveDebtService.calcularSaldoPendiente(id);
+            return ResponseEntity.ok(new DtoSaldoPendiente(saldo));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Gestión archivada"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @PostMapping("/{id}/archivar")
+    @Operation(summary = "CU16 - Archivar una gestión advirtiendo y registrando deuda pendiente (RF-22, RF-37)")
+    public ResponseEntity<DtoGestionArchivada> archivar(@PathVariable Integer id) {
+        try {
+            GestionArchiveDebtService.ArchiveResult result = gestionArchiveDebtService.archivar(id);
+            return ResponseEntity.ok(new DtoGestionArchivada(result.gestion().getIdGestion(),
+                    result.saldoPendiente(), Boolean.TRUE.equals(result.gestion().getDeudaPendienteAlArchivar())));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
