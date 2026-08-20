@@ -132,6 +132,18 @@ export interface PresupuestoPayload {
   encabezado?: string;
   estado?: string;
   observaciones?: string;
+  monto?: number;
+}
+
+export interface CompleteCaseGestionPayload {
+  numero: number;
+  encabezado?: string;
+  observaciones?: string;
+  presupuestoId: number;
+  escribanoId: number;
+  estadoGestionId: number;
+  tipoTramiteId: number;
+  inmuebleId?: number;
 }
 
 export interface EscrituraPayload {
@@ -250,6 +262,24 @@ export async function createPresupuesto(
     encabezado: `Presupuesto E2E ${uniqueId()}`,
     estado: "Pendiente",
     observaciones: `Presupuesto E2E ${uniqueId()}`,
+    ...overrides,
+  });
+}
+
+/**
+ * Gestión helpers (CU02 - complete-case: gestión + trámite in one call)
+ */
+export async function createCompleteCaseGestion(
+  page: Page,
+  overrides: Partial<CompleteCaseGestionPayload> & { presupuestoId: number },
+): Promise<ApiResult<{ idGestion: number; numero: number; estadoActual: string }>> {
+  return apiPost(page, "/gestiones/complete-case", {
+    // `numero` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
+    numero: uniqueId() % 1_000_000,
+    encabezado: `Gestión E2E ${uniqueId()}`,
+    escribanoId: 1,
+    estadoGestionId: 1,
+    tipoTramiteId: 4,
     ...overrides,
   });
 }
