@@ -170,6 +170,12 @@
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
     "filterByCliente": "Filter by client...",
+    "archiveGestion": "Archive case",
+    "archiveConfirmTitle": "Archive this case?",
+    "archiveConfirmDescriptionNoDebt": "This case has no pending balance. This action cannot be undone.",
+    "archiveConfirmDescriptionWithDebt": "This case has a pending balance of {monto}. You can archive it anyway, but it will be recorded with pending debt.",
+    "archived": "Case archived",
+    "errorArchive": "Error archiving the case",
     "fields": {
       "numero": "Number",
       "tipo": "Case type",

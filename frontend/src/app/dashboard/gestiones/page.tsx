@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Archive } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -18,14 +18,18 @@ import {
   useCreateCompleteGestion,
   useUpdateGestion,
   useDeleteGestion,
+  useSaldoPendiente,
+  useArchivarGestion,
 } from "@/hooks/useGestiones";
 import { usePersonas } from "@/hooks/usePersonas";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
-import { fullName } from "@/lib/utils";
+import { fullName, formatCurrency } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
+
+const ESTADO_ARCHIVADA = "Archivada";
 
 export default function GestionesPage() {
   const t = useTranslations("gestiones");
@@ -39,9 +43,11 @@ export default function GestionesPage() {
   const createCompleteMutation = useCreateCompleteGestion();
   const updateMutation = useUpdateGestion();
   const deleteMutation = useDeleteGestion();
+  const archivarMutation = useArchivarGestion();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [archiveId, setArchiveId] = useState<number | null>(null);
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
@@ -54,6 +60,7 @@ export default function GestionesPage() {
   const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useGestionesByCliente(
     clienteFilter ? Number(clienteFilter) : 0
   );
+  const { data: saldoPendiente } = useSaldoPendiente(archiveId ?? undefined);
 
   const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
   const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
@@ -112,6 +119,18 @@ export default function GestionesPage() {
     }
   }
 
+  async function handleArchive() {
+    if (!archiveId) return;
+    try {
+      await archivarMutation.mutateAsync(archiveId);
+      toast.success(t("archived"));
+    } catch {
+      toast.error(t("errorArchive"));
+    } finally {
+      setArchiveId(null);
+    }
+  }
+
   const columns: Column<GestionDeEscritura>[] = [
     {
       key: "id",
@@ -137,6 +156,17 @@ export default function GestionesPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
+          {g.estadoActual !== ESTADO_ARCHIVADA && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setArchiveId(g.idGestion!)}
+              aria-label={t("archiveGestion")}
+              data-testid={`btn-archivar-gestion-${g.idGestion}`}
+            >
+              <Archive className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             size="sm"
             variant="ghost"
@@ -148,7 +178,7 @@ export default function GestionesPage() {
           </Button>
         </div>
       ),
-      className: "w-24",
+      className: "w-32",
     },
   ];
 
@@ -255,6 +285,20 @@ export default function GestionesPage() {
         onOpenChange={(v) => !v && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!archiveId}
+        onOpenChange={(v) => !v && setArchiveId(null)}
+        onConfirm={handleArchive}
+        loading={archivarMutation.isPending}
+        title={t("archiveConfirmTitle")}
+        description={
+          saldoPendiente && saldoPendiente.saldoPendiente > 0
+            ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPendiente) })
+            : t("archiveConfirmDescriptionNoDebt")
+        }
+        confirmLabel={t("archiveGestion")}
       />
     </div>
   );

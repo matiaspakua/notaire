@@ -128,6 +128,16 @@ export interface GestionDeEscritura {
   tramiteCount?: number;
 }
 
+export interface DtoSaldoPendiente {
+  saldoPendiente: number;
+}
+
+export interface DtoGestionArchivada {
+  idGestion: number;
+  saldoPendiente: number;
+  deudaPendienteAlArchivar: boolean;
+}
+
 export interface CreateCompleteGestionInput {
   numero: number;
   encabezado?: string;

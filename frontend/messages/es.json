@@ -170,6 +170,12 @@
     "errorDelete": "Error al eliminar la gestión",
     "noData": "No hay gestiones registradas",
     "filterByCliente": "Filtrar por cliente...",
+    "archiveGestion": "Archivar gestión",
+    "archiveConfirmTitle": "¿Archivar esta gestión?",
+    "archiveConfirmDescriptionNoDebt": "La gestión no tiene saldo pendiente. Esta acción no se puede deshacer.",
+    "archiveConfirmDescriptionWithDebt": "Esta gestión tiene un saldo pendiente de {monto}. Puede archivarla de todas formas, pero quedará registrada con deuda pendiente.",
+    "archived": "Gestión archivada",
+    "errorArchive": "Error al archivar la gestión",
     "fields": {
       "numero": "Número",
       "tipo": "Tipo de Trámite",

@@ -17,6 +17,7 @@ interface ConfirmDialogProps {
   onOpenChange: (v: boolean) => void;
   title?: string;
   description?: string;
+  confirmLabel?: string;
   onConfirm: () => void;
   loading?: boolean;
 }
@@ -26,6 +27,7 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
+  confirmLabel,
   onConfirm,
   loading,
 }: ConfirmDialogProps) {
@@ -41,7 +43,7 @@ export function ConfirmDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={loading}>
-            {t("confirm")}
+            {confirmLabel ?? t("confirm")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
