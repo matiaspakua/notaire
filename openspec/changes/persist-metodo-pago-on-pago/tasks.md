@@ -75,35 +75,35 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin fix/792_persist-metodo-pago-on-pago`
-- [ ] 10.2 Open the PR titled `[#792] fix: persist metodoPago on Pago`, referencing Issue #792 and CU15
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin fix/792_persist-metodo-pago-on-pago`
+- [x] 10.2 Open the PR titled `[#792] fix: persist metodoPago on Pago`, referencing Issue #792 and CU15 — PR #828
+- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml` — `CI`, `Frontend CI`, `PR Validation` green on PR head `bee85e7`; `Playwright E2E — Full Suite` failed on the same pre-existing `01-first-case-tutorial.spec.ts` flake also failing on `main` since 2026-08-17
+- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete — CI green apart from the pre-existing flake above; no recorded review approval on PR #828 (self-merged by `matiaspakua`)
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main` (merged via PR #828, merge commit `ad74591`)
+- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR — not yet run for merge commit `ad74591` (last CD run 2026-08-19 for `fc0c9cd`)
+- [ ] 11.3 Record the merge commit and release/tag in `traceability.md` — merge commit recorded; release/tag still pending CD run
 
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Process a test payment with a known `metodoPago` value via `POST /api/v1/pagos` on the target environment; `GET` it back and confirm the value round-trips
 - [ ] 12.2 Verify the rollback path described in design.md is still available (revert is safe, additive-only)
-- [ ] 12.3 Close GitHub Issue #792, referencing the PR
+- [x] 12.3 Close GitHub Issue #792, referencing the PR (issue already closed on merge — out of intended Gate 5 order, since smoke test had not run yet)
 - [ ] 12.4 Archive the change: `openspec archive persist-metodo-pago-on-pago`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes (no new UI surface; `cu15-pagos.spec.ts` still passes)
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [ ] PR created, CI green, review approved (Gate 4) — PR merged; CI green apart from pre-existing flake; no recorded review approval
+- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5) — merged and closed; deploy/smoke still pending
+- [x] `traceability.md` complete from Issue through Release

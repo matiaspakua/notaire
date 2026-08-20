@@ -30,22 +30,22 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Gestión with a single trámite and presupuesto | `GestionArchiveDebtServiceTest#shouldReturnSinglePresupuestoBalanceForSingleTramite` | written, failing (compile) |
-| Gestión with multiple trámites and presupuestos | `GestionArchiveDebtServiceTest#shouldSumBalancesAcrossMultipleTramitesAndPresupuestos` | written, failing (compile) |
-| Gestión with no pending balance | `GestionArchiveDebtServiceTest#shouldReturnZeroWhenAllPresupuestosAreFullyPaid` | written, failing (compile) |
-| Archiving a gestión with pending debt | `GestionArchiveIntegrationTest#shouldReportPendingDebtWhenArchivingGestionWithBalance` | written, failing (compile) |
-| Confirming archiving despite pending debt | `GestionArchiveIntegrationTest#shouldArchiveGestionEvenWhenPendingDebtExists` | written, failing (compile) |
-| Archiving a gestión with no pending debt | `GestionArchiveIntegrationTest#shouldArchiveGestionWithoutDebtWarning` | written, failing (compile) |
-| Archiving record reflects pending debt | `GestionArchiveIntegrationTest#shouldPersistDeudaPendienteTrueWhenBalanceIsPositive` | written, failing (compile) |
-| Archiving record reflects no pending debt | `GestionArchiveIntegrationTest#shouldPersistDeudaPendienteFalseWhenBalanceIsZero` | written, failing (compile) |
+| Gestión with a single trámite and presupuesto | `GestionArchiveDebtServiceTest#shouldReturnSinglePresupuestoBalanceForSingleTramite` | passing |
+| Gestión with multiple trámites and presupuestos | `GestionArchiveDebtServiceTest#shouldSumBalancesAcrossMultipleTramitesAndPresupuestos` | passing |
+| Gestión with no pending balance | `GestionArchiveDebtServiceTest#shouldReturnZeroWhenAllPresupuestosAreFullyPaid` | passing |
+| Archiving a gestión with pending debt | `GestionArchiveIntegrationTest#shouldReportPendingDebtWhenArchivingGestionWithBalance` | passing |
+| Confirming archiving despite pending debt | `GestionArchiveIntegrationTest#shouldArchiveGestionEvenWhenPendingDebtExists` | passing |
+| Archiving a gestión with no pending debt | `GestionArchiveIntegrationTest#shouldArchiveGestionWithoutDebtWarning` | passing |
+| Archiving record reflects pending debt | `GestionArchiveIntegrationTest#shouldPersistDeudaPendienteTrueWhenBalanceIsPositive` | passing |
+| Archiving record reflects no pending debt | `GestionArchiveIntegrationTest#shouldPersistDeudaPendienteFalseWhenBalanceIsZero` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | no | |
-| `docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml` | no | |
-| `CHANGELOG.md` | no | |
+| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | yes | `d4f74a8` |
+| `docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml` | yes | `d4f74a8` |
+| `CHANGELOG.md` | yes | `d4f74a8` |
 
 ## Gate log
 
@@ -53,9 +53,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #819, `openspec/changes/verify-debt-on-gestion-archive/` proposal+specs+design |
 | 2 | Failing tests written, test cases designed | yes | `GestionArchiveDebtServiceTest`, `GestionArchiveIntegrationTest`, `crud-gestiones.spec.ts` written before implementation (commit a8fad05) |
-| 3 | Suite green, coverage held, docs updated | yes | CI green on PR head `d4f74a8`; docs updated in commit `d4f74a8` |
-| 4 | CI green, review approved, no conflicts | partial | CI green except pre-existing `Playwright E2E — Full Suite` flake (also fails on `main`); no recorded review approval (`reviewDecision` empty on PR #826) |
-| 5 | Deployed, smoke test passed, Issue closed | no | Issue #819 closed, but CD has not run for merge commit `dc5e2a3` and no smoke test has been performed |
+| 3 | Suite green, coverage held, docs updated | yes | CI green on PR head `d4f74a8`; docs updated in commit `d4f74a8` (CU16, estado diagram, CHANGELOG) |
+| 4 | CI green, review approved, no conflicts | partial | `CI`, `Frontend CI`, `PR Validation` green on PR head `d4f74a8`; `Playwright E2E — Full Suite` failed on the same pre-existing `01-first-case-tutorial.spec.ts` flake also failing on `main` since 2026-08-17; no recorded review approval (`reviews` empty on PR #826, self-merged by `matiaspakua`) |
+| 5 | Deployed, smoke test passed, Issue closed | partial | Issue #819 closed and merged to `main` (`dc5e2a3`); CD (`cd.yml`) has not run for this commit yet (last run 2026-08-19 for `fc0c9cd`) and no smoke test has been performed |
 
 ## Exceptions
 
