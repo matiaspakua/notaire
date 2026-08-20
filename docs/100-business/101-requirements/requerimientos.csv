@@ -118,3 +118,5 @@ GitHub_ID,Titulo,Tipo,Descripción
 #119,Diferencias entre protocolo principal y auxiliar,Requerimientos Funcionales,Permitir definir y gestionar las diferencias entre protocolo principal y auxiliar
 #120,Impresión de testimonios,Requerimientos Funcionales,Permitir la impresión del testimonio en hojas especiales firmado por el escribano
 #121,Control de numeración de escrituras,Requerimientos Funcionales,Permitir garantizar que la numeración de las escrituras sea única y correlativa
+#,Login al sistema,Requerimientos Funcionales,El sistema debe permitir el acceso mediante un proceso de autenticación que valide nombre de usuario y contraseña.
+Login al sistema,Requerimientos Funcionales,El sistema debe permitir el acceso mediante un proceso de autenticación que valide nombre de usuario y contraseña
