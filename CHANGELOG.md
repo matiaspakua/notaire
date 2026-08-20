@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Pending-debt verification when archiving a gestión** (issue #819, CU-16, RF-22, RF-37):
+  archiving a gestión now aggregates the pending balance (`PagoService.calcularSaldoPendiente`)
+  across all `presupuesto`s reachable through its `tramite`s, exposes it via
+  `GET /api/v1/gestiones/{id}/saldo-pendiente`, and records whether debt was outstanding at
+  archive time on the gestión (`gestiones_de_escrituras.deuda_pendiente_al_archivar`, migration
+  `V15`) via `POST /api/v1/gestiones/{id}/archivar`. The gestión screen surfaces a non-blocking
+  debt warning in the archive confirmation dialog. New `GestionArchiveDebtService` in
+  `backend-api`; new archive action + `useSaldoPendiente`/`useArchivarGestion` hooks in
+  `frontend/src/app/dashboard/gestiones/page.tsx`.
+
 - **AUTH-001 HTTP/integration test gaps closed: rate limiting, wrong password, expired token**
   (issues #685, #686, #687): `backend-api/api-test/auth/` gained a chained rate-limit test
   (5 failed logins against a per-run-randomized username, then asserts the lockout response)

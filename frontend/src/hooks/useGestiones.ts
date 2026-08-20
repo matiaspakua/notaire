@@ -1,12 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { CreateCompleteGestionInput, GestionDeEscritura } from "@/types";
+import type {
+  CreateCompleteGestionInput,
+  DtoGestionArchivada,
+  DtoSaldoPendiente,
+  GestionDeEscritura,
+} from "@/types";
 
 export const gestionesKeys = {
   all: ["gestiones"] as const,
   detail: (id: number) => ["gestiones", id] as const,
   byCliente: (id: number) => ["gestiones", "cliente", id] as const,
   byNumero: (numero: number) => ["gestiones", "numero", numero] as const,
+  saldoPendiente: (id: number) => ["gestiones", id, "saldo-pendiente"] as const,
 };
 
 export function useGestiones() {
@@ -64,6 +70,24 @@ export function useDeleteGestion() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/gestiones/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
+  });
+}
+
+/** CU16 - Saldo pendiente agregado de una gestión (RF-22), consultado antes de archivar. */
+export function useSaldoPendiente(gestionId: number | undefined) {
+  return useQuery({
+    queryKey: gestionesKeys.saldoPendiente(gestionId ?? 0),
+    queryFn: () => apiGet<DtoSaldoPendiente>(`/gestiones/${gestionId}/saldo-pendiente`),
+    enabled: !!gestionId,
+  });
+}
+
+/** CU16 - Archiva la gestión advirtiendo y registrando la deuda pendiente (RF-22, RF-37). */
+export function useArchivarGestion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => apiPost<DtoGestionArchivada>(`/gestiones/${id}/archivar`, {}),
     onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
   });
 }

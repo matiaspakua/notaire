@@ -63,6 +63,10 @@ repeat
 
 repeat while (¿Existen más trámites en la gestión?) is (sí) not (no)
 
+if (¿Saldo pendiente > 0?) then (sí)
+  :Mostrar advertencia de deuda pendiente (no bloqueante);
+endif
+
 :Archivar gestión;
 stop
 @enduml

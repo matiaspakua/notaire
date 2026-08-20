@@ -80,7 +80,9 @@ test.describe("CU16 - Archivar Gestión", () => {
   });
 
   test.skip("CU16-GW01: Given gestion exists, When archivar clicked, Then status changes", async () => {
-    // Skipped: gestiones page has no "archivar" button. Row actions are edit/delete only.
+    // Skipped here: full coverage (golden path, debt warning, cancel/confirm,
+    // responsive viewports) lives in crud-gestiones.spec.ts — see
+    // "CU16 - Archivar Gestión con verificación de deuda" (issue #819).
   });
 });
 
