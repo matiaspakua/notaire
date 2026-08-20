@@ -15,6 +15,7 @@ public class DtoPago implements DtoValido
     private Float monto;
     private Date fecha;
     private String observaciones;
+    private String metodoPago;
     private Integer version = 0;
 
     public DtoPago()
@@ -94,6 +95,16 @@ public class DtoPago implements DtoValido
     public void setObservaciones(String observaciones)
     {
         this.observaciones = observaciones;
+    }
+
+    public String getMetodoPago()
+    {
+        return this.metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago)
+    {
+        this.metodoPago = metodoPago;
     }
 
     @Override

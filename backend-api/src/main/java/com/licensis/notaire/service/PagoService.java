@@ -32,6 +32,16 @@ public class PagoService {
      */
     @Transactional
     public Pago procesarPago(Integer idPresupuesto, Float monto, Date fecha, String observaciones) {
+        return procesarPago(idPresupuesto, monto, fecha, observaciones, null);
+    }
+
+    /**
+     * CU15 - Procesar pago: Registra un nuevo pago para un presupuesto.
+     * Calcula el saldo pendiente y valida que el monto no exceda el total.
+     */
+    @Transactional
+    public Pago procesarPago(Integer idPresupuesto, Float monto, Date fecha, String observaciones,
+            String metodoPago) {
         log.info("Procesando pago para presupuesto {}: monto={}", idPresupuesto, monto);
 
         Presupuesto presupuesto = presupuestoRepository.findById(idPresupuesto)
@@ -53,6 +63,7 @@ public class PagoService {
         pago.setMonto(monto);
         pago.setFecha(fecha != null ? fecha : new Date());
         pago.setObservaciones(observaciones);
+        pago.setMetodoPago(metodoPago);
         pago.setPresupuesto(presupuesto);
 
         Pago savedPago = pagoRepository.save(pago);
@@ -142,11 +153,16 @@ public class PagoService {
         log.info("Pago eliminado exitosamente: ID={}", idPago);
     }
 
+    @Transactional
+    public Pago editarPago(Integer idPago, Float monto, Date fecha, String observaciones) {
+        return editarPago(idPago, monto, fecha, observaciones, null);
+    }
+
     /**
      * Edita un pago existente.
      */
     @Transactional
-    public Pago editarPago(Integer idPago, Float monto, Date fecha, String observaciones) {
+    public Pago editarPago(Integer idPago, Float monto, Date fecha, String observaciones, String metodoPago) {
         log.info("Editando pago con ID: {}", idPago);
         Pago pago = pagoRepository.findById(idPago)
                 .orElseThrow(() -> new IllegalArgumentException("Pago no encontrado con ID: " + idPago));
@@ -162,6 +178,9 @@ public class PagoService {
         }
         if (observaciones != null) {
             pago.setObservaciones(observaciones);
+        }
+        if (metodoPago != null) {
+            pago.setMetodoPago(metodoPago);
         }
 
         Pago savedPago = pagoRepository.save(pago);
