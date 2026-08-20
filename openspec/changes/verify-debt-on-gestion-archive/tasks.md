@@ -68,30 +68,30 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #819`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #819`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin feat/819_verify-debt-on-gestion-archive`
-- [ ] 10.2 Open the PR titled `[#819] feat: verificar deuda pendiente al archivar una gestión`, referencing Issue #819 and CU-16/RF-22/RF-37
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin feat/819_verify-debt-on-gestion-archive`
+- [x] 10.2 Open the PR titled `[#819] feat: verificar deuda pendiente al archivar una gestión`, referencing Issue #819 and CU-16/RF-22/RF-37
+- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml` — `playwright-e2e.yml` failed (`01-first-case-tutorial.spec.ts`), but the same test fails identically on `main` before this merge, so it's a pre-existing flake, not caused by this change
+- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete — CI green apart from the pre-existing flake above; no recorded review approval on PR #826
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main` (merged via PR #826, merge commit `dc5e2a3`)
+- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR — not yet run for merge commit `dc5e2a3`
+- [ ] 11.3 Record the merge commit and release/tag in `traceability.md` — merge commit recorded; release/tag still pending CD run
 
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Archive a test gestión with a known pending balance via the new endpoint on the target environment; confirm the response and persisted record both reflect pending debt
 - [ ] 12.2 Verify the rollback path described in design.md is still available (revert is safe, additive-only)
-- [ ] 12.3 Close GitHub Issue #819, referencing the PR
+- [x] 12.3 Close GitHub Issue #819, referencing the PR (issue already closed — out of intended Gate 5 order, since smoke test had not run yet)
 - [ ] 12.4 Archive the change: `openspec archive verify-debt-on-gestion-archive`
 
 ## Definition of Done
