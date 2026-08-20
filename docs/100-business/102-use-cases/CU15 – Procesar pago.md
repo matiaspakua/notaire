@@ -7,7 +7,7 @@
 | **Caso de Uso** | CU15 – Procesar pago |
 | **Actores** | Cliente, Recepcionista/Escribano |
 | **Propósito** | Registra el pago de un trámite de una gestión. |
-| **Descripción** | Un Cliente se acerca a la escribanía para abonar una gestión. El Recepcionista/Escribano solicita los datos necesarios para realizar la búsqueda. El sistema presenta los presupuestos pendientes asociados al Cliente. El Recepcionista/Escribano selecciona un presupuesto de la lista, y se muestra la información correspondiente. El Cliente indica el monto que desea abonar, y el Recepcionista/Escribano genera un nuevo pago registrando el monto del mismo, fecha de pago y observaciones adicionales. Finalmente se genera el recibo común correspondiente. |
+| **Descripción** | Un Cliente se acerca a la escribanía para abonar una gestión. El Recepcionista/Escribano solicita los datos necesarios para realizar la búsqueda. El sistema presenta los presupuestos pendientes asociados al Cliente. El Recepcionista/Escribano selecciona un presupuesto de la lista, y se muestra la información correspondiente. El Cliente indica el monto que desea abonar, y el Recepcionista/Escribano genera un nuevo pago registrando el monto del mismo, fecha de pago, método de pago y observaciones adicionales. El método de pago queda persistido junto con el pago y se puede consultar posteriormente. Finalmente se genera el recibo común correspondiente. |
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #20 (Abonar trámite), RF #21 (Registrar quién abona el trámite), RF #22 (Abonar presupuestos en cuotas), RF #23 (Generar e imprimir recibos de pagos); CU19, CU60 |
 | **GitHub ID** | #168 |
@@ -24,9 +24,9 @@
 | 6 | El Recepcionista/Escribano solicita al Cliente que le indique el monto del pago a realizar. |  |
 | 7 | El Cliente indica el monto que desea abonar. |  |
 | 8 | El Recepcionista/Escribano solicita generar un nuevo pago. |  |
-| 9 |  | Solicita el monto del mismo, fecha de pago y observaciones adicionales. |
+| 9 |  | Solicita el monto del mismo, fecha de pago, método de pago y observaciones adicionales. |
 | 10 | El Recepcionista/Escribano indica los datos solicitados y guarda los mismos. |  |
-| 11 |  | Registra el pago realizado, calcula el saldo pendiente y lo muestra. |
+| 11 |  | Registra el pago realizado (incluyendo el método de pago), calcula el saldo pendiente y lo muestra. |
 | 12 | Solicita la generación del recibo correspondiente. |  |
 | 13 |  | Genera el recibo común correspondiente, donde figura: (Fecha de Pago; Número de presupuesto; Número de pago; Nombre, Apellido, Tipo y número de identificación del Cliente; Número de la gestión asociada.) |
 | 14 | El Recepcionista/Escribano hace entrega del recibo generado al Cliente. |  |

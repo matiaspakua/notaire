@@ -293,4 +293,61 @@ class PagoServiceTest {
             return pago;
         }
     }
+
+    @Nested
+    @DisplayName("metodoPago persistence")
+    class MetodoPagoTests {
+
+        @Test
+        @DisplayName("Should persist metodoPago when processing a payment")
+        void shouldPersistMetodoPagoWhenProcesarPago() {
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(0f);
+            when(pagoRepository.save(any(Pago.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            Pago result = pagoService.procesarPago(1, 2000.00f, new Date(), "Pago parcial", "Efectivo");
+
+            assertThat(result.getMetodoPago()).isEqualTo("Efectivo");
+        }
+
+        @Test
+        @DisplayName("Should allow null metodoPago when processing a payment")
+        void shouldAllowNullMetodoPagoOnProcesarPago() {
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(0f);
+            when(pagoRepository.save(any(Pago.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            Pago result = pagoService.procesarPago(1, 2000.00f, new Date(), "Pago parcial");
+
+            assertThat(result.getMetodoPago()).isNull();
+        }
+
+        @Test
+        @DisplayName("Should update metodoPago when editing a payment")
+        void shouldUpdateMetodoPagoWhenEditarPago() {
+            Pago existing = new Pago();
+            existing.setIdPago(1);
+            existing.setMonto(1000f);
+            existing.setFecha(new Date());
+            existing.setMetodoPago("Efectivo");
+            when(pagoRepository.findById(1)).thenReturn(Optional.of(existing));
+            when(pagoRepository.save(any(Pago.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            Pago result = pagoService.editarPago(1, 1000f, new Date(), "Editado", "Transferencia");
+
+            assertThat(result.getMetodoPago()).isEqualTo("Transferencia");
+        }
+
+        @Test
+        @DisplayName("Should throw when editing metodoPago of a non-existent pago")
+        void shouldThrowWhenEditingMetodoPagoOfMissingPago() {
+            when(pagoRepository.findById(999)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> pagoService.editarPago(999, 1000f, new Date(), "Test", "Efectivo"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Pago no encontrado");
+
+            verify(pagoRepository, never()).save(any(Pago.class));
+        }
+    }
 }

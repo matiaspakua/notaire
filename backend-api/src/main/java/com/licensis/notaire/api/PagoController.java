@@ -125,7 +125,8 @@ public class PagoController {
                     request.idPresupuesto(),
                     request.monto(),
                     request.fecha(),
-                    request.observaciones()
+                    request.observaciones(),
+                    request.metodoPago()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(pago);
         } catch (IllegalArgumentException e) {
@@ -144,9 +145,10 @@ public class PagoController {
             @Parameter(description = "Monto del pago") @RequestParam Float monto,
             @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha,
-            @Parameter(description = "Observaciones") @RequestParam(required = false) String observaciones) {
+            @Parameter(description = "Observaciones") @RequestParam(required = false) String observaciones,
+            @Parameter(description = "Método de pago") @RequestParam(required = false) String metodoPago) {
         try {
-            Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones);
+            Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones, metodoPago);
             return ResponseEntity.status(HttpStatus.CREATED).body(pago);
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al procesar pago: {}", e.getMessage());
@@ -165,7 +167,8 @@ public class PagoController {
     @Operation(summary = "Editar pago")
     public ResponseEntity<Pago> update(@PathVariable Integer id, @RequestBody Pago entity) {
         try {
-            Pago updated = pagoService.editarPago(id, entity.getMonto(), entity.getFecha(), entity.getObservaciones());
+            Pago updated = pagoService.editarPago(id, entity.getMonto(), entity.getFecha(),
+                    entity.getObservaciones(), entity.getMetodoPago());
             return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -197,6 +200,7 @@ public class PagoController {
             Integer idPresupuesto,
             Float monto,
             Date fecha,
-            String observaciones
+            String observaciones,
+            String metodoPago
     ) {}
 }

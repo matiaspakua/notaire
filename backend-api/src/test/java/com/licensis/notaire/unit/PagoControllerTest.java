@@ -168,7 +168,7 @@ class PagoControllerTest {
     @DisplayName("POST /api/v1/pagos should return 201 when pago created")
     void shouldCreatePagoViaJson() throws Exception {
         Pago newPago = buildPago();
-        when(pagoService.procesarPago(anyInt(), anyFloat(), any(Date.class), anyString()))
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
                 .thenReturn(newPago);
 
         String json = """
@@ -186,13 +186,13 @@ class PagoControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idPago").value(1));
 
-        verify(pagoService, times(1)).procesarPago(eq(10), eq(500.0f), any(Date.class), eq("Pago de prueba"));
+        verify(pagoService, times(1)).procesarPago(eq(10), eq(500.0f), any(Date.class), eq("Pago de prueba"), any());
     }
 
     @Test
     @DisplayName("POST /api/v1/pagos should return 400 on validation error")
     void shouldReturn400OnCreateValidationError() throws Exception {
-        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid amount"));
 
         String json = """
@@ -213,7 +213,7 @@ class PagoControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 500 on service error")
     void shouldReturn500OnCreateServiceError() throws Exception {
-        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """
@@ -235,7 +235,7 @@ class PagoControllerTest {
     @DisplayName("POST /api/v1/pagos/params should return 201 when pago created via params")
     void shouldCreatePagoViaParams() throws Exception {
         Pago newPago = buildPago();
-        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenReturn(newPago);
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -251,7 +251,7 @@ class PagoControllerTest {
     @DisplayName("POST /api/v1/pagos/params should handle missing optional params")
     void shouldHandleMissingOptionalParams() throws Exception {
         Pago newPago = buildPago();
-        when(pagoService.procesarPago(eq(10), eq(500.0f), isNull(), isNull()))
+        when(pagoService.procesarPago(eq(10), eq(500.0f), isNull(), isNull(), isNull()))
                 .thenReturn(newPago);
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -264,7 +264,7 @@ class PagoControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 500 on service error")
     void shouldReturn500OnParamsServiceError() throws Exception {
-        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new RuntimeException("Service error"));
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -277,7 +277,7 @@ class PagoControllerTest {
     @DisplayName("PUT /api/v1/pagos/{id} should return 200 when updated")
     void shouldUpdatePago() throws Exception {
         Pago updated = buildPago();
-        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenReturn(updated);
 
         String json = """
@@ -298,7 +298,7 @@ class PagoControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
-        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new IllegalArgumentException("Pago no encontrado"));
 
         String json = """
@@ -318,7 +318,7 @@ class PagoControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturn500OnUpdateError() throws Exception {
-        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString()))
+        when(pagoService.editarPago(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """
