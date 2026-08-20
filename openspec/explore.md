@@ -77,7 +77,7 @@ Los cinco hallazgos de mayor impacto:
 
 ## 1. Cobranza: se cobra "a ciegas", sin comprobante, y el proceso mismo no la contempla
 
-### 1.1 El diagrama de estados de una gestión no tiene ningún paso de dinero
+### 1.1 El diagrama de estados de una gestión no tiene ningún paso de dinero *(Issue #819, resuelto y archivado — spec `gestion-archive-debt-check`)*
 
 El diagrama que documenta el ciclo de vida completo de una gestión
 (`transicion-de-estados.puml`) describe con detalle cada acción del trámite
@@ -151,7 +151,7 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
 - **El método de pago que se le pide al cliente se pierde.** El personal
   registra "efectivo" o "transferencia" y ese dato no llega a ningún lado —
   el sistema deja creer que quedó registrado cuando no es así. *(Issue #792,
-  abierto)*
+  resuelto y archivado — spec `pagos`)*
 - **El recibo común nunca se genera** (RF-21, CU15 pasos 12–14: "Genera el
   recibo... donde figura fecha de pago, número de presupuesto, cliente,
   gestión asociada"). No hay ninguna forma de imprimir o entregar un
@@ -160,9 +160,10 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
 - **No hay forma de ver, desde una gestión, cuánto se presupuestó, cuánto se
   cobró y cuánto falta.** El pago se registra contra un presupuesto suelto;
   nada resume esa información al nivel del caso (gestión), que es como el
-  cliente y el personal piensan el trámite.
+  cliente y el personal piensan el trámite. *(Issue #820, abierto — spec en
+  progreso: `openspec/changes/payment-financial-tracking`)*
 
-### 1.3 Pagos parciales / en cuotas: el SRS los exige y no existe ningún circuito
+### 1.3 Pagos parciales / en cuotas: el SRS los exige y no existe ningún circuito *(Issue #821, abierto — bloqueado por #820)*
 
 - RF-22 es explícito: *"Los presupuestos pueden abonarse por completo o en
   cuotas sin montos fijos predefinidos... Se debe advertir de cualquier
@@ -184,7 +185,7 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   bajó a un flujo operativo concreto, ni en el producto ni en su
   documentación de casos de uso.
 
-### 1.4 Descuentos y recargos: no existen ni como concepto, tampoco en el SRS
+### 1.4 Descuentos y recargos: no existen ni como concepto, tampoco en el SRS *(Issue #822, abierto — bloqueado por #820)*
 
 - Un presupuesto se arma con ítems que llevan un monto o un porcentaje y una
   observación de texto libre — no hay forma de marcar un ítem como
@@ -208,7 +209,7 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   contabilidad como para justificar una diferencia de precio ante un
   cliente que lo reclame.
 
-### 1.5 Costos adicionales de documentos (sellos, impuestos): se puede marcar "pagado" sin monto ni conexión al presupuesto
+### 1.5 Costos adicionales de documentos (sellos, impuestos): se puede marcar "pagado" sin monto ni conexión al presupuesto *(Issue #823, abierto — bloqueado por #820)*
 
 - El SRS pide que la plantilla de presupuesto contemple "gastos fijos y
   variables como impuestos y sellos" (RF-06) y que el seguimiento de
