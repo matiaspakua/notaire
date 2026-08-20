@@ -34,7 +34,7 @@
 - [x] 4.4 Add a `GET` endpoint (or extend an existing gestión endpoint) exposing the aggregate pending balance so the frontend can show the warning before submitting
 - [x] 4.5 Document the new/changed endpoints with `@Operation`/`@ApiResponse` and verify in Swagger UI — confirmed both `GET /{id}/saldo-pendiente` and `POST /{id}/archivar` appear in `/v3/api-docs` with summaries and 200/404 responses; `/swagger-ui/index.html` returns 200
 - [x] 4.6 Add the archive action to the gestión screen in `frontend/` using `FormContainer`/theme tokens, showing the debt warning (non-blocking) when the aggregate balance is greater than zero — row action + `ConfirmDialog` (extended with `confirmLabel`) in `frontend/src/app/dashboard/gestiones/page.tsx`, backed by `useSaldoPendiente`/`useArchivarGestion` hooks
-- [ ] 4.7 Update `transicion-de-estados.puml` to add the debt-check point before "Archivar gestión" (see group 8)
+- [x] 4.7 Update `transicion-de-estados.puml` to add the debt-check point before "Archivar gestión" (see group 8)
 
 ## 5. Actualizar tests existentes
 
@@ -47,24 +47,24 @@
 - [x] 6.1 `mvn test -pl backend-api` — unit + integration (1482/1482 passing)
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (verified via `mvn verify`, bound execution passes; standalone `jacoco:check` goal invocation is not supported outside the bound lifecycle)
 - [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs) — BUILD SUCCESS
-- [ ] 6.4 `bash testing/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.4 `bash testing/scripts/test.sh` — HTTP/Bruno API suite — all strict endpoint checks passed, backend rebuilt in Docker with #819 changes prior to running
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add the gestión-archiving E2E spec under `frontend/tests/e2e/` (see design.md — Playwright Strategy)
-- [ ] 7.2 `cd frontend && npx playwright test` — all green
-- [ ] 7.3 Verify the archive action and debt warning at 320px, 768px and 1024px
-- [ ] 7.4 Cover golden path (no debt) and edge path (debt warning, confirm/cancel)
+- [x] 7.1 Add the gestión-archiving E2E spec under `frontend/tests/e2e/` (see design.md — Playwright Strategy) — `crud-gestiones.spec.ts` ("CU16 - Archivar Gestión con verificación de deuda")
+- [x] 7.2 `cd frontend && npx playwright test` — 418 passed, 36 skipped, 1 failed; the failure (`01-first-case-tutorial.spec.ts` — "Register the client" step, persona-creation dialog not closing) is pre-existing and unrelated to #819 — confirmed via `git stash` bisection of this branch's changes; out of scope, needs its own issue
+- [x] 7.3 Verify the archive action and debt warning at 320px, 768px and 1024px — `crud-gestiones.spec.ts` viewport tests (lines 103+), all passing
+- [x] 7.4 Cover golden path (no debt) and edge path (debt warning, confirm/cancel) — both scenarios in `crud-gestiones.spec.ts`, all passing
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` — add the debt-verification step to Curso de Eventos / Excepciones
-- [ ] 8.2 Update `docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml` — add the debt-check point before "Archivar gestión"
-- [ ] 8.3 Update OpenAPI/Swagger annotations for the new/changed endpoints; verify in Swagger UI
-- [ ] 8.4 Update `CHANGELOG.md` (`[Unreleased]`) — gestión archiving now warns about and records pending debt
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.1 Update `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` — add the debt-verification step to Curso de Eventos / Excepciones
+- [x] 8.2 Update `docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml` — add the debt-check point before "Archivar gestión"
+- [x] 8.3 Update OpenAPI/Swagger annotations for the new/changed endpoints; verify in Swagger UI — `@Operation`/`@ApiResponses` present on both endpoints (`GestionController.java:327-356`); confirmed `GET /{id}/saldo-pendiente` and `POST /{id}/archivar` present in `/v3/api-docs`
+- [x] 8.4 Update `CHANGELOG.md` (`[Unreleased]`) — gestión archiving now warns about and records pending debt
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth; CU16 doc and `CHANGELOG.md` cover distinct audiences (business flow vs. release notes), no overlap
+- [x] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate — PREFLIGHT PASSED (15/15; trivy/Playwright/Bruno/Docker skipped as environment-dependent, covered manually above)
 
 ## 9. Commits atómicos
 
