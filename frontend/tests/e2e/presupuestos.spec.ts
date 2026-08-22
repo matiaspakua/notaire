@@ -6,6 +6,12 @@
  */
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
+import {
+  createPersona,
+  createPresupuesto,
+  createCompleteCaseGestion,
+  createPago,
+} from "./setup/api-helpers";
 
 test.describe("Presupuestos module (CU01, CU39)", () => {
   test.beforeEach(async ({ page }) => {
@@ -115,5 +121,69 @@ test.describe("Pagos module (CU15, CU47)", () => {
       .getByRole("table")
       .or(page.getByText(/no hay pagos/i));
     await expect(tableOrEmpty.first()).toBeVisible({ timeout: 10000 });
+  });
+});
+
+test.describe("CU47 — Resumen financiero de presupuesto (#820)", () => {
+  test.beforeEach(async ({ page }) => {
+    await authenticateAsAdmin(page);
+  });
+
+  test("muestra total, saldo pendiente y gestión asociada sin pagos", async ({ page }) => {
+    const persona = await createPersona(page);
+    const idPersona = persona.data!.idPersona;
+    const presupuesto = await createPresupuesto(page, idPersona, undefined, { monto: 1000 });
+    const idPresupuesto = presupuesto.data!.idPresupuesto;
+    const gestion = await createCompleteCaseGestion(page, { presupuestoId: idPresupuesto });
+
+    await page.goto("/dashboard/presupuestos");
+    await page.waitForLoadState("domcontentloaded");
+
+    await page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`).click();
+    const dialog = page.getByTestId("dialog-resumen-presupuesto");
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+
+    await expect(dialog).toContainText(String(gestion.data!.numero));
+    await expect(dialog.getByTestId("resumen-sin-pagos")).toBeVisible();
+  });
+
+  test("incluye los pagos aplicados y refleja el saldo pendiente restante", async ({ page }) => {
+    const persona = await createPersona(page);
+    const idPersona = persona.data!.idPersona;
+    const presupuesto = await createPresupuesto(page, idPersona, undefined, { monto: 1000 });
+    const idPresupuesto = presupuesto.data!.idPresupuesto;
+    await createCompleteCaseGestion(page, { presupuestoId: idPresupuesto });
+    const pago = await createPago(page, idPresupuesto, { monto: 400 });
+    expect(pago.ok).toBeTruthy();
+
+    await page.goto("/dashboard/presupuestos");
+    await page.waitForLoadState("domcontentloaded");
+
+    await page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`).click();
+    const dialog = page.getByTestId("dialog-resumen-presupuesto");
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+
+    await expect(dialog.getByTestId("resumen-sin-pagos")).not.toBeVisible();
+    await expect(dialog.getByRole("table")).toBeVisible();
+    await expect(dialog).toContainText("400");
+  });
+
+  test("muestra mensaje de no encontrado cuando el resumen responde 404", async ({ page }) => {
+    const persona = await createPersona(page);
+    const idPersona = persona.data!.idPersona;
+    const presupuesto = await createPresupuesto(page, idPersona, undefined, { monto: 1000 });
+    const idPresupuesto = presupuesto.data!.idPresupuesto;
+
+    await page.route(`**/api/v1/presupuestos/${idPresupuesto}/resumen`, (route) =>
+      route.fulfill({ status: 404, contentType: "application/json", body: "{}" })
+    );
+
+    await page.goto("/dashboard/presupuestos");
+    await page.waitForLoadState("domcontentloaded");
+
+    await page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`).click();
+    const dialog = page.getByTestId("dialog-resumen-presupuesto");
+    await expect(dialog).toBeVisible({ timeout: 10000 });
+    await expect(dialog.getByTestId("resumen-not-found")).toBeVisible();
   });
 });

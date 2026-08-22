@@ -143,6 +143,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await page.getByTestId("btn-nueva-persona").click();
       await page.getByTestId("input-nombre").fill("Ana");
       await page.getByTestId("input-apellido").fill(`Tutorial ${runId}`);
+      await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${runId}`);
       await page.getByLabel(/email/i).fill(`ana.tutorial.${runId}@notaire.test`);
       await page.getByTestId("check-es-cliente").click();
       await pause(page);

@@ -206,6 +206,18 @@ export interface Pago {
   presupuesto?: Presupuesto;
 }
 
+/** CU47 - GET /presupuestos/{id}/resumen response. */
+export interface PresupuestoResumen {
+  idPresupuesto: number;
+  numeroPresupuesto: number;
+  idGestion?: number;
+  numeroGestion?: number;
+  encabezadoGestion?: string;
+  total: number;
+  saldoPendiente: number;
+  pagos: Pago[];
+}
+
 export interface Suplencia {
   idSuplencia?: number;
   fkIdSuplantado?: Persona;
