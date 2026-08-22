@@ -21,6 +21,24 @@
 > issues `requerimiento-funcional` como señal — son placeholders de
 > trazabilidad del SRS (todos quedan abiertos independientemente de si la
 > funcionalidad ya existe), no un tracker de "hecho / no hecho".
+>
+> **Consolidación (2026-08-21):** este documento incorpora ahora el triage
+> completo de sus 13 hallazgos originales — antes repartido en
+> `explore_1.1_issues.md` (hallazgos 1.1–1.5) y `explore_2-9_issues.md`
+> (hallazgos 2–9), ambos retirados tras la fusión. Cada hallazgo lleva su
+> ficha de triage (Caso de Uso, RF, tamaño, prioridad, dependencias)
+> inmediatamente después de su descripción, y la Tabla maestra de estado
+> reemplaza a las dos tablas "Estado" que existían por separado.
+>
+> **Revisión de código (2026-08-21):** se cruzó el diagrama de estados
+> (`transicion-de-estados.puml`) contra el motor de workflow real
+> (`WorkflowNode`/`WorkflowTransition`/`WorkflowValidationService`/
+> `WorkflowTraceService`) y contra el diagrama animado de la pantalla
+> principal (`WorkflowTracker.tsx` en `dashboard/page.tsx`), a pedido
+> explícito de verificar si ese diagrama animado puede imitar el ciclo
+> completo de una gestión. Los hallazgos 2 y 3 (ya propuestos como #832 y
+> #833) siguen vigentes y sin cambios. Surgió un hallazgo nuevo, el 10, que
+> ninguno de los dos cubre.
 
 ## Resumen ejecutivo
 
@@ -75,6 +93,39 @@ Los cinco hallazgos de mayor impacto:
 
 ---
 
+## Tabla maestra de estado
+
+Los 14 hallazgos de este documento (1.1–1.5, 2–9 y 10), su Issue de GitHub y
+el estado de su `/opsx:propose`. `resuelto` = mergeado a `main` y archivado
+en `openspec/changes/archive/`; `propose completo` = artefactos Gate 1
+listos en `openspec/changes/`, pendiente de `/opsx:apply`.
+
+| # | Hallazgo | Issue | Estado |
+|---|----------|-------|--------|
+| 1.1 | Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
+| 1.2 | Cobrar sin saldo visible, sin tope, sin comprobante | [#820](https://github.com/matiaspakua/notaire/issues/820) | propose completo — `openspec/changes/payment-financial-tracking/`, pendiente de apply |
+| 1.3 | Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | propose completo — `openspec/changes/pagos-parciales-cuotas/`, pendiente de apply |
+| 1.4 | Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | propose completo — `openspec/changes/descuentos-recargos-presupuesto/`, pendiente de apply |
+| 1.5 | Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | propose completo — `openspec/changes/costos-documentos-presupuesto/`, pendiente de apply |
+| 2 | Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | propose completo — `openspec/changes/escritura-post-firma-legal-cycle/` |
+| 3 | Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | propose completo — `openspec/changes/gestion-workflow-y-bitacora/` |
+| 4 | Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | propose completo — `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
+| 5 | Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | propose completo — `openspec/changes/persona-validacion-duplicados/` |
+| 6 | Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | propose completo — `openspec/changes/suplencia-efecto-en-gestiones/` |
+| 7 | Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | propose completo — `openspec/changes/tipo-documento-vencimiento-config/` |
+| 8 | Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | propose completo — `openspec/changes/folio-vinculacion-escritura/` |
+| 9 | Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | propose completo — 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
+| 10 | Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | abierto — sin propose, depende de #832/#833 |
+
+Los 13 hallazgos originales tienen su `/opsx:propose` completo y validado
+(`bash scripts/validate-sdlc-plan.sh`). El hallazgo 10 ya tiene Issue
+(#841) pero todavía no tiene `/opsx:propose` — depende de que #832/#833 se
+apliquen primero. Próximo paso: `/opsx:apply` change por change, en
+sesiones separadas, siguiendo `CONSTITUTION.md` — el merge a `main` requiere
+aprobación humana explícita en cada caso.
+
+---
+
 ## 1. Cobranza: se cobra "a ciegas", sin comprobante, y el proceso mismo no la contempla
 
 ### 1.1 El diagrama de estados de una gestión no tiene ningún paso de dinero *(Issue #819, resuelto y archivado — spec `gestion-archive-debt-check`)*
@@ -111,6 +162,13 @@ engancharse, porque "archivar gestión" (RF-34/35) es, como ya señala el
 hallazgo 3, apenas un cambio de estado sin reglas. El circuito de pago vive,
 en el mejor de los casos, como una pantalla aislada de "cobrar" (CU15) sin
 ninguna conexión con el ciclo de vida de la gestión que le da origen.
+
+**Ficha de triage** — Caso de Uso: CU16 – Archivar Gestión (#169). RF: RF-22
+"Abonar presupuestos en cuotas" (issue #22); RF-37 "Archivar trámite"
+(issue #37, no confirmado). Tamaño: M · Prioridad: `priority:high`.
+Roadmap: fundacional — los hallazgos 1.3 (cuotas) y 1.5 (costos de
+documento) dependen de que exista un punto de verificación de saldo/deuda
+antes de cerrar una gestión.
 
 ### 1.2 Al cobrar, no se ve cuánto se debe, no se controla el método, no se emite comprobante
 
@@ -160,10 +218,27 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
 - **No hay forma de ver, desde una gestión, cuánto se presupuestó, cuánto se
   cobró y cuánto falta.** El pago se registra contra un presupuesto suelto;
   nada resume esa información al nivel del caso (gestión), que es como el
-  cliente y el personal piensan el trámite. *(Issue #820, abierto — spec en
-  progreso: `openspec/changes/payment-financial-tracking`)*
+  cliente y el personal piensan el trámite. *(Issue #820, propose completo —
+  `openspec/changes/payment-financial-tracking`, pendiente de apply)*
 
-### 1.3 Pagos parciales / en cuotas: el SRS los exige y no existe ningún circuito *(Issue #821, abierto — bloqueado por #820)*
+**Ficha de triage (Issue #820)** — Caso de Uso: CU47 – Consultar Pago
+(#200); CU02 – Iniciar Gestión (#155). RF: RF-20 "Abonar trámite" (issue
+#20, no confirmado); RF-21 "Registrar quién abona el trámite" (*"el costo y
+saldo del trámite se calcula en base al [presupuesto]"*). Tamaño: M ·
+Prioridad: `priority:high`. Descripción: un pago ya se guarda contra un
+presupuesto, pero esa relación no es visible ni consultable end-to-end; se
+debe poder consultar desde una gestión el total presupuestado / cobrado /
+saldo agregando todos sus presupuestos y trámites. Relación con issues
+existentes: complementa (no duplica) #796 (picker de presupuesto + saldo en
+el formulario de cobro) y #792 (persistir método de pago) — ambos del mismo
+módulo. Roadmap: base para los hallazgos 1.3, 1.4 y 1.5 (todos necesitan que
+el saldo/costo de una gestión sea calculable de punta a punta) — aunque,
+tras el `propose` de los tres, ninguno resultó bloqueado en la práctica: cada
+uno reutiliza `PagoService.calcularSaldoPendiente`/`calcularTotalPresupuesto`
+ya existentes en `main`, sin esperar a que #820 se implemente (ver Out of
+Scope de cada propuesta).
+
+### 1.3 Pagos parciales / en cuotas: el SRS los exige y no existe ningún circuito *(Issue #821, propose completo — `openspec/changes/pagos-parciales-cuotas`, pendiente de apply; no bloqueado por #820 — ver Out of Scope de la propuesta)*
 
 - RF-22 es explícito: *"Los presupuestos pueden abonarse por completo o en
   cuotas sin montos fijos predefinidos... Se debe advertir de cualquier
@@ -185,7 +260,16 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   bajó a un flujo operativo concreto, ni en el producto ni en su
   documentación de casos de uso.
 
-### 1.4 Descuentos y recargos: no existen ni como concepto, tampoco en el SRS *(Issue #822, abierto — bloqueado por #820)*
+**Ficha de triage** — Caso de Uso: CU15 – Procesar pago (#168); CU47 –
+Consultar Pago (#200). RF: RF-22 "Abonar presupuestos en cuotas" (issue
+#22). Tamaño: M · Prioridad: `priority:medium`. Dependencias declaradas en
+triage: hallazgo 1.2 (saldo/resumen financiero) y 1.1 (verificación de
+deuda al archivar, donde se dispara la advertencia final de RF-22) —
+confirmado en el `propose` que este cambio reutiliza
+`calcularSaldoPendiente` ya existente y no requiere que #820 esté
+implementado primero.
+
+### 1.4 Descuentos y recargos: no existen ni como concepto, tampoco en el SRS *(Issue #822, propose completo — `openspec/changes/descuentos-recargos-presupuesto`, pendiente de apply; no bloqueado por #820 — ver Out of Scope de la propuesta)*
 
 - Un presupuesto se arma con ítems que llevan un monto o un porcentaje y una
   observación de texto libre — no hay forma de marcar un ítem como
@@ -209,17 +293,33 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   contabilidad como para justificar una diferencia de precio ante un
   cliente que lo reclame.
 
-### 1.5 Costos adicionales de documentos (sellos, impuestos): se puede marcar "pagado" sin monto ni conexión al presupuesto *(Issue #823, abierto — bloqueado por #820)*
+**Ficha de triage** — Caso de Uso: CU45 – Modificar presupuesto (#198);
+CU71 – Gestión de Items (#300). RF: ninguno lo exige explícitamente hoy —
+se ancla en CU45/CU71, que son los que hoy administran los ítems de un
+presupuesto (Gate 0: CU-XX solo es suficiente cuando ningún RF cubre el
+hallazgo). Tamaño: M · Prioridad: `priority:medium`. Nota: ambos CU
+debieron actualizarse en el `propose` para documentar el nuevo tipo de
+ítem.
+
+### 1.5 Costos adicionales de documentos (sellos, impuestos): el monto existe pero no se conecta al presupuesto *(Issue #823, propose completo — `openspec/changes/costos-documentos-presupuesto`, pendiente de apply; no bloqueado por #820 — ver Out of Scope de la propuesta)*
+
+> **Corrección (grounding, propose completo):** el párrafo original de este
+> hallazgo afirmaba que el dato de pago de un documento era "una fecha
+> suelta, sin monto". Al hacer el `propose`, se verificó contra
+> `DocumentoPresentado.java` que el campo `importeAPagar` (monto) **ya
+> existe** junto a `fechaPago` — el problema real, más acotado, es que ese
+> monto nunca se suma a ningún cálculo de total o saldo. Ver
+> `openspec/changes/costos-documentos-presupuesto/proposal.md` — Objetivo.
 
 - El SRS pide que la plantilla de presupuesto contemple "gastos fijos y
   variables como impuestos y sellos" (RF-06) y que el seguimiento de
   documentos informe sobre deudas y vencimientos asociados, avisando si una
   deuda fue cancelada y el documento liberado, o si sigue pendiente de pago
   o retiro (RF-19).
-- El catálogo de tipos de documento sí registra, a nivel de dato, si un
-  documento tiene fecha de pago — pero **ese dato es una fecha suelta, sin
-  monto ni vínculo con el presupuesto o los pagos de la gestión**. Se puede
-  marcar "pagado el 12/03" para un certificado, pero ese pago no suma al
+- `DocumentoPresentado` sí registra, a nivel de dato, tanto `fechaPago` como
+  `importeAPagar` (monto) para un documento — **pero ninguno de los dos está
+  vinculado al presupuesto o a los pagos de la gestión**. Se puede cargar el
+  monto y la fecha de pago de un certificado, pero ese monto no suma al
   total del presupuesto, no descuenta saldo, no aparece en el resumen de
   cobranza de la gestión (1.2) y no se refleja en ningún recibo. Es el
   mismo patrón que el resto del documento señala en la sección "Por qué se
@@ -230,6 +330,16 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   general) quedan fuera de cualquier presupuesto, de cualquier saldo y de
   cualquier reporte de cobranza — se pagan y se controlan, si acaso, fuera
   del sistema.
+
+**Ficha de triage** — Caso de Uso: CU27 – Ingresar nuevo tipo de documento
+(#180); CU39 – Crear Plantilla Presupuesto (#192). RF: RF-04 "Editar
+plantillas de presupuestos" (issue #6, *"gastos fijos y variables como
+impuestos y sellos"*); RF-17 "Seguimiento de documentos" (issue #19,
+deudas/impuestos/vencimientos). Tamaño: L · Prioridad: `priority:medium`.
+Dependencia declarada en triage: hallazgo 1.2 (resumen financiero de
+gestión, donde este costo adicional debe terminar sumando) — confirmado en
+el `propose` que no bloquea, ya que `GestionArchiveDebtService` (#819) ya
+agrega el saldo por presupuesto y heredará este cambio automáticamente.
 
 ## 2. Después de la firma, el trámite notarial "desaparece" del sistema
 
@@ -254,6 +364,19 @@ la que tiene efectos legales frente a terceros (el registro de la
 propiedad) — y actualmente vive fuera del sistema: en papel, en memoria, o
 en una planilla aparte.
 
+**Ficha de triage (Issue #832)** — Caso de Uso: CU06 – Firmar escritura
+(#159); CU07 – Generar testimonio (#160); CU08 – Verificar Testimonio
+(#161); CU11 – Ingresar para inscripción (#164); CU12 – Retirar testimonio
+(#165); CU44 – Reingresar testimonio (#197). RF: RF-27 (firmar escritura),
+RF-31 (generar testimonio), RF-30/RF-92 (presentar/seguir inscripción),
+RF-32 (registrar testimonios inscriptos), RF-33 (retirar/reingresar
+testimonio), RF-94 (emitir copia impresa). Tamaño: L · Prioridad:
+`priority:high`. Nota de alcance: son 6 pasos secuenciales de un mismo
+circuito regulatorio, agrupados en un único hallazgo porque este documento
+los describe como una sola cadena; el `propose` evaluó dividir en fases
+(firma+testimonio / inscripción / retiro-copia) para no bloquear todo el
+circuito en un solo cambio — ver `openspec/changes/escritura-post-firma-legal-cycle/`.
+
 ## 3. El historial de una gestión no registra nada, y los estados no tienen reglas
 
 - **La bitácora de una gestión (CU13, "Ver historial de gestión", RF-24)
@@ -273,6 +396,16 @@ en una planilla aparte.
   si es alcanzable, es solo cambiando el estado a mano por el mismo selector
   sin reglas de arriba, no como un cierre de caso intencional.
 
+**Ficha de triage (Issue #833)** — Caso de Uso: CU13 – Ver historial de
+gestión (#166); CU83 – Definir Workflow de Estados y Transiciones (#451,
+#453, #454, #455); CU16 – Archivar Gestión (#169, #819). RF: RF-24
+(historial/bitácora de gestión), sin RF explícito para la validación de
+transiciones de estado. Tamaño: L · Prioridad: `priority:high`. Nota de
+alcance: tres gaps relacionados (bitácora, motor de transiciones,
+archivado) que comparten la misma raíz — la pantalla de gestión no
+consulta las reglas ya modeladas — ver
+`openspec/changes/gestion-workflow-y-bitacora/`.
+
 ## 4. Presupuestar sigue dependiendo de la memoria del personal
 
 - Existen plantillas de precios por tipo de trámite (RF-04, RF-64 a RF-67,
@@ -287,6 +420,15 @@ en una planilla aparte.
   fuente común de precio salvo acordarse — exactamente el problema que la
   plantilla fue creada para resolver.
 
+**Ficha de triage (Issue #834)** — Caso de Uso: CU39 – Crear Plantilla
+Presupuesto (#192); CU55 – Modificar Plantilla Presupuesto (#208); CU49 –
+Eliminar Plantilla Presupuesto (#202); CU71 – Gestión de Items (#300). RF:
+RF-04, RF-64 a RF-67 (plantillas de presupuesto por tipo de trámite), RF-07
+(agregar ítems adicionales). Tamaño: M · Prioridad: `priority:medium`. Ver
+`openspec/changes/presupuesto-plantillas-y-catalogo-items/` — sin
+solapamiento con 1.5 (#823), que no toca `TipoDeDocumento`/
+`DocumentoPresentado`.
+
 ## 5. Un cliente puede quedar duplicado sin que nadie lo note
 
 - No hay ninguna validación que impida cargar dos veces a la misma persona
@@ -298,6 +440,10 @@ en una planilla aparte.
   ese cliente quedan repartidos entre dos fichas sin vínculo, y nada en el
   sistema avisa que eso ocurrió — el historial del cliente queda
   silenciosamente incompleto cada vez que se lo busca.
+
+**Ficha de triage (Issue #835)** — Caso de Uso: CU17 – Dar Alta persona
+(#170); CU18 – Dar Alta Cliente (#171). RF: RF-37. Tamaño: S · Prioridad:
+`priority:high`. Ver `openspec/changes/persona-validacion-duplicados/`.
 
 ## 6. Suplencias: se puede registrar, pero no cambia nada en la práctica
 
@@ -314,6 +460,12 @@ en una planilla aparte.
   "Registrar suplentes del escribano") no tiene un lugar dedicado** en la
   pantalla de personas — la credencial de escribano no es algo que el
   personal pueda gestionar explícitamente hoy.
+
+**Ficha de triage (Issue #836)** — Caso de Uso: CU22 – Registrar Suplencia
+(#175); CU59 – Consultar Suplencias (#212); CU48 – Dar alta escribano
+(#201); CU51 – Modificar escribano (#204). RF: RF-87 a RF-90 (suplencias),
+RF-88 (registrar suplentes del escribano). Tamaño: M · Prioridad:
+`priority:medium`. Ver `openspec/changes/suplencia-efecto-en-gestiones/`.
 
 ## 7. Los tipos de documento no pueden llevar sus propias reglas
 
@@ -332,6 +484,12 @@ en una planilla aparte.
   decidido — el sistema completa "no vence", "sin responsable de entrega" en
   silencio.
 
+**Ficha de triage (Issue #837)** — Caso de Uso: CU27 – Ingresar nuevo tipo
+de documento (#180); CU32 – Modificar tipo de documento (#185); CU42 –
+Informar próximos vencimientos (#195). RF: RF-55 (catálogo de tipos de
+documento), RF-16 (informar próximos vencimientos). Tamaño: S · Prioridad:
+`priority:medium`. Ver `openspec/changes/tipo-documento-vencimiento-config/`.
+
 ## 8. El protocolo notarial no se puede armar desde el sistema
 
 - Folios y escrituras se administran cada uno por su lado (altas, búsquedas,
@@ -342,6 +500,16 @@ en una planilla aparte.
   vive en tal folio, esta copia salió de tal testimonio"— no tiene ningún
   camino para armarse a través del producto. Cada pieza existe; el ensamblaje
   entre ellas no.
+
+**Ficha de triage (Issue #838)** — Caso de Uso: CU87 – Vincular Escritura a
+Folio y Copia a Testimonio (**nuevo**, creado en el triage); CU28 –
+Ingresar nuevos folios (#181); CU05 – Preparar escritura (#158); CU07 –
+Generar testimonio (#160); CU80 – Administrar Cuadernos de Folios (#311).
+RF: RF #94 (Administrar folios), RF #96 (Control de numeración correlativa
+de folios), RF #121 (Control de numeración de escrituras). Tamaño: M ·
+Prioridad: `priority:medium`. Documento creado:
+`docs/100-business/102-use-cases/CU87 – Vincular Escritura a Folio y Copia
+a Testimonio.md`. Ver `openspec/changes/folio-vinculacion-escritura/`.
 
 ## 9. Bloque completo del SRS sin ningún desarrollo
 
@@ -362,7 +530,119 @@ Estas áreas corresponden a trámites y controles que un notario real necesita
 para cumplir con la reglamentación del Colegio Notarial y el registro de la
 propiedad — hoy se resuelven, si acaso, completamente fuera del sistema.
 
+**Ficha de triage (Issue #839)** — Caso de Uso: CU80 – Administrar
+Cuadernos de Folios (#311, Cuadernos); CU85 – Administrar Carpetas de
+Trámite (**nuevo**); CU81 – Gestión de Trámites en Protocolo Auxiliar
+(#312); CU82 – Generar Minuta de Inscripción (#313); CU86 – Controlar
+Numeración Correlativa de Escrituras (**nuevo**). RF: RF-74 a RF-77
+(cuadernos), RF-78 a RF-80 / #104-106 (carpetas de trámite), RF-85/86/93
+(protocolo auxiliar), RF-91 (minuta de inscripción), RF-95 / #121 (control
+de numeración de escrituras) — la numeración correlativa de **folios**
+(RF-70/71/72, #96/97/98) queda fuera de este hallazgo porque ya está
+cubierta por CU28/CU80. Tamaño: L · Prioridad: `priority:high`. Documentos
+creados: `docs/100-business/102-use-cases/CU85 – Administrar Carpetas de
+Trámite.md`, `docs/100-business/102-use-cases/CU86 – Controlar Numeración
+Correlativa de Escrituras.md`. Con CU85 y CU86 creados, las 5 áreas de
+negocio quedan con Caso de Uso propio y se propusieron como 5 cambios
+independientes (ver Tabla maestra de estado).
+
 ---
+
+## 10. El motor de workflow no puede representar el circuito legal post-firma, ni siquiera después de aplicar #832 y #833
+
+Esta revisión partió de una pregunta puntual: ¿la pantalla principal —el
+diagrama de estados animado que muestra el progreso de una gestión— puede
+en principio llegar a imitar el ciclo completo descrito en
+`transicion-de-estados.puml`? La respuesta, tras leer el motor de workflow
+de punta a punta (`WorkflowNode`, `WorkflowTransition`,
+`WorkflowValidationService`, `WorkflowTraceService`,
+`WorkflowTracker.tsx`), es: **hoy no, y tampoco después de que se apliquen
+los hallazgos 2 (#832) y 3 (#833) que ya están propuestos** — hay un tercer
+gap, más profundo, que ninguno de los dos cubre.
+
+```
+transicion-de-estados.puml (fragmento post-firma):
+
+  :Firmar escritura;
+  :Generar testimonio;
+  :Ingresar para inscripción;
+       │
+       ▼
+  ┌─────────────────────┐
+  │ ¿Volvió observado?   │◀── LOOP: puede repetirse
+  └─────────────────────┘        N veces por testimonio
+       │ sí
+       ▼
+  :Registrar reingreso;
+  :Ingresar para inscripción;  ──┘
+       │ no
+       ▼
+  :Retirar testimonio;   (repite por c/testimonio de la gestión)
+```
+
+- **`WorkflowNode` está atado 1 a 1 a un `EstadoDeGestion` existente** — así
+  lo dice la propia documentación de CU83 ("cada uno vinculado a un
+  `EstadoDeGestion` existente") y lo confirma el código
+  (`WorkflowNode.fkEstadoDeGestionId`). El catálogo real de
+  `EstadoDeGestion` (10 filas, sembradas en `V2__initial_data.sql`) no tiene
+  ningún estado para "testimonio generado", "testimonio verificado",
+  "ingresado a inscripción", "retirado" ni "reingresado" — son sub-pasos del
+  ciclo legal que #832 va a modelar sobre `Escritura`/`Testimonio`/
+  `MovimientoTestimonio`, no sobre `Gestion.estado`.
+- **El bucle de reingreso no es un estado, es un evento que se repite.** El
+  propio `MovimientoTestimonio` (que #832 usa deliberadamente, ver su
+  design.md — Decisions) modela cada ingreso/retiro/reingreso como una fila
+  nueva, precisamente porque un testimonio puede reingresar varias veces sin
+  perder el rastro de los intentos anteriores. `WorkflowNode`/`Historial`,
+  en cambio, modelan **un único estado "actual" por gestión** — no hay forma
+  de que un grafo de nodos mutuamente excluyentes represente "este
+  testimonio ya reingresó 3 veces" sin, en el mejor de los casos, perder esa
+  cuenta cada vez que se revisita el mismo nodo.
+- **Consecuencia concreta para la pantalla principal:** `WorkflowTracker.tsx`
+  (el diagrama animado en `WorkflowHero`, `dashboard/page.tsx`) es
+  arquitectónicamente genérico — dibuja cualquier grafo que le llegue desde
+  `WorkflowTraceService.buildTrace`. Eso significa que, una vez aplicado
+  #833 (que hace que `Historial` se escriba de verdad), si un administrador
+  configurara un `WorkflowDefinition` con más nodos, el tracker sí mostraría
+  más progreso que hoy. Pero **no existe combinación de nodos que reproduzca
+  el bucle de reingreso**, porque el modelo de datos subyacente no tiene
+  dónde guardar "cuántas veces" sin convertir cada reingreso en un estado
+  distinto (lo cual tampoco resolvería el bucle, solo lo aplanaría a una
+  secuencia fija con un tope arbitrario de reingresos).
+  - Dato adicional, menor: el `WorkflowDefinition` de demostración
+    sembrado hoy (`V10__seed_workflow_demo_data.sql`) sólo cubre 7 nodos —
+    alta → documentación → escritura redactada → firma → inscripción →
+    archivo-sin-escritura — y sólo está asignado a 3 `TipoDeTramite`; ni
+    siquiera alcanza la granularidad que el modelo actual ya permitiría.
+    Esto no es un bug, es data de demo incompleta, y queda subsumido por
+    #833 en la medida en que #833 exige que cada `TipoDeTramite` real tenga
+    su propio `WorkflowDefinition` correctamente configurado — pero vale
+    dejarlo anotado porque es lo primero que un administrador va a notar al
+    entrar a la pantalla configurada hoy.
+
+Esto no invalida a #832 ni a #833 — ambos siguen siendo prerequisito
+correcto y necesario (sin ellos, ni siquiera la parte no-cíclica del
+diagrama se puede reflejar). Es un gap adicional, más chico en superficie
+pero conceptualmente distinto: **el modelo de "un nodo = un estado actual"
+del motor de workflow no alcanza para representar un sub-flujo con
+reintentos**, y alguien va a tener que decidir — al implementar #832 o en un
+cambio aparte — si eso se resuelve (a) agregando estados a
+`EstadoDeGestion` para el circuito post-firma y aceptando que el tracker
+muestre una versión aplanada/sin-loop del reingreso, o (b) mostrando
+`MovimientoTestimonio` como una línea de tiempo secundaria, separada del
+grafo de `WorkflowNode`, en vez de forzarlo dentro del mismo modelo. Esa
+decisión de diseño queda fuera del alcance de esta exploración.
+
+**Ficha de triage (Issue #841)** — Caso de Uso: CU83 –
+Definir Workflow de Estados y Transiciones (#451, #453, #454, #455); CU06 –
+Firmar escritura (#159); CU07 – Generar testimonio (#160); CU11 – Ingresar
+para inscripción (#164); CU44 – Reingresar testimonio (#197). RF: sin RF
+explícito — es un gap de modelo de datos, no un requerimiento del SRS.
+Tamaño: M · Prioridad: `priority:medium`. Roadmap: depende de que #832 y
+#833 se apliquen primero (ninguno de los dos lo bloquea a nivel de
+propuesta, pero como decisión de diseño conviene resolverlo sabiendo cómo
+quedó el circuito de #832 en código real, no solo en el proposal). No
+bloquea a #832 ni a #833 — es un refinamiento posterior de la misma área.
 
 ## Por qué se repite este patrón
 
@@ -402,4 +682,8 @@ siquiera están nombrados en la documentación de negocio existente.
 `openspec/explore_functional_report.md` (relevamiento técnico-funcional del
 2026-08-11), con una segunda pasada el 2026-08-19 centrada en el circuito
 completo de pagos (cuotas, descuentos, recargos, costos adicionales) y en
-el diagrama de estados de una gestión.*
+el diagrama de estados de una gestión. Triage de los 13 hallazgos originales
+consolidado en este mismo documento el 2026-08-21 (antes en
+`explore_1.1_issues.md` y `explore_2-9_issues.md`, ambos retirados). Tercera
+pasada el 2026-08-21, revisión de código del motor de workflow contra el
+diagrama de estados y la pantalla principal — agregó el hallazgo 10.*
