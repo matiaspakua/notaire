@@ -427,8 +427,10 @@ class SimpleControllersTest {
     @DisplayName("PresupuestoController")
     class PresupuestoControllerTests {
         private final PresupuestoService service = mock(PresupuestoService.class);
+        private final com.licensis.notaire.service.PresupuestoResumenService presupuestoResumenService =
+                mock(com.licensis.notaire.service.PresupuestoResumenService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PresupuestoController(service))
+                standaloneSetup(new PresupuestoController(service, presupuestoResumenService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 

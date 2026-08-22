@@ -1,7 +1,9 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoPagoResponse;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.service.PagoService;
+import com.licensis.notaire.service.mappers.PagoMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -42,9 +44,9 @@ public class PagoController {
     @GetMapping
     @Operation(summary = "Obtener todos los pagos")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Pago>> getAll() {
+    public ResponseEntity<List<DtoPagoResponse>> getAll() {
         try {
-            return ResponseEntity.ok(pagoService.findAll());
+            return ResponseEntity.ok(pagoService.findAll().stream().map(PagoMapper::toDto).toList());
         } catch (Exception e) {
             log.error("Error al obtener pagos", e);
             return ResponseEntity.internalServerError().build();
@@ -58,9 +60,10 @@ public class PagoController {
     @GetMapping("/{id}")
     @Operation(summary = "CU47 - Consultar pago por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Pago> getById(@PathVariable Integer id) {
+    public ResponseEntity<DtoPagoResponse> getById(@PathVariable Integer id) {
         try {
             return pagoService.consultarPago(id)
+                    .map(PagoMapper::toDto)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -72,9 +75,10 @@ public class PagoController {
     @GetMapping("/presupuesto/{idPresupuesto}")
     @Operation(summary = "Obtener pagos por presupuesto")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Pago>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
+    public ResponseEntity<List<DtoPagoResponse>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
         try {
-            return ResponseEntity.ok(pagoService.findPagosByPresupuesto(idPresupuesto));
+            return ResponseEntity.ok(
+                    pagoService.findPagosByPresupuesto(idPresupuesto).stream().map(PagoMapper::toDto).toList());
         } catch (Exception e) {
             log.error("Error al obtener pagos por presupuesto ID={}", idPresupuesto, e);
             return ResponseEntity.internalServerError().build();
@@ -99,13 +103,14 @@ public class PagoController {
     @GetMapping("/fecha")
     @Operation(summary = "Obtener pagos por rango de fechas")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Pago>> getByFechaRange(
+    public ResponseEntity<List<DtoPagoResponse>> getByFechaRange(
             @Parameter(description = "Fecha inicio (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @Parameter(description = "Fecha fin (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         try {
-            return ResponseEntity.ok(pagoService.findPagosByFechaRange(startDate, endDate));
+            return ResponseEntity.ok(
+                    pagoService.findPagosByFechaRange(startDate, endDate).stream().map(PagoMapper::toDto).toList());
         } catch (Exception e) {
             log.error("Error al obtener pagos por fecha", e);
             return ResponseEntity.internalServerError().build();
@@ -119,7 +124,7 @@ public class PagoController {
 })
     @PostMapping
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
-    public ResponseEntity<Pago> procesarPago(@RequestBody PagoRequest request) {
+    public ResponseEntity<DtoPagoResponse> procesarPago(@RequestBody PagoRequest request) {
         try {
             Pago pago = pagoService.procesarPago(
                     request.idPresupuesto(),
@@ -128,7 +133,7 @@ public class PagoController {
                     request.observaciones(),
                     request.metodoPago()
             );
-            return ResponseEntity.status(HttpStatus.CREATED).body(pago);
+            return ResponseEntity.status(HttpStatus.CREATED).body(PagoMapper.toDto(pago));
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al procesar pago: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
@@ -140,7 +145,7 @@ public class PagoController {
 
     @PostMapping("/params")
     @Operation(summary = "CU15 - Procesar pago (query params)")
-    public ResponseEntity<Pago> procesarPagoParams(
+    public ResponseEntity<DtoPagoResponse> procesarPagoParams(
             @Parameter(description = "ID del presupuesto") @RequestParam Integer idPresupuesto,
             @Parameter(description = "Monto del pago") @RequestParam Float monto,
             @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
@@ -149,7 +154,7 @@ public class PagoController {
             @Parameter(description = "Método de pago") @RequestParam(required = false) String metodoPago) {
         try {
             Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones, metodoPago);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pago);
+            return ResponseEntity.status(HttpStatus.CREATED).body(PagoMapper.toDto(pago));
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al procesar pago: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
@@ -165,11 +170,11 @@ public class PagoController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Editar pago")
-    public ResponseEntity<Pago> update(@PathVariable Integer id, @RequestBody Pago entity) {
+    public ResponseEntity<DtoPagoResponse> update(@PathVariable Integer id, @RequestBody Pago entity) {
         try {
             Pago updated = pagoService.editarPago(id, entity.getMonto(), entity.getFecha(),
                     entity.getObservaciones(), entity.getMetodoPago());
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(PagoMapper.toDto(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

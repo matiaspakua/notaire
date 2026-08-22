@@ -88,7 +88,8 @@ class PagoIntegrationTest extends ServiceIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.metodoPago").value("Efectivo"));
+                .andExpect(jsonPath("$.metodoPago").value("Efectivo"))
+                .andExpect(jsonPath("$.idPresupuesto").value(idPresupuesto));
     }
 
     @Test
