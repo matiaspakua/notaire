@@ -9,7 +9,7 @@
 | **Propósito** | Consulta los pagos realizados, por gestión. |
 | **Descripción** | El Recepcionista/Escribano decide consultar los pagos realizados, hasta el momento, en base a una gestión en particular. El Recepcionista/Escribano busca la gestión por número de presupuesto, o por nombre y apellido, o tipo y número de identificación. El sistema presenta la lista de presupuestos asociados al cliente buscado. El Recepcionista/Escribano selecciona un presupuesto en particular, y el sistema detalla el mismo. |
 | **Tipo** | Primario |
-| **Referencias Cruzadas** | RF #20 (Abonar trámite), RF #22 (Abonar presupuestos en cuotas); CU19, CU60 |
+| **Referencias Cruzadas** | RF #20 (Abonar trámite), RF #22 (Abonar presupuestos en cuotas); CU19, CU60; `GET /api/v1/presupuestos/{id}/resumen` (#820) |
 | **GitHub ID** | #200 |
 
 ## Curso de Eventos

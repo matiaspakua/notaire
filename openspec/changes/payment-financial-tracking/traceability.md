@@ -14,11 +14,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #820 | open |
+| Issue | #820 | open, in-progress |
 | Use Case | CU-47 (Consultar Pago, #200); CU-02 (Iniciar Gestión, #155) | exists |
-| Specification | `openspec/changes/payment-financial-tracking/` | in progress |
-| Branch | `feat/820_expose-pago-presupuesto-gestion-summary` | not yet created |
-| Tasks | `tasks.md` | 0/N complete |
+| Specification | `openspec/changes/payment-financial-tracking/` | complete |
+| Branch | `feat/820_expose-pago-presupuesto-gestion-summary` | created |
+| Tasks | `tasks.md` | in progress — see checklist |
 | Commits | | pending |
 | Pull Request | | pending |
 | CI run | | pending |
@@ -30,32 +30,32 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Retrieving a single payment includes its presupuesto | `PagoControllerTest#shouldIncludePresupuestoWhenRetrievingPaymentById` | pending |
-| Listing payments by presupuesto includes the presupuesto on each entry | `PagoControllerTest#shouldIncludePresupuestoOnEachListedPayment` | pending |
-| Creating a payment returns the associated presupuesto | `PagoControllerTest#shouldReturnPresupuestoWhenCreatingPayment` | pending |
-| Presupuesto with no payments | `PresupuestoResumenServiceTest#shouldReturnFullBalanceWhenNoPayments` | pending |
-| Presupuesto with one payment | `PresupuestoResumenServiceTest#shouldReturnReducedBalanceWithOnePayment` | pending |
-| Presupuesto with multiple payments | `PresupuestoResumenServiceTest#shouldReturnNetBalanceWithMultiplePayments` | pending |
-| Requesting the summary of a non-existent presupuesto | `PresupuestoResumenControllerTest#shouldReturnNotFoundForUnknownPresupuesto` | pending |
-| Gestión with a single trámite and presupuesto | `GestionResumenFinancieroServiceTest#shouldSummarizeSingleTramiteGestion` | pending |
-| Gestión with multiple trámites and presupuestos | `GestionResumenFinancieroServiceTest#shouldAggregateMultipleTramites` | pending |
-| Gestión with no payments registered | `GestionResumenFinancieroServiceTest#shouldReturnZeroCollectedWhenNoPayments` | pending |
+| Retrieving a single payment includes its presupuesto | `PagoControllerTest#shouldIncludePresupuestoWhenRetrievingPaymentById` | passing |
+| Listing payments by presupuesto includes the presupuesto on each entry | `PagoControllerTest#shouldIncludePresupuestoOnEachListedPayment` | passing |
+| Creating a payment returns the associated presupuesto | `PagoControllerTest#shouldReturnPresupuestoWhenCreatingPayment` | passing |
+| Presupuesto with no payments | `PresupuestoResumenServiceTest#shouldReturnFullBalanceWhenNoPayments` | passing |
+| Presupuesto with one payment | `PresupuestoResumenServiceTest#shouldReturnReducedBalanceWithOnePayment` | passing |
+| Presupuesto with multiple payments | `PresupuestoResumenServiceTest#shouldReturnNetBalanceWithMultiplePayments` | passing |
+| Requesting the summary of a non-existent presupuesto | `PresupuestoResumenControllerTest#shouldReturnNotFoundForUnknownPresupuesto` | passing |
+| Gestión with a single trámite and presupuesto | `GestionResumenFinancieroServiceTest#shouldSummarizeSingleTramiteGestion` | passing |
+| Gestión with multiple trámites and presupuestos | `GestionResumenFinancieroServiceTest#shouldAggregateMultipleTramites` | passing |
+| Gestión with no payments registered | `GestionResumenFinancieroServiceTest#shouldReturnZeroCollectedWhenNoPayments` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU47 – Consultar Pago.md` | no | |
-| `CHANGELOG.md` | no | |
+| `docs/100-business/102-use-cases/CU47 – Consultar Pago.md` | yes | pending (uncommitted) |
+| `CHANGELOG.md` | yes | pending (uncommitted) |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | Issue #820 open; proposal/design/specs drafted, not yet validated |
-| 2 | Failing tests written, test cases designed | pending | |
-| 3 | Suite green, coverage held, docs updated | pending | |
-| 4 | CI green, review approved, no conflicts | pending | |
+| 1 | Issue + Specification + Acceptance Criteria | yes | Issue #820 open, in-progress; proposal/design/specs complete |
+| 2 | Failing tests written, test cases designed | yes | Unit + integration tests written first, observed failing, now passing |
+| 3 | Suite green, coverage held, docs updated | yes | `mvn verify -pl backend-api -am`: 1513 tests, BUILD SUCCESS; `tsc --noEmit` and `eslint --max-warnings=0` clean; docs updated |
+| 4 | CI green, review approved, no conflicts | pending | PR not yet opened |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
 ## Exceptions
