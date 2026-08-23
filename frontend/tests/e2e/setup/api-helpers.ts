@@ -167,10 +167,10 @@ export interface UsuarioPayload {
 }
 
 export interface PagoPayload {
-  idGestion?: number;
+  idPresupuesto?: number;
   monto: number;
   fecha?: string;
-  formaPago?: string;
+  metodoPago?: string;
   observaciones?: string;
 }
 
@@ -329,14 +329,14 @@ export async function createUsuario(
  */
 export async function createPago(
   page: Page,
-  gestionId: number,
+  presupuestoId: number,
   overrides: Partial<PagoPayload> = {},
 ): Promise<ApiResult<{ idPago: number }>> {
   return apiPost(page, "/pagos", {
-    idGestion: gestionId,
+    idPresupuesto: presupuestoId,
     monto: 5000,
     fecha: new Date().toISOString().split("T")[0],
-    formaPago: "Efectivo",
+    metodoPago: "Efectivo",
     ...overrides,
   });
 }

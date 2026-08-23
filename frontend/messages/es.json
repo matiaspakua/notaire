@@ -318,6 +318,18 @@
       "borrador": "BORRADOR",
       "aprobado": "APROBADO",
       "rechazado": "RECHAZADO"
+    },
+    "resumen": {
+      "title": "Resumen financiero",
+      "gestionSection": "Gestión y presupuesto",
+      "pagosSection": "Pagos",
+      "numeroGestion": "Número de gestión",
+      "encabezado": "Encabezado",
+      "numeroPresupuesto": "Número de presupuesto",
+      "total": "Total",
+      "saldo": "Saldo pendiente",
+      "noPagos": "No hay pagos registrados para este presupuesto",
+      "notFound": "No se encontró el presupuesto solicitado"
     }
   },
   "auditoria": {

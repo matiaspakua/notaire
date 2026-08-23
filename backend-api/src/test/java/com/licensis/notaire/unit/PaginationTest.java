@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.PresupuestoController;
+import com.licensis.notaire.service.PresupuestoResumenService;
 import com.licensis.notaire.service.PresupuestoService;
 import com.licensis.notaire.negocio.Presupuesto;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,11 +32,15 @@ class PaginationTest {
     @Mock
     private PresupuestoService presupuestoService;
 
+    @Mock
+    private PresupuestoResumenService presupuestoResumenService;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new PresupuestoController(presupuestoService))
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                new PresupuestoController(presupuestoService, presupuestoResumenService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

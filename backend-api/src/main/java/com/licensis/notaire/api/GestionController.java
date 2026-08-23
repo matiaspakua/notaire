@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoGestionResumenFinanciero;
 import com.licensis.notaire.dto.DtoGestionSummary;
 import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
 import com.licensis.notaire.dto.DtoHistorialSummary;
@@ -21,6 +22,7 @@ import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.service.GestionArchiveDebtService;
 import com.licensis.notaire.service.GestionQueryService;
+import com.licensis.notaire.service.GestionResumenFinancieroService;
 import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,6 +68,7 @@ public class GestionController {
     private final TramiteRepository tramiteRepository;
     private final InmuebleRepository inmuebleRepository;
     private final GestionArchiveDebtService gestionArchiveDebtService;
+    private final GestionResumenFinancieroService gestionResumenFinancieroService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -74,7 +77,8 @@ public class GestionController {
                              EstadoDeGestionRepository estadoRepository, PresupuestoRepository presupuestoRepository,
                              TipoDeTramiteRepository tipoTramiteRepository, TramiteRepository tramiteRepository,
                              InmuebleRepository inmuebleRepository,
-                             GestionArchiveDebtService gestionArchiveDebtService) {
+                             GestionArchiveDebtService gestionArchiveDebtService,
+                             GestionResumenFinancieroService gestionResumenFinancieroService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -86,6 +90,7 @@ public class GestionController {
         this.tramiteRepository = tramiteRepository;
         this.inmuebleRepository = inmuebleRepository;
         this.gestionArchiveDebtService = gestionArchiveDebtService;
+        this.gestionResumenFinancieroService = gestionResumenFinancieroService;
     }
 
     public record DtoSaldoPendiente(Float saldoPendiente) {}
@@ -334,6 +339,20 @@ public class GestionController {
         try {
             Float saldo = gestionArchiveDebtService.calcularSaldoPendiente(id);
             return ResponseEntity.ok(new DtoSaldoPendiente(saldo));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @GetMapping("/{id}/resumen-financiero")
+    @Operation(summary = "CU47/CU02 - Obtener resumen financiero agregado de una gestión")
+    public ResponseEntity<DtoGestionResumenFinanciero> getResumenFinanciero(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(gestionResumenFinancieroService.obtenerResumen(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

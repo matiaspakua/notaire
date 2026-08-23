@@ -318,6 +318,18 @@
       "borrador": "DRAFT",
       "aprobado": "APPROVED",
       "rechazado": "REJECTED"
+    },
+    "resumen": {
+      "title": "Financial summary",
+      "gestionSection": "Case and quote",
+      "pagosSection": "Payments",
+      "numeroGestion": "Case number",
+      "encabezado": "Header",
+      "numeroPresupuesto": "Quote number",
+      "total": "Total",
+      "saldo": "Outstanding balance",
+      "noPagos": "No payments registered for this quote",
+      "notFound": "The requested quote was not found"
     }
   },
   "auditoria": {

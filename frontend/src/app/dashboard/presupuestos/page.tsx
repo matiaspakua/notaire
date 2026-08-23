@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Receipt } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -17,11 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { apiGet, ApiError } from "@/lib/api-client";
 import {
   usePresupuestos,
+  usePresupuestoResumen,
   useCreatePresupuesto,
   useUpdatePresupuesto,
   useDeletePresupuesto,
@@ -46,6 +48,10 @@ export default function PresupuestosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Presupuesto>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [resumenId, setResumenId] = useState<number | null>(null);
+  const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
+    usePresupuestoResumen(resumenId);
 
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
@@ -130,6 +136,14 @@ export default function PresupuestosPage() {
       header: "",
       render: (p) => (
         <div className="flex gap-2 justify-end">
+          <Button
+            size="sm"
+            variant="ghost"
+            data-testid={`btn-resumen-presupuesto-${p.idPresupuesto}`}
+            onClick={() => setResumenId(p.idPresupuesto!)}
+          >
+            <Receipt className="h-4 w-4" />
+          </Button>
           <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
             <Pencil className="h-4 w-4" />
           </Button>
@@ -143,7 +157,7 @@ export default function PresupuestosPage() {
           </Button>
         </div>
       ),
-      className: "w-24",
+      className: "w-32",
     },
   ];
 
@@ -257,6 +271,85 @@ export default function PresupuestosPage() {
               </Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
                 {isEditMode ? tc("update") : tc("create")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={resumenId !== null} onOpenChange={(v) => !v && setResumenId(null)}>
+        <DialogContent className="max-w-2xl" data-testid="dialog-resumen-presupuesto">
+          <FormContainer>
+            <FormHeader title={t("resumen.title")} />
+            {isResumenLoading && (
+              <p className="text-sm text-muted-foreground">{tc("loading")}</p>
+            )}
+            {resumenError && (
+              <p className="text-sm text-destructive" data-testid="resumen-not-found">
+                {resumenError instanceof ApiError && resumenError.status === 404
+                  ? t("resumen.notFound")
+                  : t("errorSave")}
+              </p>
+            )}
+            {resumen && (
+              <>
+                <FormSection title={t("resumen.gestionSection")}>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">{t("resumen.numeroGestion")}</p>
+                      <p className="font-medium">{resumen.numeroGestion ?? "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t("resumen.encabezado")}</p>
+                      <p className="font-medium">{resumen.encabezadoGestion ?? "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t("resumen.numeroPresupuesto")}</p>
+                      <p className="font-medium">{resumen.numeroPresupuesto}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{tc("amount")} {t("resumen.total").toLowerCase()}</p>
+                      <p className="font-medium">{formatCurrency(resumen.total)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t("resumen.saldo")}</p>
+                      <p className="font-medium">{formatCurrency(resumen.saldoPendiente)}</p>
+                    </div>
+                  </div>
+                </FormSection>
+                <FormSection title={t("resumen.pagosSection")}>
+                  {resumen.pagos.length === 0 ? (
+                    <p className="text-sm text-muted-foreground" data-testid="resumen-sin-pagos">
+                      {t("resumen.noPagos")}
+                    </p>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{tc("id")}</TableHead>
+                          <TableHead>{tc("amount")}</TableHead>
+                          <TableHead>{tc("date")}</TableHead>
+                          <TableHead>{tc("observations")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {resumen.pagos.map((pago) => (
+                          <TableRow key={pago.idPago}>
+                            <TableCell>{pago.idPago}</TableCell>
+                            <TableCell>{formatCurrency(pago.monto)}</TableCell>
+                            <TableCell>{formatDate(pago.fecha)}</TableCell>
+                            <TableCell>{pago.observaciones ?? "—"}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </FormSection>
+              </>
+            )}
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setResumenId(null)}>
+                {tc("cancel")}
               </Button>
             </FormActions>
           </FormContainer>

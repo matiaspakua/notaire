@@ -1,7 +1,9 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoPresupuestoResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.service.PresupuestoResumenService;
 import com.licensis.notaire.service.PresupuestoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,9 +39,12 @@ public class PresupuestoController {
     private static final Logger log = LoggerFactory.getLogger(PresupuestoController.class);
 
     private final PresupuestoService presupuestoService;
+    private final PresupuestoResumenService presupuestoResumenService;
 
-    public PresupuestoController(PresupuestoService presupuestoService) {
+    public PresupuestoController(PresupuestoService presupuestoService,
+            PresupuestoResumenService presupuestoResumenService) {
         this.presupuestoService = presupuestoService;
+        this.presupuestoResumenService = presupuestoResumenService;
     }
 
     @GetMapping
@@ -61,6 +66,20 @@ public class PresupuestoController {
         return presupuestoService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @GetMapping("/{id}/resumen")
+    @Operation(summary = "CU47 - Obtener resumen financiero de un presupuesto (total, saldo y pagos)")
+    public ResponseEntity<DtoPresupuestoResumen> getResumen(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(presupuestoResumenService.obtenerResumen(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/persona/{idPersona}")

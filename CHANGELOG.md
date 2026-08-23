@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Pago ↔ presupuesto ↔ gestión financial summary exposed end-to-end** (issue #820,
+  CU-47, CU-02, RF-21): `Pago.getPresupuesto()` is no longer `@JsonIgnore` — payment
+  responses now go through `DtoPagoResponse` (via `PagoMapper`) and include the
+  associated `idPresupuesto`. Added `GET /api/v1/presupuestos/{id}/resumen`
+  (`PresupuestoResumenService`) returning the gestión número/encabezado, presupuesto
+  total, saldo pendiente, and the full payment list for a presupuesto — 404 for an
+  unknown id. Added `GET /api/v1/gestiones/{id}/resumen-financiero`
+  (`GestionResumenFinancieroService`) aggregating total presupuestado, total cobrado
+  and saldo across every presupuesto reachable through a gestión's trámites. The CU47
+  "Ver resumen" dialog on `/dashboard/presupuestos` calls the presupuesto-scoped
+  endpoint and shows total, saldo and the payment table without extra navigation
+  (`usePresupuestoResumen` in `frontend/src/hooks/usePresupuestos.ts`).
+
 - **Pending-debt verification when archiving a gestión** (issue #819, CU-16, RF-22, RF-37):
   archiving a gestión now aggregates the pending balance (`PagoService.calcularSaldoPendiente`)
   across all `presupuesto`s reachable through its `tramite`s, exposes it via
