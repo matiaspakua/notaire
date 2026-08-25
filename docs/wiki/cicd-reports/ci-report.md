@@ -5,9 +5,9 @@ nav_order: 1
 
 # 📊 CI/CD Pipeline Report
 
-**Generated:** 2026-08-21 12:13:43  
+**Generated:** 2026-08-25 07:09:16  
 **Branch:** main  
-**Commit:** 0e0470f6a4b6377c7e81185580aa6d23b4201abf
+**Commit:** 1de525a047eb5511187544e090267baca3a21a40
 
 ---
 
@@ -39,7 +39,7 @@ nav_order: 1
 | Severity | Count |
 |----------|-------|
 | Critical | 3 |
-| High | 15 |
+| High | 13 |
 
 ---
 
