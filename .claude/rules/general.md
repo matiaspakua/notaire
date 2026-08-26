@@ -12,6 +12,8 @@
 
 6. Write clear and concise commit messages following Conventional Commits format (`<type>(<scope>): <description>`, ending with `Closes #<issue-number>`).
 
+6.1. **Commits must be atomic — no exceptions.** One logical change per commit: a commit that mixes unrelated concerns (e.g. a rule change and an unrelated data fix, or two independent features) must be split. This keeps `git log`, `git bisect`, and `git revert` useful, and makes PR review tractable. Only the commit(s) that actually close the issue carry `Closes #<issue-number>`; a commit that is one atomic step of a larger issue references the issue number without `Closes`.
+
 7. Follow the coding standards and style guidelines established for the project. See `.claude/rules/programming.md`.
 
 8. Code must be self-explanatory. Do not add comments unless strictly necessary (hidden constraint, subtle invariant, or a specific workaround). Never write comments that explain what the code does — only why.

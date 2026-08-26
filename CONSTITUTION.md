@@ -56,7 +56,7 @@ No change is "done" unless it has passed the full process defined here.
 | P1 | **TDD first** | Write failing tests before implementation. A test you never saw fail proves nothing. |
 | P2 | **KIS — Keep It Simple** | The simplest solution that satisfies the Specification and passes all tests. Reject unnecessary complexity. |
 | P3 | **SRP — Single Responsibility** | Each class, method, test, and module does exactly one thing. |
-| P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. |
+| P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. Every finding raised by exploration (`openspec/explore*.md`) must resolve to a real GitHub Issue before it can become a change — a finding with no Issue is unfinished triage, not a rejected one (see §4, §13). |
 | P5 | **Clean code** | Self-explanatory code; comments only explain *why*, never *what*. Remove dead and duplicate code. |
 | P6 | **Flyway is the single source of truth** for the database schema; never alter old migrations — add a new `V{n}` migration. |
 | P7 | **Documentation is part of the change** — permanent docs are updated before merge, never duplicated. |
@@ -99,6 +99,7 @@ A change is **Done** only when **all** of the following are true:
 | Database | New Flyway migration `V{n}__description.sql`; never edit applied migrations |
 | Frontend | Centralized design system: `src/theme/tokens.ts` + `FormContainer → FormSection → FormField → FormActions` |
 | Endpoints | Every REST endpoint must be invoked from the UI at least once (UI traceability) and documented in OpenAPI/Swagger |
+| Exploration finding | Every finding ("hallazgo") in an exploration report (`openspec/explore*.md`) must carry a real, verifiable GitHub Issue reference — via the `openspec-triage` skill — before `/opsx:propose` may scaffold a change from it; see §13 and `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` |
 
 ---
 
@@ -477,6 +478,7 @@ drift.
 | Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
 | Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `openspec/specs/` |
+| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` |
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |

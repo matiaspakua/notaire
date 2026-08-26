@@ -39,6 +39,27 @@
 > completo de una gestión. Los hallazgos 2 y 3 (ya propuestos como #832 y
 > #833) siguen vigentes y sin cambios. Surgió un hallazgo nuevo, el 10, que
 > ninguno de los dos cubre.
+>
+> **Consolidación (2026-08-26):** el triage del último sub-hallazgo de 1.2
+> sin Issue ("no existe tope que impida cobrar de más") vivía en un archivo
+> aparte, `explore_1.2_overpayment_issue.md`, creado sólo porque en ese
+> momento era el único punto pendiente de esta pasada. Confirmada la
+> creación del Issue #848 y completado su `/opsx:propose`
+> (`openspec/changes/pago-limite-saldo-pendiente/`), ese archivo se fusionó
+> de vuelta en la sección 1.2 (abajo) y se eliminó — este documento vuelve a
+> ser la única fuente de trazabilidad hallazgo↔Issue, sin excepción: **regla
+> del proyecto, todo hallazgo de negocio debe tener un Issue de GitHub
+> asociado, sin excepciones** (ver `CONSTITUTION.md` §4 y
+> `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md`).
+>
+> **Cierre de Issue #820 (2026-08-26):** `openspec archive
+> payment-financial-tracking` se ejecutó — `tasks.md` y `traceability.md`
+> del change se reconstruyeron con evidencia real (PR #845, merge commit
+> `a2a17f8`) antes de archivar, y su spec quedó sincronizada en
+> `openspec/specs/pago-presupuesto-gestion-summary/spec.md`. La Tabla
+> maestra de abajo también se reordenó por prioridad (en vez del orden de
+> aparición de los hallazgos) para que sirva como orden de ejecución de
+> `/opsx:apply`.
 
 ## Resumen ejecutivo
 
@@ -100,29 +121,61 @@ el estado de su `/opsx:propose`. `resuelto` = mergeado a `main` y archivado
 en `openspec/changes/archive/`; `propose completo` = artefactos Gate 1
 listos en `openspec/changes/`, pendiente de `/opsx:apply`.
 
-| # | Hallazgo | Issue | Estado |
+**Orden:** por prioridad (`priority:high` → `priority:medium` → sin
+prioridad), y dentro de cada prioridad, `propose completo, pendiente de
+apply` primero — así la tabla sirve directamente como **orden de ejecución
+de `/opsx:apply`**, un change por vez, en sesiones separadas. La fila 1.2
+del documento original (que agrupaba 5 Issues con prioridades distintas) se
+desagregó acá para que cada Issue se pueda ordenar y ejecutar por separado;
+la sección 1.2 más abajo sigue siendo la lectura narrativa conjunta.
+
+### Listos para `/opsx:apply` — `priority:high`
+
+| Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 1.1 | Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
-| 1.2 | Cobrar sin saldo visible, sin tope, sin comprobante | [#820](https://github.com/matiaspakua/notaire/issues/820) | propose completo — `openspec/changes/payment-financial-tracking/`, pendiente de apply |
-| 1.3 | Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | propose completo — `openspec/changes/pagos-parciales-cuotas/`, pendiente de apply |
-| 1.4 | Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | propose completo — `openspec/changes/descuentos-recargos-presupuesto/`, pendiente de apply |
-| 1.5 | Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | propose completo — `openspec/changes/costos-documentos-presupuesto/`, pendiente de apply |
-| 2 | Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | propose completo — `openspec/changes/escritura-post-firma-legal-cycle/` |
-| 3 | Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | propose completo — `openspec/changes/gestion-workflow-y-bitacora/` |
-| 4 | Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | propose completo — `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
-| 5 | Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | propose completo — `openspec/changes/persona-validacion-duplicados/` |
-| 6 | Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | propose completo — `openspec/changes/suplencia-efecto-en-gestiones/` |
-| 7 | Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | propose completo — `openspec/changes/tipo-documento-vencimiento-config/` |
-| 8 | Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | propose completo — `openspec/changes/folio-vinculacion-escritura/` |
-| 9 | Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | propose completo — 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
-| 10 | Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | abierto — sin propose, depende de #832/#833 |
+| 1 | 2 — Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | `openspec/changes/escritura-post-firma-legal-cycle/` |
+| 2 | 3 — Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | `openspec/changes/gestion-workflow-y-bitacora/` |
+| 3 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
+| 4 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
+
+Ejecutar 1 y 2 primero si se puede: son prerequisito de negocio del
+hallazgo 10 (`#841`, ver más abajo), que hoy no tiene `/opsx:propose`.
+
+### Listos para `/opsx:apply` — `priority:medium`
+
+| Orden | Hallazgo | Issue | Change |
+|---|----------|-------|--------|
+| 5 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
+| 6 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
+| 7 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
+| 8 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
+| 9 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
+| 10 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
+| 11 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
+| 12 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
+| 13 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
+
+### Bloqueados — falta `/opsx:propose`
+
+| Hallazgo | Issue | Prioridad | Motivo |
+|----------|-------|-----------|--------|
+| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Depende de que #832/#833 (arriba) se apliquen primero — sin `/opsx:propose` todavía |
+| 1.2 — Recibo de pago nunca se emite | [#23](https://github.com/matiaspakua/notaire/issues/23) | sin prioridad asignada | Abierto, sin `/opsx:propose` iniciado |
+
+### Ya resueltos (no requieren `/opsx:apply`)
+
+| Hallazgo | Issue | Estado |
+|----------|-------|--------|
+| 1.1 — Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
+| 1.2 — Sin resumen financiero por gestión | [#820](https://github.com/matiaspakua/notaire/issues/820) | resuelto, mergeado (PR #845, `a2a17f8`) y archivado — spec `pago-presupuesto-gestion-summary` |
+| 1.2 — Método de pago no se persistía | [#792](https://github.com/matiaspakua/notaire/issues/792) | resuelto y archivado — spec `pagos` |
 
 Los 13 hallazgos originales tienen su `/opsx:propose` completo y validado
 (`bash scripts/validate-sdlc-plan.sh`). El hallazgo 10 ya tiene Issue
 (#841) pero todavía no tiene `/opsx:propose` — depende de que #832/#833 se
-apliquen primero. Próximo paso: `/opsx:apply` change por change, en
-sesiones separadas, siguiendo `CONSTITUTION.md` — el merge a `main` requiere
-aprobación humana explícita en cada caso.
+apliquen primero. Próximo paso: `/opsx:apply` change por change, siguiendo
+el orden de arriba, en sesiones separadas, siguiendo `CONSTITUTION.md` — el
+merge a `main` requiere aprobación humana explícita en cada caso.
 
 ---
 
@@ -202,10 +255,15 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
   cliente, gestión ni saldo. Lo mismo exige CU47 ("Consultar pago") al
   mostrar el detalle de un presupuesto — el "saldo" es un dato que el SRS
   espera ver en dos pantallas distintas y no existe en ninguna. *(Issue
-  #796, abierto)*
+  #796, propose completo — `openspec/changes/pago-presupuesto-picker-saldo/`,
+  pendiente de apply)*
 - **No existe tope que impida cobrar de más.** El sistema no rechaza (ni
   advierte) un pago que exceda lo adeudado — un pago mal tipeado se acepta
-  igual que uno correcto, sin que nadie se entere en el momento.
+  igual que uno correcto, sin que nadie se entere en el momento. El propio
+  Javadoc de `procesarPago` afirma *"valida que el monto no exceda el
+  total"*, pero el único chequeo real es `monto <= 0`
+  (`PagoService.java:29-73`). *(Issue #848, propose completo —
+  `openspec/changes/pago-limite-saldo-pendiente/`, pendiente de apply)*
 - **El método de pago que se le pide al cliente se pierde.** El personal
   registra "efectivo" o "transferencia" y ese dato no llega a ningún lado —
   el sistema deja creer que quedó registrado cuando no es así. *(Issue #792,
@@ -218,8 +276,21 @@ Recibo para el cliente  ──▶ NO EXISTE — no hay ninguna forma de emitirlo
 - **No hay forma de ver, desde una gestión, cuánto se presupuestó, cuánto se
   cobró y cuánto falta.** El pago se registra contra un presupuesto suelto;
   nada resume esa información al nivel del caso (gestión), que es como el
-  cliente y el personal piensan el trámite. *(Issue #820, propose completo —
-  `openspec/changes/payment-financial-tracking`, pendiente de apply)*
+  cliente y el personal piensan el trámite. *(Issue #820, resuelto,
+  mergeado — PR #845, `a2a17f8` — y archivado; spec
+  `pago-presupuesto-gestion-summary`)*
+
+**Ficha de triage (Issue #848)** — Caso de Uso: CU15 – Procesar Pago (#168).
+RF: RF-18 "Abonar trámite" (issue #20), sub-requerimiento RF-18.2 "Abonar
+presupuestos". Tamaño: S · Prioridad: `priority:medium`. Descripción: no
+hay redondeo/propina que justifique aceptar un pago mayor al saldo — es un
+control faltante en `PagoService.procesarPago`, expuesto vía REST
+(`PagoController`) y consumido por
+`frontend/src/app/dashboard/pagos/page.tsx`. Relación con issues
+existentes: complementa (no duplica) #796 (que da visibilidad al saldo pero
+no impide excederlo) y #820 (resumen a nivel gestión, no validación en el
+momento del cobro). Roadmap: independiente — no bloquea ni es bloqueado por
+#821/#822/#823.
 
 **Ficha de triage (Issue #820)** — Caso de Uso: CU47 – Consultar Pago
 (#200); CU02 – Iniciar Gestión (#155). RF: RF-20 "Abonar trámite" (issue
@@ -236,7 +307,13 @@ el saldo/costo de una gestión sea calculable de punta a punta) — aunque,
 tras el `propose` de los tres, ninguno resultó bloqueado en la práctica: cada
 uno reutiliza `PagoService.calcularSaldoPendiente`/`calcularTotalPresupuesto`
 ya existentes en `main`, sin esperar a que #820 se implemente (ver Out of
-Scope de cada propuesta).
+Scope de cada propuesta). **Estado real (verificado 2026-08-26 vía
+`gh issue view 820` y `git log`): mergeado y cerrado — PR #845, commit
+`a2a17f8`.** El change se reconstruyó (`tasks.md`/`traceability.md`
+actualizados con evidencia real de PR/merge commit) y se archivó con
+`openspec archive payment-financial-tracking` el 2026-08-26 —
+`openspec/changes/archive/2026-08-26-payment-financial-tracking/`; su spec
+quedó sincronizada en `openspec/specs/pago-presupuesto-gestion-summary/spec.md`.
 
 ### 1.3 Pagos parciales / en cuotas: el SRS los exige y no existe ningún circuito *(Issue #821, propose completo — `openspec/changes/pagos-parciales-cuotas`, pendiente de apply; no bloqueado por #820 — ver Out of Scope de la propuesta)*
 
@@ -686,4 +763,8 @@ el diagrama de estados de una gestión. Triage de los 13 hallazgos originales
 consolidado en este mismo documento el 2026-08-21 (antes en
 `explore_1.1_issues.md` y `explore_2-9_issues.md`, ambos retirados). Tercera
 pasada el 2026-08-21, revisión de código del motor de workflow contra el
-diagrama de estados y la pantalla principal — agregó el hallazgo 10.*
+diagrama de estados y la pantalla principal — agregó el hallazgo 10. Cuarta
+consolidación el 2026-08-26: se fusionó de vuelta el triage del último
+sub-hallazgo de 1.2 (`explore_1.2_overpayment_issue.md`, Issue #848, ya con
+`/opsx:propose` completo) y se retiró ese archivo — este documento es la
+única fuente de trazabilidad hallazgo↔Issue del proyecto.*

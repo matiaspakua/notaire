@@ -2,7 +2,12 @@
 > repo's tooling (no references anywhere in scripts, CI, or other docs).
 > The real, enforced process is `CONSTITUTION.md` §5 +
 > [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md).
-> Kept here for historical reference only.
+> Kept here for historical reference only. Where this template says
+> "task/issue", the real process requires a **real GitHub Issue** — every
+> traceable unit of work, including a finding from an exploration report,
+> must resolve to one (`CONSTITUTION.md` P4, §4; enforced mechanically by
+> `scripts/validate-sdlc-plan.sh` and the `openspec-triage` skill). This
+> archived document predates and does not describe that mechanism.
 
 # Closed-Loop Engineering Agent
 
