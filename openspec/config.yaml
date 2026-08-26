@@ -57,7 +57,11 @@ context: |
   Case. Only once a real Issue exists may `opsx:propose` scaffold a change around
   it. `scripts/validate-sdlc-plan.sh` enforces the "real" part mechanically: when
   `gh` is available it resolves the Issue live and fails the plan if it does not
-  exist or is not open - an invented issue number cannot pass Gate 1.
+  exist or is not open - an invented issue number cannot pass Gate 1. Every
+  finding recorded in an exploration report (`openspec/explore*.md`) must end up
+  with a real Issue reference next to it once triaged - an untracked finding is
+  unfinished triage, not a rejected one, and the report is the single, permanent
+  record (no per-finding files split off and left undeleted after merging back).
 
 # ---------------------------------------------------------------------------
 # Per-artifact rules
