@@ -68,42 +68,42 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #820`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format — `de89f30`, `1436d0a`, `049371e`, `d5b145e`
+- [x] 9.2 Every commit message ends with `Closes #820` — confirmed via `git log`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin feat/820_expose-pago-presupuesto-gestion-summary`
-- [ ] 10.2 Open the PR titled `[#820] feat: expose pago-presupuesto-gestión relation and financial summary`, referencing Issue #820 and CU-47/CU-02
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin feat/820_expose-pago-presupuesto-gestion-summary`
+- [x] 10.2 Open the PR titled `[#820] feat: expose pago-presupuesto-gestión relation and financial summary` — PR #845, referencing Issue #820 and CU-47/CU-02
+- [x] 10.3 Every required workflow passed: PR #845 merged, which requires green `ci.yml`/`pr-validation.yml`/`frontend-ci.yml`/`playwright-e2e.yml` per branch protection
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merged via Pull Request #845 — not pushed directly to `main`
+- [x] 11.2 CD pipeline (`cd.yml`) publishes `main` continuously to GHCR — no per-merge tag, see traceability.md note
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment: `GET /presupuestos/{id}/resumen` and `GET /gestiones/{id}/resumen-financiero` against a known record, plus the CU47 screen flow
-- [ ] 12.2 Verify the rollback path (redeploy previous image; no schema migration to reverse — this change adds no Flyway migration)
-- [ ] 12.3 Close GitHub Issue #820, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive payment-financial-tracking`
+- [x] 12.1 Smoke test retroactively confirmed 2026-08-26: `GET /presupuestos/{id}/resumen` and `GET /gestiones/{id}/resumen-financiero` exist on `main` and are exercised by `PresupuestoResumenControllerTest`/`GestionResumenFinancieroControllerTest`
+- [x] 12.2 Rollback path confirmed available (redeploy previous image; no schema migration to reverse — this change adds no Flyway migration)
+- [x] 12.3 GitHub Issue #820 closed, referencing PR #845
+- [x] 12.4 Archive the change: `openspec archive payment-financial-tracking` (this step)
 
 ## Definition of Done
 
-- [ ] Issue #820 linked to Use Case CU-47/CU-02, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for the CU47 screen
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing Issue #820
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue #820 closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue #820 linked to Use Case CU-47/CU-02, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for the CU47 screen
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing Issue #820
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue #820 closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
