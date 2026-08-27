@@ -72,10 +72,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #833`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 The commit that closes the work carries `Closes #833` (`.claude/rules/general.md` #6.1); intermediate atomic commits reference the issue without closing it
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 

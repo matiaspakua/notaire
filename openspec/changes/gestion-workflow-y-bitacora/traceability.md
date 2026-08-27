@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #833 | open |
 | Use Case | CU13 – Ver historial de gestión (#166); CU83 – Definir Workflow de Estados y Transiciones (#451, #453, #454, #455); CU16 – Archivar Gestión (#169, #819) | exists |
-| Specification | `openspec/changes/gestion-workflow-y-bitacora/` | in progress |
-| Branch | `feat/833_gestion-workflow-y-bitacora` | not created |
-| Tasks | `tasks.md` | 0/N complete |
-| Commits | — | pending |
+| Specification | `openspec/changes/gestion-workflow-y-bitacora/` | done |
+| Branch | `feat/833_gestion-workflow-y-bitacora` | created |
+| Tasks | `tasks.md` | Gates 1-3 complete (Groups 1-8); Groups 9-12 in progress |
+| Commits | `897dde7`, `cb420ed`, `76f127c`, `f102d72`, `fdcc7c5`, `88c51aa`, `828370b`, `64af369` | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -44,18 +44,18 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU13 – Ver historial de gestión.md` | no | pending |
-| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | no | pending |
-| `docs/100-business/102-use-cases/CU83 – Definir Workflow de Estados y Transiciones.md` | no | pending |
-| `CHANGELOG.md` | no | pending |
+| `docs/100-business/102-use-cases/CU13 – Ver historial de gestión.md` | yes | `828370b` |
+| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | yes | `828370b` |
+| `docs/100-business/102-use-cases/CU83 – Definir Workflow de Estados y Transiciones.md` | yes | `828370b` |
+| `CHANGELOG.md` | yes | `828370b` |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | — |
-| 2 | Failing tests written, test cases designed | pending | — |
-| 3 | Suite green, coverage held, docs updated | pending | — |
+| 1 | Issue + Specification + Acceptance Criteria | passed | Issue #833, `specs/gestion-workflow-transicion/spec.md`, `specs/gestion-bitacora/spec.md`, `specs/gestion-archive-debt-check/spec.md` |
+| 2 | Failing tests written, test cases designed | passed | `897dde7`, `cb420ed` (unit + integration tests before implementation) |
+| 3 | Suite green, coverage held, docs updated | passed | `mvn verify -pl backend-api` green, `npx playwright test` 447 passed/39 skipped against the Docker stack, `bash scripts/preflight.sh --fix` PASSED (15 gates), docs updated in `828370b` |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
