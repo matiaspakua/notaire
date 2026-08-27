@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/833_gestion-workflow-y-bitacora` | created |
 | Tasks | `tasks.md` | Gates 1-3 complete (Groups 1-8); Groups 9-12 in progress |
 | Commits | `897dde7`, `cb420ed`, `76f127c`, `f102d72`, `fdcc7c5`, `88c51aa`, `828370b`, `64af369` | done |
-| Pull Request | — | pending |
+| Pull Request | [#855](https://github.com/matiaspakua/notaire/pull/855) | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
