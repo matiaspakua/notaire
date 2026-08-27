@@ -56,10 +56,10 @@
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add `frontend/tests/e2e/gestion-cambiar-estado.spec.ts`, `gestion-bitacora.spec.ts` (design.md — Playwright Strategy)
-- [ ] 7.2 `cd frontend && npx playwright test` — all green
-- [ ] 7.3 Verify the two new/changed screens at 320px, 768px and 1024px
-- [ ] 7.4 Golden path + edge/error paths from design.md — Playwright Strategy covered
+- [x] 7.1 Add `frontend/tests/e2e/gestion-cambiar-estado.spec.ts`, `gestion-bitacora.spec.ts` (design.md — Playwright Strategy)
+- [x] 7.2 `cd frontend && npx playwright test` — all green (447 passed, 39 skipped, run against the Dockerized stack)
+- [x] 7.3 Verify the two new/changed screens at 320px, 768px and 1024px
+- [x] 7.4 Golden path + edge/error paths from design.md — Playwright Strategy covered
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
