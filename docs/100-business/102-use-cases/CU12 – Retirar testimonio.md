@@ -33,3 +33,4 @@
 | 10.2 | 1. El Recepcionista informa al Cliente de la deuda registrada. 2. El Cliente decide no retirar la copia. | El sistema gestiona la excepción y notifica al usuario. |
 | 10.2 | El Recepcionista informa al Cliente de la deuda registrada. (Seguir en el punto 6.) | Informa que el Cliente registra deudas sobre el presupuesto de la gestión, asociada a la copia a retirar. |
 | 5.2 | No existen copias de testimonio a retirar, asociadas al Cliente indicado. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.3 | El testimonio seleccionado aún no fue registrado como inscripto (ver CU11). | El sistema gestiona la excepción y notifica al usuario. |

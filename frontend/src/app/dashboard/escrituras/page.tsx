@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Signature } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -18,11 +18,13 @@ import {
   useCreateEscritura,
   useUpdateEscritura,
   useDeleteEscritura,
+  useFirmarEscritura,
 } from "@/hooks/useEscrituras";
-import { formatDate } from "@/lib/utils";
+import { formatDate, extractApiError } from "@/lib/utils";
 import type { Escritura } from "@/types";
 
-const EMPTY: Partial<Escritura> = { numero: undefined, fechaEscrituracion: "", cuerpo: "", estado: "SIN_FIRMAR" };
+const EMPTY: Partial<Escritura> = { numero: undefined, fechaEscrituracion: "", cuerpo: "" };
+const ESTADO_SIN_FIRMAR = "Sin Firmar";
 
 export default function EscriturasPage() {
   const t = useTranslations("escrituras");
@@ -32,9 +34,11 @@ export default function EscriturasPage() {
   const createMutation = useCreateEscritura();
   const updateMutation = useUpdateEscritura();
   const deleteMutation = useDeleteEscritura();
+  const firmarMutation = useFirmarEscritura();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [firmarId, setFirmarId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Escritura>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [searchNumero, setSearchNumero] = useState("");
@@ -72,15 +76,35 @@ export default function EscriturasPage() {
     finally { setDeleteId(null); }
   }
 
+  async function handleFirmar() {
+    if (!firmarId) return;
+    try {
+      await firmarMutation.mutateAsync(firmarId);
+      toast.success(t("firmada"));
+    } catch (err) { toast.error(extractApiError(err) ?? t("errorFirmar")); }
+    finally { setFirmarId(null); }
+  }
+
   const columns: Column<Escritura>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEscritura}</span>, className: "w-12" },
     { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.numero ?? "—"}</span> },
     { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fechaEscrituracion) },
-    { key: "folio", header: t("fields.folio"), render: (e) => e.folio?.numero ?? "—" },
+    { key: "estado", header: t("fields.estado"), render: (e) => e.estado ?? "—" },
     {
-      key: "actions", header: "", className: "w-24",
+      key: "actions", header: "", className: "w-32",
       render: (e) => (
         <div className="flex gap-2 justify-end">
+          {e.estado === ESTADO_SIN_FIRMAR && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setFirmarId(e.idEscritura!)}
+              aria-label={t("firmarEscritura")}
+              data-testid={`btn-firmar-escritura-${e.idEscritura}`}
+            >
+              <Signature className="h-4 w-4" />
+            </Button>
+          )}
           <Button size="sm" variant="ghost" onClick={() => openEdit(e)}><Pencil className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(e.idEscritura!)}><Trash2 className="h-4 w-4" /></Button>
         </div>
@@ -127,6 +151,16 @@ export default function EscriturasPage() {
       </Dialog>
 
       <ConfirmDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={handleDelete} loading={deleteMutation.isPending} />
+
+      <ConfirmDialog
+        open={!!firmarId}
+        onOpenChange={(v) => !v && setFirmarId(null)}
+        onConfirm={handleFirmar}
+        loading={firmarMutation.isPending}
+        title={t("firmarConfirmTitle")}
+        description={t("firmarConfirmDescription")}
+        confirmLabel={t("firmarEscritura")}
+      />
     </div>
   );
 }

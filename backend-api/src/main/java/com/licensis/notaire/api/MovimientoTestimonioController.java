@@ -3,6 +3,7 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
 import com.licensis.notaire.repository.MovimientoTestimonioRepository;
+import com.licensis.notaire.service.MovimientoTestimonioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,9 +29,12 @@ import java.util.Optional;
 public class MovimientoTestimonioController {
 
     private final MovimientoTestimonioRepository repository;
+    private final MovimientoTestimonioService movimientoTestimonioService;
 
-    public MovimientoTestimonioController(MovimientoTestimonioRepository repository) {
+    public MovimientoTestimonioController(MovimientoTestimonioRepository repository,
+            MovimientoTestimonioService movimientoTestimonioService) {
         this.repository = repository;
+        this.movimientoTestimonioService = movimientoTestimonioService;
     }
 
     @GetMapping
@@ -113,5 +117,59 @@ public class MovimientoTestimonioController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el movimiento de testimonio está referenciado por otros registros.");
         }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "El testimonio no está verificado o ya tiene un movimiento abierto"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @PostMapping("/{idTestimonio}/ingresar-inscripcion")
+    @Operation(summary = "Ingresar testimonio para inscripción",
+               description = "Registra la fecha de ingreso de un testimonio verificado al Registro de la Propiedad")
+    public ResponseEntity<DtoMovimientoTestimonio> ingresarInscripcion(@PathVariable Integer idTestimonio) {
+        MovimientoTestimonio movimiento = movimientoTestimonioService.ingresarInscripcion(idTestimonio);
+        return ResponseEntity.status(HttpStatus.CREATED).body(movimiento.getDto());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Falta el ingreso a inscripción previo"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @PostMapping("/{idTestimonio}/registrar-inscripcion")
+    @Operation(summary = "Registrar inscripción del testimonio",
+               description = "Marca como inscripto el movimiento abierto de un testimonio, registrando la fecha")
+    public ResponseEntity<DtoMovimientoTestimonio> registrarInscripcion(@PathVariable Integer idTestimonio) {
+        MovimientoTestimonio movimiento = movimientoTestimonioService.registrarInscripcion(idTestimonio);
+        return ResponseEntity.ok(movimiento.getDto());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "El testimonio no está inscripto"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @PostMapping("/{idTestimonio}/retirar")
+    @Operation(summary = "Retirar testimonio inscripto",
+               description = "Registra la fecha de salida y el número de cartón de un testimonio inscripto")
+    public ResponseEntity<DtoMovimientoTestimonio> retirar(@PathVariable Integer idTestimonio,
+            @RequestBody DtoMovimientoTestimonio dto) {
+        MovimientoTestimonio movimiento = movimientoTestimonioService.retirar(idTestimonio, dto.getNumeroCarton());
+        return ResponseEntity.ok(movimiento.getDto());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "El testimonio no fue retirado previamente"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @PostMapping("/{idTestimonio}/reingresar")
+    @Operation(summary = "Reingresar testimonio retirado",
+               description = "Crea un nuevo movimiento de ingreso para un testimonio previamente retirado, sin "
+                       + "alterar el movimiento anterior")
+    public ResponseEntity<DtoMovimientoTestimonio> reingresar(@PathVariable Integer idTestimonio) {
+        MovimientoTestimonio movimiento = movimientoTestimonioService.reingresar(idTestimonio);
+        return ResponseEntity.status(HttpStatus.CREATED).body(movimiento.getDto());
     }
 }

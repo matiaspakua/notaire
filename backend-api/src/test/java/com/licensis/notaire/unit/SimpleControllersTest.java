@@ -48,9 +48,12 @@ import com.licensis.notaire.repository.TipoDeFolioRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.service.EscrituraFirmaService;
 import com.licensis.notaire.service.EscrituraService;
+import com.licensis.notaire.service.MovimientoTestimonioService;
 import com.licensis.notaire.service.PersonaService;
 import com.licensis.notaire.service.PresupuestoService;
+import com.licensis.notaire.service.TestimonioGeneracionVerificacionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -327,8 +330,9 @@ class SimpleControllersTest {
     @DisplayName("MovimientoTestimonioController")
     class MovimientoTestimonioControllerTests {
         private final MovimientoTestimonioRepository repo = mock(MovimientoTestimonioRepository.class);
+        private final MovimientoTestimonioService movimientoTestimonioService = mock(MovimientoTestimonioService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new MovimientoTestimonioController(repo)).build();
+                standaloneSetup(new MovimientoTestimonioController(repo, movimientoTestimonioService)).build();
 
         private MovimientoTestimonio build() {
             MovimientoTestimonio m = new MovimientoTestimonio();
@@ -385,8 +389,9 @@ class SimpleControllersTest {
     @DisplayName("EscrituraController")
     class EscrituraControllerTests {
         private final EscrituraService service = mock(EscrituraService.class);
+        private final EscrituraFirmaService firmaService = mock(EscrituraFirmaService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EscrituraController(service))
+                standaloneSetup(new EscrituraController(service, firmaService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -473,8 +478,10 @@ class SimpleControllersTest {
     @DisplayName("TestimonioController")
     class TestimonioControllerTests {
         private final TestimonioRepository repo = mock(TestimonioRepository.class);
+        private final TestimonioGeneracionVerificacionService generacionVerificacionService =
+                mock(TestimonioGeneracionVerificacionService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonioController(repo)).build();
+                standaloneSetup(new TestimonioController(repo, generacionVerificacionService)).build();
 
         private Testimonio build() {
             Testimonio t = new Testimonio();

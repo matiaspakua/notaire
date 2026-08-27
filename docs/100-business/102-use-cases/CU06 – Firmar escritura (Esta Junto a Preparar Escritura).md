@@ -29,3 +29,5 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 4.1 | La escritura no se encuentra dentro de la lista de escrituras disponibles para firmar. | El sistema gestiona la excepción y notifica al usuario. |
+| 6.1 | La escritura ya se encuentra firmada. | El sistema gestiona la excepción y notifica al usuario. |
+| 6.2 | La escritura no tiene folio(s) asignado(s). | El sistema gestiona la excepción y notifica al usuario. |

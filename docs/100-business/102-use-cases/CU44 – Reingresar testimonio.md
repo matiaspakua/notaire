@@ -28,4 +28,4 @@
 
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
-| 5.1 | La escritura no tiene testimonios que hayan sido ingresados para inscribir. | El sistema gestiona la excepción y notifica al usuario. |
+| 5.1 | El testimonio seleccionado no fue retirado previamente (ver CU12). | El sistema gestiona la excepción y notifica al usuario. |

@@ -177,9 +177,9 @@ export class GherkinSteps {
   }
 
   async thenShowsErrorMessage(message: string) {
-    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(
+      this.page.locator("[data-sonner-toast]").getByText(new RegExp(message, "i"))
+    ).toBeVisible({ timeout: 5000 });
   }
 
   async thenUrlIs(expectedUrl: RegExp) {
@@ -192,9 +192,9 @@ export class GherkinSteps {
   }
 
   async thenShowsSuccessMessage(message: string = "éxito") {
-    await expect(this.page.getByText(new RegExp(message, "i"))).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(
+      this.page.locator("[data-sonner-toast]").getByText(new RegExp(message, "i"))
+    ).toBeVisible({ timeout: 5000 });
   }
 
   /** Then: a toast notification is displayed */
@@ -218,6 +218,14 @@ export class GherkinSteps {
     await expect(
       this.page.getByRole("progressbar").or(this.page.locator(".loading"))
     ).not.toBeVisible({ timeout: 10000 });
+  }
+
+  /** Then: the page has no horizontal scroll at the current viewport (ui-ux-design.md — Responsive Design) */
+  async thenHasNoHorizontalOverflow() {
+    const overflow = await this.page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    );
+    expect(overflow).toBe(true);
   }
 
   /** Then: a dropdown option is selectable */

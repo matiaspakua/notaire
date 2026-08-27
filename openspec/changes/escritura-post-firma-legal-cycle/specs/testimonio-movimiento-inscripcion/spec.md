@@ -29,6 +29,12 @@ ingreso, según CU11 y RF-30/RF-92.
 - **THEN** el sistema rechaza la operación y responde con un error que
   indica que el testimonio ya está en trámite de inscripción
 
+#### Scenario: Rechazo de ingreso de testimonio no verificado
+- **WHEN** el Escribano intenta presentar para inscripción un testimonio
+  que todavía no fue verificado
+- **THEN** el sistema rechaza la operación y responde con un error que
+  indica que el testimonio debe estar verificado
+
 ### Requirement: Registrar inscripción del testimonio
 El sistema SHALL permitir marcar un testimonio ingresado como inscripto,
 registrando la fecha de inscripción, según RF-32.

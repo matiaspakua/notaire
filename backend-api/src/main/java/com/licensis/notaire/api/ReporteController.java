@@ -143,6 +143,24 @@ public class ReporteController {
                 () -> reporteService.generarReporteDeclaracionJuradaMensual(anio, mes));
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "El testimonio no está verificado"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @GetMapping(value = "/testimonio/{idTestimonio}/copia", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generar copia impresa de testimonio verificado",
+               description = "Genera un PDF con la copia impresa de un testimonio, solo si ya fue verificado")
+    public ResponseEntity<byte[]> generarReporteCopiaTestimonio(
+            @Parameter(description = "ID del testimonio")
+            @PathVariable @Positive Integer idTestimonio) {
+        byte[] pdfBytes = reporteService.generarReporteCopiaTestimonio(idTestimonio);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"testimonio_" + idTestimonio + "_copia.pdf\"")
+                .body(pdfBytes);
+    }
+
     @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar declaracion jurada de rentas",
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")

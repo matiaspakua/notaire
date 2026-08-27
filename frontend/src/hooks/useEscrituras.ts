@@ -38,3 +38,12 @@ export function useDeleteEscritura() {
     onSuccess: () => qc.invalidateQueries({ queryKey: escriturasKeys.all }),
   });
 }
+
+/** CU06 - Transiciona una escritura "Sin Firmar" con folio asignado al estado "Firmada". */
+export function useFirmarEscritura() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => apiPost<Escritura>(`/escrituras/${id}/firmar`, {}),
+    onSuccess: () => qc.invalidateQueries({ queryKey: escriturasKeys.all }),
+  });
+}

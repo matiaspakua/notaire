@@ -58,6 +58,24 @@ class TestimonioControllerIntegrationTest {
         return node.get("idEscritura").asInt();
     }
 
+    private int createEscrituraFirmada() throws Exception {
+        String escrituraBody = """
+                {
+                  "numero": 3002,
+                  "cuerpo": "Escritura firmada de prueba para generar testimonio",
+                  "estado": "Firmada",
+                  "fechaEscrituracion": "2026-06-16"
+                }
+                """;
+        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(escrituraBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        JsonNode node = mapper.readTree(result.getResponse().getContentAsString());
+        return node.get("idEscritura").asInt();
+    }
+
     // DtoEscritura.numero is primitive int — must be included in nested object to avoid 400
     private String testimonioBody(int numero, boolean observado, int escrituraId) {
         return """
@@ -228,5 +246,67 @@ class TestimonioControllerIntegrationTest {
     void shouldReturn404WhenDeletingNonExistingTestimonio() throws Exception {
         mockMvc.perform(delete("/api/v1/testimonio/99999"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("CU07 - Should generate testimonio with system-assigned numero from a Firmada escritura")
+    void shouldGenerateTestimonioFromFirmadaEscritura() throws Exception {
+        int escrituraId = createEscrituraFirmada();
+
+        mockMvc.perform(post("/api/v1/testimonio/" + escrituraId + "/generar"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.idTestimonio").isNumber())
+                .andExpect(jsonPath("$.numero").isNumber())
+                .andExpect(jsonPath("$.verificado").value(false))
+                .andExpect(jsonPath("$.observado").value(false))
+                .andExpect(jsonPath("$.escritura.idEscritura").value(escrituraId));
+    }
+
+    @Test
+    @DisplayName("CU07 - Should return 400 when generating testimonio from a non-Firmada escritura")
+    void shouldRejectGenerateTestimonioFromNonFirmadaEscritura() throws Exception {
+        int escrituraId = createEscritura();
+
+        mockMvc.perform(post("/api/v1/testimonio/" + escrituraId + "/generar"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("CU08 - Should verify a generated testimonio without observaciones")
+    void shouldVerifyGeneratedTestimonioWithoutObservaciones() throws Exception {
+        int escrituraId = createEscrituraFirmada();
+
+        MvcResult generated = mockMvc.perform(post("/api/v1/testimonio/" + escrituraId + "/generar"))
+                .andExpect(status().isCreated())
+                .andReturn();
+        int idTestimonio = mapper.readTree(generated.getResponse().getContentAsString())
+                .get("idTestimonio").asInt();
+
+        mockMvc.perform(post("/api/v1/testimonio/" + idTestimonio + "/verificar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"observado\": false}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verificado").value(true))
+                .andExpect(jsonPath("$.observado").value(false));
+    }
+
+    @Test
+    @DisplayName("CU08 - Should verify a generated testimonio with observaciones")
+    void shouldVerifyGeneratedTestimonioWithObservaciones() throws Exception {
+        int escrituraId = createEscrituraFirmada();
+
+        MvcResult generated = mockMvc.perform(post("/api/v1/testimonio/" + escrituraId + "/generar"))
+                .andExpect(status().isCreated())
+                .andReturn();
+        int idTestimonio = mapper.readTree(generated.getResponse().getContentAsString())
+                .get("idTestimonio").asInt();
+
+        mockMvc.perform(post("/api/v1/testimonio/" + idTestimonio + "/verificar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"observado\": true, \"observaciones\": \"Falta firma del otorgante\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.verificado").value(true))
+                .andExpect(jsonPath("$.observado").value(true))
+                .andExpect(jsonPath("$.observaciones").value("Falta firma del otorgante"));
     }
 }

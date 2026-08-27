@@ -15,6 +15,7 @@ public class DtoTestimonio implements DtoValido
     private DtoEscritura escritura;
     private int numero;
     private boolean observado;
+    private boolean verificado;
     private String observaciones;
     private int version = 0;
     private List<DtoCopia> copias = new ArrayList();
@@ -72,6 +73,16 @@ public class DtoTestimonio implements DtoValido
     public void setObservado(boolean observado)
     {
         this.observado = observado;
+    }
+
+    public boolean isVerificado()
+    {
+        return this.verificado;
+    }
+
+    public void setVerificado(boolean verificado)
+    {
+        this.verificado = verificado;
     }
 
     public String getObservaciones()

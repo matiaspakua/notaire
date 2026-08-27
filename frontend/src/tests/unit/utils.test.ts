@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { cn, formatDate, formatCurrency, fullName } from "@/lib/utils";
+import { cn, formatDate, formatCurrency, fullName, extractApiError } from "@/lib/utils";
 
 describe("cn()", () => {
   it("merges classes", () => {
@@ -58,5 +58,34 @@ describe("fullName()", () => {
 
   it("handles empty object", () => {
     expect(fullName({})).toBe("—");
+  });
+});
+
+describe("extractApiError()", () => {
+  it("returns null for non-Error values", () => {
+    expect(extractApiError("plain string")).toBeNull();
+    expect(extractApiError(null)).toBeNull();
+  });
+
+  it("returns null when the status is neither 400 nor 409", () => {
+    const err = new Error('[404] /escrituras/1: {"message":"Not found"}');
+    expect(extractApiError(err)).toBeNull();
+  });
+
+  it("extracts the message field from a 400 BusinessValidationException body", () => {
+    const err = new Error(
+      '[400] /escrituras/1/firmar: {"status":400,"error":"Bad Request","message":"La escritura no está en estado \'Sin Firmar\'"}'
+    );
+    expect(extractApiError(err)).toBe("La escritura no está en estado 'Sin Firmar'");
+  });
+
+  it("extracts the error field from a 409 Conflict body as a fallback", () => {
+    const err = new Error('[409] /movimiento-testimonio: {"error":"Ya existe un movimiento abierto"}');
+    expect(extractApiError(err)).toBe("Ya existe un movimiento abierto");
+  });
+
+  it("returns null when the body is not parseable JSON", () => {
+    const err = new Error("[400] /escrituras/1/firmar: not json");
+    expect(extractApiError(err)).toBeNull();
   });
 });

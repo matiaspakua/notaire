@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  ArrowRightLeft,
   BookMarked,
   Building2,
   Calculator,
   Copy,
   CreditCard,
+  FileCheck2,
   FileText,
   FolderKanban,
   Home,
@@ -44,6 +46,12 @@ const navItems: NavItem[] = [
   },
   { labelKey: "personas", href: "/dashboard/personas", icon: Users },
   { labelKey: "escrituras", href: "/dashboard/escrituras", icon: ScrollText },
+  { labelKey: "testimonios", href: "/dashboard/testimonios", icon: FileCheck2 },
+  {
+    labelKey: "movimientosTestimonio",
+    href: "/dashboard/movimientos-testimonio",
+    icon: ArrowRightLeft,
+  },
   { labelKey: "pagos", href: "/dashboard/pagos", icon: CreditCard },
   { labelKey: "protocolo", href: "/dashboard/protocolo", icon: BookMarked },
   { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
