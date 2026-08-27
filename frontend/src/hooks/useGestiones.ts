@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { gestionWorkflowKeys } from "@/hooks/useGestionWorkflow";
 import type {
   CreateCompleteGestionInput,
   DtoGestionArchivada,
   DtoSaldoPendiente,
   GestionDeEscritura,
+  Historial,
 } from "@/types";
 
 export const gestionesKeys = {
@@ -13,6 +15,10 @@ export const gestionesKeys = {
   byCliente: (id: number) => ["gestiones", "cliente", id] as const,
   byNumero: (numero: number) => ["gestiones", "numero", numero] as const,
   saldoPendiente: (id: number) => ["gestiones", id, "saldo-pendiente"] as const,
+};
+
+export const historialKeys = {
+  byGestion: (id: number) => ["historial", "gestion", id] as const,
 };
 
 export function useGestiones() {
@@ -89,5 +95,28 @@ export function useArchivarGestion() {
   return useMutation({
     mutationFn: (id: number) => apiPost<DtoGestionArchivada>(`/gestiones/${id}/archivar`, {}),
     onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
+  });
+}
+
+/** CU83 - Transiciona el estado de una gestión validando el workflow definido. */
+export function useTransicionarGestion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, estadoDestino }: { id: number; estadoDestino: string }) =>
+      apiPost<GestionDeEscritura>(`/gestiones/${id}/transicionar`, { estadoDestino }),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: gestionesKeys.all });
+      qc.invalidateQueries({ queryKey: gestionWorkflowKeys.trace(id) });
+      qc.invalidateQueries({ queryKey: historialKeys.byGestion(id) });
+    },
+  });
+}
+
+/** CU13 - Bitácora completa de una gestión, ordenada cronológicamente. */
+export function useHistorial(gestionId: number | undefined) {
+  return useQuery({
+    queryKey: historialKeys.byGestion(gestionId ?? 0),
+    queryFn: () => apiGet<Historial[]>(`/gestiones/${gestionId}/historial`),
+    enabled: !!gestionId,
   });
 }

@@ -35,9 +35,9 @@
 - [x] 4.5 `GET /api/v1/gestiones/{id}/historial` en `GestionController`, documentado en OpenAPI, delegando a `GestionBitacoraService`
 - [x] 4.6 `GestionArchiveDebtService.archivar`: delegar la validación de transición a `GestionTransitionService` (destino "Archivada") antes de aplicar el archivado, y llamar a `GestionBitacoraService` al confirmar
 - [x] 4.7 Confirmar que el cálculo/advertencia de saldo pendiente (issue #819) no cambia de comportamiento
-- [ ] 4.8 Frontend: acción "Cambiar estado" en `frontend/src/app/dashboard/gestiones`, con selector limitado a los destinos válidos devueltos por el backend, usando `FormContainer`/`FormSection`/`FormField`/`FormActions`
-- [ ] 4.9 Frontend: vista de bitácora que lista el `Historial` de la gestión seleccionada (CU13)
-- [ ] 4.10 Frontend: manejar el error de archivado rechazado por transición inválida con un mensaje visible, reutilizando el patrón existente de `ConfirmDialog`
+- [x] 4.8 Frontend: acción "Cambiar estado" en `frontend/src/app/dashboard/gestiones`, con selector limitado a los destinos válidos devueltos por el backend, usando `FormContainer`/`FormSection`/`FormField`/`FormActions`
+- [x] 4.9 Frontend: vista de bitácora que lista el `Historial` de la gestión seleccionada (CU13)
+- [x] 4.10 Frontend: manejar el error de archivado rechazado por transición inválida con un mensaje visible, reutilizando el patrón existente de `ConfirmDialog`
 - [x] 4.11 Confirmar en Swagger UI que los dos endpoints nuevos aparecen correctamente documentados
 
 ## 5. Actualizar tests existentes
