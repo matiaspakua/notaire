@@ -63,12 +63,12 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update `docs/100-business/102-use-cases/CU13 – Ver historial de gestión.md`, `CU16 – Archivar Gestión.md`, `CU83 – Definir Workflow de Estados y Transiciones.md` (proposal.md — Documentation Impact)
-- [ ] 8.2 Update OpenAPI/Swagger annotations for the two new endpoints and verify in Swagger UI
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — validación de transición y bitácora conectadas al flujo real de gestión
-- [ ] 8.4 Archive superseded documents into `docs/archive/` — n/a, no document is superseded by this change
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.1 Update `docs/100-business/102-use-cases/CU13 – Ver historial de gestión.md`, `CU16 – Archivar Gestión.md`, `CU83 – Definir Workflow de Estados y Transiciones.md` (proposal.md — Documentation Impact)
+- [x] 8.2 Update OpenAPI/Swagger annotations for the two new endpoints and verify in Swagger UI
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — validación de transición y bitácora conectadas al flujo real de gestión
+- [x] 8.4 Archive superseded documents into `docs/archive/` — n/a, no document is superseded by this change
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
