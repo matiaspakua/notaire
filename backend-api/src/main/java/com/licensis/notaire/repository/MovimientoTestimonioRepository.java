@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovimientoTestimonioRepository extends JpaRepository<MovimientoTestimonio, Integer> {
@@ -16,6 +17,8 @@ public interface MovimientoTestimonioRepository extends JpaRepository<Movimiento
     List<MovimientoTestimonio> findByFkIdTestimonio(Testimonio testimonio);
 
     List<MovimientoTestimonio> findByFkIdTestimonioIdTestimonio(Integer idTestimonio);
+
+    Optional<MovimientoTestimonio> findTopByFkIdTestimonioIdTestimonioOrderByIdMovimientoTestimonioDesc(Integer idTestimonio);
 
     List<MovimientoTestimonio> findByInscripta(boolean inscripta);
 

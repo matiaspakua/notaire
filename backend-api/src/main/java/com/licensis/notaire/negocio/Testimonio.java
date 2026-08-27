@@ -63,6 +63,9 @@ public class Testimonio implements Serializable
     @Basic(optional = false)
     @Column(name = "observado")
     private boolean observado;
+    @Basic(optional = false)
+    @Column(name = "verificado")
+    private boolean verificado;
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimonio", fetch = FetchType.LAZY)
@@ -122,6 +125,16 @@ public class Testimonio implements Serializable
         this.observado = observado;
     }
 
+    public boolean getVerificado()
+    {
+        return verificado;
+    }
+
+    public void setVerificado(boolean verificado)
+    {
+        this.verificado = verificado;
+    }
+
     public String getObservaciones()
     {
         return observaciones;
@@ -177,6 +190,7 @@ public class Testimonio implements Serializable
         numero = miDto.getNumero();
         observaciones = miDto.getObservaciones();
         observado = miDto.isObservado();
+        verificado = miDto.isVerificado();
         version = miDto.getVersion();
 
         if (miDto.getEscritura() != null)
@@ -210,6 +224,7 @@ public class Testimonio implements Serializable
         miDto.setNumero(numero);
         miDto.setObservaciones(observaciones);
         miDto.setObservado(observado);
+        miDto.setVerificado(verificado);
         miDto.setVersion(version);
 
         if (fkIdEscritura != null)
