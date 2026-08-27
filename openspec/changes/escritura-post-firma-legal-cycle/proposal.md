@@ -100,9 +100,12 @@ cambian de forma, solo se les agrega una capa de acciones de negocio._
   `POST /api/v1/movimientos-testimonio/{id}/retirar`;
   `POST /api/v1/movimientos-testimonio/{id}/reingresar`;
   `GET /api/v1/reportes/testimonio/{id}/copia` (PDF, JasperReports).
-- Database (Flyway `V{n}`): ninguna — `Escritura`, `Testimonio` y
-  `MovimientoTestimonio` ya tienen todos los campos que este circuito
-  necesita.
+- Database (Flyway `V{n}`): `V17__add_verificado_to_testimonios.sql` —
+  agrega `testimonios.verificado` (boolean, aditivo). `Escritura` y
+  `MovimientoTestimonio` ya tienen todos los demás campos que este circuito
+  necesita; `Testimonio.observado` por sí solo no alcanza para distinguir
+  "aún no verificado" de "verificado, no observado", que CU11 requiere
+  para aceptar un testimonio a inscripción.
 - Configuration / `.env`: none.
 - Dependencies: none new (reutiliza JasperReports, ya usado por
   `ReporteController`).

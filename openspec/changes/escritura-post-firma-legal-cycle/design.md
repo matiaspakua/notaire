@@ -5,9 +5,12 @@
 
 `Escritura`, `Testimonio` and `MovimientoTestimonio` are already persisted
 (`negocio/Escritura.java`, `Testimonio.java`, `MovimientoTestimonio.java`)
-with every field this circuit needs (`estado`, `fechaIngreso`, `fechaSalida`,
-`fechaInscripcion`, `inscripta`, `numeroCarton`). They are reachable only
-through generic CRUD endpoints (`EscrituraController`, `TestimonioController`,
+with every field this circuit needs except one: `estado`, `fechaIngreso`,
+`fechaSalida`, `fechaInscripcion`, `inscripta`, `numeroCarton` all exist, but
+`Testimonio.observado` alone cannot distinguish "not yet verified" from
+"verified, not observed" — both read as `false`. `V17` adds
+`Testimonio.verificado` to close that gap. They are reachable only through
+generic CRUD endpoints (`EscrituraController`, `TestimonioController`,
 `MovimientoTestimonioController`), so any client can set any field to any
 value, including `estado`, without going through the rules in proposal.md.
 `ReporteController` already generates PDFs with JasperReports from a
@@ -95,6 +98,7 @@ value, including `estado`, without going through the rules in proposal.md.
 | Rechazo de emisión de copia de testimonio no verificado | integration | `TestimonioCopiaReportIntegrationTest#shouldRejectCopiaWhenNotVerified` |
 | Ingreso exitoso registra fecha de ingreso | unit | `MovimientoTestimonioServiceTest#shouldRegisterIngresoInscripcion` |
 | Rechazo de ingreso de testimonio ya ingresado sin retirar | unit | `MovimientoTestimonioServiceTest#shouldRejectIngresoWhenAlreadyOpen` |
+| Rechazo de ingreso de testimonio no verificado | unit | `MovimientoTestimonioServiceTest#shouldRejectIngresoWhenTestimonioNotVerified` |
 | Registro exitoso marca inscripto con fecha | unit | `MovimientoTestimonioServiceTest#shouldRegisterInscripcion` |
 | Rechazo de registrar inscripción sin ingreso previo | unit | `MovimientoTestimonioServiceTest#shouldRejectInscripcionWithoutIngreso` |
 | Retiro exitoso registra fecha de salida y número de cartón | unit | `MovimientoTestimonioServiceTest#shouldRegisterRetiro` |
@@ -146,9 +150,12 @@ value, including `estado`, without going through the rules in proposal.md.
 
 ## Deployment Strategy
 
-- Flyway migration required: no — `Escritura`, `Testimonio` y
-  `MovimientoTestimonio` ya tienen todos los campos necesarios (proposal.md
-  — Database).
+- Flyway migration required: yes — `V17__add_verificado_to_testimonios.sql`
+  agrega `testimonios.verificado` (boolean, `NOT NULL DEFAULT false`,
+  aditivo). `observado` por sí solo no distingue "aún no verificado" de
+  "verificado, no observado", y CU11/la spec de
+  `testimonio-movimiento-inscripcion` exigen un testimonio verificado antes
+  de aceptarlo para inscripción (proposal.md — Database).
 - Deployment order / coupling: backend y frontend se despliegan juntos
   (los nuevos endpoints son consumidos únicamente por las pantallas
   nuevas); no requiere orden especial ni ventana de compatibilidad.
@@ -164,7 +171,12 @@ value, including `estado`, without going through the rules in proposal.md.
 - Revert safe: yes — el cambio es aditivo (nuevos endpoints/servicios/
   pantallas); revertir el commit no afecta los endpoints CRUD existentes
   ni el esquema.
-- Database rollback: none needed — no hay migración Flyway asociada.
+- Database rollback: la migración `V17` es aditiva (agrega una columna
+  `NOT NULL DEFAULT false`); un revert del código deja la columna sin uso
+  pero no requiere rollback de esquema — no se agrega un script `R17`
+  porque no hay operación destructiva que revertir (`.claude/rules/database-migrations.md`
+  — Rollback Strategy: solo se justifican rollback scripts para
+  operaciones destructivas).
 - Data written under the new behavior after revert: los registros de
   `Escritura`/`Testimonio`/`MovimientoTestimonio` creados o actualizados a
   través de las acciones nuevas quedan tal cual en la base (mismos campos

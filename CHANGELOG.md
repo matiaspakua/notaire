@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Circuito legal posterior a la firma de escritura: testimonio, inscripción y retiro**
+  (issue #832, CU06, CU07, CU08, CU11, CU12, CU44): `POST /api/v1/escrituras/{id}/firmar`
+  transitions a "Sin Firmar" escritura with folio(s) assigned to "Firmada"
+  (`EscrituraFirmaService`). `POST /api/v1/testimonios/{id}/generar` and
+  `.../verificar` (`TestimonioGeneracionVerificacionService`, migration `V17`) generate
+  a testimonio from a firmada escritura and record verification (observado/no
+  observado + motivo); `GET /api/v1/reportes/testimonio/{id}/copia` issues the printed
+  copy (JasperReports) only for verified testimonios. `MovimientoTestimonioService`
+  adds the Registro de la Propiedad circuit: `ingresar-inscripcion`,
+  `registrar-inscripcion`, `retirar` and `reingresar`, each validating the required
+  preconditions (verificado, movimiento abierto, inscripto, retirado) and returning
+  404 for a non-existent testimonio. New Playwright specs cover firma, generación/
+  verificación de testimonio and the movimiento-de-inscripción circuit.
+
 - **Pago ↔ presupuesto ↔ gestión financial summary exposed end-to-end** (issue #820,
   CU-47, CU-02, RF-21): `Pago.getPresupuesto()` is no longer `@JsonIgnore` — payment
   responses now go through `DtoPagoResponse` (via `PagoMapper`) and include the
