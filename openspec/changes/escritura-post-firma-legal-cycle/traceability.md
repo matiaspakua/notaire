@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/832_escritura-post-firma-legal-cycle` | created |
 | Tasks | `tasks.md` | 76/76 complete |
 | Commits | `376b868`, `080b1af`, `8e98d06`, `04b92e3`, `9e3c5f4`, and the final ledger commit closing #832 | done |
-| Pull Request | — | pending |
+| Pull Request | [#852](https://github.com/matiaspakua/notaire/pull/852) | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
