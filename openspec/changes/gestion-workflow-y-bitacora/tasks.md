@@ -81,8 +81,8 @@
 
 - [x] 10.1 `git push -u origin feat/833_gestion-workflow-y-bitacora`
 - [x] 10.2 Open the PR titled `[#833] feat: conectar workflow y bitácora al flujo real de gestión`, referencing Issue #833 and CU13/CU83/CU16
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml` — all green on PR #855
+- [ ] 10.4 Gate 4 — CI green, no merge conflicts, docs complete; awaiting code review approval
 - [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
