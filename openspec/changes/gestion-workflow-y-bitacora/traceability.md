@@ -30,15 +30,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Transición válida se aplica | `GestionTransitionServiceTest#shouldApplyValidTransition` | pending |
-| Transición inválida es rechazada | `GestionTransitionServiceTest#shouldRejectInvalidTransition` | pending |
-| Gestión sin workflow definido rechaza cualquier transición | `GestionTransitionServiceTest#shouldRejectTransitionWhenNoWorkflowDefinition` | pending |
-| Alta de gestión registra su estado inicial | `GestionBitacoraServiceTest#shouldRecordHistorialOnCreate` | pending |
-| Transición válida registra el nuevo estado | `GestionBitacoraServiceTest#shouldRecordHistorialOnValidTransition` | pending |
-| Archivado registra el estado archivado | `GestionBitacoraServiceTest#shouldRecordHistorialOnArchive` | pending |
-| Consulta devuelve el historial completo ordenado | `GestionBitacoraServiceTest#shouldReturnOrderedHistorial` | pending |
-| Archiving succeeds when the transition to Archivada is valid | `GestionArchiveDebtServiceTest#shouldArchiveWhenTransitionValid` | pending |
-| Archiving is rejected when the transition to Archivada is invalid | `GestionArchiveDebtServiceTest#shouldRejectArchiveWhenTransitionInvalid` | pending |
+| Transición válida se aplica | `GestionTransitionServiceTest#shouldApplyValidTransition`, `GestionTransitionControllerIntegrationTest#shouldApplyValidTransition` | passing |
+| Transición inválida es rechazada | `GestionTransitionServiceTest#shouldRejectInvalidTransition`, `GestionTransitionControllerIntegrationTest#shouldRejectInvalidTransition` | passing |
+| Gestión sin workflow definido rechaza cualquier transición | `GestionTransitionServiceTest#shouldRejectTransitionWhenNoWorkflowDefinition`, `GestionTransitionControllerIntegrationTest#shouldRejectTransitionWhenNoWorkflowDefinition` | passing |
+| Alta de gestión registra su estado inicial | `GestionBitacoraServiceTest#shouldRecordHistorialOnCreate` | passing |
+| Transición válida registra el nuevo estado | `GestionBitacoraServiceTest#shouldRecordHistorialOnValidTransition` | passing |
+| Archivado registra el estado archivado | `GestionBitacoraServiceTest#shouldRecordHistorialOnArchive` | passing |
+| Consulta devuelve el historial completo ordenado | `GestionBitacoraServiceTest#shouldReturnOrderedHistorial`, `GestionBitacoraControllerIntegrationTest#shouldReturnOrderedHistorial` | passing |
+| Archiving succeeds when the transition to Archivada is valid | `GestionArchiveDebtServiceTest#shouldArchiveWhenTransitionValid` | passing |
+| Archiving is rejected when the transition to Archivada is invalid | `GestionArchiveDebtServiceTest#shouldRejectArchiveWhenTransitionInvalid` | passing |
 
 ## Permanent documentation updated
 

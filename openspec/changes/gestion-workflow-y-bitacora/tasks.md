@@ -20,39 +20,39 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases from the Requirement coverage table in `traceability.md` (happy path, edge cases, error paths)
-- [ ] 3.2 Write unit tests: `GestionTransitionServiceTest`, `GestionBitacoraServiceTest`; extend `GestionArchiveDebtServiceTest` with the two new transition-validation scenarios
-- [ ] 3.3 Write integration tests: `GestionTransitionControllerIntegrationTest`, `GestionBitacoraControllerIntegrationTest`; extend `GestionArchiveDebtControllerIntegrationTest`
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=GestionTransitionServiceTest,GestionBitacoraServiceTest,GestionArchiveDebtServiceTest`
-- [ ] 3.5 Confirm every `#### Scenario:` in the three delta specs maps to at least one test (cross-check against `traceability.md` — Requirement coverage)
+- [x] 3.1 Enumerate test cases from the Requirement coverage table in `traceability.md` (happy path, edge cases, error paths)
+- [x] 3.2 Write unit tests: `GestionTransitionServiceTest`, `GestionBitacoraServiceTest`; extend `GestionArchiveDebtServiceTest` with the two new transition-validation scenarios
+- [x] 3.3 Write integration tests: `GestionTransitionControllerIntegrationTest`, `GestionBitacoraControllerIntegrationTest`; extend `GestionArchiveDebtControllerIntegrationTest`
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=GestionTransitionServiceTest,GestionBitacoraServiceTest,GestionArchiveDebtServiceTest`
+- [x] 3.5 Confirm every `#### Scenario:` in the three delta specs maps to at least one test (cross-check against `traceability.md` — Requirement coverage)
 
 ## 4. Implementación
 
-- [ ] 4.1 `GestionTransitionService`: validar estado origen/destino contra `WorkflowTransitionRepository`/`WorkflowNodeRepository` del `WorkflowDefinition` del tipo de trámite de la gestión
-- [ ] 4.2 `POST /api/v1/gestiones/{id}/transicionar` en `GestionController`, documentado en OpenAPI (`@Operation`, `@ApiResponse`)
-- [ ] 4.3 `GestionBitacoraService`: escribir `Historial` (estado, fecha, observaciones) en alta, transición válida y archivado
-- [ ] 4.4 Invocar `GestionBitacoraService` desde el alta de gestión (`GestionController.create()`/servicio equivalente) y desde `GestionTransitionService` tras aplicar una transición válida
-- [ ] 4.5 `GET /api/v1/gestiones/{id}/historial` en `GestionController`, documentado en OpenAPI, delegando a `GestionBitacoraService`
-- [ ] 4.6 `GestionArchiveDebtService.archivar`: delegar la validación de transición a `GestionTransitionService` (destino "Archivada") antes de aplicar el archivado, y llamar a `GestionBitacoraService` al confirmar
-- [ ] 4.7 Confirmar que el cálculo/advertencia de saldo pendiente (issue #819) no cambia de comportamiento
+- [x] 4.1 `GestionTransitionService`: validar estado origen/destino contra `WorkflowTransitionRepository`/`WorkflowNodeRepository` del `WorkflowDefinition` del tipo de trámite de la gestión
+- [x] 4.2 `POST /api/v1/gestiones/{id}/transicionar` en `GestionController`, documentado en OpenAPI (`@Operation`, `@ApiResponse`)
+- [x] 4.3 `GestionBitacoraService`: escribir `Historial` (estado, fecha, observaciones) en alta, transición válida y archivado
+- [x] 4.4 Invocar `GestionBitacoraService` desde el alta de gestión (`GestionController.create()`/servicio equivalente) y desde `GestionTransitionService` tras aplicar una transición válida
+- [x] 4.5 `GET /api/v1/gestiones/{id}/historial` en `GestionController`, documentado en OpenAPI, delegando a `GestionBitacoraService`
+- [x] 4.6 `GestionArchiveDebtService.archivar`: delegar la validación de transición a `GestionTransitionService` (destino "Archivada") antes de aplicar el archivado, y llamar a `GestionBitacoraService` al confirmar
+- [x] 4.7 Confirmar que el cálculo/advertencia de saldo pendiente (issue #819) no cambia de comportamiento
 - [ ] 4.8 Frontend: acción "Cambiar estado" en `frontend/src/app/dashboard/gestiones`, con selector limitado a los destinos válidos devueltos por el backend, usando `FormContainer`/`FormSection`/`FormField`/`FormActions`
 - [ ] 4.9 Frontend: vista de bitácora que lista el `Historial` de la gestión seleccionada (CU13)
 - [ ] 4.10 Frontend: manejar el error de archivado rechazado por transición inválida con un mensaje visible, reutilizando el patrón existente de `ConfirmDialog`
-- [ ] 4.11 Confirmar en Swagger UI que los dos endpoints nuevos aparecen correctamente documentados
+- [x] 4.11 Confirmar en Swagger UI que los dos endpoints nuevos aparecen correctamente documentados
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Confirmar que los tests existentes de `GestionController` (CRUD genérico, `PUT /{id}`) no cambian — este change es aditivo salvo dentro de `archivar` (design.md — Regression Strategy)
-- [ ] 5.2 Extender `GestionArchiveDebtServiceTest`/`GestionArchiveDebtControllerIntegrationTest` con los dos escenarios nuevos de validación de transición, sin debilitar las aserciones existentes de saldo pendiente
-- [ ] 5.3 n/a — ningún test queda obsoleto
+- [x] 5.1 Confirmar que los tests existentes de `GestionController` (CRUD genérico, `PUT /{id}`) no cambian — este change es aditivo salvo dentro de `archivar` (design.md — Regression Strategy)
+- [x] 5.2 Extender `GestionArchiveDebtServiceTest`/`GestionArchiveDebtControllerIntegrationTest` con los dos escenarios nuevos de validación de transición, sin debilitar las aserciones existentes de saldo pendiente
+- [x] 5.3 n/a — ningún test queda obsoleto
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 `bash testing/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 `bash testing/scripts/test.sh` — HTTP/Bruno API suite
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
