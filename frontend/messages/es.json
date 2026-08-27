@@ -5,6 +5,8 @@
     "presupuestos": "Presupuestos",
     "personas": "Personas",
     "escrituras": "Escrituras",
+    "testimonios": "Testimonios",
+    "movimientosTestimonio": "Movimientos de Testimonio",
     "pagos": "Pagos",
     "protocolo": "Protocolo",
     "inmuebles": "Inmuebles",
@@ -200,12 +202,71 @@
     "errorDelete": "Error al eliminar",
     "noData": "No hay escrituras registradas",
     "searchPlaceholder": "Buscar por número...",
+    "firmarEscritura": "Firmar escritura",
+    "firmada": "Escritura firmada",
+    "errorFirmar": "Error al firmar la escritura",
+    "firmarConfirmTitle": "¿Firmar esta escritura?",
+    "firmarConfirmDescription": "La escritura pasará al estado \"Firmada\". Esta acción no se puede deshacer.",
     "fields": {
       "numero": "Número",
       "fecha": "Fecha",
       "tipo": "Tipo",
-      "folio": "Folio",
+      "estado": "Estado",
       "observaciones": "Observaciones"
+    }
+  },
+  "testimonios": {
+    "title": "Testimonios",
+    "newTestimonio": "Generar testimonio",
+    "selectEscritura": "Seleccionar escritura...",
+    "generated": "Testimonio generado",
+    "errorGenerate": "Error al generar el testimonio",
+    "verificarTestimonio": "Verificar testimonio",
+    "verified": "Testimonio verificado",
+    "errorVerify": "Error al verificar el testimonio",
+    "emitirCopia": "Emitir copia",
+    "errorCopia": "Error al emitir la copia",
+    "estadoGenerado": "Generado",
+    "estadoVerificado": "Verificado",
+    "estadoObservado": "Observado",
+    "noData": "No hay testimonios registrados",
+    "fields": {
+      "numero": "Número",
+      "escritura": "Escritura",
+      "estado": "Estado",
+      "observado": "Observado",
+      "observaciones": "Observaciones"
+    }
+  },
+  "movimientosTestimonio": {
+    "title": "Movimientos de Testimonio",
+    "ingresar": "Ingresar para inscripción",
+    "ingresado": "Testimonio ingresado",
+    "errorIngresar": "Error al ingresar el testimonio",
+    "registrarInscripcion": "Registrar inscripción",
+    "inscripto": "Inscripción registrada",
+    "errorRegistrar": "Error al registrar la inscripción",
+    "retirar": "Retirar",
+    "retirado": "Testimonio retirado",
+    "errorRetirar": "Error al retirar el testimonio",
+    "reingresar": "Reingresar",
+    "reingresado": "Testimonio reingresado",
+    "errorReingresar": "Error al reingresar el testimonio",
+    "noData": "No hay testimonios verificados",
+    "estados": {
+      "sinIngresar": "Sin ingresar",
+      "ingresado": "Ingresado",
+      "inscripto": "Inscripto",
+      "retirado": "Retirado"
+    },
+    "fields": {
+      "numero": "Número",
+      "escritura": "Escritura",
+      "estado": "Estado",
+      "fechaIngreso": "Fecha de ingreso",
+      "fechaInscripcion": "Fecha de inscripción",
+      "fechaSalida": "Fecha de salida",
+      "numeroCarton": "Número de cartón"
     }
   },
   "pagos": {

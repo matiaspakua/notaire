@@ -5,6 +5,8 @@
     "presupuestos": "Quotes",
     "personas": "People",
     "escrituras": "Deeds",
+    "testimonios": "Testimonios",
+    "movimientosTestimonio": "Testimonio Movements",
     "pagos": "Payments",
     "protocolo": "Protocol",
     "inmuebles": "Properties",
@@ -200,12 +202,71 @@
     "errorDelete": "Error deleting",
     "noData": "No deeds registered",
     "searchPlaceholder": "Search by number...",
+    "firmarEscritura": "Sign deed",
+    "firmada": "Deed signed",
+    "errorFirmar": "Error signing the deed",
+    "firmarConfirmTitle": "Sign this deed?",
+    "firmarConfirmDescription": "The deed will move to the \"Firmada\" state. This action cannot be undone.",
     "fields": {
       "numero": "Number",
       "fecha": "Date",
       "tipo": "Type",
-      "folio": "Folio",
+      "estado": "Status",
       "observaciones": "Observations"
+    }
+  },
+  "testimonios": {
+    "title": "Testimonios",
+    "newTestimonio": "Generate testimonio",
+    "selectEscritura": "Select deed...",
+    "generated": "Testimonio generated",
+    "errorGenerate": "Error generating the testimonio",
+    "verificarTestimonio": "Verify testimonio",
+    "verified": "Testimonio verified",
+    "errorVerify": "Error verifying the testimonio",
+    "emitirCopia": "Issue copy",
+    "errorCopia": "Error issuing the copy",
+    "estadoGenerado": "Generated",
+    "estadoVerificado": "Verified",
+    "estadoObservado": "Flagged",
+    "noData": "No testimonios registered",
+    "fields": {
+      "numero": "Number",
+      "escritura": "Deed",
+      "estado": "Status",
+      "observado": "Flagged",
+      "observaciones": "Observations"
+    }
+  },
+  "movimientosTestimonio": {
+    "title": "Testimonio Movements",
+    "ingresar": "File for registration",
+    "ingresado": "Testimonio filed",
+    "errorIngresar": "Error filing the testimonio",
+    "registrarInscripcion": "Register inscription",
+    "inscripto": "Inscription registered",
+    "errorRegistrar": "Error registering the inscription",
+    "retirar": "Withdraw",
+    "retirado": "Testimonio withdrawn",
+    "errorRetirar": "Error withdrawing the testimonio",
+    "reingresar": "Re-file",
+    "reingresado": "Testimonio re-filed",
+    "errorReingresar": "Error re-filing the testimonio",
+    "noData": "No verified testimonios",
+    "estados": {
+      "sinIngresar": "Not filed",
+      "ingresado": "Filed",
+      "inscripto": "Registered",
+      "retirado": "Withdrawn"
+    },
+    "fields": {
+      "numero": "Number",
+      "escritura": "Deed",
+      "estado": "Status",
+      "fechaIngreso": "Filing date",
+      "fechaInscripcion": "Registration date",
+      "fechaSalida": "Withdrawal date",
+      "numeroCarton": "Folder number"
     }
   },
   "pagos": {

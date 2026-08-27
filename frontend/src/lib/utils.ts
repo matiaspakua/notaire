@@ -35,18 +35,20 @@ export function fullName(p?: {
 }
 
 /**
- * Extract the server-side error message from a 409 Conflict Error.
- * Returns the `error` field from the JSON body embedded in the message,
- * or null when the message isn't a 409 or carries no parseable JSON.
+ * Extract the server-side error message from a 400/409 API Error.
+ * Returns the `message` field (populated by `GlobalExceptionHandler` for
+ * `BusinessValidationException`/`ResourceNotFoundException`), falling back to
+ * the legacy `error` field, or null when the status isn't 400/409 or the body
+ * carries no parseable JSON.
  */
 export function extractApiError(err: unknown): string | null {
   if (!(err instanceof Error)) return null;
-  if (!err.message.includes("[409]")) return null;
+  if (!err.message.includes("[400]") && !err.message.includes("[409]")) return null;
   try {
     const jsonStart = err.message.indexOf("{");
     if (jsonStart !== -1) {
-      const body = JSON.parse(err.message.slice(jsonStart)) as { error?: string };
-      return body.error ?? null;
+      const body = JSON.parse(err.message.slice(jsonStart)) as { message?: string; error?: string };
+      return body.message ?? body.error ?? null;
     }
   } catch {
     // message is not JSON — fall through

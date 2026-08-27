@@ -192,8 +192,29 @@ export interface Escritura {
   fechaEscrituracion?: string;
   cuerpo?: string;
   estado?: string;
-  folio?: Folio;
   gestion?: GestionDeEscritura;
+}
+
+export interface MovimientoTestimonio {
+  idMovimientoTestimonio?: number;
+  fechaIngreso?: string;
+  fechaSalida?: string;
+  fechaInscripcion?: string;
+  inscripta?: boolean;
+  numeroCarton?: number;
+  observaciones?: string;
+  testimonio?: { idTestimonio?: number };
+}
+
+/** CU07/CU08 - Testimonio generado a partir de una escritura firmada. */
+export interface Testimonio {
+  idTestimonio?: number;
+  numero?: number;
+  observado?: boolean;
+  verificado?: boolean;
+  observaciones?: string;
+  escritura?: Escritura;
+  movimientosTestimonios?: MovimientoTestimonio[];
 }
 
 export interface Pago {
