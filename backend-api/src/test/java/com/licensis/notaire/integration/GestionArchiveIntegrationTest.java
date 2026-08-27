@@ -21,9 +21,16 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.TipoDeTramite;
+import com.licensis.notaire.negocio.WorkflowDefinition;
+import com.licensis.notaire.negocio.WorkflowNode;
+import com.licensis.notaire.negocio.WorkflowNodeType;
+import com.licensis.notaire.negocio.WorkflowTransition;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
+import com.licensis.notaire.repository.WorkflowDefinitionRepository;
+import com.licensis.notaire.repository.WorkflowNodeRepository;
+import com.licensis.notaire.repository.WorkflowTransitionRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU16", "RF-22", "RF-37"})
@@ -44,17 +51,27 @@ class GestionArchiveIntegrationTest {
     @Autowired
     private GestionDeEscrituraRepository gestionDeEscrituraRepository;
 
+    @Autowired
+    private WorkflowDefinitionRepository workflowDefinitionRepository;
+
+    @Autowired
+    private WorkflowNodeRepository workflowNodeRepository;
+
+    @Autowired
+    private WorkflowTransitionRepository workflowTransitionRepository;
+
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
+    private EstadoDeGestion archivada;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        if (estadoDeGestionRepository.findByNombre("Archivada").isEmpty()) {
-            EstadoDeGestion archivada = new EstadoDeGestion();
-            archivada.setNombre("Archivada");
-            estadoDeGestionRepository.save(archivada);
-        }
+        archivada = estadoDeGestionRepository.findByNombre("Archivada").orElseGet(() -> {
+            EstadoDeGestion nuevo = new EstadoDeGestion();
+            nuevo.setNombre("Archivada");
+            return estadoDeGestionRepository.save(nuevo);
+        });
     }
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {
@@ -83,19 +100,43 @@ class GestionArchiveIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idPresupuesto").asInt();
     }
 
-    private Integer createEstadoDeGestion() {
+    private EstadoDeGestion createEstadoDeGestion() {
         EstadoDeGestion estado = new EstadoDeGestion();
-        estado.setNombre("Estado Archive IT");
-        return estadoDeGestionRepository.save(estado).getIdEstadoGestion();
+        estado.setNombre("Estado Archive IT " + System.nanoTime());
+        return estadoDeGestionRepository.save(estado);
     }
 
-    private Integer createTipoDeTramite() {
+    private Integer createTipoDeTramiteConWorkflowHaciaArchivada(EstadoDeGestion estadoInicial) {
+        WorkflowDefinition definition = new WorkflowDefinition();
+        definition.setNombre("Workflow Archive IT " + System.nanoTime());
+        definition.setActivo(true);
+        definition = workflowDefinitionRepository.save(definition);
+
+        WorkflowNode nodoOrigen = new WorkflowNode();
+        nodoOrigen.setWorkflowDefinition(definition);
+        nodoOrigen.setEstadoDeGestion(estadoInicial);
+        nodoOrigen.setTipo(WorkflowNodeType.INITIAL);
+        nodoOrigen = workflowNodeRepository.save(nodoOrigen);
+
+        WorkflowNode nodoDestino = new WorkflowNode();
+        nodoDestino.setWorkflowDefinition(definition);
+        nodoDestino.setEstadoDeGestion(archivada);
+        nodoDestino.setTipo(WorkflowNodeType.FINAL);
+        nodoDestino = workflowNodeRepository.save(nodoDestino);
+
+        WorkflowTransition transicion = new WorkflowTransition();
+        transicion.setWorkflowDefinition(definition);
+        transicion.setNodoOrigen(nodoOrigen);
+        transicion.setNodoDestino(nodoDestino);
+        workflowTransitionRepository.save(transicion);
+
         TipoDeTramite tipo = new TipoDeTramite();
         tipo.setNombre("Tramite Archive IT");
         tipo.setHabilitado(true);
         tipo.setSeArchiva(false);
         tipo.setSeInscribe(false);
         tipo.setAsociaInmuebles(false);
+        tipo.setWorkflowDefinition(definition);
         return tipoDeTramiteRepository.save(tipo).getIdTipoTramite();
     }
 
@@ -103,8 +144,9 @@ class GestionArchiveIntegrationTest {
         Integer clienteId = createPersona("43" + (System.nanoTime() % 1000000));
         Integer escribanoId = createPersona("44" + (System.nanoTime() % 1000000));
         Integer presupuestoId = createPresupuesto(clienteId, montoInmueble);
-        Integer estadoId = createEstadoDeGestion();
-        Integer tipoTramiteId = createTipoDeTramite();
+        EstadoDeGestion estadoInicial = createEstadoDeGestion();
+        Integer estadoId = estadoInicial.getIdEstadoGestion();
+        Integer tipoTramiteId = createTipoDeTramiteConWorkflowHaciaArchivada(estadoInicial);
         String body = """
                 {"numero": %d, "encabezado": "Gestion Archive IT", "presupuestoId": %d,
                  "escribanoId": %d, "estadoGestionId": %d, "tipoTramiteId": %d}
