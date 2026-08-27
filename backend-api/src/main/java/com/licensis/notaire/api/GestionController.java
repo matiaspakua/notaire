@@ -21,8 +21,10 @@ import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.service.GestionArchiveDebtService;
+import com.licensis.notaire.service.GestionBitacoraService;
 import com.licensis.notaire.service.GestionQueryService;
 import com.licensis.notaire.service.GestionResumenFinancieroService;
+import com.licensis.notaire.service.GestionTransitionService;
 import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,6 +71,8 @@ public class GestionController {
     private final InmuebleRepository inmuebleRepository;
     private final GestionArchiveDebtService gestionArchiveDebtService;
     private final GestionResumenFinancieroService gestionResumenFinancieroService;
+    private final GestionBitacoraService gestionBitacoraService;
+    private final GestionTransitionService gestionTransitionService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -78,7 +82,9 @@ public class GestionController {
                              TipoDeTramiteRepository tipoTramiteRepository, TramiteRepository tramiteRepository,
                              InmuebleRepository inmuebleRepository,
                              GestionArchiveDebtService gestionArchiveDebtService,
-                             GestionResumenFinancieroService gestionResumenFinancieroService) {
+                             GestionResumenFinancieroService gestionResumenFinancieroService,
+                             GestionBitacoraService gestionBitacoraService,
+                             GestionTransitionService gestionTransitionService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -91,11 +97,15 @@ public class GestionController {
         this.inmuebleRepository = inmuebleRepository;
         this.gestionArchiveDebtService = gestionArchiveDebtService;
         this.gestionResumenFinancieroService = gestionResumenFinancieroService;
+        this.gestionBitacoraService = gestionBitacoraService;
+        this.gestionTransitionService = gestionTransitionService;
     }
 
     public record DtoSaldoPendiente(Float saldoPendiente) {}
 
     public record DtoGestionArchivada(Integer idGestion, Float saldoPendiente, boolean deudaPendienteAlArchivar) {}
+
+    public record DtoTransicionRequest(String estadoDestino) {}
 
     public record CompleteCaseRequest(Integer numero, String encabezado, String observaciones,
             Integer presupuestoId, Integer escribanoId, Integer estadoGestionId, Integer tipoTramiteId,
@@ -174,6 +184,7 @@ public class GestionController {
         applyGestionFields(gestion, request, dependencies.get());
         gestion = repository.save(gestion);
         saveTramite(gestion, dependencies.get());
+        gestionBitacoraService.registrarEstado(gestion, null);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(gestionQueryService.findById(gestion.getIdGestion()).orElseThrow());
     }
@@ -372,5 +383,35 @@ public class GestionController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Transición aplicada"),
+        @ApiResponse(responseCode = "400", description = "Transición no válida para el workflow del tipo de trámite"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @PostMapping("/{id}/transicionar")
+    @Operation(summary = "CU83 - Transicionar el estado de una gestión validando el workflow definido")
+    public ResponseEntity<DtoGestionSummary> transicionar(@PathVariable Integer id,
+            @RequestBody DtoTransicionRequest request) {
+        gestionTransitionService.transicionar(id, request.estadoDestino());
+        return ResponseEntity.ok(gestionQueryService.findById(id).orElseThrow());
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @GetMapping("/{id}/historial")
+    @Operation(summary = "CU13 - Obtener la bitácora completa de una gestión, ordenada cronológicamente")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoHistorialSummary>> getHistorial(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        List<DtoHistorialSummary> historial = gestionBitacoraService.obtenerHistorial(id).stream()
+                .map(com.licensis.notaire.service.mappers.HistorialMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(historial);
     }
 }
