@@ -1,10 +1,8 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import org.slf4j.Logger;
@@ -18,7 +16,9 @@ import java.util.Set;
 
 /**
  * CU16 - Archivar Gestión: calcula el saldo pendiente agregado de una gestión
- * (RF-22) y persiste si quedó archivada con deuda (RF-37).
+ * (RF-22) y persiste si quedó archivada con deuda (RF-37). Delega la
+ * validación de la transición de estado (y su registro en bitácora) a
+ * {@link GestionTransitionService} (CU83, CU13).
  */
 @Service
 public class GestionArchiveDebtService {
@@ -29,16 +29,16 @@ public class GestionArchiveDebtService {
 
     private final GestionDeEscrituraRepository gestionRepository;
     private final TramiteRepository tramiteRepository;
-    private final EstadoDeGestionRepository estadoRepository;
     private final PagoService pagoService;
+    private final GestionTransitionService gestionTransitionService;
 
     public GestionArchiveDebtService(GestionDeEscrituraRepository gestionRepository,
-            TramiteRepository tramiteRepository, EstadoDeGestionRepository estadoRepository,
-            PagoService pagoService) {
+            TramiteRepository tramiteRepository, PagoService pagoService,
+            GestionTransitionService gestionTransitionService) {
         this.gestionRepository = gestionRepository;
         this.tramiteRepository = tramiteRepository;
-        this.estadoRepository = estadoRepository;
         this.pagoService = pagoService;
+        this.gestionTransitionService = gestionTransitionService;
     }
 
     /**
@@ -77,18 +77,12 @@ public class GestionArchiveDebtService {
      */
     @Transactional
     public ArchiveResult archivar(Integer idGestion) {
-        GestionDeEscritura gestion = gestionRepository.findById(idGestion)
-                .orElseThrow(() -> new IllegalArgumentException("Gestión no encontrada con ID: " + idGestion));
-
         Float saldoPendiente = calcularSaldoPendiente(idGestion);
-        EstadoDeGestion archivada = estadoRepository.findByNombre(ESTADO_ARCHIVADA)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Estado '" + ESTADO_ARCHIVADA + "' no está definido en el sistema"));
 
-        gestion.setFkIdEstadoDeGestion(archivada);
+        GestionDeEscritura gestion = gestionTransitionService.transicionar(idGestion, ESTADO_ARCHIVADA);
         gestion.setDeudaPendienteAlArchivar(saldoPendiente != null && saldoPendiente > 0);
-
         GestionDeEscritura archivedGestion = gestionRepository.save(gestion);
+
         log.info("Gestión {} archivada con deudaPendienteAlArchivar={}", idGestion,
                 archivedGestion.getDeudaPendienteAlArchivar());
         return new ArchiveResult(archivedGestion, saldoPendiente);

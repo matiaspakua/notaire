@@ -7,10 +7,10 @@
 | **Caso de Uso** | CU16 – Archivar Gestión |
 | **Actores** | Escribano/Gestor/Protocolista |
 | **Propósito** | Finaliza una gestión. |
-| **Descripción** | El Escribano/Gestor/Protocolista selecciona de una lista de gestiones en trámite disponibles, una de ellas y cambia el estado de la gestión a “archivada” e indica observaciones. El sistema calcula el saldo pendiente agregado de la gestión y, si es mayor a cero, advierte al usuario antes de confirmar (la advertencia no bloquea el archivado). El sistema genera un nuevo número de archivo indicando número de bibliorato y número de carpeta, para la misma, y registra si la gestión quedó archivada con deuda pendiente. |
+| **Descripción** | El Escribano/Gestor/Protocolista selecciona de una lista de gestiones en trámite disponibles, una de ellas y cambia el estado de la gestión a “archivada” e indica observaciones. El sistema valida que la transición al estado "Archivada" sea alcanzable desde el estado actual según el workflow definido para el tipo de trámite (CU83); si no lo es, rechaza el archivado con un mensaje visible. El sistema calcula el saldo pendiente agregado de la gestión y, si es mayor a cero, advierte al usuario antes de confirmar (la advertencia no bloquea el archivado). El sistema genera un nuevo número de archivo indicando número de bibliorato y número de carpeta, para la misma, registra si la gestión quedó archivada con deuda pendiente y agrega la entrada correspondiente a la bitácora (CU13). |
 | **Tipo** | Primario |
-| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #22 (Verificar deuda pendiente al archivar), RF #36 (Archivar trámites), RF #37 (Archivar trámite), RF #104 (Administrar carpetas de trámite), RF #106 (Estados de carpeta); CU19 |
-| **GitHub ID** | #169, #819 |
+| **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #22 (Verificar deuda pendiente al archivar), RF #36 (Archivar trámites), RF #37 (Archivar trámite), RF #104 (Administrar carpetas de trámite), RF #106 (Estados de carpeta); CU13, CU19, CU83 |
+| **GitHub ID** | #169, #819, #833 |
 
 ## Curso de Eventos
 
@@ -29,3 +29,4 @@
 |---|---|---|
 | 2.1 | La gestión ya tiene un número de archivo asociado. | El sistema gestiona la excepción y notifica al usuario. |
 | 3.1.1 | El saldo pendiente agregado de la gestión es igual a cero. | El sistema archiva la gestión directamente, sin mostrar advertencia. |
+| 3.2 | El workflow definido para el tipo de trámite de la gestión no admite una transición desde el estado actual hacia "Archivada". | El sistema rechaza el archivado e informa que la transición no está permitida. |

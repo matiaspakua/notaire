@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
@@ -7,6 +9,7 @@ import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.service.GestionArchiveDebtService;
+import com.licensis.notaire.service.GestionTransitionService;
 import com.licensis.notaire.service.PagoService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +44,9 @@ class GestionArchiveDebtServiceTest {
 
     @Mock
     private PagoService pagoService;
+
+    @Mock
+    private GestionTransitionService gestionTransitionService;
 
     @InjectMocks
     private GestionArchiveDebtService gestionArchiveDebtService;
@@ -111,6 +117,43 @@ class GestionArchiveDebtServiceTest {
             assertThatThrownBy(() -> gestionArchiveDebtService.calcularSaldoPendiente(999))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Gestión no encontrada");
+        }
+    }
+
+    @Nested
+    @DisplayName("Archivar gestión")
+    class ArchivarTests {
+
+        @Test
+        @DisplayName("Archiving succeeds when the transition to Archivada is valid")
+        void shouldArchiveWhenTransitionValid() {
+            EstadoDeGestion archivada = new EstadoDeGestion(3, "Archivada");
+            testGestion.setFkIdEstadoDeGestion(archivada);
+
+            when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
+            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramiteFor(10)));
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(0.00f);
+            when(gestionTransitionService.transicionar(1, "Archivada")).thenReturn(testGestion);
+            when(gestionRepository.save(testGestion)).thenReturn(testGestion);
+
+            GestionArchiveDebtService.ArchiveResult result = gestionArchiveDebtService.archivar(1);
+
+            assertThat(result.gestion().getFkIdEstadoDeGestion()).isEqualTo(archivada);
+            assertThat(result.gestion().getDeudaPendienteAlArchivar()).isFalse();
+        }
+
+        @Test
+        @DisplayName("Archiving is rejected when the transition to Archivada is invalid")
+        void shouldRejectArchiveWhenTransitionInvalid() {
+            when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
+            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramiteFor(10)));
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(0.00f);
+            when(gestionTransitionService.transicionar(1, "Archivada"))
+                    .thenThrow(new BusinessValidationException("Transición no permitida"));
+
+            assertThatThrownBy(() -> gestionArchiveDebtService.archivar(1))
+                    .isInstanceOf(BusinessValidationException.class)
+                    .hasMessageContaining("Transición no permitida");
         }
     }
 }

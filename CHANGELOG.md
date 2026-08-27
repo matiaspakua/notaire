@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Workflow engine y bitácora conectados al flujo real de gestión** (issue #833,
+  CU13, CU16, CU83): `POST /api/v1/gestiones/{id}/transicionar`
+  (`GestionTransitionService`) valida cada cambio de estado de una gestión contra
+  el `WorkflowDefinition`/`WorkflowNode`/`WorkflowTransition` de su tipo de trámite
+  (CU83) y rechaza transiciones no permitidas por el grafo. `GestionArchiveDebtService.archivar`
+  ahora delega esa misma validación de transición (destino "Archivada") antes de
+  archivar. Cada alta, transición válida y archivado registra una entrada en la
+  bitácora vía `GestionBitacoraService`, expuesta en `GET /api/v1/gestiones/{id}/historial`
+  (CU13). La pantalla `/dashboard/gestiones` agrega las acciones "Cambiar estado"
+  (selector limitado a los destinos válidos del workflow) y "Ver bitácora", y
+  muestra el mensaje de rechazo cuando una transición no está permitida. New
+  Playwright specs (`gestion-cambiar-estado.spec.ts`, `gestion-bitacora.spec.ts`)
+  cover the golden path, invalid-transition and viewport edge cases.
+
 - **Circuito legal posterior a la firma de escritura: testimonio, inscripción y retiro**
   (issue #832, CU06, CU07, CU08, CU11, CU12, CU44): `POST /api/v1/escrituras/{id}/firmar`
   transitions a "Sin Firmar" escritura with folio(s) assigned to "Firmada"

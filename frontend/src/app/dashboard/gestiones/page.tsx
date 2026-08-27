@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Archive } from "lucide-react";
+import { Plus, Pencil, Trash2, Archive, RefreshCcw, History } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import {
   useGestiones,
   useGestionesByCliente,
@@ -20,13 +20,16 @@ import {
   useDeleteGestion,
   useSaldoPendiente,
   useArchivarGestion,
+  useTransicionarGestion,
+  useHistorial,
 } from "@/hooks/useGestiones";
+import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import { usePersonas } from "@/hooks/usePersonas";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
-import { fullName, formatCurrency } from "@/lib/utils";
+import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 
 const ESTADO_ARCHIVADA = "Archivada";
@@ -44,10 +47,14 @@ export default function GestionesPage() {
   const updateMutation = useUpdateGestion();
   const deleteMutation = useDeleteGestion();
   const archivarMutation = useArchivarGestion();
+  const transicionarMutation = useTransicionarGestion();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [archiveId, setArchiveId] = useState<number | null>(null);
+  const [transitionId, setTransitionId] = useState<number | null>(null);
+  const [selectedEstado, setSelectedEstado] = useState("");
+  const [bitacoraId, setBitacoraId] = useState<number | null>(null);
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
@@ -61,9 +68,19 @@ export default function GestionesPage() {
     clienteFilter ? Number(clienteFilter) : 0
   );
   const { data: saldoPendiente } = useSaldoPendiente(archiveId ?? undefined);
+  const { data: trace } = useGestionWorkflowTrace(transitionId ?? undefined);
+  const { data: historial = [] } = useHistorial(bitacoraId ?? undefined);
 
   const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
   const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
+
+  const currentNode = trace?.nodes.find((n) => n.estadoGestionNombre === trace.estadoActual);
+  const validDestinations = trace && currentNode
+    ? trace.transitions
+        .filter((tr) => tr.nodoOrigenId === currentNode.id)
+        .map((tr) => trace.nodes.find((n) => n.id === tr.nodoDestinoId))
+        .filter((n): n is NonNullable<typeof n> => !!n && !!n.estadoGestionNombre)
+    : [];
 
   function openCreate() {
     setEditing(null);
@@ -124,10 +141,29 @@ export default function GestionesPage() {
     try {
       await archivarMutation.mutateAsync(archiveId);
       toast.success(t("archived"));
-    } catch {
-      toast.error(t("errorArchive"));
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorArchive"));
     } finally {
       setArchiveId(null);
+    }
+  }
+
+  async function handleTransicionar() {
+    if (!transitionId || !selectedEstado) return;
+    try {
+      await transicionarMutation.mutateAsync({ id: transitionId, estadoDestino: selectedEstado });
+      toast.success(t("transitioned"));
+      setTransitionId(null);
+      setSelectedEstado("");
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorTransition"));
+    }
+  }
+
+  function closeTransitionDialog(open: boolean) {
+    if (!open) {
+      setTransitionId(null);
+      setSelectedEstado("");
     }
   }
 
@@ -149,12 +185,37 @@ export default function GestionesPage() {
       render: (g) => g.tramiteCount ?? 0,
     },
     {
+      key: "estado",
+      header: t("fields.estado"),
+      render: (g) => g.estadoActual ?? "—",
+    },
+    {
       key: "actions",
       header: "",
       render: (g) => (
         <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
+          </Button>
+          {g.estadoActual !== ESTADO_ARCHIVADA && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setTransitionId(g.idGestion!)}
+              aria-label={t("changeState")}
+              data-testid={`btn-cambiar-estado-${g.idGestion}`}
+            >
+              <RefreshCcw className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setBitacoraId(g.idGestion!)}
+            aria-label={t("viewBitacora")}
+            data-testid={`btn-ver-bitacora-${g.idGestion}`}
+          >
+            <History className="h-4 w-4" />
           </Button>
           {g.estadoActual !== ESTADO_ARCHIVADA && (
             <Button
@@ -178,7 +239,7 @@ export default function GestionesPage() {
           </Button>
         </div>
       ),
-      className: "w-32",
+      className: "w-48",
     },
   ];
 
@@ -300,6 +361,63 @@ export default function GestionesPage() {
         }
         confirmLabel={t("archiveGestion")}
       />
+
+      <Dialog open={!!transitionId} onOpenChange={closeTransitionDialog}>
+        <DialogContent>
+          <FormContainer>
+            <FormHeader title={t("changeState")} description={t("selectNewStateDescription")} />
+            <FormSection title={t("selectNewState")}>
+              <FormField label={t("selectNewState")} required>
+                <Select value={selectedEstado} onValueChange={setSelectedEstado}>
+                  <SelectTrigger data-testid="select-nuevo-estado">
+                    <SelectValue placeholder={t("selectNewState")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {validDestinations.map((n) => (
+                      <SelectItem key={n.id} value={n.estadoGestionNombre!}>
+                        {n.estadoGestionNombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => closeTransitionDialog(false)}>
+                {tc("cancel")}
+              </Button>
+              <Button
+                onClick={handleTransicionar}
+                disabled={!selectedEstado || transicionarMutation.isPending}
+                data-testid="btn-confirmar-transicion"
+              >
+                {t("confirmTransition")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!bitacoraId} onOpenChange={(v) => !v && setBitacoraId(null)}>
+        <DialogContent>
+          <FormContainer>
+            <FormHeader title={t("bitacoraTitle")} />
+            {historial.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("bitacoraEmpty")}</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {historial.map((h) => (
+                  <div key={h.idHistorial} data-testid="bitacora-item" className="border-b pb-2">
+                    <div className="font-medium">{h.estadoGestionNombre}</div>
+                    <div className="text-xs text-muted-foreground">{formatDate(h.fecha)}</div>
+                    {h.observaciones && <div className="text-sm">{h.observaciones}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -135,6 +135,8 @@ class AdditionalControllersTest {
             HistorialRepository histRepo = mock(HistorialRepository.class);
             var traceService = mock(com.licensis.notaire.service.WorkflowTraceService.class);
             var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
+            var transitionService = mock(com.licensis.notaire.service.GestionTransitionService.class);
+            var bitacoraService = mock(com.licensis.notaire.service.GestionBitacoraService.class);
             var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonaRepository.class),
                     mock(com.licensis.notaire.repository.EstadoDeGestionRepository.class),
@@ -143,7 +145,8 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.repository.TramiteRepository.class),
                     mock(com.licensis.notaire.repository.InmuebleRepository.class),
                     mock(com.licensis.notaire.service.GestionArchiveDebtService.class),
-                    mock(com.licensis.notaire.service.GestionResumenFinancieroService.class)))
+                    mock(com.licensis.notaire.service.GestionResumenFinancieroService.class),
+                    bitacoraService, transitionService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
@@ -184,6 +187,24 @@ class AdditionalControllersTest {
                     .content(mapper.writeValueAsString(g))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
+
+            when(transitionService.transicionar(1, "En Progreso")).thenReturn(g);
+            when(transitionService.transicionar(1, "Estado Inexistente"))
+                    .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
+                            "Transición no permitida"));
+            when(transitionService.transicionar(2, "En Progreso"))
+                    .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
+                            "Gestión no encontrada con ID: 2"));
+
+            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
+                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isOk());
+            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
+                    .content("{\"estadoDestino\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
+            mvc.perform(post("/api/v1/gestiones/2/transicionar").contentType("application/json")
+                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isNotFound());
+
+            mvc.perform(get("/api/v1/gestiones/1/historial")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/gestiones/2/historial")).andExpect(status().isNotFound());
 
             when(repo.save(any(GestionDeEscritura.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/gestiones").contentType("application/json")

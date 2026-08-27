@@ -376,6 +376,111 @@ export async function createTipoTramite(
   });
 }
 
+/**
+ * Workflow helpers (CU83) — used to seed a self-contained workflow
+ * (definition + nodes + transition) for gestión transition E2E tests,
+ * independent of demo/seed data.
+ */
+export async function createWorkflowDefinition(
+  page: Page,
+  overrides: { nombre?: string; descripcion?: string; activo?: boolean } = {},
+): Promise<ApiResult<{ id: number }>> {
+  const id = uniqueId();
+  return apiPost(page, "/workflow-definition", {
+    nombre: `Workflow E2E ${id}`,
+    descripcion: "Created by E2E test",
+    activo: true,
+    ...overrides,
+  });
+}
+
+export async function createWorkflowNode(
+  page: Page,
+  workflowDefinitionId: number,
+  estadoGestionId: number,
+  tipo: "INITIAL" | "INTERMEDIATE" | "FINAL",
+): Promise<ApiResult<{ id: number }>> {
+  return apiPost(page, "/workflow-node", {
+    workflowDefinitionId,
+    estadoGestionId,
+    tipo,
+    posicionX: 0,
+    posicionY: 0,
+  });
+}
+
+export async function createWorkflowTransition(
+  page: Page,
+  workflowDefinitionId: number,
+  nodoOrigenId: number,
+  nodoDestinoId: number,
+): Promise<ApiResult<{ id: number }>> {
+  return apiPost(page, "/workflow-transition", {
+    workflowDefinitionId,
+    nodoOrigenId,
+    nodoDestinoId,
+  });
+}
+
+export async function assignWorkflowToTipoTramite(
+  page: Page,
+  tipoTramiteId: number,
+  workflowDefinitionId: number,
+): Promise<ApiResult<unknown>> {
+  return apiPut(page, `/tipo-tramite/${tipoTramiteId}/workflow`, { workflowDefinitionId });
+}
+
+/**
+ * Seeds a self-contained two-node workflow (INITIAL -> FINAL) with a single
+ * valid transition, assigns it to a fresh tipo de trámite, and creates a
+ * gestión whose estado inicial matches the workflow's INITIAL node — ready
+ * for a "Cambiar estado" transition to the FINAL node's estado.
+ */
+export async function seedGestionWithWorkflow(
+  page: Page,
+  presupuestoId: number,
+): Promise<{
+  idGestion: number;
+  numero: number;
+  estadoInicial: string;
+  estadoFinal: string;
+}> {
+  const estadoInicial = await createEstadoGestion(page);
+  const estadoFinal = await createEstadoGestion(page);
+  const workflow = await createWorkflowDefinition(page);
+  const workflowId = workflow.data!.id;
+
+  const nodoInicial = await createWorkflowNode(
+    page,
+    workflowId,
+    estadoInicial.data!.idEstadoGestion,
+    "INITIAL",
+  );
+  const nodoFinal = await createWorkflowNode(
+    page,
+    workflowId,
+    estadoFinal.data!.idEstadoGestion,
+    "FINAL",
+  );
+  await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoFinal.data!.id);
+
+  const tipoTramite = await createTipoTramite(page);
+  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idTipoDeTramite, workflowId);
+
+  const gestion = await createCompleteCaseGestion(page, {
+    presupuestoId,
+    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
+    estadoGestionId: estadoInicial.data!.idEstadoGestion,
+  });
+
+  return {
+    idGestion: gestion.data!.idGestion,
+    numero: gestion.data!.numero,
+    estadoInicial: estadoInicial.data!.nombre,
+    estadoFinal: estadoFinal.data!.nombre,
+  };
+}
+
 export async function createConcepto(
   page: Page,
   overrides: { nombre?: string; valor?: number } = {},
@@ -392,7 +497,7 @@ export async function createConcepto(
 export async function createEstadoGestion(
   page: Page,
   overrides: { nombre?: string } = {},
-): Promise<ApiResult<{ idEstadoGestion: number }>> {
+): Promise<ApiResult<{ idEstadoGestion: number; nombre: string }>> {
   const id = uniqueId();
   return apiPost(page, "/estado-gestion", {
     nombre: `Estado E2E ${id}`,

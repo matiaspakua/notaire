@@ -40,7 +40,11 @@ test.describe("CU16 - Archivar Gestión con verificación de deuda", () => {
     const idPersona = persona.data!.idPersona;
     const presupuesto = await createPresupuesto(page, idPersona, undefined, { monto });
     const idPresupuesto = presupuesto.data!.idPresupuesto;
-    const gestion = await createCompleteCaseGestion(page, { presupuestoId: idPresupuesto });
+    const gestion = await createCompleteCaseGestion(page, {
+      presupuestoId: idPresupuesto,
+      tipoTramiteId: 1,
+      estadoGestionId: 3,
+    });
     return gestion.data!;
   }
 
