@@ -115,6 +115,29 @@ is, and always was, the canonical one. Its two genuinely unique phases (Docker
 build/smoke test, advisory Trivy filesystem scan) were folded into `preflight.sh`
 above; the script itself has been removed.
 
+## `run_pipeline.sh` — the mandatory pre-PR gate
+
+`preflight.sh` mirrors CI gates but assumes the Docker stack is already up and
+only prints to the terminal — there's no single artifact proving a branch is
+ready. `scripts/run_pipeline.sh` is that command: it brings the stack up
+itself (`scripts/start.sh`), runs `scripts/validate-sdlc-plan.sh`, runs
+`preflight.sh --full`, adds a markdown-lint pass (ratcheted against
+`origin/main`, same policy as the Spotless gate — see the git-worktree caveat
+above) that has no CI job yet, and writes one HTML dashboard plus a log per
+run under `reports/pipeline/<timestamp>/` (git-ignored).
+
+```bash
+bash scripts/run_pipeline.sh
+```
+
+It composes rather than duplicates: everything under "what CI checks" above
+runs through `preflight.sh --full`, so a new or changed gate in
+`.github/workflows/` only needs updating in `preflight.sh` (per the section
+below) to be picked up here automatically. This is Gate 4's CI-equivalent
+evidence requirement (`CONSTITUTION.md`) and the Step 5 "run all tests"
+requirement (`.claude/rules/ai-agent-workflow.md`) — run it before opening a
+PR.
+
 ## Keeping local and CI in sync
 
 `preflight.sh` mirrors CI by convention, not by magic — nothing enforces that

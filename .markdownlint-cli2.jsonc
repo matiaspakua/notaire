@@ -1,0 +1,18 @@
+{
+  // Scope: run_pipeline.sh only lints markdown files changed vs origin/main
+  // (ratchet, same policy as backend-api's Spotless gate — see issue #705).
+  // Rules below are relaxed for pre-existing content style, not to hide real
+  // structural problems (broken heading order, duplicate headings, missing
+  // fenced-code language, trailing whitespace stay enabled).
+  "config": {
+    "default": true,
+    "MD013": false, // line-length — pre-existing docs use long lines/tables
+    "MD033": false, // inline-html — some docs embed <div>/<img> intentionally
+    "MD034": false, // no-bare-urls — many docs reference bare URLs
+    "MD041": false, // first-line-heading — some docs open with a note/table
+    "MD059": false, // descriptive-link-text — not enforced historically
+    "MD060": false // table-column-style — pre-existing tables use mixed styles
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["**/node_modules/**", "**/target/**", "**/.next/**", "docs/archive/**"]
+}

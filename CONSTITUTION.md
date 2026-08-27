@@ -261,6 +261,12 @@ affected by the change (see [section 8](#8-documentation-rules)). → **Gate 3.*
 **17. Atomic Commits.** Commit in small, focused, self-contained units using
 Conventional Commits; each commit references the issue (`Closes #<issue-number>`).
 
+**17.5 Ejecutar el pipeline completo.** Before opening the PR, run
+`bash scripts/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
+the Docker stack up itself and composes `validate-sdlc-plan.sh` +
+`preflight.sh --full` + a markdown-lint pass, writing one HTML dashboard under
+`reports/pipeline/<timestamp>/index.html`. Do not open the PR until it passes.
+
 **18. Crear Pull Request.** Open a PR from the branch to `main` using
 `.github/PULL_REQUEST_TEMPLATE.md`, referencing the Issue and Use Case.
 
@@ -317,6 +323,7 @@ every condition is satisfied.
 - [ ] Coverage is reduced below the JaCoCo ratchet floor (80% target)
 - [ ] Playwright E2E is failing for UI changes
 - [ ] Checkstyle / Spotless / lint gates fail
+- [ ] `bash scripts/run_pipeline.sh` has not been run, or last failed
 
 ### Gate 4 — Do not merge if:
 
@@ -467,7 +474,9 @@ Agent-specific entry points:
   trivial documentation-only typo fixes. The exception must be documented in
   the commit and the PR.
 - **Enforcement:**
-  - Local: `scripts/preflight.sh` + pre-push git hook (mirrors CI gates).
+  - Local: `scripts/preflight.sh` + pre-push git hook (mirrors CI gates);
+    `scripts/run_pipeline.sh` is the mandatory, dashboarded final check
+    before opening a PR (→ Gate 3).
   - CI: GitHub Actions workflows block PRs that violate quality gates.
   - Human: code review by code owner (`CODEOWNERS`) before merge.
 
@@ -495,6 +504,7 @@ drift.
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright + Bruno API suite) |
 | Local preflight | `bash scripts/preflight.sh [--fix|--fast|--full]`; pre-push hook |
+| Pre-PR pipeline gate (Gate 3) | `bash scripts/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |

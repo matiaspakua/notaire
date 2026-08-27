@@ -403,6 +403,25 @@ ls docs/
 
 ---
 
+### Step 8.5: Run the Full Pipeline (mandatory before opening a PR)
+
+`bash scripts/run_pipeline.sh` is the single, dashboarded gate that must be
+green before Step 9. It composes `scripts/validate-sdlc-plan.sh` +
+`scripts/preflight.sh --full` (which covers everything Step 5 lists, plus
+Docker build/smoke, Bruno API tests and Playwright E2E against the live
+stack), adds a markdown-lint pass over the `*.md` files this branch changed,
+and writes an HTML dashboard at `reports/pipeline/<timestamp>/index.html`
+(git-ignored) linking every sub-report (JaCoCo, Playwright, ESLint,
+Checkstyle) plus a plain-text log.
+
+```bash
+bash scripts/run_pipeline.sh
+```
+
+Do not proceed to Step 9 until it exits 0.
+
+---
+
 ### Step 9: Create Pull Request and Close Issue
 
 **PR Title Format**: `[#<issue-number>] <type>: <description>`
@@ -490,6 +509,9 @@ Closes #253"
 git push -u origin feat/253_task_description
 
 # 8. Update docs
+
+# 8.5 Run the full pipeline (mandatory before opening a PR)
+bash scripts/run_pipeline.sh   # must exit 0
 
 # 9. Create PR
 gh pr create --title "[253] feat: description" --body "Fixes #253"
