@@ -8,7 +8,6 @@ import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
 import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
