@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/escritura-post-firma-legal-cycle/` | complete |
 | Branch | `feat/832_escritura-post-firma-legal-cycle` | created |
 | Tasks | `tasks.md` | 76/76 complete |
-| Commits | `376b868`, `080b1af`, `8e98d06`, `04b92e3`, `9e3c5f4`, and the final ledger commit closing #832 | done |
-| Pull Request | [#852](https://github.com/matiaspakua/notaire/pull/852) | open |
-| CI run | — | pending |
+| Commits | `376b868`, `080b1af`, `8e98d06`, `04b92e3`, `9e3c5f4`, `0a768d1`, `8e250c0` (coverage fix), `2380430` | done |
+| Pull Request | [#852](https://github.com/matiaspakua/notaire/pull/852) | open, mergeable, awaiting review |
+| CI run | [33050852080](https://github.com/matiaspakua/notaire/actions/runs/33050852080) (CI), [33050852035](https://github.com/matiaspakua/notaire/actions/runs/33050852035) (Frontend CI), [33050852091](https://github.com/matiaspakua/notaire/actions/runs/33050852091) (Playwright E2E), [33050852051](https://github.com/matiaspakua/notaire/actions/runs/33050852051) (PR Validation) | all green |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
@@ -70,7 +70,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #832, `proposal.md`, `specs/*/spec.md` |
 | 2 | Failing tests written, test cases designed | yes | Tests confirmed failing pre-implementation (compile failure) per `tasks.md` 3.4; the `MovimientoTestimonioService` 404 tests confirmed failing (`Tests run: 3, Failures: 3`) before the fix |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` — 1561 tests, 0 failures; `mvn verify -pl backend-api` — coverage floor met; `npx playwright test` — 16 passed, 1 documented skip; CU06/CU08/CU11/CU12/CU44 and `CHANGELOG.md` updated |
-| 4 | CI green, review approved, no conflicts | pending | — |
+| 4 | CI green, review approved, no conflicts | partial | CI green + `MERGEABLE`/`CLEAN` on PR #852 confirmed; human review approval still pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
