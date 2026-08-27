@@ -270,7 +270,14 @@ CI is red. Locally, run `bash scripts/preflight.sh` before pushing (installed
 pre-push hook enforces it).
 
 **20. Code Review.** Address review feedback in new commits. The PR is ready to
-merge only when approved by the code owner. → **Gate 4.**
+merge only when approved by the code owner. In this repository the code owner
+(`CODEOWNERS`) is also the person who merges; a separate formal GitHub
+"Approve" review is not required as long as the code owner is the one who
+merges the PR — that act **is** the approval. Record this plainly in
+`traceability.md` (e.g. "merged by code owner directly; no formal GitHub
+review recorded") rather than treating it as a gap to explain away — it is
+the expected shape of review in a solo-maintainer repo, not an exception.
+→ **Gate 4.**
 
 **21. Merge.** Merge via the PR only (squash or merge commit consistent with
 repo history). Never push directly to `main`.
@@ -314,7 +321,9 @@ every condition is satisfied.
 ### Gate 4 — Do not merge if:
 
 - [ ] CI/CD is failing or not yet green
-- [ ] Code review is pending or unresolved
+- [ ] Code review is pending or unresolved (in this repo, the code owner
+      merging the PR themselves — see step 20 — counts as review approval;
+      it is not "pending")
 - [ ] Merge conflicts exist
 - [ ] Documentation updates are pending
 

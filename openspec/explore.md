@@ -133,39 +133,41 @@ la sección 1.2 más abajo sigue siendo la lectura narrativa conjunta.
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 1 | 2 — Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | `openspec/changes/escritura-post-firma-legal-cycle/` |
-| 2 | 3 — Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | `openspec/changes/gestion-workflow-y-bitacora/` |
-| 3 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
-| 4 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
+| 1 | 3 — Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | `openspec/changes/gestion-workflow-y-bitacora/` |
+| 2 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
+| 3 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
 
-Ejecutar 1 y 2 primero si se puede: son prerequisito de negocio del
-hallazgo 10 (`#841`, ver más abajo), que hoy no tiene `/opsx:propose`.
+Ejecutar 1 primero si se puede: es prerequisito de negocio del hallazgo 10
+(`#841`, ver más abajo), que hoy no tiene `/opsx:propose`. El otro
+prerequisito, hallazgo 2 (`#832`), ya está resuelto y archivado (ver
+"Ya resueltos" más abajo).
 
 ### Listos para `/opsx:apply` — `priority:medium`
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 5 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
-| 6 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
-| 7 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
-| 8 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
-| 9 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
-| 10 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
-| 11 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
-| 12 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
-| 13 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
+| 4 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
+| 5 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
+| 6 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
+| 7 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
+| 8 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
+| 9 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
+| 10 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
+| 11 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
+| 12 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
 
 ### Bloqueados — falta `/opsx:propose`
 
 | Hallazgo | Issue | Prioridad | Motivo |
 |----------|-------|-----------|--------|
-| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Depende de que #832/#833 (arriba) se apliquen primero — sin `/opsx:propose` todavía |
+| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Depende de que #833 (arriba) se aplique — #832 ya está resuelto — sin `/opsx:propose` todavía |
 | 1.2 — Recibo de pago nunca se emite | [#23](https://github.com/matiaspakua/notaire/issues/23) | sin prioridad asignada | Abierto, sin `/opsx:propose` iniciado |
 
 ### Ya resueltos (no requieren `/opsx:apply`)
 
 | Hallazgo | Issue | Estado |
 |----------|-------|--------|
+| 2 — Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | resuelto, mergeado (PR #852, `4475b8f`) y archivado — specs `escritura-firma`, `testimonio-generacion-verificacion`, `testimonio-movimiento-inscripcion` |
 | 1.1 — Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
 | 1.2 — Sin resumen financiero por gestión | [#820](https://github.com/matiaspakua/notaire/issues/820) | resuelto, mergeado (PR #845, `a2a17f8`) y archivado — spec `pago-presupuesto-gestion-summary` |
 | 1.2 — Método de pago no se persistía | [#792](https://github.com/matiaspakua/notaire/issues/792) | resuelto y archivado — spec `pagos` |

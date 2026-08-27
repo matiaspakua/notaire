@@ -6,6 +6,9 @@ target/
 *.log
 *.jfr
 
+### Local agent tooling (per-session, machine-specific state) ###
+.claude/.headroom_wrap_marker.json
+
 ### STS ###
 .apt_generated
 .classpath
