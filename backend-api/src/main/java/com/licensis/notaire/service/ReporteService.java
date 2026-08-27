@@ -1,5 +1,9 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.negocio.Testimonio;
+import com.licensis.notaire.repository.TestimonioRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -21,6 +25,7 @@ import java.util.Map;
 public class ReporteService {
 
     private final DataSource dataSource;
+    private final TestimonioRepository testimonioRepository;
 
     private static final String RUTA_REPORTE_PRESUPUESTO = "reportes/reportePresupuestoSinInmueble.jasper";
     private static final String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportes/reportePresupuestoInmuebles.jasper";
@@ -29,8 +34,9 @@ public class ReporteService {
     private static final String RUTA_REPORTE_CONSULTAR_VENCIMIENTOS_DOCUMENTOS = "reportes/reporteConsultarVencimientosDocumentos.jasper";
     private static final String RUTA_REPORTE_CONSULTAR_DEUDA_DOCUMENTOS = "reportes/reporteConsultarDeudaDocumentos.jasper";
 
-    public ReporteService(DataSource dataSource) {
+    public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository) {
         this.dataSource = dataSource;
+        this.testimonioRepository = testimonioRepository;
     }
 
     public byte[] generarReportePresupuesto(Integer idPresupuesto) throws Exception {
@@ -77,6 +83,23 @@ public class ReporteService {
                 "Declaracion Jurada Mensual",
                 "CU25",
                 "Periodo: " + mes + "/" + anio,
+                "Generado: " + LocalDate.now()
+        );
+    }
+
+    public byte[] generarReporteCopiaTestimonio(Integer idTestimonio) {
+        Testimonio testimonio = testimonioRepository.findById(idTestimonio)
+                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimonio));
+
+        if (!testimonio.getVerificado()) {
+            throw new BusinessValidationException(
+                    "El testimonio debe estar verificado para emitir la copia impresa");
+        }
+
+        return generarPdfTextoSimple(
+                "Copia de Testimonio N° " + testimonio.getNumero(),
+                "CU08",
+                "Testimonio verificado",
                 "Generado: " + LocalDate.now()
         );
     }

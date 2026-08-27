@@ -2,11 +2,11 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.service.EscrituraFirmaService;
 import com.licensis.notaire.service.EscrituraService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,9 +36,11 @@ public class EscrituraController {
     private static final Logger log = LoggerFactory.getLogger(EscrituraController.class);
 
     private final EscrituraService escrituraService;
+    private final EscrituraFirmaService escrituraFirmaService;
 
-    public EscrituraController(EscrituraService escrituraService) {
+    public EscrituraController(EscrituraService escrituraService, EscrituraFirmaService escrituraFirmaService) {
         this.escrituraService = escrituraService;
+        this.escrituraFirmaService = escrituraFirmaService;
     }
 
     @GetMapping
@@ -122,5 +124,17 @@ public class EscrituraController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<Escritura>> buscarEscrituras(@RequestParam(required = false) Integer numero) {
         return ResponseEntity.ok(escrituraService.buscarPorNumero(numero));
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "La escritura no está en estado 'Sin Firmar' o no tiene folio asignado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @PostMapping("/{id}/firmar")
+    @Operation(summary = "Firmar escritura",
+               description = "Transiciona una escritura 'Sin Firmar' con folio asignado al estado 'Firmada'")
+    public ResponseEntity<Escritura> firmar(@PathVariable Integer id) {
+        return ResponseEntity.ok(escrituraFirmaService.firmar(id));
     }
 }

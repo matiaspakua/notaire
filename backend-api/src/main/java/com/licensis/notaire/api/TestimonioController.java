@@ -3,6 +3,7 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.repository.TestimonioRepository;
+import com.licensis.notaire.service.TestimonioGeneracionVerificacionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,9 +29,12 @@ import java.util.Optional;
 public class TestimonioController {
 
     private final TestimonioRepository repository;
+    private final TestimonioGeneracionVerificacionService generacionVerificacionService;
 
-    public TestimonioController(TestimonioRepository repository) {
+    public TestimonioController(TestimonioRepository repository,
+            TestimonioGeneracionVerificacionService generacionVerificacionService) {
         this.repository = repository;
+        this.generacionVerificacionService = generacionVerificacionService;
     }
 
     @GetMapping
@@ -113,5 +117,33 @@ public class TestimonioController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el testimonio está referenciado por otros registros.");
         }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "La escritura no está en estado 'Firmada'"),
+    @ApiResponse(responseCode = "404", description = "Escritura no encontrada")
+})
+    @PostMapping("/{idEscritura}/generar")
+    @Operation(summary = "Generar testimonio de una escritura firmada",
+               description = "Genera un testimonio con número asignado por el sistema a partir de una escritura "
+                       + "'Firmada'")
+    @Transactional
+    public ResponseEntity<DtoTestimonio> generar(@PathVariable Integer idEscritura) {
+        Testimonio testimonio = generacionVerificacionService.generar(idEscritura);
+        return ResponseEntity.status(HttpStatus.CREATED).body(testimonio.getDto());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+})
+    @PostMapping("/{id}/verificar")
+    @Operation(summary = "Verificar testimonio",
+               description = "Registra la verificación de un testimonio, marcando si fue observado y por qué")
+    @Transactional
+    public ResponseEntity<DtoTestimonio> verificar(@PathVariable Integer id, @RequestBody DtoTestimonio dto) {
+        Testimonio testimonio = generacionVerificacionService.verificar(id, dto.isObservado(), dto.getObservaciones());
+        return ResponseEntity.ok(testimonio.getDto());
     }
 }
