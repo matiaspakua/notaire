@@ -91,7 +91,7 @@ check_issue_live() {
     return 1
   fi
   if [ "$state" != "OPEN" ]; then
-    bad "spec: Issue #$number exists but is $state, not OPEN"
+    bad "spec: Issue #$number exists but is $state, not OPEN — if this feature is done and its PR merged, move its speckit/specs/<dir>/ to speckit/specs/archive/ (Gate 5 step, see script header)"
     return 1
   fi
   ok "spec: Issue #$number verified live on GitHub (OPEN)"

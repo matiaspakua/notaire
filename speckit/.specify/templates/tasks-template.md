@@ -254,6 +254,10 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX Run the smoke test on the target environment (health endpoint + the key flow of this change)
 - [ ] TXXX Verify the rollback path is still available as described in `plan.md`
 - [ ] TXXX Close the GitHub Issue, referencing the PR
+- [ ] TXXX Move this feature's `speckit/specs/<this-dir>/` to `speckit/specs/archive/`
+      now that its Issue is closed and its PR merged — `validate-speckit-plan.sh`
+      requires every non-archived feature's Issue to stay OPEN, so skipping this
+      step breaks the validator for every branch, not just this one
 
 ## Definition of Done
 
