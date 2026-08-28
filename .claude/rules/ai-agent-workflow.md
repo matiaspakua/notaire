@@ -11,6 +11,7 @@ This rule defines the mandatory workflow that **ALL AI coding agents** must foll
 ## Applicable Agents
 
 This rule applies to:
+
 - **OpenCode**: All `/oc` commands and interactions
 - **Claude Code**: All Claude AI interactions
 - **GitHub Copilot**: All Copilot suggestions and completions
@@ -20,7 +21,7 @@ This rule applies to:
 
 ## Workflow Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    AI AGENT DEVELOPMENT WORKFLOW                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -179,6 +180,7 @@ git checkout -b <type>/<issue-number>_<short-description>
 | `design` | Design/UI updates |
 
 **Examples**:
+
 ```bash
 # Correct
 feat/253_user_authentication
@@ -209,6 +211,7 @@ gh issue edit <issue-number> --add-label "in-progress"
 **MANDATORY**: Apply TDD (Test-Driven Development) for ALL changes.
 
 Order of work:
+
 1. **Analyze the issue** — understand fully before writing any code.
 2. **Write tests** that define the expected behavior.
 3. **Run tests** — they MUST fail at this point (no implementation yet).
@@ -234,11 +237,13 @@ mvn test -pl backend-api -Dtest=YourNewTestClass
 | UI change | E2E Playwright tests for every screen/form |
 
 #### Test Location
+
 - **Unit tests**: `src/test/java/.../unit/`
 - **Integration tests**: `src/test/java/.../integration/`
 - **E2E tests**: `frontend/tests/` (Playwright)
 
 #### Test Naming Convention
+
 ```java
 @Test
 @DisplayName("Should return user when valid ID provided")
@@ -259,6 +264,7 @@ Implement only what is needed to make the failing tests pass. No more.
 #### Special cases
 
 **New REST endpoint**:
+
 - Implement the endpoint.
 - Write controller + integration tests.
 - Document in OpenAPI/Swagger (`@Operation`, `@ApiResponse`).
@@ -266,12 +272,14 @@ Implement only what is needed to make the failing tests pass. No more.
 - Ensure the endpoint is called from the UI (see UI traceability below).
 
 **Database change**:
+
 - Use Flyway migration (new `V{n}__description.sql`).
 - Flyway is the single source of truth (init-db archived at `docs/archive/init-db/`).
 - Run `mvn test -Ppg-integration` to validate alignment.
 - See `.claude/rules/database-migrations.md`.
 
 **UI change**:
+
 - Follow `.claude/rules/ui-ux-design.md` and the design system.
 - Write E2E Playwright tests for every screen and form.
 - Test golden path AND edge cases.
@@ -279,6 +287,7 @@ Implement only what is needed to make the failing tests pass. No more.
 #### UI Endpoint Traceability (MANDATORY)
 
 Every REST endpoint **MUST** be invoked from the UI at least once. Traceability must be documented in a simple, standard, and clear way:
+
 - Add a comment or entry in `docs/` mapping each endpoint to the UI screen/action that calls it.
 - Use the API test collection (Bruno) to confirm the endpoint is exercised end-to-end.
 
@@ -322,6 +331,7 @@ cd frontend && npx playwright test
 ```
 
 **Quality Gates** (all must pass):
+
 - All unit and integration tests pass.
 - Coverage ≥ 80% (JaCoCo).
 - No Checkstyle violations.
@@ -336,7 +346,7 @@ If any check fails → fix and retest. **No exceptions**.
 
 **Commit Message Format**: [Conventional Commits](https://www.conventionalcommits.org/)
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -345,11 +355,13 @@ Closes #<issue-number>
 ```
 
 **Rules**:
+
 - Imperative mood: "add" not "added"
 - First line ≤ 72 characters
 - Always reference the issue: `Closes #<number>`
 
 **Examples**:
+
 ```bash
 git commit -m "feat(api): add document creation endpoint
 
@@ -367,6 +379,7 @@ Closes #254"
 ```
 
 **DO NOT**:
+
 - ❌ Commit without tests
 - ❌ Commit failing code
 - ❌ Leave commented-out code
@@ -403,11 +416,31 @@ ls docs/
 
 ---
 
+### Step 8.5: Run the Full Pipeline (mandatory before opening a PR)
+
+`bash scripts/run_pipeline.sh` is the single, dashboarded gate that must be
+green before Step 9. It composes `scripts/validate-sdlc-plan.sh` +
+`scripts/preflight.sh --full` (which covers everything Step 5 lists, plus
+Docker build/smoke, Bruno API tests and Playwright E2E against the live
+stack), adds a markdown-lint pass over the `*.md` files this branch changed,
+and writes an HTML dashboard at `reports/pipeline/<timestamp>/index.html`
+(git-ignored) linking every sub-report (JaCoCo, Playwright, ESLint,
+Checkstyle) plus a plain-text log.
+
+```bash
+bash scripts/run_pipeline.sh
+```
+
+Do not proceed to Step 9 until it exits 0.
+
+---
+
 ### Step 9: Create Pull Request and Close Issue
 
 **PR Title Format**: `[#<issue-number>] <type>: <description>`
 
 **PR Description Template**:
+
 ```markdown
 ## Summary
 <1-3 bullet points describing changes>
@@ -440,6 +473,7 @@ Fixes #<issue-number>
 ```
 
 **Commands**:
+
 ```bash
 gh pr create \
   --title "[#253] feat: add document creation" \
@@ -491,6 +525,9 @@ git push -u origin feat/253_task_description
 
 # 8. Update docs
 
+# 8.5 Run the full pipeline (mandatory before opening a PR)
+bash scripts/run_pipeline.sh   # must exit 0
+
 # 9. Create PR
 gh pr create --title "[253] feat: description" --body "Fixes #253"
 ```
@@ -502,13 +539,15 @@ gh pr create --title "[253] feat: description" --body "Fixes #253"
 ### Claude Code
 
 Add to `CLAUDE.md`:
-```
+
+```text
 @.claude/rules/ai-agent-workflow.md
 ```
 
 ### OpenCode (RTK)
 
 Reference in commands:
+
 ```toml
 [workflow]
 require_issue = true

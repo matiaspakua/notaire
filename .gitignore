@@ -65,3 +65,6 @@ infra/.env
 headroom_memory.db
 .rtk/
 .tokensave/
+
+# scripts/run_pipeline.sh dashboard + logs (regenerated every run)
+reports/
