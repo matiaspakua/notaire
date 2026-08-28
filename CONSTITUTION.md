@@ -58,11 +58,11 @@ No change is "done" unless it has passed the full process defined here.
 | P3 | **SRP — Single Responsibility** | Each class, method, test, and module does exactly one thing. |
 | P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. Every finding raised by exploration (`openspec/explore*.md`) must resolve to a real GitHub Issue before it can become a change — a finding with no Issue is unfinished triage, not a rejected one (see §4, §13). |
 | P5 | **Clean code** | Self-explanatory code; comments only explain *why*, never *what*. Remove dead and duplicate code. |
-| P6 | **Flyway is the single source of truth** for the database schema; never alter old migrations — add a new `V{n}` migration. |
-| P7 | **Documentation is part of the change** — permanent docs are updated before merge, never duplicated. |
-| P8 | **Quality gates are absolute** — no skipping, no "it works on my machine". |
-| P9 | **Least privilege & no secrets** — credentials only in the git-ignored `.env`; never hardcode secrets. |
-| P10 | **Adapt, don't replace** — follow existing architecture (`repository` over legacy `jpa`, design system tokens, etc.). |
+| P6 | **Flyway is the single source of truth** | For the database schema; never alter old migrations — add a new `V{n}` migration. |
+| P7 | **Documentation is part of the change** | Permanent docs are updated before merge, never duplicated. |
+| P8 | **Quality gates are absolute** | No skipping, no "it works on my machine". |
+| P9 | **Least privilege & no secrets** | Credentials only in the git-ignored `.env`; never hardcode secrets. |
+| P10 | **Adapt, don't replace** | Follow existing architecture (`repository` over legacy `jpa`, design system tokens, etc.). |
 
 ---
 
@@ -109,7 +109,7 @@ The workflow below is **mandatory and sequential**. No step may be skipped
 (see [Exceptions](#12-governance-exceptions-and-enforcement)). The Quality
 Gates in [section 6](#6-quality-gates) are checked at the marked points.
 
-```
+```text
 Issue
   │
   ▼
@@ -304,19 +304,19 @@ succeeded, referencing the PR.
 The five gates are **hard stops**. Work does not progress past a gate until
 every condition is satisfied.
 
-### Gate 1 — Do not start implementation without:
+### Gate 1 — Do not start implementation without
 
 - [ ] GitHub Issue exists (linked to a Use Case, with Acceptance Criteria)
 - [ ] Specification written (approved for complex changes)
 - [ ] Acceptance Criteria defined
 
-### Gate 2 — Do not implement without:
+### Gate 2 — Do not implement without
 
 - [ ] Unit Tests written (and observed failing)
 - [ ] Test cases designed (happy path + edge + error paths)
 - [ ] Integration Tests written where applicable
 
-### Gate 3 — Do not create a PR if:
+### Gate 3 — Do not create a PR if
 
 - [ ] Permanent documentation is not updated and consistent
 - [ ] Any test is failing (unit, integration, regression)
@@ -325,7 +325,7 @@ every condition is satisfied.
 - [ ] Checkstyle / Spotless / lint gates fail
 - [ ] `bash scripts/run_pipeline.sh` has not been run, or last failed
 
-### Gate 4 — Do not merge if:
+### Gate 4 — Do not merge if
 
 - [ ] CI/CD is failing or not yet green
 - [ ] Code review is pending or unresolved (in this repo, the code owner
@@ -334,7 +334,7 @@ every condition is satisfied.
 - [ ] Merge conflicts exist
 - [ ] Documentation updates are pending
 
-### Gate 5 — Do not consider the change finished until:
+### Gate 5 — Do not consider the change finished until
 
 - [ ] Deploy succeeded
 - [ ] Smoke test passed on the target environment
@@ -438,6 +438,7 @@ sections and the same task groups — no agent-proprietary feature is involved.
 An agent that never reads `CLAUDE.md` still gets this Constitution.
 
 Agent-specific entry points:
+
 - **Claude Code** → `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md`
 - **OpenCode** → `opencode.json` (loads `CLAUDE.md` and `.claude/rules/*`)
 - **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
@@ -503,7 +504,7 @@ drift.
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright + Bruno API suite) |
-| Local preflight | `bash scripts/preflight.sh [--fix|--fast|--full]`; pre-push hook |
+| Local preflight | `bash scripts/preflight.sh [--fix / --fast / --full]`; pre-push hook |
 | Pre-PR pipeline gate (Gate 3) | `bash scripts/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |

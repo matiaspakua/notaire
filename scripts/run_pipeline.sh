@@ -129,7 +129,10 @@ if [ ! -x frontend/node_modules/.bin/markdownlint-cli2 ]; then
 elif [ "${#CHANGED_MD[@]}" -eq 0 ]; then
     phase_skip "markdown-lint" "no *.md files changed vs origin/main"
 else
-    phase "markdown-lint" frontend/node_modules/.bin/markdownlint-cli2 "${CHANGED_MD[@]}" || OVERALL_FAILED=1
+    # --no-globs: without it, the config's "globs" property (needed so a bare
+    # `markdownlint-cli2` run still has a sane default) overrides these explicit
+    # ratcheted paths and lints the whole repo instead.
+    phase "markdown-lint" frontend/node_modules/.bin/markdownlint-cli2 --no-globs "${CHANGED_MD[@]}" || OVERALL_FAILED=1
 fi
 
 # -----------------------------------------------------------------------------

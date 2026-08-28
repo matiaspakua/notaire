@@ -83,7 +83,7 @@ Spotless resolves the repository through JGit, which walks parent directories
 looking for a `.git` **directory**. Inside a git worktree, `.git` is a **file**
 holding a `gitdir:` pointer, so the plugin aborts with:
 
-```
+```text
 Cannot find git repository in any parent directory
 ```
 
