@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSpec × Notaire — Flujo End-to-End</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg:           #07090e;
+      --surface:      #0d1221;
+      --card:         rgba(13, 18, 33, 0.92);
+      --border:       rgba(255,255,255,0.08);
+      --text:         #f1f5f9;
+      --muted:        #64748b;
+      --openspec-c:   #38bdf8;
+      --openspec-bg:  rgba(56, 189, 248, 0.10);
+      --notaire-c:    #a78bfa;
+      --notaire-bg:   rgba(167, 139, 250, 0.10);
+      --gate-c:       #f59e0b;
+      --gate-bg:      rgba(245, 158, 11, 0.10);
+      --done-c:       #34d399;
+      --done-bg:      rgba(52, 211, 153, 0.10);
+      --font-sans:    'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+    }
+    [data-theme="light"] {
+      --bg:          #f8fafc;
+      --surface:     #ffffff;
+      --card:        rgba(255,255,255,0.95);
+      --border:      #e2e8f0;
+      --text:        #0f172a;
+      --muted:       #64748b;
+      --openspec-c:  #0284c7;
+      --openspec-bg: rgba(2,132,199,0.08);
+      --notaire-c:   #7c3aed;
+      --notaire-bg:  rgba(124,58,237,0.08);
+      --gate-c:      #d97706;
+      --gate-bg:     rgba(217,119,6,0.08);
+      --done-c:      #059669;
+      --done-bg:     rgba(5,150,105,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:var(--font-sans); overflow:hidden; }
+
+    /* Grain texture */
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.4;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    }
+
+    /* Ambient glow blobs */
+    .glow { position:fixed; border-radius:50%; pointer-events:none; filter:blur(100px); opacity:0.14; }
+    .glow-1 { width:550px; height:550px; background:var(--openspec-c); top:-150px; left:-120px; }
+    .glow-2 { width:400px; height:400px; background:var(--notaire-c); bottom:-100px; right:80px; }
+
+    /* ── SLIDE LAYOUT ── */
+    .slide {
+      position:relative; z-index:1;
+      width:100%; height:100%;
+      display:grid;
+      grid-template-rows: auto 1fr auto auto auto;
+      padding: 1.8rem 2.8rem 1.4rem;
+      gap: 0.7rem;
+    }
+
+    /* ── HEADER ── */
+    .header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+    .eyebrow { font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:0.2rem; }
+    .slide-title { font-size:clamp(1.3rem,2vw,1.85rem); font-weight:800; color:var(--text); line-height:1.1; }
+    .slide-title em { font-style:normal; color:var(--openspec-c); }
+
+    /* controls */
+    .controls { display:flex; gap:0.45rem; align-items:center; flex-shrink:0; }
+    .legend { display:flex; gap:0.9rem; align-items:center; margin-right:0.5rem; }
+    .legend-item { display:flex; gap:0.35rem; align-items:center; font-size:0.7rem; font-weight:600; color:var(--muted); }
+    .ldot { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+    .btn {
+      font-family:var(--font-mono); font-size:0.7rem; font-weight:600;
+      padding:0.3rem 0.7rem; border-radius:6px;
+      border:1px solid var(--border); background:var(--card); color:var(--muted);
+      cursor:pointer; transition:all 0.2s ease; letter-spacing:0.02em;
+      display:inline-flex; align-items:center; gap:0.3rem;
+    }
+    .btn:hover { border-color:var(--openspec-c); color:var(--openspec-c); }
+    .btn.on { border-color:var(--openspec-c); color:var(--openspec-c); background:var(--openspec-bg); }
+
+    /* ── CANVAS ── */
+    .canvas {
+      position:relative;
+      display:flex; flex-direction:column; gap:0.75rem;
+      overflow:visible;
+    }
+
+    /* ── LANE ── */
+    .lane { display:flex; align-items:stretch; gap:0.5rem; position:relative; z-index:1; }
+    .lane-lbl {
+      width:80px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:flex-end;
+      padding-right:0.6rem;
+      font-size:0.63rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+      opacity:0;
+    }
+    .lane-lbl.os { color:var(--openspec-c); }
+    .lane-lbl.nt { color:var(--notaire-c); }
+    .lane-lbl.gt { color:var(--gate-c); }
+
+    /* ── STEPS ROW ── */
+    .steps { flex:1; display:flex; gap:0.5rem; }
+
+    /* ── STEP NODE ── */
+    .step {
+      flex:1; position:relative;
+      border-radius:10px; border:1.5px solid var(--border);
+      padding:0.7rem 0.8rem;
+      background:var(--card); cursor:pointer;
+      display:flex; flex-direction:column; gap:0.25rem;
+      opacity:0; transform:translateY(14px);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+      backdrop-filter:blur(10px);
+      overflow:hidden;
+    }
+    .step::after {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      border-radius:10px 10px 0 0; opacity:0;
+      transition:opacity 0.3s ease;
+    }
+    .step.os::after { background:var(--openspec-c); }
+    .step.nt::after { background:var(--notaire-c); }
+    .step.gt::after { background:var(--gate-c); }
+    .step.dn::after { background:var(--done-c); }
+
+    .step:hover { transform:translateY(-2px); }
+    .step.os:hover,.step.os.on { border-color:var(--openspec-c); box-shadow:0 0 20px rgba(56,189,248,0.22); }
+    .step.nt:hover,.step.nt.on { border-color:var(--notaire-c); box-shadow:0 0 20px rgba(167,139,250,0.22); }
+    .step.gt:hover,.step.gt.on { border-color:var(--gate-c);    box-shadow:0 0 20px rgba(245,158,11,0.25); }
+    .step.dn:hover,.step.dn.on { border-color:var(--done-c);    box-shadow:0 0 20px rgba(52,211,153,0.25); }
+    .step.on::after { opacity:1; }
+    .step.on { background:rgba(10,15,28,0.98); }
+
+    .step-idx { font-family:var(--font-mono); font-size:0.58rem; font-weight:600; color:var(--muted); letter-spacing:0.04em; }
+    .step-name { font-size:0.82rem; font-weight:800; line-height:1.2; }
+    .step.os .step-name { color:var(--openspec-c); }
+    .step.nt .step-name { color:var(--notaire-c); }
+    .step.gt .step-name { color:var(--gate-c); }
+    .step.dn .step-name { color:var(--done-c); }
+    .step-sub { font-size:0.69rem; color:var(--muted); line-height:1.3; margin-top:0.05rem; }
+    .step-cmd { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); background:rgba(0,0,0,0.25); border-radius:4px; padding:0.18rem 0.4rem; margin-top:0.15rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .step.on .step-cmd { color:var(--openspec-c); }
+    .badge { display:inline-flex; align-items:center; gap:0.2rem; font-size:0.58rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:0.13rem 0.4rem; border-radius:3px; margin-top:0.15rem; width:fit-content; }
+    .badge.os { background:var(--openspec-bg); color:var(--openspec-c); border:1px solid rgba(56,189,248,0.2); }
+    .badge.nt { background:var(--notaire-bg); color:var(--notaire-c); border:1px solid rgba(167,139,250,0.2); }
+    .badge.gt { background:var(--gate-bg);    color:var(--gate-c);    border:1px solid rgba(245,158,11,0.2); }
+    .badge.dn { background:var(--done-bg);    color:var(--done-c);    border:1px solid rgba(52,211,153,0.2); }
+
+    /* pulse dot */
+    .pdot { position:absolute; top:0.6rem; right:0.6rem; width:7px; height:7px; border-radius:50%; opacity:0; }
+    .step.os .pdot { background:var(--openspec-c); box-shadow:0 0 6px var(--openspec-c); }
+    .step.nt .pdot { background:var(--notaire-c);  box-shadow:0 0 6px var(--notaire-c); }
+    .step.gt .pdot { background:var(--gate-c);     box-shadow:0 0 6px var(--gate-c); }
+    .step.dn .pdot { background:var(--done-c);     box-shadow:0 0 6px var(--done-c); }
+
+    /* placeholder spacer */
+    .sp { flex:1; opacity:0; pointer-events:none; }
+
+    /* ── SVG CONNECTORS ── */
+    .conn-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:visible; }
+    .cpath { fill:none; stroke:var(--border); stroke-width:1.5; stroke-dasharray:4 3; opacity:0.45; }
+    .cpath-active { fill:none; stroke:var(--openspec-c); stroke-width:2.5; opacity:0; }
+    .cparticle { fill:var(--openspec-c); opacity:0; filter:drop-shadow(0 0 5px var(--openspec-c)); }
+
+    /* ── PROGRESS BAR ── */
+    .prog-track { height:2px; background:var(--border); border-radius:2px; overflow:hidden; }
+    .prog-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--openspec-c),var(--done-c)); width:0%; transition:width 0.55s cubic-bezier(0.16,1,0.3,1); }
+
+    /* ── DETAIL PANEL ── */
+    .detail {
+      border-radius:10px; border:1px solid var(--border); background:var(--card);
+      padding:0.9rem 1.2rem;
+      display:grid; grid-template-columns:1fr auto; grid-template-rows:auto auto;
+      gap:0.4rem 1rem; backdrop-filter:blur(12px); min-height:72px;
+    }
+    .dtitle { font-size:0.9rem; font-weight:700; color:var(--text); grid-column:1; display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+    .dtitle code { font-family:var(--font-mono); font-size:0.76rem; background:rgba(0,0,0,0.3); border-radius:3px; padding:0.08rem 0.4rem; color:var(--openspec-c); }
+    .ddesc { font-size:0.79rem; color:var(--muted); line-height:1.55; grid-column:1; }
+    .ddesc strong { color:var(--text); font-weight:600; }
+    .ddesc code  { font-family:var(--font-mono); font-size:0.74rem; background:rgba(0,0,0,0.25); border-radius:3px; padding:0.06rem 0.35rem; color:var(--openspec-c); }
+    .dactions { grid-column:2; grid-row:1/3; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:0.35rem; }
+    .dlink { display:inline-flex; align-items:center; gap:0.25rem; font-size:0.7rem; font-weight:600; color:var(--openspec-c); text-decoration:none; border:1px solid rgba(56,189,248,0.25); border-radius:5px; padding:0.28rem 0.55rem; transition:all 0.2s ease; white-space:nowrap; }
+    .dlink:hover { background:var(--openspec-bg); }
+    .dgate { font-family:var(--font-mono); font-size:0.67rem; font-weight:600; color:var(--done-c); text-align:right; white-space:nowrap; }
+
+    /* ── FOOTER ── */
+    .footer { display:flex; align-items:center; justify-content:space-between; }
+    .fctr { font-family:var(--font-mono); font-size:0.67rem; color:var(--muted); letter-spacing:0.04em; }
+    .frepo { font-size:0.67rem; color:var(--muted); }
+    .frepo a { color:var(--openspec-c); text-decoration:none; font-weight:600; }
+  </style>
+</head>
+<body>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
+  <div class="slide">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="eyebrow">OpenSpec × Notaire · Flujo End-to-End · Idea → PR Mergeado</div>
+        <h1 class="slide-title">De la <em>Idea</em> al Merge: 9 Fases, 5 Gates</h1>
+      </div>
+      <div class="controls">
+        <div class="legend">
+          <div class="legend-item"><div class="ldot" style="background:var(--openspec-c)"></div>OpenSpec</div>
+          <div class="legend-item"><div class="ldot" style="background:var(--notaire-c)"></div>Notaire</div>
+          <div class="legend-item"><div class="ldot" style="background:var(--gate-c)"></div>Gate</div>
+          <div class="legend-item"><div class="ldot" style="background:var(--done-c)"></div>Done</div>
+        </div>
+        <button class="btn" onclick="toggleTheme()">☀</button>
+        <button class="btn on" id="play-btn" onclick="togglePlay()">⏸ Pausa</button>
+        <button class="btn" onclick="restart()">↺</button>
+      </div>
+    </div>
+
+    <!-- CANVAS -->
+    <div class="canvas" id="canvas">
+
+      <!-- Lane 1: OpenSpec -->
+      <div class="lane">
+        <div class="lane-lbl os">OpenSpec</div>
+        <div class="steps" id="row-os">
+          <div class="step os" id="s-explore" onclick="go('explore')">
+            <div class="pdot"></div>
+            <span class="step-idx">FASE 01</span>
+            <span class="step-name">Explore</span>
+            <span class="step-sub">Investigación segura. Zero archivos creados.</span>
+            <span class="step-cmd">/opsx:explore "CU15"</span>
+            <span class="badge os">0 side-effects</span>
+          </div>
+          <div class="sp"></div><!-- triage slot -->
+          <div class="sp"></div><!-- gate1 slot -->
+          <div class="step os" id="s-propose" onclick="go('propose')">
+            <div class="pdot"></div>
+            <span class="step-idx">FASE 03</span>
+            <span class="step-name">Propose</span>
+            <span class="step-sub">Scaffold de deltas efímeros en changes/</span>
+            <span class="step-cmd">openspec new change "…"</span>
+            <span class="badge os">schema: notaire-sdlc</span>
+          </div>
+          <div class="step os" id="s-apply" onclick="go('apply')">
+            <div class="pdot"></div>
+            <span class="step-idx">FASE 04</span>
+            <span class="step-name">Apply · TDD</span>
+            <span class="step-sub">Test RED primero → código → GREEN</span>
+            <span class="step-cmd">/opsx:apply → mvn test</span>
+            <span class="badge os">RED → GREEN</span>
+          </div>
+          <div class="sp"></div><!-- gate2 slot -->
+          <div class="sp"></div><!-- preflight slot -->
+          <div class="sp"></div><!-- gate5 slot -->
+          <div class="step dn" id="s-archive" onclick="go('archive')">
+            <div class="pdot"></div>
+            <span class="step-idx">FASE 06</span>
+            <span class="step-name">Archive</span>
+            <span class="step-sub">Delta → specs/ vivas. Issue cerrado.</span>
+            <span class="step-cmd">/opsx:archive</span>
+            <span class="badge dn">Gate 5 · Done</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lane 2: Notaire -->
+      <div class="lane">
+        <div class="lane-lbl nt">Notaire</div>
+        <div class="steps" id="row-nt">
+          <div class="sp"></div><!-- explore -->
+          <div class="step nt" id="s-triage" onclick="go('triage')">
+            <div class="pdot"></div>
+            <span class="step-idx">PUENTE 02</span>
+            <span class="step-name">Triage</span>
+            <span class="step-sub">Análisis → GitHub Issue formal</span>
+            <span class="step-cmd">openspec-triage #848 CU15</span>
+            <span class="badge nt">Gate 1.0 · Issue real</span>
+          </div>
+          <div class="sp"></div><!-- gate1 -->
+          <div class="sp"></div><!-- propose -->
+          <div class="sp"></div><!-- apply -->
+          <div class="sp"></div><!-- gate2 -->
+          <div class="step nt" id="s-preflight" onclick="go('preflight')">
+            <div class="pdot"></div>
+            <span class="step-idx">PUENTE 05</span>
+            <span class="step-name">Preflight</span>
+            <span class="step-sub">Spotless · JaCoCo ≥ 80% · Playwright</span>
+            <span class="step-cmd">bash preflight.sh --fix</span>
+            <span class="badge nt">Gate 3 &amp; 4 · CI + Review</span>
+          </div>
+          <div class="sp"></div><!-- gate5 -->
+          <div class="sp"></div><!-- archive -->
+        </div>
+      </div>
+
+      <!-- Lane 3: Gates -->
+      <div class="lane">
+        <div class="lane-lbl gt">Gates</div>
+        <div class="steps" id="row-gt">
+          <div class="sp"></div><!-- explore -->
+          <div class="sp"></div><!-- triage -->
+          <div class="step gt" id="s-gate1" onclick="go('gate1')">
+            <div class="pdot"></div>
+            <span class="step-idx">GATE 1.0</span>
+            <span class="step-name">Plan Válido</span>
+            <span class="step-sub">Issue abierto + Spec + Acceptance Criteria.</span>
+            <span class="step-cmd">validate-sdlc-plan.sh</span>
+            <span class="badge gt">gh issue view ✓</span>
+          </div>
+          <div class="sp"></div><!-- propose -->
+          <div class="sp"></div><!-- apply -->
+          <div class="step gt" id="s-gate2" onclick="go('gate2')">
+            <div class="pdot"></div>
+            <span class="step-idx">GATE 2</span>
+            <span class="step-name">TDD Cumplido</span>
+            <span class="step-sub">Test visto fallar en JUnit. JaCoCo ≥ 80%.</span>
+            <span class="step-cmd">mvn test -pl backend-api</span>
+            <span class="badge gt">82.4% cobertura</span>
+          </div>
+          <div class="sp"></div><!-- preflight -->
+          <div class="step gt" id="s-gate5" onclick="go('gate5')">
+            <div class="pdot"></div>
+            <span class="step-idx">GATE 5</span>
+            <span class="step-name">Done</span>
+            <span class="step-sub">Smoke test + specs vivas + Issue CLOSED.</span>
+            <span class="step-cmd">cd.yml + smoke check</span>
+            <span class="badge gt">PR Merged ✓</span>
+          </div>
+          <div class="sp"></div><!-- archive -->
+        </div>
+      </div>
+
+      <!-- SVG connector overlay -->
+      <svg class="conn-svg" id="cssvg" aria-hidden="true"></svg>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail" id="detail">
+      <div class="dtitle" id="d-title">Fase 1 · <code>/opsx:explore</code> — Descubrimiento Seguro</div>
+      <div class="ddesc" id="d-desc">El agente investiga el código brownfield sin modificar el working directory. <strong>Regla Notaire P10:</strong> 0 archivos creados hasta tener hipótesis validada.</div>
+      <div class="dactions">
+        <a class="dlink" id="d-link" href="https://github.com/matiaspakua/notaire/blob/main/docs/archive/OPENSPEC-CONSTITUTION-BRIDGE.md" target="_blank" rel="noopener noreferrer">Ver en GitHub ↗</a>
+        <span class="dgate" id="d-gate">✓ 0 archivos modificados</span>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span class="fctr" id="fctr">Fase 1 / 9</span>
+      <span class="frepo"><a href="https://github.com/matiaspakua/notaire" target="_blank" rel="noopener">github.com/matiaspakua/notaire</a></span>
+    </div>
+
+  </div><!-- /slide -->
+
+  <script>
+  // ══════════════════════════════════════════════════════════════════
+  // DATA
+  // ══════════════════════════════════════════════════════════════════
+  const STEPS = [
+    { id:'explore',  cls:'os', prog:10,
+      title:'Fase 1 · <code>/opsx:explore</code> — Descubrimiento Seguro',
+      desc:'El agente investiga el código brownfield sin modificar el working directory. <strong>Regla P10 (Notaire):</strong> No crea archivos hasta tener hipótesis técnica validada. 0 side-effects.',
+      gate:'✓ 0 archivos modificados en disco',
+      link:'https://github.com/matiaspakua/notaire/blob/main/docs/archive/OPENSPEC-CONSTITUTION-BRIDGE.md' },
+    { id:'triage',   cls:'nt', prog:21,
+      title:'Puente 2 · <code>openspec-triage</code> — Issue Formal en GitHub',
+      desc:'La hipótesis se formaliza en un GitHub Issue real mediante <code>gh issue create</code>, vinculando Caso de Uso (CUxx), criterios de aceptación y rama. <strong>Sin Issue, no hay spec.</strong>',
+      gate:'✓ Gate 1.0: Issue #848 OPEN verificado',
+      link:'https://github.com/matiaspakua/notaire/issues/848' },
+    { id:'gate1',    cls:'gt', prog:33,
+      title:'Gate 1.0 · <code>validate-sdlc-plan.sh</code> — Plan Verificado',
+      desc:'Valida en vivo con <code>gh issue view</code> que el Issue existe y está OPEN. Comprueba secciones obligatorias de <code>proposal.md</code> y los 12 grupos de tareas en <code>tasks.md</code>.',
+      gate:'✓ 0 errores · Plan Válido · Integrado en CI',
+      link:'https://github.com/matiaspakua/notaire/blob/main/scripts/validate-sdlc-plan.sh' },
+    { id:'propose',  cls:'os', prog:44,
+      title:'Fase 3 · <code>openspec new change</code> — Scaffold de Especificación',
+      desc:'OpenSpec genera la estructura efímera en <code>changes/&lt;name&gt;/</code>: <code>proposal.md</code>, <code>design.md</code>, <code>specs/</code> y <code>tasks.md</code> con los 12 grupos del SDLC Notaire.',
+      gate:'✓ Schema notaire-sdlc inyectado por CLI',
+      link:'https://github.com/matiaspakua/notaire/blob/main/openspec/config.yaml' },
+    { id:'apply',    cls:'os', prog:54,
+      title:'Fase 4 · <code>/opsx:apply</code> — Ciclo TDD (RED → GREEN)',
+      desc:'El agente escribe <strong>primero el test que falla (RED)</strong> en JUnit/AssertJ. Luego la lógica mínima para ponerlo en verde. Code review audita delta de spec vs. tests producidos.',
+      gate:'✓ Gate 2: Test visto fallar antes de codificar',
+      link:'https://github.com/matiaspakua/notaire/blob/main/backend-api/src/main/java/com/licensis/notaire/service/PagoService.java' },
+    { id:'gate2',    cls:'gt', prog:63,
+      title:'Gate 2 · TDD — Cobertura Ratchet ≥ 80%',
+      desc:'<code>mvn test -pl backend-api</code> GREEN con cobertura JaCoCo ≥ 80%. El ratchet impide que la cobertura baje respecto al baseline previo del proyecto.',
+      gate:'✓ 82.4% cobertura · 1561 tests en verde',
+      link:'https://github.com/matiaspakua/notaire/blob/main/backend-api/pom.xml' },
+    { id:'preflight',cls:'nt', prog:74,
+      title:'Puente 5 · <code>preflight.sh --fix</code> — Pre-PR Obligatorio',
+      desc:'Ejecuta: Spotless (formato) → JaCoCo ratchet → <code>validate-sdlc-plan.sh</code> → Playwright E2E. Instalado como pre-push hook. <strong>Bloquea el push si algo falla.</strong>',
+      gate:'✓ Gate 3 & 4: Spotless + CI + Code Owner',
+      link:'https://github.com/matiaspakua/notaire/blob/main/scripts/preflight.sh' },
+    { id:'gate5',    cls:'gt', prog:87,
+      title:'Gate 3 & 4 · CI/CD + Code Owner Review',
+      desc:'GitHub Actions (<code>ci.yml</code> + <code>pr-validation.yml</code>) 100% verde. El Code Owner revisa el delta de spec vs. código y verifica que los tests cubren los escenarios declarados.',
+      gate:'✓ PR #850 aprobado · CI 100% verde',
+      link:'https://github.com/matiaspakua/notaire/pull/850' },
+    { id:'archive',  cls:'dn', prog:100,
+      title:'Fase 6 · <code>/opsx:archive</code> — Fusión Viva &amp; Cierre',
+      desc:'Al mergear el PR, <code>/opsx:archive</code> fusiona el delta en <code>openspec/specs/</code> de forma permanente, archiva <code>changes/</code> y cierra el Issue automáticamente.',
+      gate:'✓ Gate 5 Done · specs/ actualizadas · Issue CLOSED',
+      link:'https://github.com/matiaspakua/notaire/tree/main/openspec' },
+  ];
+
+  // Sequential connection pairs (fromId → toId)
+  const CONNS = [
+    ['explore','triage'],['triage','gate1'],['gate1','propose'],
+    ['propose','apply'],['apply','gate2'],['gate2','preflight'],
+    ['preflight','gate5'],['gate5','archive'],
+  ];
+
+  // Color map
+  const COLORS = {
+    os: '#38bdf8', nt: '#a78bfa', gt: '#f59e0b', dn: '#34d399'
+  };
+  function clr(cls) {
+    const root = document.documentElement;
+    const theme = root.getAttribute('data-theme');
+    if (theme === 'light') {
+      const lmap = { os:'#0284c7', nt:'#7c3aed', gt:'#d97706', dn:'#059669' };
+      return lmap[cls] || '#0284c7';
+    }
+    return COLORS[cls] || '#38bdf8';
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // STATE
+  // ══════════════════════════════════════════════════════════════════
+  let curIdx   = -1;
+  let playing  = true;
+  let interval = null;
+  const DELAY  = 4200;
+  let connData = {};
+
+  // ══════════════════════════════════════════════════════════════════
+  // ENTRY ANIMATION
+  // ══════════════════════════════════════════════════════════════════
+  function boot() {
+    gsap.to('.lane-lbl', { opacity:1, duration:0.55, stagger:0.12, ease:'power3.out', delay:0.2 });
+    const allSteps = document.querySelectorAll('.step');
+    gsap.to(allSteps, {
+      opacity:1, y:0,
+      duration:0.5, stagger:0.055,
+      ease:'cubic-bezier(0.16,1,0.3,1)',
+      delay:0.35,
+      onComplete: () => {
+        drawConns();
+        setTimeout(next, 500);
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // STEP NAVIGATION
+  // ══════════════════════════════════════════════════════════════════
+  function next() {
+    curIdx = (curIdx + 1) % STEPS.length;
+    activate(curIdx);
+  }
+
+  function go(id) {
+    const idx = STEPS.findIndex(s => s.id === id);
+    if (idx < 0) return;
+    if (playing) { clearInterval(interval); interval = null; }
+    curIdx = idx;
+    activate(idx);
+    if (playing) setTimeout(() => { if(playing) startPlay(); }, 3000);
+  }
+
+  function activate(idx) {
+    const s = STEPS[idx];
+    // Deactivate all
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('on'));
+    document.querySelectorAll('.pdot').forEach(el => {
+      gsap.killTweensOf(el);
+      gsap.to(el, { opacity:0, scale:1, duration:0.15 });
+    });
+
+    const el = document.getElementById('s-' + s.id);
+    if (!el) return;
+    el.classList.add('on');
+
+    // Pulse dot
+    const dot = el.querySelector('.pdot');
+    if (dot) {
+      gsap.fromTo(dot,
+        { opacity:0, scale:0.4 },
+        { opacity:1, scale:1.9, duration:0.45, ease:'power2.out',
+          yoyo:true, repeat:-1, repeatDelay:0.5 }
+      );
+    }
+
+    // Detail panel
+    updateDetail(s);
+
+    // Connector
+    animConn(idx);
+
+    // Progress
+    document.getElementById('prog').style.width = s.prog + '%';
+
+    // Counter
+    document.getElementById('fctr').textContent = `Fase ${idx + 1} / ${STEPS.length}`;
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // DETAIL PANEL
+  // ══════════════════════════════════════════════════════════════════
+  function updateDetail(s) {
+    gsap.fromTo('#detail', { opacity:0.65, y:4 }, { opacity:1, y:0, duration:0.3, ease:'power2.out' });
+    document.getElementById('d-title').innerHTML = s.title;
+    document.getElementById('d-desc').innerHTML  = s.desc;
+    document.getElementById('d-gate').innerHTML  = s.gate;
+    document.getElementById('d-link').href       = s.link;
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // SVG CONNECTORS
+  // ══════════════════════════════════════════════════════════════════
+  function getRect(id) {
+    const svg = document.getElementById('cssvg');
+    const svgR = svg.getBoundingClientRect();
+    const el = document.getElementById('s-' + id);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { l: r.left - svgR.left, r: r.right - svgR.left, t: r.top - svgR.top, b: r.bottom - svgR.top,
+             cx: (r.left + r.right)/2 - svgR.left, cy: (r.top + r.bottom)/2 - svgR.top,
+             w: r.width, h: r.height };
+  }
+
+  function drawConns() {
+    const svg = document.getElementById('cssvg');
+    svg.innerHTML = '';
+    connData = {};
+
+    CONNS.forEach(([a, b], i) => {
+      const ra = getRect(a);
+      const rb = getRect(b);
+      if (!ra || !rb) return;
+
+      // Determine connection direction
+      let x1, y1, x2, y2;
+      const sameLane = Math.abs(ra.cy - rb.cy) < 30;
+      if (sameLane) {
+        // Horizontal: right edge → left edge
+        x1 = ra.r; y1 = ra.cy;
+        x2 = rb.l; y2 = rb.cy;
+      } else {
+        // Cross-lane: bottom center → top center
+        const goRight = rb.cx > ra.cx;
+        x1 = goRight ? ra.r : ra.l;  y1 = ra.cy;
+        x2 = rb.cx;                   y2 = rb.t;
+      }
+
+      const dx = Math.abs(x2 - x1) * 0.45;
+      const dy = Math.abs(y2 - y1) * 0.35;
+      const cpx1 = x1 + dx, cpy1 = y1 + (y2 > y1 ? dy : -dy) * 0.3;
+      const cpx2 = x2 - dx, cpy2 = y2 - (y2 > y1 ? dy : -dy) * 0.3;
+      const d = `M${x1},${y1} C${cpx1},${cpy1} ${cpx2},${cpy2} ${x2},${y2}`;
+
+      // Background dashed path
+      const bg = document.createElementNS('http://www.w3.org/2000/svg','path');
+      bg.setAttribute('d', d);
+      bg.setAttribute('class','cpath');
+      svg.appendChild(bg);
+
+      // Active highlight path
+      const ac = document.createElementNS('http://www.w3.org/2000/svg','path');
+      ac.setAttribute('d', d);
+      ac.setAttribute('class','cpath-active');
+      ac.setAttribute('id', `ca-${i}`);
+      ac.setAttribute('stroke', clr(STEPS.find(s=>s.id===a)?.cls || 'os'));
+      svg.appendChild(ac);
+
+      // Particle
+      const pt = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      pt.setAttribute('class','cparticle');
+      pt.setAttribute('r','4');
+      pt.setAttribute('id', `cp-${i}`);
+      pt.setAttribute('fill', clr(STEPS.find(s=>s.id===b)?.cls || 'os'));
+      svg.appendChild(pt);
+
+      connData[`${a}-${b}`] = { path: ac, particle: pt, d };
+    });
+  }
+
+  function animConn(stepIdx) {
+    // Fade out all
+    document.querySelectorAll('.cpath-active').forEach(el => gsap.to(el, { opacity:0, duration:0.25 }));
+    document.querySelectorAll('.cparticle').forEach(el => gsap.to(el, { opacity:0, duration:0.2 }));
+    if (stepIdx === 0) return;
+
+    const prev = STEPS[stepIdx - 1];
+    const curr = STEPS[stepIdx];
+    const key  = `${prev.id}-${curr.id}`;
+    const conn = connData[key];
+    if (!conn) return;
+
+    // Highlight the path
+    gsap.to(conn.path, { opacity:1, duration:0.35 });
+
+    // Animate path draw
+    const len = conn.path.getTotalLength ? conn.path.getTotalLength() : 120;
+    conn.path.style.strokeDasharray  = len;
+    conn.path.style.strokeDashoffset = len;
+    gsap.fromTo(conn.path,
+      { strokeDashoffset: len },
+      { strokeDashoffset: 0, duration:0.55, ease:'power2.inOut' }
+    );
+
+    // Animate particle along path
+    gsap.to(conn.particle, { opacity:1, duration:0.15 });
+    const prog = { t: 0 };
+    gsap.to(prog, {
+      t: 1, duration: 0.62, ease:'power2.inOut',
+      onUpdate() {
+        if (!conn.path.getPointAtLength) return;
+        const pt = conn.path.getPointAtLength(prog.t * len);
+        conn.particle.setAttribute('cx', pt.x);
+        conn.particle.setAttribute('cy', pt.y);
+      },
+      onComplete() {
+        gsap.to(conn.particle, { opacity:0, duration:0.3, delay:0.15 });
+      }
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // PLAY / PAUSE / RESTART
+  // ══════════════════════════════════════════════════════════════════
+  function startPlay() {
+    if (interval) clearInterval(interval);
+    interval = setInterval(next, DELAY);
+  }
+
+  function togglePlay() {
+    const btn = document.getElementById('play-btn');
+    if (playing) {
+      clearInterval(interval); interval = null;
+      playing = false;
+      btn.textContent = '▶ Reanudar';
+      btn.classList.remove('on');
+    } else {
+      playing = true;
+      btn.textContent = '⏸ Pausa';
+      btn.classList.add('on');
+      startPlay();
+    }
+  }
+
+  function restart() {
+    curIdx = -1;
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('on'));
+    document.getElementById('prog').style.width = '0%';
+    setTimeout(next, 200);
+    if (playing && !interval) startPlay();
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // THEME
+  // ══════════════════════════════════════════════════════════════════
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    setTimeout(drawConns, 60);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // RESIZE
+  // ══════════════════════════════════════════════════════════════════
+  const ro = new ResizeObserver(() => drawConns());
+  ro.observe(document.getElementById('canvas'));
+
+  // ══════════════════════════════════════════════════════════════════
+  // KEYBOARD
+  // ══════════════════════════════════════════════════════════════════
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(STEPS[Math.min(curIdx+1,STEPS.length-1)].id); }
+    else if (e.key === 'ArrowLeft')                { e.preventDefault(); go(STEPS[Math.max(curIdx-1,0)].id); }
+    else if (e.key === 'p' || e.key === 'P')       togglePlay();
+    else if (e.key === 'r' || e.key === 'R')       restart();
+    else if (e.key === 't' || e.key === 'T')       toggleTheme();
+  });
+
+  // ══════════════════════════════════════════════════════════════════
+  // INIT
+  // ══════════════════════════════════════════════════════════════════
+  window.addEventListener('load', () => {
+    boot();
+    startPlay();
+  });
+  </script>
+</body>
+</html>
