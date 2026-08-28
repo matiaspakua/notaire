@@ -19,7 +19,8 @@
     "logout": "Logout",
     "brand": "Notaire",
     "brandSubtitle": "Notary Office",
-    "documentosNecesarios": "Required Documents"
+    "documentosNecesarios": "Required Documents",
+    "reingresoDocumentacion": "Re-submit Documentation"
   },
   "common": {
     "create": "Create",
@@ -307,6 +308,26 @@
       "fechaLiberado": "Release date",
       "observaciones": "Notes",
       "entregado": "Delivered"
+    }
+  },
+  "reingresoDocumentacion": {
+    "title": "Re-submit Documentation",
+    "verTramites": "View proceedings",
+    "noData": "No cases available",
+    "noTramites": "This case has no proceedings",
+    "detalleTitle": "Proceedings and required documentation",
+    "reingresar": "Re-submit",
+    "documentoReingresado": "Document re-submitted",
+    "errorReingreso": "Error re-submitting the document",
+    "noDocumentosNecesarios": "No required documentation configured",
+    "fields": {
+      "numero": "Number",
+      "encabezado": "Header",
+      "tramite": "Proceeding",
+      "nombre": "Document",
+      "vence": "Expires",
+      "diasVencimiento": "Expiration days",
+      "quienEntrega": "Delivered by"
     }
   },
   "pagos": {

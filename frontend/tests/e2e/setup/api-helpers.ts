@@ -285,6 +285,36 @@ export async function createCompleteCaseGestion(
 }
 
 /**
+ * CU43 - trámites of a gestión with their required documentation. `DtoGestionSummary`
+ * (the `complete-case`/`GET /gestiones/{id}` read-model) never exposes trámite IDs, so
+ * this is the only way to learn the ID of the trámite `complete-case` created.
+ */
+export async function getReingresoDocumentacion(
+  page: Page,
+  idGestion: number,
+): Promise<ApiResult<{ idGestion: number; numero: number; tramites: Array<{ idTramite: number }> }>> {
+  return apiGet(page, `/gestiones/${idGestion}/reingreso-documentacion`);
+}
+
+/**
+ * Plain gestión helper (CU43) — unlike `createCompleteCaseGestion`, this does
+ * not create a `Tramite`, so the resulting gestión has zero trámites.
+ */
+export async function createGestionSinTramite(
+  page: Page,
+  escribanoId: number,
+  overrides: { encabezado?: string; numero?: number } = {},
+): Promise<ApiResult<{ idGestion: number; numero: number }>> {
+  return apiPost(page, "/gestiones", {
+    encabezado: `Gestión E2E ${uniqueId()}`,
+    fechaInicio: new Date().toISOString().split("T")[0],
+    numero: uniqueId() % 1_000_000,
+    fkIdPersonaEscribano: { idPersona: escribanoId },
+    ...overrides,
+  });
+}
+
+/**
  * Escritura helpers
  */
 export async function createEscritura(
@@ -535,13 +565,33 @@ export async function createEstadoGestion(
 
 export async function createTipoDocumento(
   page: Page,
-  overrides: { nombre?: string } = {},
-): Promise<ApiResult<{ idTipoDeDocumento: number }>> {
+  overrides: { nombre?: string; vence?: boolean; diasVencimiento?: number; quienEntrega?: string } = {},
+): Promise<ApiResult<{ idTipoDocumento: number }>> {
   const id = uniqueId();
   return apiPost(page, "/tipo-de-documento", {
     nombre: `Tipo Documento E2E ${id}`,
-    descripcion: "Created by E2E test",
+    habilitado: true,
+    devuelto: false,
+    vence: true,
+    diasVencimiento: 30,
+    quienEntrega: "Cliente",
     ...overrides,
+  });
+}
+
+/**
+ * PlantillaTramite helper (CU03/CU43) — links a tipo de trámite to a tipo de
+ * documento as required documentación necesaria.
+ */
+export async function createPlantillaTramite(
+  page: Page,
+  idTipoTramite: number,
+  idTipoDocumento: number,
+): Promise<ApiResult<unknown>> {
+  return apiPost(page, "/plantilla-tramite", {
+    plantillaTramitePK: { fkIdTipoTramite: idTipoTramite, fkIdTipoDocumento: idTipoDocumento },
+    tipoDeTramite: { idTipoTramite },
+    tipoDeDocumento: { idTipoDocumento },
   });
 }
 

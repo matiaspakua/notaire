@@ -400,3 +400,45 @@ export interface MovimientoDocumentoEntidadExternaInput {
   observaciones?: string;
   entregado?: boolean;
 }
+
+/** CU43 - Tipo de documento requerido por la PlantillaTramite de un trámite. */
+export interface DocumentoNecesario {
+  idTipoDocumento: number;
+  nombre?: string;
+  vence: boolean;
+  diasVencimiento?: number;
+  quienEntrega?: string;
+}
+
+/** CU43 - Un trámite de la gestión junto con su documentación necesaria. */
+export interface TramiteDocumentacionNecesaria {
+  idTramite: number;
+  tipoTramiteNombre?: string;
+  documentosNecesarios: DocumentoNecesario[];
+}
+
+/** CU43 - GET /gestiones/{id}/reingreso-documentacion response. */
+export interface GestionReingresoDocumentacion {
+  idGestion: number;
+  numero?: number;
+  encabezado?: string;
+  tramites: TramiteDocumentacionNecesaria[];
+}
+
+/** CU43 - POST /gestiones/{id}/reingreso-documentacion request body. */
+export interface ReingresoDocumentacionInput {
+  idTramite: number;
+  idTipoDocumento: number;
+}
+
+/** CU43 - POST /gestiones/{id}/reingreso-documentacion response. */
+export interface DocumentoReingresado {
+  idDocumentoPresentado: number;
+  idTramite: number;
+  idTipoDocumento: number;
+  nombre?: string;
+  vence: boolean;
+  diasVencimiento?: number;
+  quienEntrega?: string;
+  reingresado: boolean;
+}

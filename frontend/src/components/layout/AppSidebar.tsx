@@ -17,6 +17,7 @@ import {
   Landmark,
   ListTodo,
   LogOut,
+  RotateCcw,
   Scale,
   ScrollText,
   Settings,
@@ -69,6 +70,11 @@ const navItems: NavItem[] = [
     labelKey: "documentosNecesarios",
     href: "/dashboard/documentos-necesarios",
     icon: ClipboardList,
+  },
+  {
+    labelKey: "reingresoDocumentacion",
+    href: "/dashboard/reingreso-documentacion",
+    icon: RotateCcw,
   },
   { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck },
   {
