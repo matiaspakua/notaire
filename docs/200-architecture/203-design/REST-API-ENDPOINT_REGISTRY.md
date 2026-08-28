@@ -76,6 +76,8 @@ These endpoints are actively called by the Next.js frontend:
 - `GET /api/v1/gestiones/{id}/workflow-trace`
 - `GET /api/v1/gestiones/{id}/documentos-entidades-externas` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
 - `PUT /api/v1/gestiones/{id}/documentos-entidades-externas/{idDocumentoPresentado}` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
+- `GET /api/v1/gestiones/{id}/reingreso-documentacion` — `useReingresoDocumentacion.ts`, CU43 `reingreso-documentacion` screen (#865)
+- `POST /api/v1/gestiones/{id}/reingreso-documentacion` — `useReingresoDocumentacion.ts`, CU43 `reingreso-documentacion` screen (#865)
 
 ### InmuebleController
 - `GET /api/v1/inmueble`

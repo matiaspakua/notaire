@@ -11,6 +11,7 @@
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #14 (Administrar certificados y documentos), RF #19 (Informar seguimiento de documentos); CU19 |
 | **GitHub ID** | #196 |
+| **Implementación** | Pantalla `/dashboard/reingreso-documentacion` (Issue #865) — lista de gestiones, diálogo de detalle con sus trámites y la documentación necesaria de cada uno (según su `PlantillaTramite`), y acción de reingreso por tipo de documento. Backend: `ReingresoDocumentacionService`, `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`; el reingreso crea un nuevo `DocumentoPresentado` con `reingresado=true`. |
 
 ## Curso de Eventos
 
