@@ -193,7 +193,7 @@ del testimonio, reingresos, retiro de testimonios, archivo de la gestión—
 pero **en ningún punto aparece un paso de cobro, pago parcial, deuda o
 saldo**:
 
-```
+```text
 :Buscar presupuesto / :Crear presupuesto;
        │
        ▼
@@ -227,7 +227,7 @@ antes de cerrar una gestión.
 
 ### 1.2 Al cobrar, no se ve cuánto se debe, no se controla el método, no se emite comprobante
 
-```
+```text
 Cliente pide pagar
        │
        ▼
@@ -292,11 +292,11 @@ control faltante en `PagoService.procesarPago`, expuesto vía REST
 existentes: complementa (no duplica) #796 (que da visibilidad al saldo pero
 no impide excederlo) y #820 (resumen a nivel gestión, no validación en el
 momento del cobro). Roadmap: independiente — no bloquea ni es bloqueado por
-#821/#822/#823.
+\#821/#822/#823.
 
 **Ficha de triage (Issue #820)** — Caso de Uso: CU47 – Consultar Pago
 (#200); CU02 – Iniciar Gestión (#155). RF: RF-20 "Abonar trámite" (issue
-#20, no confirmado); RF-21 "Registrar quién abona el trámite" (*"el costo y
+\#20, no confirmado); RF-21 "Registrar quién abona el trámite" (*"el costo y
 saldo del trámite se calcula en base al [presupuesto]"*). Tamaño: M ·
 Prioridad: `priority:high`. Descripción: un pago ya se guarda contra un
 presupuesto, pero esa relación no es visible ni consultable end-to-end; se
@@ -341,7 +341,7 @@ quedó sincronizada en `openspec/specs/pago-presupuesto-gestion-summary/spec.md`
 
 **Ficha de triage** — Caso de Uso: CU15 – Procesar pago (#168); CU47 –
 Consultar Pago (#200). RF: RF-22 "Abonar presupuestos en cuotas" (issue
-#22). Tamaño: M · Prioridad: `priority:medium`. Dependencias declaradas en
+\#22). Tamaño: M · Prioridad: `priority:medium`. Dependencias declaradas en
 triage: hallazgo 1.2 (saldo/resumen financiero) y 1.1 (verificación de
 deuda al archivar, donde se dispara la advertencia final de RF-22) —
 confirmado en el `propose` que este cambio reutiliza
@@ -477,7 +477,7 @@ circuito en un solo cambio — ver `openspec/changes/escritura-post-firma-legal-
 
 **Ficha de triage (Issue #833)** — Caso de Uso: CU13 – Ver historial de
 gestión (#166); CU83 – Definir Workflow de Estados y Transiciones (#451,
-#453, #454, #455); CU16 – Archivar Gestión (#169, #819). RF: RF-24
+\#453, #454, #455); CU16 – Archivar Gestión (#169, #819). RF: RF-24
 (historial/bitácora de gestión), sin RF explícito para la validación de
 transiciones de estado. Tamaño: L · Prioridad: `priority:high`. Nota de
 alcance: tres gaps relacionados (bitácora, motor de transiciones,
@@ -639,7 +639,7 @@ de punta a punta (`WorkflowNode`, `WorkflowTransition`,
 los hallazgos 2 (#832) y 3 (#833) que ya están propuestos** — hay un tercer
 gap, más profundo, que ninguno de los dos cubre.
 
-```
+```text
 transicion-de-estados.puml (fragmento post-firma):
 
   :Firmar escritura;
@@ -718,7 +718,7 @@ Firmar escritura (#159); CU07 – Generar testimonio (#160); CU11 – Ingresar
 para inscripción (#164); CU44 – Reingresar testimonio (#197). RF: sin RF
 explícito — es un gap de modelo de datos, no un requerimiento del SRS.
 Tamaño: M · Prioridad: `priority:medium`. Roadmap: depende de que #832 y
-#833 se apliquen primero (ninguno de los dos lo bloquea a nivel de
+\#833 se apliquen primero (ninguno de los dos lo bloquea a nivel de
 propuesta, pero como decisión de diseño conviene resolverlo sabiendo cómo
 quedó el circuito de #832 en código real, no solo en el proposal). No
 bloquea a #832 ni a #833 — es un refinamiento posterior de la misma área.
