@@ -16,8 +16,8 @@ Issue #865 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | Branch | `feat/865_cu43-reingresar-documentacion` | pushed |
 | Tasks | `tasks.md` | all done |
 | Commits | `83aac83` (backend), `61f4b59` (frontend), `a25e32a` (docs, closes #865) | done |
-| Pull Request | pending (opening next) | pending |
-| CI run | pending | pending |
+| Pull Request | [#871](https://github.com/matiaspakua/notaire/pull/871) | open |
+| CI run | pending (triggered on push) | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
 | Smoke test | | pending |
@@ -50,7 +50,7 @@ Issue #865 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | 1 | Issue + spec.md + Acceptance Criteria | yes | Issue #865, `spec.md` Notaire Traceability + Given/When/Then scenarios |
 | 2 | Failing tests written, test cases designed | yes | Unit tests (`ReingresoDocumentacionServiceTest`) and integration tests (`GestionReingresoDocumentacionIntegrationTest`) written before implementation, TDD; a Postgres-only regression (`GestionReingresoDocumentacionPgIntegrationTest`) was written specifically to catch a NOT NULL gap H2's `ddl-auto=create` cannot enforce, confirmed red before the fix and green after |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` 1611/1611, `mvn verify -pl backend-api` BUILD SUCCESS (JaCoCo ratchet floor held), `mvn test -Ppg-integration -Dtest=GestionReingresoDocumentacionPgIntegrationTest` green, `tsc --noEmit` clean, `vitest run` 269/269, `playwright test cu43-reingreso-documentacion.spec.ts` golden+edge passing, responsive smoke at 320/768/1024px, 3 permanent docs updated |
-| 4 | CI green, review approved, no conflicts | pending | branch pushed, PR opening next |
+| 4 | CI green, review approved, no conflicts | pending | branch pushed, PR #871 open, awaiting CI + human review |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
 ## Exceptions

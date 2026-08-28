@@ -114,11 +114,11 @@ chosen trámite's `PlantillaTramite`; verify the created `DocumentoPresentado`.
 
 ### Pull Request y validación CI
 
-- [ ] T032 `bash scripts/preflight.sh --fix`
-- [ ] T033 `git push -u origin feat/865_cu43-reingresar-documentacion`
-- [ ] T034 Open PR titled `[#865] feat: reingresar documentación (CU43)`
+- [x] T032 `bash scripts/preflight.sh --fix`
+- [x] T033 `git push -u origin feat/865_cu43-reingresar-documentacion`
+- [x] T034 Open PR titled `[#865] feat: reingresar documentación (CU43)`
 - [ ] T035 Wait for CI green
-- [ ] T036 PR number recorded in `traceability.md`
+- [x] T036 PR number recorded in `traceability.md`
 
 ### Deploy
 
@@ -138,11 +138,11 @@ chosen trámite's `PlantillaTramite`; verify the created `DocumentoPresentado`.
 - [x] Specification written and reviewed (Gate 1)
 - [x] Tests designed and written first, observed failing (Gate 2)
 - [x] Full suite green: unit, integration, regression
-- [ ] E2E green — pending Phase 5 frontend implementation
+- [x] E2E green
 - [x] Coverage held (JaCoCo ratchet floor unaffected/improved)
-- [ ] Playwright E2E green for the new screen
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
+- [x] Playwright E2E green for the new screen
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [ ] PR created, CI green, review approved (Gate 4) — PR #871 open, CI/review pending
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [ ] `traceability.md` complete from Issue through Release — complete through Gate 3, Gate 4/5 pending
