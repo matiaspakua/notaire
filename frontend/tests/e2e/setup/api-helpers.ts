@@ -377,6 +377,33 @@ export async function createTipoTramite(
 }
 
 /**
+ * Trámite / documento presentado helpers (CU10)
+ */
+export async function createTramite(
+  page: Page,
+  gestionId: number,
+  tipoTramiteId: number,
+): Promise<ApiResult<{ idTramite: number }>> {
+  return apiPost(page, "/tramites", {
+    fkIdTipoTramite: { idTipoTramite: tipoTramiteId },
+    fkIdGestion: { idGestion: gestionId },
+  });
+}
+
+export async function createDocumentoEntidadExterna(
+  page: Page,
+  tramiteId: number,
+  overrides: { nombre?: string; quienEntrega?: string } = {},
+): Promise<ApiResult<{ idDocumentoPresentado: number }>> {
+  return apiPost(page, "/documento-presentado", {
+    tramiteId,
+    quienEntrega: "Entidad Externa",
+    entregado: false,
+    ...overrides,
+  });
+}
+
+/**
  * Workflow helpers (CU83) — used to seed a self-contained workflow
  * (definition + nodes + transition) for gestión transition E2E tests,
  * independent of demo/seed data.

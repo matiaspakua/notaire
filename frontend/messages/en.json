@@ -7,6 +7,7 @@
     "escrituras": "Deeds",
     "testimonios": "Testimonios",
     "movimientosTestimonio": "Testimonio Movements",
+    "documentosEntidadesExternas": "External Entity Documentation",
     "pagos": "Payments",
     "protocolo": "Protocol",
     "inmuebles": "Properties",
@@ -47,7 +48,9 @@
     "required": "required",
     "optional": "optional",
     "language": "Language",
-    "all": "All"
+    "all": "All",
+    "yes": "Yes",
+    "no": "No"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -276,6 +279,33 @@
       "fechaInscripcion": "Registration date",
       "fechaSalida": "Withdrawal date",
       "numeroCarton": "Folder number"
+    }
+  },
+  "documentosEntidadesExternas": {
+    "title": "External Entity Documentation",
+    "verDocumentos": "View documents",
+    "noData": "No cases available",
+    "noDocumentos": "No external entity documents for this case",
+    "detalleTitle": "External entity documentation",
+    "registrarMovimiento": "Register movement",
+    "movimientoRegistrado": "Movement registered",
+    "errorMovimiento": "Error registering the movement",
+    "fields": {
+      "numero": "Number",
+      "encabezado": "Header",
+      "escribano": "Notary",
+      "nomenclaturaCatastral": "Cadastral reference",
+      "nombre": "Document",
+      "preparado": "Prepared",
+      "numeroCarton": "Folder number",
+      "fechaIngreso": "Filing date",
+      "fechaSalida": "Withdrawal date",
+      "observado": "Flagged",
+      "importeAPagar": "Amount to pay",
+      "fechaPago": "Payment date",
+      "fechaLiberado": "Release date",
+      "observaciones": "Notes",
+      "entregado": "Delivered"
     }
   },
   "pagos": {

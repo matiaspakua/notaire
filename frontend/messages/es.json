@@ -7,6 +7,7 @@
     "escrituras": "Escrituras",
     "testimonios": "Testimonios",
     "movimientosTestimonio": "Movimientos de Testimonio",
+    "documentosEntidadesExternas": "Documentación de Entidades Externas",
     "pagos": "Pagos",
     "protocolo": "Protocolo",
     "inmuebles": "Inmuebles",
@@ -47,7 +48,9 @@
     "required": "requerido",
     "optional": "opcional",
     "language": "Idioma",
-    "all": "Todos"
+    "all": "Todos",
+    "yes": "Sí",
+    "no": "No"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -276,6 +279,33 @@
       "fechaInscripcion": "Fecha de inscripción",
       "fechaSalida": "Fecha de salida",
       "numeroCarton": "Número de cartón"
+    }
+  },
+  "documentosEntidadesExternas": {
+    "title": "Documentación de Entidades Externas",
+    "verDocumentos": "Ver documentos",
+    "noData": "No hay gestiones disponibles",
+    "noDocumentos": "No hay documentos de entidad externa para esta gestión",
+    "detalleTitle": "Documentación de entidad externa",
+    "registrarMovimiento": "Registrar movimiento",
+    "movimientoRegistrado": "Movimiento registrado",
+    "errorMovimiento": "Error al registrar el movimiento",
+    "fields": {
+      "numero": "Número",
+      "encabezado": "Encabezado",
+      "escribano": "Escribano",
+      "nomenclaturaCatastral": "Nomenclatura catastral",
+      "nombre": "Documento",
+      "preparado": "Preparado",
+      "numeroCarton": "Número de cartón",
+      "fechaIngreso": "Fecha de ingreso",
+      "fechaSalida": "Fecha de salida",
+      "observado": "Observado",
+      "importeAPagar": "Importe a pagar",
+      "fechaPago": "Fecha de pago",
+      "fechaLiberado": "Fecha de liberación",
+      "observaciones": "Observaciones",
+      "entregado": "Entregado"
     }
   },
   "pagos": {
