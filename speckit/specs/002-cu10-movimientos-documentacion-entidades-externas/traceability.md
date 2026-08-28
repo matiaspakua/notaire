@@ -13,10 +13,10 @@ Issue #863 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | Issue | #863 | in-progress |
 | Use Case | CU-10 (#163) | exists |
 | Specification | `speckit/specs/002-cu10-movimientos-documentacion-entidades-externas/` | done |
-| Branch | `feat/863_cu10-movimientos-documentacion-entidades-externas` | active, not pushed yet |
+| Branch | `feat/863_cu10-movimientos-documentacion-entidades-externas` | pushed |
 | Tasks | `tasks.md` | backend, frontend, E2E, docs done |
-| Commits | `d689942` (backend), `8cae0af` (frontend + E2E), docs commit (this one) | done |
-| Pull Request | | not opened yet |
+| Commits | `d689942` (backend), `8cae0af` (frontend + E2E), `b5fbd6c` (docs) | done |
+| Pull Request | [#864](https://github.com/matiaspakua/notaire/pull/864) | open, not merged |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
@@ -50,7 +50,7 @@ Issue #863 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | 1 | Issue + spec.md + Acceptance Criteria | yes | Issue #863, `spec.md` Notaire Traceability + 7 Given/When/Then scenarios |
 | 2 | Failing tests written, test cases designed | yes | Unit tests (`DocumentoEntidadExternaServiceTest`) and integration tests (`GestionDocumentosEntidadesExternasIntegrationTest`) written before implementation, TDD |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` 1596/1596 passing, `mvn verify -pl backend-api` BUILD SUCCESS, `bash scripts/preflight.sh` PASSED (spotless, checkstyle, spotbugs, backend verify + pg-integration, frontend typecheck/eslint/vitest/build); Playwright `cu10-documentos-entidades-externas.spec.ts` 2/2 passing against the live dev stack; docs updated |
-| 4 | CI green, review approved, no conflicts | pending | PR not opened yet |
+| 4 | CI green, review approved, no conflicts | pending | PR #864 open, awaiting CI + review |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
 ## Exceptions
