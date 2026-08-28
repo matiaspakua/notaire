@@ -7,6 +7,7 @@ import {
   BookMarked,
   Building2,
   Calculator,
+  ClipboardList,
   Copy,
   CreditCard,
   FileCheck2,
@@ -58,6 +59,11 @@ const navItems: NavItem[] = [
   { labelKey: "copias", href: "/dashboard/copias", icon: Copy },
   { labelKey: "items", href: "/dashboard/items", icon: ListTodo },
   { labelKey: "documentos", href: "/dashboard/documentos", icon: FileText },
+  {
+    labelKey: "documentosNecesarios",
+    href: "/dashboard/documentos-necesarios",
+    icon: ClipboardList,
+  },
   { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck },
   {
     labelKey: "administracion",
