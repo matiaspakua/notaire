@@ -1,12 +1,15 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoDocumentoEntidadExterna;
+import com.licensis.notaire.dto.DtoDocumentoReingresado;
 import com.licensis.notaire.dto.DtoGestionDocumentosEntidadesExternas;
+import com.licensis.notaire.dto.DtoGestionReingresoDocumentacion;
 import com.licensis.notaire.dto.DtoGestionResumenFinanciero;
 import com.licensis.notaire.dto.DtoGestionSummary;
 import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
 import com.licensis.notaire.dto.DtoHistorialSummary;
 import com.licensis.notaire.dto.DtoMovimientoDocumentoEntidadExterna;
+import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
@@ -29,6 +32,7 @@ import com.licensis.notaire.service.GestionBitacoraService;
 import com.licensis.notaire.service.GestionQueryService;
 import com.licensis.notaire.service.GestionResumenFinancieroService;
 import com.licensis.notaire.service.GestionTransitionService;
+import com.licensis.notaire.service.ReingresoDocumentacionService;
 import com.licensis.notaire.service.WorkflowTraceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,6 +82,7 @@ public class GestionController {
     private final GestionBitacoraService gestionBitacoraService;
     private final GestionTransitionService gestionTransitionService;
     private final DocumentoEntidadExternaService documentoEntidadExternaService;
+    private final ReingresoDocumentacionService reingresoDocumentacionService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -90,7 +95,8 @@ public class GestionController {
                              GestionResumenFinancieroService gestionResumenFinancieroService,
                              GestionBitacoraService gestionBitacoraService,
                              GestionTransitionService gestionTransitionService,
-                             DocumentoEntidadExternaService documentoEntidadExternaService) {
+                             DocumentoEntidadExternaService documentoEntidadExternaService,
+                             ReingresoDocumentacionService reingresoDocumentacionService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -106,6 +112,7 @@ public class GestionController {
         this.gestionBitacoraService = gestionBitacoraService;
         this.gestionTransitionService = gestionTransitionService;
         this.documentoEntidadExternaService = documentoEntidadExternaService;
+        this.reingresoDocumentacionService = reingresoDocumentacionService;
     }
 
     public record DtoSaldoPendiente(Float saldoPendiente) {}
@@ -447,5 +454,29 @@ public class GestionController {
                 documentoEntidadExternaService.registrarMovimiento(id, idDocumentoPresentado, movimiento);
         documentoEntidadExternaService.intentarCompletarDocumentacion(id);
         return ResponseEntity.ok(resultado);
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @GetMapping("/{id}/reingreso-documentacion")
+    @Operation(summary = "CU43 - Obtener los trámites de una gestión con su documentación necesaria")
+    public ResponseEntity<DtoGestionReingresoDocumentacion> getDocumentacionNecesariaReingreso(
+            @PathVariable Integer id) {
+        return ResponseEntity.ok(reingresoDocumentacionService.obtenerDocumentacionNecesaria(id));
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Documento reingresado"),
+        @ApiResponse(responseCode = "400", description = "Trámite o tipo de documento inválido"),
+        @ApiResponse(responseCode = "404", description = "Gestion o trámite no encontrado")
+    })
+    @PostMapping("/{id}/reingreso-documentacion")
+    @Operation(summary = "CU43 - Reingresar un tipo de documento para un trámite de la gestión")
+    public ResponseEntity<DtoDocumentoReingresado> reingresarDocumentacion(@PathVariable Integer id,
+            @RequestBody DtoReingresoDocumentacionRequest request) {
+        DtoDocumentoReingresado resultado = reingresoDocumentacionService.reingresar(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
 }
