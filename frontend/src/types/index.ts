@@ -359,3 +359,44 @@ export interface GestionWorkflowTrace {
   /** nodeId → "completed" | "in_progress" | "pending" */
   nodeStatuses: Record<number, string>;
 }
+
+/** CU10 - a single "Entidad Externa" document tracked within a gestión. */
+export interface DocumentoEntidadExterna {
+  idDocumentoPresentado: number;
+  nombre?: string;
+  preparado?: boolean;
+  numeroCarton?: number;
+  fechaIngreso?: string;
+  fechaSalida?: string;
+  observado?: boolean;
+  importeAPagar?: number;
+  fechaPago?: string;
+  fechaLiberado?: string;
+  observaciones?: string;
+  entregado?: boolean;
+}
+
+/** CU10 - GET /gestiones/{id}/documentos-entidades-externas response. */
+export interface GestionDocumentosEntidadesExternas {
+  idGestion: number;
+  numero?: number;
+  encabezado?: string;
+  fechaInicio?: string;
+  escribano?: string;
+  nomenclaturaCatastral?: string;
+  documentos: DocumentoEntidadExterna[];
+}
+
+/** CU10 - PUT .../documentos-entidades-externas/{idDocumentoPresentado} request body. */
+export interface MovimientoDocumentoEntidadExternaInput {
+  preparado?: boolean;
+  numeroCarton?: number;
+  fechaIngreso?: string;
+  fechaSalida?: string;
+  observado?: boolean;
+  importeAPagar?: number;
+  fechaPago?: string;
+  fechaLiberado?: string;
+  observaciones?: string;
+  entregado?: boolean;
+}

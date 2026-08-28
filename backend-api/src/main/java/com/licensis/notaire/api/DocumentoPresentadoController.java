@@ -1,8 +1,10 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.DocumentoPresentado;
+import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
 import com.licensis.notaire.repository.TipoDeDocumentoRepository;
+import com.licensis.notaire.repository.TramiteRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -42,25 +44,36 @@ public class DocumentoPresentadoController {
             Boolean entregado
     ) {}
 
-    record DocumentoPresentadoRequest(Integer tipoId, String fecha, Boolean entregado) {}
+    record DocumentoPresentadoRequest(Integer tipoId, String fecha, Boolean entregado, Integer tramiteId,
+            String quienEntrega, String nombre) {}
 
     private final DocumentoPresentadoRepository repository;
     private final TipoDeDocumentoRepository tipoRepository;
+    private final TramiteRepository tramiteRepository;
 
     public DocumentoPresentadoController(DocumentoPresentadoRepository repository,
-                                         TipoDeDocumentoRepository tipoRepository) {
+                                         TipoDeDocumentoRepository tipoRepository,
+                                         TramiteRepository tramiteRepository) {
         this.repository = repository;
         this.tipoRepository = tipoRepository;
+        this.tramiteRepository = tramiteRepository;
     }
 
     private DocumentoPresentado toEntity(DocumentoPresentadoRequest request) {
         DocumentoPresentado entity = new DocumentoPresentado();
         entity.setFkIdTipoDocumento(request.tipoId());
         entity.setEntregado(request.entregado() != null ? request.entregado() : false);
-        entity.setNombre("");
-        entity.setQuienEntrega("");
+        entity.setNombre(request.nombre() != null ? request.nombre() : "");
+        entity.setQuienEntrega(request.quienEntrega() != null ? request.quienEntrega() : "");
         entity.setPreparado(false);
         entity.setVence(false);
+        entity.setLiberado(false);
+        entity.setObservado(false);
+        entity.setReingresado(false);
+        if (request.tramiteId() != null) {
+            Tramite tramite = tramiteRepository.findById(request.tramiteId()).orElse(null);
+            entity.setFkIdTramite(tramite);
+        }
         if (request.fecha() != null) {
             try {
                 entity.setFechaIngreso(DATE_FORMAT.parse(request.fecha()));

@@ -2,7 +2,7 @@
 
 **Generated**: 2026-06-16
 **Last Regenerated**: 2026-08-28
-**Status**: 189 Total Endpoints | 122 Frontend Used | 67 Unused/Reserved
+**Status**: 191 Total Endpoints | 124 Frontend Used | 67 Unused/Reserved
 
 ---
 
@@ -10,9 +10,9 @@
 
 | Status | Count | % | Notes |
 |--------|-------|---|-------|
-| **Used by Frontend** | 122 | 65% | Called via `apiGet`/`apiPost`/`apiPut`/`apiDelete`/`apiGetPaged` in `frontend/src/lib/api-client.ts` wrappers, or `downloadPdf` in `useReportes.ts` |
+| **Used by Frontend** | 124 | 65% | Called via `apiGet`/`apiPost`/`apiPut`/`apiDelete`/`apiGetPaged` in `frontend/src/lib/api-client.ts` wrappers, or `downloadPdf` in `useReportes.ts` |
 | **Unused/Reserved** | 67 | 35% | Not called by any frontend code path (internal, future, or superseded by list-endpoint client-side filtering) |
-| **TOTAL** | **189** | **100%** | All REST endpoints under `com.licensis.notaire.api` (31 controllers) |
+| **TOTAL** | **191** | **100%** | All REST endpoints under `com.licensis.notaire.api` (31 controllers) |
 
 > Classification method: static regex scan of `frontend/src/**/*.{ts,tsx}` (excluding `*.test.*`) for `api(Get|Post|Put|Delete|GetBytes|GetPaged)<...>(path)` and `downloadPdf(path)` call sites, matched against every `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping`/`@PatchMapping` in `backend-api/src/main/java/com/licensis/notaire/api/*.java`. Path variables and query strings are normalized before comparison. This will miss dynamically constructed paths and any client call added outside the `api-client.ts` wrapper/`downloadPdf` conventions.
 
@@ -74,6 +74,8 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/gestiones/{id}`
 - `DELETE /api/v1/gestiones/{id}`
 - `GET /api/v1/gestiones/{id}/workflow-trace`
+- `GET /api/v1/gestiones/{id}/documentos-entidades-externas` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
+- `PUT /api/v1/gestiones/{id}/documentos-entidades-externas/{idDocumentoPresentado}` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
 
 ### InmuebleController
 - `GET /api/v1/inmueble`

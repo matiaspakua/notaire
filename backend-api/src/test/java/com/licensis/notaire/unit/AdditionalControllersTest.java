@@ -137,6 +137,7 @@ class AdditionalControllersTest {
             var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
             var transitionService = mock(com.licensis.notaire.service.GestionTransitionService.class);
             var bitacoraService = mock(com.licensis.notaire.service.GestionBitacoraService.class);
+            var documentoEntidadExternaService = mock(com.licensis.notaire.service.DocumentoEntidadExternaService.class);
             var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonaRepository.class),
                     mock(com.licensis.notaire.repository.EstadoDeGestionRepository.class),
@@ -146,7 +147,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.repository.InmuebleRepository.class),
                     mock(com.licensis.notaire.service.GestionArchiveDebtService.class),
                     mock(com.licensis.notaire.service.GestionResumenFinancieroService.class),
-                    bitacoraService, transitionService))
+                    bitacoraService, transitionService, documentoEntidadExternaService))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();

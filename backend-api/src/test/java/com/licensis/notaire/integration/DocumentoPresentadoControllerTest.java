@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,6 +21,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.negocio.TipoDeTramite;
+import com.licensis.notaire.negocio.Tramite;
+import com.licensis.notaire.repository.DocumentoPresentadoRepository;
+import com.licensis.notaire.repository.TipoDeTramiteRepository;
+import com.licensis.notaire.repository.TramiteRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
@@ -29,12 +35,36 @@ class DocumentoPresentadoControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private TipoDeTramiteRepository tipoDeTramiteRepository;
+
+    @Autowired
+    private TramiteRepository tramiteRepository;
+
+    @Autowired
+    private DocumentoPresentadoRepository documentoPresentadoRepository;
+
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    private Integer createTramite() {
+        TipoDeTramite tipo = new TipoDeTramite();
+        tipo.setNombre("Tramite DocumentoPresentadoControllerTest");
+        tipo.setHabilitado(true);
+        tipo.setSeArchiva(false);
+        tipo.setSeInscribe(false);
+        tipo.setAsociaInmuebles(false);
+        tipo = tipoDeTramiteRepository.save(tipo);
+
+        Tramite tramite = new Tramite();
+        tramite.setFkIdTipoTramite(tipo);
+        tramite = tramiteRepository.save(tramite);
+        return tramite.getIdTramite();
     }
 
     @Test
@@ -64,6 +94,29 @@ class DocumentoPresentadoControllerTest {
                         .content(body))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.entregado").value(true));
+    }
+
+    @Test
+    @DisplayName("Should return 201 when creating documento presentado linked to a tramite with quienEntrega")
+    void shouldCreateDocumentoPresentadoLinkedToTramite() throws Exception {
+        Integer tramiteId = createTramite();
+        String body = """
+                {"tipoId": null, "fecha": "2024-06-01", "entregado": false, "tramiteId": %d,
+                 "quienEntrega": "Entidad Externa"}
+                """.formatted(tramiteId);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.idDocumentoPresentado").isNumber())
+                .andReturn();
+
+        Integer id = mapper.readTree(result.getResponse().getContentAsString())
+                .get("idDocumentoPresentado").asInt();
+        var saved = documentoPresentadoRepository.findById(id).orElseThrow();
+        assertThat(saved.getFkIdTramite().getIdTramite()).isEqualTo(tramiteId);
+        assertThat(saved.getQuienEntrega()).isEqualTo("Entidad Externa");
     }
 
     @Test
