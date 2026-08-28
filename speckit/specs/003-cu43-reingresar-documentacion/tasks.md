@@ -108,9 +108,9 @@ chosen trámite's `PlantillaTramite`; verify the created `DocumentoPresentado`.
 
 ### Commits atómicos
 
-- [ ] T029 Commit backend (service+repository verification+controller+DTOs+tests), frontend (hook+screen+E2E), docs — as separate atomic commits where reasonable
-- [ ] T030 Every commit message ends with `Closes #865` only on the commit that actually closes it
-- [ ] T031 Commit SHAs recorded in `traceability.md`
+- [x] T029 Commit backend (service+repository verification+controller+DTOs+tests), frontend (hook+screen+E2E), docs — as separate atomic commits where reasonable
+- [x] T030 Every commit message ends with `Closes #865` only on the commit that actually closes it
+- [x] T031 Commit SHAs recorded in `traceability.md`
 
 ### Pull Request y validación CI
 

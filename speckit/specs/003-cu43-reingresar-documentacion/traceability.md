@@ -15,7 +15,7 @@ Issue #865 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | Specification | `speckit/specs/003-cu43-reingresar-documentacion/` | done |
 | Branch | `feat/865_cu43-reingresar-documentacion` | pushed |
 | Tasks | `tasks.md` | all done |
-| Commits | `83aac83` (backend), `61f4b59` (frontend), docs commit below | done |
+| Commits | `83aac83` (backend), `61f4b59` (frontend), `a25e32a` (docs, closes #865) | done |
 | Pull Request | pending (opening next) | pending |
 | CI run | pending | pending |
 | Merge commit | | pending |
