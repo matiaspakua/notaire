@@ -102,9 +102,11 @@ read-only (no changes to that hook or its tests). Full frontend suite
 ## Playwright Strategy *(mandatory — UI change)*
 
 New spec `frontend/tests/e2e/documentos-necesarios.spec.ts` covering:
+
 1. Select a trámite with configured documents → table shows nombre/vence/días/quién entrega.
 2. Trigger print action → printable content is present/verifiable in the DOM.
 3. Select a trámite with no `PlantillaTramite` rows → empty-state message shown, no console error.
+
 Screens verified at 320px, 768px, 1024px per `.claude/rules/ui-ux-design.md`.
 
 ## Deployment Strategy *(mandatory)*
