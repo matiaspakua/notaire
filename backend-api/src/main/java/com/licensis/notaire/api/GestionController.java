@@ -1,9 +1,12 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.dto.DtoDocumentoEntidadExterna;
+import com.licensis.notaire.dto.DtoGestionDocumentosEntidadesExternas;
 import com.licensis.notaire.dto.DtoGestionResumenFinanciero;
 import com.licensis.notaire.dto.DtoGestionSummary;
 import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
 import com.licensis.notaire.dto.DtoHistorialSummary;
+import com.licensis.notaire.dto.DtoMovimientoDocumentoEntidadExterna;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
@@ -20,6 +23,7 @@ import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.service.DocumentoEntidadExternaService;
 import com.licensis.notaire.service.GestionArchiveDebtService;
 import com.licensis.notaire.service.GestionBitacoraService;
 import com.licensis.notaire.service.GestionQueryService;
@@ -73,6 +77,7 @@ public class GestionController {
     private final GestionResumenFinancieroService gestionResumenFinancieroService;
     private final GestionBitacoraService gestionBitacoraService;
     private final GestionTransitionService gestionTransitionService;
+    private final DocumentoEntidadExternaService documentoEntidadExternaService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -84,7 +89,8 @@ public class GestionController {
                              GestionArchiveDebtService gestionArchiveDebtService,
                              GestionResumenFinancieroService gestionResumenFinancieroService,
                              GestionBitacoraService gestionBitacoraService,
-                             GestionTransitionService gestionTransitionService) {
+                             GestionTransitionService gestionTransitionService,
+                             DocumentoEntidadExternaService documentoEntidadExternaService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -99,6 +105,7 @@ public class GestionController {
         this.gestionResumenFinancieroService = gestionResumenFinancieroService;
         this.gestionBitacoraService = gestionBitacoraService;
         this.gestionTransitionService = gestionTransitionService;
+        this.documentoEntidadExternaService = documentoEntidadExternaService;
     }
 
     public record DtoSaldoPendiente(Float saldoPendiente) {}
@@ -413,5 +420,32 @@ public class GestionController {
                 .map(com.licensis.notaire.service.mappers.HistorialMapper::toDto)
                 .toList();
         return ResponseEntity.ok(historial);
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+    })
+    @GetMapping("/{id}/documentos-entidades-externas")
+    @Operation(summary = "CU10 - Obtener la documentación de una gestión a cargo de entidades externas")
+    public ResponseEntity<DtoGestionDocumentosEntidadesExternas> getDocumentosEntidadesExternas(
+            @PathVariable Integer id) {
+        return ResponseEntity.ok(documentoEntidadExternaService.obtenerDocumentos(id));
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Movimiento registrado"),
+        @ApiResponse(responseCode = "400", description = "Documento inválido para la gestión"),
+        @ApiResponse(responseCode = "404", description = "Gestion o documento no encontrado")
+    })
+    @PutMapping("/{id}/documentos-entidades-externas/{idDocumentoPresentado}")
+    @Operation(summary = "CU10 - Registrar el movimiento de un documento de entidad externa")
+    public ResponseEntity<DtoDocumentoEntidadExterna> registrarMovimientoDocumentoEntidadExterna(
+            @PathVariable Integer id, @PathVariable Integer idDocumentoPresentado,
+            @RequestBody DtoMovimientoDocumentoEntidadExterna movimiento) {
+        DtoDocumentoEntidadExterna resultado =
+                documentoEntidadExternaService.registrarMovimiento(id, idDocumentoPresentado, movimiento);
+        documentoEntidadExternaService.intentarCompletarDocumentacion(id);
+        return ResponseEntity.ok(resultado);
     }
 }
