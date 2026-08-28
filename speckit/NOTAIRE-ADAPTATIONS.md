@@ -139,6 +139,13 @@ These six gaps motivated the three project-owned pieces below — the same
      OPEN — without this, every subsequent push repo-wide fails once the
      first SpecKit feature merges and its Issue closes (found via #866,
      after CU03/#860 closed and blocked the CU10/#863 pre-push hook).
+     The archive move only helps if someone actually performs it: #866
+     fixed the symptom for CU03 but didn't make the step self-enforcing, so
+     CU10/#863 regressed the exact same failure the moment its own PR
+     merged. #868 closed that gap by making the archive move an explicit
+     Gate 5 task (`tasks-template.md`) generated for every future feature,
+     and by pointing the validator's own CLOSED-issue error message at the
+     fix instead of only documenting it in the script header.
 
 This keeps the adaptation on the project side, per Constitution P10 ("Adapt,
 don't replace"): SpecKit's vendor skills, templates, and scripts stay
