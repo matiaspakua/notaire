@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #833 | open |
+| Issue | #833 | closed |
 | Use Case | CU13 – Ver historial de gestión (#166); CU83 – Definir Workflow de Estados y Transiciones (#451, #453, #454, #455); CU16 – Archivar Gestión (#169, #819) | exists |
 | Specification | `openspec/changes/gestion-workflow-y-bitacora/` | done |
 | Branch | `feat/833_gestion-workflow-y-bitacora` | created |
-| Tasks | `tasks.md` | Gates 1-3 complete (Groups 1-8); Groups 9-12 in progress |
+| Tasks | `tasks.md` | complete (Groups 1-12) |
 | Commits | `897dde7`, `cb420ed`, `76f127c`, `f102d72`, `fdcc7c5`, `88c51aa`, `828370b`, `64af369` | done |
-| Pull Request | [#855](https://github.com/matiaspakua/notaire/pull/855) | open |
-| CI run | PR Validation, CI - Build/Test/Security, Frontend CI, Playwright E2E — Full Suite | passed |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Pull Request | [#855](https://github.com/matiaspakua/notaire/pull/855) | merged |
+| CI run | PR Validation, CI - Build/Test/Security, Frontend CI, Playwright E2E — Full Suite (all `[ok]` on head commit `27ee4bd`) | passed |
+| Merge commit | `050fc65b4123f1b650aa576610c4497a677d2997` (now `main` HEAD) | done |
+| Release / tag | rolling `main` (no tagged release for this change) | n/a |
+| Smoke test | Post-merge CD/E2E coverage reports recorded for 2026-08-27 (commits `e800a3e`, `0695af4`) confirm the deployed stack stayed green after this merge | passed |
 
 ## Requirement coverage
 
@@ -56,8 +56,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | passed | Issue #833, `specs/gestion-workflow-transicion/spec.md`, `specs/gestion-bitacora/spec.md`, `specs/gestion-archive-debt-check/spec.md` |
 | 2 | Failing tests written, test cases designed | passed | `897dde7`, `cb420ed` (unit + integration tests before implementation) |
 | 3 | Suite green, coverage held, docs updated | passed | `mvn verify -pl backend-api` green, `npx playwright test` 447 passed/39 skipped against the Docker stack, `bash scripts/preflight.sh --fix` PASSED (15 gates), docs updated in `828370b` |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | passed | PR #855 merged, all 4 required workflows `[ok]` on head commit `27ee4bd` |
+| 5 | Deployed, smoke test passed, Issue closed | passed | Merge commit `050fc65` on `main`; post-merge CD/E2E reports (`e800a3e`, `0695af4`) green; Issue #833 closed |
 
 ## Exceptions
 

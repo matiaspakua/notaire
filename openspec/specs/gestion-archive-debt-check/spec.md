@@ -5,9 +5,7 @@
 Calculates the aggregate pending balance of a gestión's presupuestos before it
 is archived, and warns the user and records whether the gestión was archived
 with outstanding debt, per CU-16 / RF-22 / RF-37.
-
 ## Requirements
-
 ### Requirement: Calculate aggregate pending balance of a gestión
 The system SHALL calculate the aggregate pending balance ("saldo pendiente") of
 a gestión by summing the pending balance of every presupuesto linked to the
@@ -64,3 +62,24 @@ gestión had a pending debt at the moment it was archived.
 - **WHEN** a gestión with an aggregate pending balance of zero is archived
 - **THEN** the archiving record for that gestión indicates it was archived
   without pending debt
+
+### Requirement: Validate workflow transition before archiving a gestión
+The system SHALL validate, before archiving a gestión, that "Archivada" is
+a reachable destination from the gestión's current estado according to
+the `WorkflowDefinition` of its tipo de trámite (`gestion-workflow-transicion`),
+in addition to the existing pending-debt warning, per CU83 and CU16.
+
+#### Scenario: Archiving succeeds when the transition to Archivada is valid
+- **WHEN** a user archives a gestión whose current estado has a
+  `WorkflowTransition` to "Archivada" in the `WorkflowDefinition` of its
+  tipo de trámite
+- **THEN** the system archives the gestión (subject to the existing
+  pending-debt warning)
+
+#### Scenario: Archiving is rejected when the transition to Archivada is invalid
+- **WHEN** a user attempts to archive a gestión whose current estado has
+  no `WorkflowTransition` to "Archivada" in the `WorkflowDefinition` of
+  its tipo de trámite
+- **THEN** the system rejects the archiving and responds with an error
+  indicating that the gestión cannot be archived from its current estado
+
