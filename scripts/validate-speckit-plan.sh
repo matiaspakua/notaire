@@ -22,6 +22,10 @@
 #   tasks.md          the twelve mandatory SDLC groups + Definition of Done
 #   traceability.md   the Issue → ... → Release chain is present and not faked
 #
+# Completed features (Issue closed, PR merged) move to speckit/specs/archive/,
+# mirroring openspec/changes/archive/ — that directory is skipped below, so a
+# feature's Issue is only required to stay OPEN while it is still active.
+#
 # Only feature directories under speckit/specs/ are governed by this script;
 # it never touches openspec/.
 #
@@ -251,6 +255,7 @@ if [ -n "${1:-}" ]; then
 else
   shopt -s nullglob
   for d in "$SPECS_DIR"/*/; do
+    [ "$(basename "$d")" = "archive" ] && continue
     validate_feature "${d%/}"
   done
   shopt -u nullglob
