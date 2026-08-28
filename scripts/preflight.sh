@@ -43,6 +43,7 @@ Local check                     CI job                          Workflow
 ------------------------------  ------------------------------  --------------------
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
+sdlc plan (speckit features)    SpecKit Plan Validation           pr-validation.yml  (BLOCKING)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
@@ -121,6 +122,10 @@ fi
 # Engineering Constitution: every active OpenSpec change must carry a complete
 # SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
 run "sdlc plan validation" bash scripts/validate-sdlc-plan.sh
+
+# Same gate, for the SpecKit-adapted flow under speckit/ (evaluated alongside
+# OpenSpec — see speckit/NOTAIRE-ADAPTATIONS.md).
+run "speckit plan validation" bash scripts/validate-speckit-plan.sh
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"

@@ -257,6 +257,23 @@ jobs:
         run: bash scripts/validate-sdlc-plan.sh
 
   # ==========================================
+  # JOB 5c: SpecKit Plan Validation
+  # ==========================================
+  # Same gate as JOB 5b, for the SpecKit-adapted flow under speckit/ (evaluated
+  # alongside OpenSpec — see speckit/NOTAIRE-ADAPTATIONS.md). Mirrored locally
+  # by `bash scripts/validate-speckit-plan.sh`, which preflight.sh runs.
+  speckit-plan:
+    name: SpecKit Plan Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate SpecKit features against the Engineering Constitution
+        run: bash scripts/validate-speckit-plan.sh
+
+  # ==========================================
   # JOB 6: Generate PR Report
   # ==========================================
   generate-report:
