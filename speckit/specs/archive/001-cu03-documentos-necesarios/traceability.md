@@ -4,7 +4,7 @@
 
 ## Chain
 
-```
+```text
 Issue #860 → spec.md → plan.md → tasks.md → Commits → PR → Merge → Release
 ```
 

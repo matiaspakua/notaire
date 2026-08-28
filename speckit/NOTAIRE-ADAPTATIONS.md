@@ -17,6 +17,7 @@ unaffected.
 ### SpecKit's native structure
 
 `specify init` scaffolds:
+
 - `.specify/memory/constitution.md` — a single free-form "project
   constitution" file, filled interactively via `/speckit.constitution`.
 - `.specify/templates/{spec,plan,tasks,checklist}-template.md` — vendor
@@ -146,7 +147,7 @@ through project-owned files plus one already-wired mechanical gate.
 
 ## Sequence
 
-```
+```text
         /speckit-specify           /speckit-plan            /speckit-tasks
 Issue ───▶ spec.md cites ───▶ plan.md adds SDLC ───▶ tasks.md gets Notaire
 (real,     REAL Issue +           strategy sections        SDLC Gates block
