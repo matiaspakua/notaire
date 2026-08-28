@@ -13,11 +13,11 @@ Issue #860 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | Issue | #860 | in-progress |
 | Use Case | CU-03 (#156) | exists |
 | Specification | `speckit/specs/001-cu03-documentos-necesarios/` | done |
-| Branch | `feat/860_documentos-necesarios-tramite` (based on `chore/857_speckit-adaptation`) | created |
-| Tasks | `tasks.md` | 25/38 complete (implementation + docs done; PR/merge/deploy pending) |
-| Commits | `47dc28d`, `66930b7`, `307a903` | done |
-| Pull Request | pending (next step) | pending |
-| CI run | | pending |
+| Branch | `feat/860_documentos-necesarios-tramite` (rebased onto `main` after #859 merged) | pushed |
+| Tasks | `tasks.md` | 32/38 complete (implementation, docs, commits, PR done; merge/deploy pending) |
+| Commits | `43fbdc0`, `9abf2e1`, `d90dcae`, `2308ea7` | done |
+| Pull Request | [#861](https://github.com/matiaspakua/notaire/pull/861) | open |
+| CI run | pending (just opened) | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
 | Smoke test | | pending |

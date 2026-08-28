@@ -124,10 +124,10 @@ the Notaire SDLC Gates per `CONSTITUTION.md` §5/§6.
 
 ### Pull Request y validación CI
 
-- [ ] T029 `git push -u origin feat/860_documentos-necesarios-tramite`
-- [ ] T030 Open PR titled `[#860] feat: pantalla de documentos necesarios por trámite (CU03)`
+- [x] T029 `git push -u origin feat/860_documentos-necesarios-tramite`
+- [x] T030 Open PR titled `[#860] feat: pantalla de documentos necesarios por trámite (CU03)`
 - [ ] T031 Wait for CI green
-- [ ] T032 PR number recorded in `traceability.md`
+- [x] T032 PR number recorded in `traceability.md` (#861)
 
 ### Deploy
 
