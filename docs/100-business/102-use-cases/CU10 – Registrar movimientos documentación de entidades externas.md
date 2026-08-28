@@ -11,6 +11,7 @@
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #14 (Administrar certificados y documentos), RF #18 (Informar preparación de documentos), RF #19 (Informar seguimiento de documentos); CU19 |
 | **GitHub ID** | #163 |
+| **Implementación** | Pantalla `/dashboard/documentos-entidades-externas` (Issue #863) — lista de gestiones, detalle de documentación a cargo de entidades externas y diálogo para registrar movimiento (número de cartón, fechas, importe, observado, observaciones, entregado). Backend: `DocumentoEntidadExternaService`, `GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}]`; al completarse toda la documentación la gestión pasa a estado "documentación completa" automáticamente. |
 
 ## Curso de Eventos
 

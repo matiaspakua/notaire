@@ -9,7 +9,7 @@ CU06,Firmar escritura,Gestiones,Esencial,Escritura,Update,EscrituraController,PU
 CU07,Generar testimonio,Gestiones,Esencial,Testimonio,Create,TestimonioController,POST,/api/v1/testimonio,MISSING,500-ERROR,NO-TEST,GET devuelve 500,#160
 CU08,Verificar Testimonio,Gestiones,Necesario,Testimonio,Read,TestimonioController,GET,/api/v1/testimonio/{id},MISSING,500-ERROR,NO-TEST,GET /testimonio devuelve 500,#161
 CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Flag deuda en documento,#162
-CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,MovimientoTestimonio,Create,MovimientoTestimonioController,POST,/api/v1/movimiento-testimonio,MISSING,500-ERROR,NO-TEST,GET devuelve 500 / sin test POST,#163
+CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,DocumentoEntidadExterna,Read/Update,GestionController,GET/PUT,/api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}],DONE,OK,PASS,Implementado #863; E2E Playwright golden+edge path,#163
 CU11,Ingresar para inscripción,Gestiones,Esencial,Historial,Create,HistorialController,POST,/api/v1/historial,MISSING,OK,NO-TEST,Estado inscripcion,#164
 CU12,Retirar testimonio,Gestiones,Necesario,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#165
 CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},MISSING,OK,NO-TEST,,#166
