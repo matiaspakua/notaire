@@ -8,9 +8,9 @@
  * CU11 - Ingresar para inscripción
  * CU12 - Retirar testimonio
  *
- * NOTE: All tests in this file are currently skipped because the corresponding
- * UI buttons and pages have not been implemented yet. The backend endpoints
- * for documentos/testimonios exist but the frontend flow is pending.
+ * NOTE: CU04, CU07-CU12 tests below are skipped because the corresponding UI
+ * buttons and pages have not been implemented yet. The backend endpoints for
+ * documentos/testimonios exist but the frontend flow is pending.
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
@@ -21,11 +21,21 @@ test.describe("CU03 - Listar documentos y certificados necesarios", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/escrituras");
+    await steps.givenUserIsOnPage("/dashboard/documentos-necesarios");
   });
 
-  test.skip("CU03-GW01: Given on escrituras, When select gestión, Then shows documentos", async () => {
-    // Skipped: no "ver documentos" button exists on the escrituras page.
+  test("CU03-GW01: Given on documentos necesarios, When select trámite, Then shows results section", async ({
+    page,
+  }) => {
+    await steps.thenPageHasHeading("Documentos Necesarios");
+
+    await page.getByTestId("select-tramite").click();
+    await page.getByRole("option").first().click();
+
+    await expect(page.getByText(/Documentos necesarios para/i)).toBeVisible();
+    const emptyState = page.getByTestId("empty-state");
+    const table = page.getByRole("table");
+    await expect(emptyState.or(table)).toBeVisible();
   });
 });
 
