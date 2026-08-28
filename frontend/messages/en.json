@@ -18,7 +18,8 @@
     "administracion": "Administration",
     "logout": "Logout",
     "brand": "Notaire",
-    "brandSubtitle": "Notary Office"
+    "brandSubtitle": "Notary Office",
+    "documentosNecesarios": "Required Documents"
   },
   "common": {
     "create": "Create",
@@ -655,5 +656,21 @@
     "description": "This action cannot be undone.",
     "confirm": "Delete",
     "cancel": "Cancel"
+  },
+  "documentosNecesarios": {
+    "title": "Required Documents",
+    "description": "Look up the documents and certificates required for a procedure",
+    "selectorTitle": "Select procedure",
+    "resultsTitle": "Required documents for {tramite}",
+    "noDocuments": "No documents configured for this procedure.",
+    "print": "Print",
+    "fields": {
+      "tramite": "Procedure",
+      "tramitePlaceholder": "Select a procedure",
+      "nombre": "Name",
+      "vence": "Expires",
+      "diasVencimiento": "Days valid",
+      "quienEntrega": "Delivered by"
+    }
   }
 }

@@ -181,3 +181,22 @@
     transform: none !important;
   }
 }
+
+/* Printable views (CU03 and similar) mark their content with
+   data-printable="true"; everything else is hidden on print instead of
+   requiring a dedicated print-preview route. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  [data-printable="true"],
+  [data-printable="true"] * {
+    visibility: visible;
+  }
+
+  [data-printable="true"] {
+    position: absolute;
+    inset: 0;
+  }
+}

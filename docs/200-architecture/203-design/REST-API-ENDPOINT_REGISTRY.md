@@ -2,7 +2,7 @@
 
 **Generated**: 2026-06-16
 **Last Regenerated**: 2026-08-28
-**Status**: 191 Total Endpoints | 123 Frontend Used | 68 Unused/Reserved
+**Status**: 191 Total Endpoints | 124 Frontend Used | 67 Unused/Reserved
 
 ---
 
@@ -10,8 +10,8 @@
 
 | Status | Count | % | Notes |
 |--------|-------|---|-------|
-| **Used by Frontend** | 123 | 64% | Called via `apiGet`/`apiPost`/`apiPut`/`apiDelete`/`apiGetPaged` in `frontend/src/lib/api-client.ts` wrappers, or `downloadPdf` in `useReportes.ts` |
-| **Unused/Reserved** | 68 | 36% | Not called by any frontend code path (internal, future, or superseded by list-endpoint client-side filtering) |
+| **Used by Frontend** | 124 | 65% | Called via `apiGet`/`apiPost`/`apiPut`/`apiDelete`/`apiGetPaged` in `frontend/src/lib/api-client.ts` wrappers, or `downloadPdf` in `useReportes.ts` |
+| **Unused/Reserved** | 67 | 35% | Not called by any frontend code path (internal, future, or superseded by list-endpoint client-side filtering) |
 | **TOTAL** | **191** | **100%** | All REST endpoints under `com.licensis.notaire.api` (31 controllers) |
 
 > Classification method: static regex scan of `frontend/src/**/*.{ts,tsx}` (excluding `*.test.*`) for `api(Get|Post|Put|Delete|GetBytes|GetPaged)<...>(path)` and `downloadPdf(path)` call sites, matched against every `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping`/`@PatchMapping` in `backend-api/src/main/java/com/licensis/notaire/api/*.java`. Path variables and query strings are normalized before comparison. This will miss dynamically constructed paths and any client call added outside the `api-client.ts` wrapper/`downloadPdf` conventions.
@@ -107,6 +107,9 @@ These endpoints are actively called by the Next.js frontend:
 - `POST /api/v1/plantilla-presupuestos`
 - `PUT /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}`
 - `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}`
+
+### PlantillaTramiteController
+- `GET /api/v1/plantilla-tramite/tipo-tramite/{idTipoTramite}` — `usePlantillaTramite.ts`, CU03 `documentos-necesarios` screen (#860)
 
 ### PresupuestoController
 - `GET /api/v1/presupuestos`
@@ -262,7 +265,6 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 
 ### PlantillaTramiteController
 - `GET /api/v1/plantilla-tramite`
-- `GET /api/v1/plantilla-tramite/tipo-tramite/{idTipoTramite}`
 - `GET /api/v1/plantilla-tramite/{idTipoTramite}/{idTipoDocumento}`
 - `POST /api/v1/plantilla-tramite`
 - `PUT /api/v1/plantilla-tramite/{idTipoTramite}/{idTipoDocumento}`

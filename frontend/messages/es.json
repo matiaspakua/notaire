@@ -18,7 +18,8 @@
     "administracion": "Administración",
     "logout": "Cerrar sesión",
     "brand": "Notaire",
-    "brandSubtitle": "Escribanía"
+    "brandSubtitle": "Escribanía",
+    "documentosNecesarios": "Documentos Necesarios"
   },
   "common": {
     "create": "Crear",
@@ -655,5 +656,21 @@
     "description": "Esta acción no se puede deshacer.",
     "confirm": "Eliminar",
     "cancel": "Cancelar"
+  },
+  "documentosNecesarios": {
+    "title": "Documentos Necesarios",
+    "description": "Consultar los documentos y certificados necesarios para un trámite",
+    "selectorTitle": "Seleccionar trámite",
+    "resultsTitle": "Documentos necesarios para {tramite}",
+    "noDocuments": "No hay documentos configurados para este trámite.",
+    "print": "Imprimir",
+    "fields": {
+      "tramite": "Trámite",
+      "tramitePlaceholder": "Seleccione un trámite",
+      "nombre": "Nombre",
+      "vence": "Vence",
+      "diasVencimiento": "Días de validez",
+      "quienEntrega": "Quién entrega"
+    }
   }
 }
