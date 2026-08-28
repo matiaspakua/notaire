@@ -56,6 +56,20 @@ export interface TipoDeTramite {
 export interface TipoDeDocumento {
   idTipoDocumento?: number;
   nombre?: string;
+  vence?: boolean;
+  diasVencimiento?: number | null;
+  quienEntrega?: string;
+}
+
+/**
+ * Backend returns the JPA entity directly (not a Dto), so the nested
+ * `tipoDeTramite` uses the entity's own `idTipoTramite` key — unlike
+ * `TipoDeTramite.idTipoDeTramite` returned by the DTO-based /tipo-tramite endpoint.
+ */
+export interface PlantillaTramite {
+  observaciones?: string;
+  tipoDeTramite?: { idTipoTramite?: number; nombre?: string };
+  tipoDeDocumento?: TipoDeDocumento;
 }
 
 export interface TipoDeFolio {
