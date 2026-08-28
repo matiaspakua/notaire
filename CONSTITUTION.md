@@ -99,7 +99,7 @@ A change is **Done** only when **all** of the following are true:
 | Database | New Flyway migration `V{n}__description.sql`; never edit applied migrations |
 | Frontend | Centralized design system: `src/theme/tokens.ts` + `FormContainer → FormSection → FormField → FormActions` |
 | Endpoints | Every REST endpoint must be invoked from the UI at least once (UI traceability) and documented in OpenAPI/Swagger |
-| Exploration finding | Every finding ("hallazgo") in an exploration report (`openspec/explore*.md`) must carry a real, verifiable GitHub Issue reference — via the `openspec-triage` skill — before `/opsx:propose` may scaffold a change from it; see §13 and `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` |
+| Exploration finding | Every finding ("hallazgo") in an exploration report (`openspec/explore*.md`) must carry a real, verifiable GitHub Issue reference — via the `openspec-triage` skill — before `/opsx:propose` may scaffold a change from it; see §13 and `openspec/NOTAIRE-ADAPTATIONS.md` |
 
 ---
 
@@ -497,7 +497,7 @@ drift.
 | Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
 | Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `openspec/specs/` |
-| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` |
+| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `openspec/NOTAIRE-ADAPTATIONS.md` |
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |

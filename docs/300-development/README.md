@@ -16,7 +16,9 @@ trabajo obligatorio.
 | [`303-testing/`](303-testing/) | Suites de test, matriz CU↔API y guías de QA |
 | [`templates/`](templates/) | Plantillas para especificaciones OpenSpec |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
-| [`OPENSPEC-CONSTITUTION-BRIDGE.md`](OPENSPEC-CONSTITUTION-BRIDGE.md) | Cómo OpenSpec implementa las fases de `CONSTITUTION.md` |
+
+OpenSpec ↔ Constitution: ver [`openspec/NOTAIRE-ADAPTATIONS.md`](../../openspec/NOTAIRE-ADAPTATIONS.md)
+(SpecKit ↔ Constitution: [`speckit/NOTAIRE-ADAPTATIONS.md`](../../speckit/NOTAIRE-ADAPTATIONS.md)).
 
 ## Antes de tocar código
 

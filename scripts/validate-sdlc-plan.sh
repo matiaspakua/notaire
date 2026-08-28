@@ -30,7 +30,7 @@
 # format check below (§4/Gate 1) only validates that a `#<number>` is present,
 # not that it is real. When the `gh` CLI is installed and authenticated, this
 # script additionally resolves the Issue live: it must exist and be open. This
-# is what makes the process in docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md
+# is what makes the process in openspec/NOTAIRE-ADAPTATIONS.md
 # mechanically enforced rather than advisory: an exploration report (`opsx:explore`)
 # must be triaged into real GitHub Issues before `opsx:propose` scaffolds a plan
 # around one, because this gate — run by `preflight.sh` and `pr-validation.yml` —

@@ -50,7 +50,7 @@
 > ser la única fuente de trazabilidad hallazgo↔Issue, sin excepción: **regla
 > del proyecto, todo hallazgo de negocio debe tener un Issue de GitHub
 > asociado, sin excepciones** (ver `CONSTITUTION.md` §4 y
-> `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md`).
+> `openspec/NOTAIRE-ADAPTATIONS.md`).
 >
 > **Cierre de Issue #820 (2026-08-26):** `openspec archive
 > payment-financial-tracking` se ejecutó — `tasks.md` y `traceability.md`
