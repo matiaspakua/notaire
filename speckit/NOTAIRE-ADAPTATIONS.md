@@ -131,6 +131,13 @@ These six gaps motivated the three project-owned pieces below — the same
      into `.github/workflows/pr-validation.yml` as a new `speckit-plan` job,
      mirroring the existing `sdlc-plan` job — added in the same PR per the
      CLAUDE.md rule that a new gate and its CI wiring ship together.
+   - **`speckit/specs/archive/`** — once a feature's Issue is closed (PR
+     merged), its directory moves to `speckit/specs/archive/`, mirroring
+     `openspec/changes/archive/`. The validation loop skips the `archive`
+     basename, so a shipped feature's Issue is no longer required to stay
+     OPEN — without this, every subsequent push repo-wide fails once the
+     first SpecKit feature merges and its Issue closes (found via #866,
+     after CU03/#860 closed and blocked the CU10/#863 pre-push hook).
 
 This keeps the adaptation on the project side, per Constitution P10 ("Adapt,
 don't replace"): SpecKit's vendor skills, templates, and scripts stay
