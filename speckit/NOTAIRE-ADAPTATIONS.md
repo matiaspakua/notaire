@@ -3,10 +3,11 @@
 `CONSTITUTION.md` is the highest authority for how a change is made in this
 repository (§12). Notaire already governs its spec-driven workflow with
 **OpenSpec** (`openspec/`, schema `notaire-sdlc`, see
-`docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md`). This document does
+`openspec/NOTAIRE-ADAPTATIONS.md`). This document does
 the same job for **GitHub Spec-Kit** (`specify` CLI), adopted here as an
 alternative framework to evaluate side by side with OpenSpec — see
-`speckit/EVALUATION.md` for the comparison once evidence exists.
+`speckit/EVALUATION.md` for the comparison grounded in the 3 evidence
+features built through this adapted flow.
 
 Everything SpecKit-related lives under this `speckit/` directory. It never
 touches `openspec/`, and OpenSpec's process for existing changes is
@@ -46,7 +47,7 @@ enforces TDD ordering per story.
    no traceable Issue at all, violating §4/Gate 1.
 2. **No live verification.** Nothing stops an agent from typing a
    plausible-looking, non-existent Issue number, mirroring the exact
-   OpenSpec problem `OPENSPEC-CONSTITUTION-BRIDGE.md` already solved.
+   OpenSpec problem `openspec/NOTAIRE-ADAPTATIONS.md` already solved.
 3. **`plan.md` has no SDLC strategy sections.** No Testing, Regression,
    Playwright, Deployment, or Rollback Strategy — SpecKit's plan is
    architecture-only (Constitution Check, Project Structure, Complexity
@@ -193,7 +194,38 @@ committed):
 | Degraded | `#857`, `gh` removed from `PATH` | `- spec: gh CLI not available/authenticated — Issue #857 not live-verified` (advisory, does not fail the gate) |
 
 All three cases matched the OpenSpec script's behavior for the equivalent
-checks in `OPENSPEC-CONSTITUTION-BRIDGE.md`.
+checks in `openspec/NOTAIRE-ADAPTATIONS.md`.
+
+## Evidence: three features carried through the adapted flow
+
+Three Use Cases were built end to end through `/speckit.specify` →
+`/speckit.plan` → `/speckit.tasks` → TDD → implement → PR, chosen to be
+structurally distinct from every hallazgo already tracked in
+`openspec/explore.md` (no overlap between the two tools' evidence):
+
+| Feature | Use Case | Issue | PR | Status | Notes |
+|---|---|---|---|---|---|
+| Documentos y certificados necesarios por trámite | CU03 (#156) | #860 | [#861](https://github.com/matiaspakua/notaire/pull/861) | merged | New `TipoDeTramite`↔`TipoDeDocumento` link table (Flyway migration), printable checklist screen |
+| Registrar movimientos de documentación de entidades externas | CU10 (#163) | #863 | [#864](https://github.com/matiaspakua/notaire/pull/864) | merged | External-entity document tracking, catastral nomenclature for `Inmueble`-linked gestiones |
+| Reingresar documentación | CU43 (#196) | #865 | [#871](https://github.com/matiaspakua/notaire/pull/871) | open (CI/review pending) | Re-submission circuit for rejected/expired `DocumentoPresentado`; a Postgres-only regression test (`GestionReingresoDocumentacionPgIntegrationTest`) caught a NOT NULL gap H2's `ddl-auto=create` cannot enforce |
+
+Two follow-up tooling fixes came directly out of running the flow for real,
+not from the initial adaptation design — recorded here because they are the
+concrete evidence that the mechanical gate (point 3 above) needed hardening
+after first contact with a merged feature:
+
+- **#866 → PR #867**: the first feature to merge (CU03/#860) closed its
+  Issue, which then made `scripts/validate-speckit-plan.sh` fail for
+  *every* subsequent push repo-wide, because the script required every
+  `speckit/specs/*/` directory's Issue to still be `OPEN`. Fixed by moving
+  the completed feature directory to `speckit/specs/archive/`, which the
+  validator skips.
+- **#868 → PR #869**: the archive move only helps if someone actually
+  performs it — CU10/#863 hit the identical failure the moment *its* PR
+  merged, because nothing made the move self-enforcing. Closed by making
+  the archive move an explicit Gate 5 task in `tasks-template.md` for every
+  future feature, and pointing the validator's own CLOSED-issue error
+  message at the fix instead of only documenting it in the script header.
 
 ## References
 
