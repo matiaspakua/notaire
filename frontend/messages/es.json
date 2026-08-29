@@ -19,7 +19,8 @@
     "logout": "Cerrar sesión",
     "brand": "Notaire",
     "brandSubtitle": "Escribanía",
-    "documentosNecesarios": "Documentos Necesarios"
+    "documentosNecesarios": "Documentos Necesarios",
+    "reingresoDocumentacion": "Reingresar Documentación"
   },
   "common": {
     "create": "Crear",
@@ -307,6 +308,26 @@
       "fechaLiberado": "Fecha de liberación",
       "observaciones": "Observaciones",
       "entregado": "Entregado"
+    }
+  },
+  "reingresoDocumentacion": {
+    "title": "Reingresar Documentación",
+    "verTramites": "Ver trámites",
+    "noData": "No hay gestiones disponibles",
+    "noTramites": "Esta gestión no tiene trámites",
+    "detalleTitle": "Trámites y documentación necesaria",
+    "reingresar": "Reingresar",
+    "documentoReingresado": "Documento reingresado",
+    "errorReingreso": "Error al reingresar el documento",
+    "noDocumentosNecesarios": "Sin documentación necesaria configurada",
+    "fields": {
+      "numero": "Número",
+      "encabezado": "Encabezado",
+      "tramite": "Trámite",
+      "nombre": "Documento",
+      "vence": "Vence",
+      "diasVencimiento": "Días de vencimiento",
+      "quienEntrega": "Quién entrega"
     }
   },
   "pagos": {

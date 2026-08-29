@@ -42,7 +42,7 @@ CU39,Crear Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Cr
 CU40,Modificar Tipo de folio,Administracion,Esencial,TipoDeFolio,Update,TipoDeFolioController,PUT,/api/v1/tipo-folio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#193
 CU41,Modificar Cliente,Clientes,Esencial,Persona,Update,PersonaController,PUT,/api/v1/personas/{id},personas/05-update.yml,OK,FAIL,PUT 404 - ID inexistente en test,#194
 CU42,Informar próximos vencimientos,Gestiones,Necesario,DocumentoPresentado,Read,DocumentoPresentadoController,GET,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Sin filtro vencimiento específico,#195
-CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Update,DocumentoPresentadoController,PUT,/api/v1/documento-presentado/{id},MISSING,OK,NO-TEST,Sin test PUT,#196
+CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Create,GestionController,GET/POST,/api/v1/gestiones/{id}/reingreso-documentacion,DONE,OK,PASS,Implementado #865; E2E Playwright golden+edge path,#196
 CU44,Reingresar testimonio,Gestiones,Esencial,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#197
 CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,PresupuestoController,PUT,/api/v1/presupuestos/{id},presupuestos/06-update.yml,OK,OK,,#198
 CU46,Ver detalle cliente,Clientes,Esencial,Persona,Read,PersonaController,GET,/api/v1/personas/{id},personas/03-get-by-id.yml,OK,FAIL,GET 404 - ID inexistente en test,#199
