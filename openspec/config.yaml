@@ -21,19 +21,24 @@ context: |
   Never copy CONSTITUTION.md or permanent documentation into an artifact. Cite the
   file and describe only what this change does to it.
 
-  Non-negotiables (CONSTITUTION.md §3, §4, §6):
+  Non-negotiables (CONSTITUTION.md §3, §4, §6, §7):
   - No change without a GitHub Issue linked to a Use Case (CU-XX / RF-XX / RNF-XX).
     If either is missing, say so and stop - do not invent one.
   - No implementation before Gate 1: Issue + Specification + Acceptance Criteria.
   - TDD is mandatory. Tests are written and OBSERVED FAILING before implementation.
+    See docs/300-development/303-testing/TEST-PLAN.md §7 for test coverage targets
+    and fixture patterns by level (unit/component/API/E2E).
   - Branch `<type>/<issue-number>_<description>` from an updated main. Never work
     on main. Merge only via Pull Request.
   - Commits: Conventional Commits ending with `Closes #<issue-number>`.
   - Gate 3 blocks the PR: full suite green (unit, integration, regression, E2E),
-    coverage at or above the JaCoCo ratchet floor, Playwright green for UI changes,
-    Checkstyle/Spotless clean, permanent documentation updated.
+    coverage at or above the JaCoCo ratchet floor (70% line / 25% branch),
+    Playwright green for UI changes, Checkstyle/Spotless clean, permanent documentation updated.
+    E2E tests must follow TS-nnnn-<workflow-name> nomenclature with CU traceability
+    (docs/300-development/303-testing/E2E-TEST-MAPPING.md).
   - `bash scripts/preflight.sh` before pushing. `mvn verify` alone does NOT predict
     CI - Spotless is deliberately unbound from the Maven lifecycle.
+    Full pre-PR gate: `bash scripts/run_pipeline.sh` (Gate 3).
   - Flyway is the single source of truth for the schema. Never edit an applied
     migration; add a new `V{n}__description.sql`.
   - Frontend uses the centralized design system (src/theme/tokens.ts, FormContainer

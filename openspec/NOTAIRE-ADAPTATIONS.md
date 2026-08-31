@@ -91,8 +91,10 @@ Issue was **real**.
    closed Issue number fails Gate 1 mechanically; without `gh` available the
    check degrades to a visible `note`, never a silent pass. It also enforces
    the `design.md` Testing/Regression/Playwright/Deployment/Rollback
-   sections, the twelve mandatory `tasks.md` SDLC groups plus Definition of
-   Done, and that `traceability.md` was not pre-filled.
+   sections (see `docs/300-development/303-testing/TEST-PLAN.md` for test
+   coverage targets and fixture patterns by level: unit, component, API, E2E),
+   the twelve mandatory `tasks.md` SDLC groups plus Definition of Done, and
+   that `traceability.md` was not pre-filled.
 
 4. **`openspec/changes/archive/`** (via the vendor `openspec-archive-change`
    skill, `metadata.author: openspec`, used as-is — the archive mechanism
