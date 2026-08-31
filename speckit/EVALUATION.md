@@ -116,12 +116,18 @@ merged:
   blocks a push, but the CI-side visibility (a named, separately reported
   job) is asymmetric between the two tools today. Left as a follow-up, not
   required by #870's acceptance criteria.
-- **`speckit/specs/003-cu43-reingresar-documentacion/` was still active
-  (not yet archived) at the time this evaluation was written** — CU43's PR
-  #871 has not merged yet. Its Gate 5 archive task is already generated in
-  its own `tasks.md` (per the #868 fix above), so no manual follow-up should
-  be needed once the PR merges — but that self-enforcement itself is only
-  confirmed for CU03/CU10 so far, not yet for CU43.
+- **The #868 self-enforcement fix did not actually reach CU43.** PR #871
+  merged (2026-08-29), Issue #865 closed, but `speckit/specs/
+  003-cu43-reingresar-documentacion/tasks.md` — authored before the fix
+  landed — carried no generated Gate 5 archive task, so `main` broke the
+  pre-push hook again the same way CU03 and CU10 did, requiring a third
+  manual fix (Issue #873, mirroring #866/#867). The fix in #868 only patches
+  `tasks-template.md` for *future* `/speckit.tasks` runs; it does nothing for
+  specs already scaffolded before that point, which CU43's was. The durable
+  lesson: a template fix only closes a gap for artifacts generated after it
+  ships — retrofitting in-flight specs needs an explicit, separate pass, and
+  the mechanical gate (`validate-speckit-plan.sh` failing loudly on `main`)
+  is what actually caught this, not the template.
 
 ## Evidence
 
