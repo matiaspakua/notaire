@@ -14,17 +14,17 @@ Issue #879 → proposal.md → spec.md → design.md → tasks.md → Commits �
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #879 | in-progress |
+| Issue | #879 | closed |
 | Use Case | CU69 – Gestión de Inmuebles | exists |
 | Specification | `openspec/changes/fix-inmueble-valuacion-fiscal-type/` | done |
-| Branch | `fix/879_inmueble-valuacion-fiscal-type` | created |
-| Tasks | `tasks.md` | Gate 1-3 complete |
-| Commits | `0200996`, `a9d4879`, `606a59c`, `4bd075b`, `c6c7ef9` | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
+| Branch | `fix/879_inmueble-valuacion-fiscal-type` | merged, deleted |
+| Tasks | `tasks.md` | all complete |
+| Commits | `0200996`, `a9d4879`, `606a59c`, `4bd075b`, `c6c7ef9`, `cf9dcf9` | done |
+| Pull Request | #882 | merged (squash) |
+| CI run | all 25 checks green (Unit, Integration, Coverage Gate, Security Scan, Playwright E2E Full Suite, Bruno API Tests, etc.) | passed |
+| Merge commit | `7563215` | done |
 | Release / tag | none planned — continuous deploy off `main` | n/a |
-| Smoke test | — | pending |
+| Smoke test | `POST /api/v1/inmueble` with `valuacionFiscal: 150000.5` against the running dev stack (rebuilt Docker image off `main`) → `201 Created`, numeric value round-tripped correctly | passed |
 
 ## Requirement coverage
 
@@ -51,8 +51,8 @@ null on any PUT) — tracked as Issue #880, out of scope here (see design.md).
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #879, `proposal.md`, `specs/inmueble-valuacion-fiscal/spec.md` (2 Given/When/Then scenarios) |
 | 2 | Failing tests written, test cases designed | yes | `InmuebleValuacionFiscalPgIntegrationTest` written first, observed failing against Postgres (`ERROR: column "valuacion_fiscal" is of type real but expression is of type character varying`) before implementation |
 | 3 | Suite green, coverage held, docs updated | yes | 1611/1611 unit/integration tests, `mvn verify` BUILD SUCCESS (Checkstyle/SpotBugs/JaCoCo ratchet held), `bash testing/scripts/test.sh` green, 5/5 `cu69-inmuebles-valuacion-fiscal.spec.ts` Playwright tests, `bash scripts/preflight.sh --fix` 16 passed / 2 skipped |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | PR #882, all 25 checks green, `MERGEABLE`/`CLEAN`, code-owner merge = approval per Constitution §5 step 20 |
+| 5 | Deployed, smoke test passed, Issue closed | yes | `main` fast-forwarded to `7563215`, Docker backend rebuilt from `main`, smoke test `201 Created`, Issue #879 closed |
 
 ## Exceptions
 
