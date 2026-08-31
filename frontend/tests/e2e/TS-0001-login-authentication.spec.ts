@@ -1,11 +1,25 @@
 /**
- * E2E tests — Login flow
- * CU: Autenticación de usuario
+ * TS-0001 - Login Authentication Workflow
+ *
+ * Covers: AUTH-001 (User Authentication)
+ * Test Level: E2E UI/UX (foundation - login form submission)
+ * Fixtures: Direct page navigation, form fill, JWT token validation
+ *
+ * Golden Path:
+ *   - Display login form
+ *   - Submit with valid credentials
+ *   - Redirect to /dashboard
+ *
+ * Edge Cases:
+ *   - Empty submission (validation error)
+ *   - Invalid credentials (error message)
+ *
  * Requires: backend running at localhost:8080, frontend at localhost:3000
+ * Reference: docs/300-development/303-testing/TEST-PLAN.md (TS-0001 row)
  */
 import { test, expect } from "@playwright/test";
 
-test.describe("Login page", () => {
+test.describe("TS-0001 - Login Authentication", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/login");
   });
