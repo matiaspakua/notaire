@@ -207,12 +207,12 @@ structurally distinct from every hallazgo already tracked in
 |---|---|---|---|---|---|
 | Documentos y certificados necesarios por trámite | CU03 (#156) | #860 | [#861](https://github.com/matiaspakua/notaire/pull/861) | merged | New `TipoDeTramite`↔`TipoDeDocumento` link table (Flyway migration), printable checklist screen |
 | Registrar movimientos de documentación de entidades externas | CU10 (#163) | #863 | [#864](https://github.com/matiaspakua/notaire/pull/864) | merged | External-entity document tracking, catastral nomenclature for `Inmueble`-linked gestiones |
-| Reingresar documentación | CU43 (#196) | #865 | [#871](https://github.com/matiaspakua/notaire/pull/871) | open (CI/review pending) | Re-submission circuit for rejected/expired `DocumentoPresentado`; a Postgres-only regression test (`GestionReingresoDocumentacionPgIntegrationTest`) caught a NOT NULL gap H2's `ddl-auto=create` cannot enforce |
+| Reingresar documentación | CU43 (#196) | #865 | [#871](https://github.com/matiaspakua/notaire/pull/871) | merged | Re-submission circuit for rejected/expired `DocumentoPresentado`; a Postgres-only regression test (`GestionReingresoDocumentacionPgIntegrationTest`) caught a NOT NULL gap H2's `ddl-auto=create` cannot enforce |
 
-Two follow-up tooling fixes came directly out of running the flow for real,
-not from the initial adaptation design — recorded here because they are the
-concrete evidence that the mechanical gate (point 3 above) needed hardening
-after first contact with a merged feature:
+Three follow-up tooling fixes came directly out of running the flow for
+real, not from the initial adaptation design — recorded here because they
+are the concrete evidence that the mechanical gate (point 3 above) needed
+hardening after first contact with merged features:
 
 - **#866 → PR #867**: the first feature to merge (CU03/#860) closed its
   Issue, which then made `scripts/validate-speckit-plan.sh` fail for
@@ -226,6 +226,16 @@ after first contact with a merged feature:
   the archive move an explicit Gate 5 task in `tasks-template.md` for every
   future feature, and pointing the validator's own CLOSED-issue error
   message at the fix instead of only documenting it in the script header.
+- **#873**: the #868 fix only patches `tasks-template.md`, so it only helps
+  specs scaffolded *after* that point. CU43/#865's `tasks.md` was already
+  generated before #868 shipped, so it carried no Gate 5 archive task, and
+  merging PR #871 broke `main` the same way a third time — requiring a
+  third manual archive pass. This is the one finding this evaluation
+  considers still open: a template fix does not retrofit artifacts already
+  in flight, so a template-level gate needs a companion CI check (fail loud
+  if any `speckit/specs/*/` Issue is closed, regardless of how the spec was
+  scaffolded) to be actually self-enforcing — see `speckit/EVALUATION.md`
+  for the full analysis.
 
 ## References
 
