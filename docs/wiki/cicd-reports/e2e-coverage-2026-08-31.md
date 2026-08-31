@@ -5,14 +5,14 @@ title: E2E Coverage Report - 2026-08-31
 # E2E Coverage Report
 
 **Date:** 2026-08-31
-**Trigger:** schedule
+**Trigger:** push
 
 ## Playwright E2E Results
 
-- **Total:** 490
-- **Passed:** 453
+- **Total:** 429
+- **Passed:** 395
 - **Failed:** 0
-- **Skipped:** 37
+- **Skipped:** 34
 - **Flaky:** 0
 
 ## Bruno API Test Results
