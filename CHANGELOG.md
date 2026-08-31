@@ -128,6 +128,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Gestión form's presupuesto picker showed only `Presupuesto #{id}`, no client identity**
+  (issue #889, CU02): `/dashboard/gestiones`'s nueva-Gestión modal rendered each presupuesto
+  option as a bare id, even though `Presupuesto.persona` has been returned by the API since
+  #883 and is already typed on the frontend — a user had no way to tell which presupuesto
+  belonged to the client they were working with. Discovered while driving the real UI
+  end-to-end to seed a demo case. Fixed by rendering `fullName(p.persona)` and
+  `formatCurrency(p.monto)` alongside the id when a client is associated, falling back to the
+  id-only label otherwise. Frontend-only change, no API/schema change.
+
 - **Presupuesto creation/edit from the UI silently dropped the client association** (issue
   #883, CU01): `PresupuestoController.create`/`.update` bound directly to the raw
   `Presupuesto` JPA entity, whose client relation field is `fkIdPersona`, while the

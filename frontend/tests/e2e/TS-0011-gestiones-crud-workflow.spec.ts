@@ -38,6 +38,40 @@ test.describe("CU02 - Iniciar Gestión", () => {
   test.skip("CU02-GW03: Given gestion exists, When click ver detalle, Then shows details", async () => {
     // Skipped: requires at least one gestión in the database (seed data not available in CI).
   });
+
+  test("CU02-GW05: Given a presupuesto with an associated cliente, When opening the nueva gestion presupuesto picker, Then the option shows the cliente's name (#889)", async ({ page }) => {
+    // Given — a cliente and a presupuesto linked to that cliente, created through the real UI
+    const suffix = Date.now().toString().slice(-6);
+    const apellido = `PickerTest${suffix}`;
+
+    await steps.givenUserIsOnPage("/dashboard/personas");
+    await page.getByTestId("btn-nueva-persona").click();
+    await page.getByTestId("input-nombre").fill("Cliente");
+    await page.getByTestId("input-apellido").fill(apellido);
+    await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${suffix}`);
+    await page.getByTestId("check-es-cliente").click();
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await page.getByTestId("select-persona").click();
+    await page
+      .getByRole("option", { name: new RegExp(apellido, "i") })
+      .evaluate((element) => (element as HTMLElement).click());
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-31");
+    await page.getByTestId("input-monto").fill("50000");
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    // When
+    await steps.givenUserIsOnPage("/dashboard/gestiones");
+    await page.getByTestId("btn-nueva-gestion").click();
+    await page.getByTestId("select-presupuesto-gestion").click();
+
+    // Then
+    await expect(page.getByRole("option", { name: new RegExp(apellido, "i") })).toBeVisible();
+  });
 });
 
 test.describe("CU13 - Ver historial de gestión", () => {
