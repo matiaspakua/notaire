@@ -10,17 +10,17 @@ Issue #889 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #889 | open |
+| Issue | #889 | closed |
 | Use Case | CU02 — Iniciar Gestión | exists |
-| Specification | `speckit/specs/005-gestion-presupuesto-picker-client-name/` | active |
-| Branch | `fix/889_presupuesto-picker-shows-client-name` | in progress |
-| Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
+| Specification | `speckit/specs/archive/005-gestion-presupuesto-picker-client-name/` | archived |
+| Branch | `fix/889_presupuesto-picker-shows-client-name` | merged |
+| Tasks | `tasks.md` | done |
+| Commits | `d79405a`, `b87cdbd`, `9f7e034` | done |
+| Pull Request | [#890](https://github.com/matiaspakua/notaire/pull/890) | merged |
+| CI run | `Frontend CI`, `PR Validation`, `CI - Build, Test & Security`, `Playwright E2E — Full Suite` (397 passed) — all green on head `9f7e034` | passed |
+| Merge commit | `f3d72f6` on `main` | done |
 | Release / tag | none planned — continuous deploy off `main`, same as #879/#883 | n/a |
-| Smoke test | pending | pending |
+| Smoke test | Frontend-only rendering change, no backend/DB change. `Playwright E2E — Full Suite` (incl. `CU02-GW05`, the exact acceptance scenario) ran green against the merged content on PR head `9f7e034`, content-identical to squash-merge commit `f3d72f6` on `main`. No separate Docker-stack re-run performed — not required for a pure client-side label change already exercised end-to-end. | passed |
 
 ## Requirement coverage
 
@@ -42,8 +42,8 @@ Issue #889 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 | 1 | Issue + spec.md + Acceptance Criteria | yes | Issue #889, `spec.md` Notaire Traceability + Given/When/Then scenarios, `bash scripts/validate-speckit-plan.sh 005-gestion-presupuesto-picker-client-name` passing |
 | 2 | Failing tests written, test cases designed | yes | `CU02-GW05` written first (TDD), confirmed red against pre-fix code, then green after the rendering fix |
 | 3 | Suite green, coverage held, docs updated | yes | `npx tsc --noEmit` + `npm run lint` clean, `bash scripts/run_pipeline.sh` green (docker stack up, `preflight --full` — 18 passed/1 skipped/0 failed including full Playwright suite 397 passed, Bruno API tests, Docker build/smoke test — and `markdown-lint`), `CHANGELOG.md` updated |
-| 4 | CI green, review approved, no conflicts | pending | |
-| 5 | Deployed, smoke test passed, Issue closed | pending | |
+| 4 | CI green, review approved, no conflicts | yes | PR #890, all CI checks green, merged as `f3d72f6` via squash merge, no conflicts |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Merged to `main` (continuous deploy), smoke test evidence above, Issue #889 closed (`COMPLETED`) by merge |
 
 ## Exceptions
 
