@@ -51,24 +51,24 @@
 ### Pull Request y validación CI
 
 - [x] `bash scripts/run_pipeline.sh` green.
-- [ ] `git push -u origin fix/889_presupuesto-picker-shows-client-name`.
-- [ ] `gh pr create` referencing `Closes #889`.
-- [ ] Wait for CI green on the PR.
+- [x] `git push -u origin fix/889_presupuesto-picker-shows-client-name`.
+- [x] `gh pr create` referencing `Closes #889` — PR #890.
+- [x] Wait for CI green on the PR — all checks (`Frontend CI`, `PR Validation`, `CI - Build, Test & Security`, `Playwright E2E — Full Suite`) green.
 
 ### Deploy
 
-- [ ] Merge PR once CI is green.
+- [x] Merge PR once CI is green — merged as `f3d72f6` on `main`.
 
 ### Gate 5 — Smoke test y cierre
 
-- [ ] Smoke test against rebuilt `main`.
-- [ ] Issue #889 auto-closed by the merge.
-- [ ] Archive: move `speckit/specs/005-gestion-presupuesto-picker-client-name/` to `speckit/specs/archive/`.
+- [x] Smoke test against rebuilt `main` — see `traceability.md` (frontend-only change; `CU02-GW05` E2E already exercised the merged content).
+- [x] Issue #889 auto-closed by the merge.
+- [x] Archive: move `speckit/specs/005-gestion-presupuesto-picker-client-name/` to `speckit/specs/archive/`.
 
 ## Definition of Done
 
-- [ ] All TDD/implementation/regression/E2E/docs tasks above checked off.
-- [ ] `tsc`/lint clean.
-- [ ] Playwright spec green.
-- [ ] PR merged, CI green, Issue #889 closed.
-- [ ] Feature archived under `speckit/specs/archive/`.
+- [x] All TDD/implementation/regression/E2E/docs tasks above checked off.
+- [x] `tsc`/lint clean.
+- [x] Playwright spec green.
+- [x] PR merged, CI green, Issue #889 closed.
+- [x] Feature archived under `speckit/specs/archive/`.
