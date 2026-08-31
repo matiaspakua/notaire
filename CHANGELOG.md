@@ -128,6 +128,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Presupuesto creation/edit from the UI silently dropped the client association** (issue
+  #883, CU01): `PresupuestoController.create`/`.update` bound directly to the raw
+  `Presupuesto` JPA entity, whose client relation field is `fkIdPersona`, while the
+  frontend (and `DtoPresupuesto`) send/expect `persona`. Jackson silently dropped the
+  unknown `persona` key on write, and `GET` responses returned `fkIdPersona` instead of
+  `persona` on read — so every Presupuesto created or edited from `/dashboard/presupuestos`
+  lost its client link, and the apellido search (CU60) couldn't find it either. Fixed by
+  adding `@JsonProperty("persona")` to `Presupuesto.getFkIdPersona()`/`.setFkIdPersona()`,
+  mirroring the existing `@JsonProperty("monto")` alias already used on the same class for
+  `montoInmueble`. No entity/DTO/schema change.
+
 - **BREAKING: `Inmueble.valuacionFiscal` type mismatch blocked all Inmueble creation** (issue
   #879, CU69): `Inmueble.valuacionFiscal` (and `DtoInmueble.valuacionFiscal`) was declared
   `String` while the Flyway-owned `inmuebles.valuacion_fiscal` column is `real`; Hibernate
