@@ -348,6 +348,20 @@ Ver script: [install-git-hooks.sh](https://github.com/matiaspakua/notaire/blob/m
 
 ---
 
+## 21. UI Screenshots — Notaire en Acción
+
+### Pantalla de Login
+
+![width:800px](../images/login.png)
+
+---
+
+## 22. Pantalla Principal — Dashboard & Módulos
+
+![width:900px](../images/principal.png)
+
+---
+
 <!-- _class: lead -->
 <h1 style="color:#38bdf8;font-size:2.3rem;">La spec no es documentación</h1>
 <h2 style="color:#818cf8;font-size:1.6rem;">Es el test que todavía no escribiste</h2>
