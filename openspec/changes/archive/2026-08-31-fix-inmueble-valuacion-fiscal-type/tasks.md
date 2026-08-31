@@ -100,38 +100,38 @@ only group 4 is change-specific — do not renumber the mandatory groups.
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin fix/879_inmueble-valuacion-fiscal-type`
-- [ ] 10.2 Open PR titled
-      `[#879] fix: align Inmueble.valuacionFiscal type with real column`
-- [ ] 10.3 Wait for required workflows to pass
-- [ ] 10.4 Address any CI failures
-- [ ] 10.5 Record PR number in `traceability.md`
+- [x] 10.1 `git push -u origin fix/879_inmueble-valuacion-fiscal-type`
+- [x] 10.2 Open PR titled
+      `[#879] fix: align Inmueble.valuacionFiscal type with real column` — #882
+- [x] 10.3 Wait for required workflows to pass
+- [x] 10.4 Address any CI failures — none, all green on first run
+- [x] 10.5 Record PR number in `traceability.md`
 
 ## 11. Merge
 
-- [ ] 11.1 Merge PR (squash), confirm `main` green
-- [ ] 11.2 n/a — no CD/GHCR release tracked for this repo's dev flow beyond
+- [x] 11.1 Merge PR (squash), confirm `main` green
+- [x] 11.2 n/a — no CD/GHCR release tracked for this repo's dev flow beyond
       merge-to-main
-- [ ] 11.3 Record merge commit SHA in `traceability.md`
+- [x] 11.3 Record merge commit SHA in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run smoke test: `POST /api/v1/inmueble` with a numeric
+- [x] 12.1 Run smoke test: `POST /api/v1/inmueble` with a numeric
       `valuacionFiscal` against the running dev stack, confirm `201 Created`
-- [ ] 12.2 Verify rollback path still available as described in `design.md`
-- [ ] 12.3 Close GitHub Issue #879, referencing the PR
-- [ ] 12.4 Archive change: `openspec archive fix-inmueble-valuacion-fiscal-type`
+- [x] 12.2 Verify rollback path still available as described in `design.md`
+- [x] 12.3 Close GitHub Issue #879, referencing the PR
+- [x] 12.4 Archive change: `openspec archive fix-inmueble-valuacion-fiscal-type`
 
 ## Definition of Done
 
-- [ ] Issue linked to Use Case, Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue linked to Use Case, Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
