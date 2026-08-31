@@ -323,6 +323,7 @@ Violations block merge. Use `/code-review` to audit compliance.
 
 - [← Testing](README.md)
 - [Development Plan](../DEVELOPMENT-PLAN.md)
+- [Testing Patterns](TESTING-PATTERNS.md) ⭐ **NEW** - Fixture patterns & concrete examples
 - [E2E Test Mapping](E2E-TEST-MAPPING.md) (detailed TS-nnnn reference)
 - [CU-API-MATRIX.csv](CU-API-MATRIX.csv)
 - [Sequence Diagrams](../../200-architecture/204-diagrams/Secuencias/)
