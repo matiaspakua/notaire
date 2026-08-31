@@ -49,7 +49,7 @@ export default function InmueblesPage() {
     setForm({
       nomenclaturaCatastral: i.nomenclaturaCatastral ?? "",
       domicilio: i.domicilio ?? "",
-      valuacionFiscal: i.valuacionFiscal ?? "",
+      valuacionFiscal: i.valuacionFiscal !== undefined ? String(i.valuacionFiscal) : "",
       observaciones: i.observaciones ?? "",
     });
     setModalOpen(true);
@@ -57,11 +57,17 @@ export default function InmueblesPage() {
 
   async function handleSave() {
     try {
+      const payload = {
+        nomenclaturaCatastral: form.nomenclaturaCatastral,
+        domicilio: form.domicilio,
+        observaciones: form.observaciones,
+        valuacionFiscal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
+      };
       if (editing?.idInmueble) {
-        await updateMutation.mutateAsync({ id: editing.idInmueble, data: form });
+        await updateMutation.mutateAsync({ id: editing.idInmueble, data: payload });
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(form);
+        await createMutation.mutateAsync(payload);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -168,6 +174,7 @@ export default function InmueblesPage() {
               </FormField>
               <FormField label={t("fields.valuacionFiscal")}>
                 <Input
+                  type="number"
                   value={form.valuacionFiscal}
                   onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
                 />
