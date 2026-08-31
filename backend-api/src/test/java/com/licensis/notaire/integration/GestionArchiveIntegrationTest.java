@@ -90,7 +90,7 @@ class GestionArchiveIntegrationTest {
     private Integer createPresupuesto(Integer clienteId, Float montoInmueble) throws Exception {
         String body = """
                 {"numero": %d, "fecha": "2026-01-01", "encabezado": "Presupuesto Archive IT",
-                 "estado": "PENDIENTE", "monto": %s, "fkIdPersona": {"idPersona": %d}}
+                 "estado": "PENDIENTE", "monto": %s, "persona": {"idPersona": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), montoInmueble, clienteId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)

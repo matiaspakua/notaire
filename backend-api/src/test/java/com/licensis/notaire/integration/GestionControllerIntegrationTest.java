@@ -72,7 +72,7 @@ class GestionControllerIntegrationTest {
     private Integer createPresupuesto(Integer clienteId) throws Exception {
         String body = """
                 {"numero": 1, "fecha": "2026-01-01", "encabezado": "Presupuesto IT", "estado": "PENDIENTE",
-                 "fkIdPersona": {"idPersona": %d}}
+                 "persona": {"idPersona": %d}}
                 """.formatted(clienteId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)

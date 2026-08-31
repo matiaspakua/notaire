@@ -151,10 +151,12 @@ public class Presupuesto implements Serializable {
         this.pagoList = pagoList;
     }
 
+    @JsonProperty("persona")
     public Persona getFkIdPersona() {
         return fkIdPersona;
     }
 
+    @JsonProperty("persona")
     public void setFkIdPersona(Persona fkIdPersona) {
         this.fkIdPersona = fkIdPersona;
     }
