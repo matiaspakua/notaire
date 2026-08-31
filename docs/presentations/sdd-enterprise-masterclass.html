@@ -1357,20 +1357,20 @@
           </p>
         </div>
 
-        <div class="card">
+        <div class="card success">
           <div class="card-header">
             <span class="card-title">CU43 · Reingresar documentación</span>
-            <a class="demo-link purple" href="https://github.com/matiaspakua/notaire/pull/871" target="_blank">PR #871 ↗</a>
+            <a class="demo-link green" href="https://github.com/matiaspakua/notaire/pull/871" target="_blank">PR #871 ↗</a>
           </div>
           <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.4;">
-            En revisión. Issue <a href="https://github.com/matiaspakua/notaire/issues/865" target="_blank">#865</a>. Regresión Postgres-only dedicada para un gap NOT NULL que H2 no detecta.
+            Mergeado. Issue <a href="https://github.com/matiaspakua/notaire/issues/865" target="_blank">#865</a>. Regresión Postgres-only dedicada para un gap NOT NULL que H2 no detecta.
           </p>
         </div>
       </div>
 
       <div class="card danger" style="margin-top: 1.25rem;">
         <p style="font-size: 0.92rem; color: var(--text-main); line-height: 1.4;">
-          <strong>Trampa no anticipada en el diseño:</strong> el primer merge (CU03) cerró su Issue y rompió <code>validate-speckit-plan.sh</code> para <em>todo</em> push posterior, porque el script exigía Issues <code>OPEN</code> (<a href="https://github.com/matiaspakua/notaire/issues/866" target="_blank">#866</a> → <a href="https://github.com/matiaspakua/notaire/pull/867" target="_blank">PR #867</a>). El mismo fallo se repitió con CU10 porque archivar la carpeta era manual, no forzado (<a href="https://github.com/matiaspakua/notaire/issues/868" target="_blank">#868</a> → <a href="https://github.com/matiaspakua/notaire/pull/869" target="_blank">PR #869</a>).
+          <strong>Trampa no anticipada en el diseño, repetida tres veces:</strong> el primer merge (CU03) cerró su Issue y rompió <code>validate-speckit-plan.sh</code> para <em>todo</em> push posterior, porque el script exigía Issues <code>OPEN</code> (<a href="https://github.com/matiaspakua/notaire/issues/866" target="_blank">#866</a> → <a href="https://github.com/matiaspakua/notaire/pull/867" target="_blank">PR #867</a>). El mismo fallo se repitió con CU10 porque archivar la carpeta era manual, no forzado (<a href="https://github.com/matiaspakua/notaire/issues/868" target="_blank">#868</a> → <a href="https://github.com/matiaspakua/notaire/pull/869" target="_blank">PR #869</a>). Y una tercera vez con CU43 (<a href="https://github.com/matiaspakua/notaire/issues/873" target="_blank">#873</a>): el fix de #868 solo cubre <em>futuras</em> specs — la de CU43 ya existía antes del fix. Lección: un fix de plantilla no retroactiva artefactos en curso; el gate mecánico en <code>main</code> es lo que realmente lo atrapa.
         </p>
       </div>
 
