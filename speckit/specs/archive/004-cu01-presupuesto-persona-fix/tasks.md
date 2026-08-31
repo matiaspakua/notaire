@@ -57,26 +57,26 @@
 
 ### Pull Request y validación CI
 
-- [ ] `bash scripts/run_pipeline.sh` green.
-- [ ] `git push -u origin fix/883_presupuesto-persona-association`.
-- [ ] `gh pr create` referencing `Closes #883`.
-- [ ] Wait for CI green on the PR.
+- [x] `bash scripts/run_pipeline.sh` green.
+- [x] `git push -u origin fix/883_presupuesto-persona-association`.
+- [x] `gh pr create` referencing `Closes #883` — [PR #887](https://github.com/matiaspakua/notaire/pull/887).
+- [x] Wait for CI green on the PR — all checks passed.
 
 ### Deploy
 
-- [ ] Merge PR (squash) once CI is green.
-- [ ] `docker compose build backend && docker compose up -d backend` on the dev stack to pick up `main`.
+- [x] Merge PR once CI is green — merge commit `055e8e7267d16a317d75208049dccac67d48d716`.
+- [x] `docker compose build backend && docker compose up -d backend` on the dev stack to pick up `main`.
 
 ### Gate 5 — Smoke test y cierre
 
-- [ ] Smoke test against rebuilt `main`: `POST /api/v1/presupuestos` with `"persona":{"idPersona":<id>}` → `201`, `GET` the created id back and confirm `"persona"` is populated.
-- [ ] `gh issue close 883` with a comment linking the merged PR and smoke-test evidence.
-- [ ] Archive: move `speckit/specs/004-cu01-presupuesto-persona-fix/` to `speckit/specs/archive/004-cu01-presupuesto-persona-fix/`, with `tasks.md`/`traceability.md` updated to record final commit SHAs and CI/smoke-test evidence.
+- [x] Smoke test against rebuilt `main`: `POST /api/v1/presupuestos` with `"persona":{"idPersona":<id>}` → `201`, `GET` the created id back and confirmed `"persona"` populated. Test data cleaned up.
+- [x] Issue #883 auto-closed by the merge (`Closes #883` in PR body); follow-up comment added linking the merged PR and smoke-test evidence.
+- [x] Archive: moved `speckit/specs/004-cu01-presupuesto-persona-fix/` to `speckit/specs/archive/004-cu01-presupuesto-persona-fix/`, with `tasks.md`/`traceability.md` updated to record final commit SHAs and CI/smoke-test evidence.
 
 ## Definition of Done
 
 - [x] All TDD/implementation/regression/E2E/docs tasks above checked off.
 - [x] `mvn verify -pl backend-api` and `mvn test -Ppg-integration` green.
 - [x] Playwright spec green.
-- [ ] PR merged, CI green, Issue #883 closed.
-- [ ] Feature archived under `speckit/specs/archive/`.
+- [x] PR merged, CI green, Issue #883 closed.
+- [x] Feature archived under `speckit/specs/archive/`.
