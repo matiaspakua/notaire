@@ -29,7 +29,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         Inmueble inmueble = new Inmueble();
         inmueble.setNomenclaturaCatastral("Test 123");
         inmueble.setDomicilio("Test Street 123");
-        inmueble.setValuacionFiscal("50000");
+        inmueble.setValuacionFiscal(50000f);
         Inmueble created = inmuebleRepository.save(inmueble);
         assertThat(created.getIdInmueble()).isNotNull();
 
@@ -39,7 +39,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
 
         // Update
         read.setDomicilio("Updated Street 456");
-        read.setValuacionFiscal("75000");
+        read.setValuacionFiscal(75000f);
         Inmueble updated = inmuebleRepository.save(read);
         assertThat(updated.getDomicilio()).isEqualTo("Updated Street 456");
 
@@ -54,11 +54,11 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         Inmueble inmueble = new Inmueble();
         inmueble.setNomenclaturaCatastral("Casa valuada");
         inmueble.setDomicilio("Casa con valuación");
-        inmueble.setValuacionFiscal("150000");
+        inmueble.setValuacionFiscal(150000f);
         Inmueble saved = inmuebleRepository.save(inmueble);
 
-        assertThat(saved.getValuacionFiscal()).isEqualTo("150000");
-        assertThat(saved.getValuacionFiscal()).isNotBlank();
+        assertThat(saved.getValuacionFiscal()).isEqualTo(150000f);
+        assertThat(saved.getValuacionFiscal()).isNotNull();
     }
 
     @Test
@@ -86,7 +86,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
             Inmueble inmueble = new Inmueble();
             inmueble.setNomenclaturaCatastral("Nomenclatura " + locations[i]);
             inmueble.setDomicilio("Calle Principal " + locations[i]);
-            inmueble.setValuacionFiscal(String.valueOf(100000 + (i * 50000)));
+            inmueble.setValuacionFiscal((float) (100000 + (i * 50000)));
             inmuebleRepository.save(inmueble);
         }
 
@@ -97,9 +97,9 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle various fiscal valuations")
     void shouldHandleVariousFiscalValuations() {
-        String[] valuaciones = {"50000", "100000", "250000", "500000", "1000000"};
+        float[] valuaciones = {50000f, 100000f, 250000f, 500000f, 1000000f};
 
-        for (String valuacion : valuaciones) {
+        for (float valuacion : valuaciones) {
             Inmueble inmueble = new Inmueble();
             inmueble.setNomenclaturaCatastral("Val-" + valuacion);
             inmueble.setDomicilio("Propiedad valuada " + valuacion);
@@ -118,13 +118,13 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         Inmueble inmueble1 = new Inmueble();
         inmueble1.setNomenclaturaCatastral("Prop 1");
         inmueble1.setDomicilio("Propiedad 1");
-        inmueble1.setValuacionFiscal("100000");
+        inmueble1.setValuacionFiscal(100000f);
         Inmueble saved1 = inmuebleRepository.save(inmueble1);
 
         Inmueble inmueble2 = new Inmueble();
         inmueble2.setNomenclaturaCatastral("Prop 2");
         inmueble2.setDomicilio("Propiedad 2");
-        inmueble2.setValuacionFiscal("150000");
+        inmueble2.setValuacionFiscal(150000f);
         Inmueble saved2 = inmuebleRepository.save(inmueble2);
 
         // Simulate concurrent reads
@@ -144,7 +144,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
             Inmueble inmueble = new Inmueble();
             inmueble.setNomenclaturaCatastral("Nomenclatura " + i);
             inmueble.setDomicilio("Calle " + i);
-            inmueble.setValuacionFiscal(String.valueOf(50000 + (i * 10000)));
+            inmueble.setValuacionFiscal((float) (50000 + (i * 10000)));
             inmuebleRepository.save(inmueble);
         }
 
@@ -154,7 +154,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         // Filter by valuacion > 100000
         List<Inmueble> highValueProperties = all.stream()
                 .filter(i -> i.getValuacionFiscal() != null &&
-                           Integer.parseInt(i.getValuacionFiscal()) > 100000)
+                           i.getValuacionFiscal() > 100000)
                 .toList();
         assertThat(highValueProperties.size()).isGreaterThan(0);
     }
@@ -167,7 +167,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
             Inmueble inmueble = new Inmueble();
             inmueble.setNomenclaturaCatastral("Batch-" + i);
             inmueble.setDomicilio("Batch Calle " + i);
-            inmueble.setValuacionFiscal(String.valueOf(10000 * (i + 1)));
+            inmueble.setValuacionFiscal((float) (10000 * (i + 1)));
             inmuebleRepository.save(inmueble);
         }
 
@@ -187,7 +187,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         Inmueble luxury = new Inmueble();
         luxury.setNomenclaturaCatastral("ALV-1050-LUX");
         luxury.setDomicilio("Avenida Alvear 1050, Penthouse Exclusivo");
-        luxury.setValuacionFiscal("5000000");
+        luxury.setValuacionFiscal(5000000f);
         luxury.setObservaciones("Propiedad de lujo en zona premium");
         inmuebleRepository.save(luxury);
 
@@ -195,7 +195,7 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
         Inmueble budget = new Inmueble();
         budget.setNomenclaturaCatastral("RIO-800-STD");
         budget.setDomicilio("Calle Rioja 800, Departamento");
-        budget.setValuacionFiscal("45000");
+        budget.setValuacionFiscal(45000f);
         inmuebleRepository.save(budget);
 
         List<Inmueble> all = inmuebleRepository.findAll();
@@ -203,8 +203,8 @@ class InmuebleServiceIntegrationTest extends ServiceIntegrationTest {
 
         // Verify both exist
         assertThat(all).anyMatch(i -> i.getValuacionFiscal() != null &&
-                                     Integer.parseInt(i.getValuacionFiscal()) > 1000000);
+                                     i.getValuacionFiscal() > 1000000);
         assertThat(all).anyMatch(i -> i.getValuacionFiscal() != null &&
-                                     Integer.parseInt(i.getValuacionFiscal()) < 100000);
+                                     i.getValuacionFiscal() < 100000);
     }
 }

@@ -53,7 +53,7 @@ public class Inmueble implements Serializable {
     @Column(name = "nomenclatura")
     private String nomenclaturaCatastral;
     @Column(name = "valuacion_fiscal")
-    private String valuacionFiscal;
+    private Float valuacionFiscal;
     @Basic(optional = false)
     @Column(name = "domicilio")
     private String domicilio;
@@ -92,11 +92,11 @@ public class Inmueble implements Serializable {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
     }
 
-    public String getValuacionFiscal() {
+    public Float getValuacionFiscal() {
         return valuacionFiscal;
     }
 
-    public void setValuacionFiscal(String valuacionFiscal) {
+    public void setValuacionFiscal(Float valuacionFiscal) {
         this.valuacionFiscal = valuacionFiscal;
     }
 

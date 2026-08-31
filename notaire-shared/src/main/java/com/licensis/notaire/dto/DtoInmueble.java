@@ -13,7 +13,7 @@ public class DtoInmueble implements DtoValido
 
     private Integer idInmueble;
     private String nomenclaturaCatastral = "";
-    private String valuacionFiscal = "";
+    private Float valuacionFiscal;
     private String domicilio = "";
     private String tipoInmueble = "";
     private String observaciones = "";
@@ -31,7 +31,7 @@ public class DtoInmueble implements DtoValido
         this.tipoInmueble = tipoInmueble;
     }
 
-    public DtoInmueble(String nomenclaturaCatastral, String valuacionFiscal, String domicilio, String tipoInmueble, String observaciones, ArrayList<DtoTramite> dtoTramites)
+    public DtoInmueble(String nomenclaturaCatastral, Float valuacionFiscal, String domicilio, String tipoInmueble, String observaciones, ArrayList<DtoTramite> dtoTramites)
     {
         this.nomenclaturaCatastral = nomenclaturaCatastral;
         this.valuacionFiscal = valuacionFiscal;
@@ -61,12 +61,12 @@ public class DtoInmueble implements DtoValido
         this.nomenclaturaCatastral = nomenclaturaCatastral;
     }
 
-    public String getValuacionFiscal()
+    public Float getValuacionFiscal()
     {
         return this.valuacionFiscal;
     }
 
-    public void setValuacionFiscal(String valuacionFiscal)
+    public void setValuacionFiscal(Float valuacionFiscal)
     {
         this.valuacionFiscal = valuacionFiscal;
     }
