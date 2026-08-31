@@ -66,7 +66,7 @@
 - [ ] 8.1 Update `docs/100-business/102-use-cases/CU87 – Vincular Escritura a Folio y Copia a Testimonio.md`, `CU28 – Ingresar nuevos folios.md` (proposal.md — Documentation Impact)
 - [ ] 8.2 Update OpenAPI/Swagger annotations for `FolioController` and `CopiaController` and verify in Swagger UI
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — vincular folio a escritura; validar copia de testimonio ya inscripto
-- [ ] 8.4 Archive superseded documents into `docs/archive/` — n/a, no document is superseded by this change
+- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — n/a, no document is superseded by this change
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 

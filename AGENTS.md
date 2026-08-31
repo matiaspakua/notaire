@@ -54,7 +54,7 @@ change is Done until the plan is complete and every Quality Gate has passed.
 5. Run ALL tests: unit + integration + E2E Playwright
 6. Commit (Conventional Commits + Closes #issue)
 7. Push
-8. Update documentation (archive outdated docs → docs/archive/)
+8. Update documentation (archive outdated docs → docs/000-archive/)
 9. PR + Close issue
 ```
 

@@ -60,7 +60,7 @@
 - [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] 8.4 Archive superseded documents into `docs/archive/`
+- [ ] 8.4 Archive superseded documents into `docs/000-archive/`
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 

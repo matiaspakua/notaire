@@ -297,7 +297,7 @@ git push -u origin feat/253_jwt_authentication
 1. Review and update all affected docs (business + engineering).
 2. Ensure consistency and accuracy.
 3. Centralize duplicated info; remove redundant documents.
-4. Move outdated docs to `docs/archive/`.
+4. Move outdated docs to `docs/000-archive/`.
 5. If a new Use Case was created in Step 0 → verify all related docs reference it.
 
 ---

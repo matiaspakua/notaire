@@ -404,14 +404,14 @@ git push -u origin <branch-name>
 2. Ensure documents are consistent, readable, and up to date.
 3. **Avoid duplication** — centralize information in the most coherent location; remove duplicates.
 4. If documentation is missing → add it.
-5. If documentation is outdated or no longer applicable → move it to `docs/archive/`.
+5. If documentation is outdated or no longer applicable → move it to `docs/000-archive/`.
 6. If a new Use Case was created in Step 0 → verify all related documents reference it correctly.
 
 ```bash
 # Docs live under docs/
 ls docs/
 # Archive old docs here:
-# docs/archive/
+# docs/000-archive/
 ```
 
 ---

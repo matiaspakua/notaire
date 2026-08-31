@@ -28,4 +28,4 @@
 
 13. Remove dead code when found. Refactor duplicate code to a single reusable unit. Avoid cyclomatic and cognitive complexity.
 
-14. After every change, review and update the project documentation (business and engineering). Ensure documents are consistent and up to date. Centralize duplicated information. Move outdated or non-applicable documents to `docs/archive/`.
+14. After every change, review and update the project documentation (business and engineering). Ensure documents are consistent and up to date. Centralize duplicated information. Move outdated or non-applicable documents to `docs/000-archive/`.

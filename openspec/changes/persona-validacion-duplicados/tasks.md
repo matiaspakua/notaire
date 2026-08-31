@@ -60,7 +60,7 @@
 - [ ] 8.1 Update `docs/100-business/102-use-cases/CU17 – Dar Alta persona.md`, `CU18 – Dar Alta Cliente.md` (proposal.md — Documentation Impact)
 - [ ] 8.2 Update OpenAPI/Swagger annotations for the `409` response and verify in Swagger UI
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — rechazo de documento de identidad duplicado al dar de alta o editar una persona
-- [ ] 8.4 Archive superseded documents into `docs/archive/` — n/a, no document is superseded by this change
+- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — n/a, no document is superseded by this change
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 

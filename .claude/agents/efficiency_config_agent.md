@@ -99,7 +99,7 @@ git push -u origin <branch-name>
 
 ### Step 8 — Update Documentation
 
-Review and update all affected docs. Centralize duplicated info. Move outdated docs to `docs/archive/`.
+Review and update all affected docs. Centralize duplicated info. Move outdated docs to `docs/000-archive/`.
 
 ### Step 9 — PR + Close Issue
 

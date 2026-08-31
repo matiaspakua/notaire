@@ -91,7 +91,7 @@
 <!-- Which PERMANENT documentation must be updated before merge (Gate 3).
      Permanent docs are the single source of truth; this proposal is not.
      Do not duplicate their content here - name the file and what changes in it.
-     Mark documents to be archived into docs/archive/. -->
+     Mark documents to be archived into docs/000-archive/. -->
 
 | Permanent document | What must change |
 |--------------------|------------------|
