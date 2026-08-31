@@ -116,6 +116,7 @@ regression; JaCoCo ratchet floor must hold.
 ## Playwright Strategy *(mandatory — UI change)*
 
 New spec `frontend/tests/e2e/cu01-presupuesto-persona.spec.ts` covering:
+
 1. Create a Presupuesto from `/dashboard/presupuestos` selecting an existing
    cliente → success message, table row shows the cliente's apellido.
 2. Search presupuestos by cliente apellido (CU60) → the just-created
