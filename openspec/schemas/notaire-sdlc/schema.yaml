@@ -67,7 +67,7 @@ artifacts:
         merge (Gate 3). Permanent docs under `docs/`, `README.md` and `CHANGELOG.md`
         are the single source of truth; this proposal documents only the change. Name
         the file and what changes in it - do not duplicate its content. Mark documents
-        to be moved to `docs/archive/`.
+        to be moved to `docs/000-archive/`.
       - **Out of Scope**: What this change deliberately does not do, and where it is
         tracked instead.
 

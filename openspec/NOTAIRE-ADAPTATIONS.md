@@ -6,7 +6,7 @@ repository (§12). This document is the single, canonical record of how
 framework — was adapted to enforce that Constitution, and the evidence that
 the adaptation holds up in real changes. It supersedes and consolidates
 `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` (archived, see
-`docs/archive/`) into one location, per Constitution P7/§8 (never duplicate
+`docs/000-archive/`) into one location, per Constitution P7/§8 (never duplicate
 permanent documentation).
 
 This document is scoped to OpenSpec only. Notaire also evaluates **SpecKit**

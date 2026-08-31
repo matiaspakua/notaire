@@ -104,7 +104,7 @@
 - [x] 8.3 Add a `CHANGELOG.md` `[Unreleased]` entry noting the removed
       `Presupuesto.fkIdTramite`/`tramite` field is no longer part of the Presupuesto API
       shape (**BREAKING**)
-- [x] 8.4 Archive superseded documents into `docs/archive/` if any covered the removed
+- [x] 8.4 Archive superseded documents into `docs/000-archive/` if any covered the removed
       relation
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single
       source of truth

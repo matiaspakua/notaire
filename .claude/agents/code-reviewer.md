@@ -28,7 +28,7 @@ You are a code reviewer for the Notaire project. Review changes against the proj
 - [ ] Branch follows `<type>/<issue-number>_<description>` convention.
 - [ ] Tests were written before implementation (TDD evidence in commit history).
 - [ ] All unit, integration, and E2E Playwright tests pass.
-- [ ] Documentation updated; no outdated docs left outside `docs/archive/`.
+- [ ] Documentation updated; no outdated docs left outside `docs/000-archive/`.
 
 ### Code Quality (KIS + SRP)
 

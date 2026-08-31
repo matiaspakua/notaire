@@ -224,7 +224,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX Update every permanent document listed in `spec.md` / `plan.md`
 - [ ] TXXX Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
 - [ ] TXXX Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
-- [ ] TXXX Archive superseded documents into `docs/archive/`
+- [ ] TXXX Archive superseded documents into `docs/000-archive/`
 - [ ] TXXX Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] TXXX `bash scripts/preflight.sh --fix` — mirrors every CI gate
 

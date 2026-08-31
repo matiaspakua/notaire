@@ -63,7 +63,7 @@
 - [ ] 8.1 Update `docs/100-business/102-use-cases/CU39 – Crear Plantilla Presupuesto.md`, `CU71 – Gestión de Items.md` (proposal.md — Documentation Impact)
 - [ ] 8.2 Update OpenAPI/Swagger annotations for the two new endpoints and verify in Swagger UI
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — carga de ítems de plantilla y catálogo en la carga real de presupuesto
-- [ ] 8.4 Archive superseded documents into `docs/archive/` — n/a, no document is superseded by this change
+- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — n/a, no document is superseded by this change
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
