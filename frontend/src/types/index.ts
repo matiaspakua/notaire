@@ -310,7 +310,7 @@ export interface WorkflowTransition {
 export interface Inmueble {
   idInmueble?: number;
   nomenclaturaCatastral?: string;
-  valuacionFiscal?: string;
+  valuacionFiscal?: number;
   domicilio?: string;
   observaciones?: string;
 }

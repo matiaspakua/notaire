@@ -29,14 +29,14 @@ class InmuebleRepositoryIntegrationTest extends ServiceIntegrationTest {
         Inmueble inmueble = new Inmueble();
         inmueble.setNomenclaturaCatastral("Nomenclatura 123");
         inmueble.setDomicilio("Calle Principal 123, Apartamento 4B");
-        inmueble.setValuacionFiscal("100000");
+        inmueble.setValuacionFiscal(100000f);
         inmueble.setObservaciones("Test inmueble");
         Inmueble saved = inmuebleRepository.save(inmueble);
 
         assertThat(saved.getIdInmueble()).isNotNull();
         assertThat(saved.getDomicilio()).isEqualTo("Calle Principal 123, Apartamento 4B");
         assertThat(saved.getNomenclaturaCatastral()).isEqualTo("Nomenclatura 123");
-        assertThat(saved.getValuacionFiscal()).isEqualTo("100000");
+        assertThat(saved.getValuacionFiscal()).isEqualTo(100000f);
         assertThat(saved.getObservaciones()).isEqualTo("Test inmueble");
     }
 
@@ -74,15 +74,15 @@ class InmuebleRepositoryIntegrationTest extends ServiceIntegrationTest {
         Inmueble inmueble = new Inmueble();
         inmueble.setNomenclaturaCatastral("Update Test");
         inmueble.setDomicilio("Original Street");
-        inmueble.setValuacionFiscal("100000");
+        inmueble.setValuacionFiscal(100000f);
         Inmueble saved = inmuebleRepository.save(inmueble);
 
         saved.setDomicilio("Avenida Corrientes 1234");
-        saved.setValuacionFiscal("150000");
+        saved.setValuacionFiscal(150000f);
         Inmueble updated = inmuebleRepository.save(saved);
 
         assertThat(updated.getDomicilio()).isEqualTo("Avenida Corrientes 1234");
-        assertThat(updated.getValuacionFiscal()).isEqualTo("150000");
+        assertThat(updated.getValuacionFiscal()).isEqualTo(150000f);
 
         Optional<Inmueble> fetched = inmuebleRepository.findById(saved.getIdInmueble());
         assertThat(fetched.get().getDomicilio()).isEqualTo("Avenida Corrientes 1234");
@@ -125,7 +125,7 @@ class InmuebleRepositoryIntegrationTest extends ServiceIntegrationTest {
             Inmueble inmueble = new Inmueble();
             inmueble.setNomenclaturaCatastral("Nomenclatura " + i);
             inmueble.setDomicilio("Calle " + i);
-            inmueble.setValuacionFiscal(String.valueOf(50000 + (i * 10000)));
+            inmueble.setValuacionFiscal((float) (50000 + (i * 10000)));
             inmuebleRepository.save(inmueble);
         }
 

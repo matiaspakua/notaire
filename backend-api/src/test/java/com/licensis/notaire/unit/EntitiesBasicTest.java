@@ -46,7 +46,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -459,13 +458,13 @@ class EntitiesBasicTest {
 
             i1.setIdInmueble(10);
             i1.setNomenclaturaCatastral("N-1");
-            i1.setValuacionFiscal("10000");
+            i1.setValuacionFiscal(10000f);
             i1.setDomicilio("Address");
             i1.setObservaciones("obs");
             i1.setVersion(1);
             i1.setTramiteList(new ArrayList<>());
             assertThat(i1.getNomenclaturaCatastral()).isEqualTo("N-1");
-            assertThat(i1.getValuacionFiscal()).isEqualTo("10000");
+            assertThat(i1.getValuacionFiscal()).isEqualTo(10000f);
             assertThat(i1.getDomicilio()).isEqualTo("Address");
             assertThat(i1.getObservaciones()).isEqualTo("obs");
             assertThat(i1.getVersion()).isEqualTo(1);
@@ -479,14 +478,14 @@ class EntitiesBasicTest {
             DtoInmueble dto = i1.getDto();
             assertThat(dto.getDomicilio()).isEqualTo("Address");
             assertThat(dto.getIdInmueble()).isEqualTo(10);
-            assertThat(dto.getValuacionFiscal()).isEqualTo("10000");
+            assertThat(dto.getValuacionFiscal()).isEqualTo(10000f);
 
             DtoInmueble dto2 = new DtoInmueble();
             dto2.setIdInmueble(50);
             dto2.setDomicilio("d2");
             dto2.setNomenclaturaCatastral("n2");
             dto2.setObservaciones("o2");
-            dto2.setValuacionFiscal("v2");
+            dto2.setValuacionFiscal(2f);
             Inmueble i3 = new Inmueble();
             i3.setAtributos(dto2);
             assertThat(i3.getDomicilio()).isEqualTo("d2");

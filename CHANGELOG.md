@@ -128,6 +128,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **BREAKING: `Inmueble.valuacionFiscal` type mismatch blocked all Inmueble creation** (issue
+  #879, CU69): `Inmueble.valuacionFiscal` (and `DtoInmueble.valuacionFiscal`) was declared
+  `String` while the Flyway-owned `inmuebles.valuacion_fiscal` column is `real`; Hibernate
+  always bound it as VARCHAR, so every `POST /api/v1/inmueble` failed against the real
+  Postgres schema with `ERROR: column "valuacion_fiscal" is of type real but expression is
+  of type character varying`, regardless of value (H2-based tests didn't enforce this,
+  hiding the bug). Changed both fields to `Float` (matching the existing
+  `Presupuesto.montoInmueble` convention) and updated the Next.js Inmueble form
+  (`/dashboard/inmuebles`) to send/parse a number instead of a string. `valuacionFiscal`
+  is now a JSON number, not a string, in both the request and response body. Investigating
+  this surfaced an unrelated, pre-existing NPE on `PUT /api/v1/inmueble/{id}`
+  (`InmuebleJpaController.edit`, `tramiteList` null), tracked separately as issue #880.
+
 - **Payment method (`metodoPago`) was collected by CU15 but never persisted** (issue #792,
   CU15): `PagoController.procesarPago` accepted `metodoPago` in the request body but
   `PagoService`/`Pago` had no field to store it, so the value was silently dropped. Added
