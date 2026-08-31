@@ -1,0 +1,73 @@
+# Tasks: Gestión form's presupuesto picker must identify the client
+
+**Input**: `plan.md`, `spec.md` from `speckit/specs/005-gestion-presupuesto-picker-client-name/`
+
+## Task groups
+
+### Gate 1 — Prerequisites
+
+- [x] Issue #889 created, linked to CU02 — Iniciar Gestión, moved to `in-progress`.
+- [x] `spec.md` written with Given/When/Then Acceptance Scenarios and Notaire Traceability.
+- [x] `plan.md` written with Testing / Regression / Playwright / Deployment / Rollback Strategy.
+
+### Crear branch
+
+- [x] `git checkout main && git pull origin main`
+- [x] `git checkout -b fix/889_presupuesto-picker-shows-client-name`
+
+### Tests for User Story phases (TDD)
+
+- [x] Write `CU02-GW05` in `TS-0011-gestiones-crud-workflow.spec.ts`.
+- [x] Run it against pre-fix `gestiones/page.tsx` and confirm it **fails** (assertion timeout on the option text).
+
+### Implementation for User Story phases
+
+- [x] Update the presupuesto `SelectItem` label in `gestiones/page.tsx` to include `fullName(p.persona)` and `formatCurrency(p.monto)` when `p.persona` is present, falling back to the id-only label otherwise.
+- [x] Re-run `CU02-GW05` and confirm it now **passes**.
+
+### Actualizar tests existentes
+
+- [x] No existing test asserted the previous `Presupuesto #{id}`-only label — none required updating.
+
+### Ejecutar regresión
+
+- [x] `npx tsc --noEmit` clean.
+- [x] `npm run lint` clean.
+
+### Ejecutar Playwright
+
+- [x] Full `TS-0011-gestiones-crud-workflow.spec.ts` suite green (3 passed, 5 pre-existing skips, no new failures).
+
+### Gate 3 — Actualizar documentación permanente
+
+- [ ] Update `CHANGELOG.md` with the fix entry.
+
+### Commits atómicos
+
+- [ ] Commit 1: `test(gestiones): add failing E2E coverage for presupuesto picker client name` — TDD red commit.
+- [ ] Commit 2: `fix(gestiones): show cliente name in presupuesto picker` — `Closes #889`.
+
+### Pull Request y validación CI
+
+- [ ] `bash scripts/run_pipeline.sh` green.
+- [ ] `git push -u origin fix/889_presupuesto-picker-shows-client-name`.
+- [ ] `gh pr create` referencing `Closes #889`.
+- [ ] Wait for CI green on the PR.
+
+### Deploy
+
+- [ ] Merge PR once CI is green.
+
+### Gate 5 — Smoke test y cierre
+
+- [ ] Smoke test against rebuilt `main`.
+- [ ] Issue #889 auto-closed by the merge.
+- [ ] Archive: move `speckit/specs/005-gestion-presupuesto-picker-client-name/` to `speckit/specs/archive/`.
+
+## Definition of Done
+
+- [ ] All TDD/implementation/regression/E2E/docs tasks above checked off.
+- [ ] `tsc`/lint clean.
+- [ ] Playwright spec green.
+- [ ] PR merged, CI green, Issue #889 closed.
+- [ ] Feature archived under `speckit/specs/archive/`.
