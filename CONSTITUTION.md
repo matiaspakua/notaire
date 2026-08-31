@@ -344,26 +344,74 @@ every condition is satisfied.
 
 ## 7. Testing Rules
 
+**Master Reference**: [`docs/300-development/303-testing/TEST-PLAN.md`](docs/300-development/303-testing/TEST-PLAN.md)
+
 Every modification must produce or update:
 
-| Test level | Required for | Location |
-|------------|--------------|----------|
-| **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` |
-| **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) |
-| **Contract Tests** | When a contract (API DTO/schema) changes and a contract suite exists | `testing/http/`, `backend-api/api-test/` (Bruno) |
-| **Playwright E2E** | Any UI change | `frontend/tests/e2e/` |
-| **Regression Tests** | All changes — full suite must stay green | entire suite |
+| Test level | Required for | Location | Coverage Target |
+|------------|--------------|----------|-----------------|
+| **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` | 70–85% line |
+| **Component Tests** | React/frontend changes | `frontend/src/**/*.test.tsx` (Vitest) | 60–75% line |
+| **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) | 60–75% coverage |
+| **API Contract Tests** | When a contract (API DTO/schema) changes | `backend-api/api-test/` (Bruno) | 80–100% endpoints |
+| **Playwright E2E** | Any UI change; new workflows | `frontend/tests/e2e/TS-nnnn-*.spec.ts` | 1–2 per Use Case |
+| **Regression Tests** | All changes — full suite must stay green | entire suite | — |
 
-Rules:
+### Testing Fixtures & Patterns
 
-- TDD is mandatory: failing test first, then implementation, then refactor.
-- No change is accepted without appropriate coverage. Coverage must never
+All tests must follow fixture patterns documented in:
+- **[`TESTING-PATTERNS.md`](docs/300-development/303-testing/TESTING-PATTERNS.md)**: Concrete code examples
+  - Unit: AAA pattern, Test Data Builders, Mockito
+  - Component: React Testing Library, QueryClient wrappers, hook testing
+  - API: Contract validation, error scenarios, idempotency
+  - E2E: GherkinSteps (Given-When-Then), API helpers, global setup/teardown
+
+### Test Pyramid & Execution Strategy
+
+```
+                     ╱╲
+                    ╱  ╲  E2E (Playwright)  ~5% tests, 60 min weekly
+                   ╱    ╲ 35 suites, 448 tests (TS-nnnn nomenclature)
+                  ╱──────╲
+                 ╱        ╲ API Tests (Bruno) + Contract
+                ╱──────────╲ ~15% tests, 10 min daily
+               ╱  Component ╱ React + Vitest
+              ╱   Tests    ╱ ~20% tests, 5 min per commit
+             ╱────────────╲
+            ╱  Unit Tests ╱  Java + Mockito
+           ╱ (Backend)   ╱   ~60% tests, 2 min per commit
+          ╱────────────────╲
+         ╲__________________╲
+
+Execution Strategy:
+1. Per Commit: Unit tests (instant feedback)
+2. Per PR: Unit + Component + API tests (10 min)
+3. Pre-Merge: Add E2E tests (60 min, full validation)
+```
+
+### Rules
+
+- **TDD is mandatory**: failing test first, then implementation, then refactor.
+- **No change is accepted without appropriate coverage**. Coverage must never
   decrease; the JaCoCo ratchet floor is enforced by `mvn verify`.
-- Never skip or `@Disabled` tests without documented justification.
-- Test the happy path, the edge cases, and the error paths.
-- For a bug fix, first write a test that reproduces the bug, then fix.
-- For a new endpoint: controller + integration tests, OpenAPI documentation,
+- **Never skip or `@Disabled` tests** without documented justification.
+- **Test the happy path, edge cases, and error paths**.
+- **For a bug fix**: first write a test that reproduces the bug, then fix.
+- **For a new endpoint**: controller + integration tests, OpenAPI documentation,
   and UI traceability (the endpoint is called from the UI at least once).
+- **E2E tests must be autocontenido** (not depend on other tests) except where
+  clearly justified and documented.
+- **E2E test nomenclature**: `TS-nnnn-<workflow-name>.spec.ts` with CU traceability.
+  See [`E2E-TEST-MAPPING.md`](docs/300-development/303-testing/E2E-TEST-MAPPING.md).
+
+### Coverage Enforcement
+
+| Tool | Check | Enforced at | Ratchet Floor |
+|------|-------|-------------|---------------|
+| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 70% line / 25% branch |
+| Vitest | Line coverage (frontend) | CI job `frontend-ci` | 75% line |
+| Bruno | REST endpoint coverage | CI job `playwright-e2e` | 80–100% endpoints |
+| Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per Use Case |
 
 ---
 

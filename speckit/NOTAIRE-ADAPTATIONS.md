@@ -52,7 +52,8 @@ enforces TDD ordering per story.
    Playwright, Deployment, or Rollback Strategy — SpecKit's plan is
    architecture-only (Constitution Check, Project Structure, Complexity
    Tracking), not release-aware the way `design.md` is under
-   `notaire-sdlc`.
+   `notaire-sdlc`. See `docs/300-development/303-testing/TEST-PLAN.md` for
+   test coverage targets and fixture patterns by level (unit, component, API, E2E).
 4. **`tasks.md` has no SDLC gates.** SpecKit's phases stop at "Polish &
    Cross-Cutting Concerns" — there is no group for committing, opening a
    PR, deploying, or a Gate-5 smoke test/close-out, and no Definition of

@@ -1,11 +1,23 @@
 /**
- * CU01 - Preparar Presupuesto (Gherkin style)
- * Given-When-Then pattern
+ * TS-0010 - Presupuesto Workflow
+ *
+ * Covers: CU01, CU39, CU45, CU49, CU55, CU60
+ * Test Level: E2E UI/UX (full workflow through browser)
+ * Fixtures: GherkinSteps (Given-When-Then), API helpers (createPersona, createPresupuesto)
+ *
+ * Workflow:
+ *   - Create presupuesto
+ *   - Modify presupuesto
+ *   - View presupuesto list
+ *   - Search presupuesto
+ *
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
+ * Reference: docs/300-development/303-testing/TEST-PLAN.md (TS-0010 row)
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
 
-test.describe("CU01 - Preparar Presupuesto", () => {
+test.describe("TS-0010 - Presupuesto Workflow", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
