@@ -8,9 +8,9 @@
 
 `frontend/src/app/dashboard/gestiones/page.tsx` renders the presupuesto
 `<Select>` options in the nueva-Gestión form as `Presupuesto #{id}` only,
-even though `Presupuesto.persona` is already returned by the API (fixed in
-#883) and typed on the frontend. Change the option label to include the
-client's `fullName()` and `formatCurrency(monto)` when `persona` is present,
+even though `Presupuesto.persona` is already returned by the API (fixed by
+issue #883) and typed on the frontend. Change the option label to include
+the client's `fullName()` and `formatCurrency(monto)` when `persona` is present,
 falling back to the id-only label when it is not — using the two utility
 functions already imported in the same file and already used for the
 escribano picker in the same form.

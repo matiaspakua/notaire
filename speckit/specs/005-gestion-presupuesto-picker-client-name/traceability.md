@@ -33,7 +33,7 @@ Issue #889 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | pending |
+| `CHANGELOG.md` | yes | `b87cdbd` |
 
 ## Gate log
 
@@ -41,7 +41,7 @@ Issue #889 → spec.md → plan.md → tasks.md → Commits → PR → Merge →
 |------|-----------|--------|----------|
 | 1 | Issue + spec.md + Acceptance Criteria | yes | Issue #889, `spec.md` Notaire Traceability + Given/When/Then scenarios, `bash scripts/validate-speckit-plan.sh 005-gestion-presupuesto-picker-client-name` passing |
 | 2 | Failing tests written, test cases designed | yes | `CU02-GW05` written first (TDD), confirmed red against pre-fix code, then green after the rendering fix |
-| 3 | Suite green, coverage held, docs updated | pending | tsc/lint clean, Playwright green; `CHANGELOG.md` pending |
+| 3 | Suite green, coverage held, docs updated | yes | `npx tsc --noEmit` + `npm run lint` clean, `bash scripts/run_pipeline.sh` green (docker stack up, `preflight --full` — 18 passed/1 skipped/0 failed including full Playwright suite 397 passed, Bruno API tests, Docker build/smoke test — and `markdown-lint`), `CHANGELOG.md` updated |
 | 4 | CI green, review approved, no conflicts | pending | |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 

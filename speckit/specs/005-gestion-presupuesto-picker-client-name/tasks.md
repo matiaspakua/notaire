@@ -37,19 +37,20 @@
 ### Ejecutar Playwright
 
 - [x] Full `TS-0011-gestiones-crud-workflow.spec.ts` suite green (3 passed, 5 pre-existing skips, no new failures).
+- [x] Full `frontend` Playwright suite green (397 passed, 0 failures) via `bash scripts/run_pipeline.sh`.
 
 ### Gate 3 — Actualizar documentación permanente
 
-- [ ] Update `CHANGELOG.md` with the fix entry.
+- [x] Update `CHANGELOG.md` with the fix entry.
 
 ### Commits atómicos
 
-- [ ] Commit 1: `test(gestiones): add failing E2E coverage for presupuesto picker client name` — TDD red commit.
-- [ ] Commit 2: `fix(gestiones): show cliente name in presupuesto picker` — `Closes #889`.
+- [x] Commit 1: `test(gestiones): add failing E2E coverage for presupuesto picker client name` — TDD red commit.
+- [x] Commit 2: `fix(gestiones): show cliente name in presupuesto picker` — `Closes #889`.
 
 ### Pull Request y validación CI
 
-- [ ] `bash scripts/run_pipeline.sh` green.
+- [x] `bash scripts/run_pipeline.sh` green.
 - [ ] `git push -u origin fix/889_presupuesto-picker-shows-client-name`.
 - [ ] `gh pr create` referencing `Closes #889`.
 - [ ] Wait for CI green on the PR.
