@@ -7,6 +7,9 @@
   "config": {
     "default": true,
     "MD013": false, // line-length — pre-existing docs use long lines/tables
+    "MD024": { "siblings_only": true }, // duplicate-heading — CHANGELOG.md repeats
+    // "Added"/"Changed"/"Fixed" per release by design (Keep a Changelog format);
+    // only flag true duplicates within the same parent section
     "MD025": { "front_matter_title": "" }, // rule files pair frontmatter title: with a body H1 by convention
     "MD033": false, // inline-html — some docs embed <div>/<img> intentionally
     "MD034": false, // no-bare-urls — many docs reference bare URLs

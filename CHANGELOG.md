@@ -299,6 +299,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated all documentation, agent configs, and `.claude/rules/database-migrations.md`
   - See `.claude/rules/database-migrations.md` for new migration workflow
 
+<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Added" block within [Unreleased] -->
 ### Added
 
 - **ADR-007**: Database Schema Versioning with Flyway
@@ -337,6 +338,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
 
+<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Fixed" block within [Unreleased] -->
 ### Fixed
 
 - Updated Docker Compose to remove init-db volume mounts
