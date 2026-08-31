@@ -78,7 +78,12 @@ export class GherkinSteps {
 
   async whenUserSelectsFromDropdown(dropdownLabel: string, option: string) {
     await this.page.getByRole("combobox", { name: new RegExp(dropdownLabel, "i") }).click();
-    await this.page.getByRole("option", { name: new RegExp(option, "i") }).click();
+    const optionLocator = this.page.getByRole("option", { name: new RegExp(option, "i") });
+    await optionLocator.waitFor({ state: "attached" });
+    // Radix Select renders long option lists in a scrollable popper whose bounding
+    // box confuses Playwright's viewport actionability check; a real DOM click
+    // sidesteps that without changing what the user's click does.
+    await optionLocator.evaluate((el: HTMLElement) => el.click());
   }
 
   async whenUserSubmitsForm() {
