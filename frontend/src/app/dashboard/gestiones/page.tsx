@@ -295,7 +295,15 @@ export default function GestionesPage() {
                   <FormField label={t("fields.presupuesto")} required>
                     <Select value={presupuestoId} onValueChange={setPresupuestoId}>
                       <SelectTrigger data-testid="select-presupuesto-gestion"><SelectValue placeholder="Seleccionar presupuesto..." /></SelectTrigger>
-                      <SelectContent>{presupuestos.map((p) => <SelectItem key={p.idPresupuesto} value={String(p.idPresupuesto)}>Presupuesto #{p.idPresupuesto}</SelectItem>)}</SelectContent>
+                      <SelectContent>
+                        {presupuestos.map((p) => (
+                          <SelectItem key={p.idPresupuesto} value={String(p.idPresupuesto)}>
+                            {p.persona
+                              ? `Presupuesto #${p.idPresupuesto} — ${fullName(p.persona)} (${formatCurrency(p.monto)})`
+                              : `Presupuesto #${p.idPresupuesto}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
