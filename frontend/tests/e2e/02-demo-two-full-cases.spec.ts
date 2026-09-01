@@ -203,7 +203,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(numInputA).toBeEnabled({ timeout: 5000 });
 
     const numeroEscritura = `ESC-${caseA.suffix}`;
-    await numInputA.fill(numeroEscritura);
+    await numInputA.type(numeroEscritura, { delay: 50 });
     await fechaInputA.fill(caseA.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
@@ -495,7 +495,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(numInputB).toBeEnabled({ timeout: 5000 });
 
     const numeroEscrituraB = `ESC-${caseB.suffix}`;
-    await numInputB.fill(numeroEscrituraB);
+    await numInputB.type(numeroEscrituraB, { delay: 50 });
     await fechaInputB.fill(caseB.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
