@@ -355,9 +355,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     console.log(`CASE B START: ${caseB.apellidoCliente}`);
     console.log(`${"=".repeat(80)}\n`);
 
-    // Re-login
     const stepsB = new GherkinSteps(page);
-    await stepsB.givenUserIsLoggedIn();
 
     // ========== STEP 1: Create Cliente (Persona) ==========
     console.log("📝 STEP 1: Create Cliente (Persona)");
