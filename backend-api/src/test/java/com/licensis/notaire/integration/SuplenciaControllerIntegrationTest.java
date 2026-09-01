@@ -50,8 +50,9 @@ class SuplenciaControllerIntegrationTest {
     }
 
     private Integer createSuplencia() throws Exception {
-        Integer suplente = createPersona("Suplente IT", "41000001");
-        Integer suplantado = createPersona("Suplantado IT", "41000002");
+        long suffix = System.nanoTime() % 100000;
+        Integer suplente = createPersona("Suplente IT", "410" + suffix);
+        Integer suplantado = createPersona("Suplantado IT", "411" + suffix);
         String body = """
                 {"fechaInicio": "2026-01-01", "fechaFin": "2026-01-31",
                  "fkIdSuplente": {"idPersona": %d}, "fkIdSuplantado": {"idPersona": %d}}

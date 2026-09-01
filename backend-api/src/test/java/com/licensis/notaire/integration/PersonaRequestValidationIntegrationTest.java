@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,6 +24,8 @@ class PersonaRequestValidationIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private MockMvc mockMvc;
 
@@ -83,5 +87,41 @@ class PersonaRequestValidationIntegrationTest {
                                 {"nombre": "", "apellido": "Garcia", "numeroIdentificacion": "20123456", "esCliente": false}
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /personas with a document already registered returns 409 with the existing persona's id")
+    void shouldRejectCreateWithDuplicateDocument() throws Exception {
+        String response = mockMvc.perform(post("/api/v1/personas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "Otro", "apellido": "Duplicado", "numeroIdentificacion": "20123456", "esCliente": true}
+                                """))
+                .andExpect(status().isConflict())
+                .andReturn().getResponse().getContentAsString();
+
+        java.util.Map<String, Object> body = mapper.readValue(response, java.util.Map.class);
+        org.assertj.core.api.Assertions.assertThat(body).containsEntry("idPersonaExistente", 1);
+    }
+
+    @Test
+    @DisplayName("PUT /personas/{id} with another persona's document returns 409")
+    void shouldRejectUpdateWithDocumentFromAnotherPersona() throws Exception {
+        String createResponse = mockMvc.perform(post("/api/v1/personas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "Nueva", "apellido": "Persona", "numeroIdentificacion": "88888888", "esCliente": true}
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        Integer newPersonaId = (Integer) mapper.readValue(createResponse, java.util.Map.class).get("idPersona");
+
+        mockMvc.perform(put("/api/v1/personas/" + newPersonaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nombre": "Nueva", "apellido": "Persona", "numeroIdentificacion": "20123456", "esCliente": true}
+                                """))
+                .andExpect(status().isConflict());
     }
 }

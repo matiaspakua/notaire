@@ -92,7 +92,7 @@ export class GherkinSteps {
 
   async whenUserSubmitsForm() {
     await this.page
-      .getByRole("button", { name: /confirmar|guardar|crear|registrar/i })
+      .getByRole("button", { name: /confirmar|guardar|crear|registrar|actualizar/i })
       .click();
   }
 

@@ -53,7 +53,7 @@ class GestionControllerIntegrationTest {
     }
 
     private Integer createPersona() throws Exception {
-        return createPersona("42000001");
+        return createPersona("420" + (System.nanoTime() % 100000));
     }
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {

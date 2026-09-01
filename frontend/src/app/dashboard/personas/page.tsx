@@ -13,14 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
+import { apiGet, ApiError } from "@/lib/api-client";
 import {
   usePersonas,
   useCreatePersona,
   useUpdatePersona,
   useDeletePersona,
 } from "@/hooks/usePersonas";
-import { fullName } from "@/lib/utils";
+import { fullName, extractApiError } from "@/lib/utils";
 import type { Persona } from "@/types";
 
 const EMPTY: Partial<Persona> = {
@@ -91,8 +91,30 @@ export default function PersonasPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
+    } catch (err) {
+      handleSaveError(err);
+    }
+  }
+
+  function handleSaveError(err: unknown) {
+    if (!(err instanceof ApiError) || err.status !== 409) {
       toast.error(t("errorSave"));
+      return;
+    }
+    const existingId = extractDuplicatePersonaId(err);
+    const existing = personas.find((p) => p.idPersona === existingId);
+    toast.error(extractApiError(err) ?? t("duplicateDocument"), {
+      action: existing
+        ? { label: t("viewExisting"), onClick: () => openEdit(existing) }
+        : undefined,
+    });
+  }
+
+  function extractDuplicatePersonaId(err: ApiError): number | undefined {
+    try {
+      return (JSON.parse(err.body) as { idPersonaExistente?: number }).idPersonaExistente;
+    } catch {
+      return undefined;
     }
   }
 
