@@ -23,10 +23,13 @@ export class GherkinSteps {
 
   async givenUserIsOnPage(path: string) {
     await this.page.goto(path);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async givenUserIsLoggedIn() {
     await this.page.goto("/login");
+    await this.page.waitForLoadState("networkidle");
+    await expect(this.page.getByTestId("input-usuario")).toBeVisible({ timeout: 10000 });
     await this.page.getByTestId("input-usuario").fill("admin");
     await this.page.getByTestId("input-contrasenia").fill("admin");
     await this.page.getByTestId("btn-ingresar").click();

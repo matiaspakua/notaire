@@ -193,7 +193,6 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 5: Create Escritura (Deed) ==========
     console.log("📝 STEP 5: Create Escritura (Deed)");
     await stepsA.givenUserIsOnPage("/dashboard/escrituras");
-    await page.waitForLoadState("networkidle");
     await expect(page.getByTestId("btn-nueva-escritura")).toBeVisible({ timeout: 10000 });
     await page.getByTestId("btn-nueva-escritura").click();
     await expect(page.getByRole("dialog")).toBeVisible();
@@ -483,7 +482,6 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 5: Create Escritura ==========
     console.log("📝 STEP 5: Create Escritura");
     await stepsB.givenUserIsOnPage("/dashboard/escrituras");
-    await page.waitForLoadState("networkidle");
     await expect(page.getByTestId("btn-nueva-escritura")).toBeVisible({ timeout: 10000 });
     await page.getByTestId("btn-nueva-escritura").click();
     await expect(page.getByRole("dialog")).toBeVisible();
