@@ -4,98 +4,68 @@
 
 **Archivo:** `sdd-framework-guide.html`
 
-Presentación completa sobre Spec-Driven Development, comparando OpenSpec vs GitHub SpecKit con demos prácticas de ambas herramientas.
+Presentación sobre Spec-Driven Development, comparando OpenSpec vs GitHub SpecKit,
+con dos demos basadas en cambios **reales y ya mergeados** en Notaire.
 
-### 📊 Contenido (20 diapositivas)
+### 📊 Contenido (23 diapositivas)
 
-1. **Fundamentos de SDD** - Definición, por qué importa con IA
-2. **Problemas Resueltos** - Sin SDD vs Con SDD
-3. **Frameworks Overview** - SpecKit vs OpenSpec (filosofías)
-4. **Tabla Comparativa** - Características detalladas
-5. **SpecKit Greenfield** - Flujo recomendado, artefactos
-6. **OpenSpec Brownfield** - Flujo, ventajas en legacy
-7. **DEMO OpenSpec - Propose** - Creación de delta spec
-8. **DEMO OpenSpec - Apply** - Validación y gates
-9. **DEMO OpenSpec - Archive** - Cierre e integración con PR
-10. **DEMO SpecKit - Planning** - Spec exhaustiva e interactiva
-11. **DEMO SpecKit - Implementation** - Ciclo TDD y review
-12. **Conclusiones** - Cuándo usar cada herramienta
-13. **Adopción en Equipos** - Pilotaje → Estándares → Extensión
-14-15. **ANEXO: Spec Memory** - El faltante crítico en SDD
-16. **Cierre Final** - Resumen y Q&A
+1. Título
+2. **Fundamentos de SDD** — qué es, sin SDD vs con SDD
+3. **Problemas que resuelve** — alineación, trazabilidad, consistencia, context tax
+4. **OpenSpec vs Spec Kit** — filosofías
+5. **Tabla comparativa** — características detalladas
+6-7. **Caso A — Brownfield con OpenSpec** — flujo real (`/opsx:explore → propose → apply → verify → archive`, diagrama Mermaid) + delta specs y ventajas en legacy
+8-9. **Caso B — Greenfield con Spec Kit** — flujo (diagrama Mermaid) + estructura de artefactos
+9.3. **Por qué SDD necesita ajustes en empresa/legacy** — Jira, GitHub, Confluence, ambientes dev, compliance
+9.5. **¿Qué es Notaire?** — contexto técnico simplificado (diagrama Mermaid basado en SAD §3.2 Technical Context) antes de entrar a las demos
+10-12. **DEMO 1 — OpenSpec real**: Issue #879 → PR #882 (fix) → PR #884 (archive Gate 5) — fix de `Inmueble.valuacionFiscal` (slide 12 incluye links a issue, branch, proposal/design/tasks/spec, commit, test y ambas PRs)
+13-15. **DEMO 2 — Spec Kit real**: Issue #865 (CU-43) → PR #871 (feat) → PR #874 (archive Gate 5) — Reingresar documentación
+15.5. **Demo 2 — Artefactos con links**: issue, branch, spec/plan/tasks/traceability, commit, test E2E y ambas PRs
+16. **Cierre** — cuándo usar cada framework
+17. **Adopción en equipos** — Pilotaje → Estándares → Extensión
+18. **Cierre final**
+19. **Anexo A — Testing con SDD** — el spec como motor de calidad verificable; diagrama Mermaid del workflow OpenSpec adaptado (Gherkin/BDD, TDD, Cucumber, contract testing con Pact/Testcontainers)
+20. **Anexo B — Ciberseguridad con SDD** — el spec como cadena de control y evidencia; diagrama Mermaid del workflow OpenSpec adaptado (threat modeling STRIDE, SAST/SCA/SBOM, OWASP ZAP, policy-as-code con OPA)
+
+### 🎯 Demos grounded en artefactos reales del repo
+
+- **OpenSpec**: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
+- **Spec Kit**: `speckit/specs/archive/003-cu43-reingresar-documentacion/`
+
+Todos los números de Issue/PR y resultados de tests citados en la presentación
+provienen de esos artefactos y del historial de commits, no son ejemplos inventados.
 
 ### 🎨 Características
 
-- **Tema minimalista profesional** basado en Notaire design system
-- **Colores:**
-  - Primary Blue (`#3b82f6`) - Acciones principales
-  - Success Green (`#10b981`) - OpenSpec
-  - Accent Orange (`#f59e0b`) - Highlights
-  - Dark background (`#111827`) - Contraste
-
-- **Elementos visuales:**
-  - Feature boxes con bordes coloreados
-  - Comparison tables con gradientes
-  - Process flow diagrams
-  - Metrics cards con valores destacados
-  - Code blocks con sintaxis resaltada
-
-- **Interactividad:**
-  - ← → Navegación con teclado (arrow keys)
-  - Botones Previous/Next
-  - Contador de diapositivas
-  - Transiciones suaves (0.6s)
-  - Hover effects en botones
+- **Tema Notaire (Apple design tokens)** — dark/light mode:
+  - Primary Blue (`#0A84FF` / `#0071E3`) — identidad Spec Kit
+  - Success Green (`#34C759`) — identidad OpenSpec
+  - Warning Orange (`#FF9500`) — Gates / Quality
+  - Error Red (`#FF453A`) — breaking changes / riesgo
+- **Diagramas Mermaid** embebidos (flujos OpenSpec y Spec Kit, contexto técnico de Notaire, y workflows OpenSpec adaptados a Testing/Ciberseguridad, renderizados en vivo)
+- **Motion** con GSAP (entrada de slides, cursor glow, transiciones 200-400ms)
+- **Interactividad:** ← → navegación con teclado, botones, contador de diapositivas, F pantalla completa, T cambia tema
 
 ### 🚀 Cómo Usar
 
-**Opción 1: Abrir en navegador**
 ```bash
 open docs/presentations/sdd-framework-guide.html
 ```
 
-**Opción 2: Servidor local**
+O con servidor local (recomendado para que Mermaid/fonts carguen sin restricciones CORS):
+
 ```bash
 python -m http.server 8000
-# Luego abrir: http://localhost:8000/docs/presentations/sdd-framework-guide.html
+# http://localhost:8000/docs/presentations/sdd-framework-guide.html
 ```
 
-**Navegación:**
-- Teclado: `← →` (arrow keys)
-- Ratón: Click "Anterior" / "Siguiente"
-- Slide counter en esquina inferior izquierda
-
-### 📝 Demás Presentaciones
-
-- **openspec-flow-animation.html** - Animación del flujo OpenSpec
-- **sdd-enterprise-masterclass.html** - Masterclass SDD (versión anterior)
-- **sdd-enterprise-masterclass.marp.md** - Markdown source (Marp format)
-
-### 🎓 Notas para Presentadores
-
-**Estructura de flujo:**
-1. Minutos 0-3: Introducción a SDD (diapositivas 1-3)
-2. Minutos 3-8: Frameworks overview (diapositivas 4-7)
-3. Minutos 8-20: DEMO OpenSpec end-to-end (diapositivas 8-9)
-4. Minutos 20-28: DEMO SpecKit greenfield (diapositivas 10-11)
-5. Minutos 28-35: Conclusiones y adopción (diapositivas 12-13)
-6. Minutos 35-40: ANEXO Spec Memory (diapositivas 14-15)
-7. Minutos 40-45: Q&A (diapositiva 16)
-
-**Tiempo total:** ~45 minutos con Q&A
-
-### 📱 Responsive Design
-
-- **Desktop (1200px+):** Layout completo, 2-column sections
-- **Tablet (768-1024px):** Ajustes de padding y font-size
-- **Mobile (< 640px):** Single column, texto más grande
+**Navegación:** `← →` teclado · click Anterior/Siguiente · `F` pantalla completa · `T` tema
 
 ### 🔗 Referencias
 
-- Especificación técnica: `docs/300-development/303-testing/TEST-PLAN.md`
-- Análisis OpenSpec: `openspec/NOTAIRE-ADAPTATIONS.md`
-- Análisis SpecKit: `speckit/NOTAIRE-ADAPTATIONS.md`
-- Constitución: `CONSTITUTION.md` §7 (Testing Rules)
+- OpenSpec demo real: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
+- Spec Kit demo real: `speckit/specs/archive/003-cu43-reingresar-documentacion/`
+- Constitución: `CONSTITUTION.md` §5 (SDLC Workflow), §6 (Quality Gates)
 
 ---
 
