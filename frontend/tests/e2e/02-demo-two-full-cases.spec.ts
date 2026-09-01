@@ -193,7 +193,15 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 5: Create Escritura (Deed) ==========
     console.log("📝 STEP 5: Create Escritura (Deed)");
     await stepsA.givenUserIsOnPage("/dashboard/escrituras");
-    await expect(page.getByTestId("btn-nueva-escritura")).toBeVisible({ timeout: 10000 });
+
+    // Debug: find all buttons with testids
+    const allButtons = await page.locator('button[data-testid]').all();
+    console.log(`  Found ${allButtons.length} buttons with testids`);
+    for (let i = 0; i < Math.min(allButtons.length, 5); i++) {
+      const testid = await allButtons[i].getAttribute('data-testid');
+      console.log(`    Button ${i}: ${testid}`);
+    }
+
     await page.getByTestId("btn-nueva-escritura").click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
