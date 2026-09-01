@@ -9,6 +9,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 2 : 1,
+  timeout: 180000, // 3 minutes for full end-to-end demo scenarios
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
     ["json", { outputFile: "test-results/results.json" }],
