@@ -69,7 +69,6 @@ public class Escritura implements Serializable
     @Basic(optional = false)
     @Column(name = "numero")
     private int numero;
-    @Basic(optional = false)
     @Column(name = "cuerpo")
     private String cuerpo;
     @Basic(optional = false)
