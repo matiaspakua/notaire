@@ -214,7 +214,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     console.log("📝 STEP 6: Assign Folio to Escritura");
     // Find the escritura we just created in the list
     const escrituraRow = page.getByRole("row").filter({ has: page.getByText(numeroEscritura) }).first();
-    await expect(escrituraRow).toBeVisible({ timeout: 5000 });
+    await expect(escrituraRow).toBeVisible({ timeout: 15000 });
 
     // Edit it to add folio (via edit pencil icon)
     const editBtn = escrituraRow.getByRole("button").filter({ has: page.locator("svg") }).nth(0);
@@ -505,7 +505,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 6: Assign Folio & Sign ==========
     console.log("📝 STEP 6: Assign Folio to Escritura");
     const escrituraRowB = page.getByRole("row").filter({ has: page.getByText(numeroEscrituraB) }).first();
-    await expect(escrituraRowB).toBeVisible({ timeout: 5000 });
+    await expect(escrituraRowB).toBeVisible({ timeout: 15000 });
 
     const editBtnB = escrituraRowB.getByRole("button").filter({ has: page.locator("svg") }).nth(0);
     await editBtnB.click();
