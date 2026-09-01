@@ -1,7 +1,9 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Escritura;
+import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.service.EscrituraFirmaService;
 import com.licensis.notaire.service.EscrituraService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,10 +39,13 @@ public class EscrituraController {
 
     private final EscrituraService escrituraService;
     private final EscrituraFirmaService escrituraFirmaService;
+    private final FolioRepository folioRepository;
 
-    public EscrituraController(EscrituraService escrituraService, EscrituraFirmaService escrituraFirmaService) {
+    public EscrituraController(EscrituraService escrituraService, EscrituraFirmaService escrituraFirmaService,
+            FolioRepository folioRepository) {
         this.escrituraService = escrituraService;
         this.escrituraFirmaService = escrituraFirmaService;
+        this.folioRepository = folioRepository;
     }
 
     @GetMapping
@@ -75,6 +80,7 @@ public class EscrituraController {
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
         try {
             Escritura saved = escrituraService.save(entity);
+            linkFolio(saved, entity.getIdFolio());
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             log.error("Failed to create escritura", e);
@@ -113,6 +119,16 @@ public class EscrituraController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private void linkFolio(Escritura escritura, Integer idFolio) {
+        if (idFolio == null) {
+            return;
+        }
+        folioRepository.findById(idFolio).ifPresent(folio -> {
+            folio.setFkIdEscritura(escritura);
+            folioRepository.save(folio);
+        });
     }
 
     @GetMapping("/escribanos-disponibles")

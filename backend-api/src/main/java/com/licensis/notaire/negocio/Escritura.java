@@ -82,6 +82,9 @@ public class Escritura implements Serializable
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
     private List<Folio> folioList = null;
+    /** Write-only input: id of the folio to link on creation. Not persisted on this entity. */
+    @jakarta.persistence.Transient
+    private Integer idFolio;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdEscritura", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdEscritura"})
@@ -117,6 +120,16 @@ public class Escritura implements Serializable
     public void setIdEscritura(Integer idEscritura)
     {
         this.idEscritura = idEscritura;
+    }
+
+    public Integer getIdFolio()
+    {
+        return idFolio;
+    }
+
+    public void setIdFolio(Integer idFolio)
+    {
+        this.idFolio = idFolio;
     }
 
     public int getNumero()

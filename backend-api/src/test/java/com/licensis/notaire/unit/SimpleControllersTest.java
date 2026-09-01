@@ -390,8 +390,10 @@ class SimpleControllersTest {
     class EscrituraControllerTests {
         private final EscrituraService service = mock(EscrituraService.class);
         private final EscrituraFirmaService firmaService = mock(EscrituraFirmaService.class);
+        private final com.licensis.notaire.repository.FolioRepository folioRepository =
+                mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EscrituraController(service, firmaService))
+                standaloneSetup(new EscrituraController(service, firmaService, folioRepository))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 

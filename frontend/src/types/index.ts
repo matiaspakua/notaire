@@ -207,6 +207,7 @@ export interface Escritura {
   cuerpo?: string;
   estado?: string;
   gestion?: GestionDeEscritura;
+  idFolio?: number;
 }
 
 export interface MovimientoTestimonio {
