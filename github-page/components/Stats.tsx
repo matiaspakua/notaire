@@ -25,9 +25,9 @@ function buildStats(metrics: SiteMetrics): StatItem[] {
     { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: `Since ${formatDate(metrics.firstCommitDate)}` },
     { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "100% merge rate" },
     { value: metrics.useCases, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: `CU-01 → CU-${metrics.useCases}` },
-    { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#f59e0b", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
+    { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#ff9500", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
     { value: metrics.coverage.backendInstruction, label: "Test Coverage", suffix: "%", color: "var(--java-orange)", icon: "🎯", sub: "JaCoCo enforced" },
-    { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ec4899", icon: "📚", sub: "Living documentation" },
+    { value: metrics.markdownFiles, label: "Docs (Markdown files)", suffix: "", color: "#ff375f", icon: "📚", sub: "Living documentation" },
     { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration + E2E" },
     { value: metrics.dockerServices, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
     { value: metrics.grafanaDashboards, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
@@ -114,8 +114,8 @@ function StatCard({ stat, index }: { stat: StatItem; index: number }) {
       <div className="text-3xl sm:text-4xl font-bold mb-1 font-mono" style={{ color: stat.color }}>
         <AnimCounter target={stat.value} suffix={stat.suffix} />
       </div>
-      <div className="text-white text-xs font-semibold mb-1">{stat.label}</div>
-      <div className="text-slate-500 text-xs">{stat.sub}</div>
+      <div className="text-neutral-900 text-xs font-semibold mb-1">{stat.label}</div>
+      <div className="text-neutral-500 text-xs">{stat.sub}</div>
     </div>
   );
 }
@@ -138,15 +138,15 @@ export function Stats({ metrics }: { metrics: SiteMetrics }) {
     <section id="today" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">By The Numbers</p>
+          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">By The Numbers</p>
           <h2
             ref={headingRef}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4"
+            className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
             A Decade of <span className="grad-cyan">Progress</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">Every metric tells a story. From zero to production-grade in the AI era.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">Every metric tells a story. From zero to production-grade in the AI era.</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">

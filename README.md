@@ -53,7 +53,7 @@ automatizados.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, con un sistema de diseño propio inspirado en Apple.
 - **Cliente transicional**: el Swing original, refactorizado como cliente REST puro (deprecado, ver [`deprecated-frontend-swing/README.md`](deprecated-frontend-swing/README.md)).
 - **Base de datos**: **PostgreSQL 16** con **Flyway** como única fuente de verdad del esquema.
-- **Infraestructura**: Docker Compose multi-stage, 12 workflows de GitHub Actions, observabilidad Prometheus/Grafana/Loki.
+- **Infraestructura**: Docker Compose multi-stage, 11 workflows de GitHub Actions, observabilidad Prometheus/Grafana/Loki.
 
 ## 🏗️ Arquitectura
 
@@ -91,6 +91,7 @@ notaire/
 │   ├── 300-development/   # Setup, estándares, testing
 │   └── 000-archive/       # Documentación histórica/superada
 ├── infra/                 # Stack de observabilidad (Prometheus, Grafana, Loki)
+├── github-page/           # Sitio informativo/portfolio (Next.js, deploy a GitHub Pages)
 ├── openspec/               # Especificaciones SDLC (schema notaire-sdlc)
 ├── docker-compose.yml
 ├── CONSTITUTION.md         # Autoridad máxima del proceso de desarrollo
@@ -107,7 +108,7 @@ notaire/
 | **Testing** | JUnit 5 + Mockito + Testcontainers (backend), Vitest + Playwright (frontend), Bruno (API) |
 | **Calidad** | JaCoCo, Checkstyle, SpotBugs, Trivy |
 | **Observabilidad** | Micrometer, Prometheus, Loki + Promtail, Grafana |
-| **CI/CD** | GitHub Actions (12 workflows), Docker multi-stage |
+| **CI/CD** | GitHub Actions (11 workflows), Docker multi-stage |
 
 Detalle completo y justificación de cada elección: [ADRs](docs/200-architecture/202-ADR/).
 
@@ -183,8 +184,8 @@ Toda la documentación vive bajo [`docs/`](docs/README.md), organizada en tres
 
 | Área | Ubicación | Contenido |
 |:-----|:----------|:----------|
-| Negocio | `docs/100-business/` | Requisitos (RF/RNF), 82 casos de uso, modelo de datos |
-| Arquitectura | `docs/200-architecture/` | SAD (arc42), 15 ADRs, diseño de API/frontend, diagramas, seguridad, monitoreo, deploy |
+| Negocio | `docs/100-business/` | 121 requisitos (RF/RNF), 87 casos de uso, modelo de datos |
+| Arquitectura | `docs/200-architecture/` | SAD (arc42), 20 ADRs, diseño de API/frontend, diagramas, seguridad, monitoreo, deploy |
 | Desarrollo | `docs/300-development/` | Setup, estándares de código, estrategia de testing |
 | Archivo | `docs/000-archive/` | Documentación histórica o superada |
 
