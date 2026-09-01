@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.0 | **Date:** 2026-08-18 | **Author:** Architecture Team
+> **Version:** 3.1 | **Date:** 2026-09-01 | **Author:** Architecture Team
+>
+> **Changelog v3.1**: §11.3 Evolution Roadmap fully aligned with GitHub Project [Notaire Dashboard #4](https://github.com/users/matiaspakua/projects/4) — milestones #6–#11, tracking issues #898–#902, tech-debt and risk issue references added.
 
 ---
 
@@ -1095,13 +1097,55 @@ O --> (Deployability Docker)
 
 ### 11.3 Evolution Roadmap
 
-1. **Short term** — Complete Next.js frontend pages for all 73 use cases.
-2. **Short term** — Extract `ControllerNegocio` logic into dedicated service classes.
-3. **Medium term** — Replace all `jpa` package controllers with `repository` + `service`.
-4. **Medium term** — Remove `deprecated-frontend-swing` module.
-5. **Long term** — Add Kubernetes deployment manifests for production.
-6. **Long term** — Implement WebSocket support for real-time workflow updates.
-7. **Long term** — Add batch processing for report generation.
+> 📊 **Dashboard de seguimiento**: [Notaire Dashboard — GitHub Project #4](https://github.com/users/matiaspakua/projects/4)
+>
+> El roadmap está sincronizado con los milestones y el project board de GitHub.
+> Cada ítem tiene un issue de tracking con criterios de aceptación, labels `roadmap`/`tech-debt`/`risk`, y milestone asignado.
+
+#### Migration Phases — Alignment with GitHub Milestones
+
+| Phase | GitHub Milestone | Status | Tracking Issue |
+|-------|-----------------|--------|----------------|
+| Phase 1 — Analysis | [#6 Phase 1 — Analysis](https://github.com/matiaspakua/notaire/milestone/6) | ✅ Complete | Legacy documentado, 73 CU catalogados |
+| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | notaire-shared, Maven multi-módulo, Docker Compose |
+| Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entidades, Flyway V1→V14 |
+| Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 CU en Next.js 16 |
+| Phase 5 — Observability | [#10 Phase 5 — Observability](https://github.com/matiaspakua/notaire/milestone/10) | ✅ Complete | LPG stack + SonarQube + Homer |
+| Phase 6 — Deprecation | [#11 Phase 6 — Deprecation](https://github.com/matiaspakua/notaire/milestone/11) | ⬜ Planned | [#899](https://github.com/matiaspakua/notaire/issues/899) — Retire Swing, jpa cleanup |
+
+#### Short Term (Phase 4 — Modern Frontend)
+
+1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
+   Key open items: Gestiones (#804, #806), Escrituras (#838, #839), Presupuestos (#797, #821, #822, #823), Personas (#829, #835).
+2. **Fix critical bugs blocking frontend** — #829 (Persona create), #835 (persona dedup), #799 (uniqueness), #801 (DocumentoPresentado mapping).
+3. **Extract `ControllerNegocio` logic into dedicated service classes** — tracking issue [#900](https://github.com/matiaspakua/notaire/issues/900), GitHub issue [#568](https://github.com/matiaspakua/notaire/issues/568).
+
+#### Medium Term (Phase 6 — Deprecation)
+
+4. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
+5. **Remove `deprecated-frontend-swing` module** — [#811](https://github.com/matiaspakua/notaire/issues/811), [#899](https://github.com/matiaspakua/notaire/issues/899).
+6. **Enable quality gates** that are currently advisory-only: Checkstyle [#710](https://github.com/matiaspakua/notaire/issues/710), SpotBugs [#711](https://github.com/matiaspakua/notaire/issues/711), Trivy [#712](https://github.com/matiaspakua/notaire/issues/712).
+7. **Implement RBAC enforcement** (per-role authorization) — [#559](https://github.com/matiaspakua/notaire/issues/559).
+
+#### Long Term (Phase 6 — Deprecation / Post-Phase 6)
+
+8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk).
+9. **Implement WebSocket support** for real-time workflow updates.
+10. **Add batch processing** for report generation.
+
+#### Tech Debt Priority Queue (SAD §11.2 mapped to GitHub Issues)
+
+| Severity | Item | GitHub Issue | Milestone |
+|----------|------|-------------|-----------|
+| 🔴 Critical | `ControllerNegocio` God class (5,337 lines) | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Phase 6 |
+| 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | Phase 6 |
+| 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | Phase 6 |
+| 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | Phase 6 |
+| 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | Phase 6 |
+| 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | Phase 6 |
+| 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | Phase 6 |
+| 🟡 Medium | `AdministradorJpa` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Phase 6 |
+| 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | Phase 6 |
 
 ---
 
