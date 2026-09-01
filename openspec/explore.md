@@ -770,3 +770,63 @@ consolidación el 2026-08-26: se fusionó de vuelta el triage del último
 sub-hallazgo de 1.2 (`explore_1.2_overpayment_issue.md`, Issue #848, ya con
 `/opsx:propose` completo) y se retiró ese archivo — este documento es la
 única fuente de trazabilidad hallazgo↔Issue del proyecto.*
+
+---
+
+## Hallazgo 11 — Escritura sin picker de folio (bloquea demo E2E)
+
+**Issue:** [#892](https://github.com/matiaspakua/notaire/issues/892)
+
+**Descripción:** El flujo de firma de escritura requiere que la escritura tenga asignado un folio antes de firmarse (validación en `EscrituraFirmaService.java:45`), pero no existe pantalla UI que permita asignar un folio a una escritura ya creada. El formulario de Escritura (`/dashboard/escrituras`) carece de picker de folios.
+
+**Impacto:** El script de demo E2E (`frontend/tests/e2e/02-demo-two-full-cases.spec.ts`) construye dos casos de uso completos del principio al fin a través de la interfaz real, pero se atasca en la línea 176–189 (firma de escritura) porque no puede asignar un folio. Bloquea validación completa del workflow: Escritura Firmada → Testimonio → Verificación → Inscripción → Retiro.
+
+**Casos de Uso:** CU06 (Firmar Escritura), CU09–CU12 (Testimonio, Verificación, Inscripción, Retiro)
+
+**Requerimientos:** RF-27 (Firmar Escritura con folio)
+
+**Criterios de Aceptación:**
+1. Selector de folio agregado a formulario Escritura (testid: `select-folio-escritura`)
+2. Selector muestra solo folios en estado "Nuevo" no asignados
+3. Test E2E verifica: asignación de folio → firma de escritura exitosa (no más error 400)
+4. Demo script completa Case A: alcanza paso Testimonio sin errores
+
+**Tamaño:** Pequeño (frontend form + test E2E)  
+**Prioridad:** Alta (bloquea demo completa)  
+**Dependencias:** Ninguna (backend ya soporta `Escritura.folios[]`)
+
+---
+
+## Plan de Acción: Cerrar Bloqueadores Demo E2E
+
+**Estado actual:** 3 bugs ya fijos (PRs #879–#891), 1 bloqueador nuevo encontrado (#892).
+
+### Orden recomendado (próximas sesiones)
+
+1. **#892 (Escritura-folio picker)** — INMEDIATO
+   - Bloqueador directo de demo
+   - Pequeño scope: agregar selector de folio al formulario
+   - Spec: `openspec/changes/escritura-folio-picker-form/`
+   - Workflow: TDD → form picker + E2E test → refactor → docs → PR → merge
+   - Desbloquea: Testimonio, Copia, Documento, Pago workflows
+
+2. **#833 (Historial/estados gestión)** — DESPUÉS
+   - Prerequisito para workflow correcto
+   - Change: `openspec/changes/gestion-workflow-reingreso-testimonio/`
+   - Status: `propose completo`, pendiente `/opsx:apply`
+
+3. **Demo completion** — TERCERO
+   - Una vez #892 fijo: re-run `02-demo-two-full-cases.spec.ts`
+   - Confirmar Case A + Case B completan hasta archivo
+   - Smoke test con ambos casos en DB
+
+### Resumen ejecutivo
+
+La demo E2E encontró y validó **4 bugs reales**:
+- ✅ #879 Inmueble type (fijo)
+- ✅ #883 Presupuesto association (fijo)
+- ✅ #889 Picker labels (fijo)
+- ⏳ #892 Folio linking (próximo)
+
+Todos seguirán el flujo CONSTITUTION: Issue → Spec (Gate 1) → TDD (Gate 2) → Implement → Docs → PR (Gate 3/4) → Merge → Smoke (Gate 5).
+
