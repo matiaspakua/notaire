@@ -1,12 +1,10 @@
 package com.licensis.notaire.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -120,8 +118,8 @@ class BusinessWorkflowIntegrationTest {
                                     {
                                       "nombre": "Juan",
                                       "apellido": "García",
-                                      "dni": "20123456",
-                                      "numeroIdentificacion": "20123456",
+                                      "dni": "30111222",
+                                      "numeroIdentificacion": "30111222",
                                       "email": "juan.garcia@example.com",
                                       "esCliente": true,
                                       "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}

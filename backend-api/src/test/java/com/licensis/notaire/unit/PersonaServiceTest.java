@@ -1,6 +1,8 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.exception.PersonaDuplicadaException;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.service.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import com.licensis.notaire.testing.RequirementCoverage;
@@ -33,15 +36,21 @@ class PersonaServiceTest {
     private PersonaService personaService;
 
     private Persona testPersona;
+    private TipoIdentificacion tipoIdentificacion;
 
     @BeforeEach
     void setUp() {
+        tipoIdentificacion = new TipoIdentificacion();
+        tipoIdentificacion.setIdTipoIdentificacion(1);
+        tipoIdentificacion.setNombre("DNI");
+
         testPersona = new Persona();
         testPersona.setIdPersona(1);
         testPersona.setNombre("Ana");
         testPersona.setApellido("Lopez");
         testPersona.setNumeroIdentificacion("12345678");
         testPersona.setEsCliente(true);
+        testPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
     }
 
     @Nested
@@ -101,6 +110,64 @@ class PersonaServiceTest {
 
             assertThat(result).isEqualTo(testPersona);
             verify(personaRepository).save(testPersona);
+        }
+
+        @Test
+        @DisplayName("Should create persona when document is not registered")
+        void shouldCreatePersonaWhenDocumentNotRegistered() {
+            Persona nueva = new Persona();
+            nueva.setNumeroIdentificacion("87654321");
+            nueva.setFkIdTipoIdentificacion(tipoIdentificacion);
+            when(personaRepository.findByNumeroIdentificacion("87654321")).thenReturn(Optional.empty());
+            when(personaRepository.save(nueva)).thenReturn(nueva);
+
+            Persona result = personaService.save(nueva);
+
+            assertThat(result).isEqualTo(nueva);
+            verify(personaRepository).save(nueva);
+        }
+
+        @Test
+        @DisplayName("Should reject create when document is already registered")
+        void shouldRejectCreateWhenDocumentAlreadyRegistered() {
+            Persona nueva = new Persona();
+            nueva.setNumeroIdentificacion("12345678");
+            nueva.setFkIdTipoIdentificacion(tipoIdentificacion);
+            when(personaRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPersona));
+
+            assertThatThrownBy(() -> personaService.save(nueva))
+                    .isInstanceOf(PersonaDuplicadaException.class)
+                    .extracting(ex -> ((PersonaDuplicadaException) ex).getIdPersonaExistente())
+                    .isEqualTo(1);
+
+            verify(personaRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should update persona without changing the document")
+        void shouldUpdatePersonaWithoutChangingDocument() {
+            when(personaRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPersona));
+            when(personaRepository.save(testPersona)).thenReturn(testPersona);
+
+            Persona result = personaService.save(testPersona);
+
+            assertThat(result).isEqualTo(testPersona);
+            verify(personaRepository).save(testPersona);
+        }
+
+        @Test
+        @DisplayName("Should reject update when document belongs to another persona")
+        void shouldRejectUpdateWhenDocumentBelongsToAnotherPersona() {
+            Persona editada = new Persona();
+            editada.setIdPersona(2);
+            editada.setNumeroIdentificacion("12345678");
+            editada.setFkIdTipoIdentificacion(tipoIdentificacion);
+            when(personaRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPersona));
+
+            assertThatThrownBy(() -> personaService.save(editada))
+                    .isInstanceOf(PersonaDuplicadaException.class);
+
+            verify(personaRepository, never()).save(any());
         }
     }
 

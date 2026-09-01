@@ -1,5 +1,6 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.exception.PersonaDuplicadaException;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.repository.PersonaRepository;
 import org.slf4j.Logger;
@@ -36,8 +37,26 @@ public class PersonaService {
     }
 
     public Persona save(Persona entity) {
+        rejectDuplicateDocument(entity);
         logger.info("Saving persona: {} {}", entity.getNombre(), entity.getApellido());
         return personaRepository.save(entity);
+    }
+
+    private void rejectDuplicateDocument(Persona entity) {
+        personaRepository.findByNumeroIdentificacion(entity.getNumeroIdentificacion())
+                .filter(existing -> isSameTipoIdentificacion(existing, entity))
+                .filter(existing -> !existing.getIdPersona().equals(entity.getIdPersona()))
+                .ifPresent(existing -> {
+                    throw new PersonaDuplicadaException(
+                            "Ya existe una persona registrada con el documento " + entity.getNumeroIdentificacion(),
+                            existing.getIdPersona());
+                });
+    }
+
+    private boolean isSameTipoIdentificacion(Persona a, Persona b) {
+        return a.getFkIdTipoIdentificacion() != null && b.getFkIdTipoIdentificacion() != null
+                && a.getFkIdTipoIdentificacion().getIdTipoIdentificacion()
+                        .equals(b.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
     }
 
     public void deleteById(Integer id) {

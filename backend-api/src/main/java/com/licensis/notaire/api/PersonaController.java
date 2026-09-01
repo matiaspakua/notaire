@@ -1,5 +1,6 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.exception.PersonaDuplicadaException;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/personas")
@@ -78,18 +80,19 @@ public class PersonaController {
             }
             Persona saved = personaService.save(persona);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (PersonaDuplicadaException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicadaBody(e));
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar persona")
-    public ResponseEntity<Persona> updatePersona(@PathVariable Integer id, @Valid @RequestBody Persona persona) {
+    public ResponseEntity<Object> updatePersona(@PathVariable Integer id, @Valid @RequestBody Persona persona) {
         return personaService.findById(id)
                 .map(existing -> {
                     persona.setIdPersona(id);
@@ -97,10 +100,18 @@ public class PersonaController {
                     if (persona.getFkIdTipoIdentificacion() == null) {
                         persona.setFkIdTipoIdentificacion(existing.getFkIdTipoIdentificacion());
                     }
-                    Persona updated = personaService.save(persona);
-                    return ResponseEntity.ok(updated);
+                    try {
+                        Persona updated = personaService.save(persona);
+                        return ResponseEntity.ok((Object) updated);
+                    } catch (PersonaDuplicadaException e) {
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) duplicadaBody(e));
+                    }
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private Map<String, Object> duplicadaBody(PersonaDuplicadaException e) {
+        return Map.of("message", e.getMessage(), "idPersonaExistente", e.getIdPersonaExistente());
     }
 
     @ApiResponses({
