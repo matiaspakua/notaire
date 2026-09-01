@@ -144,6 +144,8 @@
     "deleted": "Persona eliminada",
     "errorSave": "Error al guardar la persona",
     "errorDelete": "Error al eliminar la persona",
+    "duplicateDocument": "Ya existe otra persona registrada con este documento.",
+    "viewExisting": "Ver persona existente",
     "noData": "No hay personas registradas",
     "filterClients": "Solo clientes",
     "fields": {

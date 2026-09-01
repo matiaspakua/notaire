@@ -144,6 +144,8 @@
     "deleted": "Person deleted",
     "errorSave": "Error saving person",
     "errorDelete": "Error deleting person",
+    "duplicateDocument": "Another person is already registered with this document.",
+    "viewExisting": "View existing person",
     "noData": "No people registered",
     "filterClients": "Clients only",
     "fields": {
