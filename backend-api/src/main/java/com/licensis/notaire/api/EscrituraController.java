@@ -1,7 +1,6 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.service.EscrituraFirmaService;
