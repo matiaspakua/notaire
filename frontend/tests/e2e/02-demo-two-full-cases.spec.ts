@@ -210,6 +210,10 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
     console.log("✅ Escritura created\n");
 
+    // Wait for table to refresh after creation (React Query invalidation + re-render)
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(500); // Extra time for React Query refetch + table re-render
+
     // ========== STEP 6: Assign Folio to Escritura & Sign ==========
     console.log("📝 STEP 6: Assign Folio to Escritura");
     // Find the escritura we just created in the list
@@ -501,6 +505,10 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
     console.log("✅ Escritura created\n");
+
+    // Wait for table to refresh after creation (React Query invalidation + re-render)
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(500); // Extra time for React Query refetch + table re-render
 
     // ========== STEP 6: Assign Folio & Sign ==========
     console.log("📝 STEP 6: Assign Folio to Escritura");
