@@ -11,7 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { usePagos, useCreatePago, useUpdatePago, useDeletePago } from "@/hooks/usePagos";
+import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
 
@@ -22,6 +30,7 @@ export default function PagosPage() {
   const tc = useTranslations("common");
 
   const { data: pagos = [], isLoading } = usePagos();
+  const { data: presupuestos = [] } = usePresupuestos();
   const createMutation = useCreatePago();
   const updateMutation = useUpdatePago();
   const deleteMutation = useDeletePago();
@@ -30,6 +39,11 @@ export default function PagosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Pago>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Fetch saldo for selected presupuesto (Issue #796)
+  const { data: resumen, isLoading: resumenLoading } = usePresupuestoResumen(
+    editing.idPresupuesto || null
+  );
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(p: Pago) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
@@ -85,9 +99,50 @@ export default function PagosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? t("editPago") : t("newPago")}>
-              <FormField label="Presupuesto ID" required>
-                <Input type="number" value={editing.idPresupuesto ?? ""} onChange={(e) => setEditing({ ...editing, idPresupuesto: parseInt(e.target.value) })} placeholder="ID del presupuesto" />
+              {/* Issue #796: Replace numeric ID input with presupuesto picker */}
+              <FormField label="Presupuesto" required>
+                <Select
+                  value={editing.idPresupuesto?.toString() || ""}
+                  onValueChange={(value) => setEditing({ ...editing, idPresupuesto: parseInt(value) })}
+                >
+                  <SelectTrigger data-testid="select-presupuesto-pago">
+                    <SelectValue placeholder="Seleccionar presupuesto..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {presupuestos.length === 0 ? (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">No hay presupuestos disponibles</div>
+                    ) : (
+                      presupuestos.map((p) => (
+                        <SelectItem key={p.idPresupuesto} value={p.idPresupuesto!.toString()}>
+                          {p.persona ? `${p.persona.apellido}, ${p.persona.nombre} - $${p.monto}` : `Presupuesto #${p.idPresupuesto}`}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
               </FormField>
+
+              {/* Issue #796: Show saldo pendiente after selection */}
+              {editing.idPresupuesto && (
+                <div className="rounded-lg bg-blue-50 p-3 border border-blue-200">
+                  {resumenLoading ? (
+                    <div className="text-sm text-muted-foreground">Cargando saldo...</div>
+                  ) : resumen ? (
+                    <div className="space-y-1">
+                      <div className="text-sm text-muted-foreground">Saldo Pendiente</div>
+                      <div className="text-lg font-semibold text-blue-900">
+                        {formatCurrency(resumen.saldoPendiente || 0)}
+                      </div>
+                      <div className="text-xs text-muted-foreground pt-1">
+                        Presupuestado: {formatCurrency(resumen.montoTotal || 0)} | Pagado: {formatCurrency((resumen.montoTotal || 0) - (resumen.saldoPendiente || 0))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-red-600">No se pudo cargar el saldo. Intenta nuevamente.</div>
+                  )}
+                </div>
+              )}
+
               <FormField label={tc("date")} required>
                 <Input type="date" value={editing.fecha ?? ""} onChange={(e) => setEditing({ ...editing, fecha: e.target.value })} />
               </FormField>
