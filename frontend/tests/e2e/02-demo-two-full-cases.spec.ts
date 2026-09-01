@@ -95,8 +95,11 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
       await page.getByRole("option", { name: new RegExp(caseA.conceptos[0], "i") }).click();
     }
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    const presupuestoSaveBtn = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(presupuestoSaveBtn).toBeEnabled({ timeout: 5000 });
+    await presupuestoSaveBtn.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Presupuesto created\n");
 
     // ========== STEP 3: Create Inmueble ==========
@@ -153,8 +156,11 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
       await numeroInput.fill(caseA.suffix);
     }
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    const gestionSaveBtn = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(gestionSaveBtn).toBeEnabled({ timeout: 5000 });
+    await gestionSaveBtn.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Gestión created\n");
 
     // ========== STEP 5: Create Escritura (Deed) ==========
@@ -362,8 +368,11 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByRole("dialog").getByLabel(/fecha/i).fill(caseB.fechaPresupuesto);
     await page.getByTestId("input-monto").fill(caseB.montoPresupuesto);
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    const presupuestoSaveBtn = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(presupuestoSaveBtn).toBeEnabled({ timeout: 5000 });
+    await presupuestoSaveBtn.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Presupuesto created\n");
 
     // ========== STEP 3: Create Inmueble ==========
