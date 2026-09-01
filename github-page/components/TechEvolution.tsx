@@ -65,8 +65,8 @@ const tramite = await page.getByRole(
 await expect(tramite).toBeVisible();
 await tramite.click();
 
-// 500+ Playwright E2E tests
-// 80% JaCoCo coverage enforced
+// 200+ Playwright E2E tests
+// 84% JaCoCo line coverage
 // Grafana + Loki observability`,
     stack: [
       { name: "Next.js 15", icon: "▲" },
@@ -107,7 +107,7 @@ function EraCard({ era, index }: { era: (typeof eras)[0]; index: number }) {
         <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${era.color}20`, background: `${era.color}08` }}>
           <div>
             <div className="text-xs font-mono font-bold tracking-widest mb-1" style={{ color: era.color }}>{era.label}</div>
-            <div className="text-white font-bold">{era.title}</div>
+            <div className="text-neutral-900 font-bold">{era.title}</div>
           </div>
           <div className="flex gap-1">
             <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
@@ -142,11 +142,11 @@ export function TechEvolution() {
     <section id="evolution" className="py-32 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-purple-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <p className="text-[#AF52DE] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Tech Evolution</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Three <span className="grad-green">Generations</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">The same business domain, reimagined through each era of software engineering.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">The same business domain, reimagined through each era of software engineering.</p>
         </div>
 
         {/* Arrow connectors + cards */}
@@ -155,7 +155,7 @@ export function TechEvolution() {
             <div key={i} className="flex flex-col lg:flex-row items-center gap-4 flex-1">
               <EraCard era={era} index={i} />
               {i < eras.length - 1 && (
-                <div className="hidden lg:flex items-center justify-center text-slate-600 text-2xl flex-none">→</div>
+                <div className="hidden lg:flex items-center justify-center text-neutral-500 text-2xl flex-none">→</div>
               )}
             </div>
           ))}

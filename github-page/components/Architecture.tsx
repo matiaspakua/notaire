@@ -10,7 +10,7 @@ const layers = [
   },
   {
     label: "API Gateway",
-    color: "#f59e0b",
+    color: "#ff9500",
     items: ["Spring Boot 4", "REST Controllers", "JWT Auth", "OpenAPI / Swagger"],
     icon: "⚙️",
   },
@@ -28,7 +28,7 @@ const layers = [
   },
   {
     label: "Observability",
-    color: "#ec4899",
+    color: "#ff375f",
     items: ["Prometheus", "Grafana", "Loki", "SonarQube"],
     icon: "📡",
   },
@@ -67,11 +67,11 @@ export function Architecture() {
     <section id="architecture" className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-green-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <p className="text-[#34C759] text-sm font-mono font-bold tracking-widest mb-4 uppercase">System Architecture</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             Modern <span className="grad-green">Microservices</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">From a single Java Swing file to a multi-layer containerized platform.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">From a single Java Swing file to a multi-layer containerized platform.</p>
         </div>
 
         <div ref={ref} className="flex flex-col gap-4">
@@ -100,9 +100,9 @@ export function Architecture() {
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
-          <p className="text-slate-500 text-sm mb-6">All layers run in Docker containers. One command to start everything.</p>
+          <p className="text-neutral-500 text-sm mb-6">All layers run in Docker containers. One command to start everything.</p>
           <div className="inline-block glass rounded-xl px-6 py-3 font-mono text-sm border border-cyan-500/20">
-            <span className="text-slate-500">$ </span>
+            <span className="text-neutral-500">$ </span>
             <span className="grad-cyan">bash scripts/start-all.sh</span>
           </div>
         </div>

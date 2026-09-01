@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
@@ -21,7 +22,7 @@ import {
   useFirmarEscritura,
 } from "@/hooks/useEscrituras";
 import { formatDate, extractApiError } from "@/lib/utils";
-import type { Escritura } from "@/types";
+import type { Escritura, Folio } from "@/types";
 
 const EMPTY: Partial<Escritura> = { numero: undefined, fechaEscrituracion: "", cuerpo: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
@@ -31,6 +32,10 @@ export default function EscriturasPage() {
   const tc = useTranslations("common");
 
   const { data: escrituras = [], isLoading } = useEscrituras();
+  const { data: folios = [] } = useQuery({
+    queryKey: ["folios"],
+    queryFn: () => apiGet<Folio[]>("/folio"),
+  });
   const createMutation = useCreateEscritura();
   const updateMutation = useUpdateEscritura();
   const deleteMutation = useDeleteEscritura();
@@ -140,6 +145,20 @@ export default function EscriturasPage() {
               </FormField>
               <FormField label={tc("date")} required>
                 <Input type="date" value={editing.fechaEscrituracion ?? ""} onChange={(e) => setEditing({ ...editing, fechaEscrituracion: e.target.value })} />
+              </FormField>
+              <FormField label={t("fields.folio")} required={!isEditMode}>
+                <Select value={(editing as any).idFolioSelected?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, folios: [{ idFolio: parseInt(v) }] } as any)}>
+                  <SelectTrigger data-testid="select-folio-escritura">
+                    <SelectValue placeholder={t("fields.folio")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {folios.filter(f => f.estado === "Nuevo").map(f => (
+                      <SelectItem key={f.idFolio} value={String(f.idFolio)}>
+                        Folio #{f.idFolio} — {f.tipoDeFolio?.nombre ?? "—"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormField>
             </FormSection>
             <FormActions align="right">

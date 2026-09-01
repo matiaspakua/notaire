@@ -31,7 +31,7 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
       name: "Backend (JaCoCo)",
       type: "Branch Coverage",
       percentage: coverage.backendBranch,
-      color: "#f59e0b",
+      color: "#ff9500",
       trend: "↑ Increasing",
       lastUpdate: coverage.lastUpdated,
     },
@@ -55,7 +55,7 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
       name: "API (Bruno)",
       type: "Endpoint Coverage",
       percentage: coverage.apiEndpoints,
-      color: "#ec4899",
+      color: "#ff375f",
       trend: "↑ Increasing",
       lastUpdate: coverage.lastUpdated,
     },
@@ -121,7 +121,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
           <div className="text-sm font-bold" style={{ color: metric.color }}>
             {metric.name}
           </div>
-          <div className="text-xs text-slate-500 mt-0.5">{metric.type}</div>
+          <div className="text-xs text-neutral-500 mt-0.5">{metric.type}</div>
         </div>
         <div className="text-xs px-2 py-1 rounded" style={{ background: `${metric.color}15`, color: metric.color }}>
           {metric.trend}
@@ -130,7 +130,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
 
       <div className="flex items-end gap-4">
         <div className="flex-1">
-          <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-1">
+          <div className="h-2 bg-neutral-100 rounded-full overflow-hidden mb-1">
             <div
               ref={progressBarRef}
               className="h-full rounded-full"
@@ -138,7 +138,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
             />
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-slate-400">Coverage</span>
+            <span className="text-xs text-neutral-600">Coverage</span>
             <span className="text-sm font-bold" style={{ color: metric.color }}>
               {animatedPercentage}%
             </span>
@@ -146,7 +146,7 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
         </div>
       </div>
 
-      <div className="text-xs text-slate-500 mt-2">Updated: {metric.lastUpdate}</div>
+      <div className="text-xs text-neutral-500 mt-2">Updated: {metric.lastUpdate}</div>
     </div>
   );
 }
@@ -176,15 +176,15 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
     <section className="py-32 px-6" style={{ background: "var(--bg-dark)" }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Quality Metrics</p>
+          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Quality Metrics</p>
           <h2
             ref={headingRef}
-            className="text-4xl sm:text-5xl font-bold text-white mb-4"
+            className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4"
             style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}
           >
             Test Coverage <span className="grad-cyan">Dashboard</span>
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-neutral-600 max-w-2xl mx-auto">
             Real-time coverage metrics across backend, frontend, E2E, and API layers. Updated on every merge to main.
           </p>
         </div>
@@ -196,47 +196,47 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
         </div>
 
         <div className="glass rounded-2xl p-8 border border-cyan-500/20">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+          <h3 className="text-neutral-900 font-bold mb-4 flex items-center gap-2">
             <span>📊</span> Coverage by Test Type
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-cyan-400 text-sm font-semibold mb-4">Backend Testing</h4>
+              <h4 className="text-[#0A84FF] text-sm font-semibold mb-4">Backend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Unit + Integration (JUnit 5)</span>
-                  <span className="text-cyan-400 font-mono">{metrics.backendTestClasses} classes</span>
+                  <span className="text-neutral-600">Unit + Integration (JUnit 5)</span>
+                  <span className="text-[#0A84FF] font-mono">{metrics.backendTestClasses} classes</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Integration Tests</span>
-                  <span className="text-cyan-400 font-mono">H2 + Postgres</span>
+                  <span className="text-neutral-600">Integration Tests</span>
+                  <span className="text-[#0A84FF] font-mono">H2 + Postgres</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">JaCoCo Enforcement</span>
-                  <span className="text-cyan-400 font-mono">70% line / 25% branch floor</span>
+                  <span className="text-neutral-600">JaCoCo Enforcement</span>
+                  <span className="text-[#0A84FF] font-mono">70% line / 25% branch floor</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Target Coverage</span>
-                  <span className="text-green-400 font-mono">80%</span>
+                  <span className="text-neutral-600">Target Coverage</span>
+                  <span className="text-[#34C759] font-mono">80%</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-green-400 text-sm font-semibold mb-4">Frontend Testing</h4>
+              <h4 className="text-[#34C759] text-sm font-semibold mb-4">Frontend Testing</h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">Component Coverage (Vitest)</span>
-                  <span className="text-green-400 font-mono">{metrics.coverage.frontendComponent}%</span>
+                  <span className="text-neutral-600">Component Coverage (Vitest)</span>
+                  <span className="text-[#34C759] font-mono">{metrics.coverage.frontendComponent}%</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">E2E Suites (Playwright)</span>
-                  <span className="text-green-400 font-mono">{metrics.frontendTestClasses} spec files</span>
+                  <span className="text-neutral-600">E2E Suites (Playwright)</span>
+                  <span className="text-[#34C759] font-mono">{metrics.frontendTestClasses} spec files</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-slate-400">API Tests</span>
-                  <span className="text-green-400 font-mono">{metrics.apiTestFiles} request files</span>
+                  <span className="text-neutral-600">API Tests</span>
+                  <span className="text-[#34C759] font-mono">{metrics.apiTestFiles} request files</span>
                 </li>
               </ul>
             </div>
@@ -248,7 +248,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
             href="/coverage/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 duration-300"
             style={{
-              background: "linear-gradient(135deg, #06b6d4, #7c3aed)",
+              background: "linear-gradient(135deg, #0a84ff, #af52de)",
               color: "white",
             }}
           >
@@ -261,7 +261,7 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
             href="/playwright/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all hover:scale-105 duration-300"
             style={{
-              background: "linear-gradient(135deg, #7c3aed, #ec4899)",
+              background: "linear-gradient(135deg, #af52de, #ff375f)",
               color: "white",
             }}
           >

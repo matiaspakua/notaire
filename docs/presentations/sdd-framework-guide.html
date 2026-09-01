@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec-Driven Development · OpenSpec vs GitHub Spec Kit · Notaire</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
+<style>
+  :root {
+    /* Notaire Design Tokens — dark theme (macOS Sequoia dark) */
+    --bg: #0b0b0d;
+    --bg-surface: #141416;
+    --card-bg: rgba(28, 28, 31, 0.86);
+    --card-border: rgba(255, 255, 255, 0.09);
+    --card-border-hover: rgba(10, 132, 255, 0.55);
+    --text-main: #FBFBFD;
+    --text-muted: #A2A2A6;
+
+    --primary: #0A84FF;      /* Apple blue standard — SpecKit identity */
+    --primary-bg: rgba(10, 132, 255, 0.12);
+    --primary-dark: #0071E3;
+    --success: #34C759;      /* Apple green — OpenSpec identity */
+    --success-bg: rgba(52, 199, 89, 0.12);
+    --warning: #FF9500;      /* Apple orange — Gates / Quality */
+    --warning-bg: rgba(255, 149, 0, 0.12);
+    --error: #FF453A;        /* Apple red — risk / breaking */
+    --error-bg: rgba(255, 69, 58, 0.12);
+
+    --code-bg: #0a0a0c;
+    --code-border: rgba(255, 255, 255, 0.08);
+    --table-header: #1a1a1d;
+    --table-row-even: rgba(255, 255, 255, 0.02);
+    --table-row-odd: rgba(255, 255, 255, 0.005);
+    --hud-bg: rgba(11, 11, 13, 0.92);
+
+    --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --r-lg: 16px;
+    --r-md: 12px;
+  }
+
+  [data-theme="light"] {
+    --bg: #FBFBFD;
+    --bg-surface: #FFFFFF;
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --card-border: #E5E5EA;
+    --card-border-hover: #0071E3;
+    --text-main: #1D1D1F;
+    --text-muted: #5A5A5F;
+    --primary: #0071E3;
+    --primary-bg: rgba(0, 113, 227, 0.08);
+    --success: #30B14B;
+    --success-bg: rgba(48, 177, 75, 0.08);
+    --warning: #E68400;
+    --warning-bg: rgba(230, 132, 0, 0.08);
+    --error: #FF3B30;
+    --error-bg: rgba(255, 59, 48, 0.08);
+    --code-bg: #F5F5F7;
+    --code-border: #E5E5EA;
+    --table-header: #F5F5F7;
+    --table-row-even: #FBFBFD;
+    --table-row-odd: #FFFFFF;
+    --hud-bg: rgba(255, 255, 255, 0.94);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  #cursor-glow {
+    position: fixed;
+    width: 480px; height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--primary-bg) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    opacity: 0.55;
+  }
+
+  #progress-container {
+    height: 4px; width: 100%;
+    background: rgba(128,128,128,0.12);
+    position: fixed; top: 0; left: 0; z-index: 1000;
+  }
+  #progress-bar {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--success), var(--primary), var(--warning));
+    box-shadow: 0 0 12px var(--primary);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #deck { flex: 1; position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 2; }
+
+  .slide {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    padding: 2.2rem 4rem 4.6rem;
+    opacity: 0; visibility: hidden;
+    display: flex; flex-direction: column;
+    overflow-y: auto; overflow-x: hidden;
+  }
+  .slide.active { opacity: 1; visibility: visible; z-index: 10; }
+
+  .tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.35rem 0.9rem;
+    background: var(--card-bg); border: 1px solid var(--primary);
+    border-radius: 9999px; font-size: 0.875rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--primary); margin-bottom: 0.7rem; width: fit-content;
+  }
+  .tag.tag-success { border-color: var(--success); color: var(--success); }
+  .tag.tag-warning { border-color: var(--warning); color: var(--warning); }
+
+  h1.slide-title { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.3rem; }
+  p.slide-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 1.3rem; line-height: 1.45; font-weight: 500; max-width: 900px; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; flex: 1; min-height: 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; flex: 1; min-height: 0; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; flex: 1; min-height: 0; }
+
+  .card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--r-lg); padding: 1.3rem;
+    display: flex; flex-direction: column; position: relative;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    overflow: auto;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--card-border-hover); }
+  .card.c-primary { border-color: var(--primary); background: linear-gradient(180deg, var(--primary-bg) 0%, var(--card-bg) 100%); }
+  .card.c-success { border-color: var(--success); background: linear-gradient(180deg, var(--success-bg) 0%, var(--card-bg) 100%); }
+  .card.c-warning { border-color: var(--warning); background: linear-gradient(180deg, var(--warning-bg) 0%, var(--card-bg) 100%); }
+  .card.c-error   { border-color: var(--error);   background: linear-gradient(180deg, var(--error-bg) 0%, var(--card-bg) 100%); }
+
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
+  .card-title { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+  .card-sub { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; }
+
+  pre, code { font-family: var(--font-mono); }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--code-border);
+    border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.875rem;
+    line-height: 1.55; overflow-x: auto; overflow-y: auto;
+  }
+  .comment { color: var(--text-muted); font-style: italic; }
+  .str { color: var(--success); }
+  .kw { color: var(--warning); font-weight: 700; }
+  .ok { color: var(--success); font-weight: 700; }
+
+  ul.bullet-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+  ul.bullet-list li { position: relative; padding-left: 1.4rem; font-size: 0.92rem; line-height: 1.4; font-weight: 500; }
+  ul.bullet-list li::before { content: "→"; position: absolute; left: 0; color: var(--primary); font-weight: 800; }
+  ul.bullet-list.list-success li::before { color: var(--success); content: "✓"; }
+
+  .stat-number { font-size: 2.4rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em; margin-bottom: 0.25rem; }
+  .stat-label { font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+
+  table.compare-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--card-border); }
+  table.compare-table th { text-align: left; padding: 0.7rem 1rem; background: var(--table-header); font-weight: 800; border-bottom: 2px solid var(--card-border); }
+  table.compare-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--card-border); vertical-align: top; background: var(--table-row-odd); }
+  table.compare-table tr:nth-child(even) td { background: var(--table-row-even); }
+  table.compare-table td.hl-success { color: var(--success); font-weight: 700; }
+  table.compare-table td.hl-primary { color: var(--primary); font-weight: 700; }
+
+  .badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.875rem; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 5px; }
+  .badge.b-primary { background: var(--primary-bg); color: var(--primary); border: 1px solid rgba(10,132,255,0.3); }
+  .badge.b-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52,199,89,0.3); }
+  .badge.b-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(255,149,0,0.3); }
+  .badge.b-error   { background: var(--error-bg);   color: var(--error);   border: 1px solid rgba(255,69,58,0.3); }
+
+  .mermaid-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg-surface); border: 1px solid var(--card-border); border-radius: var(--r-lg); padding: 1rem; overflow: auto; min-height: 0; }
+  .mermaid { width: 100%; }
+
+  .pr-link { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.7rem; background: var(--primary-bg); border: 1px solid var(--primary); color: var(--primary); border-radius: 6px; font-size: 0.875rem; font-weight: 700; font-family: var(--font-mono); text-decoration: none; transition: transform 150ms ease; }
+  a.pr-link:hover { transform: scale(1.03); }
+  .pr-link.pr-success { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+
+  .gate-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.7rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; background: var(--bg-surface); border: 1px solid var(--card-border); }
+  .gate-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+  #nav-controls {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 3.6rem;
+    background: var(--hud-bg); backdrop-filter: blur(16px);
+    border-top: 1px solid var(--card-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.2rem; z-index: 1000;
+  }
+  .nav-btn {
+    background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main);
+    padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 0.4rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-btn:hover { border-color: var(--primary); background: var(--primary-bg); }
+  .nav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .nav-info { font-size: 0.875rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; align-items: center; gap: 0.7rem; }
+
+  .two-col { display: flex; gap: 1.3rem; flex: 1; min-height: 0; }
+  .col { flex: 1; display: flex; flex-direction: column; gap: 0.8rem; min-height: 0; }
+
+  .flow-mini { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .flow-node { padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.875rem; font-weight: 700; font-family: var(--font-mono); border: 1px solid var(--card-border); background: var(--bg-surface); }
+  .flow-arrow { color: var(--text-muted); font-weight: 700; }
+
+  @media print {
+    body { overflow: visible; height: auto; }
+    #nav-controls, #progress-container, #cursor-glow { display: none !important; }
+    .slide { position: relative !important; opacity: 1 !important; visibility: visible !important; page-break-after: always; height: 100vh !important; width: 100vw !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+<div id="progress-container"><div id="progress-bar"></div></div>
+
+<div id="deck">
+
+  <!-- SLIDE 1 — TITLE -->
+  <section class="slide">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:1rem;">
+      <span class="tag">Notaire · SDD Masterclass</span>
+      <h1 style="font-size:3.4rem; font-weight:800; letter-spacing:-0.04em; line-height:1.08;">
+        Spec-Driven <span style="color:var(--primary)">Development</span>
+      </h1>
+      <p style="font-size:1.3rem; color:var(--text-muted); font-weight:500; max-width:760px;">
+        OpenSpec vs GitHub Spec Kit — de la especificación ejecutable al Pull Request,
+        con dos casos reales ya mergeados en Notaire.
+      </p>
+      <div class="flow-mini" style="margin-top:0.6rem;">
+        <span class="badge b-success">🌱 Brownfield → OpenSpec</span>
+        <span class="badge b-primary">🌳 Greenfield → Spec Kit</span>
+        <span class="badge b-warning">✅ 2 PRs reales de Notaire</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — FUNDAMENTOS: QUÉ ES SDD -->
+  <section class="slide">
+    <span class="tag">1 · Fundamentos</span>
+    <h1 class="slide-title">¿Qué es Spec-Driven Development?</h1>
+    <p class="slide-subtitle">Especificaciones ejecutables que guían la generación de código, en lugar de prompts ad-hoc.</p>
+    <div class="two-col">
+      <div class="col">
+        <div class="card c-error" style="flex:1;">
+          <div class="card-header"><span class="card-title">✗ Sin SDD</span><span class="badge b-error">Ad-hoc prompting</span></div>
+          <pre style="font-size:0.875rem;">$ "agregá un endpoint para reingresar
+   documentación, fijate cómo está
+   armado el resto"</pre>
+          <ul class="bullet-list" style="margin-top:0.8rem;">
+            <li>El agente reconstruye el contexto desde cero cada vez</li>
+            <li>Sin registro de <em>por qué</em> se decidió algo</li>
+            <li>Cada feature diverge un poco del resto</li>
+            <li>La review depende de memoria humana, no de artefactos</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card c-success" style="flex:1;">
+          <div class="card-header"><span class="card-title">✓ Con SDD</span><span class="badge b-success">Especificación ejecutable</span></div>
+          <pre style="font-size:0.875rem;"><span class="comment"># spec.md</span>
+<span class="kw">User Story:</span> Reingresar documentación
+<span class="kw">Acceptance:</span> Given/When/Then
+<span class="kw">Traceability:</span> Issue #865 · CU-43</pre>
+          <ul class="bullet-list list-success" style="margin-top:0.8rem;">
+            <li>La spec es la fuente de verdad, no el prompt</li>
+            <li>El código se deriva y se valida contra ella</li>
+            <li>Trazabilidad Issue → Caso de Uso → Tests → PR</li>
+            <li>Consistencia arquitectónica entre features distintas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — PROBLEMAS QUE RESUELVE -->
+  <section class="slide">
+    <span class="tag">1 · Fundamentos</span>
+    <h1 class="slide-title">Problemas que resuelve SDD con agentes de IA</h1>
+    <p class="slide-subtitle">No es burocracia — es lo que hace posible delegar trabajo real a un agente sin perder control.</p>
+    <div class="grid-4">
+      <div class="card c-primary">
+        <div class="stat-number" style="color:var(--primary)">🤝</div>
+        <div class="card-title" style="font-size:0.95rem;">Alineación humano/IA</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">La spec se revisa <b>antes</b> de escribir código — el desacuerdo se detecta en texto, no en un diff de 40 archivos.</p>
+      </div>
+      <div class="card c-success">
+        <div class="stat-number" style="color:var(--success)">🔗</div>
+        <div class="card-title" style="font-size:0.95rem;">Trazabilidad</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Issue → Caso de Uso → Spec → Tests → Commit → PR. Cada línea de código explica de dónde vino.</p>
+      </div>
+      <div class="card c-warning">
+        <div class="stat-number" style="color:var(--warning)">🏛️</div>
+        <div class="card-title" style="font-size:0.95rem;">Consistencia arquitectónica</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Todas las specs heredan las mismas reglas (<code>CONSTITUTION.md</code>) — no hay dos features con convenciones distintas.</p>
+      </div>
+      <div class="card" style="border-color:#8e8e93;">
+        <div class="stat-number" style="color:#8e8e93">⚡</div>
+        <div class="card-title" style="font-size:0.95rem;">Menos "context tax"</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">El agente no reconstruye contexto desde el código cada vez — lo lee de artefactos versionados y compactos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — OPENSPEC VS SPECKIT OVERVIEW -->
+  <section class="slide">
+    <span class="tag">2 · Marcos de trabajo</span>
+    <h1 class="slide-title">OpenSpec vs GitHub Spec Kit</h1>
+    <p class="slide-subtitle">Dos filosofías distintas — Notaire usa ambas, cada una donde mejor encaja.</p>
+    <div class="grid-2">
+      <div class="card c-success">
+        <div class="card-header"><span class="card-title">🌱 OpenSpec</span><span class="badge b-success">Brownfield</span></div>
+        <ul class="bullet-list">
+          <li><b>Filosofía:</b> cambio incremental sobre código existente</li>
+          <li><b>Modelo de spec:</b> delta specs (ADDED / MODIFIED / REMOVED)</li>
+          <li><b>Encaje típico:</b> fixes, features chicas/medianas sobre un sistema vivo</li>
+          <li><b>Ciclo:</b> <code>/opsx:explore → propose → apply → verify → archive</code></li>
+          <li><b>Fuerte en:</b> PRs pequeños, auditables, bajo overhead documental</li>
+        </ul>
+      </div>
+      <div class="card c-primary">
+        <div class="card-header"><span class="card-title">🌳 GitHub Spec Kit</span><span class="badge b-primary">Greenfield</span></div>
+        <ul class="bullet-list">
+          <li><b>Filosofía:</b> especificación exhaustiva antes de tocar código</li>
+          <li><b>Modelo de spec:</b> spec.md completo con User Stories priorizadas</li>
+          <li><b>Encaje típico:</b> features nuevas, subsistemas completos</li>
+          <li><b>Ciclo:</b> constitution → specify → plan → tasks → implement</li>
+          <li><b>Fuerte en:</b> clarificación socrática, diseño exhaustivo antes de codear</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — TABLA COMPARATIVA -->
+  <section class="slide">
+    <span class="tag">2 · Marcos de trabajo</span>
+    <h1 class="slide-title">Tabla comparativa</h1>
+    <div style="flex:1; display:flex; align-items:center;">
+    <table class="compare-table">
+      <thead><tr><th>Característica</th><th>OpenSpec</th><th>GitHub Spec Kit</th></tr></thead>
+      <tbody>
+        <tr><td>Modelo de cambio</td><td class="hl-success">Delta (ADDED/MODIFIED/REMOVED)</td><td class="hl-primary">Spec completa por feature</td></tr>
+        <tr><td>Punto de partida</td><td class="hl-success">Código/specs ya existentes</td><td class="hl-primary">Constitución del proyecto</td></tr>
+        <tr><td>Artefactos por feature</td><td class="hl-success">4 (proposal, design, tasks, delta spec)</td><td class="hl-primary">7+ (spec, plan, tasks, research, data-model, contracts, quickstart)</td></tr>
+        <tr><td>Clarificación</td><td>Implícita en el proposal</td><td class="hl-primary">Paso <code>/clarify</code> socrático dedicado</td></tr>
+        <tr><td>Ciclo</td><td class="hl-success"><code>/opsx:explore → propose → apply → verify → archive</code></td><td class="hl-primary">constitution → specify → plan → tasks → implement</td></tr>
+        <tr><td>Overhead documental</td><td class="hl-success">Bajo — vive junto al código</td><td>Alto — pensado para arrancar un subsistema</td></tr>
+        <tr><td>Mejor caso de uso en Notaire</td><td class="hl-success">Fix / feature incremental sobre backend-api existente</td><td class="hl-primary">Módulo nuevo end-to-end (CU completo)</td></tr>
+        <tr><td>Gate 5 (cierre)</td><td colspan="2" style="text-align:center;">Idéntico en ambos — <code>CONSTITUTION.md</code> §5/§6 gobierna los dos frameworks</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — CASO A: BROWNFIELD FLOW (OPENSPEC) -->
+  <section class="slide">
+    <span class="tag tag-success">3 · Caso práctico A — Brownfield</span>
+    <h1 class="slide-title">Flujo recomendado con OpenSpec</h1>
+    <p class="slide-subtitle"><code>/opsx:explore → /opsx:propose → /opsx:apply → /opsx:verify → /opsx:archive</code> — modelo de delta specs.</p>
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+graph LR
+  A["/opsx:explore"] --> B["/opsx:propose"]
+  B --> C["/opsx:apply"]
+  C --> D["/opsx:verify"]
+  D --> E["/opsx:archive"]
+  classDef req fill:#34C75922,stroke:#34C759,color:#1D1D1F,stroke-width:2px
+  class A,B,C,D,E req
+          </pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card c-success" style="flex:1;">
+          <div class="card-title">Los 5 comandos</div>
+          <ul class="bullet-list list-success" style="margin-top:0.6rem;">
+            <li><code>/opsx:explore</code> — mapea el problema y entiende el codebase existente</li>
+            <li><code>/opsx:propose</code> — redacta <code>proposal.md</code>, <code>specs/</code> (delta) y <code>design.md</code>, <code>tasks.md</code></li>
+            <li><code>/opsx:apply</code> — implementa las tasks contra la especificación</li>
+            <li><code>/opsx:verify</code> — chequea que la implementación coincide con la spec</li>
+            <li><code>/opsx:archive</code> — archiva el cambio completado, mergea el delta</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — CASO A: DELTA SPECS + VENTAJAS LEGACY (OPENSPEC) -->
+  <section class="slide">
+    <span class="tag tag-success">3 · Caso práctico A — Brownfield</span>
+    <h1 class="slide-title">Delta specs y ventajas en codebases existentes</h1>
+    <div class="two-col">
+      <div class="col">
+        <div class="card c-success" style="flex:1;">
+          <div class="card-title">Delta specs</div>
+          <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.7rem;">
+            <span class="badge b-success" style="width:fit-content;">ADDED — capability nueva</span>
+            <span class="badge b-primary" style="width:fit-content;">MODIFIED — capability existente cambia</span>
+            <span class="badge b-error" style="width:fit-content;">REMOVED — capability se retira</span>
+          </div>
+          <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.8rem;">Al hacer <code>/opsx:archive</code>, el delta se mergea en <code>openspec/specs/</code> — la spec permanente queda viva y al día.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card c-primary" style="flex:1;">
+          <div class="card-title">Menor overhead</div>
+          <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.6rem;">4 archivos en vez de 7+ — proporcional al tamaño real del cambio, sin sacrificar Gate 1-5. No hay que re-especificar todo el módulo para arreglar un tipo mal mapeado: el delta describe solo lo que cambia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — CASO B: GREENFIELD FLOW (SPEC KIT) -->
+  <section class="slide">
+    <span class="tag">4 · Caso práctico B — Greenfield</span>
+    <h1 class="slide-title">Flujo recomendado con Spec Kit</h1>
+    <p class="slide-subtitle">constitution → specify → plan → tasks → implement, con clarify/analyze/checklist opcionales.</p>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">
+graph LR
+  A[constitution] --> B[specify]
+  B -.optional.-> C[clarify]
+  C --> D[plan]
+  B --> D
+  D --> E[tasks]
+  E -.optional.-> F[analyze]
+  F --> G[implement]
+  E --> G
+  G -.optional.-> H[checklist]
+  classDef req fill:#0A84FF22,stroke:#0A84FF,color:#1D1D1F,stroke-width:2px
+  classDef opt fill:#8e8e9322,stroke:#8e8e93,color:#1D1D1F,stroke-dasharray: 4 3
+  class A,B,D,E,G req
+  class C,F,H opt
+      </pre>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — CASO B: ARTEFACTOS (SPEC KIT) -->
+  <section class="slide">
+    <span class="tag">4 · Caso práctico B — Greenfield</span>
+    <h1 class="slide-title">Estructura de artefactos (7+ archivos por feature)</h1>
+    <div class="two-col">
+      <div class="col">
+        <div class="card c-primary" style="flex:1;">
+          <div class="card-title">📁 speckit/specs/&lt;NNN-feature&gt;/</div>
+          <pre style="margin-top:0.6rem;">spec.md          <span class="comment"># User Stories + Given/When/Then</span>
+plan.md          <span class="comment"># Diseño técnico, contratos</span>
+tasks.md         <span class="comment"># Gates 1-12 + fases por US</span>
+traceability.md  <span class="comment"># Issue, CU, branch, PRs</span>
+research.md      <span class="comment"># Decisiones técnicas (opcional)</span>
+data-model.md    <span class="comment"># Entidades nuevas (opcional)</span>
+contracts/       <span class="comment"># OpenAPI de endpoints nuevos</span>
+checklists/      <span class="comment"># Checklist de requirements</span></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="flex:1;">
+          <div class="card-title">Entregables típicos</div>
+          <ul class="bullet-list" style="margin-top:0.6rem;">
+            <li>User Stories con prioridad (P1/P2) y "Independent Test"</li>
+            <li>Sección "Verified starting point" — qué ya existe, qué falta</li>
+            <li>Tasks agrupadas por Gate + por User Story ([P] paralelizables)</li>
+            <li>Traceability con Issue, Caso de Uso y branch desde el día 1</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9.3 — POR QUÉ SDD NECESITA AJUSTES EN EMPRESA/LEGACY -->
+  <section class="slide">
+    <span class="tag tag-warning">⚠️ Realidad enterprise</span>
+    <h1 class="slide-title">No fallan por la metodología — fallan por falta de acoplamiento</h1>
+    <p class="slide-subtitle">OpenSpec y Spec Kit asumen un entorno limpio. La empresa real (Jira, GitHub, Confluence, compliance) exige capas de integración y contexto.</p>
+
+    <div class="flow-mini" style="margin-bottom:1rem;">
+      <div class="flow-node" style="border-color:var(--primary); color:var(--primary); background:var(--primary-bg);">Framework default</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" style="border-color:var(--error); color:var(--error); background:var(--error-bg);">Realidad legacy / enterprise</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" style="border-color:var(--warning); color:var(--warning); background:var(--warning-bg);">Ajustes necesarios</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node" style="border-color:var(--success); color:var(--success); background:var(--success-bg);">Resultado usable</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:0.8rem; flex:1; min-height:0;">
+      <div class="card" style="padding:1rem;">
+        <div class="card-title" style="font-size:0.95rem;">📋 Jira</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Fuente real del trabajo.</p>
+        <p style="font-size:0.875rem; margin-top:0.5rem;"><b style="color:var(--warning);">Ajuste:</b> ticket → spec.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <div class="card-title" style="font-size:0.95rem;">🐙 GitHub</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Ramas protegidas, CI, CODEOWNERS.</p>
+        <p style="font-size:0.875rem; margin-top:0.5rem;"><b style="color:var(--warning);">Ajuste:</b> branch/PR desde spec.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <div class="card-title" style="font-size:0.95rem;">📚 Confluence</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Conocimiento disperso (ADRs, normas).</p>
+        <p style="font-size:0.875rem; margin-top:0.5rem;"><b style="color:var(--warning);">Ajuste:</b> inyectar contexto al plan.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <div class="card-title" style="font-size:0.95rem;">🖥️ Ambientes dev</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">"Funciona en mi máquina" es la norma.</p>
+        <p style="font-size:0.875rem; margin-top:0.5rem;"><b style="color:var(--warning);">Ajuste:</b> bootstrap + Docker.</p>
+      </div>
+      <div class="card" style="padding:1rem;">
+        <div class="card-title" style="font-size:0.95rem;">🔒 Compliance</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Seguridad, PII, auditoría.</p>
+        <p style="font-size:0.875rem; margin-top:0.5rem;"><b style="color:var(--warning);">Ajuste:</b> gates explícitos.</p>
+      </div>
+    </div>
+
+    <p style="font-size:0.875rem; color:var(--text-muted); margin-top:1rem; font-style:italic;">Sin ajustes: specs desalineadas → planes irreales → PRs con rechazo. Con ajustes: adopción real — no hay adopción sin traducción entre el framework y el sistema socio-técnico.</p>
+  </section>
+
+  <!-- SLIDE 9.5 — CONTEXTO: QUÉ ES NOTAIRE (SAD §3.2 Technical Context) -->
+  <section class="slide">
+    <span class="tag">🔧 Antes de la demo</span>
+    <h1 class="slide-title">¿Qué es Notaire?</h1>
+    <p class="slide-subtitle">Sistema de gestión notarial — migrando de un monolito Swing legacy a esta arquitectura cliente-servidor moderna.</p>
+    <div class="two-col">
+      <div class="col" style="flex:1.3;">
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+graph LR
+  U["Escribano / Gestor\n(usuario)"] --> FE["Frontend\nNext.js · :3000"]
+  FE --> BE["Backend API\nSpring Boot · :8080"]
+  BE --> DB[("PostgreSQL\n:5432")]
+  SW["Swing legacy\n(deprecado)"] -.-> BE
+  classDef node fill:#0A84FF14,stroke:#0071E3,color:#1D1D1F,stroke-width:2px
+  classDef db fill:#34C75922,stroke:#34C759,color:#1D1D1F,stroke-width:2px
+  classDef legacy fill:#8e8e9322,stroke:#8e8e93,color:#1D1D1F,stroke-dasharray: 4 3
+  class U,FE,BE node
+  class DB db
+  class SW legacy
+          </pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="flex:1;">
+          <div class="card-title">¿Qué gestiona?</div>
+          <ul class="bullet-list" style="margin-top:0.6rem;">
+            <li>Escrituras y protocolos notariales</li>
+            <li>Trámites y gestiones</li>
+            <li>Personas (clientes, partes)</li>
+            <li>Presupuestos y pagos</li>
+            <li>Auditoría de operaciones (usuarios, roles)</li>
+          </ul>
+          <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.8rem;">Detalle completo en el SAD, sección <b>3.2 Technical Context</b> (<code>docs/200-architecture/201-SAD/sad.md</code>).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — DEMO 1 TITLE -->
+  <section class="slide" style="align-items:center; justify-content:center;">
+    <div style="text-align:center;">
+      <span class="tag tag-success" style="margin:0 auto 1rem;">🎬 Demo 1 — Caso real, ya mergeado</span>
+      <h1 style="font-size:2.8rem; font-weight:800; letter-spacing:-0.03em;">OpenSpec en producción</h1>
+      <p style="font-size:1.1rem; color:var(--text-muted); margin-top:0.6rem;">
+        Issue <span class="pr-link pr-success">#879</span> — Fix de tipo <code>Inmueble.valuacionFiscal</code>
+      </p>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 — DEMO OPENSPEC WALKTHROUGH -->
+  <section class="slide">
+    <span class="tag tag-success">🎬 Demo 1 · OpenSpec</span>
+    <h1 class="slide-title">Del Issue al PR — paso a paso</h1>
+    <p class="slide-subtitle"><code>openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/</code></p>
+    <div class="two-col">
+      <div class="col">
+        <div class="card c-error">
+          <div class="card-title" style="font-size:0.95rem;">🐛 El bug</div>
+          <p style="font-size:0.875rem; margin-top:0.4rem;"><code>Inmueble.valuacionFiscal</code> era <code>String</code>, pero la columna Flyway <code>inmuebles.valuacion_fiscal</code> es <code>real</code>. Cada <code>POST /api/v1/inmueble</code> fallaba con un error de tipo JDBC.</p>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:0.95rem;">📋 proposal.md (real, resumido)</div>
+          <pre style="font-size:0.875rem; margin-top:0.5rem;"><span class="kw">Issue:</span> #879 · <span class="kw">Caso de Uso:</span> CU69
+<span class="kw">Branch:</span> fix/879_inmueble-valuacion-fiscal-type
+
+<span class="comment"># What Changes</span>
+- Inmueble.valuacionFiscal: String → Float
+- DtoInmueble.valuacionFiscal: String → Float
+- frontend/types: string → number
+<span style="color:var(--error); font-weight:700;">⚠ BREAKING: JSON string → JSON number</span></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card c-success" style="flex:1;">
+          <div class="card-title" style="font-size:0.95rem;">✅ Gates ejecutados</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.6rem;">
+            <div class="gate-row"><span class="gate-dot"></span>Gate 1 — Issue #879 + CU69 verificados</div>
+            <div class="gate-row"><span class="gate-dot"></span>Gate 2 — TDD: test Postgres falla primero</div>
+            <div class="gate-row"><span class="gate-dot"></span>Implementación — Entity + DTO + Frontend</div>
+            <div class="gate-row"><span class="gate-dot"></span>Regresión — <b>1611/1611</b> tests, ratchet OK</div>
+            <div class="gate-row"><span class="gate-dot"></span>Playwright — <b>5/5</b> passing (E2E nuevo)</div>
+            <div class="gate-row"><span class="gate-dot"></span>Gate 5 — Archive tras merge</div>
+          </div>
+          <div style="display:flex; gap:0.6rem; margin-top:0.9rem;">
+            <span class="pr-link pr-success">PR #882 fix</span>
+            <span class="pr-link pr-success">PR #884 archive</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12 — DEMO OPENSPEC ARTIFACTS -->
+  <section class="slide">
+    <span class="tag tag-success">🎬 Demo 1 · OpenSpec</span>
+    <h1 class="slide-title">Los artefactos reales — link a cada uno</h1>
+    <div class="grid-4">
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">🐙 Issue #879</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">El bug reportado, CU69.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/issues/879" target="_blank" rel="noopener">github.com/…/issues/879 ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">🌿 Branch</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>fix/879_inmueble-valuacion-fiscal-type</code></p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/tree/fix/879_inmueble-valuacion-fiscal-type" target="_blank" rel="noopener">ver branch ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">📋 proposal.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Objetivo, "What Changes", breaking change explícito.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/proposal.md" target="_blank" rel="noopener">ver proposal.md ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">🧩 design.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Testing strategy, plan de regresión, rollback.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/design.md" target="_blank" rel="noopener">ver design.md ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">✅ tasks.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">12 grupos mandatorios (Gate 1→5), checklist auditable.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/tasks.md" target="_blank" rel="noopener">ver tasks.md ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">📐 specs/*.md (delta)</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Capability <code>ADDED</code>: <code>inmueble-valuacion-fiscal</code>.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/specs/inmueble-valuacion-fiscal/spec.md" target="_blank" rel="noopener">ver spec.md ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">💻 Código modificado</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>Inmueble.java</code>, <code>DtoInmueble.java</code>, frontend types.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/commit/7563215afb88cd5775be64adbfe559cc29025bdd" target="_blank" rel="noopener">ver commit ↗</a>
+      </div>
+      <div class="card c-success">
+        <div class="card-title" style="font-size:0.9rem;">🧪 Tests</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Integration Postgres + E2E Playwright nuevo.</p>
+        <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/backend-api/src/test/java/com/licensis/notaire/integration/InmuebleValuacionFiscalPgIntegrationTest.java" target="_blank" rel="noopener">ver test Postgres ↗</a>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title" style="font-size:0.9rem;">🔀 Pull Requests</div>
+      <div style="display:flex; gap:0.6rem; margin-top:0.6rem; flex-wrap:wrap;">
+        <a class="pr-link pr-success" href="https://github.com/matiaspakua/notaire/pull/882" target="_blank" rel="noopener">PR #882 · fix ↗</a>
+        <a class="pr-link pr-success" href="https://github.com/matiaspakua/notaire/pull/884" target="_blank" rel="noopener">PR #884 · archive (Gate 5) ↗</a>
+      </div>
+      <p style="font-size:0.875rem; margin-top:0.6rem;">Un bug que bloqueaba <b>toda</b> la creación de Inmuebles quedó resuelto, testeado y documentado en <b>2 PRs pequeños y auditables</b> — sin re-especificar el módulo completo de Inmuebles.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 13 — DEMO 2 TITLE -->
+  <section class="slide" style="align-items:center; justify-content:center;">
+    <div style="text-align:center;">
+      <span class="tag" style="margin:0 auto 1rem;">🎬 Demo 2 — Caso real, ya mergeado</span>
+      <h1 style="font-size:2.8rem; font-weight:800; letter-spacing:-0.03em;">Spec Kit en producción</h1>
+      <p style="font-size:1.1rem; color:var(--text-muted); margin-top:0.6rem;">
+        Issue <span class="pr-link">#865</span> — CU-43 Reingresar documentación
+      </p>
+    </div>
+  </section>
+
+  <!-- SLIDE 14 — DEMO SPECKIT WALKTHROUGH -->
+  <section class="slide">
+    <span class="tag">🎬 Demo 2 · Spec Kit</span>
+    <h1 class="slide-title">Del Issue al PR — paso a paso</h1>
+    <p class="slide-subtitle"><code>speckit/specs/archive/003-cu43-reingresar-documentacion/</code></p>
+    <div class="two-col">
+      <div class="col">
+        <div class="card c-primary">
+          <div class="card-title" style="font-size:0.95rem;">🎯 La feature</div>
+          <p style="font-size:0.875rem; margin-top:0.4rem;">Un documento devuelto/vencido necesita reingresarse: el Gestor elige gestión → trámite → tipo de documento según <code>PlantillaTramite</code>, y el sistema crea un <code>DocumentoPresentado(reingresado=true)</code>.</p>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:0.95rem;">📋 spec.md (real, resumido)</div>
+          <pre style="font-size:0.875rem; margin-top:0.5rem;"><span class="kw">Issue:</span> #865 · <span class="kw">CU-43</span> (#196)
+<span class="kw">Branch:</span> feat/865_cu43-reingresar-documentacion
+
+<span class="comment"># User Story 1 (P1)</span>
+Consultar trámites + documentación necesaria
+
+<span class="comment"># User Story 2 (P1)</span>
+Reingresar un tipo de documento
+<span class="ok">✓ Independent Test por historia</span></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card c-primary" style="flex:1;">
+          <div class="card-title" style="font-size:0.95rem;">✅ Gates ejecutados</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.6rem;">
+            <div class="gate-row"><span class="gate-dot" style="background:var(--primary); box-shadow:0 0 6px var(--primary);"></span>Gate 1 — Issue #865 + CU-43 verificados</div>
+            <div class="gate-row"><span class="gate-dot" style="background:var(--primary); box-shadow:0 0 6px var(--primary);"></span>TDD — Service tests por User Story</div>
+            <div class="gate-row"><span class="gate-dot" style="background:var(--primary); box-shadow:0 0 6px var(--primary);"></span>Implementación — 2 endpoints + hook + página</div>
+            <div class="gate-row"><span class="gate-dot" style="background:var(--primary); box-shadow:0 0 6px var(--primary);"></span>Regresión — <b>1611/1611</b> tests, BUILD SUCCESS</div>
+            <div class="gate-row"><span class="gate-dot" style="background:var(--primary); box-shadow:0 0 6px var(--primary);"></span>Gate 5 — Archive tras merge</div>
+          </div>
+          <div style="display:flex; gap:0.6rem; margin-top:0.9rem;">
+            <span class="pr-link">PR #871 feat</span>
+            <span class="pr-link">PR #874 archive</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15 — DEMO SPECKIT ARTIFACTS -->
+  <section class="slide">
+    <span class="tag">🎬 Demo 2 · Spec Kit</span>
+    <h1 class="slide-title">Fases de implementación (tasks.md real)</h1>
+    <div class="grid-3">
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">Setup + Foundational</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">T008 — 5 DTOs nuevos en <code>notaire-shared</code>. T009 — reutiliza repositorios ya existentes de <code>PlantillaTramite</code> y <code>Tramite</code> (sin migración nueva).</p>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">User Story 1 → 2 (P1)</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Cada historia se implementa independiente y testeable: <code>ReingresoDocumentacionService</code> + endpoint dedicado por historia.</p>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">Frontend + Regresión</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">T018-T020 — hook React Query + página con <code>FormContainer/FormSection</code>. T021-T023 — tests existentes actualizados, 1611/1611 verde.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title" style="font-size:0.9rem;">Resultado</div>
+      <p style="font-size:0.875rem; margin-top:0.4rem;">Un módulo completo — 2 endpoints, servicio nuevo, hook, pantalla — quedó especificado, implementado y trazado hasta <code>CU-43</code> antes de escribir la primera línea de código de negocio.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 15.5 — DEMO SPECKIT ARTIFACTS (LINKS) -->
+  <section class="slide">
+    <span class="tag">🎬 Demo 2 · Spec Kit</span>
+    <h1 class="slide-title">Los artefactos reales — link a cada uno</h1>
+    <div class="grid-4">
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">🐙 Issue #865</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">CU-43, "Reingresar documentación".</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/issues/865" target="_blank" rel="noopener">github.com/…/issues/865 ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">🌿 Branch</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>feat/865_cu43-reingresar-documentacion</code></p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/tree/feat/865_cu43-reingresar-documentacion" target="_blank" rel="noopener">ver branch ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">📋 spec.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">User Stories P1, Given/When/Then.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/speckit/specs/archive/003-cu43-reingresar-documentacion/spec.md" target="_blank" rel="noopener">ver spec.md ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">🧩 plan.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Diseño técnico, contratos de endpoints.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/speckit/specs/archive/003-cu43-reingresar-documentacion/plan.md" target="_blank" rel="noopener">ver plan.md ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">✅ tasks.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Fases por User Story + Gates 1→5.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/speckit/specs/archive/003-cu43-reingresar-documentacion/tasks.md" target="_blank" rel="noopener">ver tasks.md ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">🔗 traceability.md</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Issue, CU-43, branch, PRs.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/speckit/specs/archive/003-cu43-reingresar-documentacion/traceability.md" target="_blank" rel="noopener">ver traceability.md ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">💻 Código modificado</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>GestionController</code>, <code>ReingresoDocumentacionService</code>, hook + página.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/commit/4ab24f4ad5c4f2b33c392c459bbf150c138df1e3" target="_blank" rel="noopener">ver commit ↗</a>
+      </div>
+      <div class="card c-primary">
+        <div class="card-title" style="font-size:0.9rem;">🧪 Tests</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Unit + integration + E2E Playwright.</p>
+        <a class="pr-link" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/blob/main/frontend/tests/e2e/cu43-reingreso-documentacion.spec.ts" target="_blank" rel="noopener">ver test E2E ↗</a>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title" style="font-size:0.9rem;">🔀 Pull Requests</div>
+      <div style="display:flex; gap:0.6rem; margin-top:0.6rem; flex-wrap:wrap;">
+        <a class="pr-link" href="https://github.com/matiaspakua/notaire/pull/871" target="_blank" rel="noopener">PR #871 · feat ↗</a>
+        <a class="pr-link" href="https://github.com/matiaspakua/notaire/pull/874" target="_blank" rel="noopener">PR #874 · archive (Gate 5) ↗</a>
+      </div>
+      <p style="font-size:0.875rem; margin-top:0.6rem;">Un módulo end-to-end nuevo — 2 endpoints, servicio, hook, pantalla — implementado en <b>2 PRs auditables</b>, con 1611/1611 tests verdes.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 16 — CIERRE: CUÁNDO USAR CADA UNO -->
+  <section class="slide">
+    <span class="tag">5 · Cierre</span>
+    <h1 class="slide-title">¿Cuándo usar cada framework?</h1>
+    <div style="flex:1; display:flex; align-items:center;">
+    <table class="compare-table">
+      <thead><tr><th>Situación</th><th>Recomendación</th></tr></thead>
+      <tbody>
+        <tr><td>Fix puntual sobre código existente (como #879)</td><td class="hl-success">OpenSpec — delta chico, MODIFIED/ADDED</td></tr>
+        <tr><td>Feature nueva end-to-end, un CU completo (como #865)</td><td class="hl-primary">Spec Kit — User Stories + plan exhaustivo</td></tr>
+        <tr><td>Módulo nuevo desde cero, sin código previo</td><td class="hl-primary">Spec Kit — constitution → specify → plan</td></tr>
+        <tr><td>Cambio incremental sobre subsistema vivo</td><td class="hl-success">OpenSpec — living specs, bajo overhead</td></tr>
+        <tr><td>Requiere clarificación socrática antes de codear</td><td class="hl-primary">Spec Kit — paso <code>/clarify</code> dedicado</td></tr>
+        <tr><td>PR chico, auditable, mergeable en horas</td><td class="hl-success">OpenSpec — 4 artefactos, ciclo corto</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 17 — ADOPCIÓN EN EQUIPO -->
+  <section class="slide">
+    <span class="tag">5 · Cierre</span>
+    <h1 class="slide-title">Patrón de adopción en equipos</h1>
+    <div class="grid-3">
+      <div class="card">
+        <div class="stat-number" style="color:var(--text-muted)">1</div>
+        <div class="card-title" style="font-size:0.95rem;">Pilotaje</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Un dev/agente prueba el framework en 1-2 cambios reales chicos. Se mide fricción, no se impone todavía.</p>
+      </div>
+      <div class="card c-primary">
+        <div class="stat-number" style="color:var(--primary)">2</div>
+        <div class="card-title" style="font-size:0.95rem;">Estándares mínimos</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Se documenta en <code>CONSTITUTION.md</code>: Gates obligatorios, nomenclatura, dónde vive cada artefacto.</p>
+      </div>
+      <div class="card c-success">
+        <div class="stat-number" style="color:var(--success)">3</div>
+        <div class="card-title" style="font-size:0.95rem;">Extensión progresiva</div>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">Todo el equipo (humano + agentes IA) lo usa por defecto. Excepciones documentadas y explícitas, no silenciosas.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 18 — CLOSING -->
+  <section class="slide" style="align-items:center; justify-content:center;">
+    <div style="text-align:center; max-width:800px;">
+      <h1 style="font-size:2.4rem; font-weight:800; letter-spacing:-0.03em; margin-bottom:0.8rem;">SDD no es más proceso.<br>Es <span style="color:var(--primary)">menos ambigüedad</span> por PR.</h1>
+      <p style="font-size:1.05rem; color:var(--text-muted); margin-bottom:1.5rem;">Dos frameworks, un mismo cierre: <code>CONSTITUTION.md</code> Gate 5. Elegí el que corresponda al tamaño del cambio, no al gusto del día.</p>
+      <div class="flow-mini" style="justify-content:center;">
+        <span class="pr-link pr-success">#879 → PR #882 / #884</span>
+        <span class="pr-link">#865 → PR #871 / #874</span>
+      </div>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-top:1.5rem;">Preguntas · Matías Míguez</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 19 — ANEXO A: TESTING CON SDD -->
+  <section class="slide">
+    <span class="tag">📎 Anexo A · Testing</span>
+    <h1 class="slide-title">Testing con SDD: el spec como motor de calidad verificable</h1>
+    <p class="slide-subtitle">Gana valor cuando coordina TDD/BDD, pruebas por contrato y gates de CI con ayuda de AI.</p>
+
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem;">
+      <span class="badge b-primary">Requisito ↔ evidencia</span>
+      <span class="badge b-primary">AI con contexto</span>
+      <span class="badge b-warning">Gates proporcionales</span>
+      <span class="badge b-warning">Deuda visible</span>
+    </div>
+
+    <div class="mermaid-wrap" style="flex:1;">
+      <pre class="mermaid">
+graph LR
+  A["/opsx:explore"] --> B["/opsx:propose"]
+  B -.Gherkin.-> B2["Criterios BDD\nGiven/When/Then"]
+  B --> C["/opsx:apply"]
+  C -.TDD red-green.-> C2["Cucumber · Jest · JUnit"]
+  C --> D["/opsx:verify"]
+  D -.contract + coverage.-> D2["Pact · Testcontainers\nSonarQube"]
+  D --> E["/opsx:archive"]
+  classDef req fill:#34C75922,stroke:#34C759,color:#1D1D1F,stroke-width:2px
+  classDef opt fill:#0A84FF14,stroke:#0071E3,color:#1D1D1F,stroke-dasharray: 4 3
+  class A,B,C,D,E req
+  class B2,C2,D2 opt
+      </pre>
+    </div>
+    <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.6rem;">Workflow OpenSpec adaptado: cada comando incorpora una técnica de testing concreta — no reemplaza TDD/BDD, lo estructura.</p>
+  </section>
+
+  <!-- SLIDE 20 — ANEXO B: CIBERSEGURIDAD CON SDD -->
+  <section class="slide">
+    <span class="tag" style="border-color:var(--error); color:var(--error);">📎 Anexo B · Ciberseguridad</span>
+    <h1 class="slide-title">Ciberseguridad con SDD: el spec como cadena de control y evidencia</h1>
+    <p class="slide-subtitle">Gana valor cuando integra threat modeling, secure SDLC y policy-as-code con ayuda de AI.</p>
+
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem;">
+      <span class="badge b-primary">Riesgo trazable</span>
+      <span class="badge b-primary">AI útil, no ciega</span>
+      <span class="badge b-warning">Gates por fase</span>
+      <span class="badge b-warning">Compliance reutilizable</span>
+    </div>
+
+    <div class="mermaid-wrap" style="flex:1;">
+      <pre class="mermaid">
+graph LR
+  A["/opsx:explore"] --> B["/opsx:propose"]
+  B -.threat modeling.-> B2["STRIDE · CAPEC\nabuse cases"]
+  B --> C["/opsx:apply"]
+  C -.guardrails.-> C2["SAST · SCA · SBOM\nsecrets scan"]
+  C --> D["/opsx:verify"]
+  D -.red team + policy.-> D2["OWASP ZAP · OPA\npolicy-as-code"]
+  D --> E["/opsx:archive"]
+  classDef req fill:#34C75922,stroke:#34C759,color:#1D1D1F,stroke-width:2px
+  classDef opt fill:#FF453A14,stroke:#FF3B30,color:#1D1D1F,stroke-dasharray: 4 3
+  class A,B,C,D,E req
+  class B2,C2,D2 opt
+      </pre>
+    </div>
+    <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.6rem;">Workflow OpenSpec adaptado: cada comando incorpora un control de seguridad concreto, con evidencia auditable al archivar.</p>
+  </section>
+
+</div>
+
+<div id="nav-controls">
+  <button class="nav-btn" id="theme-btn" onclick="toggleTheme()">🌙 Tema Oscuro</button>
+  <div class="nav-info">
+    <span id="slide-indicator">1 / 18</span>
+    <span style="opacity:0.5;">|</span>
+    <span>← → navegar · F pantalla completa · T tema</span>
+  </div>
+  <div style="display:flex; gap:0.6rem;">
+    <button class="nav-btn" onclick="prevSlide()">← Anterior</button>
+    <button class="nav-btn primary" onclick="nextSlide()">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      background: 'transparent',
+      primaryColor: '#0A84FF14',
+      primaryTextColor: '#1D1D1F',
+      primaryBorderColor: '#0071E3',
+      lineColor: '#86868B',
+      fontFamily: 'JetBrains Mono, monospace',
+      fontSize: '14px'
+    },
+    flowchart: { curve: 'basis', htmlLabels: true }
+  });
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const progressBar = document.getElementById('progress-bar');
+  const slideIndicator = document.getElementById('slide-indicator');
+  const themeBtn = document.getElementById('theme-btn');
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.textContent = isDark ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
+  }
+
+  const cursorGlow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', (e) => {
+    gsap.to(cursorGlow, { x: e.clientX, y: e.clientY, duration: 0.4, ease: "power2.out" });
+  });
+
+  function updateDeck(direction = 1) {
+    slides.forEach((slide, idx) => {
+      if (idx === currentSlide) {
+        slide.classList.add('active');
+        gsap.fromTo(slide.querySelectorAll('.tag, .slide-title, .slide-subtitle, .card, table, .mermaid-wrap, .gate-row'),
+          { opacity: 0, y: 14 * direction },
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: "power3.out" }
+        );
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+    const progress = ((currentSlide + 1) / totalSlides) * 100;
+    progressBar.style.width = `${progress}%`;
+    slideIndicator.textContent = `${currentSlide + 1} / ${totalSlides}`;
+  }
+
+  function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateDeck(1); } }
+  function prevSlide() { if (currentSlide > 0) { currentSlide--; updateDeck(-1); } }
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(err => alert(err.message));
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+    else if (e.key.toLowerCase() === 'f') toggleFullscreen();
+    else if (e.key.toLowerCase() === 't') toggleTheme();
+    else if (e.key === 'Home') { currentSlide = 0; updateDeck(-1); }
+    else if (e.key === 'End') { currentSlide = totalSlides - 1; updateDeck(1); }
+  });
+
+  updateDeck(1);
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@ const services = [
     port: "8888",
     role: "DevSecOps Hub — single-page dashboard linking every service",
     icon: "🏠",
-    color: "#f59e0b",
+    color: "#ff9500",
     category: "Dashboard",
   },
   {
@@ -116,15 +116,15 @@ export function InfraStack() {
 
   return (
     <section className="py-32 px-6 relative overflow-hidden" style={{ background: "var(--bg-dark)" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at bottom, rgba(6,182,212,0.05) 0%, transparent 60%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at bottom, rgba(10,132,255,0.06) 0%, transparent 60%)" }} />
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Infrastructure</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Infrastructure</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             DevSecOps <span className="grad-cyan">Platform</span>
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-neutral-600 max-w-2xl mx-auto">
             10 containerized services. Two Docker Compose stacks. One command to run everything.
             From a university project with <em>no infrastructure</em> to a full observability platform.
           </p>
@@ -136,8 +136,8 @@ export function InfraStack() {
             <button key={cat} onClick={() => setActive(cat)}
               className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
               style={active === cat
-                ? { background: "rgba(6,182,212,0.2)", color: "var(--ai-cyan)", border: "1px solid rgba(6,182,212,0.4)" }
-                : { background: "transparent", color: "#64748b", border: "1px solid #1e293b" }}>
+                ? { background: "rgba(10,132,255,0.12)", color: "var(--ai-cyan)", border: "1px solid rgba(10,132,255,0.35)" }
+                : { background: "transparent", color: "#86868b", border: "1px solid #d2d2d7" }}>
               {cat}
             </button>
           ))}
@@ -151,10 +151,10 @@ export function InfraStack() {
                 <span className="text-2xl flex-none">{s.icon}</span>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-white font-semibold text-sm">{s.name}</span>
+                    <span className="text-neutral-900 font-semibold text-sm">{s.name}</span>
                     <code className="text-xs px-2 py-0.5 rounded" style={{ background: `${s.color}15`, color: s.color }}>:{s.port}</code>
                   </div>
-                  <p className="text-slate-400 text-xs leading-relaxed">{s.role}</p>
+                  <p className="text-neutral-600 text-xs leading-relaxed">{s.role}</p>
                 </div>
               </div>
               <div className="mt-3 w-6 h-0.5 rounded-full group-hover:w-12 transition-all duration-300" style={{ background: s.color }} />
@@ -165,8 +165,8 @@ export function InfraStack() {
         {/* Two-column: start cmd + alert rules */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Start commands */}
-          <div className="glass rounded-2xl p-6 border border-cyan-500/20">
-            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+          <div className="glass rounded-2xl p-6 border border-[#0A84FF]/20">
+            <h3 className="text-neutral-900 font-bold mb-4 flex items-center gap-2">
               <span>🚀</span> Start Everything
             </h3>
             <div className="space-y-3">
@@ -175,28 +175,28 @@ export function InfraStack() {
                 { cmd: "bash scripts/start-infra.sh", desc: "Infra stack (Prometheus + Grafana + Loki + SonarQube)" },
                 { cmd: "bash scripts/start-all.sh", desc: "Everything at once" },
               ].map((c, i) => (
-                <div key={i} className="rounded-xl p-3" style={{ background: "rgba(0,0,0,0.4)" }}>
-                  <code className="text-cyan-400 text-xs font-mono">$ {c.cmd}</code>
-                  <p className="text-slate-500 text-xs mt-1">{c.desc}</p>
+                <div key={i} className="rounded-xl p-3" style={{ background: "rgba(0,0,0,0.03)" }}>
+                  <code className="text-[#0A84FF] text-xs font-mono">$ {c.cmd}</code>
+                  <p className="text-neutral-500 text-xs mt-1">{c.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Alert rules */}
-          <div className="glass rounded-2xl p-6 border border-purple-500/20">
-            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+          <div className="glass rounded-2xl p-6 border border-[#AF52DE]/20">
+            <h3 className="text-neutral-900 font-bold mb-4 flex items-center gap-2">
               <span>🔔</span> Active Alert Rules
             </h3>
             <div className="space-y-3">
               {alerts.map((a, i) => (
-                <div key={i} className="flex items-start gap-3 rounded-xl p-3" style={{ background: "rgba(0,0,0,0.4)" }}>
+                <div key={i} className="flex items-start gap-3 rounded-xl p-3" style={{ background: "rgba(0,0,0,0.03)" }}>
                   <span className={`mt-0.5 w-2 h-2 rounded-full flex-none ${a.severity === "critical" ? "bg-red-500" : "bg-yellow-500"}`} />
                   <div>
-                    <div className="text-white text-xs font-mono font-medium">{a.name}</div>
-                    <div className="text-slate-500 text-xs">{a.desc}</div>
+                    <div className="text-neutral-900 text-xs font-mono font-medium">{a.name}</div>
+                    <div className="text-neutral-500 text-xs">{a.desc}</div>
                   </div>
-                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full flex-none ${a.severity === "critical" ? "bg-red-500/15 text-red-400" : "bg-yellow-500/15 text-yellow-400"}`}>{a.severity}</span>
+                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full flex-none ${a.severity === "critical" ? "bg-red-500/15 text-red-600" : "bg-yellow-500/15 text-yellow-600"}`}>{a.severity}</span>
                 </div>
               ))}
             </div>

@@ -11,7 +11,7 @@ const events = [
     color: "var(--java-orange)",
     icon: "☕",
     tech: ["Java 1.6", "Java Swing", "MySQL", "JDBC"],
-    commits: 7,
+    commits: 19,
     side: "left",
   },
   {
@@ -55,23 +55,23 @@ const events = [
     month: "March–April",
     title: "AI Acceleration",
     subtitle: "Claude Code Integration",
-    desc: "AI-assisted development became the primary workflow. 226 commits in two months. Tests, E2E coverage, security audits, observability—all accelerated by Claude AI agents.",
+    desc: "AI-assisted development became the primary workflow. 220 commits in two months. Tests, E2E coverage, security audits, observability—all accelerated by Claude AI agents.",
     color: "var(--ai-purple)",
     icon: "🤖",
     tech: ["Claude AI", "Playwright", "JaCoCo", "Prometheus"],
-    commits: 226,
+    commits: 220,
     side: "left",
   },
   {
     year: "2026",
-    month: "May–June",
+    month: "May–August",
     title: "Production Ready",
     subtitle: "Observability & Security",
-    desc: "Grafana dashboards, Prometheus alerts, Loki log aggregation, SonarQube quality gates. A 2014 university project became a production-grade platform.",
-    color: "#f59e0b",
+    desc: "Grafana dashboards, Prometheus alerts, Loki log aggregation, SonarQube quality gates. A 2014 university project became a production-grade platform on Spring Boot 4.1.0 and Next.js 16.",
+    color: "#ff9500",
     icon: "🚀",
-    tech: ["Grafana", "Loki", "SonarQube", "Spring Boot 4.0"],
-    commits: 236,
+    tech: ["Grafana", "Loki", "SonarQube", "Spring Boot 4.1"],
+    commits: 524,
     side: "right",
   },
 ];
@@ -111,13 +111,13 @@ function TimelineEvent({ event, index }: { event: (typeof events)[0]; index: num
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-mono font-bold tracking-widest" style={{ color: event.color }}>{event.month} {event.year}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full text-slate-400 bg-slate-800">{event.commits} commits</span>
+                <span className="text-xs px-2 py-0.5 rounded-full text-neutral-600 bg-neutral-100">{event.commits} commits</span>
               </div>
-              <h3 className="text-xl font-bold text-white">{event.title}</h3>
-              <p className="text-sm text-slate-400">{event.subtitle}</p>
+              <h3 className="text-xl font-bold text-neutral-900">{event.title}</h3>
+              <p className="text-sm text-neutral-600">{event.subtitle}</p>
             </div>
           </div>
-          <p className="text-slate-400 text-sm leading-relaxed mb-4">{event.desc}</p>
+          <p className="text-neutral-600 text-sm leading-relaxed mb-4">{event.desc}</p>
           <div className="flex flex-wrap gap-2">
             {event.tech.map(t => (
               <span key={t} className="tech-badge" style={{ background: `${event.color}15`, color: event.color, border: `1px solid ${event.color}30` }}>
@@ -148,11 +148,11 @@ export function Timeline() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-20">
-          <p className="text-cyan-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">Project History</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <p className="text-[#0A84FF] text-sm font-mono font-bold tracking-widest mb-4 uppercase">Project History</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             A Decade of <span className="grad-fire">Evolution</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">From dormant Swing monolith to AI-accelerated microservices — every commit tells a story.</p>
+          <p className="text-neutral-600 max-w-xl mx-auto">From dormant Swing monolith to AI-accelerated microservices — every commit tells a story.</p>
         </div>
 
         {/* Timeline track */}
