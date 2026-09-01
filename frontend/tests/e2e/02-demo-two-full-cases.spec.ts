@@ -193,21 +193,18 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 5: Create Escritura (Deed) ==========
     console.log("📝 STEP 5: Create Escritura (Deed)");
     await stepsA.givenUserIsOnPage("/dashboard/escrituras");
-
-    // Debug: find all buttons with testids
-    const allButtons = await page.locator('button[data-testid]').all();
-    console.log(`  Found ${allButtons.length} buttons with testids`);
-    for (let i = 0; i < Math.min(allButtons.length, 5); i++) {
-      const testid = await allButtons[i].getAttribute('data-testid');
-      console.log(`    Button ${i}: ${testid}`);
-    }
-
+    await expect(page.getByTestId("btn-nueva-escritura")).toBeVisible({ timeout: 10000 });
     await page.getByTestId("btn-nueva-escritura").click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
+    // Wait for form inputs to be ready (React hydration delay)
+    const numeroInput = page.getByRole("dialog").getByLabel(/número/i);
+    const fechaInput = page.getByRole("dialog").getByLabel(/fecha/i);
+    await expect(numeroInput).toBeEnabled({ timeout: 5000 });
+
     const numeroEscritura = `ESC-${caseA.suffix}`;
-    await page.getByRole("dialog").getByLabel(/número/i).fill(numeroEscritura);
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill(caseA.fechaPresupuesto);
+    await numeroInput.fill(numeroEscritura);
+    await fechaInput.fill(caseA.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
@@ -492,9 +489,14 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByTestId("btn-nueva-escritura").click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
+    // Wait for form inputs to be ready (React hydration delay)
+    const numeroInputB = page.getByRole("dialog").getByLabel(/número/i);
+    const fechaInputB = page.getByRole("dialog").getByLabel(/fecha/i);
+    await expect(numeroInputB).toBeEnabled({ timeout: 5000 });
+
     const numeroEscrituraB = `ESC-${caseB.suffix}`;
-    await page.getByRole("dialog").getByLabel(/número/i).fill(numeroEscrituraB);
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill(caseB.fechaPresupuesto);
+    await numeroInputB.fill(numeroEscrituraB);
+    await fechaInputB.fill(caseB.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
