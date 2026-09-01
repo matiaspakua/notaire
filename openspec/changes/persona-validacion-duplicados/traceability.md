@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/persona-validacion-duplicados/` | complete |
 | Branch | `feat/835_persona-validacion-duplicados` | created |
 | Tasks | `tasks.md` | groups 1-8 complete (9-12 pending) |
-| Commits | — | pending |
+| Commits | `e6a15d2c` (backend), `589332dc` (frontend), `eeed01e9` (E2E), `9077e9b3` (docs) | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
