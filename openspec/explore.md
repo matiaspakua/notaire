@@ -799,62 +799,34 @@ sub-hallazgo de 1.2 (`explore_1.2_overpayment_issue.md`, Issue #848, ya con
 
 ## Plan de Acción: Cerrar Bloqueadores Demo E2E
 
-**Estado actual (2026-09-01):** ✅ **TODOS LOS BLOQUEADORES DE DEMO INMEDIATOS FIJOS**
+**Estado actual:** 3 bugs ya fijos (PRs #879–#891), 1 bloqueador nuevo encontrado (#892).
 
-- ✅ #879 Inmueble type (merged PR #882)
-- ✅ #883 Presupuesto association (merged PR #887)
-- ✅ #889 Picker labels (merged PR #890)
-- ✅ #892 Folio linking (merged PR #894)
+### Orden recomendado (próximas sesiones)
 
-**Próximos pasos:** Confirmar que el flujo E2E completo (02-demo-two-full-cases.spec.ts) puede construir 2 casos de uso comparable end-to-end sin errores. Si hay blocadores adicionales durante la ejecución de la demo, se documentarán aquí.
+1. **#892 (Escritura-folio picker)** — INMEDIATO
+   - Bloqueador directo de demo
+   - Pequeño scope: agregar selector de folio al formulario
+   - Spec: `openspec/changes/escritura-folio-picker-form/`
+   - Workflow: TDD → form picker + E2E test → refactor → docs → PR → merge
+   - Desbloquea: Testimonio, Copia, Documento, Pago workflows
 
----
+2. **#833 (Historial/estados gestión)** — DESPUÉS
+   - Prerequisito para workflow correcto
+   - Change: `openspec/changes/gestion-workflow-reingreso-testimonio/`
+   - Status: `propose completo`, pendiente `/opsx:apply`
 
-## Hallazgo 12 — Análisis de Completitud Demo E2E: Entidades y Workflows Requeridos
+3. **Demo completion** — TERCERO
+   - Una vez #892 fijo: re-run `02-demo-two-full-cases.spec.ts`
+   - Confirmar Case A + Case B completan hasta archivo
+   - Smoke test con ambos casos en DB
 
-Para que dos casos de uso completos (Case A y Case B) demuestren el flujo integral notarial, se creó script E2E (`02-demo-two-full-cases.spec.ts`) que ejercita ambos casos en paralelo. Primera ejecución (2026-09-01 08:22-08:24) identificó **bloqueador UI en Inmuebles**: botón "Nuevo Inmueble" carece testid (`btn-nuevo-inmueble`).
+### Resumen ejecutivo
 
-### Estado Actual Completo (2026-09-01)
+La demo E2E encontró y validó **4 bugs reales**:
+- ✅ #879 Inmueble type (fijo)
+- ✅ #883 Presupuesto association (fijo)
+- ✅ #889 Picker labels (fijo)
+- ⏳ #892 Folio linking (próximo)
 
-| Entidad | CU | Workflow | Status | Issue |
-|---------|----|---------|---------|----|
-| **Cliente (Persona)** | CU01 | Crear cliente, asignar a presupuesto | ✅ FUNCIONAL | Ninguno |
-| **Presupuesto** | CU02 | Crear presupuesto con cliente, conceptos | ✅ FUNCIONAL | Ninguno |
-| **Inmueble** | CU69 | Crear inmueble con valuación fiscal | 🔧 FIJO (testid) | ~~Botón sin testid~~ |
-| **Gestión** | CU02 | Crear gestión, asignar presupuesto | ✅ FUNCIONAL | Ninguno |
-| **Escritura** | CU06 | Crear escritura, asignar folio, firmar | ✅ FUNCIONAL | Ninguno |
-| **Folio** | CU06 | Asignar a escritura | ✅ FUNCIONAL | Ninguno |
-| **Testimonio** | CU09 | Crear post-firma | ❓ POR VALIDAR | TBD |
-| **Documentación** | CU08 | Registrar docs requeridos | ❓ POR VALIDAR | TBD |
-| **Pago** | CU15 | Registrar pago parcial/completo | ❓ POR VALIDAR | #796 (saldo) |
-| **Copia** | CU47 | Registrar copias expedidas | ❓ POR VALIDAR | TBD |
-| **Archivo** | CU16 | Archivar gestión completada | ❓ POR VALIDAR | #169 (deuda check) |
-
-### Cambios Realizados (2026-09-01 08:20-08:30)
-
-1. **Creación de demo script** (`02-demo-two-full-cases.spec.ts`):
-   - Construye 2 casos idénticos but independent (Case A, Case B)
-   - Ejercita flujo completo: Persona → Presupuesto → Inmueble → Gestión → Escritura → Firma
-   - Incluye secciones stub para Testimonio, Pago, Archivo
-   - Console logging en cada paso para diagnóstico claro
-
-2. **Fixes UI inmediatos**:
-   - ✅ Added `data-testid="btn-nuevo-inmueble"` to inmuebles page
-   - ✅ Added testids to inmuebles form fields (nomenclatura, domicilio, valuacion-fiscal)
-   - ✅ Enhanced demo script with fallback selectors (resilencia ante cambios UI)
-   - Commit: `dcc5024`
-
-3. **Próxima ejecución**:
-   - Re-run demo con fixes UI (expected: progresa hasta Testimonio o Pago)
-   - Documentar primer bloqueador real (no UI)
-
-### Fases Pendientes
-
-| Fase | Bloqueador | Estimado | Acción |
-|------|------------|----------|--------|
-| 1 | ~~Inmuebles testid~~ | ✅ DONE | Demo re-run pending |
-| 2 | Testimonio integration | Demo run → TBD | Issue + OpenSpec spec |
-| 3 | Pago saldo visibility | **#796** | Apply existing spec |
-| 4 | Archive deuda check | **#169** | Implement + validate |
-| 5 | Demo completitud | TBD | Smoke test final cases |
+Todos seguirán el flujo CONSTITUTION: Issue → Spec (Gate 1) → TDD (Gate 2) → Implement → Docs → PR (Gate 3/4) → Merge → Smoke (Gate 5).
 

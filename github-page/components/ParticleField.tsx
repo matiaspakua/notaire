@@ -24,8 +24,8 @@ export function ParticleField() {
       vx: (Math.random() - 0.5) * 0.4,
       vy: (Math.random() - 0.5) * 0.4,
       r: Math.random() * 2 + 0.5,
-      hue: Math.random() > 0.6 ? "6,182,212" : "124,58,237",
-      opacity: Math.random() * 0.6 + 0.2,
+      hue: Math.random() > 0.6 ? "10,132,255" : "175,82,222",
+      opacity: Math.random() * 0.3 + 0.1,
     }));
 
     let mouseX = canvas.width / 2, mouseY = canvas.height / 2;
@@ -66,7 +66,7 @@ export function ParticleField() {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(6,182,212,${0.12 * (1 - d / 90)})`;
+            ctx.strokeStyle = `rgba(10,132,255,${0.08 * (1 - d / 90)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -88,7 +88,7 @@ export function ParticleField() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 0, opacity: 0.7 }}
+      style={{ zIndex: 0, opacity: 0.5 }}
     />
   );
 }

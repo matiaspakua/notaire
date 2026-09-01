@@ -71,11 +71,11 @@ export function AITools() {
     <section className="py-24 px-6" style={{ background: "var(--bg-mid)" }}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-14">
-          <p className="text-orange-400 text-sm font-mono font-bold tracking-widest mb-4 uppercase">AI Arsenal</p>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
+          <p className="text-orange-600 text-sm font-mono font-bold tracking-widest mb-4 uppercase">AI Arsenal</p>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.02em" }}>
             The <span className="grad-fire">AI Tools</span> That Built It
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-neutral-600 max-w-xl mx-auto">
             Four AI tools, one codebase. Each played a different role in accelerating from idea to production.
           </p>
         </div>
@@ -87,13 +87,13 @@ export function AITools() {
                 <div className="text-4xl flex-none">{t.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-white font-bold">{t.name}</span>
+                    <span className="text-neutral-900 font-bold">{t.name}</span>
                     <span className="tech-badge text-xs" style={{ background: `${t.color}15`, color: t.color, border: `1px solid ${t.color}30` }}>{t.badge}</span>
                   </div>
-                  <div className="text-slate-500 text-xs mb-2">{t.maker}</div>
-                  <p className="text-slate-400 text-sm leading-relaxed">{t.role}</p>
+                  <div className="text-neutral-500 text-xs mb-2">{t.maker}</div>
+                  <p className="text-neutral-600 text-sm leading-relaxed">{t.role}</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <div className="h-1 rounded-full flex-1 bg-slate-800">
+                    <div className="h-1 rounded-full flex-1 bg-neutral-100">
                       <div className="h-1 rounded-full transition-all duration-1000" style={{ background: t.color, width: t.contrib.startsWith("~80") ? "80%" : t.contrib.startsWith("RTK") ? "55%" : "40%" }} />
                     </div>
                     <span className="text-xs font-mono" style={{ color: t.color }}>{t.contrib}</span>

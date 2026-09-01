@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Folio picker in Escritura form** (issue #892, CU06): Allows users to assign a folio
+  to an escritura before signing. Unblocks E2E demo completion and enables full workflow
+  validation (Escritura Firmada → Testimonio → Verificación → Inscripción → Retiro).
+  Prerequisite for CU09–CU12. Backend already supported `Escritura.folios[]` field;
+  this change wires the UI selector (`select-folio-escritura`) and submission payload.
+
 - **Workflow engine y bitácora conectados al flujo real de gestión** (issue #833,
   CU13, CU16, CU83): `POST /api/v1/gestiones/{id}/transicionar`
   (`GestionTransitionService`) valida cada cambio de estado de una gestión contra
