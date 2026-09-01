@@ -1,5 +1,6 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
@@ -72,19 +73,28 @@ public class GestionArchiveDebtService {
     public record ArchiveResult(GestionDeEscritura gestion, Float saldoPendiente) { }
 
     /**
-     * CU16 - Archiva la gestión y registra si quedó con deuda pendiente (RF-22, RF-37).
-     * El archivado no se bloquea por la existencia de deuda.
+     * CU16 - Archiva la gestión y registra si quedó con deuda pendiente (RF-22, RF-37, Issue #169).
+     * Issue #169: Validation added to BLOCK archiving if deuda pendiente exists.
+     * The archive request is rejected if any saldo pendiente remains, preventing
+     * data corruption where an unpaid gestión is marked as archived.
      */
     @Transactional
     public ArchiveResult archivar(Integer idGestion) {
         Float saldoPendiente = calcularSaldoPendiente(idGestion);
 
+        // Issue #169: Block archive if deuda exists
+        if (saldoPendiente != null && saldoPendiente > 0) {
+            throw new BusinessValidationException(
+                    String.format("No se puede archivar: deuda pendiente de $%.2f. " +
+                                    "Registre todos los pagos antes de archivar la gestión.",
+                            saldoPendiente));
+        }
+
         GestionDeEscritura gestion = gestionTransitionService.transicionar(idGestion, ESTADO_ARCHIVADA);
-        gestion.setDeudaPendienteAlArchivar(saldoPendiente != null && saldoPendiente > 0);
+        gestion.setDeudaPendienteAlArchivar(false);  // If we reach here, no debt
         GestionDeEscritura archivedGestion = gestionRepository.save(gestion);
 
-        log.info("Gestión {} archivada con deudaPendienteAlArchivar={}", idGestion,
-                archivedGestion.getDeudaPendienteAlArchivar());
-        return new ArchiveResult(archivedGestion, saldoPendiente);
+        log.info("Gestión {} archivada exitosamente (sin deuda pendiente)", idGestion);
+        return new ArchiveResult(archivedGestion, 0f);
     }
 }

@@ -125,14 +125,14 @@ class GestionArchiveDebtServiceTest {
     class ArchivarTests {
 
         @Test
-        @DisplayName("Archiving succeeds when the transition to Archivada is valid")
-        void shouldArchiveWhenTransitionValid() {
+        @DisplayName("Archiving succeeds when the transition to Archivada is valid AND no deuda pendiente")
+        void shouldArchiveWhenTransitionValidAndNoDeuda() {
             EstadoDeGestion archivada = new EstadoDeGestion(3, "Archivada");
             testGestion.setFkIdEstadoDeGestion(archivada);
 
             when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
             when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramiteFor(10)));
-            when(pagoService.calcularSaldoPendiente(10)).thenReturn(0.00f);
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(0.00f);  // No deuda - required for archive
             when(gestionTransitionService.transicionar(1, "Archivada")).thenReturn(testGestion);
             when(gestionRepository.save(testGestion)).thenReturn(testGestion);
 
@@ -154,6 +154,53 @@ class GestionArchiveDebtServiceTest {
             assertThatThrownBy(() -> gestionArchiveDebtService.archivar(1))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("Transición no permitida");
+        }
+
+        @Test
+        @DisplayName("Issue #169: Archive is rejected when deuda pendiente exists")
+        void shouldRejectArchiveWhenDeudaPending() {
+            when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
+            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramiteFor(10)));
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(20000.00f);  // Deuda exists
+
+            assertThatThrownBy(() -> gestionArchiveDebtService.archivar(1))
+                    .isInstanceOf(BusinessValidationException.class)
+                    .hasMessageContaining("No se puede archivar")
+                    .hasMessageContaining("20000")  // Locale-agnostic number check
+                    .hasMessageContaining("deuda pendiente");
+        }
+
+        @Test
+        @DisplayName("Issue #169: Archive succeeds when saldo pendiente is zero")
+        void shouldArchiveSuccessfullyWhenNoDeutaPending() {
+            EstadoDeGestion archivada = new EstadoDeGestion(3, "Archivada");
+            testGestion.setFkIdEstadoDeGestion(archivada);
+
+            when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
+            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramiteFor(10)));
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(0.00f);  // No deuda
+            when(gestionTransitionService.transicionar(1, "Archivada")).thenReturn(testGestion);
+            when(gestionRepository.save(testGestion)).thenReturn(testGestion);
+
+            GestionArchiveDebtService.ArchiveResult result = gestionArchiveDebtService.archivar(1);
+
+            assertThat(result.gestion().getDeudaPendienteAlArchivar()).isFalse();
+            assertThat(result.saldoPendiente()).isEqualTo(0.00f);
+        }
+
+        @Test
+        @DisplayName("Issue #169: Archive rejected with multiple presupuestos total deuda")
+        void shouldRejectArchiveWithMultiplePresupuestosHavingDeuda() {
+            when(gestionRepository.findById(1)).thenReturn(Optional.of(testGestion));
+            when(tramiteRepository.findByFkIdGestionIdGestion(1))
+                    .thenReturn(List.of(tramiteFor(10), tramiteFor(20)));
+            when(pagoService.calcularSaldoPendiente(10)).thenReturn(15000.00f);
+            when(pagoService.calcularSaldoPendiente(20)).thenReturn(25000.00f);
+            // Total deuda = 40000
+
+            assertThatThrownBy(() -> gestionArchiveDebtService.archivar(1))
+                    .isInstanceOf(BusinessValidationException.class)
+                    .hasMessageContaining("40000");  // Locale-agnostic number check
         }
     }
 }
