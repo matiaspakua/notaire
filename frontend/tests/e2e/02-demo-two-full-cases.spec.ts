@@ -216,6 +216,15 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
 
     // ========== STEP 6: Assign Folio to Escritura & Sign ==========
     console.log("📝 STEP 6: Assign Folio to Escritura");
+
+    // Debug: Check if table has any rows at all
+    const allRows = await page.getByRole("table").getByRole("row").all();
+    console.log(`  Debug: Table has ${allRows.length} rows (including header)`);
+    if (allRows.length > 1) {
+      const firstDataRow = await allRows[1].textContent();
+      console.log(`  Debug: First data row: ${firstDataRow?.substring(0, 100)}`);
+    }
+
     // Find the escritura we just created in the list
     const escrituraRow = page.getByRole("row").filter({ has: page.getByText(numeroEscritura) }).first();
     await expect(escrituraRow).toBeVisible({ timeout: 15000 });
