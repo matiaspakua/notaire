@@ -59,6 +59,13 @@ public class PagoService {
         log.info("Presupuesto total: {}, Pagado: {}, Saldo pendiente: {}",
                 totalPresupuesto, totalPagado, saldoPendiente);
 
+        // Issue #848: Validate payment does not exceed saldo pendiente
+        if (monto > saldoPendiente) {
+            throw new IllegalArgumentException(
+                    String.format("El monto del pago ($%.2f) no puede exceder el saldo pendiente ($%.2f)",
+                            monto, saldoPendiente));
+        }
+
         Pago pago = new Pago();
         pago.setMonto(monto);
         pago.setFecha(fecha != null ? fecha : new Date());

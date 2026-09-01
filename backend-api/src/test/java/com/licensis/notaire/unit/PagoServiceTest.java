@@ -350,4 +350,73 @@ class PagoServiceTest {
             verify(pagoRepository, never()).save(any(Pago.class));
         }
     }
+
+    @Nested
+    @DisplayName("Overpayment Validation (Issue #848)")
+    class OverpaymentValidationTests {
+
+        @Test
+        @DisplayName("Should reject payment that exceeds saldo pendiente")
+        void shouldRejectPaymentExceedingSaldo() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(50000f);
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(30000f); // Already paid 30k
+
+            // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
+            assertThatThrownBy(() -> pagoService.procesarPago(1, 25000f, new Date(), "Overpay attempt"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("no puede exceder el saldo pendiente");
+
+            verify(pagoRepository, never()).save(any(Pago.class));
+        }
+
+        @Test
+        @DisplayName("Should accept payment equal to saldo pendiente")
+        void shouldAcceptPaymentEqualToSaldo() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(50000f);
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(30000f); // Already paid 30k
+            when(pagoRepository.save(any(Pago.class))).thenAnswer(inv -> {
+                Pago p = inv.getArgument(0);
+                p.setIdPago(1);
+                return p;
+            });
+
+            // Saldo = 50k - 30k = 20k, paying exactly 20k should succeed
+            Pago result = pagoService.procesarPago(1, 20000f, new Date(), "Exact payment");
+
+            assertThat(result).isNotNull();
+            assertThat(result.getMonto()).isEqualTo(20000f);
+            verify(pagoRepository).save(any(Pago.class));
+        }
+
+        @Test
+        @DisplayName("Should accept payment less than saldo pendiente")
+        void shouldAcceptPartialPayment() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(50000f);
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(30000f); // Already paid 30k
+            when(pagoRepository.save(any(Pago.class))).thenAnswer(inv -> {
+                Pago p = inv.getArgument(0);
+                p.setIdPago(1);
+                return p;
+            });
+
+            // Saldo = 50k - 30k = 20k, paying 15k should succeed
+            Pago result = pagoService.procesarPago(1, 15000f, new Date(), "Partial payment");
+
+            assertThat(result).isNotNull();
+            assertThat(result.getMonto()).isEqualTo(15000f);
+            verify(pagoRepository).save(any(Pago.class));
+        }
+    }
 }
