@@ -71,6 +71,7 @@ public class EscrituraController {
 })
     @PostMapping
     @Operation(summary = "Crear nueva escritura")
+    @Transactional
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
         try {
             Escritura saved = escrituraService.save(entity);
@@ -87,6 +88,7 @@ public class EscrituraController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar escritura")
+    @Transactional
     public ResponseEntity<Escritura> update(@PathVariable Integer id, @RequestBody Escritura entity) {
         return escrituraService.findById(id)
                 .map(existing -> {
@@ -104,6 +106,7 @@ public class EscrituraController {
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar escritura")
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (escrituraService.findById(id).isPresent()) {
             escrituraService.deleteById(id);
