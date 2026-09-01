@@ -198,13 +198,13 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
 
     // Wait for form inputs to be ready (React hydration delay)
-    const numeroInput = page.getByRole("dialog").getByLabel(/número/i);
-    const fechaInput = page.getByRole("dialog").getByLabel(/fecha/i);
-    await expect(numeroInput).toBeEnabled({ timeout: 5000 });
+    const numInputA = page.getByRole("dialog").getByLabel(/número/i);
+    const fechaInputA = page.getByRole("dialog").getByLabel(/fecha/i);
+    await expect(numInputA).toBeEnabled({ timeout: 5000 });
 
     const numeroEscritura = `ESC-${caseA.suffix}`;
-    await numeroInput.fill(numeroEscritura);
-    await fechaInput.fill(caseA.fechaPresupuesto);
+    await numInputA.fill(numeroEscritura);
+    await fechaInputA.fill(caseA.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
@@ -490,12 +490,12 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
 
     // Wait for form inputs to be ready (React hydration delay)
-    const numeroInputB = page.getByRole("dialog").getByLabel(/número/i);
+    const numInputB = page.getByRole("dialog").getByLabel(/número/i);
     const fechaInputB = page.getByRole("dialog").getByLabel(/fecha/i);
-    await expect(numeroInputB).toBeEnabled({ timeout: 5000 });
+    await expect(numInputB).toBeEnabled({ timeout: 5000 });
 
     const numeroEscrituraB = `ESC-${caseB.suffix}`;
-    await numeroInputB.fill(numeroEscrituraB);
+    await numInputB.fill(numeroEscrituraB);
     await fechaInputB.fill(caseB.fechaPresupuesto);
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
