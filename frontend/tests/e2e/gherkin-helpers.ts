@@ -23,6 +23,7 @@ export class GherkinSteps {
 
   async givenUserIsOnPage(path: string) {
     await this.page.goto(path);
+    await this.page.waitForLoadState("domcontentloaded");
     await this.page.waitForLoadState("networkidle");
   }
 
