@@ -799,34 +799,45 @@ sub-hallazgo de 1.2 (`explore_1.2_overpayment_issue.md`, Issue #848, ya con
 
 ## Plan de Acción: Cerrar Bloqueadores Demo E2E
 
-**Estado actual:** 3 bugs ya fijos (PRs #879–#891), 1 bloqueador nuevo encontrado (#892).
+**Estado actual (2026-09-01):** ✅ **TODOS LOS BLOQUEADORES DE DEMO INMEDIATOS FIJOS**
 
-### Orden recomendado (próximas sesiones)
+- ✅ #879 Inmueble type (merged PR #882)
+- ✅ #883 Presupuesto association (merged PR #887)
+- ✅ #889 Picker labels (merged PR #890)
+- ✅ #892 Folio linking (merged PR #894)
 
-1. **#892 (Escritura-folio picker)** — INMEDIATO
-   - Bloqueador directo de demo
-   - Pequeño scope: agregar selector de folio al formulario
-   - Spec: `openspec/changes/escritura-folio-picker-form/`
-   - Workflow: TDD → form picker + E2E test → refactor → docs → PR → merge
-   - Desbloquea: Testimonio, Copia, Documento, Pago workflows
+**Próximos pasos:** Confirmar que el flujo E2E completo (02-demo-two-full-cases.spec.ts) puede construir 2 casos de uso comparable end-to-end sin errores. Si hay blocadores adicionales durante la ejecución de la demo, se documentarán aquí.
 
-2. **#833 (Historial/estados gestión)** — DESPUÉS
-   - Prerequisito para workflow correcto
-   - Change: `openspec/changes/gestion-workflow-reingreso-testimonio/`
-   - Status: `propose completo`, pendiente `/opsx:apply`
+---
 
-3. **Demo completion** — TERCERO
-   - Una vez #892 fijo: re-run `02-demo-two-full-cases.spec.ts`
-   - Confirmar Case A + Case B completan hasta archivo
-   - Smoke test con ambos casos en DB
+## Hallazgo 12 — Análisis de Completitud Demo E2E: Entidades y Workflows Requeridos
 
-### Resumen ejecutivo
+Para que dos casos de uso completos (Case A y Case B) demuestren el flujo integral notarial, es necesario asegurar que **todos los siguientes workflows estén habilitados y probados**:
 
-La demo E2E encontró y validó **4 bugs reales**:
-- ✅ #879 Inmueble type (fijo)
-- ✅ #883 Presupuesto association (fijo)
-- ✅ #889 Picker labels (fijo)
-- ⏳ #892 Folio linking (próximo)
+### Entidades/Workflows Requeridos para Demo Completa
 
-Todos seguirán el flujo CONSTITUTION: Issue → Spec (Gate 1) → TDD (Gate 2) → Implement → Docs → PR (Gate 3/4) → Merge → Smoke (Gate 5).
+| Entidad | CU | Workflow | Status | Bloqueadores |
+|---------|----|---------|---------|----|
+| **Cliente (Persona)** | CU01 | Crear cliente, asignar a presupuesto | ✅ Funcional | Ninguno |
+| **Presupuesto** | CU02 | Crear presupuesto con cliente, conceptos | ✅ Funcional (fijo #883) | Ninguno |
+| **Inmueble** | CU69 | Crear inmueble con valuación fiscal | ✅ Funcional (fijo #879) | Ninguno |
+| **Gestión** | CU02 | Crear gestión, asignar presupuesto e inmueble | ✅ Funcional (fijo #889) | Ninguno |
+| **Escritura** | CU06 | Crear escritura, asignar folio, firmar | ✅ Funcional (fijo #892) | Ninguno |
+| **Folio** | CU06 | Listar folios disponibles, asignar a escritura | ✅ Funcional (fijo #892) | Ninguno |
+| **Testimonio** | CU09 | Crear testimonio post-firma escritura | ❓ Por validar | TBD |
+| **Documentación** | CU08 | Registrar docs requeridos (poder, ID, etc.) | ❓ Por validar | TBD |
+| **Pago** | CU15 | Registrar pago parcial/completo de presupuesto | ❓ Por validar | TBD (saldo visibility #796) |
+| **Copia** | CU47 | Registrar copias expedidas | ❓ Por validar | TBD |
+| **Archivo** | CU16 | Archivar gestión completada | ❓ Por validar | TBD (deuda verification #169) |
+
+### Próxima Actividad
+
+1. **Crear script compresivo de demo** (`02-demo-two-full-cases.spec.ts`) que:
+   - Construya 2 casos de uso idénticos pero independientes
+   - Avance por cada entidad/workflow en la tabla anterior
+   - Reporte cuál es el primer punto que falla
+
+2. **Resolver bloqueadores en orden de descubrimiento** usando flujo CONSTITUTION completo (OpenSpec/SpecKit spec-driven)
+
+3. **Validar completitud** con smoke test final: ambos casos en BD, archivo generado, accesible vía dashboard
 

@@ -139,7 +139,7 @@ export default function InmueblesPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate}>
+          <Button onClick={openCreate} data-testid="btn-nuevo-inmueble">
             <Plus className="h-4 w-4" />
             {t("newInmueble")}
           </Button>
@@ -160,6 +160,7 @@ export default function InmueblesPage() {
             <FormSection title={editing ? t("editInmueble") : t("newInmueble")}>
               <FormField label="Nomenclatura Catastral" required>
                 <Input
+                  data-testid="input-nomenclatura"
                   value={form.nomenclaturaCatastral}
                   onChange={(e) => setForm({ ...form, nomenclaturaCatastral: e.target.value })}
                   placeholder="Ej: 01-02-03-04-05"
@@ -167,6 +168,7 @@ export default function InmueblesPage() {
               </FormField>
               <FormField label={t("fields.domicilio")}>
                 <Input
+                  data-testid="input-domicilio"
                   value={form.domicilio}
                   onChange={(e) => setForm({ ...form, domicilio: e.target.value })}
                   placeholder={t("fields.domicilioPlaceholder")}
@@ -175,6 +177,7 @@ export default function InmueblesPage() {
               <FormField label={t("fields.valuacionFiscal")}>
                 <Input
                   type="number"
+                  data-testid="input-valuacion-fiscal"
                   value={form.valuacionFiscal}
                   onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
                 />
