@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/835_persona-validacion-duplicados` | created |
 | Tasks | `tasks.md` | groups 1-8 complete (9-12 pending) |
 | Commits | `e6a15d2c` (backend), `589332dc` (frontend), `eeed01e9` (E2E), `9077e9b3` (docs) | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Pull Request | [#905](https://github.com/matiaspakua/notaire/pull/905) | open |
+| CI run | pending on #905 | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
