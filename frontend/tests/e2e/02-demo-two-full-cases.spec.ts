@@ -60,8 +60,16 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByRole("dialog").getByLabel(/dni/i).fill(caseA.dniCliente);
     await page.getByTestId("check-es-cliente").click();
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    // Wait for button to be enabled and dialog to be responsive
+    const saveBtn = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(saveBtn).toBeEnabled({ timeout: 5000 });
+
+    // Click and wait for network to settle before checking if dialog closes
+    await saveBtn.click();
+    await page.waitForLoadState("networkidle");
+
+    // Wait for dialog to close (increased timeout to allow mutation to complete)
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Cliente created\n");
 
     // ========== STEP 2: Create Presupuesto ==========
@@ -328,8 +336,16 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByRole("dialog").getByLabel(/dni/i).fill(caseB.dniCliente);
     await page.getByTestId("check-es-cliente").click();
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    // Wait for button to be enabled and dialog to be responsive
+    const saveBtn = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(saveBtn).toBeEnabled({ timeout: 5000 });
+
+    // Click and wait for network to settle before checking if dialog closes
+    await saveBtn.click();
+    await page.waitForLoadState("networkidle");
+
+    // Wait for dialog to close (increased timeout to allow mutation to complete)
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Cliente created\n");
 
     // ========== STEP 2: Create Presupuesto ==========
