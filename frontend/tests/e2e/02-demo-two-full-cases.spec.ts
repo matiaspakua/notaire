@@ -202,7 +202,8 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     const fechaInputA = page.getByRole("dialog").getByLabel(/fecha/i);
     await expect(numInputA).toBeEnabled({ timeout: 5000 });
 
-    const numeroEscritura = `ESC-${caseA.suffix}`;
+    const numeroEscritura = caseA.suffix; // Just the numeric suffix, backend stores as integer
+    const displayNumero = `ESC-${caseA.suffix}`; // For display/search purposes
     await numInputA.type(numeroEscritura, { delay: 50 });
     await fechaInputA.fill(caseA.fechaPresupuesto);
 
@@ -217,15 +218,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     // ========== STEP 6: Assign Folio to Escritura & Sign ==========
     console.log("📝 STEP 6: Assign Folio to Escritura");
 
-    // Debug: Check if table has any rows at all
-    const allRows = await page.getByRole("table").getByRole("row").all();
-    console.log(`  Debug: Table has ${allRows.length} rows (including header)`);
-    if (allRows.length > 1) {
-      const firstDataRow = await allRows[1].textContent();
-      console.log(`  Debug: First data row: ${firstDataRow?.substring(0, 100)}`);
-    }
-
-    // Find the escritura we just created in the list
+    // Find the escritura we just created in the list (search by numeric numero, not prefix)
     const escrituraRow = page.getByRole("row").filter({ has: page.getByText(numeroEscritura) }).first();
     await expect(escrituraRow).toBeVisible({ timeout: 15000 });
 
@@ -507,7 +500,7 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     const fechaInputB = page.getByRole("dialog").getByLabel(/fecha/i);
     await expect(numInputB).toBeEnabled({ timeout: 5000 });
 
-    const numeroEscrituraB = `ESC-${caseB.suffix}`;
+    const numeroEscrituraB = caseB.suffix; // Just the numeric suffix
     await numInputB.type(numeroEscrituraB, { delay: 50 });
     await fechaInputB.fill(caseB.fechaPresupuesto);
 
