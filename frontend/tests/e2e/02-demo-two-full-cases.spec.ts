@@ -138,10 +138,11 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await expect(presupuestoOption).toBeVisible({ timeout: 5000 });
     await presupuestoOption.evaluate((el: HTMLElement) => el.click());
 
-    // Number is auto-generated but we can fill other fields if needed
+    // Number field is type="number" so must be numeric only
     const numeroInput = page.getByRole("dialog").getByTestId("input-numero-gestion");
     if (await numeroInput.isVisible().catch(() => false)) {
-      await numeroInput.fill(`GESTION-${caseA.suffix}`);
+      // Use just the numeric suffix since input is type="number"
+      await numeroInput.fill(caseA.suffix);
     }
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
@@ -395,7 +396,8 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
 
     const numeroInputB = page.getByRole("dialog").getByTestId("input-numero-gestion");
     if (await numeroInputB.isVisible().catch(() => false)) {
-      await numeroInputB.fill(`GESTION-${caseB.suffix}`);
+      // Use just the numeric suffix since input is type="number"
+      await numeroInputB.fill(caseB.suffix);
     }
 
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();

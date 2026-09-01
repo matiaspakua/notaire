@@ -812,32 +812,49 @@ sub-hallazgo de 1.2 (`explore_1.2_overpayment_issue.md`, Issue #848, ya con
 
 ## Hallazgo 12 — Análisis de Completitud Demo E2E: Entidades y Workflows Requeridos
 
-Para que dos casos de uso completos (Case A y Case B) demuestren el flujo integral notarial, es necesario asegurar que **todos los siguientes workflows estén habilitados y probados**:
+Para que dos casos de uso completos (Case A y Case B) demuestren el flujo integral notarial, se creó script E2E (`02-demo-two-full-cases.spec.ts`) que ejercita ambos casos en paralelo. Primera ejecución (2026-09-01 08:22-08:24) identificó **bloqueador UI en Inmuebles**: botón "Nuevo Inmueble" carece testid (`btn-nuevo-inmueble`).
 
-### Entidades/Workflows Requeridos para Demo Completa
+### Estado Actual Completo (2026-09-01)
 
-| Entidad | CU | Workflow | Status | Bloqueadores |
+| Entidad | CU | Workflow | Status | Issue |
 |---------|----|---------|---------|----|
-| **Cliente (Persona)** | CU01 | Crear cliente, asignar a presupuesto | ✅ Funcional | Ninguno |
-| **Presupuesto** | CU02 | Crear presupuesto con cliente, conceptos | ✅ Funcional (fijo #883) | Ninguno |
-| **Inmueble** | CU69 | Crear inmueble con valuación fiscal | ✅ Funcional (fijo #879) | Ninguno |
-| **Gestión** | CU02 | Crear gestión, asignar presupuesto e inmueble | ✅ Funcional (fijo #889) | Ninguno |
-| **Escritura** | CU06 | Crear escritura, asignar folio, firmar | ✅ Funcional (fijo #892) | Ninguno |
-| **Folio** | CU06 | Listar folios disponibles, asignar a escritura | ✅ Funcional (fijo #892) | Ninguno |
-| **Testimonio** | CU09 | Crear testimonio post-firma escritura | ❓ Por validar | TBD |
-| **Documentación** | CU08 | Registrar docs requeridos (poder, ID, etc.) | ❓ Por validar | TBD |
-| **Pago** | CU15 | Registrar pago parcial/completo de presupuesto | ❓ Por validar | TBD (saldo visibility #796) |
-| **Copia** | CU47 | Registrar copias expedidas | ❓ Por validar | TBD |
-| **Archivo** | CU16 | Archivar gestión completada | ❓ Por validar | TBD (deuda verification #169) |
+| **Cliente (Persona)** | CU01 | Crear cliente, asignar a presupuesto | ✅ FUNCIONAL | Ninguno |
+| **Presupuesto** | CU02 | Crear presupuesto con cliente, conceptos | ✅ FUNCIONAL | Ninguno |
+| **Inmueble** | CU69 | Crear inmueble con valuación fiscal | 🔧 FIJO (testid) | ~~Botón sin testid~~ |
+| **Gestión** | CU02 | Crear gestión, asignar presupuesto | ✅ FUNCIONAL | Ninguno |
+| **Escritura** | CU06 | Crear escritura, asignar folio, firmar | ✅ FUNCIONAL | Ninguno |
+| **Folio** | CU06 | Asignar a escritura | ✅ FUNCIONAL | Ninguno |
+| **Testimonio** | CU09 | Crear post-firma | ❓ POR VALIDAR | TBD |
+| **Documentación** | CU08 | Registrar docs requeridos | ❓ POR VALIDAR | TBD |
+| **Pago** | CU15 | Registrar pago parcial/completo | ❓ POR VALIDAR | #796 (saldo) |
+| **Copia** | CU47 | Registrar copias expedidas | ❓ POR VALIDAR | TBD |
+| **Archivo** | CU16 | Archivar gestión completada | ❓ POR VALIDAR | #169 (deuda check) |
 
-### Próxima Actividad
+### Cambios Realizados (2026-09-01 08:20-08:30)
 
-1. **Crear script compresivo de demo** (`02-demo-two-full-cases.spec.ts`) que:
-   - Construya 2 casos de uso idénticos pero independientes
-   - Avance por cada entidad/workflow en la tabla anterior
-   - Reporte cuál es el primer punto que falla
+1. **Creación de demo script** (`02-demo-two-full-cases.spec.ts`):
+   - Construye 2 casos idénticos but independent (Case A, Case B)
+   - Ejercita flujo completo: Persona → Presupuesto → Inmueble → Gestión → Escritura → Firma
+   - Incluye secciones stub para Testimonio, Pago, Archivo
+   - Console logging en cada paso para diagnóstico claro
 
-2. **Resolver bloqueadores en orden de descubrimiento** usando flujo CONSTITUTION completo (OpenSpec/SpecKit spec-driven)
+2. **Fixes UI inmediatos**:
+   - ✅ Added `data-testid="btn-nuevo-inmueble"` to inmuebles page
+   - ✅ Added testids to inmuebles form fields (nomenclatura, domicilio, valuacion-fiscal)
+   - ✅ Enhanced demo script with fallback selectors (resilencia ante cambios UI)
+   - Commit: `dcc5024`
 
-3. **Validar completitud** con smoke test final: ambos casos en BD, archivo generado, accesible vía dashboard
+3. **Próxima ejecución**:
+   - Re-run demo con fixes UI (expected: progresa hasta Testimonio o Pago)
+   - Documentar primer bloqueador real (no UI)
+
+### Fases Pendientes
+
+| Fase | Bloqueador | Estimado | Acción |
+|------|------------|----------|--------|
+| 1 | ~~Inmuebles testid~~ | ✅ DONE | Demo re-run pending |
+| 2 | Testimonio integration | Demo run → TBD | Issue + OpenSpec spec |
+| 3 | Pago saldo visibility | **#796** | Apply existing spec |
+| 4 | Archive deuda check | **#169** | Implement + validate |
+| 5 | Demo completitud | TBD | Smoke test final cases |
 
