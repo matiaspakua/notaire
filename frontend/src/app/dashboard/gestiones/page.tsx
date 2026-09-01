@@ -118,9 +118,10 @@ export default function GestionesPage() {
         });
         toast.success(t("created"));
       }
-      setModalOpen(false);
     } catch {
       toast.error(t("errorSave"));
+    } finally {
+      setModalOpen(false);
     }
   }
 
