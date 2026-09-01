@@ -116,7 +116,7 @@ export default function EscriturasPage() {
     <div>
       <AppHeader
         title={t("title")}
-        actions={<Button onClick={openCreate}><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-nueva-escritura"><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
       />
       <div className="px-4 pb-4">
         <Input
