@@ -178,6 +178,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByRole("button", { name: /nueva escritura/i }).click();
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.escrituraNumero);
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-05");
+    await choose(page, "select-folio-escritura", new RegExp(def.tipoFolio, "i"));
     await saveDialog(page);
 
     await page.getByTestId("input-search-escritura").fill(def.escrituraNumero);
@@ -185,6 +186,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     escrituraId = ((await row.locator("td").first().innerText()) ?? "").trim();
     await row.getByTestId(`btn-firmar-escritura-${escrituraId}`).click();
     await page.getByRole("button", { name: /firmar escritura/i }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
     await pause(page);
   });
 

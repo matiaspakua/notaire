@@ -147,14 +147,14 @@ export default function EscriturasPage() {
                 <Input type="date" value={editing.fechaEscrituracion ?? ""} onChange={(e) => setEditing({ ...editing, fechaEscrituracion: e.target.value })} />
               </FormField>
               <FormField label={t("fields.folio")} required={!isEditMode}>
-                <Select value={(editing as any).idFolioSelected?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, folios: [{ idFolio: parseInt(v) }] } as any)}>
+                <Select value={editing.idFolio?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, idFolio: parseInt(v) })}>
                   <SelectTrigger data-testid="select-folio-escritura">
                     <SelectValue placeholder={t("fields.folio")} />
                   </SelectTrigger>
                   <SelectContent>
                     {folios.filter(f => f.estado === "Nuevo").map(f => (
                       <SelectItem key={f.idFolio} value={String(f.idFolio)}>
-                        Folio #{f.idFolio} — {f.tipoDeFolio?.nombre ?? "—"}
+                        Folio #{f.idFolio} — {f.tiposDeFolio?.nombre ?? "—"}
                       </SelectItem>
                     ))}
                   </SelectContent>
