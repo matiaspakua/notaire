@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Persona duplicate-document validation** (issue #835, CU17, CU18): creating or
+  editing a `Persona` with a `numeroIdentificacion` already registered to another
+  person is rejected with `409 Conflict` (`PersonaDuplicadaException`), whose body
+  now carries `idPersonaExistente` so the frontend can offer a direct link to the
+  existing person. The personas page shows a toast with a "Ver persona existente"
+  action and preserves the in-progress form data instead of discarding it.
+
 - **Folio picker in Escritura form** (issue #892, CU06): Allows users to assign a folio
   to an escritura before signing. Unblocks E2E demo completion and enables full workflow
   validation (Escritura Firmada → Testimonio → Verificación → Inscripción → Retiro).

@@ -27,5 +27,5 @@
 
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
-| 6.1 | La persona ya existe. | El sistema gestiona la excepción y notifica al usuario. |
+| 6.1 | Ya existe otra persona registrada con el mismo número de identificación. | El sistema rechaza el alta (HTTP 409), muestra un mensaje indicando el duplicado, ofrece un acceso directo a la persona existente y conserva los datos ingresados en el formulario. |
 | 6.2 | Alguno de los datos son incorrectos. | El sistema gestiona la excepción y notifica al usuario. |
