@@ -143,16 +143,43 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByTestId("btn-nueva-gestion").click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    // Should be able to select presupuesto; it shows cliente name (issue #889 fixed)
+    // Select presupuesto
     await page.getByTestId("select-presupuesto-gestion").click();
     const presupuestoOption = page.getByRole("option", { name: new RegExp(caseA.apellidoCliente, "i") });
     await expect(presupuestoOption).toBeVisible({ timeout: 5000 });
     await presupuestoOption.evaluate((el: HTMLElement) => el.click());
 
-    // Number field is type="number" so must be numeric only
+    // Select escribano (any admin/user will work)
+    await page.getByTestId("select-escribano-gestion").click();
+    const escribanoOption = page.getByRole("option").first();
+    await expect(escribanoOption).toBeVisible({ timeout: 5000 });
+    await escribanoOption.evaluate((el: HTMLElement) => el.click());
+
+    // Select estado
+    await page.getByTestId("select-estado-gestion").click();
+    const estadoOption = page.getByRole("option").first();
+    await expect(estadoOption).toBeVisible({ timeout: 5000 });
+    await estadoOption.evaluate((el: HTMLElement) => el.click());
+
+    // Select tipo de trámite
+    await page.getByTestId("select-tipo-tramite-gestion").click();
+    const tipoOption = page.getByRole("option").first();
+    await expect(tipoOption).toBeVisible({ timeout: 5000 });
+    await tipoOption.evaluate((el: HTMLElement) => el.click());
+
+    // Select inmueble (optional)
+    const inmuebleSelect = page.getByTestId("select-inmueble-gestion");
+    if (await inmuebleSelect.isVisible().catch(() => false)) {
+      await inmuebleSelect.click();
+      const inmuebleOption = page.getByRole("option").first();
+      if (await inmuebleOption.isVisible().catch(() => false)) {
+        await inmuebleOption.evaluate((el: HTMLElement) => el.click());
+      }
+    }
+
+    // Fill número
     const numeroInput = page.getByRole("dialog").getByTestId("input-numero-gestion");
     if (await numeroInput.isVisible().catch(() => false)) {
-      // Use just the numeric suffix since input is type="number"
       await numeroInput.fill(caseA.suffix);
     }
 
@@ -414,19 +441,41 @@ test.describe("DEMO-002: Two Complete Cases (Case A & Case B)", () => {
     await page.getByTestId("btn-nueva-gestion").click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
+    // Select presupuesto
     await page.getByTestId("select-presupuesto-gestion").click();
     const presupuestoOptionB = page.getByRole("option", { name: new RegExp(caseB.apellidoCliente, "i") });
     await expect(presupuestoOptionB).toBeVisible({ timeout: 5000 });
     await presupuestoOptionB.evaluate((el: HTMLElement) => el.click());
 
+    // Select escribano
+    await page.getByTestId("select-escribano-gestion").click();
+    const escribanoOptionB = page.getByRole("option").first();
+    await expect(escribanoOptionB).toBeVisible({ timeout: 5000 });
+    await escribanoOptionB.evaluate((el: HTMLElement) => el.click());
+
+    // Select estado
+    await page.getByTestId("select-estado-gestion").click();
+    const estadoOptionB = page.getByRole("option").first();
+    await expect(estadoOptionB).toBeVisible({ timeout: 5000 });
+    await estadoOptionB.evaluate((el: HTMLElement) => el.click());
+
+    // Select tipo
+    await page.getByTestId("select-tipo-tramite-gestion").click();
+    const tipoOptionB = page.getByRole("option").first();
+    await expect(tipoOptionB).toBeVisible({ timeout: 5000 });
+    await tipoOptionB.evaluate((el: HTMLElement) => el.click());
+
+    // Fill número
     const numeroInputB = page.getByRole("dialog").getByTestId("input-numero-gestion");
     if (await numeroInputB.isVisible().catch(() => false)) {
-      // Use just the numeric suffix since input is type="number"
       await numeroInputB.fill(caseB.suffix);
     }
 
-    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
-    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 5000 });
+    const gestionSaveBtnB = page.getByRole("dialog").getByRole("button", { name: /guardar|crear|create/i });
+    await expect(gestionSaveBtnB).toBeEnabled({ timeout: 5000 });
+    await gestionSaveBtnB.click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10000 });
     console.log("✅ Gestión created\n");
 
     // ========== STEP 5: Create Escritura ==========
