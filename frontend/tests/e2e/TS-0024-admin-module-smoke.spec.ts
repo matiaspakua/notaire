@@ -182,6 +182,20 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await page.getByRole("alertdialog").getByRole("button", { name: /eliminar/i }).click();
     await expect(page.getByText(renamed, { exact: true })).toBeHidden();
   });
+
+  test("CU81 — marking a tipo de folio as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
+    const uniqueName = `TipoAuxiliarTest${Date.now()}`;
+
+    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
+    await dialog.getByTestId("checkbox-es-auxiliar-tipo-folio").click();
+    await dialog.getByTestId("btn-save-tipo-folio").click();
+    await expect(dialog).toBeHidden();
+
+    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
+    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
+  });
 });
 
 test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
