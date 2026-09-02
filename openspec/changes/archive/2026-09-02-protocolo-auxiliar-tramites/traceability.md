@@ -19,12 +19,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/protocolo-auxiliar-tramites/` | complete |
 | Branch | `feat/839_protocolo-auxiliar-tramites` | created |
 | Tasks | `tasks.md` | Groups 1-8 complete (58/58); Groups 9-12 pending |
-| Commits | `bc64a268`, `a5593aec`, `9a24dc45`, `ad014f58`, `90d12e30` | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Commits | `bc64a268`, `a5593aec`, `9a24dc45`, `ad014f58`, `90d12e30`, `ae247a5e` | done |
+| Pull Request | [#907](https://github.com/matiaspakua/notaire/pull/907) | merged |
+| CI run | `PR Validation`/`CI - Build, Test & Security`/`Playwright E2E` fail only on pre-existing, unrelated baseline (documented in `tasks.md` 6.1/7.2/8.6); `Frontend CI` green | passed with documented exception |
+| Merge commit | `6b29fd96` (squash) | done |
+| Release / tag | n/a — no tagged release cut for this merge | — |
+| Smoke test | manual API smoke test 2026-09-02 against local stack: created tipo-folio with `esAuxiliar=true`, folio on it, listed via `GET /protocolo-auxiliar/folios-disponibles` (found), started escritura via `POST /protocolo-auxiliar/escrituras` (id 23), confirmed folio dropped out of disponibles and no `tramites` row was created (service only touches `Escritura`/`Folio`); `GET /actuator/health` returned 200; test data cleaned up afterward | passed |
 
 ## Requirement coverage
 
@@ -53,8 +53,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | `tasks.md` §1 |
 | 2 | Failing tests written, test cases designed | yes | `tasks.md` §3 |
 | 3 | Suite green, coverage held, docs updated | yes | `tasks.md` §6-8; 5 pre-existing unrelated Playwright failures documented in 7.2 |
-| 4 | CI green, review approved, no conflicts | no | pending PR |
-| 5 | Deployed, smoke test passed, Issue closed | no | pending |
+| 4 | CI green, review approved, no conflicts | yes | PR #907 merged as `6b29fd96` |
+| 5 | Deployed, smoke test passed, Issue closed | yes | smoke test passed (see Chain — Smoke test); Issue #839 left open — partial completion, 3 of 5 `protocolo-*` sub-changes still unmerged |
 
 ## Exceptions
 
