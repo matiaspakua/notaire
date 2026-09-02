@@ -51,5 +51,6 @@ INSERT INTO usuarios (version, nombre, contrasenia, tipo, estado, fk_id_persona)
 
 -- Seed Data: Presupuesto — required by Pago FK
 -- Entity columns: version, id_presupuesto (auto), numero, fecha, encabezado, observaciones, estado, monto_inmueble
-INSERT INTO presupuestos (version, numero, fecha, encabezado, estado) VALUES
-(0, 20250001, '2025-01-15', 'Presupuesto de prueba', 'PENDIENTE');
+-- monto_inmueble must be large enough to cover the pago amounts asserted against it in integration tests.
+INSERT INTO presupuestos (version, numero, fecha, encabezado, estado, monto_inmueble) VALUES
+(0, 20250001, '2025-01-15', 'Presupuesto de prueba', 'PENDIENTE', 50000.00);

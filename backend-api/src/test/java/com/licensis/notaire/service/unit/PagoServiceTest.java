@@ -1,6 +1,5 @@
 package com.licensis.notaire.service.unit;
 
-import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
@@ -70,7 +69,7 @@ class PagoServiceTest {
                 .extracting(Pago::getMonto, Pago::getIdPago)
                 .containsExactly(1000f, 1);
 
-        verify(presupuestoRepository, times(1)).findById(1);
+        verify(presupuestoRepository, times(2)).findById(1);
         verify(pagoRepository, times(1)).save(any(Pago.class));
     }
 

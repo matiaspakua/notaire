@@ -342,6 +342,7 @@
     "deleted": "Payment deleted",
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
+    "saldoExcedido": "The amount exceeds the outstanding balance of the budget",
     "noData": "No payments registered",
     "fields": {
       "fecha": "Date",

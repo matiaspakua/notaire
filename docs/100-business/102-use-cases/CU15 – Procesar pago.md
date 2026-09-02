@@ -26,7 +26,7 @@
 | 8 | El Recepcionista/Escribano solicita generar un nuevo pago. |  |
 | 9 |  | Solicita el monto del mismo, fecha de pago, método de pago y observaciones adicionales. |
 | 10 | El Recepcionista/Escribano indica los datos solicitados y guarda los mismos. |  |
-| 11 |  | Registra el pago realizado (incluyendo el método de pago), calcula el saldo pendiente y el estado de pago (Sin pagos / Parcialmente abonado / Saldado), y los muestra. |
+| 11 |  | Valida que el monto no exceda el saldo pendiente del presupuesto; si es válido, registra el pago realizado (incluyendo el método de pago), recalcula el saldo pendiente y lo muestra. |
 | 12 | Solicita la generación del recibo correspondiente. |  |
 | 13 |  | Genera el recibo común correspondiente, donde figura: (Fecha de Pago; Número de presupuesto; Número de pago; Nombre, Apellido, Tipo y número de identificación del Cliente; Número de la gestión asociada.) |
 | 14 | El Recepcionista/Escribano hace entrega del recibo generado al Cliente. |  |
@@ -39,3 +39,4 @@
 | 3.2 | 1. El Cliente no tiene presupuestos asociados. | El sistema gestiona la excepción y notifica al usuario. |
 | 11.1 | El monto abonado es menor al total del presupuesto (pago en cuotas, RF #22). | El sistema acepta el pago parcial, calcula el saldo pendiente restante y marca el estado de pago del presupuesto como "Parcialmente abonado". El Cliente puede volver a abonar el saldo restante en uno o más pagos posteriores hasta saldarlo. |
 | 11.2 | El monto abonado (acumulado con pagos previos) cubre el total del presupuesto. | El sistema marca el estado de pago del presupuesto como "Saldado" (saldo pendiente = 0). |
+| 11.3 | El monto indicado excede el saldo pendiente del presupuesto (#848). | El sistema rechaza el pago, informa que el monto no puede exceder el saldo pendiente y no lo persiste. |
