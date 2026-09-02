@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/839_protocolo-cuadernos-de-folios` | done |
 | Tasks | `tasks.md` | 33/38 complete (7.3 partially blocked — see note) |
 | Commits | `f3482b59`, `a5053b1a`, `24c60711` | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Pull Request | [#906](https://github.com/matiaspakua/notaire/pull/906) | open |
+| CI run | pending on PR #906 | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
