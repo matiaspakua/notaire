@@ -26,3 +26,11 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 4.1 | El documento ya existe. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Costo del documento en el presupuesto (Issue #823)
+
+Cada tipo de documento puede tener un costo asociado (sello, impuesto, etc.)
+registrado al presentarlo en un trámite (`DocumentoPresentado.importeAPagar`).
+Ese costo se suma automáticamente al total del presupuesto del trámite
+correspondiente (ver CU39 – Crear Plantilla Presupuesto para la definición de
+gastos esperados por tipo de documento en la plantilla).

@@ -30,3 +30,12 @@
 | 2.1 | 1. No existen tipos de trámite disponibles. | El sistema gestiona la excepción y notifica al usuario. |
 | 2.1 | 2. Los tipos de trámite existentes ya tiene una plantilla de presupuesto asociada. | El sistema gestiona la excepción y notifica al usuario. |
 | 4.1 | No existen conceptos registrados. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Gastos por tipo de documento (Issue #823)
+
+Además de los conceptos, la plantilla de presupuesto de un tipo de trámite
+puede definir un gasto fijo o variable (porcentaje) esperado por cada tipo
+de documento asociado a ese trámite (`PlantillaCostoDocumento`). Debe
+indicarse exactamente uno de los dos (monto fijo o porcentaje variable), no
+ambos ni ninguno. Ver CU27 – Ingresar nuevo tipo de documento para cómo ese
+costo se refleja luego en el presupuesto de un trámite concreto.

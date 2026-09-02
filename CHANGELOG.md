@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
+  cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
+  included in its presupuesto's total. Adds `PlantillaCostoDocumento`
+  (`POST`/`GET /api/v1/plantilla-costos-documento`) so a `TipoDeTramite`'s
+  presupuesto template can define an expected fixed or variable
+  (percentage) cost per `TipoDeDocumento` — exactly one of the two must be
+  set. Adds a "Costos de Documentos" section to the plantillas de
+  presupuesto admin screen.
 - **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
   new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
   plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
