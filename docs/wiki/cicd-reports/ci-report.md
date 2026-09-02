@@ -5,9 +5,9 @@ nav_order: 1
 
 # 📊 CI/CD Pipeline Report
 
-**Generated:** 2026-09-01 11:34:12  
+**Generated:** 2026-09-02 12:47:11  
 **Branch:** main  
-**Commit:** 5c89f7b4dd5ca85edb3554fa0040c78abe279649
+**Commit:** 256a1501c0b3dd332f8c408fd21bd56011fdf320
 
 ---
 
@@ -16,7 +16,7 @@ nav_order: 1
 | Job | Status |
 |-----|--------|
 | Build & Compile | success |
-| Unit Tests | success |
+| Unit Tests | failure |
 | Integration Tests | failure |
 | Code Coverage | failure |
 | Security Scan | success |
