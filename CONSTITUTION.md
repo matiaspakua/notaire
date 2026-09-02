@@ -297,6 +297,56 @@ Docker image; see [Release Rules](#11-release-rules)).
 **24. Cerrar Issue.** Close the GitHub Issue only after deploy + smoke test
 succeeded, referencing the PR.
 
+### Skill-assisted SDLC operating model
+
+Skills are reusable execution guidance, not a second policy layer. The
+Constitution is authoritative; OpenSpec is the change record; permanent
+documentation under `docs/` is the durable source of business and engineering
+knowledge. Use the narrowest project-specific skill for implementation details
+and compose it with the generic lifecycle skill when the work crosses a
+quality, security, delivery or operations boundary.
+
+| SDLC stage | Required capability | Notaire skills | Primary output |
+|---|---|---|---|
+| Strategy and discovery | Baseline, value and backlog | `delivery-maturity-roadmap`, `analyst`, `product-owner` | roadmap hypothesis, Issue, Use Case, acceptance criteria |
+| Traceability | Evidence chain and impact | `devsecops-traceability`, `openspec-triage` | IDs, traceability ledger, impact map |
+| Specification | Behavior contract | `openspec-propose`, `openspec` schema `notaire-sdlc` | proposal, delta specs, scenarios |
+| Architecture | Decisions and quality attributes | `architecture-decision-design`, `plantuml`, `java-architect` | design, ADR, C4/UML views |
+| Security design | Threats, privacy and controls | `secure-threat-modeling`, `backend`, `devops` | threat model, risk register, `SR-*` requirements |
+| Test design | Risk-based verification | `qa-automation-strategy`, `testing`, `api-rest` | MTP/test plan, test cases, fixtures, vectors |
+| Implementation | TDD and project conventions | `openspec-apply-change`, `programming`, `java`, `frontend-design` | failing tests, implementation, updated traceability |
+| Contract and integration | Consumer/provider compatibility | `api-contract-testing`, `api-rest` | OpenAPI/Swagger, Bruno/contract evidence |
+| Delivery | Quality, security and release gates | `ci-cd-quality-gates`, `devops`, `maven-build` | gate log, reports, immutable artifact, promotion decision |
+| Production | Operability and learning | `operations-observability-readiness`, `devops` | SLOs, telemetry, runbook, smoke/incident evidence |
+| Completion | Evidence and knowledge closure | `devsecops-traceability`, `openspec-archive-change` | complete ledger, permanent docs, archived change |
+
+#### Skill contracts
+
+Each lifecycle skill must declare its scope, inputs, outputs, validation and
+residual risks. It must preserve existing IDs and conventions, report unknowns
+instead of inventing evidence, and avoid copying permanent documentation into
+OpenSpec artifacts. When a skill produces an artifact, the artifact must carry
+the Issue/Use Case IDs and be linked from the change's `traceability.md`.
+
+The minimum cross-cutting artifact chain is:
+
+```text
+Issue + CU -> proposal -> scenario/spec -> design/ADR/threat model
+  -> tests -> code/change -> CI/security evidence -> release/deploy
+  -> smoke/SLO/incident evidence -> permanent documentation
+```
+
+Use `delivery-maturity-roadmap` for prioritization, not as a substitute for a
+product decision. Use `secure-threat-modeling` before recommending security
+controls for a new design. Use `qa-automation-strategy` before adding tests so
+test level, data, evidence and ownership are explicit. Use
+`ci-cd-quality-gates` and `operations-observability-readiness` before release
+or production changes. For API changes, `api-contract-testing` is mandatory.
+
+Project-specific skills remain authoritative for local commands and framework
+patterns. The generic skills remain reusable and provider-neutral; they must not
+be changed to encode Notaire-only paths or credentials.
+
 ---
 
 ## 6. Quality Gates
@@ -478,6 +528,13 @@ An AI agent **must**:
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
 
+Before acting, the agent must select the applicable skills using
+`.claude/skills/README.md`, load their references only when needed, and state
+which lifecycle stage and Gate the work is addressing. If the task crosses
+stages, compose skills rather than repeating their instructions. Skill guidance
+cannot override this Constitution, an approved OpenSpec artifact, or human
+direction.
+
 **Spec-Driven Development is the mechanism.** This Constitution is wired into
 OpenSpec through the project schema `openspec/schemas/notaire-sdlc` and
 `openspec/config.yaml`. Because both are read by the `openspec` CLI rather than
@@ -490,7 +547,7 @@ Agent-specific entry points:
 - **Claude Code** → `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md`
 - **OpenCode** → `opencode.json` (loads `CLAUDE.md` and `.claude/rules/*`)
 - **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
-- **Any agent** → `AGENTS.md` at repo root; `.agents/skills/openspec-*`
+- **Any agent** → `AGENTS.md` at repo root; `.claude/skills/openspec-*`
 - **Any agent, via the CLI** → `openspec instructions <artifact> --change <name>`
 
 ---
@@ -545,6 +602,8 @@ drift.
 | Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
 | Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `openspec/specs/` |
+| Lifecycle skill composition | `.claude/skills/README.md`; generic skills under `.claude/skills/`; project skills for implementation details |
+| Skill references and evaluation | `<skill>/references/` for progressive disclosure; `<skill>/evals/evals.json` for repeatable scenarios |
 | Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `openspec/NOTAIRE-ADAPTATIONS.md` |
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
