@@ -160,6 +160,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`PersonaController` create/update leaked unhandled 500s on non-duplicate persistence errors**
+  (issue #912): PR #905 (#835) removed the generic `catch (Exception e) -> 409` fallback from
+  `createPersona`/`updatePersona`, leaving only the `PersonaDuplicadaException` branch. Restored
+  the fallback so any other persistence failure surfaces as 409 instead of an unhandled 500.
 - **Payments exceeding a presupuesto's saldo pendiente returned a generic 400 instead of a
   specific 409** (issue #848, CU15): `PagoService.procesarPago` already rejected overpayments
   but duplicated the saldo calculation inline and threw a plain `IllegalArgumentException`,
