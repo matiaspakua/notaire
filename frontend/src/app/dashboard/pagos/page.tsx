@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePagos, useCreatePago, useUpdatePago, useDeletePago } from "@/hooks/usePagos";
+import { usePagos, useCreatePago, useUpdatePago, useDeletePago, usePagoEstado } from "@/hooks/usePagos";
 import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
 import { ApiError } from "@/lib/api-client";
 import { formatDate, formatCurrency } from "@/lib/utils";
@@ -45,6 +45,14 @@ export default function PagosPage() {
   const { data: resumen, isLoading: resumenLoading } = usePresupuestoResumen(
     editing.idPresupuesto || null
   );
+  // Fetch estado de pago for selected presupuesto (Issue #821)
+  const { data: estadoPago } = usePagoEstado(editing.idPresupuesto || null);
+
+  const estadoPagoLabel: Record<string, string> = {
+    SIN_PAGOS: t("estadoSinPagos"),
+    PARCIAL: t("estadoParcial"),
+    SALDADO: t("estadoSaldado"),
+  };
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(p: Pago) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
@@ -136,7 +144,17 @@ export default function PagosPage() {
                     <div className="text-sm text-muted-foreground">Cargando saldo...</div>
                   ) : resumen ? (
                     <div className="space-y-1">
-                      <div className="text-sm text-muted-foreground">Saldo Pendiente</div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">Saldo Pendiente</div>
+                        {estadoPago && (
+                          <span
+                            data-testid="estado-pago-badge"
+                            className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"
+                          >
+                            {estadoPagoLabel[estadoPago]}
+                          </span>
+                        )}
+                      </div>
                       <div className="text-lg font-semibold text-blue-900">
                         {formatCurrency(resumen.saldoPendiente || 0)}
                       </div>

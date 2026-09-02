@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos` to list
   only discount/surcharge items for a presupuesto, and a "Tipo"/"Motivo" UI
   on the ítems admin screen with a descuentos/recargos report section.
+- **Estado de pago por presupuesto** (issue #821, CU15, CU47): adds
+  `GET /api/v1/pagos/presupuesto/{idPresupuesto}/estado`, returning
+  `SIN_PAGOS`, `PARCIAL`, or `SALDADO` derived from the existing saldo
+  pendiente calculation. Additive change — existing pago/saldo endpoints are
+  unchanged. The Pagos screen now shows an estado badge next to the saldo
+  pendiente for the selected presupuesto.
+
 - **Protocolo Auxiliar** (issue #839, CU81): marking a `TipoDeFolio` as
   `esAuxiliar` lets escribanos start a new `Escritura` directly on an available
   Protocolo Auxiliar folio (a folio of that type not yet linked to an

@@ -3,6 +3,7 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoPagoResponse;
 import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
+import com.licensis.notaire.service.EstadoPago;
 import com.licensis.notaire.service.PagoService;
 import com.licensis.notaire.service.mappers.PagoMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,6 +98,25 @@ public class PagoController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error("Error al calcular saldo pendiente", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @GetMapping("/presupuesto/{idPresupuesto}/estado")
+    @Operation(summary = "CU47 - Calcular estado de pago (SIN_PAGOS, PARCIAL, SALDADO) de un presupuesto")
+    @Transactional(readOnly = true)
+    public ResponseEntity<EstadoPago> getEstadoPago(@PathVariable Integer idPresupuesto) {
+        try {
+            EstadoPago estado = pagoService.calcularEstadoPago(idPresupuesto);
+            return ResponseEntity.ok(estado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Error al calcular estado de pago", e);
             return ResponseEntity.internalServerError().build();
         }
     }

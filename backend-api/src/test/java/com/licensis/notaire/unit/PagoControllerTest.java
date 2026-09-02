@@ -4,6 +4,7 @@ import com.licensis.notaire.api.PagoController;
 import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.service.EstadoPago;
 import com.licensis.notaire.service.PagoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,6 +158,31 @@ class PagoControllerTest {
     void shouldReturnServerErrorOnSaldoCalculation() throws Exception {
         when(pagoService.calcularSaldoPendiente(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return estado de pago")
+    void shouldGetEstadoPago() throws Exception {
+        when(pagoService.calcularEstadoPago(10)).thenReturn(EstadoPago.PARCIAL);
+        mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("\"PARCIAL\""));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 404 for invalid presupuesto")
+    void shouldReturn404ForEstadoOfInvalidPresupuesto() throws Exception {
+        when(pagoService.calcularEstadoPago(999)).thenThrow(new IllegalArgumentException("Not found"));
+        mockMvc.perform(get("/api/v1/pagos/presupuesto/999/estado"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 500 on error")
+    void shouldReturnServerErrorOnEstadoCalculation() throws Exception {
+        when(pagoService.calcularEstadoPago(anyInt())).thenThrow(new RuntimeException("Calculation error"));
+        mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isInternalServerError());
     }
 
