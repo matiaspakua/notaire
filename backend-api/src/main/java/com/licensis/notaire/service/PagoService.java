@@ -114,6 +114,26 @@ public class PagoService {
     }
 
     /**
+     * CU15/CU47 - Calcula el estado de pago agregado de un presupuesto (Issue #821):
+     * SIN_PAGOS si no se registró ningún pago, SALDADO si el saldo pendiente es cero,
+     * PARCIAL en cualquier otro caso.
+     */
+    @Transactional(readOnly = true)
+    public EstadoPago calcularEstadoPago(Integer idPresupuesto) {
+        presupuestoRepository.findById(idPresupuesto)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Presupuesto no encontrado con ID: " + idPresupuesto));
+
+        Float totalPagado = pagoRepository.sumMontoByPresupuestoId(idPresupuesto);
+        if (totalPagado == null || totalPagado == 0f) {
+            return EstadoPago.SIN_PAGOS;
+        }
+
+        Float saldoPendiente = calcularSaldoPendiente(idPresupuesto);
+        return saldoPendiente <= 0f ? EstadoPago.SALDADO : EstadoPago.PARCIAL;
+    }
+
+    /**
      * Calcula el total de un presupuesto sumando los items.
      */
     private Float calcularTotalPresupuesto(Presupuesto presupuesto) {

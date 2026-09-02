@@ -5,6 +5,7 @@ import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
+import com.licensis.notaire.service.EstadoPago;
 import com.licensis.notaire.service.PagoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -190,6 +191,39 @@ class PagoServiceTest {
         assertThat(result).isEqualTo(5000f);
 
         verify(presupuestoRepository, times(1)).findById(1);
+    }
+
+    @Test
+    @DisplayName("Should report estado SIN_PAGOS when presupuesto has no pagos")
+    void shouldCalculateEstadoPagoSinPagos() {
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(null);
+
+        EstadoPago result = pagoService.calcularEstadoPago(1);
+
+        assertThat(result).isEqualTo(EstadoPago.SIN_PAGOS);
+    }
+
+    @Test
+    @DisplayName("Should report estado PARCIAL when saldo pendiente is positive but some pagos exist")
+    void shouldCalculateEstadoPagoParcial() {
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(1000f);
+
+        EstadoPago result = pagoService.calcularEstadoPago(1);
+
+        assertThat(result).isEqualTo(EstadoPago.PARCIAL);
+    }
+
+    @Test
+    @DisplayName("Should report estado SALDADO when saldo pendiente is zero")
+    void shouldCalculateEstadoPagoSaldado() {
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(5000f);
+
+        EstadoPago result = pagoService.calcularEstadoPago(1);
+
+        assertThat(result).isEqualTo(EstadoPago.SALDADO);
     }
 
     @Test
