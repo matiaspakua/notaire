@@ -160,6 +160,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`PersonaController` create/update leaked unhandled 500s on non-duplicate persistence errors**
+  (issue #912): PR #905 (#835) removed the generic `catch (Exception e) -> 409` fallback from
+  `createPersona`/`updatePersona`, leaving only the `PersonaDuplicadaException` branch. Restored
+  the fallback so any other persistence failure surfaces as 409 instead of an unhandled 500.
+
 - **`CheckboxField` double-toggled on every click, making checkboxes appear unresponsive**
   (issue #839): the shared `CheckboxField` component in `theme/form-patterns.tsx` had both
   a wrapper `onClick={() => onChange(!checked)}` and the native `<input onChange>` firing on
