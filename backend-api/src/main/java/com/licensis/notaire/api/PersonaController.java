@@ -82,6 +82,8 @@ public class PersonaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (PersonaDuplicadaException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicadaBody(e));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
@@ -105,6 +107,8 @@ public class PersonaController {
                         return ResponseEntity.ok((Object) updated);
                     } catch (PersonaDuplicadaException e) {
                         return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) duplicadaBody(e));
+                    } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) e.getMessage());
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());
