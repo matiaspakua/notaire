@@ -13,7 +13,7 @@ INSERT INTO tipos_identificacion (version, nombre) VALUES (0, 'DNI');
 
 -- Reference Data: Tipos de Folio
 -- Entity columns: version, id_tipo_folio (auto), nombre, observaciones, habilitado
-INSERT INTO tipos_de_folio (version, nombre, habilitado) VALUES (0, 'De documento', true);
+INSERT INTO tipos_de_folio (version, nombre, habilitado, es_auxiliar) VALUES (0, 'De documento', true, false);
 
 -- Reference Data: Estados de Gestion
 -- Entity columns: version, id_estado_gestion (auto), nombre, observaciones

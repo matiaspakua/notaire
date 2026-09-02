@@ -384,6 +384,19 @@
         "selectFolios": "Folios",
         "observaciones": "Observaciones"
       }
+    },
+    "auxiliar": {
+      "title": "Protocolo Auxiliar",
+      "description": "Gestionar trámites en folios de Protocolo Auxiliar",
+      "noData": "No hay folios de Protocolo Auxiliar disponibles",
+      "iniciarEscritura": "Iniciar Escritura",
+      "created": "Escritura iniciada correctamente",
+      "errorCreate": "Error al iniciar la escritura",
+      "cuerpoHelper": "Contenido de la escritura a iniciar en el folio seleccionado",
+      "fields": {
+        "folio": "Folio",
+        "cuerpo": "Cuerpo"
+      }
     }
   },
   "inmuebles": {
@@ -639,7 +652,8 @@
         "errorSave": "Error al guardar el tipo de folio",
         "errorDelete": "Error al eliminar el tipo de folio",
         "inUseCannotDelete": "No se puede eliminar: está siendo utilizado por folios",
-        "noData": "No hay tipos de folio"
+        "noData": "No hay tipos de folio",
+        "esAuxiliar": "Protocolo Auxiliar"
       }
     },
     "tramites": {

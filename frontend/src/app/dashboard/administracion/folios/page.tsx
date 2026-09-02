@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
@@ -23,6 +23,7 @@ const ESTADO_UTILIZADO = "Utilizado";
 interface TipoDeFolioRow {
   idTipoFolio: number;
   nombre: string;
+  esAuxiliar?: boolean;
 }
 
 interface FolioFormState {
@@ -67,6 +68,7 @@ export default function FoliosAdminPage() {
   const [tipoModalOpen, setTipoModalOpen] = useState(false);
   const [tipoEditing, setTipoEditing] = useState<TipoDeFolioRow | null>(null);
   const [tipoNombre, setTipoNombre] = useState("");
+  const [tipoEsAuxiliar, setTipoEsAuxiliar] = useState(false);
   const [tipoDeleteId, setTipoDeleteId] = useState<number | null>(null);
   const [tipoSaving, setTipoSaving] = useState(false);
   const [tipoDeleting, setTipoDeleting] = useState(false);
@@ -82,12 +84,14 @@ export default function FoliosAdminPage() {
   function openCreateTipo() {
     setTipoEditing(null);
     setTipoNombre("");
+    setTipoEsAuxiliar(false);
     setTipoModalOpen(true);
   }
 
   function openEditTipo(tf: TipoDeFolioRow) {
     setTipoEditing(tf);
     setTipoNombre(tf.nombre);
+    setTipoEsAuxiliar(tf.esAuxiliar ?? false);
     setTipoModalOpen(true);
   }
 
@@ -99,10 +103,10 @@ export default function FoliosAdminPage() {
     setTipoSaving(true);
     try {
       if (tipoEditing) {
-        await apiPut(`/tipo-folio/${tipoEditing.idTipoFolio}`, { nombre: tipoNombre });
+        await apiPut(`/tipo-folio/${tipoEditing.idTipoFolio}`, { nombre: tipoNombre, esAuxiliar: tipoEsAuxiliar });
         toast.success(t("tiposDeFolio.updated"));
       } else {
-        await apiPost("/tipo-folio", { nombre: tipoNombre });
+        await apiPost("/tipo-folio", { nombre: tipoNombre, esAuxiliar: tipoEsAuxiliar });
         toast.success(t("tiposDeFolio.created"));
       }
       setTipoModalOpen(false);
@@ -418,6 +422,11 @@ export default function FoliosAdminPage() {
             { key: "id", header: tc("id"), render: (tf) => <span className="text-xs text-muted-foreground">{tf.idTipoFolio}</span>, className: "w-12" },
             { key: "nombre", header: tc("name"), render: (tf) => <span className="font-medium">{tf.nombre}</span> },
             {
+              key: "esAuxiliar",
+              header: t("tiposDeFolio.esAuxiliar"),
+              render: (tf) => (tf.esAuxiliar ? <Badge variant="secondary">{t("tiposDeFolio.esAuxiliar")}</Badge> : "—"),
+            },
+            {
               key: "actions",
               header: "",
               className: "w-24",
@@ -454,6 +463,12 @@ export default function FoliosAdminPage() {
                   data-testid="input-nombre-tipo-folio"
                 />
               </FormField>
+              <CheckboxField
+                label={t("tiposDeFolio.esAuxiliar")}
+                checked={tipoEsAuxiliar}
+                onChange={setTipoEsAuxiliar}
+                data-testid="checkbox-es-auxiliar-tipo-folio"
+              />
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setTipoModalOpen(false)}>

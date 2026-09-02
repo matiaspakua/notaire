@@ -15,6 +15,7 @@ public class DtoTipoDeFolio implements DtoValido {
     private String observaciones;
     private Set folios = new HashSet(0);
     private boolean habilitado;
+    private boolean esAuxiliar;
     private Integer version;
 
     public DtoTipoDeFolio() {
@@ -69,6 +70,14 @@ public class DtoTipoDeFolio implements DtoValido {
 
     public void setHabilitado(boolean habilitado) {
         this.habilitado = habilitado;
+    }
+
+    public boolean isEsAuxiliar() {
+        return esAuxiliar;
+    }
+
+    public void setEsAuxiliar(boolean esAuxiliar) {
+        this.esAuxiliar = esAuxiliar;
     }
 
     public Integer getVersion() {

@@ -141,4 +141,24 @@ class TipoDeFolioControllerTest {
         mockMvc.perform(delete("/api/v1/tipo-folio/1"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("CU81 — PUT /{id} should mark a tipo de folio as Protocolo Auxiliar")
+    void shouldMarkTipoDeFolioAsAuxiliar() throws Exception {
+        TipoDeFolio existing = buildEntity();
+        when(repository.findById(1)).thenReturn(Optional.of(existing));
+        when(folioRepository.findByFkIdTipoFolioIdTipoFolio(1)).thenReturn(List.of());
+        when(repository.save(any(TipoDeFolio.class))).thenReturn(existing);
+
+        DtoTipoDeFolio dto = new DtoTipoDeFolio();
+        dto.setNombre("Protocolo Auxiliar");
+        dto.setEsAuxiliar(true);
+
+        mockMvc.perform(put("/api/v1/tipo-folio/1")
+                        .contentType("application/json")
+                        .content(mapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+
+        org.assertj.core.api.Assertions.assertThat(existing.isEsAuxiliar()).isTrue();
+    }
 }

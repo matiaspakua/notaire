@@ -65,6 +65,9 @@ public class TipoDeFolio implements Serializable
     @Basic(optional = false)
     @Column(name = "habilitado")
     private boolean habilitado;
+    @Basic(optional = false)
+    @Column(name = "es_auxiliar")
+    private boolean esAuxiliar;
 
     public TipoDeFolio()
     {
@@ -178,6 +181,7 @@ public class TipoDeFolio implements Serializable
         miDtoTipoDeFolio.setNombre(this.getNombre());
         miDtoTipoDeFolio.setObservaciones(this.getObservaciones());
         miDtoTipoDeFolio.setHabilitado(this.habilitado);
+        miDtoTipoDeFolio.setEsAuxiliar(this.esAuxiliar);
         miDtoTipoDeFolio.setVersion(this.getVersion());
 
         return miDtoTipoDeFolio;
@@ -192,6 +196,7 @@ public class TipoDeFolio implements Serializable
             this.setNombre(dtoTipoDeFolio.getNombre());
             this.setObservaciones(dtoTipoDeFolio.getObservaciones());
             this.setHabilitado(dtoTipoDeFolio.isHabilitado());
+            this.setEsAuxiliar(dtoTipoDeFolio.isEsAuxiliar());
             this.setVersion(dtoTipoDeFolio.getVersion());
         } else
         {
@@ -208,5 +213,15 @@ public class TipoDeFolio implements Serializable
     public void setHabilitado(boolean habilitado)
     {
         this.habilitado = habilitado;
+    }
+
+    public boolean isEsAuxiliar()
+    {
+        return esAuxiliar;
+    }
+
+    public void setEsAuxiliar(boolean esAuxiliar)
+    {
+        this.esAuxiliar = esAuxiliar;
     }
 }

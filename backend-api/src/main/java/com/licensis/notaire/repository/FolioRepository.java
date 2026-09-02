@@ -5,6 +5,7 @@ import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,4 +33,11 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
     List<Folio> findByFkIdCuaderno(Cuaderno cuaderno);
 
     List<Folio> findAllByIdFolioIn(List<Integer> ids);
+
+    @Query("SELECT f FROM Folio f WHERE f.fkIdTipoFolio.esAuxiliar = true AND f.fkIdEscritura IS NULL")
+    List<Folio> findFoliosAuxiliaresDisponibles();
+
+    @Query("SELECT MAX(f.fkIdEscritura.numero) FROM Folio f "
+            + "WHERE f.fkIdTipoFolio.esAuxiliar = true AND f.fkIdEscritura IS NOT NULL")
+    Optional<Integer> findMaxNumeroEscrituraAuxiliar();
 }
