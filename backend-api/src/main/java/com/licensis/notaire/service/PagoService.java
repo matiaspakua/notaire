@@ -1,6 +1,8 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.dto.TipoItem;
 import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
+import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
@@ -130,8 +132,9 @@ public class PagoService {
     }
 
     /**
-     * Calcula el total de un presupuesto sumando los items y los costos de
-     * documentos presentados en sus trámites (Issue #823).
+     * CU45 - Calcula el total de un presupuesto sumando los items normales y de recargo,
+     * restando los items de descuento, y sumando los costos de documentos presentados
+     * en sus trámites (Issue #823).
      */
     private Float calcularTotalPresupuesto(Presupuesto presupuesto) {
         float total;
@@ -139,8 +142,8 @@ public class PagoService {
             total = presupuesto.getMontoInmueble() != null ? presupuesto.getMontoInmueble() : 0f;
         } else {
             total = 0f;
-            for (var item : presupuesto.getItemList()) {
-                total += item.getValor();
+            for (Item item : presupuesto.getItemList()) {
+                total += item.getTipo() == TipoItem.DESCUENTO ? -item.getValor() : item.getValor();
                 if (item.getPorcentaje() != null && item.getPorcentaje() > 0) {
                     total += total * (item.getPorcentaje() / 100.0f);
                 }

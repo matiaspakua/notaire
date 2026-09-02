@@ -1,6 +1,8 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.dto.TipoItem;
 import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
+import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
@@ -418,6 +420,76 @@ class PagoServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.getMonto()).isEqualTo(15000f);
             verify(pagoRepository).save(any(Pago.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Descuentos y recargos en el total (Issue #822)")
+    class DescuentosYRecargosTests {
+
+        private Item buildItem(TipoItem tipo, float valor) {
+            Item item = new Item();
+            item.setNombre("Item de prueba");
+            item.setValor(valor);
+            item.setTipo(tipo);
+            return item;
+        }
+
+        @Test
+        @DisplayName("Should subtract a discount item from the total")
+        void shouldSubtractDiscountItemFromTotal() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(0f);
+            presupuesto.setItemList(List.of(
+                    buildItem(TipoItem.NORMAL, 10000f),
+                    buildItem(TipoItem.DESCUENTO, 2000f)
+            ));
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(0f);
+
+            Float saldoPendiente = pagoService.calcularSaldoPendiente(1);
+
+            assertThat(saldoPendiente).isEqualTo(8000f);
+        }
+
+        @Test
+        @DisplayName("Should add a surcharge item to the total")
+        void shouldAddSurchargeItemToTotal() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(0f);
+            presupuesto.setItemList(List.of(
+                    buildItem(TipoItem.NORMAL, 10000f),
+                    buildItem(TipoItem.RECARGO, 1500f)
+            ));
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(0f);
+
+            Float saldoPendiente = pagoService.calcularSaldoPendiente(1);
+
+            assertThat(saldoPendiente).isEqualTo(11500f);
+        }
+
+        @Test
+        @DisplayName("Should sum only normal items when there are no discounts or surcharges")
+        void shouldSumOnlyNormalItemsWhenNoDiscountsOrSurcharges() {
+            Presupuesto presupuesto = new Presupuesto();
+            presupuesto.setIdPresupuesto(1);
+            presupuesto.setMontoInmueble(0f);
+            presupuesto.setItemList(List.of(
+                    buildItem(TipoItem.NORMAL, 10000f),
+                    buildItem(TipoItem.NORMAL, 5000f)
+            ));
+
+            when(presupuestoRepository.findById(1)).thenReturn(Optional.of(presupuesto));
+            when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(0f);
+
+            Float saldoPendiente = pagoService.calcularSaldoPendiente(1);
+
+            assertThat(saldoPendiente).isEqualTo(15000f);
         }
     }
 }

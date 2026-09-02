@@ -1,5 +1,5 @@
 -- =============================================================================
--- V21__create_plantilla_costos_documento.sql
+-- V22__create_plantilla_costos_documento.sql
 -- =============================================================================
 -- Description: Creates plantilla_costos_documento, letting a TipoDeTramite's
 -- presupuesto template define an expected fixed or variable cost per

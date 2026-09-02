@@ -17,6 +17,8 @@ public class DtoItem implements DtoValido
     private String observaciones;
     private Integer version = 0;
     private Boolean conceptoFijo;
+    private TipoItem tipo;
+    private String motivo;
 
     /**
      * Constructor sin argumentos de @link DtoItem
@@ -120,6 +122,26 @@ public class DtoItem implements DtoValido
     public void setObservaciones(String observaciones)
     {
         this.observaciones = observaciones;
+    }
+
+    public TipoItem getTipo()
+    {
+        return this.tipo;
+    }
+
+    public void setTipo(TipoItem tipo)
+    {
+        this.tipo = tipo;
+    }
+
+    public String getMotivo()
+    {
+        return this.motivo;
+    }
+
+    public void setMotivo(String motivo)
+    {
+        this.motivo = motivo;
     }
 
     @Override

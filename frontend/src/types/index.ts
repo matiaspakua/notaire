@@ -174,8 +174,18 @@ export interface CreateCompleteGestionInput {
   inmuebleId?: number;
 }
 
+export type TipoItem = "NORMAL" | "DESCUENTO" | "RECARGO";
+
 export interface Item {
   idItem?: number;
+  nombre?: string;
+  valor?: number;
+  porcentaje?: number;
+  observaciones?: string;
+  tipo?: TipoItem;
+  motivo?: string;
+  // Legacy fields kept for backward compatibility with older unit tests;
+  // the backend Item entity has no concepto/cantidad/precio fields.
   concepto?: Concepto;
   cantidad?: number;
   precio?: number;

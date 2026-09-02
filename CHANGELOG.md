@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
+  new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
+  plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
+  validated both client- and server-side. `PagoService`'s total calculation
+  now subtracts `DESCUENTO` items and adds `RECARGO` items. Adds
+  `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos` to list
+  only discount/surcharge items for a presupuesto, and a "Tipo"/"Motivo" UI
+  on the ítems admin screen with a descuentos/recargos report section.
 - **Estado de pago por presupuesto** (issue #821, CU15, CU47): adds
   `GET /api/v1/pagos/presupuesto/{idPresupuesto}/estado`, returning
   `SIN_PAGOS`, `PARCIAL`, or `SALDADO` derived from the existing saldo

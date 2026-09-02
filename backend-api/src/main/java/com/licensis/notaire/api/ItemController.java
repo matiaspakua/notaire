@@ -1,7 +1,9 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.repository.ItemRepository;
+import com.licensis.notaire.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,17 +31,17 @@ public class ItemController {
 
     private static final Logger log = LoggerFactory.getLogger(ItemController.class);
 
-    private final ItemRepository repository;
+    private final ItemService itemService;
 
-    public ItemController(ItemRepository repository) {
-        this.repository = repository;
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todos los ítems")
     @Transactional(readOnly = true)
     public ResponseEntity<List<Item>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(itemService.findAll());
     }
 
     @ApiResponses({
@@ -50,7 +52,7 @@ public class ItemController {
     @Operation(summary = "Obtener ítem por ID")
     @Transactional(readOnly = true)
     public ResponseEntity<Item> getById(@PathVariable Integer id) {
-        return repository.findById(id)
+        return itemService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -59,7 +61,22 @@ public class ItemController {
     @Operation(summary = "Obtener ítems por presupuesto")
     @Transactional(readOnly = true)
     public ResponseEntity<List<Item>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
-        return ResponseEntity.ok(repository.findByFkIdPresupuestoIdPresupuesto(idPresupuesto));
+        return ResponseEntity.ok(itemService.findByPresupuesto(idPresupuesto));
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @GetMapping("/presupuesto/{idPresupuesto}/descuentos-recargos")
+    @Operation(summary = "CU45/CU71 - Consultar descuentos y recargos de un presupuesto")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<Item>> getDescuentosYRecargos(@PathVariable Integer idPresupuesto) {
+        try {
+            return ResponseEntity.ok(itemService.findDescuentosYRecargosByPresupuesto(idPresupuesto));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @ApiResponses({
@@ -71,8 +88,11 @@ public class ItemController {
     @Operation(summary = "Crear nuevo ítem")
     public ResponseEntity<Object> create(@RequestBody Item entity) {
         try {
-            entity = repository.save(entity);
+            entity = itemService.create(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        } catch (BusinessValidationException e) {
+            log.warn("Error de validación al crear item: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to create item", e);
             return ResponseEntity.internalServerError().build();
@@ -81,18 +101,20 @@ public class ItemController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar ítem")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Item entity) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
-            entity.setIdItem(id);
-            repository.save(entity);
+            itemService.update(id, entity);
             return ResponseEntity.ok().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (BusinessValidationException e) {
+            log.warn("Error de validación al actualizar item id {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to update item id {}", id, e);
             return ResponseEntity.internalServerError().build();
@@ -106,12 +128,11 @@ public class ItemController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar ítem")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
         try {
-            repository.deleteById(id);
+            itemService.delete(id);
             return ResponseEntity.ok().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error("Failed to delete item id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
