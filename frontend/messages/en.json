@@ -384,6 +384,19 @@
         "selectFolios": "Folios",
         "observaciones": "Observations"
       }
+    },
+    "auxiliar": {
+      "title": "Auxiliary Protocol",
+      "description": "Manage transactions on Auxiliary Protocol folios",
+      "noData": "No Auxiliary Protocol folios available",
+      "iniciarEscritura": "Start Deed",
+      "created": "Deed started successfully",
+      "errorCreate": "Error starting deed",
+      "cuerpoHelper": "Content of the deed to start on the selected folio",
+      "fields": {
+        "folio": "Folio",
+        "cuerpo": "Body"
+      }
     }
   },
   "inmuebles": {

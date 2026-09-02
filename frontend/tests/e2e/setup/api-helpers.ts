@@ -389,6 +389,19 @@ export async function createFolio(
   });
 }
 
+export async function createTipoDeFolio(
+  page: Page,
+  overrides: { nombre?: string; esAuxiliar?: boolean; habilitado?: boolean } = {},
+): Promise<ApiResult<{ idTipoFolio: number }>> {
+  const id = uniqueId();
+  return apiPost(page, "/tipo-folio", {
+    nombre: `Tipo Folio E2E ${id}`,
+    habilitado: true,
+    esAuxiliar: false,
+    ...overrides,
+  });
+}
+
 /**
  * Catálogo helpers
  */
