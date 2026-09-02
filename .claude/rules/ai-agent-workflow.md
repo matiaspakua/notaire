@@ -390,9 +390,21 @@ Closes #254"
 
 ### Step 7: Push to Remote
 
+**MANDATORY — before every push, ensure the branch is conflict-free with `main`.** A PR left in `CONFLICTING`/`DIRTY` mergeable state blocks CI and merge, and stale conflicts compound the longer they sit.
+
 ```bash
+git fetch origin
+git merge origin/main --no-edit   # or: git rebase origin/main
+# Resolve any conflicts, then re-run the affected test suites
+# (unit + integration + pg-integration, at minimum) before pushing.
 git push -u origin <branch-name>
 ```
+
+If a PR already exists and shows a merge conflict (check with
+`gh pr view <number> --json mergeable,mergeStateStatus`), resolve it
+immediately — merge `main` into the feature branch, fix conflicts, re-run
+tests, commit the merge, and push. Do not open a new PR or move to the next
+finding while an existing PR is left in a conflicting state.
 
 ---
 
