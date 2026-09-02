@@ -201,6 +201,20 @@ export interface PlantillaPresupuesto {
   itemList?: Item[];
 }
 
+export interface PlantillaCostoDocumentoPK {
+  fkIdTipoTramite: number;
+  fkIdTipoDocumento: number;
+}
+
+export interface PlantillaCostoDocumento {
+  plantillaCostoDocumentoPK?: PlantillaCostoDocumentoPK;
+  tipoDeTramite?: TipoDeTramite;
+  tipoDeDocumento?: TipoDeDocumento;
+  montoFijo?: number;
+  porcentajeVariable?: number;
+  version?: number;
+}
+
 export interface Presupuesto {
   idPresupuesto?: number;
   fecha?: string;
