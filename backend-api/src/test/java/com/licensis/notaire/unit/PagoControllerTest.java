@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.PagoController;
+import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.service.PagoService;
@@ -256,6 +257,27 @@ class PagoControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/v1/pagos should return 409 when monto exceeds saldo pendiente")
+    void shouldReturn409WhenCreateExceedsSaldo() throws Exception {
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
+                .thenThrow(new SaldoPendienteExcedidoException("no puede exceder el saldo pendiente"));
+
+        String json = """
+                {
+                    "idPresupuesto": 10,
+                    "monto": 999999.0,
+                    "fecha": "2026-06-16",
+                    "observaciones": "Overpay"
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/pagos")
+                .contentType("application/json")
+                .content(json))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     @DisplayName("POST /api/v1/pagos should return 500 on service error")
     void shouldReturn500OnCreateServiceError() throws Exception {
         when(pagoService.procesarPago(anyInt(), anyFloat(), any(), anyString(), any()))
@@ -304,6 +326,18 @@ class PagoControllerTest {
                 .param("monto", "500.0"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idPago").value(1));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/pagos/params should return 409 when monto exceeds saldo pendiente")
+    void shouldReturn409OnParamsExceedsSaldo() throws Exception {
+        when(pagoService.procesarPago(anyInt(), anyFloat(), any(), any(), any()))
+                .thenThrow(new SaldoPendienteExcedidoException("no puede exceder el saldo pendiente"));
+
+        mockMvc.perform(post("/api/v1/pagos/params")
+                .param("idPresupuesto", "10")
+                .param("monto", "999999.0"))
+                .andExpect(status().isConflict());
     }
 
     @Test

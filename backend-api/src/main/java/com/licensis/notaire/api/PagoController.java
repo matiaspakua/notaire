@@ -1,6 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoPagoResponse;
+import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.service.PagoService;
 import com.licensis.notaire.service.mappers.PagoMapper;
@@ -134,6 +135,9 @@ public class PagoController {
                     request.metodoPago()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(PagoMapper.toDto(pago));
+        } catch (SaldoPendienteExcedidoException e) {
+            log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al procesar pago: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
@@ -143,6 +147,11 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
     @PostMapping("/params")
     @Operation(summary = "CU15 - Procesar pago (query params)")
     public ResponseEntity<DtoPagoResponse> procesarPagoParams(
@@ -155,6 +164,9 @@ public class PagoController {
         try {
             Pago pago = pagoService.procesarPago(idPresupuesto, monto, fecha, observaciones, metodoPago);
             return ResponseEntity.status(HttpStatus.CREATED).body(PagoMapper.toDto(pago));
+        } catch (SaldoPendienteExcedidoException e) {
+            log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
             log.warn("Error de validación al procesar pago: {}", e.getMessage());
             return ResponseEntity.badRequest().build();

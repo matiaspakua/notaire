@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
@@ -367,7 +368,7 @@ class PagoServiceTest {
 
             // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
             assertThatThrownBy(() -> pagoService.procesarPago(1, 25000f, new Date(), "Overpay attempt"))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(SaldoPendienteExcedidoException.class)
                     .hasMessageContaining("no puede exceder el saldo pendiente");
 
             verify(pagoRepository, never()).save(any(Pago.class));

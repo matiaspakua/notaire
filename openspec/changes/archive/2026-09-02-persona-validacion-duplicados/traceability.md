@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #835 | open |
+| Issue | #835 | closed |
 | Use Case | CU17 – Dar Alta persona (#170); CU18 – Dar Alta Cliente (#171) | exists |
 | Specification | `openspec/changes/persona-validacion-duplicados/` | complete |
 | Branch | `feat/835_persona-validacion-duplicados` | created |
-| Tasks | `tasks.md` | groups 1-8 complete (9-12 pending) |
-| Commits | `e6a15d2c` (backend), `589332dc` (frontend), `eeed01e9` (E2E), `9077e9b3` (docs) | done |
-| Pull Request | [#905](https://github.com/matiaspakua/notaire/pull/905) | open |
-| CI run | pending on #905 | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Tasks | `tasks.md` | complete (68/68) |
+| Commits | `e6a15d2c`, `589332dc`, `eeed01e9`, `9077e9b3`, `605703f5`, `f800bd31` (2 further commits on the PR branch not independently retained after the squash merge) | done |
+| Pull Request | [#905](https://github.com/matiaspakua/notaire/pull/905) | merged |
+| CI run | `pr-validation.yml`/`ci.yml`/`frontend-ci.yml`/`playwright-e2e.yml` — no retained check data (branch deleted post-merge); `tasks.md` §6-7 record all suites green locally before merge | passed (evidence: local pre-merge runs) |
+| Merge commit | `13090837` (squash) | done |
+| Release / tag | n/a — no tagged release cut for this merge | — |
+| Smoke test | manual API smoke test 2026-09-02 against local stack: created persona with a fresh `numeroIdentificacion` (201), retried `POST /personas` with the same document (409, body `{"message":"Ya existe una persona registrada con el documento ...","idPersonaExistente":<id>}`); `GET /actuator/health` returned 200; test data cleaned up afterward | passed |
 
 ## Requirement coverage
 
@@ -40,9 +40,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU17 – Dar Alta persona.md` | yes | pending (commit not yet made) |
+| `docs/100-business/102-use-cases/CU17 – Dar Alta persona.md` | yes | `9077e9b3` |
 | `docs/100-business/102-use-cases/CU18 – Dar Alta Cliente.md` | no — existing generic exception text (7.2) already covers this case | n/a |
-| `CHANGELOG.md` | yes | pending (commit not yet made) |
+| `CHANGELOG.md` | yes | `9077e9b3` |
 
 ## Gate log
 
@@ -51,8 +51,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | passed | Issue #835 open, spec.md with 4 scenarios, `validate-sdlc-plan.sh` green for this change |
 | 2 | Failing tests written, test cases designed | passed | 4 `PersonaServiceTest` cases + 1 `PersonaRequestValidationIntegrationTest` case + 4 Playwright scenarios |
 | 3 | Suite green, coverage held, docs updated | passed | `mvn test -pl backend-api` (only pre-existing, unrelated failures: pago/saldo-pendiente tests), `jacoco:check@check` green, Playwright green, CU17/CHANGELOG updated |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | PR #905 merged as `13090837` |
+| 5 | Deployed, smoke test passed, Issue closed | yes | smoke test passed (see Chain — Smoke test); Issue #835 closed |
 
 ## Exceptions
 

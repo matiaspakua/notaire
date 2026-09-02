@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { usePagos, useCreatePago, useUpdatePago, useDeletePago } from "@/hooks/usePagos";
 import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
+import { ApiError } from "@/lib/api-client";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
 
@@ -58,7 +59,13 @@ export default function PagosPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error(t("errorSave")); }
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        toast.error(t("saldoExcedido"));
+      } else {
+        toast.error(t("errorSave"));
+      }
+    }
   }
 
   async function handleDelete() {
