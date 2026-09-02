@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/protocolo-auxiliar-tramites/` | complete |
 | Branch | `feat/839_protocolo-auxiliar-tramites` | created |
 | Tasks | `tasks.md` | Groups 1-8 complete (58/58); Groups 9-12 pending |
-| Commits | — | pending |
+| Commits | `bc64a268`, `a5593aec`, `9a24dc45`, `ad014f58`, `90d12e30` | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
