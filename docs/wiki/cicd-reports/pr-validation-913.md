@@ -4,7 +4,7 @@ title: PR #913 Validation Report
 
 # PR Validation Report
 
-**Generated:** 2026-09-02 14:31:20  
+**Generated:** 2026-09-02 15:32:35  
 **PR:** #913  
 **Branch:** fix/912_persona-generic-exception-409-fallback
 
