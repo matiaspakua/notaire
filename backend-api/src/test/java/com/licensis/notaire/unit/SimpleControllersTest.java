@@ -5,7 +5,6 @@ import com.licensis.notaire.api.CopiaController;
 import com.licensis.notaire.api.EscrituraController;
 import com.licensis.notaire.api.EstadoDeGestionController;
 import com.licensis.notaire.api.HistorialController;
-import com.licensis.notaire.api.ItemController;
 import com.licensis.notaire.api.MovimientoTestimonioController;
 import com.licensis.notaire.api.PersonaController;
 import com.licensis.notaire.api.PresupuestoController;
@@ -26,7 +25,6 @@ import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.Presupuesto;
@@ -40,7 +38,6 @@ import com.licensis.notaire.repository.CopiaRepository;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.MovimientoTestimonioRepository;
 import com.licensis.notaire.repository.TestimonioRepository;
 import com.licensis.notaire.repository.TipoDeDocumentoRepository;
@@ -278,53 +275,8 @@ class SimpleControllersTest {
         }
     }
 
-    @Nested
-    @DisplayName("ItemController")
-    class ItemControllerTests {
-        private final ItemRepository repo = mock(ItemRepository.class);
-        private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ItemController(repo)).build();
-
-        @Test
-        @DisplayName("GET endpoints should return appropriate responses")
-        void getEndpoints() throws Exception {
-            Item i = new Item();
-            i.setIdItem(1);
-            when(repo.findAll()).thenReturn(List.of(i));
-            when(repo.findById(1)).thenReturn(Optional.of(i));
-            when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findByFkIdPresupuestoIdPresupuesto(5)).thenReturn(List.of(i));
-            mvc.perform(get("/api/v1/items")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/items/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/items/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/items/presupuesto/5")).andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("POST/PUT/DELETE happy and error paths")
-        void writeEndpoints() throws Exception {
-            Item i = new Item();
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
-            mvc.perform(post("/api/v1/items").contentType("application/json")
-                    .content(mapper.writeValueAsString(i))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/items/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(i))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/items/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(i))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/items/1")).andExpect(status().isOk());
-            mvc.perform(delete("/api/v1/items/2")).andExpect(status().isNotFound());
-
-            when(repo.save(any(Item.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/items").contentType("application/json")
-                    .content(mapper.writeValueAsString(i))).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/items/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(i))).andExpect(status().isInternalServerError());
-
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/items/1")).andExpect(status().isConflict());
-        }
-    }
+    // ItemController tests moved to dedicated ItemControllerTest (Issue #822),
+    // since ItemController now depends on ItemService rather than ItemRepository.
 
     @Nested
     @DisplayName("MovimientoTestimonioController")
