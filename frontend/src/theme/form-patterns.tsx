@@ -294,7 +294,6 @@ export function CheckboxField({
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.5 : 1,
       }}
-      onClick={() => !disabled && onChange(!checked)}
     >
       <input
         id={inputId}

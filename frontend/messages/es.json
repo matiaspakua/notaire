@@ -29,6 +29,7 @@
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "save": "Guardar",
+    "saving": "Guardando...",
     "add": "Agregar",
     "search": "Buscar",
     "loading": "Cargando...",
@@ -362,6 +363,27 @@
       "year": "Año",
       "month": "Mes",
       "status": "Estado"
+    },
+    "cuadernos": {
+      "title": "Cuadernos de Folios",
+      "description": "Administrar cuadernos formados por diez folios consecutivos",
+      "noData": "No hay cuadernos registrados",
+      "newCuaderno": "Nuevo Cuaderno",
+      "created": "Cuaderno creado correctamente",
+      "errorCreate": "Error al crear el cuaderno",
+      "errorCaratula": "Error al generar la carátula",
+      "selectFoliosFirst": "Seleccioná los folios para el cuaderno",
+      "selectTenHelper": "Seleccioná diez folios consecutivos del mismo escribano",
+      "noAvailableFolios": "No hay folios disponibles",
+      "damaged": "Dañado",
+      "observacionesHelper": "Requerido si se incluye un folio dañado",
+      "fields": {
+        "year": "Año",
+        "registro": "Registro",
+        "caratula": "Carátula",
+        "selectFolios": "Folios",
+        "observaciones": "Observaciones"
+      }
     }
   },
   "inmuebles": {
