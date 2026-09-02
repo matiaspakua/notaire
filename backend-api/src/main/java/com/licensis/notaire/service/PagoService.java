@@ -130,18 +130,38 @@ public class PagoService {
     }
 
     /**
-     * Calcula el total de un presupuesto sumando los items.
+     * Calcula el total de un presupuesto sumando los items y los costos de
+     * documentos presentados en sus trámites (Issue #823).
      */
     private Float calcularTotalPresupuesto(Presupuesto presupuesto) {
+        float total;
         if (presupuesto.getItemList() == null || presupuesto.getItemList().isEmpty()) {
-            return presupuesto.getMontoInmueble() != null ? presupuesto.getMontoInmueble() : 0f;
+            total = presupuesto.getMontoInmueble() != null ? presupuesto.getMontoInmueble() : 0f;
+        } else {
+            total = 0f;
+            for (var item : presupuesto.getItemList()) {
+                total += item.getValor();
+                if (item.getPorcentaje() != null && item.getPorcentaje() > 0) {
+                    total += total * (item.getPorcentaje() / 100.0f);
+                }
+            }
         }
+        return total + sumarCostosDocumentosPresentados(presupuesto);
+    }
 
+    private float sumarCostosDocumentosPresentados(Presupuesto presupuesto) {
+        if (presupuesto.getTramiteList() == null) {
+            return 0f;
+        }
         float total = 0f;
-        for (var item : presupuesto.getItemList()) {
-            total += item.getValor();
-            if (item.getPorcentaje() != null && item.getPorcentaje() > 0) {
-                total += total * (item.getPorcentaje() / 100.0f);
+        for (var tramite : presupuesto.getTramiteList()) {
+            if (tramite.getDocumentoPresentadoList() == null) {
+                continue;
+            }
+            for (var documento : tramite.getDocumentoPresentadoList()) {
+                if (documento.getImporteAPagar() != null) {
+                    total += documento.getImporteAPagar();
+                }
             }
         }
         return total;
