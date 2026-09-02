@@ -7,6 +7,14 @@ export const pagosKeys = { all: ["pagos"] as const };
 export function usePagos() {
   return useQuery({ queryKey: pagosKeys.all, queryFn: () => apiGet<Pago[]>("/pagos") });
 }
+export type EstadoPago = "SIN_PAGOS" | "PARCIAL" | "SALDADO";
+export function usePagoEstado(idPresupuesto: number | null) {
+  return useQuery({
+    queryKey: [...pagosKeys.all, "estado", idPresupuesto],
+    queryFn: () => apiGet<EstadoPago>(`/pagos/presupuesto/${idPresupuesto}/estado`),
+    enabled: idPresupuesto !== null,
+  });
+}
 export function useCreatePago() {
   const qc = useQueryClient();
   return useMutation({ mutationFn: (d: Partial<Pago>) => apiPost<void>("/pagos", d), onSuccess: () => qc.invalidateQueries({ queryKey: pagosKeys.all }) });

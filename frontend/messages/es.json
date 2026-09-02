@@ -352,7 +352,10 @@
     },
     "methods": {
       "efectivo": "Efectivo"
-    }
+    },
+    "estadoSinPagos": "Sin pagos",
+    "estadoParcial": "Parcialmente abonado",
+    "estadoSaldado": "Saldado"
   },
   "protocolo": {
     "title": "Protocolo",

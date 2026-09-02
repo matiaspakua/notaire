@@ -352,7 +352,10 @@
     },
     "methods": {
       "efectivo": "Cash"
-    }
+    },
+    "estadoSinPagos": "No payments",
+    "estadoParcial": "Partially paid",
+    "estadoSaldado": "Fully paid"
   },
   "protocolo": {
     "title": "Protocol",
