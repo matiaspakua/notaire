@@ -17,14 +17,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { useItems, useCreateItem, useUpdateItem, useDeleteItem } from "@/hooks/useItems";
+import {
+  useItems,
+  useCreateItem,
+  useUpdateItem,
+  useDeleteItem,
+  useDescuentosYRecargos,
+} from "@/hooks/useItems";
 import { useConceptos } from "@/hooks/useConceptos";
 import { formatCurrency } from "@/lib/utils";
-import type { Item } from "@/types";
+import type { Item, TipoItem } from "@/types";
 
 const EMPTY: Partial<Item> = {
   cantidad: 1,
   precio: undefined,
+  tipo: "NORMAL",
+};
+
+const TIPO_LABELS: Record<TipoItem, string> = {
+  NORMAL: "Normal",
+  DESCUENTO: "Descuento",
+  RECARGO: "Recargo",
 };
 
 export default function ItemsPage() {
@@ -40,6 +53,10 @@ export default function ItemsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [conceptoId, setConceptoId] = useState("");
   const [presupuestoId, setPresupuestoId] = useState("");
+  const [reporteId, setReporteId] = useState("");
+  const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
+  const { data: descuentosRecargos = [], isFetching: reporteLoading } =
+    useDescuentosYRecargos(reporteQuery);
 
   function openCreate() {
     setEditing(EMPTY);
@@ -58,8 +75,14 @@ export default function ItemsPage() {
   }
 
   async function handleSave() {
+    const tipo = editing.tipo ?? "NORMAL";
+    if (tipo !== "NORMAL" && !editing.motivo?.trim()) {
+      toast.error("El motivo es obligatorio para ítems de descuento o recargo");
+      return;
+    }
     const payload: Partial<Item> = {
       ...editing,
+      tipo,
       concepto: conceptoId ? { idConcepto: Number(conceptoId) } : undefined,
       presupuesto: presupuestoId ? { idPresupuesto: Number(presupuestoId) } : undefined,
     };
@@ -122,6 +145,11 @@ export default function ItemsPage() {
       render: (i) => i.presupuesto?.idPresupuesto ? `#${i.presupuesto.idPresupuesto}` : "—",
     },
     {
+      key: "tipo",
+      header: "Tipo",
+      render: (i) => TIPO_LABELS[i.tipo ?? "NORMAL"],
+    },
+    {
       key: "actions",
       header: "",
       className: "w-24",
@@ -164,6 +192,43 @@ export default function ItemsPage() {
         keyExtractor={(i) => i.idItem!}
         emptyMessage="No hay ítems registrados"
       />
+
+      <FormContainer>
+        <FormSection title="Descuentos y recargos por presupuesto">
+          <div className="flex items-end gap-3">
+            <FormField label="ID Presupuesto">
+              <Input
+                type="number"
+                value={reporteId}
+                onChange={(e) => setReporteId(e.target.value)}
+                placeholder="ID del presupuesto"
+                data-testid="input-reporte-presupuesto-id"
+              />
+            </FormField>
+            <Button
+              variant="secondary"
+              onClick={() => setReporteQuery(reporteId ? Number(reporteId) : undefined)}
+              data-testid="btn-consultar-reporte"
+            >
+              Consultar
+            </Button>
+          </div>
+          {reporteQuery && (
+            <DataTable
+              data={descuentosRecargos}
+              isLoading={reporteLoading}
+              keyExtractor={(i) => i.idItem!}
+              emptyMessage="Este presupuesto no tiene descuentos ni recargos"
+              columns={[
+                { key: "nombre", header: "Nombre", render: (i) => i.nombre ?? "—" },
+                { key: "tipo", header: "Tipo", render: (i) => TIPO_LABELS[i.tipo ?? "NORMAL"] },
+                { key: "motivo", header: "Motivo", render: (i) => i.motivo ?? "—" },
+                { key: "valor", header: "Valor", render: (i) => formatCurrency(i.valor) },
+              ]}
+            />
+          )}
+        </FormSection>
+      </FormContainer>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
@@ -212,6 +277,33 @@ export default function ItemsPage() {
                   />
                 </FormField>
               </div>
+              <FormField label="Tipo de ítem">
+                <Select
+                  value={editing.tipo ?? "NORMAL"}
+                  onValueChange={(v) => setEditing({ ...editing, tipo: v as TipoItem })}
+                >
+                  <SelectTrigger data-testid="select-tipo-item">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(TIPO_LABELS) as TipoItem[]).map((tipo) => (
+                      <SelectItem key={tipo} value={tipo}>
+                        {TIPO_LABELS[tipo]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              {editing.tipo && editing.tipo !== "NORMAL" && (
+                <FormField label="Motivo" required>
+                  <Input
+                    value={editing.motivo ?? ""}
+                    onChange={(e) => setEditing({ ...editing, motivo: e.target.value })}
+                    placeholder="Ej: Descuento por pronto pago"
+                    data-testid="input-motivo"
+                  />
+                </FormField>
+              )}
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
