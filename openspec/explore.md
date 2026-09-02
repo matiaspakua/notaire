@@ -101,12 +101,11 @@ Los cinco hallazgos de mayor impacto:
    y retiro del testimonio (CU06–CU12, RF-27 a RF-33) — la parte
    regulatoriamente más sensible del trámite notarial — no tiene ninguna
    pantalla que el personal pueda usar.
-4. **El historial de una gestión no se escribe nunca, y cualquier caso puede
-   saltar a cualquier estado.** El motor de flujos de estado (CU83) puede
-   definir qué transiciones son válidas, pero ninguna pantalla real lo
-   consulta; y la bitácora de cambios de una gestión (CU13/RF-24) queda
-   vacía porque el flujo real de alta/edición de gestión nunca escribe en
-   ella.
+4. ~~**El historial de una gestión no se escribe nunca, y cualquier caso
+   puede saltar a cualquier estado.**~~ Resuelto (Issue #833, PR #855):
+   `GestionTransitionService` valida las transiciones contra el
+   `WorkflowDefinition` del tipo de trámite y `GestionBitacoraService`
+   escribe en `Historial` en cada alta/transición/archivado.
 5. **Un bloque entero del SRS —protocolo auxiliar, cuadernos, carpetas de
    trámite, minuta de inscripción, control de numeración correlativa
    (RF-74 a RF-95, ~20 requerimientos)— no tiene ningún desarrollo**, ni
@@ -133,34 +132,32 @@ la sección 1.2 más abajo sigue siendo la lectura narrativa conjunta.
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 1 | 3 — Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | `openspec/changes/gestion-workflow-y-bitacora/` |
-| 2 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
-| 3 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/`, `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/`, `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` |
+| 1 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
+| 2 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/` (mergeado, PR #906), `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/` (mergeado, PR #907), `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` — 2 de 5 mergeados, issue reabierto hasta que las 5 estén |
 
-Ejecutar 1 primero si se puede: es prerequisito de negocio del hallazgo 10
-(`#841`, ver más abajo), que hoy no tiene `/opsx:propose`. El otro
-prerequisito, hallazgo 2 (`#832`), ya está resuelto y archivado (ver
-"Ya resueltos" más abajo).
+Ambos prerequisitos del hallazgo 10 (`#841`) ya están resueltos y
+archivados: hallazgo 2 (`#832`) y hallazgo 3 (`#833`, ver "Ya resueltos"
+más abajo) — `#841` ya no está bloqueado, solo le falta `/opsx:propose`.
 
 ### Listos para `/opsx:apply` — `priority:medium`
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 4 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
-| 5 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
-| 6 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
-| 7 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
-| 8 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
-| 9 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
-| 10 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
-| 11 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
-| 12 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
+| 3 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
+| 4 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
+| 5 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
+| 6 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
+| 7 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
+| 8 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
+| 9 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
+| 10 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
+| 11 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
 
 ### Bloqueados — falta `/opsx:propose`
 
 | Hallazgo | Issue | Prioridad | Motivo |
 |----------|-------|-----------|--------|
-| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Depende de que #833 (arriba) se aplique — #832 ya está resuelto — sin `/opsx:propose` todavía |
+| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Ya no bloqueado — #832 y #833 resueltos — solo le falta `/opsx:propose` |
 | 1.2 — Recibo de pago nunca se emite | [#23](https://github.com/matiaspakua/notaire/issues/23) | sin prioridad asignada | Abierto, sin `/opsx:propose` iniciado |
 
 ### Ya resueltos (no requieren `/opsx:apply`)
@@ -168,16 +165,18 @@ prerequisito, hallazgo 2 (`#832`), ya está resuelto y archivado (ver
 | Hallazgo | Issue | Estado |
 |----------|-------|--------|
 | 2 — Circuito legal post-firma sin pantalla | [#832](https://github.com/matiaspakua/notaire/issues/832) | resuelto, mergeado (PR #852, `4475b8f`) y archivado — specs `escritura-firma`, `testimonio-generacion-verificacion`, `testimonio-movimiento-inscripcion` |
+| 3 — Historial/estados/archivado de gestión sin reglas | [#833](https://github.com/matiaspakua/notaire/issues/833) | resuelto, mergeado (PR #855, `050fc65b`) y archivado — `GestionTransitionService`/`GestionBitacoraService` conectados al flujo real (`POST /gestiones/{id}/transicionar`, `GET /gestiones/{id}/historial`) |
 | 1.1 — Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
 | 1.2 — Sin resumen financiero por gestión | [#820](https://github.com/matiaspakua/notaire/issues/820) | resuelto, mergeado (PR #845, `a2a17f8`) y archivado — spec `pago-presupuesto-gestion-summary` |
 | 1.2 — Método de pago no se persistía | [#792](https://github.com/matiaspakua/notaire/issues/792) | resuelto y archivado — spec `pagos` |
 
 Los 13 hallazgos originales tienen su `/opsx:propose` completo y validado
 (`bash scripts/validate-sdlc-plan.sh`). El hallazgo 10 ya tiene Issue
-(#841) pero todavía no tiene `/opsx:propose` — depende de que #832/#833 se
-apliquen primero. Próximo paso: `/opsx:apply` change por change, siguiendo
-el orden de arriba, en sesiones separadas, siguiendo `CONSTITUTION.md` — el
-merge a `main` requiere aprobación humana explícita en cada caso.
+(#841) pero todavía no tiene `/opsx:propose` — sus dos prerequisitos
+(#832, #833) ya están resueltos. Próximo paso: `/opsx:apply` change por
+change, siguiendo el orden de arriba, en sesiones separadas, siguiendo
+`CONSTITUTION.md` — el merge a `main` requiere aprobación humana explícita
+en cada caso.
 
 ---
 
@@ -456,7 +455,7 @@ los describe como una sola cadena; el `propose` evaluó dividir en fases
 (firma+testimonio / inscripción / retiro-copia) para no bloquear todo el
 circuito en un solo cambio — ver `openspec/changes/escritura-post-firma-legal-cycle/`.
 
-## 3. El historial de una gestión no registra nada, y los estados no tienen reglas
+## 3. El historial de una gestión no registra nada, y los estados no tienen reglas *(Issue #833, resuelto y archivado — PR #855, `050fc65b`)*
 
 - **La bitácora de una gestión (CU13, "Ver historial de gestión", RF-24)
   siempre está vacía** para cualquier caso creado por el flujo real de alta o
@@ -482,8 +481,8 @@ gestión (#166); CU83 – Definir Workflow de Estados y Transiciones (#451,
 transiciones de estado. Tamaño: L · Prioridad: `priority:high`. Nota de
 alcance: tres gaps relacionados (bitácora, motor de transiciones,
 archivado) que comparten la misma raíz — la pantalla de gestión no
-consulta las reglas ya modeladas — ver
-`openspec/changes/gestion-workflow-y-bitacora/`.
+consulta las reglas ya modeladas — resuelto en
+`openspec/changes/archive/2026-08-28-gestion-workflow-y-bitacora/`.
 
 ## 4. Presupuestar sigue dependiendo de la memoria del personal
 
