@@ -160,6 +160,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
+  (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
+  to reject the request outright when `saldoPendiente > 0`, contradicting CU16's documented
+  behavior — archiving should succeed and persist `deudaPendienteAlArchivar=true`, warning the
+  user without blocking. Broke `GestionArchiveIntegrationTest` deterministically. Reverted to
+  the warn-not-block behavior; the "Verificar deuda pendiente" (RF-22) rule is now enforced
+  purely as a pre-confirmation warning via `GET /gestiones/{id}/saldo-pendiente`.
+
+- **Creating a `Pago` against the seeded test presupuesto returned 400 instead of 201**
+  (issue #914): `backend-api/src/test/resources/data.sql`'s seed presupuesto had no
+  `monto_inmueble`, so `PagoService.procesarPago`'s saldo-pendiente validation (issue #848)
+  always computed a saldo of `$0.00`, rejecting any payment against it. Added a
+  `monto_inmueble` value to the seed row large enough to cover the payments asserted in
+  `BusinessWorkflowIntegrationTest` and `RemainingControllersIntegrationTest`.
 - **`PersonaController` create/update leaked unhandled 500s on non-duplicate persistence errors**
   (issue #912): PR #905 (#835) removed the generic `catch (Exception e) -> 409` fallback from
   `createPersona`/`updatePersona`, leaving only the `PersonaDuplicadaException` branch. Restored
