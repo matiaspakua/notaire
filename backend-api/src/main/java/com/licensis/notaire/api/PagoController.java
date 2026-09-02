@@ -101,8 +101,12 @@ public class PagoController {
         }
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
     @GetMapping("/presupuesto/{idPresupuesto}/estado")
-    @Operation(summary = "Calcular estado de pago (SIN_PAGOS, PARCIAL, SALDADO) de un presupuesto")
+    @Operation(summary = "CU47 - Calcular estado de pago (SIN_PAGOS, PARCIAL, SALDADO) de un presupuesto")
     @Transactional(readOnly = true)
     public ResponseEntity<EstadoPago> getEstadoPago(@PathVariable Integer idPresupuesto) {
         try {
