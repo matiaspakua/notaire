@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Protocolo Auxiliar** (issue #839, CU81): marking a `TipoDeFolio` as
+  `esAuxiliar` lets escribanos start a new `Escritura` directly on an available
+  Protocolo Auxiliar folio (a folio of that type not yet linked to an
+  `Escritura`), without opening a `CarpetaTramite`/`Tramite` — the ágil
+  circuit of CU81. Numbering is `MAX(Escritura.numero) + 1` scoped to
+  auxiliar folios only, independent from Protocolo Principal's sequence.
+  Adds `GET /api/v1/protocolo-auxiliar/folios-disponibles` and
+  `POST /api/v1/protocolo-auxiliar/escrituras`, a "Protocolo Auxiliar"
+  checkbox on the existing Tipos de Folio admin form, and a new
+  Protocolo Auxiliar screen under Protocolo.
+
 - **Cuadernos de Folios** (issue #839, CU80): allows escribanos to group folios
   into cuadernos of exactly 10 strictly consecutive folios belonging to the same
   registro notarial, assigning a sequential number per year/escribano and marking
