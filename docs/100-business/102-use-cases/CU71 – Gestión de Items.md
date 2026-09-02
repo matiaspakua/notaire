@@ -28,3 +28,8 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | - | Flujo estándar sin desvíos | La operación se completa según el curso normal de eventos. |
+| 3a | El Administrador clasifica el ítem como Descuento o Recargo | El sistema exige un motivo obligatorio antes de permitir el guardado (issue #822). |
+
+## Tipo de Ítem (Normal / Descuento / Recargo)
+
+Todo ítem tiene un `tipo`: `NORMAL` (por defecto), `DESCUENTO` o `RECARGO`. Al seleccionar `DESCUENTO` o `RECARGO` en el formulario, el campo `motivo` se vuelve obligatorio y se valida tanto en el cliente como en el servidor. El monto de un ítem `DESCUENTO` resta del total del presupuesto; el de un `RECARGO` suma (ver CU45).

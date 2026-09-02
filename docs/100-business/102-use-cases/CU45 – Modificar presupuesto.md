@@ -33,3 +33,7 @@
 | 2.1 | 1. La persona buscada no existe. | El sistema gestiona la excepción y notifica al usuario. |
 | 2.1 | 2. La persona buscada no tiene presupuestos asociados. | El sistema gestiona la excepción y notifica al usuario. |
 | 2.1 | 3. El presupuesto no existe. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Cálculo del Total con Descuentos y Recargos
+
+Al calcular el nuevo total (paso 7), los ítems de tipo `DESCUENTO` restan su valor del total y los de tipo `RECARGO` lo suman; los ítems `NORMAL` se comportan como hasta ahora. El sistema expone un endpoint de consulta (`GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`) para listar únicamente los ítems de descuento/recargo de un presupuesto, usado por la pantalla de administración de ítems (issue #822, ver CU71).
