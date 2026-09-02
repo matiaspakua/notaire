@@ -102,6 +102,10 @@ public class Folio implements Serializable
     @ManyToOne(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Escritura fkIdEscritura;
+    @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id_cuaderno")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
+    private Cuaderno fkIdCuaderno;
 
     public Folio()
     {
@@ -213,6 +217,16 @@ public class Folio implements Serializable
     public void setFkIdEscritura(Escritura fkIdEscritura)
     {
         this.fkIdEscritura = fkIdEscritura;
+    }
+
+    public Cuaderno getFkIdCuaderno()
+    {
+        return fkIdCuaderno;
+    }
+
+    public void setFkIdCuaderno(Cuaderno fkIdCuaderno)
+    {
+        this.fkIdCuaderno = fkIdCuaderno;
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.licensis.notaire.service;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Testimonio;
+import com.licensis.notaire.repository.CuadernoRepository;
 import com.licensis.notaire.repository.TestimonioRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -26,6 +28,7 @@ public class ReporteService {
 
     private final DataSource dataSource;
     private final TestimonioRepository testimonioRepository;
+    private final CuadernoRepository cuadernoRepository;
 
     private static final String RUTA_REPORTE_PRESUPUESTO = "reportes/reportePresupuestoSinInmueble.jasper";
     private static final String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportes/reportePresupuestoInmuebles.jasper";
@@ -33,10 +36,13 @@ public class ReporteService {
     private static final String RUTA_REPORTE_HISTORIAL_GESTION = "reportes/reporteHistorialGestion.jasper";
     private static final String RUTA_REPORTE_CONSULTAR_VENCIMIENTOS_DOCUMENTOS = "reportes/reporteConsultarVencimientosDocumentos.jasper";
     private static final String RUTA_REPORTE_CONSULTAR_DEUDA_DOCUMENTOS = "reportes/reporteConsultarDeudaDocumentos.jasper";
+    private static final int FOLIOS_POR_CUADERNO = 10;
 
-    public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository) {
+    public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository,
+                           CuadernoRepository cuadernoRepository) {
         this.dataSource = dataSource;
         this.testimonioRepository = testimonioRepository;
+        this.cuadernoRepository = cuadernoRepository;
     }
 
     public byte[] generarReportePresupuesto(Integer idPresupuesto) throws Exception {
@@ -100,6 +106,22 @@ public class ReporteService {
                 "Copia de Testimonio N° " + testimonio.getNumero(),
                 "CU08",
                 "Testimonio verificado",
+                "Generado: " + LocalDate.now()
+        );
+    }
+
+    public byte[] generarReporteCaratulaCuaderno(Integer idCuaderno) {
+        Cuaderno cuaderno = cuadernoRepository.findById(idCuaderno)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idCuaderno));
+
+        int folioDesde = (cuaderno.getNumero() - 1) * FOLIOS_POR_CUADERNO + 1;
+        int folioHasta = cuaderno.getNumero() * FOLIOS_POR_CUADERNO;
+
+        return generarPdfTextoSimple(
+                "Carátula de Cuaderno N° " + cuaderno.getNumero() + "/" + cuaderno.getAnio(),
+                "CU80",
+                "Registro N° " + cuaderno.getFkIdPersonaEscribano().getRegistroEscribano()
+                        + " - Folios " + folioDesde + " a " + folioHasta,
                 "Generado: " + LocalDate.now()
         );
     }
