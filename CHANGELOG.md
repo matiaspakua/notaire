@@ -174,6 +174,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   always computed a saldo of `$0.00`, rejecting any payment against it. Added a
   `monto_inmueble` value to the seed row large enough to cover the payments asserted in
   `BusinessWorkflowIntegrationTest` and `RemainingControllersIntegrationTest`.
+- **`PersonaController` create/update leaked unhandled 500s on non-duplicate persistence errors**
+  (issue #912): PR #905 (#835) removed the generic `catch (Exception e) -> 409` fallback from
+  `createPersona`/`updatePersona`, leaving only the `PersonaDuplicadaException` branch. Restored
+  the fallback so any other persistence failure surfaces as 409 instead of an unhandled 500.
+- **Payments exceeding a presupuesto's saldo pendiente returned a generic 400 instead of a
+  specific 409** (issue #848, CU15): `PagoService.procesarPago` already rejected overpayments
+  but duplicated the saldo calculation inline and threw a plain `IllegalArgumentException`,
+  which `PagoController` mapped to `400 Bad Request` like any other validation error —
+  indistinguishable from malformed input. Refactored to reuse the existing
+  `calcularSaldoPendiente` method and introduced `SaldoPendienteExcedidoException`, mapped to
+  `409 Conflict` in both `POST /pagos` and `POST /pagos/params`. The `/dashboard/pagos` form
+  now shows a specific "saldo excedido" message on 409 instead of the generic save-error toast.
 
 - **`CheckboxField` double-toggled on every click, making checkboxes appear unresponsive**
   (issue #839): the shared `CheckboxField` component in `theme/form-patterns.tsx` had both

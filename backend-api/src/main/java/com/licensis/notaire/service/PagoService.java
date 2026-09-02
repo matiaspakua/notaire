@@ -1,5 +1,6 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.PagoRepository;
@@ -52,16 +53,11 @@ public class PagoService {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
 
-        Float totalPresupuesto = calcularTotalPresupuesto(presupuesto);
-        Float totalPagado = pagoRepository.sumMontoByPresupuestoId(idPresupuesto);
-        Float saldoPendiente = totalPresupuesto - (totalPagado != null ? totalPagado : 0f);
+        Float saldoPendiente = calcularSaldoPendiente(idPresupuesto);
+        log.info("Saldo pendiente para presupuesto {}: {}", idPresupuesto, saldoPendiente);
 
-        log.info("Presupuesto total: {}, Pagado: {}, Saldo pendiente: {}",
-                totalPresupuesto, totalPagado, saldoPendiente);
-
-        // Issue #848: Validate payment does not exceed saldo pendiente
         if (monto > saldoPendiente) {
-            throw new IllegalArgumentException(
+            throw new SaldoPendienteExcedidoException(
                     String.format("El monto del pago ($%.2f) no puede exceder el saldo pendiente ($%.2f)",
                             monto, saldoPendiente));
         }

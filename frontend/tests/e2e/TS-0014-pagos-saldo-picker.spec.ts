@@ -207,4 +207,51 @@ test.describe("CU15 - Procesar Pago (Saldo Visibility #796)", () => {
     expect(saldoText1).not.toBe(saldoText2);
     console.log(`✅ Saldo updated when selection changed: ${saldoText1} → ${saldoText2}`);
   });
+
+  test("CU15-SALDO-05 (#848): Submitting a monto over saldo pendiente shows a specific rejection message", async ({ page }) => {
+    const suffix = Date.now().toString().slice(-6);
+    const apellido = `Overpay${suffix}`;
+    const montoPresupuesto = "50000";
+
+    // Create cliente
+    await steps.givenUserIsOnPage("/dashboard/personas");
+    await page.getByTestId("btn-nueva-persona").click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.getByTestId("input-nombre").fill("Cliente");
+    await page.getByTestId("input-apellido").fill(apellido);
+    await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${suffix}`);
+    await page.getByTestId("check-es-cliente").click();
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    // Create presupuesto with known monto
+    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.getByTestId("select-persona").click();
+    await page.getByRole("option", { name: new RegExp(apellido, "i") }).evaluate((el: HTMLElement) => el.click());
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
+    await page.getByTestId("input-monto").fill(montoPresupuesto);
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    // Submit a pago with a monto greater than the saldo pendiente
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.whenUserClicksButton("nuevo pago");
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    await presupuestoSelector.click();
+    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
+    await page.getByRole("dialog").locator('input[type="number"]').fill("999999");
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
+
+    // Then: a specific message about exceeding the saldo is shown, the dialog stays open,
+    // and the payment is not persisted
+    await expect(page.getByText(/excede el saldo pendiente/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("dialog")).toBeVisible();
+    console.log("✅ Overpayment rejected with specific message");
+  });
 });

@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+import com.licensis.notaire.exception.SaldoPendienteExcedidoException;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.Presupuesto;
@@ -117,6 +118,41 @@ class PagoServiceIntegrationTest extends ServiceIntegrationTest {
         Float saldoPendiente = pagoService.calcularSaldoPendiente(testPresupuesto.getIdPresupuesto());
 
         assertThat(saldoPendiente).isEqualTo(250000f);
+    }
+
+    @Test
+    @DisplayName("Should reject a pago exceeding saldo pendiente and not persist it")
+    void shouldRejectPagoExceedingSaldoPendiente() {
+        assertThatThrownBy(() -> pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                600000f,
+                new Date(),
+                "Overpay attempt"
+        )).isInstanceOf(SaldoPendienteExcedidoException.class);
+
+        List<Pago> pagos = pagoService.findPagosByPresupuesto(testPresupuesto.getIdPresupuesto());
+        assertThat(pagos).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should reject a pago exceeding saldo already reduced by a prior payment")
+    void shouldRejectPagoExceedingSaldoReducedByPriorPayment() {
+        pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                400000f,
+                new Date(),
+                "Pago 1"
+        );
+
+        assertThatThrownBy(() -> pagoService.procesarPago(
+                testPresupuesto.getIdPresupuesto(),
+                150000f,
+                new Date(),
+                "Overpay against reduced saldo"
+        )).isInstanceOf(SaldoPendienteExcedidoException.class);
+
+        List<Pago> pagos = pagoService.findPagosByPresupuesto(testPresupuesto.getIdPresupuesto());
+        assertThat(pagos).hasSize(1);
     }
 
     @Test
