@@ -5,10 +5,13 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoItem;
+import com.licensis.notaire.dto.TipoItem;
 import java.io.Serializable;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -64,6 +67,11 @@ public class Item implements Serializable
     private Integer porcentaje;
     @Column(name = "observaciones")
     private String observaciones;
+    @Column(name = "tipo")
+    @Enumerated(EnumType.STRING)
+    private TipoItem tipo = TipoItem.NORMAL;
+    @Column(name = "motivo")
+    private String motivo;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
@@ -140,6 +148,26 @@ public class Item implements Serializable
         this.fkIdPresupuesto = fkIdPresupuesto;
     }
 
+    public TipoItem getTipo()
+    {
+        return tipo;
+    }
+
+    public void setTipo(TipoItem tipo)
+    {
+        this.tipo = tipo;
+    }
+
+    public String getMotivo()
+    {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo)
+    {
+        this.motivo = motivo;
+    }
+
     public void setAtributos(DtoItem miDto)
     {
         idItem = miDto.getIdItem();
@@ -158,6 +186,13 @@ public class Item implements Serializable
 
         conceptoFijo = miDto.isFijo();
 
+        if (miDto.getTipo() != null)
+        {
+            tipo = miDto.getTipo();
+        }
+
+        motivo = miDto.getMotivo();
+
         version = miDto.getVersion();
     }
 
@@ -172,6 +207,8 @@ public class Item implements Serializable
         miDtoItem.setValor(valor);
         miDtoItem.setVersion(version);
         miDtoItem.setConceptoFijo(conceptoFijo);
+        miDtoItem.setTipo(tipo);
+        miDtoItem.setMotivo(motivo);
 
         return miDtoItem;
     }
