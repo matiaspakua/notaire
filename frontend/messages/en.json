@@ -639,7 +639,8 @@
         "errorSave": "Error saving folio type",
         "errorDelete": "Error deleting folio type",
         "inUseCannotDelete": "Cannot delete: it is in use by folios",
-        "noData": "No folio types"
+        "noData": "No folio types",
+        "esAuxiliar": "Protocolo Auxiliar"
       }
     },
     "tramites": {
