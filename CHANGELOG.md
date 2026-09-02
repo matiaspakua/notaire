@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cuadernos de Folios** (issue #839, CU80): allows escribanos to group folios
+  into cuadernos of exactly 10 strictly consecutive folios belonging to the same
+  registro notarial, assigning a sequential number per year/escribano and marking
+  the folios as `Asignado a cuaderno`. Damaged or annulled folios (`Errose`,
+  `no pasó`) require an `observaciones` justification. Adds
+  `GET/POST /api/v1/cuadernos` and `GET /api/v1/cuadernos/{id}/caratula` (PDF via
+  JasperReports) with a new `Cuadernos` screen under Protocolo.
+
 - **Persona duplicate-document validation** (issue #835, CU17, CU18): creating or
   editing a `Persona` with a `numeroIdentificacion` already registered to another
   person is rejected with `409 Conflict` (`PersonaDuplicadaException`), whose body
@@ -140,6 +148,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   320px after login.
 
 ### Fixed
+
+- **`CheckboxField` double-toggled on every click, making checkboxes appear unresponsive**
+  (issue #839): the shared `CheckboxField` component in `theme/form-patterns.tsx` had both
+  a wrapper `onClick={() => onChange(!checked)}` and the native `<input onChange>` firing on
+  the same click, so `onChange` ran twice and canceled itself out. Discovered while testing
+  the new Cuadernos de Folios screen. Removed the redundant wrapper handler; the native input
+  already handles clicks and label-triggered toggles. Fixes checkbox interaction across every
+  page that uses `CheckboxField` (testimonios, documentos, personas, tramites,
+  documentos-entidades-externas, cuadernos).
 
 - **Gestión form's presupuesto picker showed only `Presupuesto #{id}`, no client identity**
   (issue #889, CU02): `/dashboard/gestiones`'s nueva-Gestión modal rendered each presupuesto

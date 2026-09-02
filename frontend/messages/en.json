@@ -29,6 +29,7 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
     "add": "Add",
     "search": "Search",
     "loading": "Loading...",
@@ -362,6 +363,27 @@
       "year": "Year",
       "month": "Month",
       "status": "Status"
+    },
+    "cuadernos": {
+      "title": "Folio Notebooks",
+      "description": "Manage notebooks made up of ten consecutive folios",
+      "noData": "No notebooks registered",
+      "newCuaderno": "New Notebook",
+      "created": "Notebook created successfully",
+      "errorCreate": "Error creating notebook",
+      "errorCaratula": "Error generating cover sheet",
+      "selectFoliosFirst": "Select the folios for the notebook",
+      "selectTenHelper": "Select ten consecutive folios from the same notary",
+      "noAvailableFolios": "No folios available",
+      "damaged": "Damaged",
+      "observacionesHelper": "Required if a damaged folio is included",
+      "fields": {
+        "year": "Year",
+        "registro": "Registry",
+        "caratula": "Cover sheet",
+        "selectFolios": "Folios",
+        "observaciones": "Observations"
+      }
     }
   },
   "inmuebles": {

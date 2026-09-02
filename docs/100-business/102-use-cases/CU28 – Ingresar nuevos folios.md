@@ -26,3 +26,4 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | - | Flujo estándar sin desvíos | La operación se completa según el curso normal de eventos. |
+| - | Folio agrupado en un cuaderno (CU80) | El estado del folio pasa a "Asignado a cuaderno" y deja de estar disponible para agrupar en otro cuaderno. |

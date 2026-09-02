@@ -104,6 +104,15 @@ export interface Folio {
   version?: number;
 }
 
+export interface Cuaderno {
+  idCuaderno?: number;
+  numero?: number;
+  anio?: number;
+  observaciones?: string;
+  fkIdPersonaEscribano?: { idPersona?: number; registroEscribano?: number };
+  version?: number;
+}
+
 export interface Tramite {
   idTramite?: number;
   tipo?: TipoDeTramite;

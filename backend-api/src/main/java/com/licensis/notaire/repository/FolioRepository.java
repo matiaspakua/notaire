@@ -1,5 +1,6 @@
 package com.licensis.notaire.repository;
 
+import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoDeFolio;
@@ -27,4 +28,8 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
     List<Folio> findByAnio(int anio);
 
     List<Folio> findByEstado(String estado);
+
+    List<Folio> findByFkIdCuaderno(Cuaderno cuaderno);
+
+    List<Folio> findAllByIdFolioIn(List<Integer> ids);
 }

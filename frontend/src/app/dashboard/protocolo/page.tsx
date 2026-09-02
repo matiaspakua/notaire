@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -13,7 +14,7 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetBytes } from "@/lib/api-client";
 import type { Folio } from "@/types";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, BookOpen } from "lucide-react";
 
 export default function ProtocoloPage() {
   const t = useTranslations("protocolo");
@@ -85,6 +86,12 @@ export default function ProtocoloPage() {
         description={t("description")}
         actions={
           <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link href="/dashboard/protocolo/cuadernos">
+                <BookOpen className="h-4 w-4" />
+                {t("cuadernos.title")}
+              </Link>
+            </Button>
             <Button variant="outline" onClick={() => setReportDialog("libro-indice")}>
               <FileText className="h-4 w-4" />Libro de Índices
             </Button>
