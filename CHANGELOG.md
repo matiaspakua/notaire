@@ -175,6 +175,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`TS-0012-escritura-folio-firma.spec.ts` regressed after the #892 folio-picker fix
+  shipped** (issue #892, CU06): the test chained `.locator("button").first()` off
+  `getByTestId("select-folio-escritura")`, but that testid is applied directly to the
+  Radix `SelectTrigger` button, so the nested lookup never resolved. Also closed the
+  Radix listbox (rendered in a portal above the dialog) with `Escape` before clicking
+  "Cancelar", since a still-open dropdown intercepted that click. Test-only fix, no
+  application code changed.
+
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
   to reject the request outright when `saldoPendiente > 0`, contradicting CU16's documented
