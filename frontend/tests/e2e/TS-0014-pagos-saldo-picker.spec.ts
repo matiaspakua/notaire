@@ -124,12 +124,13 @@ test.describe("CU15 - Procesar Pago (Saldo Visibility #796)", () => {
     await presupuestoOption.click();
 
     // Then: saldo pendiente should be displayed before confirming payment
-    const saldoDisplay = page.getByRole("dialog").getByText(/saldo|pendiente|adeuda/i);
+    const saldoDisplay = page.getByTestId("saldo-pendiente-amount");
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
 
-    // Saldo should be approximately the presupuesto amount (since no payments yet)
+    // Saldo should be approximately the presupuesto amount (since no payments yet),
+    // displayed as localized currency (e.g. "75000" -> "75.000")
     const saldoText = await saldoDisplay.textContent();
-    expect(saldoText).toContain(montoPresupuesto);
+    expect(saldoText).toContain(Number(montoPresupuesto).toLocaleString("es-AR"));
     console.log(`✅ Saldo pendiente displayed: ${saldoText}`);
   });
 
@@ -156,7 +157,7 @@ test.describe("CU15 - Procesar Pago (Saldo Visibility #796)", () => {
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
     await page.getByTestId("btn-nuevo-presupuesto").click();
     await page.getByTestId("select-persona").click();
-    await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
+    await page.getByRole("option", { name: new RegExp(apellido1, "i") }).evaluate((el: HTMLElement) => el.click());
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
     await page.getByTestId("input-monto").fill(monto1);
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
@@ -175,7 +176,7 @@ test.describe("CU15 - Procesar Pago (Saldo Visibility #796)", () => {
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
     await page.getByTestId("btn-nuevo-presupuesto").click();
     await page.getByTestId("select-persona").click();
-    await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
+    await page.getByRole("option", { name: new RegExp(apellido2, "i") }).evaluate((el: HTMLElement) => el.click());
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
     await page.getByTestId("input-monto").fill(monto2);
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
@@ -190,18 +191,18 @@ test.describe("CU15 - Procesar Pago (Saldo Visibility #796)", () => {
 
     // Select first presupuesto
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
-    let saldoDisplay = page.getByRole("dialog").getByText(/saldo|pendiente/i);
+    let saldoDisplay = page.getByTestId("saldo-pendiente-amount");
     await expect(saldoDisplay).toBeVisible();
-    let saldoText1 = await saldoDisplay.textContent();
+    const saldoText1 = await saldoDisplay.textContent();
 
     // Change to second presupuesto
     await presupuestoSelector.click();
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
     // Saldo should update to second presupuesto's amount
-    saldoDisplay = page.getByRole("dialog").getByText(/saldo|pendiente/i);
+    saldoDisplay = page.getByTestId("saldo-pendiente-amount");
     await expect(saldoDisplay).toBeVisible();
-    let saldoText2 = await saldoDisplay.textContent();
+    const saldoText2 = await saldoDisplay.textContent();
 
     // The saldo values should be different (50k vs 100k)
     expect(saldoText1).not.toBe(saldoText2);

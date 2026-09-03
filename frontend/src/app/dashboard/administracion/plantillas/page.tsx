@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, RadioField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { PlantillaPresupuesto, TipoDeTramite, Concepto } from "@/types";
+import type { PlantillaPresupuesto, TipoDeTramite, Concepto, TipoDeDocumento, PlantillaCostoDocumento } from "@/types";
 
 interface PlantillaKey {
   tipoTramiteId: number;
@@ -36,6 +36,62 @@ export default function PlantillasPage() {
     queryKey: ["conceptos"],
     queryFn: () => apiGet<Concepto[]>("/conceptos"),
   });
+  const { data: tiposDocumento = [] } = useQuery({
+    queryKey: ["tipo-de-documento"],
+    queryFn: () => apiGet<TipoDeDocumento[]>("/tipo-de-documento"),
+  });
+
+  const [costoTramiteId, setCostoTramiteId] = useState("");
+  const {
+    data: costosDocumento = [],
+    isLoading: isLoadingCostos,
+    refetch: refetchCostos,
+  } = useQuery({
+    queryKey: ["plantilla-costos-documento", costoTramiteId],
+    queryFn: () =>
+      apiGet<PlantillaCostoDocumento[]>(`/plantilla-costos-documento/tipo-tramite/${costoTramiteId}`),
+    enabled: !!costoTramiteId,
+  });
+  const [costoModalOpen, setCostoModalOpen] = useState(false);
+  const [costoTipoDocumentoId, setCostoTipoDocumentoId] = useState("");
+  const [tipoCosto, setTipoCosto] = useState<"fijo" | "variable">("fijo");
+  const [costoValor, setCostoValor] = useState("");
+  const [savingCosto, setSavingCosto] = useState(false);
+
+  function openCreateCosto() {
+    setCostoTipoDocumentoId("");
+    setTipoCosto("fijo");
+    setCostoValor("");
+    setCostoModalOpen(true);
+  }
+
+  async function handleSaveCosto() {
+    const idTipoDocumento = Number(costoTipoDocumentoId);
+    const valor = Number(costoValor);
+    if (!costoTramiteId || !idTipoDocumento || !valor) {
+      toast.error(t("costosDocumento.selectionRequired"));
+      return;
+    }
+    setSavingCosto(true);
+    try {
+      await apiPost("/plantilla-costos-documento", {
+        idTipoTramite: Number(costoTramiteId),
+        idTipoDocumento,
+        montoFijo: tipoCosto === "fijo" ? valor : null,
+        porcentajeVariable: tipoCosto === "variable" ? valor : null,
+      });
+      toast.success(t("costosDocumento.created"));
+      setCostoModalOpen(false);
+      refetchCostos();
+    } catch {
+      toast.error(t("costosDocumento.errorCreate"));
+    } finally {
+      setSavingCosto(false);
+    }
+  }
+
+  const tipoDocumentoName = (id?: number) =>
+    tiposDocumento.find((x) => x.idTipoDocumento === id)?.nombre ?? `#${id}`;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -231,6 +287,109 @@ export default function PlantillasPage() {
       </Dialog>
 
       <ConfirmDialog open={!!deleteKey} onOpenChange={(v) => !v && setDeleteKey(null)} onConfirm={handleDelete} loading={deleting} />
+
+      <AppHeader title={t("costosDocumento.title")} description={t("costosDocumento.description")} />
+      <FormField label={t("costosDocumento.fields.tipoTramite")}>
+        <Select value={costoTramiteId} onValueChange={setCostoTramiteId}>
+          <SelectTrigger data-testid="select-tipo-tramite-costos">
+            <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            {tiposTramite.map((tt) => (
+              <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>
+                {tt.nombre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FormField>
+
+      {costoTramiteId && (
+        <>
+          <div className="flex justify-end mb-4">
+            <Button onClick={openCreateCosto} data-testid="btn-nuevo-costo-documento">
+              <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
+              {t("costosDocumento.newCosto")}
+            </Button>
+          </div>
+          <DataTable
+            data={costosDocumento}
+            isLoading={isLoadingCostos}
+            emptyMessage={t("costosDocumento.noData")}
+            keyExtractor={(c) =>
+              `${c.plantillaCostoDocumentoPK?.fkIdTipoTramite}-${c.plantillaCostoDocumentoPK?.fkIdTipoDocumento}`
+            }
+            columns={[
+              {
+                key: "tipoDocumento",
+                header: t("costosDocumento.fields.tipoDocumento"),
+                render: (c) =>
+                  c.tipoDeDocumento?.nombre ?? tipoDocumentoName(c.plantillaCostoDocumentoPK?.fkIdTipoDocumento),
+              },
+              {
+                key: "montoFijo",
+                header: t("costosDocumento.fields.montoFijo"),
+                render: (c) => (c.montoFijo != null ? `$${c.montoFijo}` : "—"),
+              },
+              {
+                key: "porcentajeVariable",
+                header: t("costosDocumento.fields.porcentajeVariable"),
+                render: (c) => (c.porcentajeVariable != null ? `${c.porcentajeVariable}%` : "—"),
+              },
+            ]}
+          />
+        </>
+      )}
+
+      <Dialog open={costoModalOpen} onOpenChange={setCostoModalOpen}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection title={t("costosDocumento.newCosto")}>
+              <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
+                <Select value={costoTipoDocumentoId} onValueChange={setCostoTipoDocumentoId}>
+                  <SelectTrigger data-testid="select-tipo-documento-costo">
+                    <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tiposDocumento.map((td) => (
+                      <SelectItem key={td.idTipoDocumento} value={String(td.idTipoDocumento)}>
+                        {td.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <RadioField
+                label={t("costosDocumento.fields.tipoCosto")}
+                selected={tipoCosto}
+                onChange={(v) => setTipoCosto(v as "fijo" | "variable")}
+                options={[
+                  { value: "fijo", label: t("costosDocumento.fields.montoFijo") },
+                  { value: "variable", label: t("costosDocumento.fields.porcentajeVariable") },
+                ]}
+              />
+              <FormField label={t("costosDocumento.fields.valor")} required>
+                <Input
+                  type="number"
+                  value={costoValor}
+                  onChange={(e) => setCostoValor(e.target.value)}
+                  data-testid="input-valor-costo-documento"
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setCostoModalOpen(false)}>
+                <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
+                {tc("cancel")}
+              </Button>
+              <Button onClick={handleSaveCosto} disabled={savingCosto} data-testid="btn-guardar-costo-documento">
+                <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
+                {tc("save")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
