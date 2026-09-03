@@ -175,6 +175,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Flaky E2E coverage for the pagos presupuesto picker/saldo pendiente display**
+  (issue #796, CU15): `TS-0014-pagos-saldo-picker.spec.ts` located the saldo
+  pendiente text via an ambiguous `getByRole("dialog").getByText(/saldo|pendiente/i)`,
+  which could also match the picker's loading placeholder or a seeded persona
+  surname containing "Saldo", causing intermittent strict-mode failures. Added a
+  dedicated `data-testid="saldo-pendiente-amount"` to the saldo display in
+  `pagos/page.tsx` and updated the spec to target it directly; also fixed two
+  assertions that compared the raw input amount against the locale-formatted
+  currency string, and aligned a `select-persona` option click with the
+  `evaluate(el => el.click())` workaround already used elsewhere in the suite
+  for that Radix dropdown.
+
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
   to reject the request outright when `saldoPendiente > 0`, contradicting CU16's documented

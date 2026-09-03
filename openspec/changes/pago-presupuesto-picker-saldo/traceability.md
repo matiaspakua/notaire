@@ -14,43 +14,42 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #796 | open |
+| Issue | #796 | open (in-progress) |
 | Use Case | CU15 – Procesar pago (#168), pasos 2-5 y 11 | exists |
 | Specification | `openspec/changes/pago-presupuesto-picker-saldo/` | in progress |
-| Branch | `feat/796_pago-presupuesto-picker-saldo` | not yet created |
-| Tasks | `tasks.md` | pending |
-| Commits | | pending |
-| Pull Request | | pending |
-| CI run | | pending |
-| Merge commit | | pending |
-| Release / tag | | pending |
-| Smoke test | | pending |
+| Branch | `fix/796_pago-presupuesto-picker-saldo-regression` | created |
+| Tasks | `tasks.md` | see reconciliation note — feature already shipped on `main`; this branch fixes the flaky E2E coverage |
+| Commits | pending | |
+| Pull Request | — | pending |
+| CI run | — | pending |
+| Merge commit | — | pending |
+| Release / tag | — | pending |
+| Smoke test | — | pending |
 
 ## Requirement coverage
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Operator selects a presupuesto from the picker | TBD — Playwright E2E, `frontend/tests/` | pending |
-| Operator picks a presupuesto and it becomes the payment target | TBD — Playwright E2E, `frontend/tests/` | pending |
-| No presupuestos available | TBD — component/unit test, `pagos/page.tsx` | pending |
-| Saldo pendiente is shown after selecting a presupuesto | TBD — Playwright E2E, `frontend/tests/` | pending |
-| Saldo pendiente updates when the selection changes | TBD — Playwright E2E, `frontend/tests/` | pending |
-| Saldo pendiente fails to load | TBD — component/unit test, `pagos/page.tsx` | pending |
+| Operator selects a presupuesto from the picker | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-01/02` | passing |
+| Operator picks a presupuesto and it becomes the payment target | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-02` | passing |
+| Saldo pendiente is shown after selecting a presupuesto | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-03` | fixed — was flaky on ambiguous locator, now uses `data-testid="saldo-pendiente-amount"` |
+| Saldo pendiente updates when the selection changes | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-04` | fixed — same locator fix |
+| Overpayment rejected with saldo pendiente message | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-05` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU15 – Procesar pago.md` | no | pending |
-| `CHANGELOG.md` | no | pending |
+| `docs/100-business/102-use-cases/CU15 – Procesar pago.md` | yes | pending (this branch) |
+| `CHANGELOG.md` | yes | pending (this branch) |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | Issue #796 open; proposal/specs drafted, design/tasks not yet written |
-| 2 | Failing tests written, test cases designed | pending | |
-| 3 | Suite green, coverage held, docs updated | pending | |
+| 1 | Issue + Specification + Acceptance Criteria | yes | Issue #796 open, linked to CU15; spec/proposal drafted |
+| 2 | Failing tests written, test cases designed | yes | `TS-0014-pagos-saldo-picker.spec.ts` pre-existed; failure mode confirmed (strict-mode locator ambiguity) before fixing |
+| 3 | Suite green, coverage held, docs updated | yes | 5/5 `TS-0014-pagos-saldo-picker.spec.ts` passing locally against the full Docker stack; CU15 doc + CHANGELOG updated |
 | 4 | CI green, review approved, no conflicts | pending | |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
