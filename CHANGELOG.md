@@ -175,6 +175,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`CheckboxField` click target excluded the gap between the input and its label**
+  (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
+  rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the
+  `theme.spacing[3]` gap between them with no click handler — clicks landing there (e.g. on the
+  element's bounding-box center) did nothing. Caused
+  `TS-0031-testimonio-generacion-verificacion-feature.spec.ts`'s "Observado" checkbox test to
+  silently fail to toggle state. Fixed by wrapping the input and label text in a single native
+  `<label>` element, so any click within the row toggles the checkbox.
+
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
   to reject the request outright when `saldoPendiente > 0`, contradicting CU16's documented
