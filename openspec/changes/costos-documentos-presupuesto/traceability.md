@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `feat/823_costos-documentos-presupuesto` | active |
 | Tasks | `tasks.md` | in progress |
 | Commits | `364328f3`, `265713aa`, `97f20fc7`, `a5f87551` | done |
-| Pull Request | pending push | pending |
+| Pull Request | [#926](https://github.com/matiaspakua/notaire/pull/926) | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
