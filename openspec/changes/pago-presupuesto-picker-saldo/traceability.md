@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/pago-presupuesto-picker-saldo/` | in progress |
 | Branch | `fix/796_pago-presupuesto-picker-saldo-regression` | created |
 | Tasks | `tasks.md` | see reconciliation note — feature already shipped on `main`; this branch fixes the flaky E2E coverage |
-| Commits | pending | |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Commits | `2ae786af`, plus this branch's `02-demo-two-full-cases.spec.ts` picker fix | in progress |
+| Pull Request | [#927](https://github.com/matiaspakua/notaire/pull/927) | open |
+| CI run | UI E2E job was red due to unrelated/pre-existing failures (`TS-0012` → fixed separately in #929; `02-demo-two-full-cases.spec.ts` → fixed on this branch, see below) | in progress |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
@@ -35,6 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Saldo pendiente is shown after selecting a presupuesto | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-03` | fixed — was flaky on ambiguous locator, now uses `data-testid="saldo-pendiente-amount"` |
 | Saldo pendiente updates when the selection changes | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-04` | fixed — same locator fix |
 | Overpayment rejected with saldo pendiente message | `TS-0014-pagos-saldo-picker.spec.ts#CU15-SALDO-05` | passing |
+| Demo script (`02-demo-two-full-cases.spec.ts`) still completes a pago after the numeric-ID input was replaced by the picker | `02-demo-two-full-cases.spec.ts` | fixed — updated the Pago step to drive `select-presupuesto-pago` instead of the removed `presupuesto id` field |
 
 ## Permanent documentation updated
 

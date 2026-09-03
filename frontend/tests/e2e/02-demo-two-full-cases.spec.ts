@@ -220,15 +220,12 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Pago`, async () => {
-    await go(page, "/dashboard/presupuestos");
-    await page.getByTestId("input-search-presupuesto").fill(def.clienteApellido);
-    await pause(page);
-    const presupuestoRow = page.getByRole("row").filter({ hasText: def.clienteApellido });
-    const presupuestoId = ((await presupuestoRow.locator("td").first().innerText()) ?? "").trim();
-
     await go(page, "/dashboard/pagos");
     await page.getByTestId("btn-nuevo-pago").click();
-    await page.getByRole("dialog").getByLabel(/presupuesto id/i).fill(presupuestoId);
+    await page.getByTestId("select-presupuesto-pago").click();
+    await page
+      .getByRole("option", { name: new RegExp(def.clienteApellido, "i") })
+      .evaluate((el: HTMLElement) => el.click());
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-07");
     await page.getByRole("dialog").getByLabel(/monto/i).fill(def.pagoMonto);
     await saveDialog(page);

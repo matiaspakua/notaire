@@ -81,18 +81,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Commit message ends with `Closes #796`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Commit message ends with `Closes #796`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin fix/796_pago-presupuesto-picker-saldo-regression`
-- [ ] 10.2 Open the PR titled `[#796] fix: stabilize pagos presupuesto picker/saldo E2E coverage`, referencing Issue #796 and CU15
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.1 `git push -u origin fix/796_pago-presupuesto-picker-saldo-regression`
+- [x] 10.2 Open the PR titled `[#796] fix: stabilize pagos presupuesto picker/saldo E2E coverage` — [#927](https://github.com/matiaspakua/notaire/pull/927)
+- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml` — E2E was red on unrelated pre-existing failures (`TS-0012` fixed in PR #929; `02-demo-two-full-cases.spec.ts` fixed on this branch); re-run pending
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 

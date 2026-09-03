@@ -187,6 +187,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `evaluate(el => el.click())` workaround already used elsewhere in the suite
   for that Radix dropdown.
 
+- **`02-demo-two-full-cases.spec.ts` broke after the presupuesto picker landed**
+  (issue #796): the demo script's Pago step still filled a `presupuesto id`
+  text field that the picker (see above) removed. Updated it to drive
+  `select-presupuesto-pago` and pick the option by client surname, same as
+  `TS-0014-pagos-saldo-picker.spec.ts`.
+
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
   to reject the request outright when `saldoPendiente > 0`, contradicting CU16's documented
