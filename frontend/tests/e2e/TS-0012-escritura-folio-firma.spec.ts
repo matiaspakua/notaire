@@ -29,12 +29,8 @@ test("Escritura form has folio picker (CU06 prerequisite)", async ({ page }) => 
   const folioSelector = page.getByTestId("select-folio-escritura");
   await expect(folioSelector).toBeVisible();
 
-  // Verify selector has select trigger (can be clicked)
-  const selectTrigger = folioSelector.locator("button").first();
-  await expect(selectTrigger).toBeVisible();
-
   // Click to open dropdown and verify options render
-  await selectTrigger.click();
+  await folioSelector.click();
   await page.waitForTimeout(300);
 
   // Even if no folios exist (empty state), the dropdown should be present
@@ -48,6 +44,10 @@ test("Escritura form has folio picker (CU06 prerequisite)", async ({ page }) => 
     const optionCount = await options.count();
     // Pass if we have options or even if empty (backend might have no Nuevo folios)
     expect(optionCount >= 0).toBe(true);
+    // Radix renders the listbox in a portal above the dialog; close it before
+    // interacting with the dialog again or it intercepts the next click
+    await page.keyboard.press("Escape");
+    await expect(dropdown).not.toBeVisible({ timeout: 2000 });
   }
 
   // Close the dialog
