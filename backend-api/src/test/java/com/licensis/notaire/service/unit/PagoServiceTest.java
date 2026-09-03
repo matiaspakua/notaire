@@ -1,7 +1,9 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.negocio.Pago;
 import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.PagoRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.service.EstadoPago;
@@ -328,5 +330,57 @@ class PagoServiceTest {
                 .hasMessageContaining("monto del pago debe ser mayor a cero");
 
         verify(pagoRepository, never()).save(any(Pago.class));
+    }
+
+    @Test
+    @DisplayName("Should include documento presentado cost in presupuesto total (Issue #823)")
+    void shouldIncludeDocumentCostInPresupuestoTotal() {
+        testPresupuesto.setTramiteList(List.of(tramiteWithDocumentCosts(1500f)));
+
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(null);
+
+        Float result = pagoService.calcularSaldoPendiente(1);
+
+        assertThat(result).isEqualTo(6500f);
+    }
+
+    @Test
+    @DisplayName("Should sum multiple documento presentado costs in presupuesto total (Issue #823)")
+    void shouldSumMultipleDocumentCostsInPresupuestoTotal() {
+        testPresupuesto.setTramiteList(List.of(tramiteWithDocumentCosts(1000f, 500f)));
+
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(null);
+
+        Float result = pagoService.calcularSaldoPendiente(1);
+
+        assertThat(result).isEqualTo(6500f);
+    }
+
+    @Test
+    @DisplayName("Should not change total when no documentos have cost (Issue #823)")
+    void shouldNotChangeTotalWhenNoDocumentsHaveCost() {
+        testPresupuesto.setTramiteList(List.of(tramiteWithDocumentCosts()));
+
+        when(presupuestoRepository.findById(1)).thenReturn(Optional.of(testPresupuesto));
+        when(pagoRepository.sumMontoByPresupuestoId(1)).thenReturn(null);
+
+        Float result = pagoService.calcularSaldoPendiente(1);
+
+        assertThat(result).isEqualTo(5000f);
+    }
+
+    private Tramite tramiteWithDocumentCosts(Float... importesAPagar) {
+        List<DocumentoPresentado> documentos = new ArrayList<>();
+        for (Float importeAPagar : importesAPagar) {
+            DocumentoPresentado documento = new DocumentoPresentado();
+            documento.setImporteAPagar(importeAPagar);
+            documentos.add(documento);
+        }
+
+        Tramite tramite = new Tramite();
+        tramite.setDocumentoPresentadoList(documentos);
+        return tramite;
     }
 }

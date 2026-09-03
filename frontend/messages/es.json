@@ -703,6 +703,24 @@
         "conceptoPlaceholder": "Seleccionar concepto...",
         "observaciones": "Observaciones",
         "items": "Items"
+      },
+      "costosDocumento": {
+        "title": "Costos de Documentos",
+        "description": "Gastos fijos o variables esperados por tipo de documento",
+        "newCosto": "Nuevo Costo de Documento",
+        "created": "Costo creado",
+        "errorCreate": "Error al crear el costo",
+        "noData": "No hay costos definidos para este tipo de trámite",
+        "selectionRequired": "Seleccione tipo de documento e ingrese un valor",
+        "fields": {
+          "tipoTramite": "Tipo de Trámite",
+          "tipoDocumento": "Tipo de Documento",
+          "tipoDocumentoPlaceholder": "Seleccionar tipo de documento...",
+          "tipoCosto": "Tipo de Costo",
+          "montoFijo": "Monto Fijo",
+          "porcentajeVariable": "Porcentaje Variable",
+          "valor": "Valor"
+        }
       }
     }
   },

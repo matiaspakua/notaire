@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
+  cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
+  included in its presupuesto's total. Adds `PlantillaCostoDocumento`
+  (`POST`/`GET /api/v1/plantilla-costos-documento`) so a `TipoDeTramite`'s
+  presupuesto template can define an expected fixed or variable
+  (percentage) cost per `TipoDeDocumento` — exactly one of the two must be
+  set. Adds a "Costos de Documentos" section to the plantillas de
+  presupuesto admin screen.
 - **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
   new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
   plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
@@ -182,6 +190,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Radix listbox (rendered in a portal above the dialog) with `Escape` before clicking
   "Cancelar", since a still-open dropdown intercepted that click. Test-only fix, no
   application code changed.
+
+- **Flaky E2E coverage for the pagos presupuesto picker/saldo pendiente display**
+  (issue #796, CU15): `TS-0014-pagos-saldo-picker.spec.ts` located the saldo
+  pendiente text via an ambiguous `getByRole("dialog").getByText(/saldo|pendiente/i)`,
+  which could also match the picker's loading placeholder or a seeded persona
+  surname containing "Saldo", causing intermittent strict-mode failures. Added a
+  dedicated `data-testid="saldo-pendiente-amount"` to the saldo display in
+  `pagos/page.tsx` and updated the spec to target it directly; also fixed two
+  assertions that compared the raw input amount against the locale-formatted
+  currency string, and aligned a `select-persona` option click with the
+  `evaluate(el => el.click())` workaround already used elsewhere in the suite
+  for that Radix dropdown.
+
+- **`02-demo-two-full-cases.spec.ts` broke after the presupuesto picker landed**
+  (issue #796): the demo script's Pago step still filled a `presupuesto id`
+  text field that the picker (see above) removed. Updated it to drive
+  `select-presupuesto-pago` and pick the option by client surname, same as
+  `TS-0014-pagos-saldo-picker.spec.ts`.
 
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`

@@ -20,7 +20,7 @@
 | 2 | El Recepcionista/Escribano solicita el número de presupuesto, o tipo y número de identificación, o nombre y apellido del cliente, para realizar una búsqueda. |  |
 | 3 |  | Busca y presenta, el presupuesto encontrado, o la lista de presupuestos pendientes asociados a una gestión o al cliente indicado. |
 | 4 | El Recepcionista/Escribano selecciona un presupuesto de la lista. |  |
-| 5 |  | Muestra los datos del presupuesto seleccionado: (Número de gestión a la que pertenece; Encabezado de gestión; Número de presupuesto; Trámite asociado; Ítems con los valores, porcentajes y observaciones correspondientes; Total) |
+| 5 |  | Muestra los datos del presupuesto seleccionado: (Número de gestión a la que pertenece; Encabezado de gestión; Número de presupuesto; Trámite asociado; Ítems con los valores, porcentajes y observaciones correspondientes; Total; Saldo pendiente) |
 | 6 | El Recepcionista/Escribano solicita al Cliente que le indique el monto del pago a realizar. |  |
 | 7 | El Cliente indica el monto que desea abonar. |  |
 | 8 | El Recepcionista/Escribano solicita generar un nuevo pago. |  |

@@ -703,6 +703,24 @@
         "conceptoPlaceholder": "Select concept...",
         "observaciones": "Notes",
         "items": "Items"
+      },
+      "costosDocumento": {
+        "title": "Document Costs",
+        "description": "Expected fixed or variable expenses per document type",
+        "newCosto": "New Document Cost",
+        "created": "Cost created",
+        "errorCreate": "Error creating cost",
+        "noData": "No costs defined for this trámite type",
+        "selectionRequired": "Select a document type and enter a value",
+        "fields": {
+          "tipoTramite": "Trámite Type",
+          "tipoDocumento": "Document Type",
+          "tipoDocumentoPlaceholder": "Select document type...",
+          "tipoCosto": "Cost Type",
+          "montoFijo": "Fixed Amount",
+          "porcentajeVariable": "Variable Percentage",
+          "valor": "Value"
+        }
       }
     }
   },
