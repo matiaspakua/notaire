@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/costos-documentos-presupuesto/` | complete |
 | Branch | `feat/823_costos-documentos-presupuesto` | active |
 | Tasks | `tasks.md` | in progress |
-| Commits | `364328f3`, `265713aa`, `97f20fc7` | done |
-| Pull Request | pending | pending |
+| Commits | `364328f3`, `265713aa`, `97f20fc7`, `a5f87551` | done |
+| Pull Request | pending push | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
