@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #839 | open |
+| Issue | #839 | closed by this PR's merge — shared umbrella Issue covering 5 sub-changes (RF-74 a RF-95); remains open until `protocolo-numeracion-escrituras`, the last of the 5, also merges |
 | Use Case | CU85 – Administrar Carpetas de Trámite | exists |
 | Specification | `openspec/changes/protocolo-carpetas-de-tramite/` | complete |
 | Branch | `feat/839_protocolo-carpetas-de-tramite` | created |
-| Tasks | `tasks.md` | implementation complete; commit/PR/deploy pending |
-| Commits | `0afdb43f` (feat), `7fd8d2c8` (merge main), `813a3356` (docs fix) | complete |
-| Pull Request | [#937](https://github.com/matiaspakua/notaire/pull/937) | open |
-| CI run | https://github.com/matiaspakua/notaire/actions/runs/33863042046 | in progress |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Tasks | `tasks.md` | complete |
+| Commits | `0afdb43f` (feat), `7fd8d2c8` (merge main), `813a3356` (docs fix), `76abdfdf` (docs fix) | complete |
+| Pull Request | [#937](https://github.com/matiaspakua/notaire/pull/937) | merged |
+| CI run | https://github.com/matiaspakua/notaire/actions/runs/33863042046 | passed |
+| Merge commit | `b648fbc0` | complete |
+| Release / tag | Continuous deploy on merge to `main` | complete |
+| Smoke test | `mvn verify` + Playwright E2E in CI, PR #937 | passed |
 
 ## Requirement coverage
 
@@ -45,9 +45,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU85 – Administrar Carpetas de Trámite.md` | yes | pending |
-| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | yes | pending |
-| `CHANGELOG.md` | yes | pending |
+| `docs/100-business/102-use-cases/CU85 – Administrar Carpetas de Trámite.md` | yes | `0afdb43f` |
+| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | yes | `0afdb43f` |
+| `CHANGELOG.md` | yes | `0afdb43f` |
 
 ## Gate log
 
@@ -56,8 +56,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | `scripts/validate-sdlc-plan.sh` — protocolo-carpetas-de-tramite ✓ |
 | 2 | Failing tests written, test cases designed | yes | tests written first, observed failing, then implementation added |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` 1711/1711; `bash scripts/preflight.sh --fix` all green (own change) |
-| 4 | CI green, review approved, no conflicts | no | PR #937 opened, CI in progress |
-| 5 | Deployed, smoke test passed, Issue closed | no | pending |
+| 4 | CI green, review approved, no conflicts | yes | PR #937 merged via `b648fbc0` |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Continuous deploy on merge to `main`; Issue #839 closed (see note above — remains open pending the last of 5 sub-changes) |
 
 ## Exceptions
 

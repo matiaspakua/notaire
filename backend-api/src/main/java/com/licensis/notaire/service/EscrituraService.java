@@ -1,8 +1,12 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.exception.NumeroEscrituraDuplicadoException;
+import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
 import com.licensis.notaire.negocio.Escritura;
+import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.repository.EscrituraRepository;
+import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +26,15 @@ public class EscrituraService {
 
     private final EscrituraRepository escrituraRepository;
     private final PersonaRepository personaRepository;
+    private final FolioRepository folioRepository;
+    private final NumeracionEscrituraService numeracionEscrituraService;
 
-    public EscrituraService(EscrituraRepository escrituraRepository, PersonaRepository personaRepository) {
+    public EscrituraService(EscrituraRepository escrituraRepository, PersonaRepository personaRepository,
+            FolioRepository folioRepository, NumeracionEscrituraService numeracionEscrituraService) {
         this.escrituraRepository = escrituraRepository;
         this.personaRepository = personaRepository;
+        this.folioRepository = folioRepository;
+        this.numeracionEscrituraService = numeracionEscrituraService;
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +55,42 @@ public class EscrituraService {
 
     public Escritura save(Escritura entity) {
         logger.info("Saving escritura with numero: {}", entity.getNumero());
+        validarNumeracion(entity);
         return escrituraRepository.save(entity);
+    }
+
+    private void validarNumeracion(Escritura entity) {
+        resolveFolioParaNumeracion(entity).ifPresent(folio -> {
+            Persona escribano = folio.getFkIdPersonaEscribano();
+            if (escribano == null || escribano.getIdPersona() == null) {
+                return;
+            }
+            boolean esAuxiliar = folio.getFkIdTipoFolio() != null && folio.getFkIdTipoFolio().isEsAuxiliar();
+            ResultadoValidacionNumeracion resultado = numeracionEscrituraService.validar(
+                    entity.getNumero(), escribano, folio.getAnio(), esAuxiliar,
+                    entity.getObservaciones(), entity.getIdEscritura());
+
+            if (resultado == ResultadoValidacionNumeracion.DUPLICADO) {
+                throw new NumeroEscrituraDuplicadoException(
+                        "El número " + entity.getNumero() + " ya fue utilizado en el protocolo "
+                                + (esAuxiliar ? "auxiliar" : "principal") + " del año " + folio.getAnio());
+            }
+            if (resultado == ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR) {
+                throw new SaltoNumeracionSinJustificarException(
+                        "El número " + entity.getNumero() + " deja un salto en la numeración correlativa; "
+                                + "debe indicar una justificación en observaciones");
+            }
+        });
+    }
+
+    private Optional<Folio> resolveFolioParaNumeracion(Escritura entity) {
+        if (entity.getIdFolio() != null) {
+            return folioRepository.findById(entity.getIdFolio());
+        }
+        if (entity.getIdEscritura() != null) {
+            return folioRepository.findByFkIdEscrituraIdEscritura(entity.getIdEscritura());
+        }
+        return Optional.empty();
     }
 
     public void deleteById(Integer id) {

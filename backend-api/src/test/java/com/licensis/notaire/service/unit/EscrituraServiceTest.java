@@ -1,10 +1,17 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.exception.NumeroEscrituraDuplicadoException;
+import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
 import com.licensis.notaire.negocio.Escritura;
+import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.repository.EscrituraRepository;
+import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.service.EscrituraService;
+import com.licensis.notaire.service.NumeracionEscrituraService;
+import com.licensis.notaire.service.ResultadoValidacionNumeracion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +41,12 @@ class EscrituraServiceTest {
 
     @Mock
     private PersonaRepository personaRepository;
+
+    @Mock
+    private FolioRepository folioRepository;
+
+    @Mock
+    private NumeracionEscrituraService numeracionEscrituraService;
 
     @InjectMocks
     private EscrituraService escrituraService;
@@ -142,6 +155,63 @@ class EscrituraServiceTest {
                 .isEqualTo(100);
 
         verify(escrituraRepository, times(1)).save(testEscritura);
+    }
+
+    @Test
+    @DisplayName("Should reject saving escritura when número is a duplicate within its folio scope (CU86)")
+    void shouldRejectSaveWhenNumeroIsDuplicado() {
+        Folio folio = folioConEscribano(testEscribano, 2026, false);
+        testEscritura.setIdFolio(10);
+        when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
+        when(numeracionEscrituraService.validar(100, testEscribano, 2026, false, null, 1))
+                .thenReturn(ResultadoValidacionNumeracion.DUPLICADO);
+
+        assertThatThrownBy(() -> escrituraService.save(testEscritura))
+                .isInstanceOf(NumeroEscrituraDuplicadoException.class);
+
+        verify(escrituraRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should reject saving escritura when número leaves an unjustified salto (CU86)")
+    void shouldRejectSaveWhenSaltoIsNotJustified() {
+        Folio folio = folioConEscribano(testEscribano, 2026, false);
+        testEscritura.setIdFolio(10);
+        when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
+        when(numeracionEscrituraService.validar(100, testEscribano, 2026, false, null, 1))
+                .thenReturn(ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR);
+
+        assertThatThrownBy(() -> escrituraService.save(testEscritura))
+                .isInstanceOf(SaltoNumeracionSinJustificarException.class);
+
+        verify(escrituraRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should save escritura when número correlativo is valid (CU86)")
+    void shouldSaveWhenNumeracionIsOk() {
+        Folio folio = folioConEscribano(testEscribano, 2026, false);
+        testEscritura.setIdFolio(10);
+        when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
+        when(numeracionEscrituraService.validar(100, testEscribano, 2026, false, null, 1))
+                .thenReturn(ResultadoValidacionNumeracion.OK);
+        when(escrituraRepository.save(testEscritura)).thenReturn(testEscritura);
+
+        Escritura result = escrituraService.save(testEscritura);
+
+        assertThat(result).isEqualTo(testEscritura);
+        verify(escrituraRepository, times(1)).save(testEscritura);
+    }
+
+    private Folio folioConEscribano(Persona escribano, int anio, boolean esAuxiliar) {
+        TipoDeFolio tipoDeFolio = new TipoDeFolio();
+        tipoDeFolio.setEsAuxiliar(esAuxiliar);
+
+        Folio folio = new Folio();
+        folio.setAnio(anio);
+        folio.setFkIdPersonaEscribano(escribano);
+        folio.setFkIdTipoFolio(tipoDeFolio);
+        return folio;
     }
 
     @Test
