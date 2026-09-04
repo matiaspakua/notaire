@@ -191,6 +191,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`TS-0012-escritura-folio-firma.spec.ts` regressed after the #892 folio-picker fix
+  shipped** (issue #892, CU06): the test chained `.locator("button").first()` off
+  `getByTestId("select-folio-escritura")`, but that testid is applied directly to the
+  Radix `SelectTrigger` button, so the nested lookup never resolved. Also closed the
+  Radix listbox (rendered in a portal above the dialog) with `Escape` before clicking
+  "Cancelar", since a still-open dropdown intercepted that click. Test-only fix, no
+  application code changed.
+
 - **Flaky E2E coverage for the pagos presupuesto picker/saldo pendiente display**
   (issue #796, CU15): `TS-0014-pagos-saldo-picker.spec.ts` located the saldo
   pendiente text via an ambiguous `getByRole("dialog").getByText(/saldo|pendiente/i)`,
