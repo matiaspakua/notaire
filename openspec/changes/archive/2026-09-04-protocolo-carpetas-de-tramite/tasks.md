@@ -71,29 +71,29 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #839`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #839`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin feat/839_protocolo-carpetas-de-tramite`
-- [ ] 10.2 Open the PR titled `[#839] feat(carpetas): administrar carpetas de trámite`, referencing Issue #839 and Use Case CU85
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin feat/839_protocolo-carpetas-de-tramite`
+- [x] 10.2 Open the PR titled `[#839] feat(carpetas): administrar carpetas de trámite`, referencing Issue #839 and Use Case CU85
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment: iniciar un trámite de prueba, confirmar carpeta "Activa", archivar la gestión y confirmar carpeta "Archivada"; `GET /actuator/health` en verde
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
+- [x] 12.1 Run the smoke test on the target environment: iniciar un trámite de prueba, confirmar carpeta "Activa", archivar la gestión y confirmar carpeta "Archivada"; `GET /actuator/health` en verde
+- [x] 12.2 Verify the rollback path is still available as described in design.md
 - [ ] 12.3 Close the GitHub Issue #839 only if this is the last of the five `protocolo-*` changes to merge — referencing the PR; otherwise leave it open and note the partial completion
 - [ ] 12.4 Archive the change: `openspec archive protocolo-carpetas-de-tramite`
 
