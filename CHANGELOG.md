@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
+  inscripción from a signed (`Firmada`) escritura and track it through the
+  registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.
+  Generation is blocked until the escritura's inmueble has its datos
+  registrales complete (`matricula`, `tomoFolioFinca`, `linderos`, added to
+  `Inmueble` alongside the existing catastral data). Adds
+  `POST/PUT /api/v1/minutas-inscripcion/**` endpoints, a
+  `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
+  normalized inscription form, and a "Minutas de Inscripción" dashboard
+  screen to generate, present, observe and inscribe.
 - **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
   trámite genera automáticamente su carpeta de trámite (una por trámite,
   numeración única, estado "Activa"). Adds `CarpetaTramite` entity and

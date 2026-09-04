@@ -161,6 +161,24 @@ public class ReporteController {
                 .body(pdfBytes);
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Minuta de inscripción no encontrada")
+    })
+    @GetMapping(value = "/minuta-inscripcion/{idMinutaInscripcion}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "CU82 - Generar el formulario normalizado de la minuta de inscripción",
+               description = "Genera un PDF con el formulario normalizado de una minuta de inscripción")
+    public ResponseEntity<byte[]> generarReporteMinutaInscripcion(
+            @Parameter(description = "ID de la minuta de inscripción")
+            @PathVariable @Positive Integer idMinutaInscripcion) {
+        byte[] pdfBytes = reporteService.generarReporteMinutaInscripcion(idMinutaInscripcion);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"minuta_inscripcion_" + idMinutaInscripcion + ".pdf\"")
+                .body(pdfBytes);
+    }
+
     @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar declaracion jurada de rentas",
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")

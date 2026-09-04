@@ -23,6 +23,8 @@ public interface TramiteRepository extends JpaRepository<Tramite, Integer> {
 
     List<Tramite> findByFkIdPresupuestoIdPresupuesto(Integer idPresupuesto);
 
+    List<Tramite> findByFkIdEscrituraIdEscritura(Integer idEscritura);
+
     @Query("SELECT t FROM Tramite t JOIN t.personaList p WHERE p.idPersona = :idPersona")
     List<Tramite> findByPersonaListIdPersona(@Param("idPersona") Integer idPersona);
 }

@@ -3,8 +3,10 @@ package com.licensis.notaire.service;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Cuaderno;
+import com.licensis.notaire.negocio.MinutaInscripcion;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.repository.CuadernoRepository;
+import com.licensis.notaire.repository.MinutaInscripcionRepository;
 import com.licensis.notaire.repository.TestimonioRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -29,6 +31,7 @@ public class ReporteService {
     private final DataSource dataSource;
     private final TestimonioRepository testimonioRepository;
     private final CuadernoRepository cuadernoRepository;
+    private final MinutaInscripcionRepository minutaInscripcionRepository;
 
     private static final String RUTA_REPORTE_PRESUPUESTO = "reportes/reportePresupuestoSinInmueble.jasper";
     private static final String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportes/reportePresupuestoInmuebles.jasper";
@@ -39,10 +42,12 @@ public class ReporteService {
     private static final int FOLIOS_POR_CUADERNO = 10;
 
     public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository,
-                           CuadernoRepository cuadernoRepository) {
+                           CuadernoRepository cuadernoRepository,
+                           MinutaInscripcionRepository minutaInscripcionRepository) {
         this.dataSource = dataSource;
         this.testimonioRepository = testimonioRepository;
         this.cuadernoRepository = cuadernoRepository;
+        this.minutaInscripcionRepository = minutaInscripcionRepository;
     }
 
     public byte[] generarReportePresupuesto(Integer idPresupuesto) throws Exception {
@@ -131,6 +136,19 @@ public class ReporteService {
                 "Declaracion Jurada de Rentas",
                 "CU50",
                 "Periodo: " + mes + "/" + anio,
+                "Generado: " + LocalDate.now()
+        );
+    }
+
+    public byte[] generarReporteMinutaInscripcion(Integer idMinutaInscripcion) {
+        MinutaInscripcion minuta = minutaInscripcionRepository.findById(idMinutaInscripcion)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No existe la minuta de inscripción con ID: " + idMinutaInscripcion));
+
+        return generarPdfTextoSimple(
+                "Minuta de Inscripción N° " + minuta.getNumero(),
+                "CU82",
+                "Escritura N° " + minuta.getFkIdEscritura().getNumero() + " - Estado: " + minuta.getEstado(),
                 "Generado: " + LocalDate.now()
         );
     }
