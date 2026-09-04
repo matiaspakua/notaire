@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
+  inscripción from a signed (`Firmada`) escritura and track it through the
+  registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.
+  Generation is blocked until the escritura's inmueble has its datos
+  registrales complete (`matricula`, `tomoFolioFinca`, `linderos`, added to
+  `Inmueble` alongside the existing catastral data). Adds
+  `POST/PUT /api/v1/minutas-inscripcion/**` endpoints, a
+  `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
+  normalized inscription form, and a "Minutas de Inscripción" dashboard
+  screen to generate, present, observe and inscribe.
 - **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
   CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
   (required when `vence` is checked), and `quienEntrega`. When a
