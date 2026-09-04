@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   request is rejected (HTTP 409) unless explicitly confirmed
   (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
   screen.
+- **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
+  CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
+  (required when `vence` is checked), and `quienEntrega`. When a
+  `DocumentoPresentado` is created, these fields — plus a computed
+  `fechaVencimiento` (`fechaIngreso + diasVencimiento`) — are copied from its
+  `TipoDeDocumento`, giving CU42's "próximos vencimientos" report real data to
+  work with. Adds a "Vence"/"Días de vencimiento"/"Quién entrega" section to
+  the Tipos de Documento admin form.
 - **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
   cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
   included in its presupuesto's total. Adds `PlantillaCostoDocumento`
@@ -193,6 +201,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`CheckboxField` click target excluded the gap between the input and its label**
+  (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
+  rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the
+  `theme.spacing[3]` gap between them with no click handler — clicks landing there (e.g. on the
+  element's bounding-box center) did nothing. Caused
+  `TS-0031-testimonio-generacion-verificacion-feature.spec.ts`'s "Observado" checkbox test to
+  silently fail to toggle state. Fixed by wrapping the input and label text in a single native
+  `<label>` element, so any click within the row toggles the checkbox.
 - **`TS-0012-escritura-folio-firma.spec.ts` regressed after the #892 folio-picker fix
   shipped** (issue #892, CU06): the test chained `.locator("button").first()` off
   `getByTestId("select-folio-escritura")`, but that testid is applied directly to the

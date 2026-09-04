@@ -23,3 +23,13 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 1.1 | No existen documentos próximos a vencer. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Herencia de vencimiento desde el tipo de documento (Issue #837)
+
+El vencimiento (`vence`, `diasVencimiento`, `quienEntrega`) se configura una
+única vez en el tipo de documento (CU27/CU32) y se hereda automáticamente a
+cada `DocumentoPresentado` creado a partir de ese tipo, calculando
+`fechaVencimiento = fechaIngreso + diasVencimiento`. Antes de este cambio
+ningún tipo de documento tenía estos campos cargables desde la pantalla de
+administración, por lo que este informe nunca tenía datos reales sobre los
+que operar.
