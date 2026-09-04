@@ -183,6 +183,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`CheckboxField` click target excluded the gap between the input and its label**
+  (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
+  rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the
+  `theme.spacing[3]` gap between them with no click handler — clicks landing there (e.g. on the
+  element's bounding-box center) did nothing. Caused
+  `TS-0031-testimonio-generacion-verificacion-feature.spec.ts`'s "Observado" checkbox test to
+  silently fail to toggle state. Fixed by wrapping the input and label text in a single native
+  `<label>` element, so any click within the row toggles the checkbox.
 - **`TS-0012-escritura-folio-firma.spec.ts` regressed after the #892 folio-picker fix
   shipped** (issue #892, CU06): the test chained `.locator("button").first()` off
   `getByTestId("select-folio-escritura")`, but that testid is applied directly to the
