@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #837 | open (in-progress label set) |
+| Issue | #837 | closed |
 | Use Case | CU27 – Ingresar nuevo tipo de documento (#180); CU32 – Modificar tipo de documento (#185); CU42 – Informar próximos vencimientos (#195) | exists |
 | Specification | `openspec/changes/tipo-documento-vencimiento-config/` | complete |
-| Branch | `feat/837_tipo-documento-vencimiento-config` | created |
+| Branch | `feat/837_tipo-documento-vencimiento-config` | merged |
 | Tasks | `tasks.md` | see below |
-| Commits | `86e641f0` | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Commits | `86e641f0`, `1dd6a7ad` | done |
+| Pull Request | #935 | merged |
+| CI run | PR #935 checks | green |
+| Merge commit | `3daf8759` | done |
+| Release / tag | — | not applicable (continuous deploy, no tagged release) |
+| Smoke test | admin smoke 22/22 passing (per Gate 3 evidence) | done |
 
 ## Requirement coverage
 
@@ -52,7 +52,7 @@ missing UI form and the herencia logic in `DocumentoPresentadoController`).
 |----------|---------|--------|
 | `docs/100-business/102-use-cases/CU27 – Ingresar nuevo tipo de documento.md` | no — already accurate | — |
 | `docs/100-business/102-use-cases/CU32 – Modificar tipo de documento.md` | no — already accurate | — |
-| `docs/100-business/102-use-cases/CU42 – Informar próximos vencimientos.md` | yes — added herencia note | pending |
+| `docs/100-business/102-use-cases/CU42 – Informar próximos vencimientos.md` | yes — added herencia note | `1dd6a7ad` |
 | `CHANGELOG.md` | yes | `86e641f0` |
 
 ## Gate log
@@ -62,8 +62,8 @@ missing UI form and the herencia logic in `DocumentoPresentadoController`).
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #837, `proposal.md`, `specs/` |
 | 2 | Failing tests written, test cases designed | yes | E2E specs + `DocumentoPresentadoControllerTest` written before implementation |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn verify` exit 0; Playwright 4/4 + admin smoke 22/22 passing |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | PR #935 merged via `3daf8759` |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Continuous deploy on merge to `main`; Issue #837 closed |
 
 ## Exceptions
 

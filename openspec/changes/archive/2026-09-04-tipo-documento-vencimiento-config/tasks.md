@@ -62,7 +62,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) — alta/edición de vencimiento y responsable en tipos de documento; herencia automática en documentos presentados
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` — n/a, no document is superseded by this change
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
@@ -73,35 +73,35 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin feat/837_tipo-documento-vencimiento-config`
-- [ ] 10.2 Open the PR titled `[#837] feat: permitir cargar vencimiento y responsable en tipos de documento`, referencing Issue #837 and CU27/CU32/CU42
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin feat/837_tipo-documento-vencimiento-config`
+- [x] 10.2 Open the PR titled `[#837] feat: permitir cargar vencimiento y responsable en tipos de documento`, referencing Issue #837 and CU27/CU32/CU42
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test from design.md — Deployment Strategy (tipo de documento con vence activado, documento presentado hereda vencimiento; `GET /actuator/health` en verde)
-- [ ] 12.2 Verify the rollback path described in design.md — Rollback Strategy is still available
-- [ ] 12.3 Close GitHub Issue #837, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive tipo-documento-vencimiento-config`
+- [x] 12.1 Run the smoke test from design.md — Deployment Strategy (tipo de documento con vence activado, documento presentado hereda vencimiento; `GET /actuator/health` en verde)
+- [x] 12.2 Verify the rollback path described in design.md — Rollback Strategy is still available
+- [x] 12.3 Close GitHub Issue #837, referencing the PR
+- [x] 12.4 Archive the change: `openspec archive tipo-documento-vencimiento-config`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
