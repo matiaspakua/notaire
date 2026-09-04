@@ -6,6 +6,7 @@ import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
     boolean existsByFkIdEscrituraIdEscritura(Integer idEscritura);
 
+    Optional<Folio> findByFkIdEscrituraIdEscritura(Integer idEscritura);
+
     List<Folio> findByAnio(int anio);
 
     List<Folio> findByEstado(String estado);
@@ -40,4 +43,25 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
     @Query("SELECT MAX(f.fkIdEscritura.numero) FROM Folio f "
             + "WHERE f.fkIdTipoFolio.esAuxiliar = true AND f.fkIdEscritura IS NOT NULL")
     Optional<Integer> findMaxNumeroEscrituraAuxiliar();
+
+    @Query("SELECT MAX(f.fkIdEscritura.numero) FROM Folio f "
+            + "WHERE f.fkIdPersonaEscribano.idPersona = :idEscribano AND f.anio = :anio "
+            + "AND f.fkIdTipoFolio.esAuxiliar = :esAuxiliar AND f.fkIdEscritura IS NOT NULL "
+            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdEscritura.idEscritura <> :idEscrituraExcluir)")
+    Optional<Integer> findMaxNumeroEscrituraByEscribanoAnioYTipo(
+            @Param("idEscribano") Integer idEscribano,
+            @Param("anio") int anio,
+            @Param("esAuxiliar") boolean esAuxiliar,
+            @Param("idEscrituraExcluir") Integer idEscrituraExcluir);
+
+    @Query("SELECT COUNT(f) > 0 FROM Folio f "
+            + "WHERE f.fkIdEscritura.numero = :numero AND f.fkIdPersonaEscribano.idPersona = :idEscribano "
+            + "AND f.anio = :anio AND f.fkIdTipoFolio.esAuxiliar = :esAuxiliar AND f.fkIdEscritura IS NOT NULL "
+            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdEscritura.idEscritura <> :idEscrituraExcluir)")
+    boolean existsNumeroEscrituraByEscribanoAnioYTipo(
+            @Param("numero") int numero,
+            @Param("idEscribano") Integer idEscribano,
+            @Param("anio") int anio,
+            @Param("esAuxiliar") boolean esAuxiliar,
+            @Param("idEscrituraExcluir") Integer idEscrituraExcluir);
 }
