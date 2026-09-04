@@ -132,32 +132,27 @@ la sección 1.2 más abajo sigue siendo la lectura narrativa conjunta.
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 1 | 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | `openspec/changes/persona-validacion-duplicados/` |
-| 2 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/` (mergeado, PR #906), `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/` (mergeado, PR #907), `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` — 2 de 5 mergeados, issue reabierto hasta que las 5 estén |
+| 2 | 9 — Bloque SRS sin desarrollo (RF-74 a RF-95) | [#839](https://github.com/matiaspakua/notaire/issues/839) | 5 cambios independientes: `protocolo-cuadernos-de-folios/` (mergeado, PR #906, archivado), `protocolo-carpetas-de-tramite/`, `protocolo-auxiliar-tramites/` (mergeado, PR #907, archivado), `protocolo-minuta-inscripcion/`, `protocolo-numeracion-escrituras/` — 2 de 5 mergeados, issue reabierto hasta que las 5 estén |
 
 Ambos prerequisitos del hallazgo 10 (`#841`) ya están resueltos y
 archivados: hallazgo 2 (`#832`) y hallazgo 3 (`#833`, ver "Ya resueltos"
-más abajo) — `#841` ya no está bloqueado, solo le falta `/opsx:propose`.
+más abajo) — `#841` ya no está bloqueado; su `/opsx:propose` ya se hizo
+(`openspec/changes/gestion-workflow-reingreso-testimonio/`), falta `/opsx:apply`.
 
 ### Listos para `/opsx:apply` — `priority:medium`
 
 | Orden | Hallazgo | Issue | Change |
 |---|----------|-------|--------|
-| 3 | 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | `openspec/changes/pago-limite-saldo-pendiente/` |
-| 4 | 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | `openspec/changes/pago-presupuesto-picker-saldo/` |
-| 5 | 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | `openspec/changes/pagos-parciales-cuotas/` |
-| 6 | 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | `openspec/changes/descuentos-recargos-presupuesto/` |
-| 7 | 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | `openspec/changes/costos-documentos-presupuesto/` |
 | 8 | 4 — Presupuestar sin plantillas ni catálogo de ítems | [#834](https://github.com/matiaspakua/notaire/issues/834) | `openspec/changes/presupuesto-plantillas-y-catalogo-items/` |
 | 9 | 6 — Suplencias sin efecto práctico | [#836](https://github.com/matiaspakua/notaire/issues/836) | `openspec/changes/suplencia-efecto-en-gestiones/` |
-| 10 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` |
+| 10 | 7 — Tipos de documento sin reglas propias | [#837](https://github.com/matiaspakua/notaire/issues/837) | `openspec/changes/tipo-documento-vencimiento-config/` — implementado, PR [#935](https://github.com/matiaspakua/notaire/pull/935) abierto, CI en curso |
 | 11 | 8 — Sin vínculo escritura↔folio, copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | `openspec/changes/folio-vinculacion-escritura/` |
+| 10b | 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `openspec/changes/gestion-workflow-reingreso-testimonio/` — `/opsx:propose` completo, falta `/opsx:apply` |
 
 ### Bloqueados — falta `/opsx:propose`
 
 | Hallazgo | Issue | Prioridad | Motivo |
 |----------|-------|-----------|--------|
-| 10 — Motor de workflow no representa el bucle de reingreso post-firma | [#841](https://github.com/matiaspakua/notaire/issues/841) | `priority:medium` | Ya no bloqueado — #832 y #833 resueltos — solo le falta `/opsx:propose` |
 | 1.2 — Recibo de pago nunca se emite | [#23](https://github.com/matiaspakua/notaire/issues/23) | sin prioridad asignada | Abierto, sin `/opsx:propose` iniciado |
 
 ### Ya resueltos (no requieren `/opsx:apply`)
@@ -169,14 +164,18 @@ más abajo) — `#841` ya no está bloqueado, solo le falta `/opsx:propose`.
 | 1.1 — Diagrama de estados sin paso de dinero | [#819](https://github.com/matiaspakua/notaire/issues/819) | resuelto y archivado — spec `gestion-archive-debt-check` |
 | 1.2 — Sin resumen financiero por gestión | [#820](https://github.com/matiaspakua/notaire/issues/820) | resuelto, mergeado (PR #845, `a2a17f8`) y archivado — spec `pago-presupuesto-gestion-summary` |
 | 1.2 — Método de pago no se persistía | [#792](https://github.com/matiaspakua/notaire/issues/792) | resuelto y archivado — spec `pagos` |
+| 5 — Cliente duplicado sin validación | [#835](https://github.com/matiaspakua/notaire/issues/835) | resuelto, mergeado (PR #905, `13090837`) y archivado — spec `persona-validacion-duplicados` |
+| 9 (parcial) — Protocolo Auxiliar de Trámites | [#839](https://github.com/matiaspakua/notaire/issues/839) | resuelto, mergeado (PR #907, `6b29fd96`) y archivado — spec `protocolo-auxiliar` |
+| 9 (parcial) — Cuadernos de Folios | [#839](https://github.com/matiaspakua/notaire/issues/839) | resuelto, mergeado (PR #906, `401de70a`) y archivado — spec `cuadernos-de-folios` |
+| 1.2 — Sin tope que impida cobrar de más | [#848](https://github.com/matiaspakua/notaire/issues/848) | resuelto, mergeado (PR #909) y archivado — spec `pago-limite-saldo-pendiente` |
+| 1.2 — Sin saldo visible al cobrar (picker + saldo) | [#796](https://github.com/matiaspakua/notaire/issues/796) | resuelto, mergeado (PR #927) y archivado — spec `pago-presupuesto-picker-saldo` |
+| 1.3 — Pagos parciales / en cuotas sin circuito | [#821](https://github.com/matiaspakua/notaire/issues/821) | resuelto, mergeado (PR #917) y archivado — spec `pagos-parciales-cuotas` |
+| 1.4 — Descuentos y recargos sin motivo estructurado | [#822](https://github.com/matiaspakua/notaire/issues/822) | resuelto, mergeado (PR #918) y archivado — spec `descuentos-recargos-presupuesto` |
+| 1.5 — Costo de documentos sin conexión al presupuesto | [#823](https://github.com/matiaspakua/notaire/issues/823) | resuelto, mergeado (PR #926) y archivado — spec `costos-documentos-presupuesto` |
 
-Los 13 hallazgos originales tienen su `/opsx:propose` completo y validado
-(`bash scripts/validate-sdlc-plan.sh`). El hallazgo 10 ya tiene Issue
-(#841) pero todavía no tiene `/opsx:propose` — sus dos prerequisitos
-(#832, #833) ya están resueltos. Próximo paso: `/opsx:apply` change por
-change, siguiendo el orden de arriba, en sesiones separadas, siguiendo
-`CONSTITUTION.md` — el merge a `main` requiere aprobación humana explícita
-en cada caso.
+Próximo paso: `/opsx:apply` change por change, siguiendo el orden de
+arriba, en sesiones separadas, siguiendo `CONSTITUTION.md` — el merge a
+`main` requiere aprobación humana explícita en cada caso.
 
 ---
 

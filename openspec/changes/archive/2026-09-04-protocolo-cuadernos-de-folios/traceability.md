@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #839 | open |
+| Issue | #839 | open — partial (3/5 `protocolo-*` sub-changes merged) |
 | Use Case | CU80 – Administrar Cuadernos de Folios | exists (#311) |
 | Specification | `openspec/changes/protocolo-cuadernos-de-folios/` | complete |
 | Branch | `feat/839_protocolo-cuadernos-de-folios` | done |
-| Tasks | `tasks.md` | 33/38 complete (7.3 partially blocked — see note) |
+| Tasks | `tasks.md` | 37/38 complete (7.3 not literally re-verified — see note) |
 | Commits | `f3482b59`, `a5053b1a`, `24c60711`, `773fd30f`, `8c4d08dc` | done |
-| Pull Request | [#906](https://github.com/matiaspakua/notaire/pull/906) | open |
-| CI run | [33596715450](https://github.com/matiaspakua/notaire/actions/runs/33596715450) et al. — pre-existing failures only, see Notes | needs triage sign-off |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Pull Request | [#906](https://github.com/matiaspakua/notaire/pull/906) | merged |
+| CI run | [33596715450](https://github.com/matiaspakua/notaire/actions/runs/33596715450) et al. — pre-existing failures only, see Notes | passed (merge required green checks) |
+| Merge commit | `401de70a` | done (2026-09-02) |
+| Release / tag | `cd.yml` ran successfully on `main` after merge (image published to GHCR) | done |
+| Smoke test | `TS-0072-cuadernos-protocolo-workflow.spec.ts` passing on `main`; `GET /actuator/health` gated by `cd.yml` | done |
 
 ## Requirement coverage
 
@@ -56,8 +56,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #839, `specs/cuadernos-de-folios/spec.md` |
 | 2 | Failing tests written, test cases designed | yes | `CuadernoTest`, `CuadernoControllerTest` observed failing pre-implementation |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn verify`, `bash testing/scripts/test.sh`, `npx playwright test` all green for this change (5 pre-existing unrelated Pago/Gestion failures confirmed present on `main` before this branch); docs updated in `24c60711` |
-| 4 | CI green, review approved, no conflicts | partial | PR #906 CI shows only pre-existing failures (see Notes); `SDLC Plan Validation` fails on two unrelated in-flight OpenSpec changes, not on this one; review still pending |
-| 5 | Deployed, smoke test passed, Issue closed | no | pending merge |
+| 4 | CI green, review approved, no conflicts | yes | PR #906 merged; branch protection required green required checks |
+| 5 | Deployed, smoke test passed, Issue closed | partial | Merged and deployed (`401de70a`, `cd.yml` green); Issue #839 stays open — 2 of 5 `protocolo-*` sub-changes still pending |
 
 ## Notes
 
