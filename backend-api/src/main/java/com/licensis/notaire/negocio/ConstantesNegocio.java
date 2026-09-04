@@ -62,6 +62,13 @@ public interface ConstantesNegocio
     public String ESCRITURA_NO_PASO = "No Paso";
     public String ESCRITURA_INSCRIPTA = "Inscripta";
     /**
+     * Los distintos estados del circuito registral de una Minuta de Inscripción (CU82).
+     */
+    public String MINUTA_INSCRIPCION_GENERADA = "Generada";
+    public String MINUTA_INSCRIPCION_PRESENTADA = "Presentado para inscripción";
+    public String MINUTA_INSCRIPCION_OBSERVADA = "Observado";
+    public String MINUTA_INSCRIPCION_INSCRIPTA = "Inscripto";
+    /**
      * Los distintos tipos de usuarios.
      */
     public String USUARIO_EMPLEADO = "Empleado";

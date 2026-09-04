@@ -349,6 +349,23 @@ export interface Inmueble {
   valuacionFiscal?: number;
   domicilio?: string;
   observaciones?: string;
+  matricula?: string;
+  tomoFolioFinca?: string;
+  linderos?: string;
+}
+
+export interface MinutaInscripcion {
+  idMinutaInscripcion?: number;
+  numero?: number;
+  estado?: string;
+  fechaGeneracion?: string;
+  fechaPresentacion?: string;
+  numeroEntradaRegistral?: string;
+  observacionesRegistro?: string;
+  fechaSubsanacion?: string;
+  fechaRecepcion?: string;
+  numeroInscripcionDefinitivo?: string;
+  escritura?: { idEscritura?: number; numero?: number };
 }
 
 export interface Copia {

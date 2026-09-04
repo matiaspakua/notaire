@@ -36,11 +36,22 @@ export default function InmueblesPage() {
     domicilio: "",
     valuacionFiscal: "",
     observaciones: "",
+    matricula: "",
+    tomoFolioFinca: "",
+    linderos: "",
   });
 
   function openCreate() {
     setEditing(null);
-    setForm({ nomenclaturaCatastral: "", domicilio: "", valuacionFiscal: "", observaciones: "" });
+    setForm({
+      nomenclaturaCatastral: "",
+      domicilio: "",
+      valuacionFiscal: "",
+      observaciones: "",
+      matricula: "",
+      tomoFolioFinca: "",
+      linderos: "",
+    });
     setModalOpen(true);
   }
 
@@ -51,6 +62,9 @@ export default function InmueblesPage() {
       domicilio: i.domicilio ?? "",
       valuacionFiscal: i.valuacionFiscal !== undefined ? String(i.valuacionFiscal) : "",
       observaciones: i.observaciones ?? "",
+      matricula: i.matricula ?? "",
+      tomoFolioFinca: i.tomoFolioFinca ?? "",
+      linderos: i.linderos ?? "",
     });
     setModalOpen(true);
   }
@@ -62,6 +76,9 @@ export default function InmueblesPage() {
         domicilio: form.domicilio,
         observaciones: form.observaciones,
         valuacionFiscal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
+        matricula: form.matricula || undefined,
+        tomoFolioFinca: form.tomoFolioFinca || undefined,
+        linderos: form.linderos || undefined,
       };
       if (editing?.idInmueble) {
         await updateMutation.mutateAsync({ id: editing.idInmueble, data: payload });
@@ -186,6 +203,31 @@ export default function InmueblesPage() {
                 <Input
                   value={form.observaciones}
                   onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                />
+              </FormField>
+            </FormSection>
+            <FormSection title={t("registralData")}>
+              <FormField label={t("fields.matricula")}>
+                <Input
+                  data-testid="input-matricula"
+                  value={form.matricula}
+                  onChange={(e) => setForm({ ...form, matricula: e.target.value })}
+                />
+              </FormField>
+              <FormField label={t("fields.tomoFolioFinca")}>
+                <Input
+                  data-testid="input-tomo-folio-finca"
+                  value={form.tomoFolioFinca}
+                  onChange={(e) => setForm({ ...form, tomoFolioFinca: e.target.value })}
+                  placeholder="T1-F2-FN3"
+                />
+              </FormField>
+              <FormField label={t("fields.linderos")}>
+                <Input
+                  data-testid="input-linderos"
+                  value={form.linderos}
+                  onChange={(e) => setForm({ ...form, linderos: e.target.value })}
+                  placeholder="Norte, Sur, Este, Oeste"
                 />
               </FormField>
             </FormSection>
