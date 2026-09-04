@@ -135,6 +135,15 @@ export interface DocumentoPresentadoRequest {
   entregado: boolean;
 }
 
+export interface CarpetaTramite {
+  idCarpeta?: number;
+  numero?: number;
+  estado?: string;
+  motivoEspera?: string;
+  idGestion?: number;
+  idTramite?: number;
+}
+
 export interface Historial {
   idHistorial?: number;
   fecha?: string;

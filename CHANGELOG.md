@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
   normalized inscription form, and a "Minutas de Inscripción" dashboard
   screen to generate, present, observe and inscribe.
+- **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
+  trámite genera automáticamente su carpeta de trámite (una por trámite,
+  numeración única, estado "Activa"). Adds `CarpetaTramite` entity and
+  `GET /api/v1/carpetas/{id}`, `GET /api/v1/carpetas?gestionId=&tramiteId=`,
+  `PUT /api/v1/carpetas/{id}/espera` (requires a `motivo`). Archiving a
+  gestión (CU16) now cascades to all its carpetas, transitioning them to
+  "Archivada"; if any carpeta is still "Espera" unresolved, the archive
+  request is rejected (HTTP 409) unless explicitly confirmed
+  (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
+  screen.
 - **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
   CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
   (required when `vence` is checked), and `quienEntrega`. When a
