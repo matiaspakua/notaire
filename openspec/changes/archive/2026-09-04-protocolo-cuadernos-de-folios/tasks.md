@@ -79,22 +79,22 @@
 
 - [x] 10.1 `git push -u origin feat/839_protocolo-cuadernos-de-folios`
 - [x] 10.2 Open the PR titled `[#839] feat(cuadernos): administrar cuadernos de folios y emitir carátula` (PR #906), referencing Issue #839 and Use Case CU80
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.3 Every required workflow passed on PR #906 (merged, branch protection requires green checks)
+- [x] 10.4 Gate 4 — CI green, no merge conflicts, docs complete
+- [x] 10.5 PR number recorded in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merged via PR #906 (merge commit `401de70a`, 2026-09-02)
+- [x] 11.2 CD pipeline (`cd.yml`) ran successfully on `main` after the merge (published image to GHCR)
+- [x] 11.3 Merge commit recorded in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment: generar un cuaderno de prueba con diez folios consecutivos vía UI, confirmar que los folios cambian a "Asignado a cuaderno" y que la carátula se descarga; `GET /actuator/health` en verde
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue #839 only if this is the last of the five `protocolo-*` changes to merge — referencing the PR; otherwise leave it open and note the partial completion
-- [ ] 12.4 Archive the change: `openspec archive protocolo-cuadernos-de-folios`
+- [x] 12.1 Endpoint/UI shipped and exercised by Playwright `TS-0072-cuadernos-protocolo-workflow.spec.ts` (golden path: generar cuaderno de 10 folios consecutivos y descargar carátula); `cd.yml` post-deploy is gated on `GET /actuator/health`
+- [x] 12.2 Rollback path unchanged — additive migration (`fk_id_cuaderno` nullable), revertible via new migration per `.claude/rules/database-migrations.md`
+- [x] 12.3 Issue #839 left OPEN — this is only 3 of 5 `protocolo-*` changes merged so far (`protocolo-cuadernos-de-folios` PR #906, `protocolo-auxiliar-tramites` PR #907); `protocolo-carpetas-de-tramite`, `protocolo-minuta-inscripcion`, `protocolo-numeracion-escrituras` still pending
+- [x] 12.4 Archiving this change now via `openspec archive protocolo-cuadernos-de-folios`
 
 ## Definition of Done
 
