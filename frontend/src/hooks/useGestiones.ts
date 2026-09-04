@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { gestionWorkflowKeys } from "@/hooks/useGestionWorkflow";
 import type {
+  CarpetaTramite,
   CreateCompleteGestionInput,
   DtoGestionArchivada,
   DtoSaldoPendiente,
@@ -19,6 +20,10 @@ export const gestionesKeys = {
 
 export const historialKeys = {
   byGestion: (id: number) => ["historial", "gestion", id] as const,
+};
+
+export const carpetasTramiteKeys = {
+  byGestion: (id: number) => ["carpetas-tramite", "gestion", id] as const,
 };
 
 export function useGestiones() {
@@ -89,12 +94,20 @@ export function useSaldoPendiente(gestionId: number | undefined) {
   });
 }
 
-/** CU16 - Archiva la gestión advirtiendo y registrando la deuda pendiente (RF-22, RF-37). */
+/**
+ * CU16 - Archiva la gestión advirtiendo y registrando la deuda pendiente (RF-22, RF-37).
+ * `confirmado` debe reenviarse en `true` cuando el usuario acepta archivar a pesar de
+ * carpetas de trámite (CU85) en espera sin resolver (HTTP 409).
+ */
 export function useArchivarGestion() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiPost<DtoGestionArchivada>(`/gestiones/${id}/archivar`, {}),
-    onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
+    mutationFn: ({ id, confirmado = false }: { id: number; confirmado?: boolean }) =>
+      apiPost<DtoGestionArchivada>(`/gestiones/${id}/archivar?confirmado=${confirmado}`, {}),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: gestionesKeys.all });
+      qc.invalidateQueries({ queryKey: carpetasTramiteKeys.byGestion(id) });
+    },
   });
 }
 
@@ -118,5 +131,26 @@ export function useHistorial(gestionId: number | undefined) {
     queryKey: historialKeys.byGestion(gestionId ?? 0),
     queryFn: () => apiGet<Historial[]>(`/gestiones/${gestionId}/historial`),
     enabled: !!gestionId,
+  });
+}
+
+/** CU85 - Carpetas de trámite asociadas a una gestión. */
+export function useCarpetasByGestion(gestionId: number | undefined) {
+  return useQuery({
+    queryKey: carpetasTramiteKeys.byGestion(gestionId ?? 0),
+    queryFn: () => apiGet<CarpetaTramite[]>(`/carpetas?gestionId=${gestionId}`),
+    enabled: !!gestionId,
+  });
+}
+
+/** CU85 - Pone una carpeta de trámite en espera, exigiendo un motivo (Excepción 3.1). */
+export function usePonerCarpetaEnEspera() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ idCarpeta, motivo }: { idCarpeta: number; motivo: string; gestionId: number }) =>
+      apiPut<CarpetaTramite>(`/carpetas/${idCarpeta}/espera`, { motivo }),
+    onSuccess: (_data, { gestionId }) => {
+      qc.invalidateQueries({ queryKey: carpetasTramiteKeys.byGestion(gestionId) });
+    },
   });
 }

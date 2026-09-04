@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
+  trámite genera automáticamente su carpeta de trámite (una por trámite,
+  numeración única, estado "Activa"). Adds `CarpetaTramite` entity and
+  `GET /api/v1/carpetas/{id}`, `GET /api/v1/carpetas?gestionId=&tramiteId=`,
+  `PUT /api/v1/carpetas/{id}/espera` (requires a `motivo`). Archiving a
+  gestión (CU16) now cascades to all its carpetas, transitioning them to
+  "Archivada"; if any carpeta is still "Espera" unresolved, the archive
+  request is rejected (HTTP 409) unless explicitly confirmed
+  (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
+  screen.
 - **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
   cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
   included in its presupuesto's total. Adds `PlantillaCostoDocumento`

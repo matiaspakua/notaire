@@ -149,7 +149,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.service.GestionArchiveDebtService.class),
                     mock(com.licensis.notaire.service.GestionResumenFinancieroService.class),
                     bitacoraService, transitionService, documentoEntidadExternaService,
-                    reingresoDocumentacionService))
+                    reingresoDocumentacionService, mock(com.licensis.notaire.service.CarpetaTramiteService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();

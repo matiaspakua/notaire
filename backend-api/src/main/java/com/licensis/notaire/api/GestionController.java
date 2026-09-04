@@ -10,6 +10,8 @@ import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
 import com.licensis.notaire.dto.DtoHistorialSummary;
 import com.licensis.notaire.dto.DtoMovimientoDocumentoEntidadExterna;
 import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
+import com.licensis.notaire.exception.CarpetasEnEsperaException;
+import com.licensis.notaire.negocio.CarpetaTramite;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
@@ -26,6 +28,7 @@ import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.service.CarpetaTramiteService;
 import com.licensis.notaire.service.DocumentoEntidadExternaService;
 import com.licensis.notaire.service.GestionArchiveDebtService;
 import com.licensis.notaire.service.GestionBitacoraService;
@@ -53,11 +56,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -83,6 +88,7 @@ public class GestionController {
     private final GestionTransitionService gestionTransitionService;
     private final DocumentoEntidadExternaService documentoEntidadExternaService;
     private final ReingresoDocumentacionService reingresoDocumentacionService;
+    private final CarpetaTramiteService carpetaTramiteService;
 
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
@@ -96,7 +102,8 @@ public class GestionController {
                              GestionBitacoraService gestionBitacoraService,
                              GestionTransitionService gestionTransitionService,
                              DocumentoEntidadExternaService documentoEntidadExternaService,
-                             ReingresoDocumentacionService reingresoDocumentacionService) {
+                             ReingresoDocumentacionService reingresoDocumentacionService,
+                             CarpetaTramiteService carpetaTramiteService) {
         this.repository = repository;
         this.historialRepository = historialRepository;
         this.workflowTraceService = workflowTraceService;
@@ -113,6 +120,7 @@ public class GestionController {
         this.gestionTransitionService = gestionTransitionService;
         this.documentoEntidadExternaService = documentoEntidadExternaService;
         this.reingresoDocumentacionService = reingresoDocumentacionService;
+        this.carpetaTramiteService = carpetaTramiteService;
     }
 
     public record DtoSaldoPendiente(Float saldoPendiente) {}
@@ -166,7 +174,8 @@ public class GestionController {
         Tramite tramite = new Tramite();
         tramite.setFkIdGestion(gestion);
         applyTramiteDependencies(tramite, dependencies);
-        tramiteRepository.save(tramite);
+        Tramite guardado = tramiteRepository.save(tramite);
+        carpetaTramiteService.generarCarpetaParaTramite(guardado);
     }
 
     private void updateTramite(Tramite tramite, CaseDependencies dependencies) {
@@ -385,17 +394,27 @@ public class GestionController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Gestión archivada"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Gestion no encontrada"),
+        @ApiResponse(responseCode = "409",
+                description = "Hay carpetas de trámite (CU85) en espera sin resolver; confirme para archivar")
     })
     @PostMapping("/{id}/archivar")
-    @Operation(summary = "CU16 - Archivar una gestión advirtiendo y registrando deuda pendiente (RF-22, RF-37)")
-    public ResponseEntity<DtoGestionArchivada> archivar(@PathVariable Integer id) {
+    @Operation(summary = "CU16 - Archivar una gestión advirtiendo y registrando deuda pendiente (RF-22, RF-37); "
+            + "cascada a las carpetas de trámite de CU85")
+    public ResponseEntity<Object> archivar(@PathVariable Integer id,
+            @RequestParam(name = "confirmado", defaultValue = "false") boolean confirmado) {
         try {
-            GestionArchiveDebtService.ArchiveResult result = gestionArchiveDebtService.archivar(id);
+            GestionArchiveDebtService.ArchiveResult result = gestionArchiveDebtService.archivar(id, confirmado);
             return ResponseEntity.ok(new DtoGestionArchivada(result.gestion().getIdGestion(),
                     result.saldoPendiente(), Boolean.TRUE.equals(result.gestion().getDeudaPendienteAlArchivar())));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        } catch (CarpetasEnEsperaException e) {
+            List<Integer> numerosCarpetasEnEspera = e.getCarpetasEnEspera().stream()
+                    .map(CarpetaTramite::getNumero)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", e.getMessage(), "carpetasEnEsperaNumero", numerosCarpetasEnEspera));
         }
     }
 

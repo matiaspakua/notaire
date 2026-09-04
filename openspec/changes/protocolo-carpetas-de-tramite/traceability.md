@@ -16,9 +16,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #839 | open |
 | Use Case | CU85 – Administrar Carpetas de Trámite | exists |
-| Specification | `openspec/changes/protocolo-carpetas-de-tramite/` | in progress |
-| Branch | `feat/839_protocolo-carpetas-de-tramite` | pending |
-| Tasks | `tasks.md` | 0/N complete |
+| Specification | `openspec/changes/protocolo-carpetas-de-tramite/` | complete |
+| Branch | `feat/839_protocolo-carpetas-de-tramite` | created |
+| Tasks | `tasks.md` | implementation complete; commit/PR/deploy pending |
 | Commits | — | pending |
 | Pull Request | — | pending |
 | CI run | — | pending |
@@ -30,33 +30,34 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Alta de un trámite único en la gestión | `CarpetaTramiteServiceTest#shouldGenerateCarpetaOnSingleTramiteGestion` | pending |
-| Gestión que agrupa más de un trámite | `CarpetaTramiteServiceTest#shouldGenerateOneCarpetaPerTramiteInMultiTramiteGestion` | pending |
-| Consulta de una carpeta existente | `CarpetaTramiteControllerTest#shouldReturnCarpetaByTramite` | pending |
-| Consulta de una carpeta inexistente | `CarpetaTramiteControllerTest#shouldReturnNotFoundForMissingCarpeta` | pending |
-| Carpeta puesta en espera con motivo | `CarpetaTramiteControllerTest#shouldSetCarpetaToEsperaWithMotivo` | pending |
-| Intento de poner en espera sin motivo | `CarpetaTramiteControllerTest#shouldRejectEsperaWithoutMotivo` | pending |
-| Archivado de gestión con todas las carpetas activas | `GestionArchiveDebtServiceTest#shouldArchiveAllActiveCarpetasOnGestionArchive` | pending |
-| Archivado de gestión con una carpeta en espera sin resolver | `GestionArchiveDebtServiceTest#shouldRequireConfirmationWhenCarpetaInEsperaUnresolved` | pending |
-| Confirmación explícita de archivado con carpeta en espera | `GestionArchiveDebtServiceTest#shouldArchiveCarpetaInEsperaOnExplicitConfirmation` | pending |
+| Alta de un trámite único en la gestión | `CarpetaTramiteServiceTest#shouldGenerateCarpetaOnSingleTramiteGestion` | passing |
+| Gestión que agrupa más de un trámite | `CarpetaTramiteServiceTest#shouldGenerateOneCarpetaPerTramiteInMultiTramiteGestion` | passing |
+| Consulta de una carpeta existente | `CarpetaTramiteControllerTest#shouldReturnCarpetaByTramite` | passing |
+| Consulta de una carpeta inexistente | `CarpetaTramiteControllerTest#shouldReturnNotFoundForMissingCarpeta` | passing |
+| Carpeta puesta en espera con motivo | `CarpetaTramiteControllerTest#shouldSetCarpetaToEsperaWithMotivo` | passing |
+| Intento de poner en espera sin motivo | `CarpetaTramiteControllerTest#shouldRejectEsperaWithoutMotivo` | passing |
+| Archivado de gestión con todas las carpetas activas | `GestionArchiveDebtServiceTest#shouldArchiveAllActiveCarpetasOnGestionArchive` | passing |
+| Archivado de gestión con una carpeta en espera sin resolver | `GestionArchiveDebtServiceTest#shouldRequireConfirmationWhenCarpetaInEsperaUnresolved` | passing |
+| Confirmación explícita de archivado con carpeta en espera | `GestionArchiveDebtServiceTest#shouldArchiveCarpetaInEsperaOnExplicitConfirmation` | passing |
+| E2E: golden path + edge paths + responsive (CU85) | `frontend/tests/e2e/carpetas-de-tramite.spec.ts` (6 tests) | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU85 – Administrar Carpetas de Trámite.md` | no | — |
-| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | no | — |
-| `CHANGELOG.md` | no | — |
+| `docs/100-business/102-use-cases/CU85 – Administrar Carpetas de Trámite.md` | yes | pending |
+| `docs/100-business/102-use-cases/CU16 – Archivar Gestión.md` | yes | pending |
+| `CHANGELOG.md` | yes | pending |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | no | in progress |
-| 2 | Failing tests written, test cases designed | no | — |
-| 3 | Suite green, coverage held, docs updated | no | — |
-| 4 | CI green, review approved, no conflicts | no | — |
-| 5 | Deployed, smoke test passed, Issue closed | no | — |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `scripts/validate-sdlc-plan.sh` — protocolo-carpetas-de-tramite ✓ |
+| 2 | Failing tests written, test cases designed | yes | tests written first, observed failing, then implementation added |
+| 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` 1711/1711; `bash scripts/preflight.sh --fix` all green (own change) |
+| 4 | CI green, review approved, no conflicts | no | PR not yet opened |
+| 5 | Deployed, smoke test passed, Issue closed | no | pending |
 
 ## Exceptions
 
