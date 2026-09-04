@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/protocolo-carpetas-de-tramite/` | complete |
 | Branch | `feat/839_protocolo-carpetas-de-tramite` | created |
 | Tasks | `tasks.md` | implementation complete; commit/PR/deploy pending |
-| Commits | `0afdb43f` (feat), `7fd8d2c8` (merge main) | complete |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Commits | `0afdb43f` (feat), `7fd8d2c8` (merge main), `813a3356` (docs fix) | complete |
+| Pull Request | [#937](https://github.com/matiaspakua/notaire/pull/937) | open |
+| CI run | https://github.com/matiaspakua/notaire/actions/runs/33863042046 | in progress |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
@@ -56,7 +56,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | `scripts/validate-sdlc-plan.sh` — protocolo-carpetas-de-tramite ✓ |
 | 2 | Failing tests written, test cases designed | yes | tests written first, observed failing, then implementation added |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn test -pl backend-api` 1711/1711; `bash scripts/preflight.sh --fix` all green (own change) |
-| 4 | CI green, review approved, no conflicts | no | PR not yet opened |
+| 4 | CI green, review approved, no conflicts | no | PR #937 opened, CI in progress |
 | 5 | Deployed, smoke test passed, Issue closed | no | pending |
 
 ## Exceptions
