@@ -595,8 +595,14 @@
       "inUseCannotDelete": "No se puede eliminar: el tipo de documento está siendo utilizado",
       "noData": "No hay tipos de documento registrados",
       "nameRequired": "El nombre es requerido",
+      "diasVencimientoRequired": "Debe indicar en cuántos días vence",
       "namePlaceholder": "Ej: DNI, Escritura",
-      "searchPlaceholder": "Buscar por nombre..."
+      "searchPlaceholder": "Buscar por nombre...",
+      "fields": {
+        "vence": "¿Vence?",
+        "diasVencimiento": "Días para el vencimiento",
+        "quienEntrega": "Quién entrega/devuelve"
+      }
     },
     "estadosGestion": {
       "title": "Estados de Gestión",

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
+  CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
+  (required when `vence` is checked), and `quienEntrega`. When a
+  `DocumentoPresentado` is created, these fields — plus a computed
+  `fechaVencimiento` (`fechaIngreso + diasVencimiento`) — are copied from its
+  `TipoDeDocumento`, giving CU42's "próximos vencimientos" report real data to
+  work with. Adds a "Vence"/"Días de vencimiento"/"Quién entrega" section to
+  the Tipos de Documento admin form.
 - **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
   cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
   included in its presupuesto's total. Adds `PlantillaCostoDocumento`

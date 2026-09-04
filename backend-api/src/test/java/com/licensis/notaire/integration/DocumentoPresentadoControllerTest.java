@@ -20,10 +20,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.SimpleDateFormat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.negocio.TipoDeDocumento;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
+import com.licensis.notaire.repository.TipoDeDocumentoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 
@@ -44,12 +48,26 @@ class DocumentoPresentadoControllerTest {
     @Autowired
     private DocumentoPresentadoRepository documentoPresentadoRepository;
 
+    @Autowired
+    private TipoDeDocumentoRepository tipoDeDocumentoRepository;
+
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    private Integer createTipoDeDocumento(boolean vence, Integer diasVencimiento, String quienEntrega) {
+        TipoDeDocumento tipo = new TipoDeDocumento();
+        tipo.setNombre("Tipo DocumentoPresentadoControllerTest " + System.nanoTime());
+        tipo.setVence(vence);
+        tipo.setDiasVencimiento(diasVencimiento);
+        tipo.setQuienEntrega(quienEntrega);
+        tipo.setHabilitado(true);
+        tipo = tipoDeDocumentoRepository.save(tipo);
+        return tipo.getIdTipoDocumento();
     }
 
     private Integer createTramite() {
@@ -116,6 +134,71 @@ class DocumentoPresentadoControllerTest {
                 .get("idDocumentoPresentado").asInt();
         var saved = documentoPresentadoRepository.findById(id).orElseThrow();
         assertThat(saved.getFkIdTramite().getIdTramite()).isEqualTo(tramiteId);
+        assertThat(saved.getQuienEntrega()).isEqualTo("Entidad Externa");
+    }
+
+    @Test
+    @DisplayName("Should inherit vence, diasVencimiento and quienEntrega from tipo de documento and compute fechaVencimiento")
+    void shouldInheritVencimientoFieldsFromTipoDeDocumento() throws Exception {
+        Integer tipoId = createTipoDeDocumento(true, 5, "Escribano");
+        String body = """
+                {"tipoId": %d, "fecha": "2024-01-01", "entregado": false}
+                """.formatted(tipoId);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Integer id = mapper.readTree(result.getResponse().getContentAsString())
+                .get("idDocumentoPresentado").asInt();
+        var saved = documentoPresentadoRepository.findById(id).orElseThrow();
+        assertThat(saved.getVence()).isTrue();
+        assertThat(saved.getDiasVencimiento()).isEqualTo(5);
+        assertThat(saved.getQuienEntrega()).isEqualTo("Escribano");
+        assertThat(saved.getFechaVencimiento()).isEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse("2024-01-06"));
+    }
+
+    @Test
+    @DisplayName("Should not compute fechaVencimiento when tipo de documento does not vence")
+    void shouldNotComputeFechaVencimientoWhenTipoDoesNotVence() throws Exception {
+        Integer tipoId = createTipoDeDocumento(false, null, "Cliente");
+        String body = """
+                {"tipoId": %d, "fecha": "2024-01-01", "entregado": false}
+                """.formatted(tipoId);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Integer id = mapper.readTree(result.getResponse().getContentAsString())
+                .get("idDocumentoPresentado").asInt();
+        var saved = documentoPresentadoRepository.findById(id).orElseThrow();
+        assertThat(saved.getVence()).isFalse();
+        assertThat(saved.getFechaVencimiento()).isNull();
+        assertThat(saved.getQuienEntrega()).isEqualTo("Cliente");
+    }
+
+    @Test
+    @DisplayName("Should let an explicit quienEntrega override the value inherited from tipo de documento")
+    void shouldLetExplicitQuienEntregaOverrideTipoDeDocumento() throws Exception {
+        Integer tipoId = createTipoDeDocumento(false, null, "Escribano");
+        String body = """
+                {"tipoId": %d, "fecha": "2024-01-01", "entregado": false, "quienEntrega": "Entidad Externa"}
+                """.formatted(tipoId);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Integer id = mapper.readTree(result.getResponse().getContentAsString())
+                .get("idDocumentoPresentado").asInt();
+        var saved = documentoPresentadoRepository.findById(id).orElseThrow();
         assertThat(saved.getQuienEntrega()).isEqualTo("Entidad Externa");
     }
 

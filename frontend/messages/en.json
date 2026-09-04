@@ -595,8 +595,14 @@
       "inUseCannotDelete": "Cannot delete: document type is in use",
       "noData": "No document types registered",
       "nameRequired": "Name is required",
+      "diasVencimientoRequired": "You must specify how many days until it expires",
       "namePlaceholder": "E.g.: ID Card, Deed",
-      "searchPlaceholder": "Search by name..."
+      "searchPlaceholder": "Search by name...",
+      "fields": {
+        "vence": "Expires?",
+        "diasVencimiento": "Days until expiration",
+        "quienEntrega": "Who delivers/returns it"
+      }
     },
     "estadosGestion": {
       "title": "Case Statuses",
