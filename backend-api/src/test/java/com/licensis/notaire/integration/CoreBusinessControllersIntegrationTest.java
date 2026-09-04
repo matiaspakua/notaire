@@ -368,5 +368,28 @@ class CoreBusinessControllersIntegrationTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
+
+        @Test
+        @DisplayName("CU82 - Should save matricula, tomo/folio/finca and linderos")
+        void shouldSaveMatriculaTomoFolioFincaYLinderos() throws Exception {
+            String body = """
+                    {
+                      "nomenclaturaCatastral": "123-456-789",
+                      "domicilio": "Calle Falsa 123",
+                      "valuacionFiscal": 1000.00,
+                      "matricula": "M-1",
+                      "tomoFolioFinca": "T1-F2-FN3",
+                      "linderos": "Norte, Sur, Este, Oeste"
+                    }
+                    """;
+
+            mockMvc.perform(post("/api/v1/inmueble")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.matricula", is("M-1")))
+                    .andExpect(jsonPath("$.tomoFolioFinca", is("T1-F2-FN3")))
+                    .andExpect(jsonPath("$.linderos", is("Norte, Sur, Este, Oeste")));
+        }
     }
 }

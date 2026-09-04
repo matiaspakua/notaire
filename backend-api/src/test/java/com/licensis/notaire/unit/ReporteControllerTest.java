@@ -87,4 +87,18 @@ class ReporteControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(logAppender.list).isNotEmpty();
     }
+
+    @Test
+    @DisplayName("CU82 - Should generate the minuta de inscripción report")
+    void shouldGenerateMinutaInscripcionReport() {
+        byte[] pdfBytes = {1, 2, 3};
+        when(reporteService.generarReporteMinutaInscripcion(1)).thenReturn(pdfBytes);
+
+        ResponseEntity<byte[]> response = controller.generarReporteMinutaInscripcion(1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(pdfBytes);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION))
+                .isEqualTo("inline; filename=\"minuta_inscripcion_1.pdf\"");
+    }
 }

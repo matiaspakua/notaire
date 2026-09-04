@@ -17,6 +17,9 @@ public class DtoInmueble implements DtoValido
     private String domicilio = "";
     private String tipoInmueble = "";
     private String observaciones = "";
+    private String matricula = "";
+    private String tomoFolioFinca = "";
+    private String linderos = "";
     private List<DtoTramite> tramites = new ArrayList<>();
 
     public DtoInmueble()
@@ -99,6 +102,36 @@ public class DtoInmueble implements DtoValido
     public void setObservaciones(String observaciones)
     {
         this.observaciones = observaciones;
+    }
+
+    public String getMatricula()
+    {
+        return this.matricula;
+    }
+
+    public void setMatricula(String matricula)
+    {
+        this.matricula = matricula;
+    }
+
+    public String getTomoFolioFinca()
+    {
+        return this.tomoFolioFinca;
+    }
+
+    public void setTomoFolioFinca(String tomoFolioFinca)
+    {
+        this.tomoFolioFinca = tomoFolioFinca;
+    }
+
+    public String getLinderos()
+    {
+        return this.linderos;
+    }
+
+    public void setLinderos(String linderos)
+    {
+        this.linderos = linderos;
     }
 
     public List<DtoTramite> getTramites()
