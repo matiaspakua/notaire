@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/protocolo-carpetas-de-tramite/` | complete |
 | Branch | `feat/839_protocolo-carpetas-de-tramite` | created |
 | Tasks | `tasks.md` | implementation complete; commit/PR/deploy pending |
-| Commits | — | pending |
+| Commits | `0afdb43f` (feat), `7fd8d2c8` (merge main) | complete |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
