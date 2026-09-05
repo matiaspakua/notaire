@@ -1,0 +1,24 @@
+info:
+  name: Get All Historial
+  type: http
+  seq: 4
+  description: |-
+      ## GET /api/v1/historial
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Contains the created historial entry", function () {
+            const body = res.getBody();
+            const id = parseInt(bru.getVar('_historial_id'), 10);
+            expect(body.some((h) => h.idHistorial === id)).to.be.true;
+          });

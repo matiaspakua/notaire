@@ -1,0 +1,26 @@
+info:
+  name: Get Inmueble by ID
+  type: http
+  seq: 3
+  description: |-
+    ## Get Inmueble by ID — GET /api/v1/inmueble/{id}
+    Obtiene los detalles de un inmueble específico.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/inmueble/{{inmueble_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status 200 OK", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+        test("Returns correct inmueble details", function () {
+          const b = res.getBody();
+          expect(b.idInmueble).to.equal(bru.getVar('inmueble_id'));
+          expect(b.domicilio).to.equal('Av. Libertador 5000');
+          expect(b.matricula).to.equal('M-9988');
+        });

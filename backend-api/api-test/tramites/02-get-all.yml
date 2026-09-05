@@ -1,0 +1,22 @@
+info:
+  name: List Tramites
+  type: http
+  seq: 2
+  description: "## GET /api/v1/tramites — respuesta paginada"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tramites"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Includes created tramite in the page content", function () {
+            const b = res.getBody();
+            expect(b.content.some(t => t.idTramite === bru.getVar('tramite_id'))).to.be.true;
+          });

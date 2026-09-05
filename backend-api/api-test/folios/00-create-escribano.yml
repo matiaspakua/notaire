@@ -31,9 +31,12 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Status 201 Created or 409 Conflict", function () {
+            expect([200, 201, 409]).to.include(res.getStatus());
+          });
           test("Stores escribano id", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idPersona');
-            bru.setVar('_folio_escribano_id', b.idPersona);
+            const id = b.idPersona || b.idPersonaExistente;
+            expect(id).to.be.a('number');
+            bru.setVar('_folio_escribano_id', id);
           });

@@ -1,12 +1,12 @@
 info:
   name: Get All Registros de Auditoria
   type: http
+  seq: 1
   description: |-
-      ## Get All Registros de Auditoria
-      Obtiene todos los registros de auditoría.
-      
-      **Method:** GET
-      **Path:** /api/v1/registro-auditoria
+      ## Get All Registros de Auditoria — GET /api/v1/registro-auditoria
+      Obtiene todos los registros de auditoría sin paginación (compatibilidad legacy).
+      El endpoint devuelve una lista plana de DTOs cuando no se pasan parámetros
+      de paginación. Requiere token JWT válido (corre después del bloque `auth`).
 
 http:
   method: GET
@@ -24,9 +24,18 @@ runtime:
           test("Status 200", function () {
             expect(res.getStatus()).to.equal(200);
           });
-           
-          test("Response is array", function () {
+
+          test("Response is an array (legacy flat list)", function () {
+            expect(res.getBody()).to.be.an('array');
+          });
+
+          test("Each entry has expected audit fields", function () {
             const body = res.getBody();
-            expect(body).to.be.an('array');
+            if (body.length > 0) {
+              const entry = body[0];
+              expect(entry).to.have.property('idRegistroAuditoria');
+              expect(entry).to.have.property('detalleOperacion');
+              expect(entry).to.have.property('modulo');
+            }
           });
 

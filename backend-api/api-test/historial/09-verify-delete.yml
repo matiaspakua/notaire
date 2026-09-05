@@ -1,0 +1,20 @@
+info:
+  name: Verify Historial Delete
+  type: http
+  seq: 10
+  description: |-
+      ## GET /api/v1/historial/{id}
+      Confirms the DELETE in the previous step removed the record.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{_historial_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () {
+            expect(res.getStatus()).to.equal(404);
+          });

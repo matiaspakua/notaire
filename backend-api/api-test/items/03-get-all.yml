@@ -1,0 +1,22 @@
+info:
+  name: List Items
+  type: http
+  seq: 4
+  description: "## GET /api/v1/items"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/items"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Includes created item", function () {
+            const b = res.getBody();
+            expect(b.some(i => i.idItem === bru.getVar('item_id'))).to.be.true;
+          });

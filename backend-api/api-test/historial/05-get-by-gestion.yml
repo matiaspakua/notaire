@@ -1,0 +1,24 @@
+info:
+  name: Get Historial by Gestion (CU13)
+  type: http
+  seq: 6
+  description: |-
+      ## GET /api/v1/historial/gestion/{idGestion}
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/gestion/{{_historial_gestion_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Contains the created historial entry", function () {
+            const body = res.getBody();
+            const id = parseInt(bru.getVar('_historial_id'), 10);
+            expect(body.some((h) => h.idHistorial === id)).to.be.true;
+          });

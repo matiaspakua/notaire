@@ -1,0 +1,39 @@
+info:
+  name: Setup - Create Gestion
+  type: http
+  seq: 2
+  description: |-
+      ## Setup — POST /api/v1/gestiones
+      Crea la gestion de escritura requerida por el alta de historial, para
+      que la suite sea autosuficiente en una base de datos recién migrada.
+      El estado "Iniciada" (id 1) se siembra en V2__initial_data.sql.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/gestiones"
+  body:
+    type: json
+    data: |-
+        {
+          "fechaInicio": "2026-09-05",
+          "numero": 900001,
+          "encabezado": "Gestion Historial E2E",
+          "fkIdPersonaEscribano": { "idPersona": {{_historial_escribano_id}} },
+          "fkIdEstadoDeGestion": { "idEstadoGestion": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores gestion id", function () {
+            const b = res.getBody();
+            expect(b.idGestion).to.be.a('number');
+            bru.setVar('_historial_gestion_id', b.idGestion);
+          });

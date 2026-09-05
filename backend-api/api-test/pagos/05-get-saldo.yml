@@ -1,0 +1,23 @@
+info:
+  name: Get Saldo Pendiente
+  type: http
+  seq: 6
+  description: |-
+      ## GET /api/v1/pagos/presupuesto/{idPresupuesto}/saldo
+      Total 10000 - pago 4000 = saldo 6000.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/pagos/presupuesto/{{_pagos_presupuesto_id}}/saldo"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Saldo pendiente is 6000", function () {
+            expect(res.getBody()).to.equal(6000.0);
+          });

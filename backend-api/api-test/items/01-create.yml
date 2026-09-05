@@ -1,0 +1,45 @@
+info:
+  name: Create Item
+  type: http
+  seq: 2
+  description: |-
+      ## POST /api/v1/items
+      CU45/CU71 - Crea un item de tipo RECARGO (requiere motivo) asociado al
+      presupuesto creado en el setup.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/items"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "Recargo urgencia",
+          "valor": 500.0,
+          "porcentaje": 10,
+          "tipo": "RECARGO",
+          "motivo": "Tramite urgente solicitado por el cliente",
+          "conceptoFijo": false,
+          "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores item id", function () {
+            const b = res.getBody();
+            expect(b.idItem).to.be.a('number');
+            bru.setVar('item_id', b.idItem);
+          });
+          test("Persists nombre and tipo", function () {
+            const b = res.getBody();
+            expect(b.nombre).to.equal('Recargo urgencia');
+            expect(b.tipo).to.equal('RECARGO');
+          });

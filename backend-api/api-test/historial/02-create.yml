@@ -1,0 +1,39 @@
+info:
+  name: Create Historial
+  type: http
+  seq: 3
+  description: |-
+      ## POST /api/v1/historial
+      Registra un evento de historial para la gestion creada en el setup.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/historial"
+  body:
+    type: json
+    data: |-
+        {
+          "fecha": "2026-09-05",
+          "observaciones": "Gestion iniciada",
+          "fkIdGestion": { "idGestion": {{_historial_gestion_id}} },
+          "fkIdEstadoGestion": { "idEstadoGestion": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores historial id", function () {
+            const b = res.getBody();
+            expect(b.idHistorial).to.be.a('number');
+            bru.setVar('_historial_id', b.idHistorial);
+          });
+          test("Persists observaciones", function () {
+            expect(res.getBody().observaciones).to.equal('Gestion iniciada');
+          });

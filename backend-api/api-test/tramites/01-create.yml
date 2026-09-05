@@ -1,0 +1,38 @@
+info:
+  name: Create Tramite
+  type: http
+  seq: 1
+  description: |-
+      ## POST /api/v1/tramites
+      Crea un tramite asociado al tipo de tramite sembrado en
+      V2__initial_data.sql (id 1).
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tramites"
+  body:
+    type: json
+    data: |-
+        {
+          "observaciones": "Tramite E2E",
+          "fkIdTipoTramite": { "idTipoTramite": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores tramite id", function () {
+            const b = res.getBody();
+            expect(b.idTramite).to.be.a('number');
+            bru.setVar('tramite_id', b.idTramite);
+          });
+          test("Persists observaciones", function () {
+            expect(res.getBody().observaciones).to.equal('Tramite E2E');
+          });

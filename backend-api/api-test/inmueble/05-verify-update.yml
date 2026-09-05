@@ -1,0 +1,25 @@
+info:
+  name: Verify Update Inmueble
+  type: http
+  seq: 5
+  description: |-
+    ## Verify Update Inmueble — GET /api/v1/inmueble/{id}
+    Verifica que las modificaciones en el inmueble persistieron correctamente.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/inmueble/{{inmueble_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status 200 OK", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+        test("Attributes were properly updated", function () {
+          const b = res.getBody();
+          expect(b.domicilio).to.equal('Av. Libertador 5000 Piso 2');
+          expect(b.nomenclaturaCatastral).to.equal('CIRC-01-SEC-A-PARC-99-MOD');
+        });

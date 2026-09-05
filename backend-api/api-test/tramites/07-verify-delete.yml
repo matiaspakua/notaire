@@ -1,0 +1,18 @@
+info:
+  name: Verify Tramite Delete
+  type: http
+  seq: 7
+  description: "## GET /api/v1/tramites/{id} — debe devolver 404 tras el delete"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tramites/{{tramite_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () {
+            expect(res.getStatus()).to.equal(404);
+          });

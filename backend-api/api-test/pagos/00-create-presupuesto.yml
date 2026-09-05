@@ -1,0 +1,40 @@
+info:
+  name: Setup - Create Presupuesto Con Monto
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/presupuestos
+      Crea un presupuesto con `monto` (serializa `montoInmueble`) fijado para
+      que exista saldo pendiente contra el cual procesar pagos, y así la
+      suite sea autosuficiente en una base de datos recién migrada.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "fkIdPersona": { "idPersona": 1 },
+          "fecha": "2026-09-05",
+          "encabezado": "Presupuesto Pagos E2E",
+          "estado": "Pendiente",
+          "monto": 10000.0,
+          "observaciones": "creado por la suite de pagos"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores presupuesto id", function () {
+            const b = res.getBody();
+            expect(b.idPresupuesto).to.be.a('number');
+            bru.setVar('_pagos_presupuesto_id', b.idPresupuesto);
+          });

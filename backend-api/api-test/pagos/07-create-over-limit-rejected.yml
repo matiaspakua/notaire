@@ -1,0 +1,32 @@
+info:
+  name: Create Pago Over Limit - Rejected
+  type: http
+  seq: 8
+  description: |-
+      ## POST /api/v1/pagos
+      CU15 - Un pago que excede el saldo pendiente (6000) debe ser rechazado
+      con 409 Conflict.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/pagos"
+  body:
+    type: json
+    data: |-
+        {
+          "idPresupuesto": {{_pagos_presupuesto_id}},
+          "monto": 7000.0,
+          "fecha": "2026-09-05",
+          "observaciones": "Pago que excede el saldo"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () {
+            expect(res.getStatus()).to.equal(409);
+          });

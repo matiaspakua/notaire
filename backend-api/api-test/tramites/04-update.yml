@@ -1,0 +1,27 @@
+info:
+  name: Update Tramite
+  type: http
+  seq: 4
+  description: "## PUT /api/v1/tramites/{id}"
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tramites/{{tramite_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "observaciones": "Tramite E2E actualizado",
+          "fkIdTipoTramite": { "idTipoTramite": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
