@@ -91,19 +91,29 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1–9.4 Pending — see `traceability.md`
+- [x] 9.1 `b4e89a1` fix(backend): fix silent-delete and budget-FK persistence bugs found auditing Bruno API tests
+- [x] 9.2 `38fea13` test(api): complete historial/items/pagos/tramites/inmueble Bruno folders
+- [x] 9.3 `5db94cc` docs(testing): update COVERAGE.md, CU-API-MATRIX.csv, CHANGELOG for #952
+- [x] 9.4 Each commit atomic and conventional; no `Closes #952` on intermediate commits, reserved for the PR
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1–10.5 Pending
+- [x] 10.1 PR [#955](https://github.com/matiaspakua/notaire/pull/955) opened, `Closes #952`
+- [x] 10.2 `bash scripts/preflight.sh` passed before push (14 passed, 2 skipped: trivy, server-backed suites)
+- [x] 10.3 CI green on PR #955
+- [x] 10.4 `gh pr view 955 --json mergeable,mergeStateStatus` confirmed `MERGEABLE` before merge
+- [x] 10.5 PR merged — merge commit `3abe6a68c1cf5f6f16f37a2606b8324a12b9879c`, 2026-09-05T17:58:56Z
 
 ## 11. Deploy
 
-- [ ] 11.1–11.3 Pending
+- [x] 11.1–11.3 No deploy step required — backend-only test infrastructure + defect fixes, covered by CI's existing pipeline; no separate deployment action needed for this change
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1–12.4 Pending
+- [x] 12.1 Post-merge `bru run . -r --env Developmen` re-verified against `main` (149/149 requests, 266/266 tests)
+- [x] 12.2 Issue #952 closed automatically by PR #955 merge
+- [x] 12.3 No regressions observed in subsequent sessions
+- [x] 12.4 Change archived via `openspec archive bruno-api-test-audit`
 
 ## Definition of Done
 
@@ -111,11 +121,11 @@
 - [x] Specification written (this change)
 - [x] Tests designed; fix proven failing-then-passing manually before the
       Bruno assertions are committed
-- [ ] Full suite green: unit, integration, regression (Bruno)
-- [ ] Coverage at or above the JaCoCo ratchet floor
+- [x] Full suite green: unit, integration, regression (Bruno)
+- [x] Coverage at or above the JaCoCo ratchet floor
 - [x] Playwright n/a — no UI surface
-- [ ] Permanent documentation updated
-- [ ] Commits atomic and conventional, referencing #952
-- [ ] PR created, CI green
-- [ ] Merged, deployed, smoke test passed, Issue closed
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Permanent documentation updated
+- [x] Commits atomic and conventional, referencing #952
+- [x] PR created, CI green
+- [x] Merged, deployed, smoke test passed, Issue closed
+- [x] `traceability.md` complete from Issue through Release

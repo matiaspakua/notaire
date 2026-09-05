@@ -10,17 +10,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #952 | in-progress |
+| Issue | #952 | closed (merged via PR #955) |
 | Use Case | CU76 | exists |
-| Specification | `openspec/changes/bruno-api-test-audit/` | in progress |
-| Branch | `test/952_bruno-api-test-audit` | active |
-| Tasks | `tasks.md` | see tasks.md |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
-| Release / tag | pending | pending |
-| Smoke test | pending | pending |
+| Specification | `openspec/changes/bruno-api-test-audit/` | complete, archived |
+| Branch | `test/952_bruno-api-test-audit` | merged |
+| Tasks | `tasks.md` | complete |
+| Commits | `b4e89a1`, `38fea13`, `5db94cc` | done |
+| Pull Request | [#955](https://github.com/matiaspakua/notaire/pull/955) | merged |
+| CI run | green on PR #955 | done |
+| Merge commit | `3abe6a68c1cf5f6f16f37a2606b8324a12b9879c` | done, 2026-09-05T17:58:56Z |
+| Release / tag | n/a — no separate release process | n/a |
+| Smoke test | `bru run` re-verified post-merge (149/149, 266/266) | done |
 
 ## Requirement coverage
 
@@ -51,11 +51,11 @@ Acceptance Criteria instead of `#### Scenario:` blocks:
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | Issue #952 (open, linked to CU76); this proposal |
+| 1 | Issue + Specification + Acceptance Criteria | yes | Issue #952 (closed, linked to CU76); this proposal |
 | 2 | Failing tests written, test cases designed | yes | Bugs reproduced via `curl`/DB inspection and (for the historial delete cascade defect) `HistorialDeleteIntegrationTest` before fixing; Bruno `items`/`pagos`/`historial`/`tramites` folder assertions cover the fixes |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn verify` BUILD SUCCESS (1745/1745 backend tests, coverage gate passed); `bru run` 149/149 requests, 266/266 tests; docs updated above |
-| 4 | CI green, review approved, no conflicts | pending | PR not yet opened |
-| 5 | Deployed, smoke test passed, Issue closed | pending | pending |
+| 4 | CI green, review approved, no conflicts | yes | PR #955 merged, CI green, `mergeable: MERGEABLE` confirmed before merge |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Issue #952 closed via PR #955 merge; `bru run` re-verified post-merge |
 
 ## Exceptions
 
