@@ -33,4 +33,8 @@ public interface GestionDeEscrituraRepository extends JpaRepository<GestionDeEsc
     List<GestionDeEscritura> findByObservacionesContaining(@Param("keyword") String keyword);
 
     java.util.Optional<GestionDeEscritura> findByNumero(int numero);
+
+    @Query("SELECT DISTINCT g FROM GestionDeEscritura g JOIN g.tramiteList t "
+            + "WHERE t.fkIdPresupuesto.fkIdPersona.idPersona = :idPersona")
+    List<GestionDeEscritura> findByClientePersonaId(@Param("idPersona") Integer idPersona);
 }

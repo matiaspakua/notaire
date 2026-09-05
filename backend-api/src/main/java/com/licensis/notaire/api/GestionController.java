@@ -265,7 +265,7 @@ public class GestionController {
     @Operation(summary = "Obtener gestiones de un cliente (CU19)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<GestionDeEscritura>> getByCliente(@PathVariable Integer idPersona) {
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(repository.findByClientePersonaId(idPersona));
     }
 
     @GetMapping("/{id}/estado-actual")
