@@ -286,7 +286,6 @@ export function CheckboxField({
 
   return (
     <div
-      data-testid={dataTestId}
       style={{
         display: "flex",
         alignItems: "center",
@@ -297,6 +296,7 @@ export function CheckboxField({
     >
       <input
         id={inputId}
+        data-testid={dataTestId}
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
