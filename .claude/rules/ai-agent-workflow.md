@@ -499,6 +499,14 @@ EOF
 )"
 ```
 
+**MANDATORY — verify mergeability immediately after creating the PR.** Do not consider the task done, and do not move on to other work, until this check passes:
+
+```bash
+gh pr view <number> --json mergeable,mergeStateStatus
+```
+
+If `mergeable` is not `MERGEABLE` or `mergeStateStatus` is `CONFLICTING`/`DIRTY`, fix it right away: merge `main` into the branch, resolve conflicts, re-run the affected test suites, commit, and push — then re-check. Every unit of work must end with a PR that is conflict-free and a clean branch (no uncommitted or unpushed changes).
+
 ---
 
 ## Quick Reference
