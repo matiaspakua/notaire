@@ -9,13 +9,13 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import type { TipoDeDocumento } from "@/types";
 
-const EMPTY: Partial<TipoDeDocumento> = { nombre: "" };
+const EMPTY: Partial<TipoDeDocumento> = { nombre: "", vence: false, diasVencimiento: null, quienEntrega: "" };
 
 export default function DocumentosPage() {
   const t = useTranslations("administracion.documentos");
@@ -60,6 +60,7 @@ export default function DocumentosPage() {
 
   async function handleSave() {
     if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
+    if (editing.vence && !editing.diasVencimiento) { toast.error(t("diasVencimientoRequired")); return; }
     try {
       if (isEditMode && editing.idTipoDocumento) {
         await updateMutation.mutateAsync({ id: editing.idTipoDocumento, data: editing });
@@ -159,6 +160,34 @@ export default function DocumentosPage() {
                   onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
                   placeholder={t("namePlaceholder")}
                   data-testid="input-nombre-documento"
+                />
+              </FormField>
+              <CheckboxField
+                label={t("fields.vence")}
+                checked={editing.vence ?? false}
+                onChange={(checked) =>
+                  setEditing({ ...editing, vence: checked, diasVencimiento: checked ? editing.diasVencimiento : null })
+                }
+                data-testid="checkbox-vence-documento"
+              />
+              {editing.vence && (
+                <FormField label={t("fields.diasVencimiento")} required>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={editing.diasVencimiento ?? ""}
+                    onChange={(e) =>
+                      setEditing({ ...editing, diasVencimiento: e.target.value ? parseInt(e.target.value) : null })
+                    }
+                    data-testid="input-dias-vencimiento-documento"
+                  />
+                </FormField>
+              )}
+              <FormField label={t("fields.quienEntrega")}>
+                <Input
+                  value={editing.quienEntrega ?? ""}
+                  onChange={(e) => setEditing({ ...editing, quienEntrega: e.target.value })}
+                  data-testid="input-quien-entrega-documento"
                 />
               </FormField>
             </FormSection>

@@ -1,6 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.DocumentoPresentado;
+import com.licensis.notaire.negocio.TipoDeDocumento;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
 import com.licensis.notaire.repository.TipoDeDocumentoRepository;
@@ -25,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/documento-presentado")
@@ -64,9 +68,7 @@ public class DocumentoPresentadoController {
         entity.setFkIdTipoDocumento(request.tipoId());
         entity.setEntregado(request.entregado() != null ? request.entregado() : false);
         entity.setNombre(request.nombre() != null ? request.nombre() : "");
-        entity.setQuienEntrega(request.quienEntrega() != null ? request.quienEntrega() : "");
         entity.setPreparado(false);
-        entity.setVence(false);
         entity.setLiberado(false);
         entity.setObservado(false);
         entity.setReingresado(false);
@@ -81,7 +83,30 @@ public class DocumentoPresentadoController {
                 log.warn("Invalid fecha format: {}", request.fecha());
             }
         }
+        applyVencimientoFromTipoDeDocumento(entity, request);
         return entity;
+    }
+
+    private void applyVencimientoFromTipoDeDocumento(DocumentoPresentado entity, DocumentoPresentadoRequest request) {
+        Optional<TipoDeDocumento> tipo = request.tipoId() != null
+                ? tipoRepository.findById(request.tipoId())
+                : Optional.empty();
+
+        boolean vence = tipo.map(TipoDeDocumento::getVence).orElse(false);
+        Integer diasVencimiento = tipo.map(TipoDeDocumento::getDiasVencimiento).orElse(null);
+        String quienEntrega = request.quienEntrega() != null
+                ? request.quienEntrega()
+                : tipo.map(TipoDeDocumento::getQuienEntrega).orElse("");
+
+        entity.setVence(vence);
+        entity.setDiasVencimiento(diasVencimiento);
+        entity.setQuienEntrega(quienEntrega);
+
+        if (vence && diasVencimiento != null && entity.getFechaIngreso() != null) {
+            Date fechaVencimiento = Date.from(
+                    entity.getFechaIngreso().toInstant().plus(diasVencimiento, ChronoUnit.DAYS));
+            entity.setFechaVencimiento(fechaVencimiento);
+        }
     }
 
     private DocumentoPresentadoResponse toResponse(DocumentoPresentado d) {

@@ -10,7 +10,7 @@
 | **Descripción** | Cuando un cliente solicita un trámite y se inicia una gestión (ver CU02), el sistema genera automáticamente una carpeta de trámite con número único, que agrupa la documentación asociada. La carpeta transita por los estados activa, espera y archivada a medida que avanza el trámite, y puede consultarse en cualquier momento para saber en qué estado se encuentra la documentación física/lógica de un trámite. |
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #104 (Administrar carpetas de trámite), RF #105 (Generar carpeta de trámite), RF #106 (Estados de carpeta); CU02, CU16 |
-| **GitHub ID** | _pendiente — se completa al crear el issue de implementación_ |
+| **GitHub ID** | #839 |
 
 ## Curso de Eventos
 

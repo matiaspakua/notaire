@@ -3,8 +3,10 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.repository.EscrituraRepository;
+import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.service.EscrituraService;
+import com.licensis.notaire.service.NumeracionEscrituraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +33,12 @@ class EscrituraServiceTest {
 
     @Mock
     private PersonaRepository personaRepository;
+
+    @Mock
+    private FolioRepository folioRepository;
+
+    @Mock
+    private NumeracionEscrituraService numeracionEscrituraService;
 
     @InjectMocks
     private EscrituraService escrituraService;

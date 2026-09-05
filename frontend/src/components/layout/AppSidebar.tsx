@@ -22,6 +22,7 @@ import {
   ScrollText,
   Settings,
   ShieldCheck,
+  Stamp,
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -63,6 +64,7 @@ const navItems: NavItem[] = [
   { labelKey: "pagos", href: "/dashboard/pagos", icon: CreditCard },
   { labelKey: "protocolo", href: "/dashboard/protocolo", icon: BookMarked },
   { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
+  { labelKey: "minutasInscripcion", href: "/dashboard/minutas-inscripcion", icon: Stamp },
   { labelKey: "copias", href: "/dashboard/copias", icon: Copy },
   { labelKey: "items", href: "/dashboard/items", icon: ListTodo },
   { labelKey: "documentos", href: "/dashboard/documentos", icon: FileText },

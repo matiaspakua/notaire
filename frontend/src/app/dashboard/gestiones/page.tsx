@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Archive, RefreshCcw, History } from "lucide-react";
+import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -22,6 +22,8 @@ import {
   useArchivarGestion,
   useTransicionarGestion,
   useHistorial,
+  useCarpetasByGestion,
+  usePonerCarpetaEnEspera,
 } from "@/hooks/useGestiones";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import { usePersonas } from "@/hooks/usePersonas";
@@ -29,8 +31,11 @@ import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
+import { ApiError } from "@/lib/api-client";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
+
+const ESTADO_CARPETA_ACTIVA = "Activa";
 
 const ESTADO_ARCHIVADA = "Archivada";
 
@@ -48,13 +53,18 @@ export default function GestionesPage() {
   const deleteMutation = useDeleteGestion();
   const archivarMutation = useArchivarGestion();
   const transicionarMutation = useTransicionarGestion();
+  const ponerEnEsperaMutation = usePonerCarpetaEnEspera();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [archiveId, setArchiveId] = useState<number | null>(null);
+  const [archiveConflict, setArchiveConflict] = useState<string | null>(null);
   const [transitionId, setTransitionId] = useState<number | null>(null);
   const [selectedEstado, setSelectedEstado] = useState("");
   const [bitacoraId, setBitacoraId] = useState<number | null>(null);
+  const [carpetasGestionId, setCarpetasGestionId] = useState<number | null>(null);
+  const [esperaCarpetaId, setEsperaCarpetaId] = useState<number | null>(null);
+  const [motivoEspera, setMotivoEspera] = useState("");
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
@@ -70,6 +80,7 @@ export default function GestionesPage() {
   const { data: saldoPendiente } = useSaldoPendiente(archiveId ?? undefined);
   const { data: trace } = useGestionWorkflowTrace(transitionId ?? undefined);
   const { data: historial = [] } = useHistorial(bitacoraId ?? undefined);
+  const { data: carpetas = [] } = useCarpetasByGestion(carpetasGestionId ?? undefined);
 
   const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
   const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
@@ -140,12 +151,46 @@ export default function GestionesPage() {
   async function handleArchive() {
     if (!archiveId) return;
     try {
-      await archivarMutation.mutateAsync(archiveId);
+      await archivarMutation.mutateAsync({ id: archiveId, confirmado: !!archiveConflict });
       toast.success(t("archived"));
-    } catch (err) {
-      toast.error(extractApiError(err) ?? t("errorArchive"));
-    } finally {
       setArchiveId(null);
+      setArchiveConflict(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setArchiveConflict(extractApiError(err) ?? t("archiveConflictTitle"));
+        return;
+      }
+      toast.error(extractApiError(err) ?? t("errorArchive"));
+      setArchiveId(null);
+      setArchiveConflict(null);
+    }
+  }
+
+  function closeArchiveDialog(open: boolean) {
+    if (!open) {
+      setArchiveId(null);
+      setArchiveConflict(null);
+    }
+  }
+
+  async function handlePonerEnEspera() {
+    if (!esperaCarpetaId || !carpetasGestionId) return;
+    if (!motivoEspera.trim()) {
+      toast.error(t("errorMotivoRequerido"));
+      return;
+    }
+    try {
+      await ponerEnEsperaMutation.mutateAsync({
+        idCarpeta: esperaCarpetaId,
+        motivo: motivoEspera,
+        gestionId: carpetasGestionId,
+      });
+      toast.success(t("carpetaEnEspera"));
+      setEsperaCarpetaId(null);
+      setMotivoEspera("");
+      setCarpetasGestionId(null);
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorCarpetaEspera"));
     }
   }
 
@@ -217,6 +262,15 @@ export default function GestionesPage() {
             data-testid={`btn-ver-bitacora-${g.idGestion}`}
           >
             <History className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setCarpetasGestionId(g.idGestion!)}
+            aria-label={t("viewCarpetas")}
+            data-testid={`btn-ver-carpetas-${g.idGestion}`}
+          >
+            <FolderClock className="h-4 w-4" />
           </Button>
           {g.estadoActual !== ESTADO_ARCHIVADA && (
             <Button
@@ -359,16 +413,18 @@ export default function GestionesPage() {
 
       <ConfirmDialog
         open={!!archiveId}
-        onOpenChange={(v) => !v && setArchiveId(null)}
+        onOpenChange={closeArchiveDialog}
         onConfirm={handleArchive}
         loading={archivarMutation.isPending}
-        title={t("archiveConfirmTitle")}
+        title={archiveConflict ? t("archiveConflictTitle") : t("archiveConfirmTitle")}
         description={
-          saldoPendiente && saldoPendiente.saldoPendiente > 0
-            ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPendiente) })
-            : t("archiveConfirmDescriptionNoDebt")
+          archiveConflict
+            ? archiveConflict
+            : saldoPendiente && saldoPendiente.saldoPendiente > 0
+              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPendiente) })
+              : t("archiveConfirmDescriptionNoDebt")
         }
-        confirmLabel={t("archiveGestion")}
+        confirmLabel={archiveConflict ? t("archiveConfirmAnyway") : t("archiveGestion")}
       />
 
       <Dialog open={!!transitionId} onOpenChange={closeTransitionDialog}>
@@ -425,6 +481,86 @@ export default function GestionesPage() {
               </div>
             )}
           </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!carpetasGestionId}
+        onOpenChange={(v) => {
+          if (!v) {
+            setCarpetasGestionId(null);
+            setEsperaCarpetaId(null);
+            setMotivoEspera("");
+          }
+        }}
+      >
+        <DialogContent>
+          {esperaCarpetaId ? (
+            <FormContainer>
+              <FormHeader title={t("ponerEnEsperaTitle")} />
+              <FormSection title={t("ponerEnEsperaTitle")}>
+                <FormField label={t("motivoEspera")} required helperText={t("motivoEsperaHelper")}>
+                  <Input
+                    value={motivoEspera}
+                    onChange={(e) => setMotivoEspera(e.target.value)}
+                    placeholder={t("motivoEsperaPlaceholder")}
+                    data-testid="input-motivo-espera"
+                  />
+                </FormField>
+              </FormSection>
+              <FormActions align="right">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setEsperaCarpetaId(null);
+                    setMotivoEspera("");
+                  }}
+                >
+                  {tc("cancel")}
+                </Button>
+                <Button
+                  onClick={handlePonerEnEspera}
+                  disabled={ponerEnEsperaMutation.isPending}
+                  data-testid="btn-confirmar-espera"
+                >
+                  {t("confirmEspera")}
+                </Button>
+              </FormActions>
+            </FormContainer>
+          ) : (
+            <FormContainer>
+              <FormHeader title={t("carpetasTitle")} />
+              {carpetas.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t("carpetasEmpty")}</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {carpetas.map((c) => (
+                    <div
+                      key={c.idCarpeta}
+                      data-testid="carpeta-item"
+                      className="border-b pb-2 flex items-center justify-between"
+                    >
+                      <div>
+                        <div className="font-medium">{t("carpetaNumero", { numero: c.numero ?? 0 })}</div>
+                        <div className="text-xs text-muted-foreground">{c.estado}</div>
+                        {c.motivoEspera && <div className="text-sm">{c.motivoEspera}</div>}
+                      </div>
+                      {c.estado === ESTADO_CARPETA_ACTIVA && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setEsperaCarpetaId(c.idCarpeta!)}
+                          data-testid={`btn-poner-en-espera-${c.idCarpeta}`}
+                        >
+                          {t("ponerEnEspera")}
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </FormContainer>
+          )}
         </DialogContent>
       </Dialog>
     </div>

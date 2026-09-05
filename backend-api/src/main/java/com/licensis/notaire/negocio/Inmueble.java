@@ -59,6 +59,12 @@ public class Inmueble implements Serializable {
     private String domicilio;
     @Column(name = "observaciones")
     private String observaciones;
+    @Column(name = "matricula")
+    private String matricula;
+    @Column(name = "tomo_folio_finca")
+    private String tomoFolioFinca;
+    @Column(name = "linderos")
+    private String linderos;
     @OneToMany(mappedBy = "fkIdInmueble", fetch = FetchType.LAZY)
     private List<Tramite> tramiteList;
 
@@ -116,6 +122,30 @@ public class Inmueble implements Serializable {
         this.observaciones = observaciones;
     }
 
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getTomoFolioFinca() {
+        return tomoFolioFinca;
+    }
+
+    public void setTomoFolioFinca(String tomoFolioFinca) {
+        this.tomoFolioFinca = tomoFolioFinca;
+    }
+
+    public String getLinderos() {
+        return linderos;
+    }
+
+    public void setLinderos(String linderos) {
+        this.linderos = linderos;
+    }
+
     @XmlTransient
     @JsonIgnore
     public List<Tramite> getTramiteList() {
@@ -134,6 +164,9 @@ public class Inmueble implements Serializable {
         miDto.setNomenclaturaCatastral(this.getNomenclaturaCatastral());
         miDto.setObservaciones(this.getObservaciones());
         miDto.setValuacionFiscal(this.getValuacionFiscal());
+        miDto.setMatricula(this.getMatricula());
+        miDto.setTomoFolioFinca(this.getTomoFolioFinca());
+        miDto.setLinderos(this.getLinderos());
 
         return miDto;
     }
@@ -149,6 +182,9 @@ public class Inmueble implements Serializable {
             this.nomenclaturaCatastral = miDtoInmueble.getNomenclaturaCatastral();
             this.observaciones = miDtoInmueble.getObservaciones();
             this.valuacionFiscal = miDtoInmueble.getValuacionFiscal();
+            this.matricula = miDtoInmueble.getMatricula();
+            this.tomoFolioFinca = miDtoInmueble.getTomoFolioFinca();
+            this.linderos = miDtoInmueble.getLinderos();
         }
     }
 

@@ -133,18 +133,38 @@ public class PagoService {
 
     /**
      * CU45 - Calcula el total de un presupuesto sumando los items normales y de recargo,
-     * y restando los items de descuento.
+     * restando los items de descuento, y sumando los costos de documentos presentados
+     * en sus trámites (Issue #823).
      */
     private Float calcularTotalPresupuesto(Presupuesto presupuesto) {
+        float total;
         if (presupuesto.getItemList() == null || presupuesto.getItemList().isEmpty()) {
-            return presupuesto.getMontoInmueble() != null ? presupuesto.getMontoInmueble() : 0f;
+            total = presupuesto.getMontoInmueble() != null ? presupuesto.getMontoInmueble() : 0f;
+        } else {
+            total = 0f;
+            for (Item item : presupuesto.getItemList()) {
+                total += item.getTipo() == TipoItem.DESCUENTO ? -item.getValor() : item.getValor();
+                if (item.getPorcentaje() != null && item.getPorcentaje() > 0) {
+                    total += total * (item.getPorcentaje() / 100.0f);
+                }
+            }
         }
+        return total + sumarCostosDocumentosPresentados(presupuesto);
+    }
 
+    private float sumarCostosDocumentosPresentados(Presupuesto presupuesto) {
+        if (presupuesto.getTramiteList() == null) {
+            return 0f;
+        }
         float total = 0f;
-        for (Item item : presupuesto.getItemList()) {
-            total += item.getTipo() == TipoItem.DESCUENTO ? -item.getValor() : item.getValor();
-            if (item.getPorcentaje() != null && item.getPorcentaje() > 0) {
-                total += total * (item.getPorcentaje() / 100.0f);
+        for (var tramite : presupuesto.getTramiteList()) {
+            if (tramite.getDocumentoPresentadoList() == null) {
+                continue;
+            }
+            for (var documento : tramite.getDocumentoPresentadoList()) {
+                if (documento.getImporteAPagar() != null) {
+                    total += documento.getImporteAPagar();
+                }
             }
         }
         return total;

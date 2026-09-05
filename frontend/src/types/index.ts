@@ -135,6 +135,15 @@ export interface DocumentoPresentadoRequest {
   entregado: boolean;
 }
 
+export interface CarpetaTramite {
+  idCarpeta?: number;
+  numero?: number;
+  estado?: string;
+  motivoEspera?: string;
+  idGestion?: number;
+  idTramite?: number;
+}
+
 export interface Historial {
   idHistorial?: number;
   fecha?: string;
@@ -209,6 +218,20 @@ export interface PlantillaPresupuesto {
   nombre?: string;
   descripcion?: string;
   itemList?: Item[];
+}
+
+export interface PlantillaCostoDocumentoPK {
+  fkIdTipoTramite: number;
+  fkIdTipoDocumento: number;
+}
+
+export interface PlantillaCostoDocumento {
+  plantillaCostoDocumentoPK?: PlantillaCostoDocumentoPK;
+  tipoDeTramite?: TipoDeTramite;
+  tipoDeDocumento?: TipoDeDocumento;
+  montoFijo?: number;
+  porcentajeVariable?: number;
+  version?: number;
 }
 
 export interface Presupuesto {
@@ -335,6 +358,23 @@ export interface Inmueble {
   valuacionFiscal?: number;
   domicilio?: string;
   observaciones?: string;
+  matricula?: string;
+  tomoFolioFinca?: string;
+  linderos?: string;
+}
+
+export interface MinutaInscripcion {
+  idMinutaInscripcion?: number;
+  numero?: number;
+  estado?: string;
+  fechaGeneracion?: string;
+  fechaPresentacion?: string;
+  numeroEntradaRegistral?: string;
+  observacionesRegistro?: string;
+  fechaSubsanacion?: string;
+  fechaRecepcion?: string;
+  numeroInscripcionDefinitivo?: string;
+  escritura?: { idEscritura?: number; numero?: number };
 }
 
 export interface Copia {

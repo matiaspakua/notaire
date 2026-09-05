@@ -11,6 +11,7 @@
     "pagos": "Pagos",
     "protocolo": "Protocolo",
     "inmuebles": "Inmuebles",
+    "minutasInscripcion": "Minutas de Inscripción",
     "copias": "Copias",
     "items": "Items",
     "documentos": "Documentos",
@@ -195,6 +196,24 @@
     "viewBitacora": "Ver bitácora",
     "bitacoraTitle": "Bitácora de la gestión",
     "bitacoraEmpty": "Esta gestión aún no tiene entradas en la bitácora.",
+    "viewCarpetas": "Ver carpetas de trámite",
+    "carpetasTitle": "Carpetas de trámite (CU85)",
+    "carpetasEmpty": "Esta gestión aún no tiene carpetas de trámite.",
+    "carpetaNumero": "Carpeta N.° {numero}",
+    "carpetaEstadoActiva": "Activa",
+    "carpetaEstadoEspera": "En espera",
+    "carpetaEstadoArchivada": "Archivada",
+    "ponerEnEspera": "Poner en espera",
+    "ponerEnEsperaTitle": "Poner carpeta en espera",
+    "motivoEspera": "Motivo",
+    "motivoEsperaHelper": "Explique por qué esta carpeta queda en espera (obligatorio).",
+    "motivoEsperaPlaceholder": "Ej: Falta documentación del titular",
+    "confirmEspera": "Confirmar espera",
+    "carpetaEnEspera": "Carpeta puesta en espera",
+    "errorCarpetaEspera": "Error al poner la carpeta en espera",
+    "errorMotivoRequerido": "El motivo es obligatorio",
+    "archiveConflictTitle": "Hay carpetas de trámite en espera",
+    "archiveConfirmAnyway": "Archivar de todos modos",
     "fields": {
       "numero": "Número",
       "tipo": "Tipo de Trámite",
@@ -413,11 +432,51 @@
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
     "noData": "No hay inmuebles registrados",
+    "registralData": "Datos registrales",
     "fields": {
       "domicilio": "Domicilio",
       "domicilioPlaceholder": "Calle, número, localidad",
       "valuacionFiscal": "Valuación Fiscal",
-      "observaciones": "Observaciones"
+      "observaciones": "Observaciones",
+      "matricula": "Matrícula",
+      "tomoFolioFinca": "Tomo/Folio/Finca",
+      "linderos": "Linderos"
+    }
+  },
+  "minutasInscripcion": {
+    "title": "Minutas de Inscripción",
+    "generarSection": "Generar minuta",
+    "buscarSection": "Buscar minuta existente",
+    "selectEscritura": "Seleccionar escritura",
+    "generarMinuta": "Generar minuta",
+    "descargarReporte": "Descargar formulario",
+    "presentar": "Presentar",
+    "observar": "Observar",
+    "inscribir": "Inscribir",
+    "generated": "Minuta de inscripción generada",
+    "presented": "Presentación registrada",
+    "observed": "Observación registrada",
+    "inscribed": "Inscripción definitiva registrada",
+    "errorGenerate": "Error al generar la minuta",
+    "errorPresentar": "Error al registrar la presentación",
+    "errorObservar": "Error al registrar la observación",
+    "errorInscribir": "Error al registrar la inscripción",
+    "errorReporte": "Error al descargar el reporte",
+    "estadoGenerada": "Generada",
+    "estadoPresentada": "Presentado para inscripción",
+    "estadoObservada": "Observado",
+    "estadoInscripta": "Inscripto",
+    "fields": {
+      "numero": "N°",
+      "escritura": "Escritura",
+      "estado": "Estado",
+      "idMinuta": "ID de minuta",
+      "fechaPresentacion": "Fecha de presentación",
+      "numeroEntradaRegistral": "N° de entrada registral",
+      "observacionesRegistro": "Observaciones del Registro",
+      "fechaSubsanacion": "Fecha de subsanación",
+      "fechaRecepcion": "Fecha de recepción",
+      "numeroInscripcionDefinitivo": "N° de inscripción definitivo"
     }
   },
   "copias": {
@@ -595,8 +654,14 @@
       "inUseCannotDelete": "No se puede eliminar: el tipo de documento está siendo utilizado",
       "noData": "No hay tipos de documento registrados",
       "nameRequired": "El nombre es requerido",
+      "diasVencimientoRequired": "Debe indicar en cuántos días vence",
       "namePlaceholder": "Ej: DNI, Escritura",
-      "searchPlaceholder": "Buscar por nombre..."
+      "searchPlaceholder": "Buscar por nombre...",
+      "fields": {
+        "vence": "¿Vence?",
+        "diasVencimiento": "Días para el vencimiento",
+        "quienEntrega": "Quién entrega/devuelve"
+      }
     },
     "estadosGestion": {
       "title": "Estados de Gestión",
@@ -703,6 +768,24 @@
         "conceptoPlaceholder": "Seleccionar concepto...",
         "observaciones": "Observaciones",
         "items": "Items"
+      },
+      "costosDocumento": {
+        "title": "Costos de Documentos",
+        "description": "Gastos fijos o variables esperados por tipo de documento",
+        "newCosto": "Nuevo Costo de Documento",
+        "created": "Costo creado",
+        "errorCreate": "Error al crear el costo",
+        "noData": "No hay costos definidos para este tipo de trámite",
+        "selectionRequired": "Seleccione tipo de documento e ingrese un valor",
+        "fields": {
+          "tipoTramite": "Tipo de Trámite",
+          "tipoDocumento": "Tipo de Documento",
+          "tipoDocumentoPlaceholder": "Seleccionar tipo de documento...",
+          "tipoCosto": "Tipo de Costo",
+          "montoFijo": "Monto Fijo",
+          "porcentajeVariable": "Porcentaje Variable",
+          "valor": "Valor"
+        }
       }
     }
   },

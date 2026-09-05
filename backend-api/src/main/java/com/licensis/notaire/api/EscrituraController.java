@@ -12,8 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,6 @@ import java.util.List;
 @RequestMapping("/api/v1/escrituras")
 @Tag(name = "Escrituras", description = "API para gestionar escrituras")
 public class EscrituraController {
-
-    private static final Logger log = LoggerFactory.getLogger(EscrituraController.class);
 
     private final EscrituraService escrituraService;
     private final EscrituraFirmaService escrituraFirmaService;
@@ -77,14 +73,9 @@ public class EscrituraController {
     @Operation(summary = "Crear nueva escritura")
     @Transactional
     public ResponseEntity<Escritura> create(@RequestBody Escritura entity) {
-        try {
-            Escritura saved = escrituraService.save(entity);
-            linkFolio(saved, entity.getIdFolio());
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-        } catch (Exception e) {
-            log.error("Failed to create escritura", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        Escritura saved = escrituraService.save(entity);
+        linkFolio(saved, entity.getIdFolio());
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @ApiResponses({

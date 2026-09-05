@@ -11,6 +11,7 @@
     "pagos": "Payments",
     "protocolo": "Protocol",
     "inmuebles": "Properties",
+    "minutasInscripcion": "Registration Memoranda",
     "copias": "Copies",
     "items": "Items",
     "documentos": "Documents",
@@ -195,6 +196,24 @@
     "viewBitacora": "View log",
     "bitacoraTitle": "Case log",
     "bitacoraEmpty": "This case has no log entries yet.",
+    "viewCarpetas": "View case folders",
+    "carpetasTitle": "Case folders (CU85)",
+    "carpetasEmpty": "This case has no folders yet.",
+    "carpetaNumero": "Folder No. {numero}",
+    "carpetaEstadoActiva": "Active",
+    "carpetaEstadoEspera": "On hold",
+    "carpetaEstadoArchivada": "Archived",
+    "ponerEnEspera": "Put on hold",
+    "ponerEnEsperaTitle": "Put folder on hold",
+    "motivoEspera": "Reason",
+    "motivoEsperaHelper": "Explain why this folder is being put on hold (required).",
+    "motivoEsperaPlaceholder": "E.g.: Missing documentation from the owner",
+    "confirmEspera": "Confirm hold",
+    "carpetaEnEspera": "Folder put on hold",
+    "errorCarpetaEspera": "Error putting folder on hold",
+    "errorMotivoRequerido": "Reason is required",
+    "archiveConflictTitle": "There are case folders on hold",
+    "archiveConfirmAnyway": "Archive anyway",
     "fields": {
       "numero": "Number",
       "tipo": "Case type",
@@ -413,11 +432,51 @@
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
     "noData": "No properties registered",
+    "registralData": "Registral data",
     "fields": {
       "domicilio": "Address",
       "domicilioPlaceholder": "Street, number, city",
       "valuacionFiscal": "Tax Assessment",
-      "observaciones": "Observations"
+      "observaciones": "Observations",
+      "matricula": "Registration number",
+      "tomoFolioFinca": "Volume/Page/Property",
+      "linderos": "Boundaries"
+    }
+  },
+  "minutasInscripcion": {
+    "title": "Registration Memoranda",
+    "generarSection": "Generate memorandum",
+    "buscarSection": "Find existing memorandum",
+    "selectEscritura": "Select deed",
+    "generarMinuta": "Generate memorandum",
+    "descargarReporte": "Download form",
+    "presentar": "Submit",
+    "observar": "Flag observation",
+    "inscribir": "Register",
+    "generated": "Registration memorandum generated",
+    "presented": "Submission recorded",
+    "observed": "Observation recorded",
+    "inscribed": "Final registration recorded",
+    "errorGenerate": "Error generating the memorandum",
+    "errorPresentar": "Error recording the submission",
+    "errorObservar": "Error recording the observation",
+    "errorInscribir": "Error recording the registration",
+    "errorReporte": "Error downloading the report",
+    "estadoGenerada": "Generated",
+    "estadoPresentada": "Submitted for registration",
+    "estadoObservada": "Observed",
+    "estadoInscripta": "Registered",
+    "fields": {
+      "numero": "No.",
+      "escritura": "Deed",
+      "estado": "Status",
+      "idMinuta": "Memorandum ID",
+      "fechaPresentacion": "Submission date",
+      "numeroEntradaRegistral": "Registry entry number",
+      "observacionesRegistro": "Registry observations",
+      "fechaSubsanacion": "Correction date",
+      "fechaRecepcion": "Receipt date",
+      "numeroInscripcionDefinitivo": "Final registration number"
     }
   },
   "copias": {
@@ -595,8 +654,14 @@
       "inUseCannotDelete": "Cannot delete: document type is in use",
       "noData": "No document types registered",
       "nameRequired": "Name is required",
+      "diasVencimientoRequired": "You must specify how many days until it expires",
       "namePlaceholder": "E.g.: ID Card, Deed",
-      "searchPlaceholder": "Search by name..."
+      "searchPlaceholder": "Search by name...",
+      "fields": {
+        "vence": "Expires?",
+        "diasVencimiento": "Days until expiration",
+        "quienEntrega": "Who delivers/returns it"
+      }
     },
     "estadosGestion": {
       "title": "Case Statuses",
@@ -703,6 +768,24 @@
         "conceptoPlaceholder": "Select concept...",
         "observaciones": "Notes",
         "items": "Items"
+      },
+      "costosDocumento": {
+        "title": "Document Costs",
+        "description": "Expected fixed or variable expenses per document type",
+        "newCosto": "New Document Cost",
+        "created": "Cost created",
+        "errorCreate": "Error creating cost",
+        "noData": "No costs defined for this trámite type",
+        "selectionRequired": "Select a document type and enter a value",
+        "fields": {
+          "tipoTramite": "Trámite Type",
+          "tipoDocumento": "Document Type",
+          "tipoDocumentoPlaceholder": "Select document type...",
+          "tipoCosto": "Cost Type",
+          "montoFijo": "Fixed Amount",
+          "porcentajeVariable": "Variable Percentage",
+          "valor": "Value"
+        }
       }
     }
   },

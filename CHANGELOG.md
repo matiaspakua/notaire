@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
+  inscripción from a signed (`Firmada`) escritura and track it through the
+  registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.
+  Generation is blocked until the escritura's inmueble has its datos
+  registrales complete (`matricula`, `tomoFolioFinca`, `linderos`, added to
+  `Inmueble` alongside the existing catastral data). Adds
+  `POST/PUT /api/v1/minutas-inscripcion/**` endpoints, a
+  `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
+  normalized inscription form, and a "Minutas de Inscripción" dashboard
+  screen to generate, present, observe and inscribe.
+- **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
+  trámite genera automáticamente su carpeta de trámite (una por trámite,
+  numeración única, estado "Activa"). Adds `CarpetaTramite` entity and
+  `GET /api/v1/carpetas/{id}`, `GET /api/v1/carpetas?gestionId=&tramiteId=`,
+  `PUT /api/v1/carpetas/{id}/espera` (requires a `motivo`). Archiving a
+  gestión (CU16) now cascades to all its carpetas, transitioning them to
+  "Archivada"; if any carpeta is still "Espera" unresolved, the archive
+  request is rejected (HTTP 409) unless explicitly confirmed
+  (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
+  screen.
+- **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
+  CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
+  (required when `vence` is checked), and `quienEntrega`. When a
+  `DocumentoPresentado` is created, these fields — plus a computed
+  `fechaVencimiento` (`fechaIngreso + diasVencimiento`) — are copied from its
+  `TipoDeDocumento`, giving CU42's "próximos vencimientos" report real data to
+  work with. Adds a "Vence"/"Días de vencimiento"/"Quién entrega" section to
+  the Tipos de Documento admin form.
+- **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
+  cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
+  included in its presupuesto's total. Adds `PlantillaCostoDocumento`
+  (`POST`/`GET /api/v1/plantilla-costos-documento`) so a `TipoDeTramite`'s
+  presupuesto template can define an expected fixed or variable
+  (percentage) cost per `TipoDeDocumento` — exactly one of the two must be
+  set. Adds a "Costos de Documentos" section to the plantillas de
+  presupuesto admin screen.
 - **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
   new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
   plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
@@ -174,6 +210,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   320px after login.
 
 ### Fixed
+
+- **`CheckboxField` click target excluded the gap between the input and its label**
+  (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
+  rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the
+  `theme.spacing[3]` gap between them with no click handler — clicks landing there (e.g. on the
+  element's bounding-box center) did nothing. Caused
+  `TS-0031-testimonio-generacion-verificacion-feature.spec.ts`'s "Observado" checkbox test to
+  silently fail to toggle state. Fixed by wrapping the input and label text in a single native
+  `<label>` element, so any click within the row toggles the checkbox.
+- **`TS-0012-escritura-folio-firma.spec.ts` regressed after the #892 folio-picker fix
+  shipped** (issue #892, CU06): the test chained `.locator("button").first()` off
+  `getByTestId("select-folio-escritura")`, but that testid is applied directly to the
+  Radix `SelectTrigger` button, so the nested lookup never resolved. Also closed the
+  Radix listbox (rendered in a portal above the dialog) with `Escape` before clicking
+  "Cancelar", since a still-open dropdown intercepted that click. Test-only fix, no
+  application code changed.
+
+- **Flaky E2E coverage for the pagos presupuesto picker/saldo pendiente display**
+  (issue #796, CU15): `TS-0014-pagos-saldo-picker.spec.ts` located the saldo
+  pendiente text via an ambiguous `getByRole("dialog").getByText(/saldo|pendiente/i)`,
+  which could also match the picker's loading placeholder or a seeded persona
+  surname containing "Saldo", causing intermittent strict-mode failures. Added a
+  dedicated `data-testid="saldo-pendiente-amount"` to the saldo display in
+  `pagos/page.tsx` and updated the spec to target it directly; also fixed two
+  assertions that compared the raw input amount against the locale-formatted
+  currency string, and aligned a `select-persona` option click with the
+  `evaluate(el => el.click())` workaround already used elsewhere in the suite
+  for that Radix dropdown.
+
+- **`02-demo-two-full-cases.spec.ts` broke after the presupuesto picker landed**
+  (issue #796): the demo script's Pago step still filled a `presupuesto id`
+  text field that the picker (see above) removed. Updated it to drive
+  `select-presupuesto-pago` and pick the option by client surname, same as
+  `TS-0014-pagos-saldo-picker.spec.ts`.
 
 - **Archiving a gestión with pending debt was incorrectly blocked (HTTP 400)**
   (issue #914, CU16): commit 52776cc9 (issue #169) changed `GestionArchiveDebtService.archivar`
