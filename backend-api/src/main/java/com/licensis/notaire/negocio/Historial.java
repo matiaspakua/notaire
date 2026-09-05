@@ -23,6 +23,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.springframework.data.domain.Persistable;
 
 /**
  * Clase que representa el historial (registro de cambios de estado) de una gestion de escritura.
@@ -41,7 +42,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "Historial.findByIdGestion", query = "SELECT h FROM Historial h WHERE h.fkIdGestion.idGestion = :idGestion"),
             @NamedQuery(name = "Historial.findByFecha", query = "SELECT h FROM Historial h WHERE h.fecha = :fecha")
         })
-public class Historial implements Serializable
+public class Historial implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -95,6 +96,22 @@ public class Historial implements Serializable
     public void setIdHistorial(Integer idHistorial)
     {
         this.idHistorial = idHistorial;
+    }
+
+    @Override
+    public Integer getId()
+    {
+        return idHistorial;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 — indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew()
+    {
+        return idHistorial == null || idHistorial.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
     }
 
     public String getObservaciones()

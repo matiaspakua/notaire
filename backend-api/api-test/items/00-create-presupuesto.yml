@@ -1,0 +1,38 @@
+info:
+  name: Setup - Create Presupuesto
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/presupuestos
+      Crea el presupuesto padre requerido por el alta de items, para que la
+      suite sea autosuficiente en una base de datos recién migrada.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "fkIdPersona": { "idPersona": 1 },
+          "fecha": "2026-09-05",
+          "encabezado": "Presupuesto Items E2E",
+          "estado": "Pendiente",
+          "observaciones": "creado por la suite de items"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores presupuesto id", function () {
+            const b = res.getBody();
+            expect(b.idPresupuesto).to.be.a('number');
+            bru.setVar('_items_presupuesto_id', b.idPresupuesto);
+          });

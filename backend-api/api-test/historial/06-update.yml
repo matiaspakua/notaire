@@ -1,0 +1,30 @@
+info:
+  name: Update Historial
+  type: http
+  seq: 7
+  description: |-
+      ## PUT /api/v1/historial/{id}
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/historial/{{_historial_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "fecha": "2026-09-05",
+          "observaciones": "Gestion en tramite",
+          "fkIdGestion": { "idGestion": {{_historial_gestion_id}} },
+          "fkIdEstadoGestion": { "idEstadoGestion": 2 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });

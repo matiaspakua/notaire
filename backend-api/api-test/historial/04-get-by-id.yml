@@ -1,0 +1,25 @@
+info:
+  name: Get Historial by Id
+  type: http
+  seq: 5
+  description: |-
+      ## GET /api/v1/historial/{id}
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{_historial_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Returns matching historial", function () {
+            const b = res.getBody();
+            expect(b.idHistorial).to.equal(parseInt(bru.getVar('_historial_id'), 10));
+            expect(b.gestionId).to.equal(parseInt(bru.getVar('_historial_gestion_id'), 10));
+            expect(b.observaciones).to.equal('Gestion iniciada');
+          });

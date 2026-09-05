@@ -1,0 +1,41 @@
+info:
+  name: Create Pago
+  type: http
+  seq: 2
+  description: |-
+      ## POST /api/v1/pagos
+      CU15 - Procesa un pago parcial contra el saldo pendiente del presupuesto
+      creado en el setup (monto 4000 de un total de 10000).
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/pagos"
+  body:
+    type: json
+    data: |-
+        {
+          "idPresupuesto": {{_pagos_presupuesto_id}},
+          "monto": 4000.0,
+          "fecha": "2026-09-05",
+          "observaciones": "Pago parcial E2E",
+          "metodoPago": "Transferencia"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Stores pago id", function () {
+            const b = res.getBody();
+            expect(b.idPago).to.be.a('number');
+            bru.setVar('pago_id', b.idPago);
+          });
+          test("Persists monto", function () {
+            expect(res.getBody().monto).to.equal(4000.0);
+          });

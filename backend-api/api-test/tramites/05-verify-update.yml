@@ -1,0 +1,21 @@
+info:
+  name: Verify Tramite Update
+  type: http
+  seq: 5
+  description: "## GET /api/v1/tramites/{id} — verifica que el update haya persistido"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tramites/{{tramite_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Persists updated observaciones", function () {
+            expect(res.getBody().observaciones).to.equal('Tramite E2E actualizado');
+          });

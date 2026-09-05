@@ -1,0 +1,18 @@
+info:
+  name: Delete Pago
+  type: http
+  seq: 11
+  description: "## DELETE /api/v1/pagos/{id}"
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/pagos/{{pago_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });

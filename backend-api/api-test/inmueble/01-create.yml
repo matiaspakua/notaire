@@ -1,0 +1,41 @@
+info:
+  name: Create Inmueble
+  type: http
+  seq: 1
+  description: |-
+    ## Create Inmueble — POST /api/v1/inmueble
+    Crea un nuevo inmueble con datos catastrales y valuación fiscal.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/inmueble"
+  body:
+    type: json
+    data: |-
+      {
+        "nomenclaturaCatastral": "CIRC-01-SEC-A-PARC-99",
+        "domicilio": "Av. Libertador 5000",
+        "valuacionFiscal": 250000.0,
+        "matricula": "M-9988",
+        "tomoFolioFinca": "T5-F12-FN3",
+        "linderos": "N: Calle, S: Lote 2",
+        "observaciones": "Inmueble Bruno E2E"
+      }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status 201 Created", function () {
+          expect(res.getStatus()).to.equal(201);
+        });
+        test("Returns idInmueble and persists attributes", function () {
+          const b = res.getBody();
+          expect(b).to.have.property('idInmueble');
+          expect(b.domicilio).to.equal('Av. Libertador 5000');
+          expect(b.nomenclaturaCatastral).to.equal('CIRC-01-SEC-A-PARC-99');
+          bru.setVar('inmueble_id', b.idInmueble);
+        });

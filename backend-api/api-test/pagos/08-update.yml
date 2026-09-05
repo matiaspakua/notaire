@@ -1,0 +1,32 @@
+info:
+  name: Update Pago
+  type: http
+  seq: 9
+  description: "## PUT /api/v1/pagos/{id}"
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/pagos/{{pago_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "monto": 4500.0,
+          "fecha": "2026-09-05",
+          "observaciones": "Pago parcial E2E actualizado",
+          "metodoPago": "Efectivo"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Persists updated monto", function () {
+            expect(res.getBody().monto).to.equal(4500.0);
+          });

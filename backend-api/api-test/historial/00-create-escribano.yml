@@ -1,10 +1,10 @@
 info:
-  name: Setup - Create Suplente Persona
+  name: Setup - Create Escribano Persona
   type: http
   seq: 1
   description: |-
       ## Setup — POST /api/v1/personas
-      Crea la persona suplente requerida por el alta de suplencia, para que la
+      Crea la persona escribano requerida por el alta de gestion, para que la
       suite sea autosuficiente en una base de datos recién migrada.
 http:
   method: POST
@@ -13,14 +13,14 @@ http:
     type: json
     data: |-
         {
-          "nombre": "Suplente",
-          "apellido": "Suplencias E2E",
-          "numeroIdentificacion": "30555446",
+          "nombre": "Escribano",
+          "apellido": "Historial E2E",
+          "numeroIdentificacion": "30555447",
           "esCliente": false,
           "tipoIdentificacion": { "idTipoIdentificacion": 1 },
           "nacionalidad": "Argentina",
           "estadoCivil": "Soltero",
-          "sexo": "Femenino"
+          "sexo": "Masculino"
         }
   headers:
     - name: Content-Type
@@ -34,9 +34,9 @@ runtime:
           test("Status 201 Created or 409 Conflict", function () {
             expect([200, 201, 409]).to.include(res.getStatus());
           });
-          test("Stores suplente id", function () {
+          test("Stores escribano id", function () {
             const b = res.getBody();
             const id = b.idPersona || b.idPersonaExistente;
             expect(id).to.be.a('number');
-            bru.setVar('_suplente_id', id);
+            bru.setVar('_historial_escribano_id', id);
           });

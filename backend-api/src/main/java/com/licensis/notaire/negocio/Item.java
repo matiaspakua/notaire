@@ -22,8 +22,9 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.springframework.data.domain.Persistable;
 
 /**
  * Clase que presenta los items que pueden ser asociados a los presupuestos.
@@ -41,7 +42,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.porcentaje = :porcentaje"),
             @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
         })
-public class Item implements Serializable
+public class Item implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -74,7 +75,7 @@ public class Item implements Serializable
     private String motivo;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Presupuesto fkIdPresupuesto;
 
     /**
@@ -106,6 +107,22 @@ public class Item implements Serializable
     public void setIdItem(Integer idItem)
     {
         this.idItem = idItem;
+    }
+
+    @Override
+    public Integer getId()
+    {
+        return idItem;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 — indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew()
+    {
+        return idItem == null || idItem.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
     }
 
     public String getNombre()

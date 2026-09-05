@@ -24,6 +24,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.springframework.data.domain.Persistable;
 
 /**
  *
@@ -40,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "Pago.findByFecha", query = "SELECT p FROM Pago p WHERE p.fecha = :fecha"),
             @NamedQuery(name = "Pago.findByPresupuesto", query = "SELECT p FROM Pago p WHERE p.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
         })
-public class Pago implements Serializable
+public class Pago implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -93,6 +94,22 @@ public class Pago implements Serializable
     public void setIdPago(Integer idPago)
     {
         this.idPago = idPago;
+    }
+
+    @Override
+    public Integer getId()
+    {
+        return idPago;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 — indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @JsonIgnore
+    public boolean isNew()
+    {
+        return idPago == null;
     }
 
     public String getObservaciones()

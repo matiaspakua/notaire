@@ -1,0 +1,20 @@
+info:
+  name: Verify Delete Inmueble
+  type: http
+  seq: 7
+  description: |-
+    ## Verify Delete Inmueble — GET /api/v1/inmueble/{id}
+    Verifica que el inmueble ya no existe (404 Not Found).
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/inmueble/{{inmueble_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status 404 Not Found", function () {
+          expect(res.getStatus()).to.equal(404);
+        });

@@ -1,0 +1,21 @@
+info:
+  name: Get Pago By Id
+  type: http
+  seq: 4
+  description: "## GET /api/v1/pagos/{id} — CU47"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/pagos/{{pago_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Returns the correct pago", function () {
+            expect(res.getBody().idPago).to.equal(bru.getVar('pago_id'));
+          });

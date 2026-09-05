@@ -1,0 +1,32 @@
+info:
+  name: Update Inmueble
+  type: http
+  seq: 4
+  description: |-
+    ## Update Inmueble — PUT /api/v1/inmueble/{id}
+    Actualiza la información del inmueble.
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/inmueble/{{inmueble_id}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nomenclaturaCatastral": "CIRC-01-SEC-A-PARC-99-MOD",
+        "domicilio": "Av. Libertador 5000 Piso 2",
+        "valuacionFiscal": 300000.0,
+        "matricula": "M-9988-B",
+        "observaciones": "Actualizado E2E"
+      }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("Status 200 OK", function () {
+          expect(res.getStatus()).to.equal(200);
+        });

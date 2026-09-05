@@ -1,0 +1,25 @@
+info:
+  name: Verify Historial Update
+  type: http
+  seq: 8
+  description: |-
+      ## GET /api/v1/historial/{id}
+      Confirms the PUT in the previous step persisted correctly.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{_historial_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Reflects the updated observaciones and estado", function () {
+            const b = res.getBody();
+            expect(b.observaciones).to.equal('Gestion en tramite');
+            expect(b.estadoGestionId).to.equal(2);
+          });

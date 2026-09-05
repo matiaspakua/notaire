@@ -1,0 +1,23 @@
+info:
+  name: Verify Item Update
+  type: http
+  seq: 8
+  description: "## GET /api/v1/items/{id} — verifica que el update haya persistido"
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/items/{{item_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Persists updated valor and nombre", function () {
+            const b = res.getBody();
+            expect(b.nombre).to.equal('Recargo urgencia actualizado');
+            expect(b.valor).to.equal(750.0);
+          });

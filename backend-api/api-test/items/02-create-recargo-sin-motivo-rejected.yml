@@ -1,0 +1,32 @@
+info:
+  name: Create Recargo Sin Motivo - Rejected
+  type: http
+  seq: 3
+  description: |-
+      ## POST /api/v1/items
+      CU45 - Un item RECARGO sin motivo debe ser rechazado con 400.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/items"
+  body:
+    type: json
+    data: |-
+        {
+          "nombre": "Recargo sin motivo",
+          "valor": 100.0,
+          "tipo": "RECARGO",
+          "conceptoFijo": false,
+          "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () {
+            expect(res.getStatus()).to.equal(400);
+          });

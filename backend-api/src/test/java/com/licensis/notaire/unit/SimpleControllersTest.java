@@ -261,6 +261,14 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(h))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/historial/2").contentType("application/json")
                     .content(mapper.writeValueAsString(h))).andExpect(status().isNotFound());
+
+            Historial toDelete = new Historial();
+            com.licensis.notaire.negocio.EstadoDeGestion estado =
+                    new com.licensis.notaire.negocio.EstadoDeGestion();
+            estado.setHistorialList(new java.util.HashSet<>(List.of(toDelete)));
+            toDelete.setFkIdEstadoGestion(estado);
+            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
+            when(repo.findById(2)).thenReturn(Optional.empty());
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
 
@@ -270,7 +278,7 @@ class SimpleControllersTest {
             mvc.perform(put("/api/v1/historial/1").contentType("application/json")
                     .content(mapper.writeValueAsString(h))).andExpect(status().isInternalServerError());
 
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+            doThrow(new RuntimeException("fk")).when(repo).delete(toDelete);
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isConflict());
         }
     }

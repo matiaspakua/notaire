@@ -37,6 +37,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import org.springframework.data.domain.Persistable;
 
 /**
  * Clase que representa un tramite en curso (no es la definicion de un tramite,
@@ -77,7 +78,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "Tramite.findByIdTramite", query = "SELECT t FROM Tramite t WHERE t.idTramite = :idTramite"),
         @NamedQuery(name = "Tramite.findByIdPresupuesto", query = "SELECT t FROM Tramite t WHERE t.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
 })
-public class Tramite implements Serializable {
+public class Tramite implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -139,6 +140,20 @@ public class Tramite implements Serializable {
 
     public void setIdTramite(Integer idTramite) {
         this.idTramite = idTramite;
+    }
+
+    @Override
+    public Integer getId() {
+        return idTramite;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 — indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @JsonIgnore
+    public boolean isNew() {
+        return idTramite == null || idTramite.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
     }
 
     public String getObservaciones() {

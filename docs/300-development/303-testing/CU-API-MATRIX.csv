@@ -10,11 +10,11 @@ CU07,Generar testimonio,Gestiones,Esencial,Testimonio,Create,TestimonioControlle
 CU08,Verificar Testimonio,Gestiones,Necesario,Testimonio,Read,TestimonioController,GET,/api/v1/testimonio/{id},MISSING,500-ERROR,NO-TEST,GET /testimonio devuelve 500,#161
 CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,DocumentoPresentado,Create,DocumentoPresentadoController,POST,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Flag deuda en documento,#162
 CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,DocumentoEntidadExterna,Read/Update,GestionController,GET/PUT,/api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}],DONE,OK,PASS,Implementado #863; E2E Playwright golden+edge path,#163
-CU11,Ingresar para inscripción,Gestiones,Esencial,Historial,Create,HistorialController,POST,/api/v1/historial,MISSING,OK,NO-TEST,Estado inscripcion,#164
+CU11,Ingresar para inscripción,Gestiones,Esencial,Historial,Create,HistorialController,POST,/api/v1/historial,historial/02-create.yml,OK,OK,Estado inscripcion,#164
 CU12,Retirar testimonio,Gestiones,Necesario,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#165
-CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},MISSING,OK,NO-TEST,,#166
+CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},historial/05-get-by-gestion.yml,OK,OK,,#166
 CU14,Consultar estado gestión,Gestiones,Necesario,GestionDeEscritura,Read,GestionController,GET,/api/v1/gestiones/{id}/estado-actual,MISSING,OK,NO-TEST,Reemplazado por Ver Detalle,#167
-CU15,Procesar pago,Pagos,Estaría Bueno,Pago,Business-Op,PagoController,POST,/api/v1/pagos,MISSING,OK,NO-TEST,0% doc - lógica de negocio incompleta,#168
+CU15,Procesar pago,Pagos,Estaría Bueno,Pago,Business-Op,PagoController,POST,/api/v1/pagos,pagos/01-create.yml,OK,OK,Incluye caso rechazo por saldo insuficiente (pagos/07),#168
 CU16,Archivar Gestión,Gestiones,Necesario,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,Actualiza estado a archivado,#169
 CU17,Dar Alta persona,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,,#170
 CU18,Dar Alta Cliente,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,esCliente=true,#171
@@ -46,7 +46,7 @@ CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Create,Ges
 CU44,Reingresar testimonio,Gestiones,Esencial,MovimientoTestimonio,Update,MovimientoTestimonioController,PUT,/api/v1/movimiento-testimonio/{id},MISSING,500-ERROR,NO-TEST,GET base devuelve 500,#197
 CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,PresupuestoController,PUT,/api/v1/presupuestos/{id},presupuestos/06-update.yml,OK,OK,,#198
 CU46,Ver detalle cliente,Clientes,Esencial,Persona,Read,PersonaController,GET,/api/v1/personas/{id},personas/03-get-by-id.yml,OK,FAIL,GET 404 - ID inexistente en test,#199
-CU47,Consultar Pago,Pagos,Estaría Bueno,Pago,Read,PagoController,GET,/api/v1/pagos/{id},MISSING,OK,NO-TEST,0% doc - endpoint existe,#200
+CU47,Consultar Pago,Pagos,Estaría Bueno,Pago,Read,PagoController,GET,/api/v1/pagos/{id},pagos/03-get-by-id.yml,OK,OK,,#200
 CU48,Dar alta escribano,Administracion,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,registroEscribano != null en body,#201
 CU48,Dar alta escribano (disponibles),Administracion,Esencial,Escritura,Read,EscrituraController,GET,/api/v1/escrituras/escribanos-disponibles,MISSING,500-ERROR,NO-TEST,GET devuelve 500,#201
 CU49,Eliminar Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Delete,PlantillaPresupuestoController,DELETE,/api/v1/plantilla-presupuestos/tipo-tramite/{t}/concepto/{c},MISSING,OK,NO-TEST,ERROR en concurrencia - sin test DELETE,#202
@@ -69,9 +69,9 @@ CU65,Buscar Tipos de documentos,Administracion,Necesario,TipoDeDocumento,Search,
 CU66,Buscar Conceptos,Administracion,Necesario,Concepto,Search,ConceptoController,GET,/api/v1/conceptos,conceptos/get-conceptos.yml,OK,OK,,#219
 CU67,Buscar Estados de Gestión,Administracion,Necesario,EstadoDeGestion,Search,EstadoDeGestionController,GET,/api/v1/estado-gestion,estado-gestion/02-list.yml,500-ERROR,FAIL,GET devuelve 500,#220
 CU68,Buscar tipos de folios,Administracion,Necesario,TipoDeFolio,Search,TipoDeFolioController,GET,/api/v1/tipo-folio,tipo-folio/02-list.yml,500-ERROR,FAIL,GET devuelve 500,#221
-CU69,Gestión de Inmuebles,Gestiones,Necesario,Inmueble,CRUD,InmuebleController,GET,/api/v1/inmueble,MISSING,500-ERROR,NO-TEST,POST /inmueble devuelve 500 sin investigar (ver COVERAGE.md); CRUD completo GET/POST/PUT/DELETE sin test Bruno,#292
+CU69,Gestión de Inmuebles,Gestiones,Necesario,Inmueble,CRUD,InmuebleController,GET,/api/v1/inmueble,inmueble/01-create.yml,OK,OK,CRUD completo (create/list/get/update/delete) cubierto tras migrar el controller de InmuebleJpaController a InmuebleRepository,#292
 CU70,Gestión de Copias,Gestiones,Necesario,Copia,CRUD,CopiaController,GET,/api/v1/copia,MISSING,NOT-TESTED,NO-TEST,"CRUD completo sin test Bruno (create requiere fkIdTestimonio, ver COVERAGE.md)",#243
-CU71,Gestión de Ítems,Presupuestos,Necesario,Item,CRUD,ItemController,GET,/api/v1/items,MISSING,NOT-TESTED,NO-TEST,CRUD completo + /presupuesto/{idPresupuesto} sin test Bruno,#300
+CU71,Gestión de Ítems,Presupuestos,Necesario,Item,CRUD,ItemController,GET,/api/v1/items,items/01-create.yml,OK,OK,CRUD completo + /presupuesto/{idPresupuesto}; incluye regresión del bug fkIdPresupuesto (ver COVERAGE.md),#300
 CU72,Gestión de Documentos Presentados,Gestiones,Necesario,DocumentoPresentado,CRUD,DocumentoPresentadoController,GET,/api/v1/documento-presentado,MISSING,OK,NO-TEST,Endpoints ya verificados OK via filas CU04/CU09/CU42/CU43; sin test Bruno dedicado,#163
 CU73,Registro de Auditoría,Administracion,Necesario,RegistroAuditoria,Search,RegistroAuditoriaController,GET,/api/v1/registro-auditoria,auditoria/get-registros-auditoria.yml,OK,OK,Distinto de CU23 (filtra por usuario); este CU cubre el listado general,#309
 CU74,Estrategia de Rendimiento y Caché,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Requisito no funcional transversal, no mapea a un endpoint unico. Ver SAD paragraph 8 Cross-cutting Concepts","#298, #278, #277, #290, #303"
