@@ -111,12 +111,19 @@ public class HistorialController {
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar historial")
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
+        Historial entity = repository.findById(id).orElse(null);
+        if (entity == null) {
             return ResponseEntity.notFound().build();
         }
         try {
-            repository.deleteById(id);
+            // EstadoDeGestion.historialList is an eagerly-fetched, cascade=ALL, bidirectional
+            // collection that this entity belongs to. Hibernate's cascade processing on that
+            // stale collection reference silently cancels a direct entityManager.remove() at
+            // flush time unless the entity is unlinked from it first.
+            entity.getFkIdEstadoGestion().getHistorialList().remove(entity);
+            repository.delete(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to delete historial id {}", id, e);
