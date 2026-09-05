@@ -29,7 +29,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
-      className={cn("fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-[28px] border-none bg-white p-8 apple-shadow-lg animate-in fade-in zoom-in-95 duration-200", className)}
+      className={cn("fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-[28px] border-none bg-white p-8 apple-shadow-lg animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto", className)}
       {...props}
     />
   </AlertDialogPortal>
