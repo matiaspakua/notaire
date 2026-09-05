@@ -39,6 +39,7 @@ async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idE
     cuerpo: `Escritura para firma E2E ${id}`,
     estado: 'Sin Firmar',
     idFolio,
+    observaciones: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
   })
   if (!result.ok || !result.data?.idEscritura) {
     throw new Error(`Failed to seed escritura: ${result.error ?? JSON.stringify(result.data)}`)
@@ -120,6 +121,9 @@ test.describe('CU05 - Preparar Escritura', () => {
     const folioOption = page.getByRole('option').first()
     await folioOption.waitFor({ state: 'attached', timeout: 5000 })
     await folioOption.evaluate((el: HTMLElement) => el.click())
+
+    // Justify the numbering gap (numero is random, per CU86 correlative validation)
+    await dialog.getByLabel(/observaciones/i).fill('Numeración no correlativa: seed de datos E2E aislado (CU86)')
 
     // Submit
     await dialog.getByRole('button', { name: /confirmar|guardar|crear/i }).click()

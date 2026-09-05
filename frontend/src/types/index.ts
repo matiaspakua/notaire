@@ -252,6 +252,7 @@ export interface Escritura {
   estado?: string;
   gestion?: GestionDeEscritura;
   idFolio?: number;
+  observaciones?: string;
 }
 
 export interface MovimientoTestimonio {

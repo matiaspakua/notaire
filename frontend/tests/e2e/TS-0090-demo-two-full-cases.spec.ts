@@ -182,6 +182,10 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.escrituraNumero);
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-05");
     await choose(page, "select-folio-escritura", new RegExp(def.tipoFolio, "i"));
+    await page
+      .getByRole("dialog")
+      .getByLabel(/observaciones/i)
+      .fill("Numeración no correlativa: seed de datos E2E aislado (CU86)");
     await saveDialog(page);
 
     await page.getByTestId("input-search-escritura").fill(def.escrituraNumero);
