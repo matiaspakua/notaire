@@ -27,7 +27,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
 
     await expect(page.getByTestId("input-dias-vencimiento-documento")).not.toBeVisible();
 
-    await page.getByTestId("checkbox-vence-documento").getByRole("checkbox").click();
+    await page.getByTestId("checkbox-vence-documento").click();
 
     await expect(page.getByTestId("input-dias-vencimiento-documento")).toBeVisible();
   });
@@ -35,7 +35,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
   test("CU27-GW02: Given vence checked without dias, When saving, Then shows validation error", async ({ page }) => {
     await page.getByTestId("btn-nuevo-tipo-documento").click();
     await page.getByTestId("input-nombre-documento").fill(`Poder Vence ${Date.now()}`);
-    await page.getByTestId("checkbox-vence-documento").getByRole("checkbox").click();
+    await page.getByTestId("checkbox-vence-documento").click();
 
     await page.getByRole("button", { name: /crear|guardar/i }).click();
 
@@ -48,7 +48,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     const nombre = `Cedula Vence ${Date.now()}`;
     await page.getByTestId("btn-nuevo-tipo-documento").click();
     await page.getByTestId("input-nombre-documento").fill(nombre);
-    await page.getByTestId("checkbox-vence-documento").getByRole("checkbox").click();
+    await page.getByTestId("checkbox-vence-documento").click();
     await page.getByTestId("input-dias-vencimiento-documento").fill("30");
     await page.getByTestId("input-quien-entrega-documento").fill("Registro de la Propiedad");
 
@@ -64,7 +64,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     const nombre = `Contrato Vence ${Date.now()}`;
     await page.getByTestId("btn-nuevo-tipo-documento").click();
     await page.getByTestId("input-nombre-documento").fill(nombre);
-    await page.getByTestId("checkbox-vence-documento").getByRole("checkbox").click();
+    await page.getByTestId("checkbox-vence-documento").click();
     await page.getByTestId("input-dias-vencimiento-documento").fill("15");
     await page.getByTestId("input-quien-entrega-documento").fill("Escribano");
     await page.getByRole("button", { name: /crear|guardar/i }).click();
@@ -75,7 +75,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await row.getByRole("button").first().click();
 
     await steps.thenModalIsVisible();
-    await expect(page.getByTestId("checkbox-vence-documento").getByRole("checkbox")).toBeChecked();
+    await expect(page.getByTestId("checkbox-vence-documento")).toBeChecked();
     await expect(page.getByTestId("input-dias-vencimiento-documento")).toHaveValue("15");
     await expect(page.getByTestId("input-quien-entrega-documento")).toHaveValue("Escribano");
   });
