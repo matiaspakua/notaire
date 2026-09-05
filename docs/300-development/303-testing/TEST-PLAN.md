@@ -70,13 +70,20 @@ Where:
 | **TS-0045** | `TS-0045-breadcrumb-navigation-qa.spec.ts` | Navigation component (#434) | Breadcrumb trail in admin module | Low |
 | **TS-0050** | `TS-0050-cu-health-matrix-smoke.spec.ts` | Smoke / health check | CU endpoint health matrix (all 68 CU endpoints respond) | Medium |
 
-### TS-0060, TS-0070–TS-0071: Regression & Tutorials
+### TS-0060, TS-0070–TS-0071, TS-0090: Regression & Tutorials
 
 | Suite | Filename | Scope | Value |
 |-------|----------|-------|-------|
 | **TS-0060** | `TS-0060-full-application-tour-regression.spec.ts` | Complete end-to-end tour: login → all modules → logout (create/edit/delete) | **HIGHEST** (catch regressions) |
 | **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Human-watchable, paced tour for demos / recording | Reference |
 | **TS-0071** | `TS-0071-first-case-tutorial-onboarding.spec.ts` | Learner-friendly: CU01–CU05, recording-ready (TUTORIAL_PAUSE_MS) | Onboarding |
+| **TS-0090** | `TS-0090-demo-two-full-cases.spec.ts` | Seeds two full, comparable cases through the UI for live-demo prep | Reference |
+
+### TS-0091: Feature — Items
+
+| Suite | Filename | Primary CU(s) | Scope |
+|-------|----------|---------------|-------|
+| **TS-0091** | `TS-0091-items-descuentos-recargos.spec.ts` | CU45, CU71 | Descuento/recargo item validation + report query |
 
 ---
 

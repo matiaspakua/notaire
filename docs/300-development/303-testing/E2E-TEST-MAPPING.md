@@ -125,16 +125,26 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 ---
 
-### Regression & Tutorial Tests (TS-0060, TS-0070–TS-0071)
+### Regression & Tutorial Tests (TS-0060, TS-0070–TS-0071, TS-0090)
 
 | TS | Filename | Scope | Test Type | Value | Run |
 |----|----|-------|---------|-------|-----|
 | **TS-0060** | `TS-0060-full-application-tour-regression.spec.ts` | Complete E2E tour | Regression / smoke | **HIGHEST** | Every PR |
 | **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Paced walkthrough | Human-watchable demo | Reference | On demand |
 | **TS-0071** | `TS-0071-first-case-tutorial-onboarding.spec.ts` | Learner-friendly | Recording demo (CU01–CU05) | Onboarding | On demand |
+| **TS-0090** | `TS-0090-demo-two-full-cases.spec.ts` | Seeds two comparable full cases via UI | Live-demo data seed | Reference | On demand |
 
 **TS-0060 Value**: Catches regressions across all modules in single test (highest ROI for full regression)
 **TS-0070/0071 Value**: Recording-ready demos for training, onboarding, documentation
+**TS-0090 Value**: Populates a dev stack with two side-by-side comparable cases before a live demo
+
+---
+
+### Feature Tests — Items (TS-0091)
+
+| TS | Filename | CU Coverage | Fixture Type | Setup | Assertions | Status |
+|----|----|-------|------|-------|----------|--------|
+| **TS-0091** | `TS-0091-items-descuentos-recargos.spec.ts` | CU45, CU71 | GherkinSteps | Direct navigation | Client-side validation + report query | ✅ Passing |
 
 ---
 

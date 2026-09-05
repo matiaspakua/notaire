@@ -144,13 +144,21 @@ export default function PresupuestosPage() {
           >
             <Receipt className="h-4 w-4" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            data-testid={`btn-editar-presupuesto-${p.idPresupuesto}`}
+            aria-label={tc("edit")}
+            onClick={() => openEdit(p)}
+          >
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
+            data-testid={`btn-eliminar-presupuesto-${p.idPresupuesto}`}
+            aria-label={tc("delete")}
             onClick={() => setDeleteId(p.idPresupuesto!)}
           >
             <Trash2 className="h-4 w-4" />

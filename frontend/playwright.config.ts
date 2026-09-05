@@ -19,7 +19,7 @@ export default defineConfig({
   globalSetup: "./tests/e2e/setup/global-setup",
   globalTeardown: "./tests/e2e/setup/global-teardown",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
