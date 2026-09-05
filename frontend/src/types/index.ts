@@ -17,8 +17,8 @@ export interface Persona {
   idPersona?: number;
   nombre?: string;
   apellido?: string;
-  dni?: string;
-  cuil?: string;
+  numeroIdentificacion?: string;
+  cuit?: string;
   email?: string;
   telefono?: string;
   domicilio?: string;
@@ -252,6 +252,7 @@ export interface Escritura {
   estado?: string;
   gestion?: GestionDeEscritura;
   idFolio?: number;
+  observaciones?: string;
 }
 
 export interface MovimientoTestimonio {

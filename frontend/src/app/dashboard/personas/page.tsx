@@ -26,7 +26,7 @@ import type { Persona } from "@/types";
 const EMPTY: Partial<Persona> = {
   nombre: "",
   apellido: "",
-  dni: "",
+  numeroIdentificacion: "",
   email: "",
   telefono: "",
   domicilio: "",
@@ -98,7 +98,7 @@ export default function PersonasPage() {
 
   function handleSaveError(err: unknown) {
     if (!(err instanceof ApiError) || err.status !== 409) {
-      toast.error(t("errorSave"));
+      toast.error(extractApiError(err) ?? t("errorSave"));
       return;
     }
     const existingId = extractDuplicatePersonaId(err);
@@ -145,7 +145,7 @@ export default function PersonasPage() {
     {
       key: "dni",
       header: `${t("fields.dni")} / ${t("fields.cuil")}`,
-      render: (p) => p.dni ?? p.cuil ?? "—",
+      render: (p) => p.numeroIdentificacion ?? p.cuit ?? "—",
     },
     {
       key: "email",
@@ -262,14 +262,14 @@ export default function PersonasPage() {
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.dni")}>
                   <Input
-                    value={editing.dni ?? ""}
-                    onChange={(e) => setEditing({ ...editing, dni: e.target.value })}
+                    value={editing.numeroIdentificacion ?? ""}
+                    onChange={(e) => setEditing({ ...editing, numeroIdentificacion: e.target.value })}
                   />
                 </FormField>
                 <FormField label={t("fields.cuil")}>
                   <Input
-                    value={editing.cuil ?? ""}
-                    onChange={(e) => setEditing({ ...editing, cuil: e.target.value })}
+                    value={editing.cuit ?? ""}
+                    onChange={(e) => setEditing({ ...editing, cuit: e.target.value })}
                   />
                 </FormField>
               </div>

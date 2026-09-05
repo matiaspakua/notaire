@@ -1,13 +1,16 @@
 /**
- * Demo seed — creates 2 complete, comparable "gestiones" through the real
- * Notaire UI (no direct API/SQL), each with every dependent entity: cliente,
+ * TS-0090 - Demo seed — two full comparable cases
+ *
+ * Creates 2 complete, comparable "gestiones" through the real Notaire UI
+ * (no direct API/SQL), each with every dependent entity: cliente,
  * presupuesto, tipo de trámite, folio, gestión, inmueble, escritura (firmada),
  * testimonio (verificado), documento presentado, pago and copia.
  *
  * Intended for live-demo prep: run once against a dev stack to populate the
- * database with two side-by-side cases before showing the app.
+ * database with two side-by-side cases before showing the app. Reference
+ * suite (on demand), same category as TS-0070/TS-0071.
  *
- *   HEADED=1 SLOW_MO=400 npx playwright test 02-demo-two-full-cases --project=chromium
+ *   HEADED=1 SLOW_MO=400 npx playwright test TS-0090-demo-two-full-cases --project=chromium
  */
 import { expect, test, type Page } from "@playwright/test";
 
@@ -179,6 +182,10 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.escrituraNumero);
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-05");
     await choose(page, "select-folio-escritura", new RegExp(def.tipoFolio, "i"));
+    await page
+      .getByRole("dialog")
+      .getByLabel(/observaciones/i)
+      .fill("Numeración no correlativa: seed de datos E2E aislado (CU86)");
     await saveDialog(page);
 
     await page.getByTestId("input-search-escritura").fill(def.escrituraNumero);
@@ -222,10 +229,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Pago`, async () => {
     await go(page, "/dashboard/pagos");
     await page.getByTestId("btn-nuevo-pago").click();
-    await page.getByTestId("select-presupuesto-pago").click();
-    await page
-      .getByRole("option", { name: new RegExp(def.clienteApellido, "i") })
-      .evaluate((el: HTMLElement) => el.click());
+    await choose(page, "select-presupuesto-pago", new RegExp(def.clienteApellido, "i"));
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-07");
     await page.getByRole("dialog").getByLabel(/monto/i).fill(def.pagoMonto);
     await saveDialog(page);

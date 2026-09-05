@@ -50,7 +50,7 @@ public class Historial implements Serializable
     private int version;
     @Basic(optional = false)
     @Column(name = "fecha")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
     private static final long serialVersionUID = 1L;
     @Id

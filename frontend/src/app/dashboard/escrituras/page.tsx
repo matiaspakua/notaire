@@ -69,7 +69,7 @@ export default function EscriturasPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch { toast.error(t("errorSave")); }
+    } catch (err) { toast.error(extractApiError(err) ?? t("errorSave")); }
   }
 
   async function handleDelete() {
@@ -159,6 +159,13 @@ export default function EscriturasPage() {
                     ))}
                   </SelectContent>
                 </Select>
+              </FormField>
+              <FormField label={t("fields.observaciones")}>
+                <Input
+                  value={editing.observaciones ?? ""}
+                  onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })}
+                  data-testid="input-observaciones-escritura"
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">

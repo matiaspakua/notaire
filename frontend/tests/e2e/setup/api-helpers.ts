@@ -127,7 +127,7 @@ export interface PersonaPayload {
 }
 
 export interface PresupuestoPayload {
-  fkIdPersona?: { idPersona: number };
+  persona?: { idPersona: number };
   fecha?: string;
   encabezado?: string;
   estado?: string;
@@ -212,7 +212,9 @@ export interface SuplenciaPayload {
  * Seed test helpers — create entities with unique test IDs
  */
 
-let _testCounter = Date.now();
+// Kept below Java's 32-bit `int` max (2,147,483,647) so IDs fed into `int`-typed
+// entity fields (e.g. Escritura.numero) don't overflow and fail JSON deserialization.
+let _testCounter = Date.now() % 1_000_000_000;
 
 /** Generate a unique test identifier */
 export function uniqueId(): number {
@@ -230,7 +232,7 @@ export function uniqueLabel(prefix: string): string {
 export async function createPersona(
   page: Page,
   overrides: Partial<PersonaPayload> = {},
-): Promise<ApiResult<{ idPersona: number }>> {
+): Promise<ApiResult<{ idPersona: number; nombre?: string; apellido?: string }>> {
   const id = uniqueId();
   return apiPost(page, "/personas", {
     nombre: "Test",
@@ -257,7 +259,7 @@ export async function createPresupuesto(
   overrides: Partial<PresupuestoPayload> = {},
 ): Promise<ApiResult<{ idPresupuesto: number }>> {
   return apiPost(page, "/presupuestos", {
-    fkIdPersona: { idPersona: personaId },
+    persona: { idPersona: personaId },
     fecha: new Date().toISOString().split("T")[0],
     encabezado: `Presupuesto E2E ${uniqueId()}`,
     estado: "Pendiente",

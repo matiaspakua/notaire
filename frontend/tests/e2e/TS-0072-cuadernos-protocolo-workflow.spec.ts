@@ -59,7 +59,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     await page.getByRole("button", { name: /nuevo cuaderno/i }).click();
 
     const dialog = page.getByRole("dialog");
-    const checkboxes = folios.map((f) => dialog.getByTestId(`checkbox-folio-${f.idFolio}`).getByRole("checkbox"));
+    const checkboxes = folios.map((f) => dialog.getByTestId(`checkbox-folio-${f.idFolio}`));
 
     for (const checkbox of checkboxes) {
       await checkbox.click();

@@ -3,10 +3,16 @@ package com.licensis.notaire.integration;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.negocio.Tramite;
+import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PresupuestoRepository;
+import com.licensis.notaire.repository.TipoDeTramiteRepository;
+import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +41,15 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
 
     @Autowired
     private EstadoDeGestionRepository estadoRepository;
+
+    @Autowired
+    private PresupuestoRepository presupuestoRepository;
+
+    @Autowired
+    private TramiteRepository tramiteRepository;
+
+    @Autowired
+    private TipoDeTramiteRepository tipoDeTramiteRepository;
 
     private GestionDeEscritura testGestion;
     private Persona testEscribano;
@@ -204,6 +219,48 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
         Page<GestionDeEscritura> page = gestionRepository.findAll(PageRequest.of(0, 10));
 
         assertThat(page).isNotEmpty()
+                .anyMatch(g -> g.getIdGestion().equals(saved.getIdGestion()));
+    }
+
+    @Test
+    @DisplayName("Should find gestiones by cliente persona id (CU19)")
+    void shouldFindByClientePersonaId() {
+        TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
+        tipoIdentificacion.setNombre("DNI");
+        tipoIdentificacionRepository.save(tipoIdentificacion);
+
+        Persona cliente = new Persona();
+        cliente.setNombre("Cliente");
+        cliente.setApellido("Test");
+        cliente.setNumeroIdentificacion("12345678");
+        cliente.setEsCliente(true);
+        cliente.setFkIdTipoIdentificacion(tipoIdentificacion);
+        personaRepository.save(cliente);
+
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setNumero((int) (System.currentTimeMillis() % 10000));
+        presupuesto.setFecha(new Date());
+        presupuesto.setEncabezado("Presupuesto Test");
+        presupuesto.setEstado("PENDIENTE");
+        presupuesto.setFkIdPersona(cliente);
+        presupuesto = presupuestoRepository.save(presupuesto);
+        presupuestoRepository.flush();
+
+        GestionDeEscritura saved = gestionRepository.save(testGestion);
+
+        TipoDeTramite tipoDeTramite = new TipoDeTramite();
+        tipoDeTramite.setNombre("Tipo Tramite Test");
+        tipoDeTramiteRepository.save(tipoDeTramite);
+
+        Tramite tramite = new Tramite();
+        tramite.setFkIdPresupuesto(presupuesto);
+        tramite.setFkIdGestion(saved);
+        tramite.setFkIdTipoTramite(tipoDeTramite);
+        tramiteRepository.save(tramite);
+
+        List<GestionDeEscritura> found = gestionRepository.findByClientePersonaId(cliente.getIdPersona());
+
+        assertThat(found).isNotEmpty()
                 .anyMatch(g -> g.getIdGestion().equals(saved.getIdGestion()));
     }
 }
