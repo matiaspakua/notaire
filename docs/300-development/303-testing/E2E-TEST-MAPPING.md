@@ -9,7 +9,7 @@ Use this document alongside [`TEST-PLAN.md`](TEST-PLAN.md) and [`CU-API-MATRIX.c
 
 ## TS-nnnn Numbering Scheme
 
-```
+```text
 TS-0001 to TS-0003    = Foundation (Auth, Dashboard)
 TS-0010 to TS-0035    = Core Business Workflows (26 high-value suites)
 TS-0040 to TS-0051    = Quality Assurance / Technical (9 utility suites)
@@ -57,6 +57,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0011** | `TS-0011-gestiones-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | GherkinSteps, API helpers | 1 (form simplified) | 12 expect() | **HIGH** |
 
 **Consolidated From**:
+
 - `presupuestos.spec.ts` → merged into TS-0010 (module CRUD duplicate)
 - `crud-gestiones.spec.ts` → merged into TS-0011 (CRUD duplicate)
 - `personas.spec.ts` → merged into TS-0015 (module CRUD duplicate)
@@ -76,6 +77,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
 
 **Consolidated From**:
+
 - `escritura-firma.spec.ts` → edge cases merged into TS-0013
 - `cu70-workflow-viewer.spec.ts` → removed (read-only variant of editor)
 
@@ -151,6 +153,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 ## Fixture Patterns by Category
 
 ### Pattern 1: GherkinSteps (Given-When-Then)
+
 **Used by**: TS-0010–0035 (all core workflows)
 
 ```typescript
@@ -169,11 +172,13 @@ test("scenario", async () => {
 ```
 
 **Fixture Components**:
+
 - `GherkinSteps` class (given-helpers.ts)
 - API helpers: `createPersona()`, `createPresupuesto()`, etc. (setup/api-helpers.ts)
 - Global auth: `global-setup.ts` injects `E2E_ADMIN_TOKEN`
 
 ### Pattern 2: Direct Navigation (No GherkinSteps)
+
 **Used by**: TS-0001–0003, TS-0040–0051, TS-0060–0071
 
 ```typescript
@@ -246,7 +251,7 @@ All 11 skipped tests have documented blockers:
 
 ## Test Counts & Statistics
 
-```
+```text
 Total E2E Test Suites:        35 (down from 41)
   - Foundation (TS-0001–0003):     3 suites
   - Core Workflows (TS-0010–0035): 26 suites

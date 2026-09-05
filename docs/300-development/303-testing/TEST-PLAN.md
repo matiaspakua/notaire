@@ -7,6 +7,7 @@
 All E2E test suites follow the naming convention: **`TS-nnnn-<workflow-name>.spec.ts`**
 
 Where:
+
 - **TS** = Test Suite prefix (E2E, end-to-end)
 - **nnnn** = 4-digit sequential number (0001, 0002, ..., 0071)
 - **`<workflow-name>`** = Descriptive workflow identifier (kebab-case)
@@ -143,6 +144,7 @@ test.describe("TS-0010 - Presupuesto Workflow", () => {
 ### Fixture Validation Rules
 
 Every test suite **MUST**:
+
 1. ✅ Use `GherkinSteps` for UI navigation (not inline `page.click()`)
 2. ✅ Use API helpers (not browser-based form filling for expensive operations)
 3. ✅ Have `test.beforeEach()` that prepares the page (login, navigate, seed data)
@@ -177,7 +179,7 @@ To minimize E2E test count (lower runtime, higher ROI per test), 6 low-value tes
 
 Per [`CONSTITUTION.md`](../../../.claude/rules/ai-agent-workflow.md), all changes flow through:
 
-```
+```text
 Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit (Vitest) → E2E (Playwright, per CU)
 ```
 
@@ -218,6 +220,7 @@ bash scripts/preflight.sh --full
 ### CI Pipeline
 
 The GitHub Actions pipeline verifies all test levels before merge:
+
 1. Build + unit tests
 2. Integration tests (PostgreSQL)
 3. API tests (Bruno)
@@ -259,6 +262,7 @@ Full traceability is maintained in [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv):
 - **Column J**: Notes
 
 Use this CSV to:
+
 1. Verify every CU has ≥1 E2E test (TS-nnnn)
 2. Ensure consistency: endpoint → Bruno → E2E
 3. Track issues to features
@@ -270,7 +274,7 @@ Use this CSV to:
 
 Each major workflow (TS-0010 through TS-0035) references sequence diagrams at:
 
-```
+```text
 docs/200-architecture/204-diagrams/Secuencias/
 ├── CU01.puml (Presupuesto)
 ├── CU02.puml (Gestiones)
@@ -280,6 +284,7 @@ docs/200-architecture/204-diagrams/Secuencias/
 ```
 
 Test comments include `@sequence` links to relevant diagrams so test readers can see the actor flow:
+
 ```typescript
 /**
  * TS-0010 - Presupuesto Workflow
@@ -293,11 +298,13 @@ Test comments include `@sequence` links to relevant diagrams so test readers can
 ## 10. Skipped Tests Policy
 
 Tests **MAY** be skipped only if:
+
 1. A linked GitHub issue documents the blocker (e.g., #838: no endpoint for folio→escritura linking)
 2. A clear, descriptive `test.skip()` comment explains the reason
 3. It is not a design gap but a genuine technical limitation
 
 **Example**:
+
 ```typescript
 test.skip("CU01-GW02: Create presupuesto with all fields", async () => {
   // Skipped: presupuesto form does not have a "tipo tramite" dropdown per design.
@@ -307,6 +314,7 @@ test.skip("CU01-GW02: Create presupuesto with all fields", async () => {
 ```
 
 **Avoid**:
+
 - ❌ `test.skip()` with no comment
 - ❌ Skipped tests for flaky timing (fix the test, not skip it)
 - ❌ Skipped tests for "future work" (remove them or implement)
@@ -316,6 +324,7 @@ test.skip("CU01-GW02: Create presupuesto with all fields", async () => {
 ## 11. Quality Gates for E2E Tests
 
 Before merging a PR, all E2E tests **MUST**:
+
 - ✅ Pass on the current Docker stack (no manual restarts)
 - ✅ Have zero skipped tests (unless issue-linked per §10)
 - ✅ Follow fixture patterns (GherkinSteps, no hardcoded auth)
