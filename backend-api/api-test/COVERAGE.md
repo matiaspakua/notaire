@@ -3,10 +3,9 @@
 Bruno YAML suite — run with `bru run . -r --env Developmen` from this directory
 (backend must be up at `localhost:8080`).
 
-**Current status:** 104 requests across 16 resource directories (file count as of
-2026-08-19). The `72 requests · 124/124 tests passing` figure dates to PR #416 and
-predates the collection's later growth (issue #688) — run the `bru run` command
-above against a live backend for current pass/fail totals.
+**Current status:** 149 requests / 266 tests passing across the full suite
+(verified 2026-09-05, issue #952). `00-auth` was renamed from `auth/` so it
+sorts first (login/rate-limit fixtures other suites depend on).
 
 ## Backend defects found and fixed via this suite
 
@@ -18,6 +17,9 @@ above against a live backend for current pass/fail totals.
 | 4 | `PUT /tipo-de-documento/{id}` | NPE on null `habilitado` / `version` | `TipoDeDocumento.setAtributos` null-safe |
 | 5 | `GET /usuarios/persona/{id}` | `NonUniqueResult` 500 when a persona has >1 usuario | `findFirstByFkIdPersonaIdPersona` |
 | 6 | `PUT /usuarios/{id}` | omitting `contrasenia` → NOT-NULL 500 | preserve stored password when omitted |
+| 7 | `POST/PUT /items` | `fkIdPresupuesto` silently dropped (`@JsonIgnore` blocked the field on write, not just read) | `@JsonProperty(access = WRITE_ONLY)` |
+| 8 | `DELETE /historial/{id}`, `/items/{id}`, `/pagos/{id}`, `/tramites/{id}` | delete silently no-op'd for rows loaded fresh from the DB (Spring Data's default `isNew()` misreads a primitive `@Version` of 0 as "new") | implement `Persistable<Integer>` with an explicit `isNew()` |
+| 9 | `DELETE /historial/{id}` | delete silently cancelled by Hibernate's cascade on the stale `EstadoDeGestion.historialList` collection | unlink the entity from that collection before `repository.delete()` |
 
 (Earlier, the same campaign fixed `PUT /conceptos`, `GET /folio`,
 `DELETE /personas` — merged in PR #416.)
@@ -48,22 +50,16 @@ the value but update did not. Hardened in `setAtributos`.
 | plantilla-presupuesto | ✅ | `get-by-tipo-tramite` |
 | plantilla-tramite | read-only | list, `get-by-tipo-tramite` |
 | escrituras | search only | `buscar` (CU62) — no create/update/delete |
+| inmueble | ✅ | — |
+| historial | ✅ | `gestion/{id}` |
+| items | ✅ | `presupuesto/{id}`, budget-FK happy path |
+| pagos | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409 |
+| tramites | ✅ | — |
 
-## TODO — resources not yet covered (and known issues)
+## TODO — resources not yet covered
 
-These were removed as malformed stubs; they need lifecycle authoring. Several
-`POST`s currently 500 on **missing-required-field** payloads (should arguably be
-`400` validation) — flagged for a follow-up:
-
-| Resource | Endpoints | Notes |
-|----------|-----------|-------|
-| gestiones | CRUD + `cliente/{id}`, `numero/{n}`, `{id}/estado-actual` | create needs `numero, fechaInicio, encabezado, fkIdPersonaEscribano, fkIdEstadoGestion` |
-| escrituras | CRUD + `escribanos-disponibles` | `buscar` is already covered (see above); create needs `numero, fechaEscrituracion, cuerpo, estado` |
-| inmueble | CRUD | create 500 to investigate |
-| copia | CRUD | needs `fkIdTestimonio` (→ testimonio → escritura chain) |
-| items | CRUD + `presupuesto/{id}` | needs presupuesto + concepto |
-| pagos | CRUD + `fecha`, `presupuesto/{id}`, `saldo` | needs presupuesto |
-| tramites, historial, testimonio, movimiento-testimonio, documento-presentado, reportes | list/CRUD | |
-
-**Recommendation:** add input validation (`@Valid` + `400`) so missing-field
-`POST`s return `400` instead of `500`, then author the lifecycles above.
+Tracked as issue #953 (16 controllers with zero Bruno coverage): `CarpetaTramite`,
+`Copia`, `Cuaderno`, `DocumentoPresentado`, `Gestion`, `MinutaInscripcion`,
+`MovimientoTestimonio`, `PlantillaCostoDocumento`, `ProtocoloAuxiliar`, `Reporte`,
+`Rol`, `Testimonio`, `WorkflowDefinition`, `WorkflowNode`, `WorkflowTransition`,
+`WorkflowValidation`.

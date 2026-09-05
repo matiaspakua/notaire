@@ -211,6 +211,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Bruno API test suite audit uncovered four silent-delete/write defects**
+  (issue #952, CU76): `Item.fkIdPresupuesto` was annotated `@JsonIgnore`,
+  which blocks the field on both read and write — `POST/PUT /api/v1/items`
+  silently dropped the budget FK instead of persisting it; changed to
+  `@JsonProperty(access = WRITE_ONLY)`. Separately, `DELETE` on
+  `/api/v1/historial/{id}`, `/api/v1/items/{id}`, `/api/v1/pagos/{id}`, and
+  `/api/v1/tramites/{id}` silently no-op'd for rows loaded fresh from the
+  database: Spring Data's default `isNew()` infers "new" from a primitive
+  `@Version` field of `0`, which is indistinguishable from an
+  already-persisted row that was never updated — `Historial`, `Item`,
+  `Pago`, and `Tramite` now implement `Persistable<Integer>` with an
+  explicit `isNew()`. `historial` delete had a second, independent cause:
+  Hibernate's cascade processing on the stale, eagerly-fetched
+  `EstadoDeGestion.historialList` collection silently cancelled the direct
+  delete unless the entity was first unlinked from it. Also migrated
+  `InmuebleController` off the legacy `InmuebleJpaController` onto
+  `InmuebleRepository`, completed the `historial`, `items`, `pagos`,
+  `tramites`, and `inmueble` Bruno folders with full CRUD lifecycles, and
+  renamed `auth/` to `00-auth/` so its login/rate-limit fixtures run first.
+  Full suite now at 149 requests / 266 tests passing
+  (`backend-api/api-test/COVERAGE.md`).
 - **`CheckboxField` click target excluded the gap between the input and its label**
   (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
   rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the
