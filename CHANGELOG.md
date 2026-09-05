@@ -226,6 +226,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Radix listbox (rendered in a portal above the dialog) with `Escape` before clicking
   "Cancelar", since a still-open dropdown intercepted that click. Test-only fix, no
   application code changed.
+- **`tipo-documento-vencimiento-config.spec.ts` checkbox locator regression** (issue #928):
+  the spec chained `.getByRole("checkbox")` off a `getByTestId(...)` that already resolves
+  to the checkbox element itself, so the nested role lookup timed out. Test-only fix.
+- **No way to justify a numbering gap when creating/editing an escritura** (issue #950,
+  CU86): `NumeracionEscrituraService` already accepted a non-blank `observaciones` value
+  as justification for a non-sequential `numero`, but the escritura form had no
+  `observaciones` field and `handleSave`'s catch block discarded the backend's specific
+  `SaltoNumeracionSinJustificarException` message behind a generic "error saving" toast.
+  Added the missing `observaciones` `FormField` to `/dashboard/escrituras` and now surface
+  `extractApiError(err)` in the toast.
 
 - **Flaky E2E coverage for the pagos presupuesto picker/saldo pendiente display**
   (issue #796, CU15): `TS-0014-pagos-saldo-picker.spec.ts` located the saldo
