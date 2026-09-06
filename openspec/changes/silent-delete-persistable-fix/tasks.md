@@ -17,8 +17,8 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, observed failing)
 
-- [ ] 3.1 Write `PersistableIdentityEntitiesIsNewTest` (unit, parameterized over the 25 surrogate-key entities) — assert `isNew()` is `false` for a loaded instance and `true` for a freshly constructed one; run and observe **FAIL** (entities do not yet implement `Persistable`)
-- [ ] 3.2 Write `PersistableEmbeddedIdEntitiesIsNewTest` (unit, parameterized over the 5 `@EmbeddedId` entities) — same two assertions; run and observe **FAIL**
+- [x] 3.1 Write `PersistableIdentityEntitiesIsNewTest` (unit, parameterized over the 25 surrogate-key entities) — assert `isNew()` is `false` for a loaded instance and `true` for a freshly constructed one; run and observe **FAIL** (entities do not yet implement `Persistable`)
+- [x] 3.2 Write `PersistableEmbeddedIdEntitiesIsNewTest` (unit, parameterized over the 5 `@EmbeddedId` entities) — same two assertions; run and observe **FAIL**
 - [ ] 3.3 Write `PersistableIdentityEntitiesDeleteIntegrationTest` (integration, parameterized, two-transaction shape per `HistorialDeleteIntegrationTest`) — run and observe **FAIL** (row still present after delete)
 - [ ] 3.4 Write `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` (integration, parameterized, same shape) — run and observe **FAIL**
 - [ ] 3.5 Write `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` (integration, covering the two `EAGER`+`CascadeType.ALL` risk cases) — run and observe **FAIL**
@@ -34,7 +34,7 @@ Batch 2 — core domain entities:
 - [ ] 4.4 Re-run the Batch-2 parameterized cases and confirm they pass
 
 Batch 3 — `@EmbeddedId` composite-key entities:
-- [ ] 4.5 Implement `Persistable<XxxPK>` with the `@Transient boolean isNew` + `@PostLoad`/`@PostPersist` pattern (design.md Decision 2) on `FoliosCopias`, `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`
+- [ ] 4.5 Implement `Persistable<XxxPK>` with the `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` pattern (design.md Decision 2) on `FoliosCopias`, `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`
 - [ ] 4.6 Re-run `PersistableEmbeddedIdEntitiesIsNewTest` / `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` and confirm they pass
 
 Batch 4 — cascade risk cases:
