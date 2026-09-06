@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { usePagos, useCreatePago, useUpdatePago, useDeletePago, usePagoEstado } from "@/hooks/usePagos";
 import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
+import { useReciboPago } from "@/hooks/useReportes";
 import { ApiError } from "@/lib/api-client";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
@@ -35,6 +36,7 @@ export default function PagosPage() {
   const createMutation = useCreatePago();
   const updateMutation = useUpdatePago();
   const deleteMutation = useDeletePago();
+  const reciboPago = useReciboPago();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -85,6 +87,14 @@ export default function PagosPage() {
     finally { setDeleteId(null); }
   }
 
+  async function handleEmitirRecibo(idPago: number) {
+    try {
+      await reciboPago.download(idPago);
+    } catch {
+      toast.error(t("errorRecibo"));
+    }
+  }
+
   const columns: Column<Pago>[] = [
     { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPago}</span>, className: "w-12" },
     { key: "presupuesto", header: "Presupuesto", render: (p) => <span className="text-xs text-muted-foreground">#{p.idPresupuesto ?? p.presupuesto?.idPresupuesto ?? "—"}</span>, className: "w-20" },
@@ -92,9 +102,10 @@ export default function PagosPage() {
     { key: "monto", header: tc("amount"), render: (p) => <span className="font-medium">{formatCurrency(p.monto)}</span> },
     { key: "metodo", header: t("fields.metodoPago"), render: (p) => p.metodoPago ?? "—" },
     {
-      key: "actions", header: "", className: "w-24",
+      key: "actions", header: "", className: "w-32",
       render: (p) => (
         <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" title={t("emitirRecibo")} onClick={() => handleEmitirRecibo(p.idPago!)}><FileText className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(p.idPago!)}><Trash2 className="h-4 w-4" /></Button>
         </div>
