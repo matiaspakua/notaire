@@ -179,6 +179,23 @@ public class ReporteController {
                 .body(pdfBytes);
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Pago no encontrado")
+    })
+    @GetMapping(value = "/recibo-pago/{idPago}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "CU15 - Emitir recibo de pago",
+               description = "Genera un PDF con el recibo de un pago existente")
+    public ResponseEntity<byte[]> generarReporteReciboPago(
+            @Parameter(description = "ID del pago")
+            @PathVariable @Positive Integer idPago) {
+        byte[] pdfBytes = reporteService.generarReporteReciboPago(idPago);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"recibo_pago_" + idPago + ".pdf\"")
+                .body(pdfBytes);
+    }
+
     @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar declaracion jurada de rentas",
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
