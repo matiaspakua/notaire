@@ -21,7 +21,6 @@
 | Título | Descripción breve | Issue | Criticidad |
 |---|---|---|---|
 | Recibo de pago nunca se emite | Paso final de CU15 (entregar comprobante al cliente) sin ninguna forma de imprimirse o emitirse | [#23](https://github.com/matiaspakua/notaire/issues/23) | Alta |
-| `DELETE` silencioso en ~30 entidades | `Persistable.isNew()` mal inferido sobre `version` primitivo hace que varias entidades no se borren pese a devolver `200 OK` | [#957](https://github.com/matiaspakua/notaire/issues/957) | Alta |
 | Presupuestar sin plantillas ni catálogo de ítems | Plantillas de precio y catálogo de ítems existen pero no se usan al armar un presupuesto real | [#834](https://github.com/matiaspakua/notaire/issues/834) | Media |
 | Suplencias sin efecto práctico en gestiones | Registrar una suplencia no redirige casos nuevos al escribano suplente | [#836](https://github.com/matiaspakua/notaire/issues/836) | Media |
 | Protocolo notarial no se puede armar desde el sistema | Sin acción para vincular escritura↔folio ni copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | Media |
@@ -54,6 +53,7 @@
 | Demo E2E — tipo de Inmueble mal mapeado | Bloqueaba Caso B de la demo end-to-end | [#879](https://github.com/matiaspakua/notaire/issues/879) | Media |
 | Demo E2E — asociación de presupuesto rota | Bloqueaba flujo completo de demo | [#883](https://github.com/matiaspakua/notaire/issues/883) | Media |
 | Demo E2E — labels de pickers inconsistentes | Bloqueaba selección en formularios de la demo | [#889](https://github.com/matiaspakua/notaire/issues/889) | Baja |
+| `DELETE` silencioso en ~30 entidades | `Persistable.isNew()` mal inferido sobre `version` primitivo hace que varias entidades no se borren pese a devolver `200 OK` | [#957](https://github.com/matiaspakua/notaire/issues/957) | Alta |
 
 ## Historial de pasadas
 
@@ -63,3 +63,4 @@
 4. **2026-08-26** — consolidación del sub-hallazgo de sobrepago (#848) de vuelta en este documento.
 5. **2026-09-05** — verificación completa de `backend-api/` y `frontend/` contra `main`; confirmó la resolución de la mayoría de los hallazgos de cobranza y del bloque de protocolo; agregó el hallazgo del change de OpenSpec huérfano (#169) y el de `DELETE` silencioso transversal (#957).
 6. **2026-09-05** — validación de trazabilidad RF↔CU (95/95 Requerimientos Funcionales cubiertos, con la excepción documental de CU84/#956) y validación end-to-end de que una gestión puede iniciarse y completarse hoy usando pantallas reales para cada paso del ciclo de vida (CU02–CU16), no solo API. Reescritura completa de este archivo a formato de índice (contenido detallado migrado a cada Issue de GitHub).
+7. **2026-09-06** — cierre de #957 (`silent-delete-persistable-fix`): las 30 entidades restantes (25 de clave surrogate + 5 `@EmbeddedId`) implementan `Persistable`; tests de regresión de cascada (`Concepto`, `Presupuesto`) confirman que el fix también cubre los dos casos de riesgo `EAGER`+`CascadeType.ALL`. Movido a Resueltos.

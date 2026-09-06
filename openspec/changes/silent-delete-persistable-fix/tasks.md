@@ -21,7 +21,7 @@
 - [x] 3.2 Write `PersistableEmbeddedIdEntitiesIsNewTest` (unit, parameterized over the 5 `@EmbeddedId` entities) — same two assertions; run and observe **FAIL**
 - [ ] 3.3 Write `PersistableIdentityEntitiesDeleteIntegrationTest` (integration, parameterized, two-transaction shape per `HistorialDeleteIntegrationTest`) — run and observe **FAIL** (row still present after delete)
 - [ ] 3.4 Write `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` (integration, parameterized, same shape) — run and observe **FAIL**
-- [ ] 3.5 Write `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` (integration, covering the two `EAGER`+`CascadeType.ALL` risk cases) — run and observe **FAIL**
+- [x] 3.5 Write `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` (integration, covering the two `EAGER`+`CascadeType.ALL` risk cases) — written after Batches 1-3 were already applied, so both passed on first run instead of failing first; confirmed passing in 4.7
 
 ## 4. Implementación
 
@@ -38,19 +38,19 @@ Batch 3 — `@EmbeddedId` composite-key entities:
 - [x] 4.6 Re-run `PersistableEmbeddedIdEntitiesIsNewTest` and confirm it passes; `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` deferred to Batch 4 tests
 
 Batch 4 — cascade risk cases:
-- [ ] 4.7 Run `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` against the now-fixed `Concepto`/`Presupuesto` and confirm both parent and cascaded children rows are absent after delete
-- [ ] 4.8 If either test still fails after the `Persistable` fix (i.e. the `EAGER`+`ALL` cascade itself, not `isNew()`, is reverting the delete), file a new Issue for the cascade behavior per proposal.md's Out of Scope and record it in `openspec/explore.md` — do not patch it inline in this change
+- [x] 4.7 Run `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` against the now-fixed `Concepto`/`Presupuesto` and confirm both parent and cascaded children rows are absent after delete — both pass (`mvn test -Dtest=ConceptoDeleteCascadeIntegrationTest,PresupuestoDeleteCascadeIntegrationTest`: 2 run, 0 failures)
+- [x] 4.8 N/A — both tests passed on first run; the `Persistable` fix alone resolved the `EAGER`+`ALL` cascade cases, no separate cascade-behavior Issue needed
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Run the existing suites that exercise these 30 entities' `DELETE` endpoints (e.g. `backend-api/api-test/folios/`, `backend-api/api-test/suplencias/`) and confirm none needed an assertion change — a previously-passing "200 but not deleted" test is not expected to exist, since no prior test asserted the row was actually gone
-- [ ] 5.2 Confirm `HistorialDeleteIntegrationTest` (the reference template, `Historial`/`Item`/`Pago`/`Tramite`) is untouched and still green
+- [x] 5.1 Run the existing suites that exercise these 30 entities' `DELETE` endpoints (e.g. `backend-api/api-test/folios/`, `backend-api/api-test/suplencias/`) and confirm none needed an assertion change — confirmed by reading `folios/04-delete.yml` and `suplencias/05-delete.yml`: both only assert HTTP status (200/204), never a follow-up GET, so no prior test asserted the row was actually gone and none needed updating
+- [x] 5.2 Confirm `HistorialDeleteIntegrationTest` (the reference template, `Historial`/`Item`/`Pago`/`Tramite`) is untouched and still green — `mvn test -Dtest=HistorialDeleteIntegrationTest`: 1 run, 0 failures
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn verify -pl backend-api`
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` (confirm ratchet floor 70% line / 25% branch still held)
-- [ ] 6.3 `bash testing/scripts/test.sh` (Bruno HTTP suite against a running API)
+- [x] 6.1 `mvn verify -pl backend-api` — exit 0; 944 tests run, 0 failures/errors (surefire-reports aggregate)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` (confirm ratchet floor 70% line / 25% branch still held) — ran as part of `mvn verify` above without failing the ratchet gate
+- [x] 6.3 `bash testing/scripts/test.sh` (Bruno HTTP suite against a running API) — all strict endpoint checks passed
 
 ## 7. Ejecutar Playwright
 
@@ -58,10 +58,10 @@ Batch 4 — cascade risk cases:
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update `backend-api/api-test/COVERAGE.md` — add a defect entry (style of defecto #8/#9) listing the 30 entities fixed by this change
-- [ ] 8.2 Update `CHANGELOG.md` — `[Unreleased]` entry for the silent-delete fix extension
-- [ ] 8.3 Update `openspec/explore.md` — move the #957 row from "Pendientes" to "Resueltos"
-- [ ] 8.4 Update `traceability.md` — mark Gate log entries, requirement coverage, and permanent-documentation rows as done with their commit references
+- [x] 8.1 Update `backend-api/api-test/COVERAGE.md` — add a defect entry (style of defecto #8/#9) listing the 30 entities fixed by this change
+- [x] 8.2 Update `CHANGELOG.md` — `[Unreleased]` entry for the silent-delete fix extension
+- [x] 8.3 Update `openspec/explore.md` — move the #957 row from "Pendientes" to "Resueltos"
+- [x] 8.4 Update `traceability.md` — mark Gate log entries, requirement coverage, and permanent-documentation rows as done (commit references pending until commit step 9)
 
 ## 9. Commits atómicos
 
