@@ -30,8 +30,8 @@ Batch 1 — catálogo/base tables:
 - [x] 4.2 Re-run the Batch-1 parameterized cases in `PersistableIdentityEntitiesIsNewTest` / `PersistableIdentityEntitiesDeleteIntegrationTest` and confirm they pass
 
 Batch 2 — core domain entities:
-- [ ] 4.3 Implement `Persistable<Integer>` on `Persona`, `Usuario`, `Escritura`, `GestionDeEscritura`, `Presupuesto`, `Testimonio`, `Cuaderno`, `Folio`, `Inmueble`, `MinutaInscripcion`, `MovimientoTestimonio`, `DocumentoPresentado`, `RegistroAuditoria`, `Suplencia`, `Concepto`, `Copia`
-- [ ] 4.4 Re-run the Batch-2 parameterized cases and confirm they pass
+- [x] 4.3 Implement `Persistable<Integer>` on `Persona`, `Usuario`, `Escritura`, `GestionDeEscritura`, `Presupuesto`, `Testimonio`, `Cuaderno`, `Folio`, `Inmueble`, `MinutaInscripcion`, `MovimientoTestimonio`, `DocumentoPresentado`, `RegistroAuditoria`, `Suplencia`, `Concepto`, `Copia`
+- [x] 4.4 Re-run the Batch-2 parameterized cases and confirm they pass
 
 Batch 3 — `@EmbeddedId` composite-key entities:
 - [ ] 4.5 Implement `Persistable<XxxPK>` with the `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` pattern (design.md Decision 2) on `FoliosCopias`, `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`

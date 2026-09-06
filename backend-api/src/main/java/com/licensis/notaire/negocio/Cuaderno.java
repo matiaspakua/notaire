@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 
 /**
  * A cuaderno groups exactly ten consecutive folios of the same registro
@@ -28,7 +29,7 @@ import java.io.Serializable;
     @NamedQuery(name = "Cuaderno.findByAnioAndEscribano",
             query = "SELECT c FROM Cuaderno c WHERE c.anio = :anio AND c.fkIdPersonaEscribano = :escribano")
 })
-public class Cuaderno implements Serializable {
+public class Cuaderno implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,6 +59,21 @@ public class Cuaderno implements Serializable {
     @Column(name = "version")
     @Version
     private int version = ConstantesPersistencia.VERSION_INICIAL;
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idCuaderno;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idCuaderno == null || idCuaderno.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdCuaderno() {
         return idCuaderno;

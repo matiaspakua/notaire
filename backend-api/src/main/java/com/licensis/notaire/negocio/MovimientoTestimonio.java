@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoTestimonio;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.Date;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -43,7 +44,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "MovimientoTestimonio.findByTestimonio", query = "SELECT m FROM MovimientoTestimonio m WHERE m.fkIdTestimonio.idTestimonio = :idTestimonio"),
             @NamedQuery(name = "MovimientoTestimonio.findByNumeroCarton", query = "SELECT m FROM MovimientoTestimonio m WHERE m.numeroCarton = :numeroCarton")
         })
-public class MovimientoTestimonio implements Serializable
+public class MovimientoTestimonio implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -94,6 +95,21 @@ public class MovimientoTestimonio implements Serializable
         this.inscripta = inscripta;
         this.numeroCarton = numeroCarton;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idMovimientoTestimonio;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idMovimientoTestimonio == null || idMovimientoTestimonio.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdMovimientoTestimonio()
     {

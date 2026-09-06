@@ -13,6 +13,7 @@ import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -61,7 +62,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "GestionDeEscritura.findByNumero", query = "SELECT g FROM GestionDeEscritura g WHERE g.numero = :numero"),
         @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM GestionDeEscritura g WHERE g.fechaInicio = :fechaInicio")
 })
-public class GestionDeEscritura implements Serializable {
+public class GestionDeEscritura implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "fecha_inicio")
@@ -120,6 +121,21 @@ public class GestionDeEscritura implements Serializable {
         this.fechaInicio = fechaInicio;
         this.encabezado = encabezado;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idGestion;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idGestion == null || idGestion.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdGestion() {
         return idGestion;

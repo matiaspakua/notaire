@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoConcepto;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.Basic;
@@ -40,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
             @NamedQuery(name = "Concepto.findByNombre", query = "SELECT c FROM Concepto c WHERE c.nombre = :nombre"),
             @NamedQuery(name = "Concepto.findByPorcentaje", query = "SELECT c FROM Concepto c WHERE c.porcentaje = :porcentaje")
         })
-public class Concepto implements Serializable
+public class Concepto implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -87,6 +88,21 @@ public class Concepto implements Serializable
         this.valor = valor;
         this.porcentaje = porcentaje;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idConcepto;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idConcepto == null || idConcepto.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdConcepto()
     {
