@@ -26,8 +26,8 @@
 ## 4. Implementación
 
 Batch 1 — catálogo/base tables:
-- [ ] 4.1 Implement `Persistable<Integer>` on `Rol`, `TipoDeDocumento`, `TipoDeFolio`, `TipoDeTramite`, `TipoIdentificacion`, `EstadoDeGestion`, `WorkflowDefinition`, `WorkflowNode`, `WorkflowTransition`
-- [ ] 4.2 Re-run the Batch-1 parameterized cases in `PersistableIdentityEntitiesIsNewTest` / `PersistableIdentityEntitiesDeleteIntegrationTest` and confirm they pass
+- [x] 4.1 Implement `Persistable<Integer>` on `Rol`, `TipoDeDocumento`, `TipoDeFolio`, `TipoDeTramite`, `TipoIdentificacion`, `EstadoDeGestion`, `WorkflowDefinition`, `WorkflowNode`, `WorkflowTransition`
+- [x] 4.2 Re-run the Batch-1 parameterized cases in `PersistableIdentityEntitiesIsNewTest` / `PersistableIdentityEntitiesDeleteIntegrationTest` and confirm they pass
 
 Batch 2 — core domain entities:
 - [ ] 4.3 Implement `Persistable<Integer>` on `Persona`, `Usuario`, `Escritura`, `GestionDeEscritura`, `Presupuesto`, `Testimonio`, `Cuaderno`, `Folio`, `Inmueble`, `MinutaInscripcion`, `MovimientoTestimonio`, `DocumentoPresentado`, `RegistroAuditoria`, `Suplencia`, `Concepto`, `Copia`
