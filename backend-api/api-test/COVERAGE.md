@@ -53,7 +53,7 @@ the value but update did not. Hardened in `setAtributos`.
 | inmueble | ✅ | — |
 | historial | ✅ | `gestion/{id}` |
 | items | ✅ | `presupuesto/{id}`, budget-FK happy path |
-| pagos | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409 |
+| pagos | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409, recibo PDF (`reportes/recibo-pago/{id}`) |
 | tramites | ✅ | — |
 
 ## TODO — resources not yet covered
