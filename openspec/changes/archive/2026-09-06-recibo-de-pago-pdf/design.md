@@ -13,11 +13,13 @@ has no printable representation at all. See proposal.md for the gap.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Add `GET /api/v1/reportes/recibo-pago/{idPago}` returning a PDF recibo.
 - Reuse the existing raw-PDF helper; no new template asset, no new dependency.
 - Wire the endpoint from the pagos screen (UI traceability).
 
 **Non-Goals:**
+
 - Physical printing or emailing the recibo.
 - A graphically designed Jasper template (`.jrxml`/`.jasper`).
 
