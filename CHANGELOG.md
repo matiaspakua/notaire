@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Recibo de pago en PDF** (issue #23, CU15/RF-21): new
+  `GET /api/v1/reportes/recibo-pago/{idPago}` endpoint generates a PDF recibo
+  (cliente, fecha, concepto(s), total abonado) for an existing pago, 404 if
+  not found. Wired to an "Emitir recibo" action on the pagos screen.
 - **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
   inscripción from a signed (`Firmada`) escritura and track it through the
   registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.

@@ -15,6 +15,7 @@ CU12,Retirar testimonio,Gestiones,Necesario,MovimientoTestimonio,Update,Movimien
 CU13,Ver historial de gestión,Gestiones,Estaría Bueno,Historial,Read,HistorialController,GET,/api/v1/historial/gestion/{id},historial/05-get-by-gestion.yml,OK,OK,,#166
 CU14,Consultar estado gestión,Gestiones,Necesario,GestionDeEscritura,Read,GestionController,GET,/api/v1/gestiones/{id}/estado-actual,MISSING,OK,NO-TEST,Reemplazado por Ver Detalle,#167
 CU15,Procesar pago,Pagos,Estaría Bueno,Pago,Business-Op,PagoController,POST,/api/v1/pagos,pagos/01-create.yml,OK,OK,Incluye caso rechazo por saldo insuficiente (pagos/07),#168
+CU15,Procesar pago (recibo PDF),Pagos,Estaría Bueno,Pago,Report,ReporteController,GET,/api/v1/reportes/recibo-pago/{idPago},pagos/10-get-recibo-pdf.yml,OK,OK,,#23
 CU16,Archivar Gestión,Gestiones,Necesario,GestionDeEscritura,Update,GestionController,PUT,/api/v1/gestiones/{id},MISSING,OK,NO-TEST,Actualiza estado a archivado,#169
 CU17,Dar Alta persona,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,,#170
 CU18,Dar Alta Cliente,Clientes,Esencial,Persona,Create,PersonaController,POST,/api/v1/personas,personas/01-create.yml,OK,OK,esCliente=true,#171
