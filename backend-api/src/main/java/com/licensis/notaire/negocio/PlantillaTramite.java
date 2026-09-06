@@ -6,6 +6,11 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoPlantillaTramite;
 import java.io.Serializable;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -31,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "PlantillaTramite.findByFkIdTipoTramite", query = "SELECT p FROM PlantillaTramite p WHERE p.plantillaTramitePK.fkIdTipoTramite = :fkIdTipoTramite"),
             @NamedQuery(name = "PlantillaTramite.findByFkIdTipoDocumento", query = "SELECT p FROM PlantillaTramite p WHERE p.plantillaTramitePK.fkIdTipoDocumento = :fkIdTipoDocumento")
         })
-public class PlantillaTramite implements Serializable
+public class PlantillaTramite implements Serializable, Persistable<PlantillaTramitePK>
 {
 
     @Basic(optional = false)
@@ -49,6 +54,31 @@ public class PlantillaTramite implements Serializable
     @JoinColumn(name = "fk_id_tipo_documento", referencedColumnName = "id_tipo_documento", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private TipoDeDocumento tipoDeDocumento;
+    @Transient
+    private boolean isNewEntity = true;
+
+    // Sets by Spring Data JPA's isNew() default heuristic for entities whose @EmbeddedId
+    // is client-assigned (never null), so id-nullness cannot signal "new" the way it does
+    // for @GeneratedValue entities. A transient flag flipped by these lifecycle callbacks
+    // is the correct, standard Spring Data pattern for this case.
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNewEntity = false;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public PlantillaTramitePK getId() {
+        return plantillaTramitePK;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return isNewEntity;
+    }
+
 
     public PlantillaTramite()
     {

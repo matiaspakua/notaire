@@ -58,15 +58,20 @@ the parent itself still needs it) — all declare `@Id @GeneratedValue(strategy
 = GenerationType.IDENTITY) private Integer id...`.
 
 This is the exact pattern already adopted for `Historial`/`Item`/`Pago`/
-`Tramite`: the surrogate ID is `null` until the first `INSERT` assigns it,
-so `id == null` is a correct and sufficient "is this new" signal.
+`Tramite`: `isNew()` returns `id == null || id.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO)`.
+The surrogate ID is `null` until the first `INSERT` assigns it for most of
+these entities; a few (`EstadoDeGestion`, `GestionDeEscritura`,
+`Presupuesto`, `Inmueble`) initialize it to the legacy sentinel
+`ConstantesNegocio.ID_OBJETO_NO_VALIDO` (`-1`) in their default constructor
+instead of leaving it `null` — the same `isNew()` check handles both cases
+uniformly, matching the existing `Historial` implementation exactly.
 **Alternative considered**: keep relying on `@Version`, but change the
 column to boxed `Integer` so `null` (not `0`) means new — rejected per
 proposal.md (touches the optimistic-locking column type across the schema
 for no behavioral gain over the `Persistable` approach, which needs no
 schema change).
 
-### Decision 2 — `Persistable<XxxPK>` + `@PostLoad`/`@PostPersist` transient flag for the 5 `@EmbeddedId` entities
+### Decision 2 — `Persistable<XxxPK>` + `@PostLoad`/`@PrePersist` transient flag for the 5 `@EmbeddedId` entities
 Applies to: `FoliosCopias`, `PlantillaCostoDocumento`,
 `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`.
 
@@ -81,7 +86,7 @@ flag flipped by JPA lifecycle callbacks:
 @Transient
 private boolean isNew = true;
 
-@PostPersist
+@PrePersist
 @PostLoad
 void markNotNew() {
     this.isNew = false;
@@ -92,6 +97,18 @@ public boolean isNew() {
     return isNew;
 }
 ```
+
+`@PrePersist` (not `@PostPersist`) is required: `@PostPersist` fires only
+when the `INSERT` actually flushes, which can be deferred past the
+`save()` call inside a single transaction. A `save()` followed by
+`delete()` on the same instance in the same transaction (no explicit
+flush in between — e.g. `PlantillaPresupuestoServiceIntegrationTest
+.shouldSupportDelete`) would still see `isNew() == true` at `delete()`
+time and silently no-op, reproducing the exact defect this change fixes.
+`@PrePersist` fires synchronously inside the `persist()` call itself, so
+the flag is already `false` by the time `delete()` runs; `em.find()` in
+`SimpleJpaRepository.delete()` then resolves the already-managed instance
+from the first-level cache without needing a flush.
 
 **Alternative considered**: apply the same `id == null` check as Decision 1
 — rejected because it is factually wrong for these entities (the ID is

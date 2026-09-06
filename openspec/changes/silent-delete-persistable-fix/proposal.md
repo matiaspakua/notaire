@@ -22,7 +22,7 @@ ya fue diagnosticado y corregido para `Historial`, `Item`, `Pago` y `Tramite`
 ## What Changes
 
 - Implementar `Persistable<Integer>` (25 entidades con ID surrogate) o
-  `Persistable<XxxPK>` con flag transitorio `@PostLoad`/`@PostPersist` (5
+  `Persistable<XxxPK>` con flag transitorio `@PostLoad`/`@PrePersist` (5
   entidades con `@EmbeddedId`), con `isNew()` explícito, en las 30
   entidades restantes con `private int version` primitivo (ver design.md,
   Decisiones 1 y 2).
@@ -76,7 +76,7 @@ ya fue diagnosticado y corregido para `Historial`, `Item`, `Pago` y `Tramite`
     `TipoIdentificacion`, `Usuario`, `WorkflowDefinition`, `WorkflowNode`,
     `WorkflowTransition`.
   - 5 with an `@EmbeddedId` composite key (Decision 2 in design.md —
-    `Persistable<XxxPK>` with a `@PostLoad`/`@PostPersist` transient flag,
+    `Persistable<XxxPK>` with a `@PostLoad`/`@PrePersist` transient flag,
     since the ID is client-assigned and never `null`): `FoliosCopias`,
     `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`,
     `TramitesPersonas`.

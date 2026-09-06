@@ -34,8 +34,8 @@ Batch 2 — core domain entities:
 - [x] 4.4 Re-run the Batch-2 parameterized cases and confirm they pass
 
 Batch 3 — `@EmbeddedId` composite-key entities:
-- [ ] 4.5 Implement `Persistable<XxxPK>` with the `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` pattern (design.md Decision 2) on `FoliosCopias`, `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`
-- [ ] 4.6 Re-run `PersistableEmbeddedIdEntitiesIsNewTest` / `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` and confirm they pass
+- [x] 4.5 Implement `Persistable<XxxPK>` with the `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` pattern (design.md Decision 2) on `FoliosCopias`, `PlantillaCostoDocumento`, `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`
+- [x] 4.6 Re-run `PersistableEmbeddedIdEntitiesIsNewTest` and confirm it passes; `PersistableEmbeddedIdEntitiesDeleteIntegrationTest` deferred to Batch 4 tests
 
 Batch 4 — cascade risk cases:
 - [ ] 4.7 Run `ConceptoDeleteCascadeIntegrationTest` and `PresupuestoDeleteCascadeIntegrationTest` against the now-fixed `Concepto`/`Presupuesto` and confirm both parent and cascaded children rows are absent after delete

@@ -5,6 +5,11 @@
 package com.licensis.notaire.negocio;
 
 import java.io.Serializable;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -31,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "FoliosCopias.findByFkIdFolio", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdFolio = :fkIdFolio"),
             @NamedQuery(name = "FoliosCopias.findByFkIdCopia", query = "SELECT f FROM FoliosCopias f WHERE f.foliosCopiasPK.fkIdCopia = :fkIdCopia")
         })
-public class FoliosCopias implements Serializable
+public class FoliosCopias implements Serializable, Persistable<FoliosCopiasPK>
 {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +52,31 @@ public class FoliosCopias implements Serializable
     @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Folio folio;
+    @Transient
+    private boolean isNewEntity = true;
+
+    // Sets by Spring Data JPA's isNew() default heuristic for entities whose @EmbeddedId
+    // is client-assigned (never null), so id-nullness cannot signal "new" the way it does
+    // for @GeneratedValue entities. A transient flag flipped by these lifecycle callbacks
+    // is the correct, standard Spring Data pattern for this case.
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNewEntity = false;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public FoliosCopiasPK getId() {
+        return foliosCopiasPK;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return isNewEntity;
+    }
+
 
     public FoliosCopias()
     {

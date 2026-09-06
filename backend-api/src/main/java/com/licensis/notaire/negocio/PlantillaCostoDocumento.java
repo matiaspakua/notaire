@@ -11,6 +11,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
 import java.io.Serializable;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
+
 import java.util.Objects;
 
 /**
@@ -19,7 +24,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "plantilla_costos_documento")
-public class PlantillaCostoDocumento implements Serializable {
+public class PlantillaCostoDocumento implements Serializable, Persistable<PlantillaCostoDocumentoPK> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +49,31 @@ public class PlantillaCostoDocumento implements Serializable {
     @Column(name = "version")
     @Version
     private int version = 0;
+    @Transient
+    private boolean isNewEntity = true;
+
+    // Sets by Spring Data JPA's isNew() default heuristic for entities whose @EmbeddedId
+    // is client-assigned (never null), so id-nullness cannot signal "new" the way it does
+    // for @GeneratedValue entities. A transient flag flipped by these lifecycle callbacks
+    // is the correct, standard Spring Data pattern for this case.
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNewEntity = false;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public PlantillaCostoDocumentoPK getId() {
+        return plantillaCostoDocumentoPK;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return isNewEntity;
+    }
+
 
     public PlantillaCostoDocumento() {
     }
