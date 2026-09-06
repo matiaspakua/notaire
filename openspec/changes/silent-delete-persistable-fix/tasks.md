@@ -65,12 +65,12 @@ Batch 4 — cascade risk cases:
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit test scaffolding (group 3) — `test(negocio): add failing Persistable isNew/delete tests for remaining entities` — `Refs #957`
-- [ ] 9.2 Commit Batch 1 (group 4.1–4.2) — `Refs #957`
-- [ ] 9.3 Commit Batch 2 (group 4.3–4.4) — `Refs #957`
-- [ ] 9.4 Commit Batch 3 (group 4.5–4.6) — `Refs #957`
-- [ ] 9.5 Commit Batch 4 / cascade tests (group 4.7–4.8) — `Refs #957`
-- [ ] 9.6 Commit documentation updates (group 8) — `docs(negocio): document silent-delete-persistable-fix — Closes #957`
+- [x] 9.1 Commit test scaffolding (group 3) — `c973ce5 test(negocio): add Persistable isNew unit tests for all 30 entities`
+- [x] 9.2 Commit Batch 1 (group 4.1–4.2) — `9407bdd fix(negocio): implement Persistable on catalogo/base entities (batch 1)`
+- [x] 9.3 Commit Batch 2 (group 4.3–4.4) — `0c13f7c fix(negocio): implement Persistable on core domain entities (batch 2)`
+- [x] 9.4 Commit Batch 3 (group 4.5–4.6) — `1367b3f fix(negocio): implement Persistable on @EmbeddedId entities (batch 3)`
+- [x] 9.5 Commit Batch 4 / cascade tests (group 4.7–4.8) — `4eb253c test(negocio): add cascade-delete regression tests for Concepto/Presupuesto`
+- [x] 9.6 Commit documentation updates (group 8) — `125b1e1 docs(negocio): document silent-delete-persistable-fix` — Closes #957
 
 ## 10. Pull Request y validación CI
 
