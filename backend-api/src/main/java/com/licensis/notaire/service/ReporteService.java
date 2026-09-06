@@ -3,10 +3,16 @@ package com.licensis.notaire.service;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Cuaderno;
+import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.MinutaInscripcion;
+import com.licensis.notaire.negocio.Pago;
+import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.repository.CuadernoRepository;
+import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.MinutaInscripcionRepository;
+import com.licensis.notaire.repository.PagoRepository;
 import com.licensis.notaire.repository.TestimonioRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -15,6 +21,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +39,8 @@ public class ReporteService {
     private final TestimonioRepository testimonioRepository;
     private final CuadernoRepository cuadernoRepository;
     private final MinutaInscripcionRepository minutaInscripcionRepository;
+    private final PagoRepository pagoRepository;
+    private final ItemRepository itemRepository;
 
     private static final String RUTA_REPORTE_PRESUPUESTO = "reportes/reportePresupuestoSinInmueble.jasper";
     private static final String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportes/reportePresupuestoInmuebles.jasper";
@@ -43,11 +52,15 @@ public class ReporteService {
 
     public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository,
                            CuadernoRepository cuadernoRepository,
-                           MinutaInscripcionRepository minutaInscripcionRepository) {
+                           MinutaInscripcionRepository minutaInscripcionRepository,
+                           PagoRepository pagoRepository,
+                           ItemRepository itemRepository) {
         this.dataSource = dataSource;
         this.testimonioRepository = testimonioRepository;
         this.cuadernoRepository = cuadernoRepository;
         this.minutaInscripcionRepository = minutaInscripcionRepository;
+        this.pagoRepository = pagoRepository;
+        this.itemRepository = itemRepository;
     }
 
     public byte[] generarReportePresupuesto(Integer idPresupuesto) throws Exception {
@@ -151,6 +164,54 @@ public class ReporteService {
                 "Escritura N° " + minuta.getFkIdEscritura().getNumero() + " - Estado: " + minuta.getEstado(),
                 "Generado: " + LocalDate.now()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] generarReporteReciboPago(Integer idPago) {
+        Pago pago = pagoRepository.findById(idPago)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPago));
+
+        Presupuesto presupuesto = pago.getPresupuesto();
+        Persona cliente = presupuesto != null ? presupuesto.getFkIdPersona() : null;
+        String nombreCliente = cliente != null
+                ? (cliente.getNombre() + " " + cliente.getApellido()).trim()
+                : "Cliente no identificado";
+
+        String conceptos = presupuesto != null
+                ? itemRepository.findByFkIdPresupuestoIdPresupuesto(presupuesto.getIdPresupuesto()).stream()
+                        .map(Item::getNombre)
+                        .filter(nombre -> nombre != null && !nombre.isBlank())
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("Sin conceptos detallados")
+                : "Sin conceptos detallados";
+
+        return generarPdfRecibo(nombreCliente, pago.getFecha(), conceptos, pago.getMonto());
+    }
+
+    private byte[] generarPdfRecibo(String cliente, java.util.Date fecha, String conceptos, float monto) {
+        try {
+            StringBuilder stream = new StringBuilder();
+            stream.append("BT\n");
+            stream.append("/F1 20 Tf\n");
+            stream.append("50 760 Td\n");
+            stream.append("(Recibo de Pago) Tj\n");
+            stream.append("/F1 12 Tf\n");
+            stream.append("0 -30 Td\n");
+            stream.append("(Cliente: ").append(escapePdfText(cliente)).append(") Tj\n");
+            stream.append("0 -20 Td\n");
+            stream.append("(Fecha de pago: ").append(escapePdfText(String.valueOf(fecha))).append(") Tj\n");
+            stream.append("0 -20 Td\n");
+            stream.append("(Concepto(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
+            stream.append("0 -20 Td\n");
+            stream.append("(Total abonado: ").append(escapePdfText(String.valueOf(monto))).append(") Tj\n");
+            stream.append("0 -40 Td\n");
+            stream.append("(Recibo generado por backend API - CU15.) Tj\n");
+            stream.append("ET\n");
+
+            return buildPdf(stream.toString());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar el recibo de pago: " + e.getMessage(), e);
+        }
     }
 
     private byte[] generarPdfDesdeTemplate(String templatePath, Map<String, Object> parameters) throws Exception {

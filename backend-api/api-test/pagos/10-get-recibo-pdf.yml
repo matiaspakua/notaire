@@ -1,0 +1,23 @@
+info:
+  name: Get Recibo Pago PDF
+  type: http
+  seq: 11
+  description: |-
+      ## GET /api/v1/reportes/recibo-pago/{idPago}
+      CU15/RF-21 - Emite el recibo en PDF del pago creado en esta suite.
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/reportes/recibo-pago/{{pago_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+          test("Returns a PDF", function () {
+            expect(res.getHeader('content-type')).to.include('application/pdf');
+          });

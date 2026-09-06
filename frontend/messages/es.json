@@ -361,8 +361,10 @@
     "deleted": "Pago eliminado",
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
+    "errorRecibo": "Error al generar el recibo",
     "saldoExcedido": "El monto excede el saldo pendiente del presupuesto",
     "noData": "No hay pagos registrados",
+    "emitirRecibo": "Emitir recibo",
     "fields": {
       "fecha": "Fecha",
       "monto": "Monto",

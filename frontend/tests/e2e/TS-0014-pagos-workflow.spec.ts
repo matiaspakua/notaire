@@ -141,6 +141,26 @@ test.describe("CU15 - Procesar Pago", () => {
   test.skip("CU15-GW03: Given pago exists, When click ver detalle, Then shows details", () => {
     // Skipped: pagos table has no "ver" button per row — only edit/delete icons.
   });
+
+  test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
+    const montoUnico = 345;
+    const { idPresupuesto } = await seedPresupuesto(page, montoUnico + 1000);
+    const pagoResult = await createPago(page, idPresupuesto, { monto: montoUnico });
+    if (!pagoResult.ok || !pagoResult.data?.idPago) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPago}\\b`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+
+    const downloadPromise = page.waitForEvent("download");
+    await row.getByTitle(/emitir recibo/i).click();
+    const download = await downloadPromise;
+
+    expect(download.suggestedFilename()).toMatch(/recibo_pago_.*\.pdf/);
+  });
 });
 
 test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {

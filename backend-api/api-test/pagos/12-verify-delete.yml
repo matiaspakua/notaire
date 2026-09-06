@@ -1,7 +1,7 @@
 info:
   name: Verify Pago Delete
   type: http
-  seq: 12
+  seq: 13
   description: "## GET /api/v1/pagos/{id} — debe devolver 404 tras el delete"
 http:
   method: GET

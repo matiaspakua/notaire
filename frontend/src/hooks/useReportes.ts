@@ -2,13 +2,10 @@
  * useReportes — PDF report download hooks
  * Wraps /api/v1/reportes/* endpoints that return application/pdf
  */
-
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+import { apiGetBytes } from "@/lib/api-client";
 
 async function downloadPdf(path: string, filename: string): Promise<void> {
-  const res = await fetch(`${BASE}${path}`, { headers: { Accept: "application/pdf" } });
-  if (!res.ok) throw new Error(`Error generando reporte: ${res.status}`);
-  const blob = await res.blob();
+  const blob = await apiGetBytes(path);
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -103,6 +100,17 @@ export function useReporteDeudaDocumentos() {
       downloadPdf(
         `/reportes/consultar-deuda-documentos?numeroGestion=${numeroGestion}`,
         `deuda_documentos_${numeroGestion}.pdf`
+      ),
+  };
+}
+
+/** CU15 — Emitir recibo de pago */
+export function useReciboPago() {
+  return {
+    download: (idPago: number) =>
+      downloadPdf(
+        `/reportes/recibo-pago/${idPago}`,
+        `recibo_pago_${idPago}.pdf`
       ),
   };
 }

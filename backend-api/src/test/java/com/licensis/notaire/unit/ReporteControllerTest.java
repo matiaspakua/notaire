@@ -101,4 +101,18 @@ class ReporteControllerTest {
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION))
                 .isEqualTo("inline; filename=\"minuta_inscripcion_1.pdf\"");
     }
+
+    @Test
+    @DisplayName("CU15 - Should generate the recibo de pago report")
+    void shouldGenerateReciboPagoReport() {
+        byte[] pdfBytes = {1, 2, 3};
+        when(reporteService.generarReporteReciboPago(1)).thenReturn(pdfBytes);
+
+        ResponseEntity<byte[]> response = controller.generarReporteReciboPago(1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(pdfBytes);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION))
+                .isEqualTo("inline; filename=\"recibo_pago_1.pdf\"");
+    }
 }

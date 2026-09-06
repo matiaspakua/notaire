@@ -361,8 +361,10 @@
     "deleted": "Payment deleted",
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
+    "errorRecibo": "Error generating the receipt",
     "saldoExcedido": "The amount exceeds the outstanding balance of the budget",
     "noData": "No payments registered",
+    "emitirRecibo": "Issue receipt",
     "fields": {
       "fecha": "Date",
       "monto": "Amount",
