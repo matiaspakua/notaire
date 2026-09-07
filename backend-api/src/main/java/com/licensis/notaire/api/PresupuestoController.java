@@ -2,7 +2,10 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoPresupuestoResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.service.PresupuestoCatalogoItemsService;
+import com.licensis.notaire.service.PresupuestoPlantillaService;
 import com.licensis.notaire.service.PresupuestoResumenService;
 import com.licensis.notaire.service.PresupuestoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,11 +43,17 @@ public class PresupuestoController {
 
     private final PresupuestoService presupuestoService;
     private final PresupuestoResumenService presupuestoResumenService;
+    private final PresupuestoPlantillaService presupuestoPlantillaService;
+    private final PresupuestoCatalogoItemsService presupuestoCatalogoItemsService;
 
     public PresupuestoController(PresupuestoService presupuestoService,
-            PresupuestoResumenService presupuestoResumenService) {
+            PresupuestoResumenService presupuestoResumenService,
+            PresupuestoPlantillaService presupuestoPlantillaService,
+            PresupuestoCatalogoItemsService presupuestoCatalogoItemsService) {
         this.presupuestoService = presupuestoService;
         this.presupuestoResumenService = presupuestoResumenService;
+        this.presupuestoPlantillaService = presupuestoPlantillaService;
+        this.presupuestoCatalogoItemsService = presupuestoCatalogoItemsService;
     }
 
     @GetMapping
@@ -137,5 +146,30 @@ public class PresupuestoController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "El tipo de trámite no tiene plantilla configurada"),
+    @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado")
+})
+    @PostMapping("/{id}/items-desde-plantilla")
+    @Operation(summary = "CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite")
+    public ResponseEntity<List<Item>> cargarItemsDesdePlantilla(
+            @PathVariable Integer id,
+            @Parameter(description = "ID del tipo de trámite") @RequestParam Integer tipoTramiteId) {
+        return ResponseEntity.ok(presupuestoPlantillaService.cargarItemsDesdePlantilla(id, tipoTramiteId));
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "Presupuesto o ítem de catálogo no encontrado")
+})
+    @PostMapping("/{id}/items-desde-catalogo")
+    @Operation(summary = "CU71 - Agregar al presupuesto copias de ítems existentes del catálogo")
+    public ResponseEntity<List<Item>> agregarItemsDesdeCatalogo(
+            @PathVariable Integer id,
+            @RequestBody List<Integer> idItems) {
+        return ResponseEntity.ok(presupuestoCatalogoItemsService.agregarItemsDesdeCatalogo(id, idItems));
     }
 }

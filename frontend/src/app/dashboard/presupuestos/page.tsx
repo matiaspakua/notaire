@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Receipt } from "lucide-react";
+import { Plus, Pencil, Trash2, Receipt, ListChecks } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -27,8 +27,12 @@ import {
   useCreatePresupuesto,
   useUpdatePresupuesto,
   useDeletePresupuesto,
+  useCargarItemsDesdePlantilla,
+  useAgregarItemsDesdeCatalogo,
 } from "@/hooks/usePresupuestos";
 import { usePersonas } from "@/hooks/usePersonas";
+import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
+import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
 
@@ -52,6 +56,55 @@ export default function PresupuestosPage() {
   const [resumenId, setResumenId] = useState<number | null>(null);
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
     usePresupuestoResumen(resumenId);
+
+  const [itemsPresupuestoId, setItemsPresupuestoId] = useState<number | null>(null);
+  const { data: presupuestoItems = [], isLoading: isItemsLoading } =
+    useItemsByPresupuesto(itemsPresupuestoId ?? undefined);
+  const { data: tiposTramite = [] } = useTiposTramite();
+  const { data: catalogoItems = [] } = useItems();
+  const [selectedTipoTramiteId, setSelectedTipoTramiteId] = useState<string>("");
+  const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
+  const cargarPlantillaMutation = useCargarItemsDesdePlantilla();
+  const agregarCatalogoMutation = useAgregarItemsDesdeCatalogo();
+
+  function openItems(p: Presupuesto) {
+    setItemsPresupuestoId(p.idPresupuesto!);
+    setSelectedTipoTramiteId("");
+    setSelectedCatalogItemId("");
+  }
+
+  async function handleCargarPlantilla() {
+    if (!itemsPresupuestoId || !selectedTipoTramiteId) return;
+    try {
+      await cargarPlantillaMutation.mutateAsync({
+        idPresupuesto: itemsPresupuestoId,
+        tipoTramiteId: Number(selectedTipoTramiteId),
+      });
+      toast.success(t("items.loadedFromPlantilla"));
+    } catch (e) {
+      toast.error(
+        e instanceof ApiError && e.status === 400
+          ? t("items.errorNoPlantilla")
+          : t("items.errorCargar")
+      );
+    }
+  }
+
+  async function handleAgregarCatalogo() {
+    if (!itemsPresupuestoId || !selectedCatalogItemId) return;
+    try {
+      await agregarCatalogoMutation.mutateAsync({
+        idPresupuesto: itemsPresupuestoId,
+        idItems: [Number(selectedCatalogItemId)],
+      });
+      toast.success(t("items.addedFromCatalogo"));
+      setSelectedCatalogItemId("");
+    } catch {
+      toast.error(t("items.errorAgregar"));
+    }
+  }
+
+  const itemsSubtotal = presupuestoItems.reduce((sum, item) => sum + (item.valor ?? 0), 0);
 
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
@@ -143,6 +196,15 @@ export default function PresupuestosPage() {
             onClick={() => setResumenId(p.idPresupuesto!)}
           >
             <Receipt className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            aria-label={t("items.title")}
+            data-testid={`btn-items-presupuesto-${p.idPresupuesto}`}
+            onClick={() => openItems(p)}
+          >
+            <ListChecks className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
@@ -357,6 +419,112 @@ export default function PresupuestosPage() {
             )}
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setResumenId(null)}>
+                {tc("cancel")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={itemsPresupuestoId !== null} onOpenChange={(v) => !v && setItemsPresupuestoId(null)}>
+        <DialogContent className="max-w-2xl" data-testid="dialog-items-presupuesto">
+          <FormContainer>
+            <FormHeader title={t("items.title")} />
+
+            <FormSection title={t("items.plantillaSection")}>
+              <FormField
+                label={t("items.selectTipoTramite")}
+                helperText={tiposTramite.length === 0 ? t("items.noTiposTramite") : undefined}
+              >
+                <div className="flex gap-2">
+                  <Select value={selectedTipoTramiteId} onValueChange={setSelectedTipoTramiteId}>
+                    <SelectTrigger data-testid="select-tipo-tramite-items" disabled={tiposTramite.length === 0}>
+                      <SelectValue placeholder={t("items.selectTipoTramite")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tiposTramite.map((tt) => (
+                        <SelectItem key={tt.idTipoDeTramite} value={tt.idTipoDeTramite!.toString()}>
+                          {tt.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    data-testid="btn-cargar-plantilla"
+                    disabled={!selectedTipoTramiteId || cargarPlantillaMutation.isPending}
+                    onClick={handleCargarPlantilla}
+                  >
+                    {t("items.cargarPlantilla")}
+                  </Button>
+                </div>
+              </FormField>
+            </FormSection>
+
+            <FormSection title={t("items.catalogoSection")}>
+              <FormField
+                label={t("items.selectCatalogItem")}
+                helperText={catalogoItems.length === 0 ? t("items.noCatalogItems") : undefined}
+              >
+                <div className="flex gap-2">
+                  <Select value={selectedCatalogItemId} onValueChange={setSelectedCatalogItemId}>
+                    <SelectTrigger data-testid="select-catalog-item" disabled={catalogoItems.length === 0}>
+                      <SelectValue placeholder={t("items.selectCatalogItem")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {catalogoItems.map((item) => (
+                        <SelectItem key={item.idItem} value={item.idItem!.toString()}>
+                          {item.nombre} — {formatCurrency(item.valor)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    data-testid="btn-agregar-catalogo"
+                    disabled={!selectedCatalogItemId || agregarCatalogoMutation.isPending}
+                    onClick={handleAgregarCatalogo}
+                  >
+                    {t("items.agregarCatalogo")}
+                  </Button>
+                </div>
+              </FormField>
+            </FormSection>
+
+            <FormSection title={t("items.itemsSection")}>
+              {isItemsLoading ? (
+                <p className="text-sm text-muted-foreground">{tc("loading")}</p>
+              ) : presupuestoItems.length === 0 ? (
+                <p className="text-sm text-muted-foreground" data-testid="items-sin-datos">
+                  {t("items.noData")}
+                </p>
+              ) : (
+                <>
+                  <Table data-testid="table-items-presupuesto">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t("items.columns.nombre")}</TableHead>
+                        <TableHead>{t("items.columns.valor")}</TableHead>
+                        <TableHead>{t("items.columns.porcentaje")}</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {presupuestoItems.map((item) => (
+                        <TableRow key={item.idItem}>
+                          <TableCell>{item.nombre}</TableCell>
+                          <TableCell>{formatCurrency(item.valor)}</TableCell>
+                          <TableCell>{item.porcentaje ?? 0}%</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <div className="flex justify-end pt-2 text-sm font-medium" data-testid="items-subtotal">
+                    {t("items.subtotal")}: {formatCurrency(itemsSubtotal)}
+                  </div>
+                </>
+              )}
+            </FormSection>
+
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setItemsPresupuestoId(null)}>
                 {tc("cancel")}
               </Button>
             </FormActions>

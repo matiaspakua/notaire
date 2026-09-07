@@ -1,6 +1,8 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.PresupuestoController;
+import com.licensis.notaire.service.PresupuestoCatalogoItemsService;
+import com.licensis.notaire.service.PresupuestoPlantillaService;
 import com.licensis.notaire.service.PresupuestoResumenService;
 import com.licensis.notaire.service.PresupuestoService;
 import com.licensis.notaire.negocio.Presupuesto;
@@ -35,12 +37,19 @@ class PaginationTest {
     @Mock
     private PresupuestoResumenService presupuestoResumenService;
 
+    @Mock
+    private PresupuestoPlantillaService presupuestoPlantillaService;
+
+    @Mock
+    private PresupuestoCatalogoItemsService presupuestoCatalogoItemsService;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
-                new PresupuestoController(presupuestoService, presupuestoResumenService))
+                new PresupuestoController(presupuestoService, presupuestoResumenService,
+                        presupuestoPlantillaService, presupuestoCatalogoItemsService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

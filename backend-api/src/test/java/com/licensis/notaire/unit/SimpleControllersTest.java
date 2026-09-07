@@ -65,6 +65,8 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -397,8 +399,13 @@ class SimpleControllersTest {
         private final PresupuestoService service = mock(PresupuestoService.class);
         private final com.licensis.notaire.service.PresupuestoResumenService presupuestoResumenService =
                 mock(com.licensis.notaire.service.PresupuestoResumenService.class);
+        private final com.licensis.notaire.service.PresupuestoPlantillaService presupuestoPlantillaService =
+                mock(com.licensis.notaire.service.PresupuestoPlantillaService.class);
+        private final com.licensis.notaire.service.PresupuestoCatalogoItemsService presupuestoCatalogoItemsService =
+                mock(com.licensis.notaire.service.PresupuestoCatalogoItemsService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PresupuestoController(service, presupuestoResumenService))
+                standaloneSetup(new PresupuestoController(service, presupuestoResumenService,
+                        presupuestoPlantillaService, presupuestoCatalogoItemsService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -434,6 +441,17 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/presupuestos/1")).andExpect(status().isNoContent());
             doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
             mvc.perform(delete("/api/v1/presupuestos/99")).andExpect(status().isNotFound());
+
+            com.licensis.notaire.negocio.Item item = new com.licensis.notaire.negocio.Item(1, "Sellado", 500f);
+            when(presupuestoPlantillaService.cargarItemsDesdePlantilla(1, 5)).thenReturn(List.of(item));
+            mvc.perform(post("/api/v1/presupuestos/1/items-desde-plantilla?tipoTramiteId=5"))
+                    .andExpect(status().isOk());
+
+            when(presupuestoCatalogoItemsService.agregarItemsDesdeCatalogo(eq(1), anyList()))
+                    .thenReturn(List.of(item));
+            mvc.perform(post("/api/v1/presupuestos/1/items-desde-catalogo").contentType("application/json")
+                    .content(mapper.writeValueAsString(List.of(1))))
+                    .andExpect(status().isOk());
         }
     }
 
