@@ -30,3 +30,9 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 4.1 | La persona no esta registrada en el sistema. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Datos solicitados
+
+El registro de escribano incluye el número de registro de escribano
+(matrícula), campo requerido por CU22 para habilitar a la Persona como
+suplente de otro escribano.
