@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Suplencias con efecto práctico en la asignación de gestiones** (issue
+  #836, CU22/CU48/CU51): a `GestionDeEscritura` created or edited
+  (`POST`/`PUT .../complete-case`) for an escribano with an active
+  `Suplencia` (fecha de la gestión dentro de `fechaInicio`–`fechaFin`) is
+  now redirected to the suplente automatically, leaving a trace in
+  `observaciones` and a toast notification on the gestiones screen. The
+  personas screen now exposes a "Registro de escribano" field
+  (alta/edición) so any Persona can be enabled as a suplente.
 - **Cargar presupuesto desde plantilla y catálogo de ítems** (issue #834,
   CU39/CU71): the presupuestos screen now offers, per presupuesto, a
   dialog to (1) pick a `TipoDeTramite` and load its `PlantillaPresupuesto`

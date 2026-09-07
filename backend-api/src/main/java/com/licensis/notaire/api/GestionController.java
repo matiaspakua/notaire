@@ -34,6 +34,7 @@ import com.licensis.notaire.service.GestionArchiveDebtService;
 import com.licensis.notaire.service.GestionBitacoraService;
 import com.licensis.notaire.service.GestionQueryService;
 import com.licensis.notaire.service.GestionResumenFinancieroService;
+import com.licensis.notaire.service.GestionSuplenciaService;
 import com.licensis.notaire.service.GestionTransitionService;
 import com.licensis.notaire.service.ReingresoDocumentacionService;
 import com.licensis.notaire.service.WorkflowTraceService;
@@ -83,6 +84,7 @@ public class GestionController {
     private final TramiteRepository tramiteRepository;
     private final InmuebleRepository inmuebleRepository;
     private final GestionArchiveDebtService gestionArchiveDebtService;
+    private final GestionSuplenciaService gestionSuplenciaService;
     private final GestionResumenFinancieroService gestionResumenFinancieroService;
     private final GestionBitacoraService gestionBitacoraService;
     private final GestionTransitionService gestionTransitionService;
@@ -98,6 +100,7 @@ public class GestionController {
                              TipoDeTramiteRepository tipoTramiteRepository, TramiteRepository tramiteRepository,
                              InmuebleRepository inmuebleRepository,
                              GestionArchiveDebtService gestionArchiveDebtService,
+                             GestionSuplenciaService gestionSuplenciaService,
                              GestionResumenFinancieroService gestionResumenFinancieroService,
                              GestionBitacoraService gestionBitacoraService,
                              GestionTransitionService gestionTransitionService,
@@ -115,6 +118,7 @@ public class GestionController {
         this.tramiteRepository = tramiteRepository;
         this.inmuebleRepository = inmuebleRepository;
         this.gestionArchiveDebtService = gestionArchiveDebtService;
+        this.gestionSuplenciaService = gestionSuplenciaService;
         this.gestionResumenFinancieroService = gestionResumenFinancieroService;
         this.gestionBitacoraService = gestionBitacoraService;
         this.gestionTransitionService = gestionTransitionService;
@@ -161,13 +165,27 @@ public class GestionController {
                 tipoTramite.get(), inmueble));
     }
 
-    private static void applyGestionFields(GestionDeEscritura gestion, CompleteCaseRequest request,
+    private void applyGestionFields(GestionDeEscritura gestion, CompleteCaseRequest request,
             CaseDependencies dependencies) {
         gestion.setNumero(request.numero());
         gestion.setEncabezado(request.encabezado() == null ? "Gestión" : request.encabezado());
-        gestion.setObservaciones(request.observaciones());
-        gestion.setFkIdPersonaEscribano(dependencies.escribano());
+        GestionSuplenciaService.EscribanoAsignado asignado =
+                gestionSuplenciaService.resolverEscribano(dependencies.escribano(), gestion.getFechaInicio());
+        gestion.setFkIdPersonaEscribano(asignado.escribano());
+        gestion.setObservaciones(buildObservaciones(request.observaciones(), dependencies.escribano(), asignado));
         gestion.setFkIdEstadoDeGestion(dependencies.estado());
+    }
+
+    private String buildObservaciones(String requestObservaciones, Persona escribanoSolicitado,
+            GestionSuplenciaService.EscribanoAsignado asignado) {
+        if (asignado.suplenciaAplicada() == null) {
+            return requestObservaciones;
+        }
+        String redireccion = gestionSuplenciaService.observacionRedireccion(escribanoSolicitado, asignado.escribano());
+        if (requestObservaciones == null || requestObservaciones.isBlank()) {
+            return redireccion;
+        }
+        return requestObservaciones + " | " + redireccion;
     }
 
     private void saveTramite(GestionDeEscritura gestion, CaseDependencies dependencies) {
@@ -193,7 +211,10 @@ public class GestionController {
 
     @PostMapping("/complete-case")
     @Transactional
-    @Operation(summary = "CU02 - Crear una gestión con sus dependencias obligatorias")
+    @Operation(summary = "CU02 - Crear una gestión con sus dependencias obligatorias",
+            description = "CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de "
+                    + "inicio de la gestión, la gestión se redirige automáticamente al suplente y se deja "
+                    + "constancia en el campo observaciones de la respuesta.")
     public ResponseEntity<Object> createCompleteCase(@RequestBody CompleteCaseRequest request) {
         if (!hasRequiredFields(request)) {
             return ResponseEntity.badRequest().build();
@@ -214,7 +235,10 @@ public class GestionController {
 
     @PutMapping("/{id}/complete-case")
     @Transactional
-    @Operation(summary = "CU02 - Actualizar una gestión junto con sus dependencias obligatorias")
+    @Operation(summary = "CU02 - Actualizar una gestión junto con sus dependencias obligatorias",
+            description = "CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de "
+                    + "inicio de la gestión, la gestión se redirige automáticamente al suplente y se deja "
+                    + "constancia en el campo observaciones de la respuesta.")
     public ResponseEntity<Object> updateCompleteCase(@PathVariable Integer id,
             @RequestBody CompleteCaseRequest request) {
         Optional<GestionDeEscritura> existing = repository.findById(id);

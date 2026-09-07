@@ -27,3 +27,12 @@
 |---|---|---|
 | 2.1 | No existen escribanos registrados. | El sistema gestiona la excepción y notifica al usuario. |
 | 4.1 | El periodo indicado no es válido. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Efecto en la asignación de gestiones (RF #115)
+
+Mientras la suplencia registrada está vigente (fecha de la gestión dentro
+del período `fechaInicio`–`fechaFin`), toda gestión nueva o editada que se
+intente asignar al escribano suplantado (CU02) se redirige automáticamente
+al escribano suplente. El sistema deja constancia de la redirección en las
+observaciones de la gestión y lo notifica al usuario al guardar (CU48/CU51
+— el suplente debe tener registro de escribano vigente).

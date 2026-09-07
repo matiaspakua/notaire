@@ -158,7 +158,11 @@
       "email": "Email",
       "telefono": "Phone",
       "domicilio": "Address",
-      "esCliente": "Is client"
+      "esCliente": "Is client",
+      "registroEscribano": "Notary registration number"
+    },
+    "helperText": {
+      "registroEscribano": "Notarial registry number. Used to identify the notary in substitutions."
     },
     "badges": {
       "client": "Client",
@@ -177,6 +181,7 @@
     "created": "Case created",
     "updated": "Case updated",
     "deleted": "Case deleted",
+    "suplenciaRedirected": "The case was redirected to the notary's active substitute",
     "errorSave": "Error saving case",
     "errorDelete": "Error deleting case",
     "noData": "No cases registered",
