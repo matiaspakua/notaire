@@ -554,6 +554,30 @@
       "saldo": "Outstanding balance",
       "noPagos": "No payments registered for this quote",
       "notFound": "The requested quote was not found"
+    },
+    "items": {
+      "title": "Quote items",
+      "plantillaSection": "Load items from template",
+      "catalogoSection": "Add catalog item",
+      "itemsSection": "Loaded items",
+      "selectTipoTramite": "Select case type...",
+      "selectCatalogItem": "Select catalog item...",
+      "noTiposTramite": "No case types registered.",
+      "noCatalogItems": "No items in the catalog.",
+      "cargarPlantilla": "Load from template",
+      "agregarCatalogo": "Add",
+      "loadedFromPlantilla": "Items loaded from template",
+      "addedFromCatalogo": "Item added from catalog",
+      "errorNoPlantilla": "The selected case type has no template configured",
+      "errorCargar": "Error loading template items",
+      "errorAgregar": "Error adding catalog item",
+      "noData": "This quote has no items loaded yet",
+      "subtotal": "Subtotal",
+      "columns": {
+        "nombre": "Name",
+        "valor": "Value",
+        "porcentaje": "Percentage"
+      }
     }
   },
   "auditoria": {
