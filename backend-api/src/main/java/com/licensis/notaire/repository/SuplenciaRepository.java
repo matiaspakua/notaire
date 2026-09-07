@@ -23,4 +23,7 @@ public interface SuplenciaRepository extends JpaRepository<Suplencia, Integer> {
 
     @Query("SELECT s FROM Suplencia s WHERE s.fechaInicio <= :fecha AND s.fechaFin >= :fecha")
     List<Suplencia> findByFechaInicioBeforeAndFechaFinAfter(@Param("fecha") Date fecha);
+
+    List<Suplencia> findByFkIdSuplantadoIdPersonaAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
+            Integer idSuplantado, Date fechaInicio, Date fechaFin);
 }
