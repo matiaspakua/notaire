@@ -554,6 +554,30 @@
       "saldo": "Saldo pendiente",
       "noPagos": "No hay pagos registrados para este presupuesto",
       "notFound": "No se encontró el presupuesto solicitado"
+    },
+    "items": {
+      "title": "Ítems del presupuesto",
+      "plantillaSection": "Cargar ítems desde la plantilla",
+      "catalogoSection": "Agregar ítem del catálogo",
+      "itemsSection": "Ítems cargados",
+      "selectTipoTramite": "Seleccionar tipo de trámite...",
+      "selectCatalogItem": "Seleccionar ítem del catálogo...",
+      "noTiposTramite": "No hay tipos de trámite registrados.",
+      "noCatalogItems": "No hay ítems en el catálogo.",
+      "cargarPlantilla": "Cargar de la plantilla",
+      "agregarCatalogo": "Agregar",
+      "loadedFromPlantilla": "Ítems cargados desde la plantilla",
+      "addedFromCatalogo": "Ítem agregado del catálogo",
+      "errorNoPlantilla": "El tipo de trámite seleccionado no tiene una plantilla configurada",
+      "errorCargar": "Error al cargar los ítems de la plantilla",
+      "errorAgregar": "Error al agregar el ítem del catálogo",
+      "noData": "Este presupuesto todavía no tiene ítems cargados",
+      "subtotal": "Subtotal",
+      "columns": {
+        "nombre": "Nombre",
+        "valor": "Valor",
+        "porcentaje": "Porcentaje"
+      }
     }
   },
   "auditoria": {

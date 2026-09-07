@@ -566,6 +566,37 @@ export async function createConcepto(
   });
 }
 
+/**
+ * CU39 - PlantillaPresupuesto: associates a Concepto's price with a TipoDeTramite.
+ */
+export async function createPlantillaPresupuesto(
+  page: Page,
+  tipoTramiteId: number,
+  conceptoId: number,
+): Promise<ApiResult<Record<string, unknown>>> {
+  return apiPost(page, "/plantilla-presupuestos", {
+    plantillaPresupuestoPK: { fkIdTipoTramite: tipoTramiteId, fkIdConcepto: conceptoId },
+    tipoDeTramite: { idTipoTramite: tipoTramiteId },
+    concepto: { idConcepto: conceptoId },
+  });
+}
+
+/**
+ * CU71 - Item catalog entry (reusable, not yet attached to a presupuesto).
+ */
+export async function createItem(
+  page: Page,
+  overrides: { nombre?: string; valor?: number } = {},
+): Promise<ApiResult<{ idItem: number }>> {
+  const id = uniqueId();
+  return apiPost(page, "/items", {
+    nombre: `Item E2E ${id}`,
+    valor: 500,
+    porcentaje: 0,
+    ...overrides,
+  });
+}
+
 export async function createEstadoGestion(
   page: Page,
   overrides: { nombre?: string } = {},

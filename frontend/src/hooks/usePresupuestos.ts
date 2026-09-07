@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { Presupuesto, PresupuestoResumen } from "@/types";
+import { itemsKeys } from "@/hooks/useItems";
+import type { Item, Presupuesto, PresupuestoResumen } from "@/types";
 
 export const presupuestosKeys = {
   all: ["presupuestos"] as const,
@@ -47,5 +48,27 @@ export function useDeletePresupuesto() {
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/presupuestos/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: presupuestosKeys.all }),
+  });
+}
+
+/** CU39 - Cargar los ítems del presupuesto desde la plantilla del tipo de trámite. */
+export function useCargarItemsDesdePlantilla() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ idPresupuesto, tipoTramiteId }: { idPresupuesto: number; tipoTramiteId: number }) =>
+      apiPost<Item[]>(`/presupuestos/${idPresupuesto}/items-desde-plantilla?tipoTramiteId=${tipoTramiteId}`, undefined),
+    onSuccess: (_, variables) =>
+      qc.invalidateQueries({ queryKey: itemsKeys.byPresupuesto(variables.idPresupuesto) }),
+  });
+}
+
+/** CU71 - Agregar al presupuesto copias de ítems existentes del catálogo. */
+export function useAgregarItemsDesdeCatalogo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ idPresupuesto, idItems }: { idPresupuesto: number; idItems: number[] }) =>
+      apiPost<Item[]>(`/presupuestos/${idPresupuesto}/items-desde-catalogo`, idItems),
+    onSuccess: (_, variables) =>
+      qc.invalidateQueries({ queryKey: itemsKeys.byPresupuesto(variables.idPresupuesto) }),
   });
 }
