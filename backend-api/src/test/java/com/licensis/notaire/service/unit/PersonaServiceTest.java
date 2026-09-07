@@ -119,6 +119,32 @@ class PersonaServiceTest {
     }
 
     @Test
+    @DisplayName("Should register escribano credential on an existing persona")
+    void shouldRegisterEscribanoCredentialOnExistingPersona() {
+        testPersona.setRegistroEscribano(null);
+        testPersona.setRegistroEscribano(1234);
+        when(personaRepository.save(testPersona)).thenReturn(testPersona);
+
+        Persona result = personaService.save(testPersona);
+
+        assertThat(result.getRegistroEscribano()).isEqualTo(1234);
+        verify(personaRepository, times(1)).save(testPersona);
+    }
+
+    @Test
+    @DisplayName("Should update escribano credential on an existing persona")
+    void shouldUpdateEscribanoCredentialOnExistingPersona() {
+        testPersona.setRegistroEscribano(1234);
+        testPersona.setRegistroEscribano(5678);
+        when(personaRepository.save(testPersona)).thenReturn(testPersona);
+
+        Persona result = personaService.save(testPersona);
+
+        assertThat(result.getRegistroEscribano()).isEqualTo(5678);
+        verify(personaRepository, times(1)).save(testPersona);
+    }
+
+    @Test
     @DisplayName("Should delete persona by id")
     void shouldDeletePersonaById() {
         personaService.deleteById(1);
