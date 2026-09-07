@@ -41,6 +41,7 @@ public class GestionQueryService {
                 gestion.getEncabezado(),
                 gestion.getFechaInicio(),
                 gestion.getFkIdEstadoDeGestion() != null ? gestion.getFkIdEstadoDeGestion().getNombre() : null,
-                gestion.getTramiteList() != null ? gestion.getTramiteList().size() : 0);
+                gestion.getTramiteList() != null ? gestion.getTramiteList().size() : 0,
+                gestion.getObservaciones());
     }
 }

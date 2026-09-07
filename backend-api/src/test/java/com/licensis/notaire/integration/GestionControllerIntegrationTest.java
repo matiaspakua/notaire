@@ -21,14 +21,25 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.EstadoDeGestion;
+import com.licensis.notaire.negocio.GestionDeEscritura;
+import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
+import com.licensis.notaire.repository.GestionDeEscrituraRepository;
+import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.SuplenciaRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.testing.RequirementCoverage;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
+@RequirementCoverage({"CU02", "CU22"})
 @DisplayName("Gestion controller — create validates data before hitting the database")
 class GestionControllerIntegrationTest {
 
@@ -43,6 +54,15 @@ class GestionControllerIntegrationTest {
 
     @Autowired
     private TramiteRepository tramiteRepository;
+
+    @Autowired
+    private GestionDeEscrituraRepository gestionDeEscrituraRepository;
+
+    @Autowired
+    private PersonaRepository personaRepository;
+
+    @Autowired
+    private SuplenciaRepository suplenciaRepository;
 
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -222,5 +242,59 @@ class GestionControllerIntegrationTest {
                         .content(updateBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idGestion").value(gestionId));
+    }
+
+    @Test
+    @DisplayName("Should redirect a gestion to the suplente when the requested escribano has an active suplencia")
+    void shouldRedirectToSuplenteWhenUpdatingGestionEscribano() throws Exception {
+        Integer clienteId = createPersona("42000016");
+        Integer escribanoId = createPersona("42000017");
+        Integer suplenteId = createPersona("42000018");
+        Integer presupuestoId = createPresupuesto(clienteId);
+        Integer estadoId = createEstadoDeGestion();
+        Integer tipoTramiteId = createTipoDeTramite();
+        String createBody = """
+                {"numero": 9205, "encabezado": "Gestion IT", "presupuestoId": %d,
+                 "escribanoId": %d, "estadoGestionId": %d, "tipoTramiteId": %d}
+                """.formatted(presupuestoId, escribanoId, estadoId, tipoTramiteId);
+        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer gestionId = mapper.readTree(created.getResponse().getContentAsString()).get("idGestion").asInt();
+        createActiveSuplencia(escribanoId, suplenteId);
+
+        String updateBody = """
+                {"numero": 9205, "encabezado": "Gestion IT", "presupuestoId": %d,
+                 "escribanoId": %d, "estadoGestionId": %d, "tipoTramiteId": %d}
+                """.formatted(presupuestoId, escribanoId, estadoId, tipoTramiteId);
+        mockMvc.perform(put("/api/v1/gestiones/" + gestionId + "/complete-case")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBody))
+                .andExpect(status().isOk());
+
+        GestionDeEscritura gestion = gestionDeEscrituraRepository.findById(gestionId).orElseThrow();
+        Persona suplente = personaRepository.findById(suplenteId).orElseThrow();
+        assertThat(gestion.getFkIdPersonaEscribano().getIdPersona())
+                .as("the gestion should be redirected to the suplente, not the requested escribano")
+                .isEqualTo(suplenteId);
+        assertThat(gestion.getObservaciones())
+                .as("the redirection should be recorded, identifying both escribanos")
+                .contains(suplente.getNombre())
+                .contains(suplente.getApellido());
+    }
+
+    private void createActiveSuplencia(Integer escribanoId, Integer suplenteId) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date fechaInicio = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, 2);
+        Date fechaFin = calendar.getTime();
+
+        Suplencia suplencia = new Suplencia(null, fechaInicio, fechaFin);
+        suplencia.setFkIdSuplantado(personaRepository.findById(escribanoId).orElseThrow());
+        suplencia.setFkIdSuplente(personaRepository.findById(suplenteId).orElseThrow());
+        suplenciaRepository.save(suplencia);
     }
 }

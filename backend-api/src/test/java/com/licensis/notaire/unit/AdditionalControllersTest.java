@@ -147,6 +147,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.repository.TramiteRepository.class),
                     mock(com.licensis.notaire.repository.InmuebleRepository.class),
                     mock(com.licensis.notaire.service.GestionArchiveDebtService.class),
+                    mock(com.licensis.notaire.service.GestionSuplenciaService.class),
                     mock(com.licensis.notaire.service.GestionResumenFinancieroService.class),
                     bitacoraService, transitionService, documentoEntidadExternaService,
                     reingresoDocumentacionService, mock(com.licensis.notaire.service.CarpetaTramiteService.class)))
@@ -158,7 +159,7 @@ class AdditionalControllersTest {
             com.licensis.notaire.negocio.Persona escr = new com.licensis.notaire.negocio.Persona();
             escr.setIdPersona(99);
             g.setFkIdPersonaEscribano(escr);
-            var summary = new com.licensis.notaire.dto.DtoGestionSummary(1, 10, "Gestion", new Date(), null, 0);
+            var summary = new com.licensis.notaire.dto.DtoGestionSummary(1, 10, "Gestion", new Date(), null, 0, null);
             when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
             when(queryService.findById(1)).thenReturn(Optional.of(summary));

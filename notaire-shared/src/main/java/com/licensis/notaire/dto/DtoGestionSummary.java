@@ -13,5 +13,6 @@ public record DtoGestionSummary(
         String encabezado,
         Date fechaInicio,
         String estadoActual,
-        int tramiteCount) {
+        int tramiteCount,
+        String observaciones) {
 }
