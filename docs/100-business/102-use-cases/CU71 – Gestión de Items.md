@@ -33,3 +33,14 @@
 ## Tipo de Ítem (Normal / Descuento / Recargo)
 
 Todo ítem tiene un `tipo`: `NORMAL` (por defecto), `DESCUENTO` o `RECARGO`. Al seleccionar `DESCUENTO` o `RECARGO` en el formulario, el campo `motivo` se vuelve obligatorio y se valida tanto en el cliente como en el servidor. El monto de un ítem `DESCUENTO` resta del total del presupuesto; el de un `RECARGO` suma (ver CU45).
+
+## Agregar copias de ítems del catálogo a un presupuesto (Issue #834)
+
+Desde el diálogo de ítems de un presupuesto (`/dashboard/presupuestos`),
+el Escribano puede elegir un ítem existente del catálogo (`Item` sin
+`fk_id_presupuesto`) y agregarlo como copia al presupuesto (endpoint
+`POST /api/v1/presupuestos/{id}/items-desde-catalogo`, recibe una lista
+de IDs de ítems del catálogo). Cada copia es un `Item` nuevo e
+independiente asociado al presupuesto; modificarla no altera el ítem del
+catálogo original. Ver también CU39 – Crear Plantilla Presupuesto para la
+carga masiva de ítems desde la plantilla del tipo de trámite.

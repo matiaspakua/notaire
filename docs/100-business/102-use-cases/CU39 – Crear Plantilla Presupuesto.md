@@ -39,3 +39,15 @@ de documento asociado a ese trámite (`PlantillaCostoDocumento`). Debe
 indicarse exactamente uno de los dos (monto fijo o porcentaje variable), no
 ambos ni ninguno. Ver CU27 – Ingresar nuevo tipo de documento para cómo ese
 costo se refleja luego en el presupuesto de un trámite concreto.
+
+## Cargar ítems de la plantilla en un presupuesto real (Issue #834)
+
+Desde la pantalla de presupuestos (`/dashboard/presupuestos`), el
+Escribano puede abrir el diálogo de ítems de un presupuesto ya creado,
+elegir un `TipoDeTramite` y cargar de un solo paso, como ítems del
+presupuesto, los conceptos definidos en la `PlantillaPresupuesto` de ese
+tipo de trámite (endpoint `POST
+/api/v1/presupuestos/{id}/items-desde-plantilla?tipoTramiteId=X`). Si el
+tipo de trámite seleccionado no tiene plantilla configurada, el sistema
+informa el error y no agrega ningún ítem. Ver también CU71 – Gestión de
+Items para la carga de ítems individuales desde el catálogo.

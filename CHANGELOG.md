@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Cargar presupuesto desde plantilla y catálogo de ítems** (issue #834,
+  CU39/CU71): the presupuestos screen now offers, per presupuesto, a
+  dialog to (1) pick a `TipoDeTramite` and load its `PlantillaPresupuesto`
+  conceptos as ítems in one step (`POST
+  /api/v1/presupuestos/{id}/items-desde-plantilla?tipoTramiteId=X`, 400 if
+  the tipo de trámite has no plantilla), and (2) add copies of existing
+  catalog `Item`s to the presupuesto (`POST
+  /api/v1/presupuestos/{id}/items-desde-catalogo`). Replaces the previous
+  free-text `montoInmueble` field as the only way to price a presupuesto.
 - **Recibo de pago en PDF** (issue #23, CU15/RF-21): new
   `GET /api/v1/reportes/recibo-pago/{idPago}` endpoint generates a PDF recibo
   (cliente, fecha, concepto(s), total abonado) for an existing pago, 404 if
