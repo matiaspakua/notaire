@@ -41,9 +41,11 @@ explícitamente y el resto del circuito de cobranza ya está resuelto.
 ## Capabilities
 
 ### New Capabilities
+
 - `pago-recibo`: generación de un comprobante/recibo en PDF para un pago ya registrado, detallando cliente, fecha, concepto(s) y total.
 
 ### Modified Capabilities
+
 _Ninguna — no se altera el contrato de `POST /api/v1/pagos` ni de ningún endpoint existente._
 
 ## Impact Analysis

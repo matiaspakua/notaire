@@ -12,12 +12,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "workflow_definition")
-public class WorkflowDefinition implements Serializable {
+public class WorkflowDefinition implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,6 +52,14 @@ public class WorkflowDefinition implements Serializable {
     public WorkflowDefinition(Integer id) {
         this.id = id;
     }
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
 
     public Integer getId() {
         return id;

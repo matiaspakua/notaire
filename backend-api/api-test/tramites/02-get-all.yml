@@ -5,7 +5,7 @@ info:
   description: "## GET /api/v1/tramites — respuesta paginada"
 http:
   method: GET
-  url: "{{base_url}}/api/v1/tramites"
+  url: "{{base_url}}/api/v1/tramites?size=1000"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

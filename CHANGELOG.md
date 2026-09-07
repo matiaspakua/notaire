@@ -245,6 +245,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   renamed `auth/` to `00-auth/` so its login/rate-limit fixtures run first.
   Full suite now at 149 requests / 266 tests passing
   (`backend-api/api-test/COVERAGE.md`).
+- **Silent-delete `isNew()` bug extended to 30 more entities** (issue #957):
+  the same root cause behind #952's `historial`/`items`/`pagos`/`tramites`
+  fix — Spring Data's default `isNew()` misreading a primitive `@Version` of
+  `0` as "new" — was present on every other surrogate-key entity (`Rol`,
+  `TipoDeDocumento`, `TipoDeFolio`, `TipoDeTramite`, `TipoIdentificacion`,
+  `EstadoDeGestion`, `WorkflowDefinition`/`Node`/`Transition`, `Persona`,
+  `Usuario`, `Escritura`, `GestionDeEscritura`, `Presupuesto`, `Testimonio`,
+  `Cuaderno`, `Folio`, `Inmueble`, `MinutaInscripcion`,
+  `MovimientoTestimonio`, `DocumentoPresentado`, `RegistroAuditoria`,
+  `Suplencia`, `Concepto`, `Copia`) and on the 5 `@EmbeddedId`
+  composite-key join entities (`FoliosCopias`, `PlantillaCostoDocumento`,
+  `PlantillaPresupuesto`, `PlantillaTramite`, `TramitesPersonas`), where
+  `DELETE` would return `200`/`204` but silently leave the row in place. All
+  30 now implement `Persistable<Integer>` or `Persistable<XxxPK>` (composite
+  keys use a `@Transient boolean isNew` flag flipped by `@PostLoad`/
+  `@PrePersist`, since a client-assigned `@EmbeddedId` is never null). Also
+  verified the two riskiest `EAGER`+`CascadeType.ALL` cascades
+  (`Concepto.plantillaPresupuestoList`, `Presupuesto.pagoList`) correctly
+  cascade-delete their children now that `isNew()` is fixed.
 - **`CheckboxField` click target excluded the gap between the input and its label**
   (issue #930, CU08): the shared `CheckboxField` pattern (`frontend/src/theme/form-patterns.tsx`)
   rendered a wrapping `<div>` with a separate `<input>` and `<label htmlFor>`, leaving the

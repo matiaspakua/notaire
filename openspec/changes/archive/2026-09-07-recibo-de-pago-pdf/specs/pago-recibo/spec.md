@@ -12,11 +12,13 @@ al cliente al cierre de una gestión de cobranza.
 ## ADDED Requirements
 
 ### Requirement: Emitir recibo de un pago existente
+
 El sistema SHALL generar un PDF de recibo para un pago ya persistido,
 detallando el cliente que abona, la fecha de pago, el/los concepto(s)
 abonado(s) y el total abonado.
 
 #### Scenario: Recibo de un pago simple
+
 - **WHEN** se solicita el recibo de un `idPago` existente cuyo presupuesto
   tiene un cliente e ítems asociados
 - **THEN** el sistema responde `200 OK` con `Content-Type: application/pdf`
@@ -24,11 +26,13 @@ abonado(s) y el total abonado.
   de al menos un ítem del presupuesto y el monto del pago
 
 #### Scenario: Recibo de un pago parcial o en cuotas
+
 - **WHEN** se solicita el recibo de un pago que corresponde a una cuota
   parcial de un presupuesto con saldo pendiente
 - **THEN** el recibo muestra el monto de esa cuota (el `monto` del pago),
   no el total del presupuesto
 
 #### Scenario: Recibo de un pago inexistente
+
 - **WHEN** se solicita el recibo de un `idPago` que no existe
 - **THEN** el sistema responde `404 Not Found`

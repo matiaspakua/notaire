@@ -12,12 +12,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
-public class Rol implements Serializable {
+public class Rol implements Serializable, Persistable<Integer> {
 
     @Version
     @Column(name = "version")
@@ -44,6 +45,21 @@ public class Rol implements Serializable {
 
     public Rol() {
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idRol;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idRol == null || idRol.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdRol() {
         return idRol;

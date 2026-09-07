@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoSuplencia;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.Date;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -45,7 +46,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "Suplencia.findByFechaFin", query = "SELECT s FROM Suplencia s WHERE s.fechaFin = :fechaFin"),
             @NamedQuery(name = "Suplencia.findSuplenciasPorAnio", query = "SELECT s FROM Suplencia s WHERE s.fechaInicio >= :fechaInicio AND s.fechaFin <= :fechaFin"),
         })
-public class Suplencia implements Serializable
+public class Suplencia implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -90,6 +91,21 @@ public class Suplencia implements Serializable
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idSuplencia;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idSuplencia == null || idSuplencia.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdSuplencia()
     {

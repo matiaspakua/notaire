@@ -7,6 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoInmueble;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.Basic;
@@ -37,7 +38,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "Inmueble.findByIdInmueble", query = "SELECT i FROM Inmueble i WHERE i.idInmueble = :idInmueble"),
         @NamedQuery(name = "Inmueble.findByNomenclatura", query = "SELECT i FROM Inmueble i WHERE i.nomenclaturaCatastral = :nomenclatura")
 })
-public class Inmueble implements Serializable {
+public class Inmueble implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -81,6 +82,21 @@ public class Inmueble implements Serializable {
     public Inmueble(Integer idInmueble) {
         this.idInmueble = idInmueble;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idInmueble;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idInmueble == null || idInmueble.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdInmueble() {
         return idInmueble;

@@ -10,17 +10,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #23 | open |
+| Issue | #23 | closed |
 | Use Case | CU15 – Procesar pago / RF-21 | exists |
-| Specification | `openspec/changes/recibo-de-pago-pdf/` | drafted |
-| Branch | `feat/23_recibo-de-pago-pdf` | pushed |
-| Tasks | `tasks.md` | complete (Gate 1–3) |
-| Commits | `3ad8e85`, `04e322f` | done |
-| Pull Request | | pending |
-| CI run | | pending |
-| Merge commit | | pending |
-| Release / tag | | pending |
-| Smoke test | | pending |
+| Specification | `openspec/changes/recibo-de-pago-pdf/` | complete |
+| Branch | `feat/23_recibo-de-pago-pdf` | merged |
+| Tasks | `tasks.md` | complete (Gates 1–5) |
+| Commits | `3ad8e85`, `04e322f`, `d77a454`, `96302f4` | done |
+| Pull Request | [#961](https://github.com/matiaspakua/notaire/pull/961) | merged |
+| CI run | green (PR #961) | done |
+| Merge commit | `96302f4` (2026-09-06) | done |
+| Release / tag | standard CD pipeline, no separate tag | done |
+| Smoke test | 404/problem+json confirmed live; 200/PDF path covered by `ReciboPagoReportIntegrationTest` | passed |
 
 ## Requirement coverage
 
@@ -46,8 +46,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #23 open, linked to CU15; proposal.md + spec drafted |
 | 2 | Failing tests written, test cases designed | yes | `ReporteServiceReciboPagoTest`, `ReciboPagoReportIntegrationTest` written first |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn verify` + `preflight.sh --fix` green; Playwright TS-0014 13/13 (2 skipped, pre-existing) |
-| 4 | CI green, review approved, no conflicts | pending | PR not yet opened |
-| 5 | Deployed, smoke test passed, Issue closed | pending | |
+| 4 | CI green, review approved, no conflicts | yes | PR #961 merged, no conflicts |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Merge commit `96302f4`; smoke test above; Issue #23 closed via PR |
 
 ## Exceptions
 

@@ -17,6 +17,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
 
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.Date;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "minutas_inscripcion")
-public class MinutaInscripcion implements Serializable {
+public class MinutaInscripcion implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,6 +82,21 @@ public class MinutaInscripcion implements Serializable {
     @Column(name = "version")
     @Version
     private int version;
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idMinutaInscripcion;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idMinutaInscripcion == null || idMinutaInscripcion.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdMinutaInscripcion() {
         return idMinutaInscripcion;

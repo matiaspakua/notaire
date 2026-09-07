@@ -8,6 +8,7 @@ import com.licensis.notaire.dto.DtoCopia;
 import com.licensis.notaire.dto.DtoTestimonio;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +49,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
             @NamedQuery(name = "Copia.findByTestimonio", query = "SELECT c FROM Copia c WHERE c.fkIdTestimonio.idTestimonio = :idTestimonio"),
             @NamedQuery(name = "Copia.findByFechaRetiro", query = "SELECT c FROM Copia c WHERE c.fechaRetiro = :fechaRetiro")
         })
-public class Copia implements Serializable
+public class Copia implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
@@ -102,6 +103,21 @@ public class Copia implements Serializable
         this.numero = numero;
         this.fechaImpresion = fechaImpresion;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idCopia;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idCopia == null || idCopia.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdCopia()
     {

@@ -6,6 +6,7 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import java.io.Serializable;
+import org.springframework.data.domain.Persistable;
 import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -38,7 +39,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "TipoIdentificacion.findAll", query = "SELECT t FROM TipoIdentificacion t"),
         @NamedQuery(name = "TipoIdentificacion.findByIdTipoIdentificacion", query = "SELECT t FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = :idTipoIdentificacion")
 })
-public class TipoIdentificacion implements Serializable {
+public class TipoIdentificacion implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -75,6 +76,21 @@ public class TipoIdentificacion implements Serializable {
         this.idTipoIdentificacion = idTipoIdentificacion;
         this.nombre = nombre;
     }
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public Integer getId() {
+        return idTipoIdentificacion;
+    }
+
+    // Overrides Spring Data's default isNew(), which infers "new" from a primitive
+    // @Version field being 0 -- indistinguishable from an already-persisted row that
+    // was never updated, causing deleteById()/delete() to silently no-op for it.
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return idTipoIdentificacion == null || idTipoIdentificacion.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+    }
+
 
     public Integer getIdTipoIdentificacion() {
         return idTipoIdentificacion;

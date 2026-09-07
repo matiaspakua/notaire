@@ -5,6 +5,11 @@
 package com.licensis.notaire.negocio;
 
 import java.io.Serializable;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -33,7 +38,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "TramitesPersonas.findByTramiteCliente", query = "SELECT t FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
         //@NamedQuery(name = "TramitesPersonas.eliminarRegistro", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
         })
-public class TramitesPersonas implements Serializable
+public class TramitesPersonas implements Serializable, Persistable<TramitesPersonasPK>
 {
 
     @Basic(optional = false)
@@ -52,6 +57,31 @@ public class TramitesPersonas implements Serializable
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Tramite tramite;
+    @Transient
+    private boolean isNewEntity = true;
+
+    // Sets by Spring Data JPA's isNew() default heuristic for entities whose @EmbeddedId
+    // is client-assigned (never null), so id-nullness cannot signal "new" the way it does
+    // for @GeneratedValue entities. A transient flag flipped by these lifecycle callbacks
+    // is the correct, standard Spring Data pattern for this case.
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNewEntity = false;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public TramitesPersonasPK getId() {
+        return tramitesPersonasPK;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return isNewEntity;
+    }
+
 
     public TramitesPersonas()
     {

@@ -7,6 +7,11 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoPlantillaPresupuesto;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jakarta.persistence.Basic;
@@ -34,7 +39,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
             @NamedQuery(name = "PlantillaPresupuesto.findByFkIdTipoTramite", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdTipoTramite = :fkIdTipoTramite"),
             @NamedQuery(name = "PlantillaPresupuesto.findByFkIdConcepto", query = "SELECT p FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdConcepto = :fkIdConcepto")
         })
-public class PlantillaPresupuesto implements Serializable
+public class PlantillaPresupuesto implements Serializable, Persistable<PlantillaPresupuestoPK>
 {
 
     @Basic(optional = false)
@@ -52,6 +57,31 @@ public class PlantillaPresupuesto implements Serializable
     @JoinColumn(name = "fk_id_concepto", referencedColumnName = "id_concepto", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Concepto concepto;
+    @Transient
+    private boolean isNewEntity = true;
+
+    // Sets by Spring Data JPA's isNew() default heuristic for entities whose @EmbeddedId
+    // is client-assigned (never null), so id-nullness cannot signal "new" the way it does
+    // for @GeneratedValue entities. A transient flag flipped by these lifecycle callbacks
+    // is the correct, standard Spring Data pattern for this case.
+    @PrePersist
+    @PostLoad
+    void markNotNew() {
+        this.isNewEntity = false;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public PlantillaPresupuestoPK getId() {
+        return plantillaPresupuestoPK;
+    }
+
+    @Override
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public boolean isNew() {
+        return isNewEntity;
+    }
+
 
     public PlantillaPresupuesto()
     {
