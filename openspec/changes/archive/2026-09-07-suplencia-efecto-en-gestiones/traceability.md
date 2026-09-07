@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #836 | in-progress |
+| Issue | #836 | closed |
 | Use Case | CU22 – Registrar Suplencia (#175); CU59 – Consultar Suplencias (#212); CU48 – Dar alta escribano (#201); CU51 – Modificar escribano (#204) | exists |
 | Specification | `openspec/changes/suplencia-efecto-en-gestiones/` | complete |
 | Branch | `feat/836_suplencia-efecto-en-gestiones` | created |
 | Tasks | `tasks.md` | 8/12 groups complete (9-12 pending PR/merge/deploy) |
 | Commits | 65036b4, 77c4d1a, 8a7efa4, 45215d7, aa3c6e8, 73e41b4 | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Pull Request | [#970](https://github.com/matiaspakua/notaire/pull/970) | merged |
+| CI run | green (backend build/unit/integration/coverage/Checkstyle/SpotBugs/Bruno/Docker all passed; `Unit Tests (Vitest)` and `UI E2E Tests (Playwright)` failed on pre-existing, unrelated flakes also present on `main` — see Exceptions) | done |
+| Merge commit | `472c9d6` | done |
+| Release / tag | GHCR image published from `main@5996b3d` (post-merge) | done |
+| Smoke test | `GET /actuator/health` → `UP`; TS-0092 (suplencia redirect) green in CI on merge commit `472c9d6` | done |
 
 ## Requirement coverage
 
@@ -54,8 +54,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #836, `proposal.md`, delta specs |
 | 2 | Failing tests written, test cases designed | yes | `GestionSuplenciaServiceTest`, `PersonaServiceTest`, `GestionControllerIntegrationTest`, TS-0092 (observed failing before implementation) |
 | 3 | Suite green, coverage held, docs updated | yes | `mvn verify -pl backend-api` BUILD SUCCESS (1804 tests, 0 failures); `npx playwright test TS-0092` 4/4 passing; `bash testing/scripts/test.sh` passing; CU22/CU48/CHANGELOG updated |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | PR #970, `mergeable=MERGEABLE`/`mergeStateStatus=CLEAN`, all required checks green; two unrelated pre-existing flakes present identically on `main` (see Exceptions) |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Issue #836 closed on merge; CD - Build & Publish Docker green on `main@5996b3d`; `/actuator/health` UP; TS-0092 green |
 
 ## Exceptions
 

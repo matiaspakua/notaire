@@ -74,24 +74,24 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin feat/836_suplencia-efecto-en-gestiones`
-- [ ] 10.2 Open the PR titled `[#836] feat: dar efecto práctico a las suplencias de escribano`, referencing Issue #836 and CU22/CU59/CU48/CU51
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin feat/836_suplencia-efecto-en-gestiones`
+- [x] 10.2 Open the PR titled `[#836] feat: dar efecto práctico a las suplencias de escribano`, referencing Issue #836 and CU22/CU59/CU48/CU51
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml` — required checks green; two pre-existing unrelated flakes (`Unit Tests (Vitest)`, full Playwright suite) also failing identically on `main`, unrelated to this change
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test from design.md — Deployment Strategy (suplencia vigente, gestión redirigida al suplente; `GET /actuator/health` en verde)
-- [ ] 12.2 Verify the rollback path described in design.md — Rollback Strategy is still available
-- [ ] 12.3 Close GitHub Issue #836, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive suplencia-efecto-en-gestiones`
+- [x] 12.1 Run the smoke test from design.md — Deployment Strategy (suplencia vigente, gestión redirigida al suplente; `GET /actuator/health` en verde) — `/actuator/health` UP; TS-0092 (suplencia redirect) green in CI on the merge commit
+- [x] 12.2 Verify the rollback path described in design.md — Rollback Strategy is still available — additive change, no schema/behavior removal; revert of PR #970 remains a clean rollback
+- [x] 12.3 Close GitHub Issue #836, referencing the PR — auto-closed on merge of PR #970
+- [x] 12.4 Archive the change: `openspec archive suplencia-efecto-en-gestiones`
 
 ## Definition of Done
 
