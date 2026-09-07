@@ -119,7 +119,7 @@ export default function GestionesPage() {
         });
         toast.success(t("updated"));
       } else {
-        await createCompleteMutation.mutateAsync({
+        const created = await createCompleteMutation.mutateAsync({
           numero: Number(numero),
           presupuestoId: Number(presupuestoId),
           escribanoId: Number(escribanoId),
@@ -128,11 +128,18 @@ export default function GestionesPage() {
           inmuebleId: inmuebleId ? Number(inmuebleId) : undefined,
         });
         toast.success(t("created"));
+        notifySuplenciaRedirect(created.observaciones);
       }
     } catch {
       toast.error(t("errorSave"));
     } finally {
       setModalOpen(false);
+    }
+  }
+
+  function notifySuplenciaRedirect(observaciones?: string) {
+    if (observaciones?.includes("redirigida por suplencia activa")) {
+      toast.info(t("suplenciaRedirected"), { description: observaciones });
     }
   }
 

@@ -23,6 +23,7 @@ export interface Persona {
   telefono?: string;
   domicilio?: string;
   esCliente?: boolean;
+  registroEscribano?: number;
 }
 
 export interface Rol {
@@ -157,6 +158,7 @@ export interface GestionDeEscritura {
   idGestion?: number;
   numero?: number;
   encabezado?: string;
+  observaciones?: string;
   fechaInicio?: string;
   estadoActual?: string;
   tramiteCount?: number;

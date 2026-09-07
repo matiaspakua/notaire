@@ -292,6 +292,19 @@ export default function PersonasPage() {
                   onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
                 />
               </FormField>
+              <FormField label={t("fields.registroEscribano")} helperText={t("helperText.registroEscribano")}>
+                <Input
+                  type="number"
+                  value={editing.registroEscribano ?? ""}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      registroEscribano: e.target.value ? Number(e.target.value) : undefined,
+                    })
+                  }
+                  data-testid="input-registro-escribano"
+                />
+              </FormField>
               <CheckboxField
                 label={t("fields.esCliente")}
                 checked={editing.esCliente ?? false}

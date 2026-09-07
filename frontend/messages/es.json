@@ -158,7 +158,11 @@
       "email": "Email",
       "telefono": "Teléfono",
       "domicilio": "Domicilio",
-      "esCliente": "Es cliente"
+      "esCliente": "Es cliente",
+      "registroEscribano": "Registro de escribano"
+    },
+    "helperText": {
+      "registroEscribano": "Número de registro notarial. Se usa para identificar al escribano en suplencias."
     },
     "badges": {
       "client": "Cliente",
@@ -177,6 +181,7 @@
     "created": "Gestión creada",
     "updated": "Gestión actualizada",
     "deleted": "Gestión eliminada",
+    "suplenciaRedirected": "La gestión fue redirigida al escribano suplente vigente",
     "errorSave": "Error al guardar la gestión",
     "errorDelete": "Error al eliminar la gestión",
     "noData": "No hay gestiones registradas",
