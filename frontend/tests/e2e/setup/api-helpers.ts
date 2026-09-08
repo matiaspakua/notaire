@@ -379,7 +379,14 @@ export async function createPago(
 export async function createFolio(
   page: Page,
   personaId?: number,
-  overrides: { numero?: number; anio?: number; estado?: string; tipoFolioId?: number; escribanoId?: number } = {},
+  overrides: {
+    numero?: number;
+    anio?: number;
+    estado?: string;
+    tipoFolioId?: number;
+    escribanoId?: number;
+    escrituraId?: number;
+  } = {},
 ): Promise<ApiResult<{ idFolio: number }>> {
   return apiPost(page, "/folio", {
     numero: Math.floor(10000 + Math.random() * 90000),

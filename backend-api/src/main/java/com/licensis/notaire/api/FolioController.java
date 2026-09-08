@@ -1,9 +1,11 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoFolio;
+import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Persona;
 import com.licensis.notaire.negocio.TipoDeFolio;
+import com.licensis.notaire.repository.EscrituraRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonaRepository;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
@@ -34,6 +36,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/folio")
 @Tag(name = "Folio", description = "API para gestionar folio")
+@Transactional
 public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
@@ -46,19 +49,23 @@ public class FolioController {
             @NotBlank String estado,
             String observaciones,
             Integer tipoFolioId,
-            Integer escribanoId
+            Integer escribanoId,
+            Integer escrituraId
     ) {}
 
     private final FolioRepository folioRepository;
     private final TipoDeFolioRepository tipoDeFolioRepository;
     private final PersonaRepository personaRepository;
+    private final EscrituraRepository escrituraRepository;
 
     public FolioController(FolioRepository folioRepository,
                            TipoDeFolioRepository tipoDeFolioRepository,
-                           PersonaRepository personaRepository) {
+                           PersonaRepository personaRepository,
+                           EscrituraRepository escrituraRepository) {
         this.folioRepository = folioRepository;
         this.tipoDeFolioRepository = tipoDeFolioRepository;
         this.personaRepository = personaRepository;
+        this.escrituraRepository = escrituraRepository;
     }
 
     @GetMapping
@@ -120,6 +127,14 @@ public class FolioController {
         if (tipo.isEmpty() || escribano.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+        Escritura escritura = null;
+        if (request.escrituraId() != null) {
+            Optional<Escritura> found = escrituraRepository.findById(request.escrituraId());
+            if (found.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            escritura = found.get();
+        }
         try {
             Folio folio = new Folio();
             folio.setNumero(request.numero());
@@ -128,6 +143,10 @@ public class FolioController {
             folio.setObservaciones(request.observaciones());
             folio.setFkIdTipoFolio(tipo.get());
             folio.setFkIdPersonaEscribano(escribano.get());
+            if (escritura != null) {
+                folio.setFkIdEscritura(escritura);
+                folio.setEstado(ESTADO_UTILIZADO);
+            }
             Folio saved = folioRepository.save(folio);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved.getDto());
         } catch (Exception e) {
@@ -136,9 +155,21 @@ public class FolioController {
         }
     }
 
+    /**
+     * A folio Utilizado can only be re-saved when the request targets the same
+     * escritura it is already linked to (idempotent re-save); any other change
+     * while Utilizado is rejected.
+     */
+    private boolean linksSameEscritura(Folio folio, FolioRequest request) {
+        Escritura linked = folio.getFkIdEscritura();
+        return linked != null && request.escrituraId() != null
+                && linked.getIdEscritura().equals(request.escrituraId());
+    }
+
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar folio")
@@ -147,11 +178,19 @@ public class FolioController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        if (ESTADO_UTILIZADO.equals(existing.get().getEstado())) {
+        Folio folio = existing.get();
+        if (ESTADO_UTILIZADO.equals(folio.getEstado()) && !linksSameEscritura(folio, request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Este folio está en uso (Utilizado) y no puede modificarse."));
         }
-        Folio folio = existing.get();
+        Escritura escritura = null;
+        if (request.escrituraId() != null) {
+            Optional<Escritura> found = escrituraRepository.findById(request.escrituraId());
+            if (found.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            escritura = found.get();
+        }
         folio.setNumero(request.numero());
         folio.setAnio(request.anio());
         folio.setEstado(request.estado());
@@ -161,6 +200,10 @@ public class FolioController {
         }
         if (request.escribanoId() != null) {
             personaRepository.findById(request.escribanoId()).ifPresent(folio::setFkIdPersonaEscribano);
+        }
+        if (escritura != null) {
+            folio.setFkIdEscritura(escritura);
+            folio.setEstado(ESTADO_UTILIZADO);
         }
         try {
             Folio saved = folioRepository.save(folio);

@@ -4,6 +4,7 @@
  */
 package com.licensis.notaire.negocio;
 
+import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPersona;
 import com.licensis.notaire.jpa.ConstantesPersistencia;
@@ -287,6 +288,10 @@ public class Folio implements Serializable, Persistable<Integer>
             this.setEstado(unDtoFolio.getEstado());
             this.setObservaciones(unDtoFolio.getObservaciones());
             this.setVersion(unDtoFolio.getVersion());
+            if (unDtoFolio.getEscritura() != null)
+            {
+                this.setFkIdEscritura(new Escritura(unDtoFolio.getEscritura().getIdEscritura()));
+            }
         }
     }
 
@@ -312,6 +317,17 @@ public class Folio implements Serializable, Persistable<Integer>
         }
 
         miDtoFolio.setTiposDeFolio(this.fkIdTipoFolio.getDto());
+
+        if (this.fkIdEscritura != null)
+        {
+            // Not fkIdEscritura.getDto(): that walks Escritura's lazy folioList, which
+            // includes this same Folio, and would recurse back into Folio.getDto().
+            DtoEscritura miDtoEscritura = new DtoEscritura();
+            miDtoEscritura.setIdEscritura(this.fkIdEscritura.getIdEscritura());
+            miDtoEscritura.setNumero(this.fkIdEscritura.getNumero());
+            miDtoEscritura.setEstado(this.fkIdEscritura.getEstado());
+            miDtoFolio.setEscritura(miDtoEscritura);
+        }
 
         return miDtoFolio;
     }

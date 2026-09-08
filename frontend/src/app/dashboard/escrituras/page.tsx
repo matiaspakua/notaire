@@ -96,6 +96,14 @@ export default function EscriturasPage() {
     { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fechaEscrituracion) },
     { key: "estado", header: t("fields.estado"), render: (e) => e.estado ?? "—" },
     {
+      key: "folio",
+      header: t("fields.folio"),
+      render: (e) => {
+        const linked = folios.find((f) => f.escritura?.idEscritura === e.idEscritura);
+        return linked ? `Folio #${linked.idFolio}` : "—";
+      },
+    },
+    {
       key: "actions", header: "", className: "w-32",
       render: (e) => (
         <div className="flex gap-2 justify-end">

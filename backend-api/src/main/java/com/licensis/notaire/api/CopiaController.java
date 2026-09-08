@@ -2,6 +2,7 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.repository.CopiaRepository;
+import com.licensis.notaire.repository.MovimientoTestimonioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/copia")
@@ -30,9 +32,12 @@ public class CopiaController {
     private static final Logger log = LoggerFactory.getLogger(CopiaController.class);
 
     private final CopiaRepository repository;
+    private final MovimientoTestimonioRepository movimientoTestimonioRepository;
 
-    public CopiaController(CopiaRepository repository) {
+    public CopiaController(CopiaRepository repository,
+                            MovimientoTestimonioRepository movimientoTestimonioRepository) {
         this.repository = repository;
+        this.movimientoTestimonioRepository = movimientoTestimonioRepository;
     }
 
     @GetMapping
@@ -63,6 +68,12 @@ public class CopiaController {
     @PostMapping
     @Operation(summary = "Crear nueva copia")
     public ResponseEntity<Object> create(@RequestBody Copia entity) {
+        if (entity.getFkIdTestimonio() != null
+                && movimientoTestimonioRepository.existsByFkIdTestimonioIdTestimonioAndInscriptaTrue(
+                        entity.getFkIdTestimonio().getIdTestimonio())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "El testimonio ya tiene un movimiento inscripto y no admite nuevas copias."));
+        }
         try {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity);

@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Vincular escritura a folio y validar copia de testimonio ya inscripto**
+  (issue #838, CU87): `POST`/`PUT /api/v1/folio` accept an optional
+  `escrituraId`; linking sets the folio's `estado` to `Utilizado` and
+  rejects (`409`) linking a folio already `Utilizado` by a different
+  escritura (re-saving the same escritura is idempotent). `POST
+  /api/v1/copia` now rejects (`409`) creating a copia when its source
+  testimonio has a `MovimientoTestimonio` with `inscripta = true`. The
+  folios admin screen lets the Escribano pick an unlinked, `Firmada`
+  escritura when creating/editing a folio, and the escrituras screen
+  shows the linked folio.
 - **Suplencias con efecto práctico en la asignación de gestiones** (issue
   #836, CU22/CU48/CU51): a `GestionDeEscritura` created or edited
   (`POST`/`PUT .../complete-case`) for an escribano with an active
