@@ -239,4 +239,118 @@ class FolioControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
+
+    private int createEscritura() throws Exception {
+        String body = """
+                {
+                  "numero": %d,
+                  "cuerpo": "Escritura de prueba para vinculación de folio",
+                  "estado": "Sin Firmar",
+                  "fechaEscrituracion": "2026-06-16"
+                }
+                """.formatted((int) (System.currentTimeMillis() % 1_000_000));
+        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("idEscritura").asInt();
+    }
+
+    private String bodyWithEscritura(int numero, String estado, Integer escrituraId) {
+        return """
+                {
+                  "numero": %d,
+                  "anio": 2026,
+                  "estado": "%s",
+                  "tipoFolioId": 1,
+                  "escribanoId": 1,
+                  "escrituraId": %s
+                }
+                """.formatted(numero, estado, escrituraId);
+    }
+
+    @Test
+    @DisplayName("CU06/#838 — POST should link folio to escritura and force estado Utilizado")
+    void shouldLinkFolioToEscrituraOnCreate() throws Exception {
+        int idEscritura = createEscritura();
+
+        MvcResult result = mockMvc.perform(post("/api/v1/folio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9020, "Nuevo", idEscritura)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var json = mapper.readTree(result.getResponse().getContentAsString());
+        assertThat(json.get("estado").asText()).isEqualTo("Utilizado");
+        assertThat(json.get("escritura").get("idEscritura").asInt()).isEqualTo(idEscritura);
+    }
+
+    @Test
+    @DisplayName("CU06/#838 — PUT should link folio to escritura and force estado Utilizado")
+    void shouldLinkFolioToEscrituraOnUpdate() throws Exception {
+        int idEscritura = createEscritura();
+        MvcResult create = mockMvc.perform(post("/api/v1/folio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validBody(9021, "Nuevo")))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        MvcResult update = mockMvc.perform(put("/api/v1/folio/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9021, "Nuevo", idEscritura)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var json = mapper.readTree(update.getResponse().getContentAsString());
+        assertThat(json.get("estado").asText()).isEqualTo("Utilizado");
+        assertThat(json.get("escritura").get("idEscritura").asInt()).isEqualTo(idEscritura);
+    }
+
+    @Test
+    @DisplayName("CU06/#838 — POST should return 400 when escrituraId does not exist")
+    void shouldReturn400WhenEscrituraIdNotFound() throws Exception {
+        mockMvc.perform(post("/api/v1/folio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9022, "Nuevo", 999999)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("CU06/#838 — PUT should return 409 when folio is already Utilizado by another escritura")
+    void shouldRejectLinkingFolioAlreadyUtilizadoByAnotherEscritura() throws Exception {
+        int idEscrituraA = createEscritura();
+        int idEscrituraB = createEscritura();
+        MvcResult create = mockMvc.perform(post("/api/v1/folio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9023, "Nuevo", idEscrituraA)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(put("/api/v1/folio/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9023, "Nuevo", idEscrituraB)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    @DisplayName("CU06/#838 — PUT should allow re-saving a folio already linked to the same escritura")
+    void shouldAllowReSavingFolioWithSameEscritura() throws Exception {
+        int idEscritura = createEscritura();
+        MvcResult create = mockMvc.perform(post("/api/v1/folio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9024, "Nuevo", idEscritura)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
+
+        mockMvc.perform(put("/api/v1/folio/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bodyWithEscritura(9024, "Utilizado", idEscritura)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.estado").value("Utilizado"));
+    }
 }

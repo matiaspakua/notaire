@@ -22,6 +22,8 @@ public interface MovimientoTestimonioRepository extends JpaRepository<Movimiento
 
     List<MovimientoTestimonio> findByInscripta(boolean inscripta);
 
+    boolean existsByFkIdTestimonioIdTestimonioAndInscriptaTrue(Integer idTestimonio);
+
     @Query("SELECT m FROM MovimientoTestimonio m WHERE m.fechaIngreso BETWEEN :startDate AND :endDate")
     List<MovimientoTestimonio> findByFechaMovimientoBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

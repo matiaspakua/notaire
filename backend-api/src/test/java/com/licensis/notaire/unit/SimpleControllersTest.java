@@ -90,7 +90,9 @@ class SimpleControllersTest {
     @DisplayName("CopiaController")
     class CopiaControllerTests {
         private final CopiaRepository repo = mock(CopiaRepository.class);
-        private final org.springframework.test.web.servlet.MockMvc mvc = standaloneSetup(new CopiaController(repo)).build();
+        private final MovimientoTestimonioRepository movimientoTestimonioRepository = mock(MovimientoTestimonioRepository.class);
+        private final org.springframework.test.web.servlet.MockMvc mvc =
+                standaloneSetup(new CopiaController(repo, movimientoTestimonioRepository)).build();
 
         @Test
         @DisplayName("GET all should return 200")
