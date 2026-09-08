@@ -9,7 +9,7 @@
 | **Propósito** | Registra un conjunto de folios de un Escribano. |
 | **Descripción** | Un Escribano decide registrar el ingreso de nuevos folios. El sistema solicita: el número del primer y último folio del conjunto, número de registro de escribano y año. El escribano ingresa los datos indicados y guarda los cambios. |
 | **Tipo** | Primario |
-| **Referencias Cruzadas** | RF #55 (Administrar tablas base), RF #58 (Ingresar nuevos folios), RF #94 (Administrar folios), RF #95 (Cargar folios del Colegio Notarial), RF #96 (Control de numeración correlativa de folios) |
+| **Referencias Cruzadas** | RF #55 (Administrar tablas base), RF #58 (Ingresar nuevos folios), RF #94 (Administrar folios), RF #95 (Cargar folios del Colegio Notarial), RF #96 (Control de numeración correlativa de folios); CU87 (vincular el folio a la escritura que ocupa) |
 | **GitHub ID** | #181 |
 
 ## Curso de Eventos
@@ -27,3 +27,4 @@
 |---|---|---|
 | - | Flujo estándar sin desvíos | La operación se completa según el curso normal de eventos. |
 | - | Folio agrupado en un cuaderno (CU80) | El estado del folio pasa a "Asignado a cuaderno" y deja de estar disponible para agrupar en otro cuaderno. |
+| - | Folio vinculado a la escritura que ocupa (CU87) | El estado del folio pasa a "Utilizado" y deja de estar disponible para vincularse a otra escritura. |
