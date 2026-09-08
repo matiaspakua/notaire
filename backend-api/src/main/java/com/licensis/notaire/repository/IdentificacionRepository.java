@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Identificacion;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface IdentificacionRepository extends JpaRepository<Identificacion, Integer> {
 
-    List<Identificacion> findByPersona(Persona persona);
+    List<Identificacion> findByPersona(Person persona);
 
     List<Identificacion> findByPersonaIdPersona(Integer idPersona);
 

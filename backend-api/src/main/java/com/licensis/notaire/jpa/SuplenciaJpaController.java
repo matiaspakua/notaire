@@ -6,14 +6,13 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import jakarta.transaction.UserTransaction;
 
@@ -44,16 +43,16 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdSuplente = suplencia.getFkIdSuplente();
+            Person fkIdSuplente = suplencia.getFkIdSuplente();
             if (fkIdSuplente != null)
             {
-                fkIdSuplente = em.getReference(fkIdSuplente.getClass(), fkIdSuplente.getIdPersona());
+                fkIdSuplente = em.getReference(fkIdSuplente.getClass(), fkIdSuplente.getPersonId());
                 suplencia.setFkIdSuplente(fkIdSuplente);
             }
-            Persona fkIdSuplantado = suplencia.getFkIdSuplantado();
+            Person fkIdSuplantado = suplencia.getFkIdSuplantado();
             if (fkIdSuplantado != null)
             {
-                fkIdSuplantado = em.getReference(fkIdSuplantado.getClass(), fkIdSuplantado.getIdPersona());
+                fkIdSuplantado = em.getReference(fkIdSuplantado.getClass(), fkIdSuplantado.getPersonId());
                 suplencia.setFkIdSuplantado(fkIdSuplantado);
             }
             em.persist(suplencia);
@@ -86,18 +85,18 @@ public class SuplenciaJpaController implements Serializable, IPersistenciaJpa
             em = getEntityManager();
             em.getTransaction().begin();
             Suplencia persistentSuplencia = em.find(Suplencia.class, suplencia.getIdSuplencia());
-            Persona fkIdSuplenteOld = persistentSuplencia.getFkIdSuplente();
-            Persona fkIdSuplenteNew = suplencia.getFkIdSuplente();
-            Persona fkIdSuplantadoOld = persistentSuplencia.getFkIdSuplantado();
-            Persona fkIdSuplantadoNew = suplencia.getFkIdSuplantado();
+            Person fkIdSuplenteOld = persistentSuplencia.getFkIdSuplente();
+            Person fkIdSuplenteNew = suplencia.getFkIdSuplente();
+            Person fkIdSuplantadoOld = persistentSuplencia.getFkIdSuplantado();
+            Person fkIdSuplantadoNew = suplencia.getFkIdSuplantado();
             if (fkIdSuplenteNew != null)
             {
-                fkIdSuplenteNew = em.getReference(fkIdSuplenteNew.getClass(), fkIdSuplenteNew.getIdPersona());
+                fkIdSuplenteNew = em.getReference(fkIdSuplenteNew.getClass(), fkIdSuplenteNew.getPersonId());
                 suplencia.setFkIdSuplente(fkIdSuplenteNew);
             }
             if (fkIdSuplantadoNew != null)
             {
-                fkIdSuplantadoNew = em.getReference(fkIdSuplantadoNew.getClass(), fkIdSuplantadoNew.getIdPersona());
+                fkIdSuplantadoNew = em.getReference(fkIdSuplantadoNew.getClass(), fkIdSuplantadoNew.getPersonId());
                 suplencia.setFkIdSuplantado(fkIdSuplantadoNew);
             }
             suplencia = em.merge(suplencia);

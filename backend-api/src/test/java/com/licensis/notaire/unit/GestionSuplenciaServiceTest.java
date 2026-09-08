@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.repository.SuplenciaRepository;
 import com.licensis.notaire.service.GestionSuplenciaService;
@@ -33,23 +33,23 @@ class GestionSuplenciaServiceTest {
 
     private GestionSuplenciaService gestionSuplenciaService;
 
-    private Persona escribanoSolicitado;
-    private Persona suplente;
+    private Person escribanoSolicitado;
+    private Person suplente;
     private Date fechaGestion;
 
     @BeforeEach
     void setUp() {
         gestionSuplenciaService = new GestionSuplenciaService(suplenciaRepository);
 
-        escribanoSolicitado = new Persona();
-        escribanoSolicitado.setIdPersona(10);
-        escribanoSolicitado.setNombre("Escribano");
-        escribanoSolicitado.setApellido("Solicitado");
+        escribanoSolicitado = new Person();
+        escribanoSolicitado.setPersonId(10);
+        escribanoSolicitado.setFirstName("Escribano");
+        escribanoSolicitado.setLastName("Solicitado");
 
-        suplente = new Persona();
-        suplente.setIdPersona(20);
-        suplente.setNombre("Escribano");
-        suplente.setApellido("Suplente");
+        suplente = new Person();
+        suplente.setPersonId(20);
+        suplente.setFirstName("Escribano");
+        suplente.setLastName("Suplente");
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(2026, Calendar.JANUARY, 15, 0, 0, 0);
@@ -61,7 +61,7 @@ class GestionSuplenciaServiceTest {
     void shouldAssignRequestedEscribanoWhenNoActiveSuplencia() {
         when(suplenciaRepository
                 .findByFkIdSuplantadoIdPersonaAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-                        eq(escribanoSolicitado.getIdPersona()), any(Date.class), any(Date.class)))
+                        eq(escribanoSolicitado.getPersonId()), any(Date.class), any(Date.class)))
                 .thenReturn(Collections.emptyList());
 
         GestionSuplenciaService.EscribanoAsignado resultado =
@@ -79,7 +79,7 @@ class GestionSuplenciaServiceTest {
         suplenciaActiva.setFkIdSuplente(suplente);
         when(suplenciaRepository
                 .findByFkIdSuplantadoIdPersonaAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-                        eq(escribanoSolicitado.getIdPersona()), any(Date.class), any(Date.class)))
+                        eq(escribanoSolicitado.getPersonId()), any(Date.class), any(Date.class)))
                 .thenReturn(List.of(suplenciaActiva));
 
         GestionSuplenciaService.EscribanoAsignado resultado =
@@ -89,7 +89,7 @@ class GestionSuplenciaServiceTest {
         assertThat(resultado.suplenciaAplicada()).isEqualTo(suplenciaActiva);
         verify(suplenciaRepository)
                 .findByFkIdSuplantadoIdPersonaAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-                        eq(escribanoSolicitado.getIdPersona()), any(Date.class), any(Date.class));
+                        eq(escribanoSolicitado.getPersonId()), any(Date.class), any(Date.class));
     }
 
     @Test
@@ -98,9 +98,9 @@ class GestionSuplenciaServiceTest {
         String observacion = gestionSuplenciaService.observacionRedireccion(escribanoSolicitado, suplente);
 
         assertThat(observacion)
-                .contains(escribanoSolicitado.getNombre())
-                .contains(escribanoSolicitado.getApellido())
-                .contains(suplente.getNombre())
-                .contains(suplente.getApellido());
+                .contains(escribanoSolicitado.getFirstName())
+                .contains(escribanoSolicitado.getLastName())
+                .contains(suplente.getFirstName())
+                .contains(suplente.getLastName());
     }
 }

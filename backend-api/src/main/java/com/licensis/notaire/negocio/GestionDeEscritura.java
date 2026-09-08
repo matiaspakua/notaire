@@ -7,7 +7,7 @@ package com.licensis.notaire.negocio;
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
 import com.licensis.notaire.dto.DtoInmueble;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
@@ -91,9 +91,9 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
     private String observaciones;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdGestion")
     private List<Historial> historialList;
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Persona fkIdPersonaEscribano;
+    private Person fkIdPersonaEscribano;
     @OneToMany(mappedBy = "fkIdGestion")
     private List<Tramite> tramiteList;
     @Column(name = "deuda_pendiente_al_archivar")
@@ -187,11 +187,11 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
         this.historialList = historialList;
     }
 
-    public Persona getFkIdPersonaEscribano() {
+    public Person getFkIdPersonaEscribano() {
         return fkIdPersonaEscribano;
     }
 
-    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano) {
+    public void setFkIdPersonaEscribano(Person fkIdPersonaEscribano) {
         this.fkIdPersonaEscribano = fkIdPersonaEscribano;
     }
 
@@ -250,7 +250,7 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
         this.setObservaciones(dtoGestion.getObservaciones());
 
         if (dtoGestion.getPersonaEscribano() != null) {
-            Persona escribano = new Persona();
+            Person escribano = new Person();
             escribano.setAtributos(dtoGestion.getPersonaEscribano());
 
             this.setFkIdPersonaEscribano(escribano);
@@ -306,17 +306,17 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
          * Atencion: para mejorar se puede filtrar que persona pertenece a que tramite,
          * lo soporta
          */
-        ArrayList<DtoPersona> listaDtoPersonas = new ArrayList<>();
+        ArrayList<DtoPerson> listaDtoPersonas = new ArrayList<>();
         ArrayList<Integer> listaIdPersona = new ArrayList<>();
 
         if (!(this.tramiteList.isEmpty())) {
             for (int j = 0; j < tramiteList.size(); j++) {
                 for (int i = 0; i < tramiteList.get(j).getPersonaList().size(); i++) {
 
-                    DtoPersona miDtoPersona = this.getDtoPersonaInvolucrada(tramiteList.get(j).getPersonaList().get(i));
+                    DtoPerson miDtoPersona = this.getDtoPersonaInvolucrada(tramiteList.get(j).getPersonaList().get(i));
 
-                    if (!listaIdPersona.contains(miDtoPersona.getIdPersona())) {
-                        listaIdPersona.add(miDtoPersona.getIdPersona());
+                    if (!listaIdPersona.contains(miDtoPersona.getId())) {
+                        listaIdPersona.add(miDtoPersona.getId());
                         listaDtoPersonas.add(miDtoPersona);
                     }
                 }
@@ -338,32 +338,32 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoPersona getDtoEscribano() {
+    public DtoPerson getDtoEscribano() {
 
-        DtoPersona dtoPersona = new DtoPersona();
+        DtoPerson dtoPersona = new DtoPerson();
 
         // Version del objeto
         dtoPersona.setVersion(fkIdPersonaEscribano.getVersion());
-        dtoPersona.setIdPersona(fkIdPersonaEscribano.getIdPersona());
-        dtoPersona.setNombre(fkIdPersonaEscribano.getNombre());
-        dtoPersona.setApellido(fkIdPersonaEscribano.getApellido());
-        dtoPersona.setCuit(fkIdPersonaEscribano.getCuit());
-        dtoPersona.setEmail(fkIdPersonaEscribano.getEMail());
-        dtoPersona.setEsCliente(fkIdPersonaEscribano.getEsCliente());
-        dtoPersona.setEstadoCivil(fkIdPersonaEscribano.getEstadoCivil());
-        dtoPersona.setFechaNacimiento(fkIdPersonaEscribano.getFechaNacimiento());
-        dtoPersona.setNacionalidad(fkIdPersonaEscribano.getNacionalidad());
-        dtoPersona.setNumeroIdentificacion(fkIdPersonaEscribano.getNumeroIdentificacion());
-        dtoPersona.setNumeroNupcias(fkIdPersonaEscribano.getNumeroNupcias());
-        dtoPersona.setOcupacion(fkIdPersonaEscribano.getOcupacion());
-        dtoPersona.setDomicilio(fkIdPersonaEscribano.getDomicilio());
-        dtoPersona.setRegistroEscribano(fkIdPersonaEscribano.getRegistroEscribano());
-        dtoPersona.setSexo(fkIdPersonaEscribano.getSexo());
-        dtoPersona.setTelefono(fkIdPersonaEscribano.getTelefono());
+        dtoPersona.setId(fkIdPersonaEscribano.getPersonId());
+        dtoPersona.setFirstName(fkIdPersonaEscribano.getFirstName());
+        dtoPersona.setLastName(fkIdPersonaEscribano.getLastName());
+        dtoPersona.setTaxId(fkIdPersonaEscribano.getTaxId());
+        dtoPersona.setEmail(fkIdPersonaEscribano.getEmail());
+        dtoPersona.setIsClient(fkIdPersonaEscribano.getIsClient());
+        dtoPersona.setMaritalStatus(fkIdPersonaEscribano.getMaritalStatus());
+        dtoPersona.setBirthDate(fkIdPersonaEscribano.getBirthDate());
+        dtoPersona.setNationality(fkIdPersonaEscribano.getNationality());
+        dtoPersona.setIdentificationNumber(fkIdPersonaEscribano.getIdentificationNumber());
+        dtoPersona.setMarriageCount(fkIdPersonaEscribano.getMarriageCount());
+        dtoPersona.setOccupation(fkIdPersonaEscribano.getOccupation());
+        dtoPersona.setAddress(fkIdPersonaEscribano.getAddress());
+        dtoPersona.setNotaryRegistrationNumber(fkIdPersonaEscribano.getNotaryRegistrationNumber());
+        dtoPersona.setSex(fkIdPersonaEscribano.getSex());
+        dtoPersona.setPhone(fkIdPersonaEscribano.getPhone());
 
         DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
         dtoTipoIdentificacion
-                .setIdTipoIdentificacion(fkIdPersonaEscribano.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
+                .setIdTipoIdentificacion(fkIdPersonaEscribano.getFkIdIdentificationType().getIdTipoIdentificacion());
 
         dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
 
@@ -390,30 +390,30 @@ public class GestionDeEscritura implements Serializable, Persistable<Integer> {
         return miDto;
     }
 
-    public DtoPersona getDtoPersonaInvolucrada(Persona miPersona) {
-        DtoPersona dtoPersona = new DtoPersona();
+    public DtoPerson getDtoPersonaInvolucrada(Person miPersona) {
+        DtoPerson dtoPersona = new DtoPerson();
 
         // Version del objeto
         dtoPersona.setVersion(miPersona.getVersion());
-        dtoPersona.setIdPersona(miPersona.getIdPersona());
-        dtoPersona.setNombre(miPersona.getNombre());
-        dtoPersona.setApellido(miPersona.getApellido());
-        dtoPersona.setCuit(miPersona.getCuit());
-        dtoPersona.setEmail(miPersona.getEMail());
-        dtoPersona.setEsCliente(miPersona.getEsCliente());
-        dtoPersona.setEstadoCivil(miPersona.getEstadoCivil());
-        dtoPersona.setFechaNacimiento(miPersona.getFechaNacimiento());
-        dtoPersona.setNacionalidad(miPersona.getNacionalidad());
-        dtoPersona.setNumeroIdentificacion(miPersona.getNumeroIdentificacion());
-        dtoPersona.setNumeroNupcias(miPersona.getNumeroNupcias());
-        dtoPersona.setOcupacion(miPersona.getOcupacion());
-        dtoPersona.setDomicilio(miPersona.getDomicilio());
-        dtoPersona.setRegistroEscribano(miPersona.getRegistroEscribano());
-        dtoPersona.setSexo(miPersona.getSexo());
-        dtoPersona.setTelefono(miPersona.getTelefono());
+        dtoPersona.setId(miPersona.getPersonId());
+        dtoPersona.setFirstName(miPersona.getFirstName());
+        dtoPersona.setLastName(miPersona.getLastName());
+        dtoPersona.setTaxId(miPersona.getTaxId());
+        dtoPersona.setEmail(miPersona.getEmail());
+        dtoPersona.setIsClient(miPersona.getIsClient());
+        dtoPersona.setMaritalStatus(miPersona.getMaritalStatus());
+        dtoPersona.setBirthDate(miPersona.getBirthDate());
+        dtoPersona.setNationality(miPersona.getNationality());
+        dtoPersona.setIdentificationNumber(miPersona.getIdentificationNumber());
+        dtoPersona.setMarriageCount(miPersona.getMarriageCount());
+        dtoPersona.setOccupation(miPersona.getOccupation());
+        dtoPersona.setAddress(miPersona.getAddress());
+        dtoPersona.setNotaryRegistrationNumber(miPersona.getNotaryRegistrationNumber());
+        dtoPersona.setSex(miPersona.getSex());
+        dtoPersona.setPhone(miPersona.getPhone());
 
         DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-        dtoTipoIdentificacion.setIdTipoIdentificacion(miPersona.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
+        dtoTipoIdentificacion.setIdTipoIdentificacion(miPersona.getFkIdIdentificationType().getIdTipoIdentificacion());
 
         dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
 

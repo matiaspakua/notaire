@@ -4,10 +4,10 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.CuadernoRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,10 +29,10 @@ public class CuadernoService {
 
     private final CuadernoRepository cuadernoRepository;
     private final FolioRepository folioRepository;
-    private final PersonaRepository personaRepository;
+    private final PersonRepository personaRepository;
 
     public CuadernoService(CuadernoRepository cuadernoRepository, FolioRepository folioRepository,
-                            PersonaRepository personaRepository) {
+                            PersonRepository personaRepository) {
         this.cuadernoRepository = cuadernoRepository;
         this.folioRepository = folioRepository;
         this.personaRepository = personaRepository;
@@ -49,7 +49,7 @@ public class CuadernoService {
     }
 
     public Cuaderno crearCuaderno(List<Integer> idsFolio, Integer idEscribano, int anio, String observaciones) {
-        Persona escribano = personaRepository.findById(idEscribano)
+        Person escribano = personaRepository.findById(idEscribano)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la persona escribano con ID: " + idEscribano));
 
         List<Folio> folios = folioRepository.findAllByIdFolioIn(idsFolio);
@@ -75,11 +75,11 @@ public class CuadernoService {
 
         marcarFoliosAsignados(foliosOrdenados, guardado);
         logger.info("Cuaderno {}/{} creado para escribano {} con {} folios",
-                guardado.getNumero(), guardado.getAnio(), escribano.getIdPersona(), foliosOrdenados.size());
+                guardado.getNumero(), guardado.getAnio(), escribano.getPersonId(), foliosOrdenados.size());
         return guardado;
     }
 
-    public int calcularSiguienteNumero(int anio, Persona escribano) {
+    public int calcularSiguienteNumero(int anio, Person escribano) {
         int candidato = cuadernoRepository.findByAnioAndFkIdPersonaEscribano(anio, escribano).size() + 1;
         while (cuadernoRepository.existsByNumeroAndAnioAndFkIdPersonaEscribano(candidato, anio, escribano)) {
             candidato++;
@@ -102,9 +102,9 @@ public class CuadernoService {
         }
     }
 
-    private void validarMismoEscribano(List<Folio> folios, Persona escribano) {
+    private void validarMismoEscribano(List<Folio> folios, Person escribano) {
         boolean todosMismoEscribano = folios.stream()
-                .allMatch(f -> escribano.getIdPersona().equals(f.getFkIdPersonaEscribano().getIdPersona()));
+                .allMatch(f -> escribano.getPersonId().equals(f.getFkIdPersonaEscribano().getPersonId()));
         if (!todosMismoEscribano) {
             throw new BusinessValidationException("Todos los folios deben pertenecer al mismo registro notarial");
         }

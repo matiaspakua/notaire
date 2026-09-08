@@ -62,15 +62,15 @@ class GestionReingresoDocumentacionIntegrationTest {
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {
         String body = """
-                {"nombre": "Escribano IT", "apellido": "CU43", "numeroIdentificacion": "%s",
-                 "esCliente": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
+                {"firstName": "Escribano IT", "lastName": "CU43", "identificationNumber": "%s",
+                 "isClient": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
                 """.formatted(numeroIdentificacion);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     private record GestionConTramite(Integer idGestion, Integer idTramite, TipoDeTramite tipoDeTramite) {
@@ -80,7 +80,7 @@ class GestionReingresoDocumentacionIntegrationTest {
         Integer escribanoId = createPersona("43100" + numero);
         String body = """
                 {"encabezado": "Gestion CU43", "fechaInicio": "2026-01-01", "numero": %d,
-                 "fkIdPersonaEscribano": {"idPersona": %d}}
+                 "fkIdPersonaEscribano": {"personId": %d}}
                 """.formatted(numero, escribanoId);
         MvcResult result = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)

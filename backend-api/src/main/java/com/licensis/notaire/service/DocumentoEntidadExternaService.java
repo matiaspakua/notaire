@@ -9,7 +9,7 @@ import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
@@ -149,11 +149,11 @@ public class DocumentoEntidadExternaService {
                 documentos.stream().map(DocumentoEntidadExternaService::toDto).toList());
     }
 
-    private static String nombreEscribano(Persona escribano) {
+    private static String nombreEscribano(Person escribano) {
         if (escribano == null) {
             return null;
         }
-        return (escribano.getNombre() + " " + escribano.getApellido()).trim();
+        return (escribano.getFirstName() + " " + escribano.getLastName()).trim();
     }
 
     private String resolverNomenclaturaCatastral(Integer idGestion) {

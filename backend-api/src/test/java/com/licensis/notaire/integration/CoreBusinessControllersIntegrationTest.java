@@ -40,44 +40,44 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PersonaController - CU17/CU18/CU41/CU54/CU61")
-    class PersonaControllerTests {
+    @DisplayName("PersonController - CU17/CU18/CU41/CU54/CU61")
+    class PersonControllerTests {
 
         @Test
-        @DisplayName("CU18 - Should return all personas")
-        void shouldReturnAllPersonas() throws Exception {
-            mockMvc.perform(get("/api/v1/personas"))
+        @DisplayName("CU18 - Should return all people")
+        void shouldReturnAllPeople() throws Exception {
+            mockMvc.perform(get("/api/v1/people"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("CU18 - Should return persona by ID")
-        void shouldReturnPersonaById() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/1"))
+        @DisplayName("CU18 - Should return person by ID")
+        void shouldReturnPersonById() throws Exception {
+            mockMvc.perform(get("/api/v1/people/1"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.idPersona", is(1)));
+                    .andExpect(jsonPath("$.personId", is(1)));
         }
 
         @Test
-        @DisplayName("CU18 - Should return 404 for non-existing persona")
-        void shouldReturn404ForNonExistingPersona() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/9999"))
+        @DisplayName("CU18 - Should return 404 for non-existing person")
+        void shouldReturn404ForNonExistingPerson() throws Exception {
+            mockMvc.perform(get("/api/v1/people/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU17 - Should create new persona (client)")
-        void shouldCreatePersona() throws Exception {
-            mockMvc.perform(post("/api/v1/personas")
+        @DisplayName("CU17 - Should create new person (client)")
+        void shouldCreatePerson() throws Exception {
+            mockMvc.perform(post("/api/v1/people")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "nombre": "Carlos",
-                                      "apellido": "Gomez",
-                                      "numeroIdentificacion": "30987654",
-                                      "esCliente": true,
+                                      "firstName": "Carlos",
+                                      "lastName": "Gomez",
+                                      "identificationNumber": "30987654",
+                                      "isClient": true,
                                       "fkIdTipoIdentificacion": { "idTipoIdentificacion": 1 },
                                       "version": 0
                                     }
@@ -86,19 +86,19 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU41 - Should search personas by nombre")
-        void shouldSearchPersonasByNombre() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/buscar")
-                            .param("nombre", "Juan"))
+        @DisplayName("CU41 - Should search people by firstName")
+        void shouldSearchPeopleByFirstName() throws Exception {
+            mockMvc.perform(get("/api/v1/people/search")
+                            .param("firstName", "Juan"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("CU61 - Should search personas by numeroIdentificacion")
-        void shouldSearchPersonasByNumeroIdentificacion() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/buscar")
-                            .param("numeroIdentificacion", "20123456"))
+        @DisplayName("CU61 - Should search people by identificationNumber")
+        void shouldSearchPeopleByIdentificationNumber() throws Exception {
+            mockMvc.perform(get("/api/v1/people/search")
+                            .param("identificationNumber", "20123456"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
         }

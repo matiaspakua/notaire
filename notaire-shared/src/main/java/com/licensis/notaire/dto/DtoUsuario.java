@@ -10,7 +10,7 @@ public class DtoUsuario
 {
 
     private Integer idUsuario;
-    private DtoPersona personas;
+    private DtoPerson personas;
     private String nombre;
     private String contrasenia;
     private boolean estado;
@@ -46,12 +46,12 @@ public class DtoUsuario
         this.idUsuario = idUsuario;
     }
 
-    public DtoPersona getPersonas()
+    public DtoPerson getPersonas()
     {
         return this.personas;
     }
 
-    public void setPersonas(DtoPersona personas)
+    public void setPersonas(DtoPerson personas)
     {
         this.personas = personas;
     }

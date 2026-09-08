@@ -1,36 +1,10 @@
 package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.ConceptoJpaController;
-import com.licensis.notaire.jpa.EstadoDeGestionJpaController;
-import com.licensis.notaire.jpa.FolioJpaController;
-import com.licensis.notaire.jpa.PersonaJpaController;
-import com.licensis.notaire.jpa.RegistroAuditoriaJpaController;
-import com.licensis.notaire.jpa.SuplenciaJpaController;
-import com.licensis.notaire.jpa.TipoDeFolioJpaController;
-import com.licensis.notaire.jpa.TipoDeDocumentoJpaController;
-import com.licensis.notaire.jpa.TipoDeTramiteJpaController;
-import com.licensis.notaire.jpa.PlantillaTramiteJpaController;
-import com.licensis.notaire.jpa.TipoIdentificacionJpaController;
-import com.licensis.notaire.jpa.HistorialJpaController;
-import com.licensis.notaire.jpa.TramiteJpaController;
-import com.licensis.notaire.jpa.GestionDeEscrituraJpaController;
-import com.licensis.notaire.jpa.PresupuestoJpaController;
-import com.licensis.notaire.jpa.ItemJpaController;
-import com.licensis.notaire.jpa.InmuebleJpaController;
-import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
-import com.licensis.notaire.jpa.TramitesPersonasJpaController;
-import com.licensis.notaire.jpa.PagoJpaController;
-import com.licensis.notaire.jpa.EscrituraJpaController;
-import com.licensis.notaire.jpa.CopiaJpaController;
-import com.licensis.notaire.jpa.TestimonioJpaController;
-import com.licensis.notaire.jpa.MovimientoTestimonioJpaController;
-import com.licensis.notaire.jpa.DocumentoPresentadoJpaController;
-import com.licensis.notaire.jpa.UsuarioJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.service.AdministradorJpa;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -146,7 +120,7 @@ class AdministradorJpaTest {
             assertThat(list).anyMatch(jpa ->
                     jpa.getNombreJpa().contains("ConceptoJpaController"));
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("PersonaJpaController"));
+                    jpa.getNombreJpa().contains("PersonJpaController"));
             assertThat(list).anyMatch(jpa ->
                     jpa.getNombreJpa().contains("UsuarioJpaController"));
             assertThat(list).anyMatch(jpa ->

@@ -6,7 +6,7 @@ import com.licensis.notaire.api.EscrituraController;
 import com.licensis.notaire.api.EstadoDeGestionController;
 import com.licensis.notaire.api.HistorialController;
 import com.licensis.notaire.api.MovimientoTestimonioController;
-import com.licensis.notaire.api.PersonaController;
+import com.licensis.notaire.api.PersonController;
 import com.licensis.notaire.api.PresupuestoController;
 import com.licensis.notaire.api.TestimonioController;
 import com.licensis.notaire.api.TipoDeDocumentoController;
@@ -26,7 +26,7 @@ import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.negocio.TipoDeDocumento;
@@ -48,7 +48,7 @@ import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.service.EscrituraFirmaService;
 import com.licensis.notaire.service.EscrituraService;
 import com.licensis.notaire.service.MovimientoTestimonioService;
-import com.licensis.notaire.service.PersonaService;
+import com.licensis.notaire.service.PersonService;
 import com.licensis.notaire.service.PresupuestoService;
 import com.licensis.notaire.service.TestimonioGeneracionVerificacionService;
 import org.junit.jupiter.api.DisplayName;
@@ -762,75 +762,75 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("PersonaController")
-    class PersonaControllerTests {
-        private final PersonaService service = mock(PersonaService.class);
+    @DisplayName("PersonController")
+    class PersonControllerTests {
+        private final PersonService service = mock(PersonService.class);
         private final TipoIdentificacionRepository tipoRepo = mock(TipoIdentificacionRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PersonaController(service, tipoRepo)).build();
+                standaloneSetup(new PersonController(service, tipoRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths including buscar and default tipo identificacion")
+        @DisplayName("Cover all paths including search and default tipo identificacion")
         void all() throws Exception {
-            Persona p = new Persona();
-            p.setIdPersona(1);
-            p.setNombre("Juan");
-            p.setApellido("Perez");
-            p.setNumeroIdentificacion("12345678");
+            Person p = new Person();
+            p.setPersonId(1);
+            p.setFirstName("Juan");
+            p.setLastName("Perez");
+            p.setIdentificationNumber("12345678");
             TipoIdentificacion tipo = new TipoIdentificacion(1, "DNI");
-            p.setFkIdTipoIdentificacion(tipo);
+            p.setFkIdIdentificationType(tipo);
 
             when(service.findAll()).thenReturn(List.of(p));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.save(any(Persona.class))).thenReturn(p);
-            when(service.buscar(any(), any(), any(), any(), any())).thenReturn(List.of(p));
+            when(service.save(any(Person.class))).thenReturn(p);
+            when(service.search(any(), any(), any(), any(), any())).thenReturn(List.of(p));
             when(tipoRepo.findById(1)).thenReturn(Optional.of(tipo));
 
-            mvc.perform(get("/api/v1/personas")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/personas/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/personas/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/personas/buscar?nombre=Juan")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/people")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/people/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/people/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/people/search?firstName=Juan")).andExpect(status().isOk());
 
-            mvc.perform(post("/api/v1/personas").contentType("application/json")
+            mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/personas/1").contentType("application/json")
+            mvc.perform(put("/api/v1/people/1").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/personas/2").contentType("application/json")
+            mvc.perform(put("/api/v1/people/2").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/personas/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/personas/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
             // POST with missing tipo identificacion should use default
-            Persona persona2 = new Persona();
-            persona2.setIdPersona(2);
-            persona2.setNombre("Ana");
-            persona2.setApellido("Gomez");
-            persona2.setNumeroIdentificacion("87654321");
-            mvc.perform(post("/api/v1/personas").contentType("application/json")
-                    .content(mapper.writeValueAsString(persona2))).andExpect(status().isCreated());
+            Person person2 = new Person();
+            person2.setPersonId(2);
+            person2.setFirstName("Ana");
+            person2.setLastName("Gomez");
+            person2.setIdentificationNumber("87654321");
+            mvc.perform(post("/api/v1/people").contentType("application/json")
+                    .content(mapper.writeValueAsString(person2))).andExpect(status().isCreated());
 
             // POST when save fails
-            when(service.save(any(Persona.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/personas").contentType("application/json")
+            when(service.save(any(Person.class))).thenThrow(new RuntimeException("x"));
+            mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isConflict());
         }
 
         @Test
         @DisplayName("POST should create default tipo identificacion when missing in DB")
         void postShouldCreateDefaultTipo() throws Exception {
-            Persona p = new Persona();
-            p.setNombre("Juan");
-            p.setApellido("Perez");
-            p.setNumeroIdentificacion("12345678");
+            Person p = new Person();
+            p.setFirstName("Juan");
+            p.setLastName("Perez");
+            p.setIdentificationNumber("12345678");
             when(tipoRepo.findById(1)).thenReturn(Optional.empty());
             TipoIdentificacion created = new TipoIdentificacion();
             created.setIdTipoIdentificacion(1);
             created.setNombre("DNI");
             when(tipoRepo.save(any(TipoIdentificacion.class))).thenReturn(created);
-            when(service.save(any(Persona.class))).thenReturn(p);
+            when(service.save(any(Person.class))).thenReturn(p);
 
-            mvc.perform(post("/api/v1/personas").contentType("application/json")
+            mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
             verify(tipoRepo).save(any(TipoIdentificacion.class));
         }

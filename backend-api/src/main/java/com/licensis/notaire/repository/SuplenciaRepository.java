@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Suplencia;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 public interface SuplenciaRepository extends JpaRepository<Suplencia, Integer> {
 
-    List<Suplencia> findByFkIdSuplente(Persona suplente);
+    List<Suplencia> findByFkIdSuplente(Person suplente);
 
     List<Suplencia> findByFkIdSuplenteIdPersona(Integer idSuplente);
 
-    List<Suplencia> findByFkIdSuplantado(Persona suplantado);
+    List<Suplencia> findByFkIdSuplantado(Person suplantado);
 
     List<Suplencia> findByFkIdSuplantadoIdPersona(Integer idSuplantado);
 

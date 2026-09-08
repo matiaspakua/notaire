@@ -9,7 +9,7 @@ import com.licensis.notaire.dto.DtoTramite;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
@@ -141,16 +141,16 @@ class TramiteEntityTest {
         @Test
         @DisplayName("Should set and get persona list")
         void shouldSetAndGetPersonaList() {
-            Persona persona = new Persona();
-            persona.setNombre("Juan");
-            List<Persona> personas = new ArrayList<>();
+            Person persona = new Person();
+            persona.setFirstName("Juan");
+            List<Person> personas = new ArrayList<>();
             personas.add(persona);
 
             Tramite tramite = new Tramite();
             tramite.setPersonaList(personas);
 
             assertThat(tramite.getPersonaList()).hasSize(1);
-            assertThat(tramite.getPersonaList().get(0).getNombre()).isEqualTo("Juan");
+            assertThat(tramite.getPersonaList().get(0).getFirstName()).isEqualTo("Juan");
         }
     }
 
@@ -376,8 +376,8 @@ class TramiteEntityTest {
             GestionDeEscritura gestion = new GestionDeEscritura();
             gestion.setIdGestion(9);
             gestion.setNumero(5001);
-            Persona escribano = new Persona(3);
-            escribano.setRegistroEscribano(1001);
+            Person escribano = new Person(3);
+            escribano.setNotaryRegistrationNumber(1001);
             gestion.setFkIdPersonaEscribano(escribano);
             tramite.setFkIdGestion(gestion);
 

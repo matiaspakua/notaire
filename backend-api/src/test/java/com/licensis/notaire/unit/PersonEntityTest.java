@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,87 +14,87 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU17", "CU18", "CU41", "CU46", "CU48", "CU51", "CU54", "CU61"})
-@DisplayName("Persona Entity Tests")
-class PersonaEntityTest {
+@DisplayName("Person Entity Tests")
+class PersonEntityTest {
 
     @Nested
-    @DisplayName("CU17 - Dar Alta Persona - Unit Tests")
-    class DarAltaPersonaTests {
+    @DisplayName("CU17 - Create Person - Unit Tests")
+    class CreatePersonTests {
 
         @Test
-        @DisplayName("Should create persona with required fields")
-        void shouldCreatePersonaWithRequiredFields() {
+        @DisplayName("Should create person with required fields")
+        void shouldCreatePersonWithRequiredFields() {
             TipoIdentificacion tipoId = new TipoIdentificacion();
             tipoId.setIdTipoIdentificacion(1);
             tipoId.setNombre("DNI");
 
-            Persona persona = new Persona();
-            persona.setIdPersona(1);
-            persona.setNombre("Juan");
-            persona.setApellido("Perez");
-            persona.setNumeroIdentificacion("12345678");
-            persona.setFkIdTipoIdentificacion(tipoId);
-            persona.setEsCliente(false);
+            Person person = new Person();
+            person.setPersonId(1);
+            person.setFirstName("Juan");
+            person.setLastName("Perez");
+            person.setIdentificationNumber("12345678");
+            person.setFkIdIdentificationType(tipoId);
+            person.setIsClient(false);
 
-            assertThat(persona.getNombre()).isEqualTo("Juan");
-            assertThat(persona.getApellido()).isEqualTo("Perez");
-            assertThat(persona.getNumeroIdentificacion()).isEqualTo("12345678");
-            assertThat(persona.getEsCliente()).isFalse();
+            assertThat(person.getFirstName()).isEqualTo("Juan");
+            assertThat(person.getLastName()).isEqualTo("Perez");
+            assertThat(person.getIdentificationNumber()).isEqualTo("12345678");
+            assertThat(person.getIsClient()).isFalse();
         }
 
         @Test
-        @DisplayName("Should create cliente with all fields")
-        void shouldCreateClienteWithAllFields() {
+        @DisplayName("Should create client with all fields")
+        void shouldCreateClientWithAllFields() {
             TipoIdentificacion tipoId = new TipoIdentificacion();
             tipoId.setIdTipoIdentificacion(1);
             tipoId.setNombre("DNI");
 
-            Persona persona = new Persona();
-            persona.setIdPersona(1);
-            persona.setNombre("Maria");
-            persona.setApellido("Gonzalez");
-            persona.setNumeroIdentificacion("87654321");
-            persona.setFkIdTipoIdentificacion(tipoId);
-            persona.setEsCliente(true);
-            persona.setNacionalidad("Argentina");
-            persona.setFechaNacimiento(new Date(1990 - 1900, 5, 15));
-            persona.setCuit("27-87654321-5");
-            persona.setEstadoCivil("soltero");
-            persona.setSexo("femenino");
-            persona.setOcupacion("empleada");
-            persona.setDomicilio("Calle Falsa 123");
+            Person person = new Person();
+            person.setPersonId(1);
+            person.setFirstName("Maria");
+            person.setLastName("Gonzalez");
+            person.setIdentificationNumber("87654321");
+            person.setFkIdIdentificationType(tipoId);
+            person.setIsClient(true);
+            person.setNationality("Argentina");
+            person.setBirthDate(new Date(1990 - 1900, 5, 15));
+            person.setTaxId("27-87654321-5");
+            person.setMaritalStatus("soltero");
+            person.setSex("femenino");
+            person.setOccupation("empleada");
+            person.setAddress("Calle Falsa 123");
 
-            assertThat(persona.getEsCliente()).isTrue();
-            assertThat(persona.getNacionalidad()).isEqualTo("Argentina");
-            assertThat(persona.getCuit()).isEqualTo("27-87654321-5");
-            assertThat(persona.getEstadoCivil()).isEqualTo("soltero");
+            assertThat(person.getIsClient()).isTrue();
+            assertThat(person.getNationality()).isEqualTo("Argentina");
+            assertThat(person.getTaxId()).isEqualTo("27-87654321-5");
+            assertThat(person.getMaritalStatus()).isEqualTo("soltero");
         }
 
         @Test
-        @DisplayName("Should create escribano with registro")
-        void shouldCreateEscribanoWithRegistro() {
+        @DisplayName("Should create notary with registration number")
+        void shouldCreateNotaryWithRegistration() {
             TipoIdentificacion tipoId = new TipoIdentificacion();
             tipoId.setIdTipoIdentificacion(1);
             tipoId.setNombre("DNI");
 
-            Persona escribano = new Persona();
-            escribano.setIdPersona(1);
-            escribano.setNombre("Juan Carlos");
-            escribano.setApellido("Garcia");
-            escribano.setNumeroIdentificacion("20123456");
-            escribano.setFkIdTipoIdentificacion(tipoId);
-            escribano.setRegistroEscribano(1001);
-            escribano.setEsCliente(false);
+            Person notary = new Person();
+            notary.setPersonId(1);
+            notary.setFirstName("Juan Carlos");
+            notary.setLastName("Garcia");
+            notary.setIdentificationNumber("20123456");
+            notary.setFkIdIdentificationType(tipoId);
+            notary.setNotaryRegistrationNumber(1001);
+            notary.setIsClient(false);
 
-            assertThat(escribano.getRegistroEscribano()).isEqualTo(1001);
+            assertThat(notary.getNotaryRegistrationNumber()).isEqualTo(1001);
         }
 
         @Test
         @DisplayName("Should implement equals based on id")
         void shouldImplementEqualsBasedOnId() {
-            Persona p1 = new Persona(1);
-            Persona p2 = new Persona(1);
-            Persona p3 = new Persona(2);
+            Person p1 = new Person(1);
+            Person p2 = new Person(1);
+            Person p3 = new Person(2);
 
             assertThat(p1).isEqualTo(p2);
             assertThat(p1).isNotEqualTo(p3);
@@ -103,92 +103,92 @@ class PersonaEntityTest {
         @Test
         @DisplayName("Should implement hashCode based on id")
         void shouldImplementHashCodeBasedOnId() {
-            Persona p1 = new Persona(1);
-            Persona p2 = new Persona(1);
+            Person p1 = new Person(1);
+            Person p2 = new Person(1);
 
             assertThat(p1.hashCode()).isEqualTo(p2.hashCode());
         }
     }
 
     @Nested
-    @DisplayName("CU61 - Buscar persona o cliente - Unit Tests")
-    class BuscarPersonaTests {
+    @DisplayName("CU61 - Search person or client - Unit Tests")
+    class SearchPersonTests {
 
         @Test
-        @DisplayName("Should filter personas by nombre")
-        void shouldFilterPersonasByNombre() {
-            List<Persona> personas = createTestPersonas();
-            
+        @DisplayName("Should filter people by first name")
+        void shouldFilterPeopleByFirstName() {
+            List<Person> people = createTestPeople();
+
             String filter = "Juan";
-            List<Persona> filtered = personas.stream()
-                .filter(p -> p.getNombre() != null && p.getNombre().contains(filter))
+            List<Person> filtered = people.stream()
+                .filter(p -> p.getFirstName() != null && p.getFirstName().contains(filter))
                 .toList();
 
             assertThat(filtered).hasSize(1);
-            assertThat(filtered.get(0).getApellido()).isEqualTo("Perez");
+            assertThat(filtered.get(0).getLastName()).isEqualTo("Perez");
         }
 
         @Test
-        @DisplayName("Should filter personas by apellido")
-        void shouldFilterPersonasByApellido() {
-            List<Persona> personas = createTestPersonas();
-            
+        @DisplayName("Should filter people by last name")
+        void shouldFilterPeopleByLastName() {
+            List<Person> people = createTestPeople();
+
             String filter = "Garcia";
-            List<Persona> filtered = personas.stream()
-                .filter(p -> p.getApellido() != null && p.getApellido().contains(filter))
+            List<Person> filtered = people.stream()
+                .filter(p -> p.getLastName() != null && p.getLastName().contains(filter))
                 .toList();
 
             assertThat(filtered).hasSize(2);
         }
 
         @Test
-        @DisplayName("Should filter only clientes")
-        void shouldFilterOnlyClientes() {
-            List<Persona> personas = createTestPersonas();
-            
-            List<Persona> clientes = personas.stream()
-                .filter(Persona::getEsCliente)
+        @DisplayName("Should filter only clients")
+        void shouldFilterOnlyClients() {
+            List<Person> people = createTestPeople();
+
+            List<Person> clients = people.stream()
+                .filter(Person::getIsClient)
                 .toList();
 
-            assertThat(clientes).hasSize(1);
+            assertThat(clients).hasSize(1);
         }
 
         @Test
-        @DisplayName("Should filter by tipo identificacion")
-        void shouldFilterByTipoIdentificacion() {
-            List<Persona> personas = createTestPersonas();
-            
+        @DisplayName("Should filter by identification type")
+        void shouldFilterByIdentificationType() {
+            List<Person> people = createTestPeople();
+
             TipoIdentificacion dni = new TipoIdentificacion();
             dni.setIdTipoIdentificacion(1);
-            
-            List<Persona> filtered = personas.stream()
-                .filter(p -> p.getFkIdTipoIdentificacion() != null 
-                    && p.getFkIdTipoIdentificacion().getIdTipoIdentificacion().equals(1))
+
+            List<Person> filtered = people.stream()
+                .filter(p -> p.getFkIdIdentificationType() != null
+                    && p.getFkIdIdentificationType().getIdTipoIdentificacion().equals(1))
                 .toList();
 
             assertThat(filtered).hasSize(3);
         }
     }
 
-    private List<Persona> createTestPersonas() {
+    private List<Person> createTestPeople() {
         TipoIdentificacion dni = new TipoIdentificacion();
         dni.setIdTipoIdentificacion(1);
         dni.setNombre("DNI");
 
-        Persona p1 = new Persona(1, "Juan", "Perez", "12345678", false);
-        p1.setFkIdTipoIdentificacion(dni);
+        Person p1 = new Person(1, "Juan", "Perez", "12345678", false);
+        p1.setFkIdIdentificationType(dni);
 
-        Persona p2 = new Persona(2, "Maria", "Garcia", "87654321", true);
-        p2.setFkIdTipoIdentificacion(dni);
+        Person p2 = new Person(2, "Maria", "Garcia", "87654321", true);
+        p2.setFkIdIdentificationType(dni);
 
-        Persona p3 = new Persona(3, "Carlos", "Garcia", "11222333", false);
-        p3.setFkIdTipoIdentificacion(dni);
+        Person p3 = new Person(3, "Carlos", "Garcia", "11222333", false);
+        p3.setFkIdIdentificationType(dni);
 
-        List<Persona> personas = new ArrayList<>();
-        personas.add(p1);
-        personas.add(p2);
-        personas.add(p3);
-        
-        return personas;
+        List<Person> people = new ArrayList<>();
+        people.add(p1);
+        people.add(p2);
+        people.add(p3);
+
+        return people;
     }
 }

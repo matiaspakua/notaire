@@ -1,9 +1,9 @@
 package com.licensis.notaire.config;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.repository.UsuarioRepository;
 import org.slf4j.Logger;
@@ -39,12 +39,12 @@ public class DataInitializer implements ApplicationRunner {
     private String adminPassword;
 
     private final UsuarioRepository usuarioRepository;
-    private final PersonaRepository personaRepository;
+    private final PersonRepository personaRepository;
     private final TipoIdentificacionRepository tipoIdentificacionRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UsuarioRepository usuarioRepository,
-                           PersonaRepository personaRepository,
+                           PersonRepository personaRepository,
                            TipoIdentificacionRepository tipoIdentificacionRepository,
                            PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
@@ -70,7 +70,7 @@ public class DataInitializer implements ApplicationRunner {
         }
 
         log.info("Usuario '{}' no encontrado. Creando usuario administrador inicial...", adminUsername);
-        Persona adminPersona = buildAdminPersona();
+        Person adminPersona = buildAdminPersona();
         personaRepository.save(adminPersona);
 
         Usuario admin = new Usuario();
@@ -83,17 +83,17 @@ public class DataInitializer implements ApplicationRunner {
         log.info("Usuario administrador inicial '{}' creado correctamente.", adminUsername);
     }
 
-    private Persona buildAdminPersona() {
+    private Person buildAdminPersona() {
         TipoIdentificacion tipo = tipoIdentificacionRepository.findAll().stream()
                 .findFirst()
                 .orElseGet(this::createDefaultTipoIdentificacion);
 
-        Persona persona = new Persona();
-        persona.setNombre("Admin");
-        persona.setApellido("Sistema");
-        persona.setEsCliente(false);
-        persona.setNumeroIdentificacion("00000000");
-        persona.setFkIdTipoIdentificacion(tipo);
+        Person persona = new Person();
+        persona.setFirstName("Admin");
+        persona.setLastName("Sistema");
+        persona.setIsClient(false);
+        persona.setIdentificationNumber("00000000");
+        persona.setFkIdIdentificationType(tipo);
         return persona;
     }
 

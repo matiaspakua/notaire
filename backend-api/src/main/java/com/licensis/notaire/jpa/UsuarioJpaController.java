@@ -18,7 +18,7 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Usuario;
 
@@ -60,9 +60,9 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdPersona = usuarios.getFkIdPersona();
+            Person fkIdPersona = usuarios.getFkIdPersona();
             if (fkIdPersona != null) {
-                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getIdPersona());
+                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getPersonId());
                 usuarios.setFkIdPersona(fkIdPersona);
             }
             List<RegistroAuditoria> attachedRegistroAuditoriaList = new ArrayList<RegistroAuditoria>();
@@ -105,8 +105,8 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
             em = getEntityManager();
             em.getTransaction().begin();
             Usuario persistentUsuarios = em.find(Usuario.class, usuarios.getIdUsuario());
-            Persona fkIdPersonaOld = persistentUsuarios.getFkIdPersona();
-            Persona fkIdPersonaNew = usuarios.getFkIdPersona();
+            Person fkIdPersonaOld = persistentUsuarios.getFkIdPersona();
+            Person fkIdPersonaNew = usuarios.getFkIdPersona();
             List<RegistroAuditoria> registroAuditoriaListOld = persistentUsuarios.getRegistroAuditoriaList();
             List<RegistroAuditoria> registroAuditoriaListNew = usuarios.getRegistroAuditoriaList();
             List<String> illegalOrphanMessages = null;
@@ -124,7 +124,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
             if (fkIdPersonaNew != null) {
-                fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getIdPersona());
+                fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getPersonId());
                 usuarios.setFkIdPersona(fkIdPersonaNew);
             }
             List<RegistroAuditoria> attachedRegistroAuditoriaListNew = new ArrayList<RegistroAuditoria>();
@@ -204,7 +204,7 @@ public class UsuarioJpaController implements Serializable, IPersistenciaJpa {
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Persona fkIdPersona = usuarios.getFkIdPersona();
+            Person fkIdPersona = usuarios.getFkIdPersona();
             if (fkIdPersona != null) {
                 fkIdPersona.getUsuariosList().remove(usuarios);
                 fkIdPersona = em.merge(fkIdPersona);

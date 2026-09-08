@@ -11,7 +11,7 @@ import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,10 +54,10 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
+            Person fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
             if (fkIdPersonaEscribano != null)
             {
-                fkIdPersonaEscribano = em.getReference(fkIdPersonaEscribano.getClass(), fkIdPersonaEscribano.getIdPersona());
+                fkIdPersonaEscribano = em.getReference(fkIdPersonaEscribano.getClass(), fkIdPersonaEscribano.getPersonId());
                 folio.setFkIdPersonaEscribano(fkIdPersonaEscribano);
             }
             TipoDeFolio fkIdTipoFolio = folio.getFkIdTipoFolio();
@@ -135,8 +135,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 throw new ClassModifiedException();
             } else
             {
-                Persona fkIdPersonaEscribanoOld = persistentFolio.getFkIdPersonaEscribano();
-                Persona fkIdPersonaEscribanoNew = folio.getFkIdPersonaEscribano();
+                Person fkIdPersonaEscribanoOld = persistentFolio.getFkIdPersonaEscribano();
+                Person fkIdPersonaEscribanoNew = folio.getFkIdPersonaEscribano();
                 TipoDeFolio fkIdTipoFolioOld = persistentFolio.getFkIdTipoFolio();
                 TipoDeFolio fkIdTipoFolioNew = folio.getFkIdTipoFolio();
                 Escritura fkIdEscrituraOld = persistentFolio.getFkIdEscritura();
@@ -145,7 +145,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 //                List<Copia> copiaListNew = folio.getCopiaList();
                 if (fkIdPersonaEscribanoNew != null)
                 {
-                    fkIdPersonaEscribanoNew = em.getReference(fkIdPersonaEscribanoNew.getClass(), fkIdPersonaEscribanoNew.getIdPersona());
+                    fkIdPersonaEscribanoNew = em.getReference(fkIdPersonaEscribanoNew.getClass(), fkIdPersonaEscribanoNew.getPersonId());
                     folio.setFkIdPersonaEscribano(fkIdPersonaEscribanoNew);
                 }
                 if (fkIdTipoFolioNew != null)
@@ -291,7 +291,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new NonexistentEntityException("The folio with id " + id + " no longer exists.", enfe);
             }
-            Persona fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
+            Person fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
             if (fkIdPersonaEscribano != null)
             {
                 fkIdPersonaEscribano.getFolioList().remove(folio);

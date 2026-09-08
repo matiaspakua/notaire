@@ -4,11 +4,11 @@ import com.licensis.notaire.exception.NumeroEscrituraDuplicadoException;
 import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.repository.EscrituraRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.EscrituraService;
 import com.licensis.notaire.service.NumeracionEscrituraService;
 import com.licensis.notaire.service.ResultadoValidacionNumeracion;
@@ -40,7 +40,7 @@ class EscrituraServiceTest {
     private EscrituraRepository escrituraRepository;
 
     @Mock
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Mock
     private FolioRepository folioRepository;
@@ -52,15 +52,15 @@ class EscrituraServiceTest {
     private EscrituraService escrituraService;
 
     private Escritura testEscritura;
-    private Persona testEscribano;
+    private Person testEscribano;
 
     @BeforeEach
     void setUp() {
-        testEscribano = new Persona();
-        testEscribano.setIdPersona(1);
-        testEscribano.setNombre("Juan");
-        testEscribano.setApellido("Escribano");
-        testEscribano.setRegistroEscribano(100);
+        testEscribano = new Person();
+        testEscribano.setPersonId(1);
+        testEscribano.setFirstName("Juan");
+        testEscribano.setLastName("Escribano");
+        testEscribano.setNotaryRegistrationNumber(100);
 
         testEscritura = new Escritura();
         testEscritura.setIdEscritura(1);
@@ -203,7 +203,7 @@ class EscrituraServiceTest {
         verify(escrituraRepository, times(1)).save(testEscritura);
     }
 
-    private Folio folioConEscribano(Persona escribano, int anio, boolean esAuxiliar) {
+    private Folio folioConEscribano(Person escribano, int anio, boolean esAuxiliar) {
         TipoDeFolio tipoDeFolio = new TipoDeFolio();
         tipoDeFolio.setEsAuxiliar(esAuxiliar);
 
@@ -225,17 +225,17 @@ class EscrituraServiceTest {
     @Test
     @DisplayName("Should find all available escribanos")
     void shouldFindEscribanosDisponibles() {
-        List<Persona> escribanos = new ArrayList<>();
+        List<Person> escribanos = new ArrayList<>();
         escribanos.add(testEscribano);
 
         when(personaRepository.findAllEscribanos()).thenReturn(escribanos);
 
-        List<Persona> result = escrituraService.findEscribanosDisponibles();
+        List<Person> result = escrituraService.findEscribanosDisponibles();
 
         assertThat(result).isNotNull()
                 .hasSize(1)
                 .contains(testEscribano)
-                .allMatch(p -> p.getRegistroEscribano() != null);
+                .allMatch(p -> p.getNotaryRegistrationNumber() != null);
 
         verify(personaRepository, times(1)).findAllEscribanos();
     }
@@ -245,7 +245,7 @@ class EscrituraServiceTest {
     void shouldReturnEmptyListWhenNoEscribanosAvailable() {
         when(personaRepository.findAllEscribanos()).thenReturn(new ArrayList<>());
 
-        List<Persona> result = escrituraService.findEscribanosDisponibles();
+        List<Person> result = escrituraService.findEscribanosDisponibles();
 
         assertThat(result).isNotNull()
                 .isEmpty();

@@ -3,11 +3,11 @@ package com.licensis.notaire.integration;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
@@ -43,7 +43,7 @@ class EscrituraFirmaControllerIntegrationTest extends ServiceIntegrationTest {
     private TipoDeFolioRepository tipoDeFolioRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
@@ -79,13 +79,13 @@ class EscrituraFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         tipoIdentificacion.setNombre("DNI");
         tipoIdentificacion = tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        Persona escribano = new Persona();
-        escribano.setNombre("Escribano");
-        escribano.setApellido("Test");
-        escribano.setNumeroIdentificacion(String.valueOf(System.currentTimeMillis() % 100_000_000));
-        escribano.setEsCliente(false);
-        escribano.setRegistroEscribano((int) (System.currentTimeMillis() % 10_000));
-        escribano.setFkIdTipoIdentificacion(tipoIdentificacion);
+        Person escribano = new Person();
+        escribano.setFirstName("Escribano");
+        escribano.setLastName("Test");
+        escribano.setIdentificationNumber(String.valueOf(System.currentTimeMillis() % 100_000_000));
+        escribano.setIsClient(false);
+        escribano.setNotaryRegistrationNumber((int) (System.currentTimeMillis() % 10_000));
+        escribano.setFkIdIdentificationType(tipoIdentificacion);
         escribano = personaRepository.save(escribano);
 
         TipoDeFolio tipoDeFolio = new TipoDeFolio();

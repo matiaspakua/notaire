@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
@@ -14,7 +14,7 @@ import com.licensis.notaire.negocio.ControllerNegocio;
 import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoIdentificacion;
@@ -38,13 +38,13 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class PersonaJpaController implements Serializable, IPersistenciaJpa {
+public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
-    private static PersonaJpaController instancia = null;
+    private static PersonJpaController instancia = null;
 
-    private PersonaJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    private PersonJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
@@ -53,7 +53,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return emf.createEntityManager();
     }
 
-    public int create(Persona persona) {
+    public int create(Person persona) {
         int oid = 0;
         if (persona.getTramitesPersonasList() == null) {
             persona.setTramitesPersonasList(new ArrayList<TramitesPersonas>());
@@ -83,11 +83,11 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdTipoIdentificacion();
+            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdIdentificationType();
             if (fkIdTipoIdentificacion != null) {
                 fkIdTipoIdentificacion = em.getReference(fkIdTipoIdentificacion.getClass(),
                         fkIdTipoIdentificacion.getIdTipoIdentificacion());
-                persona.setFkIdTipoIdentificacion(fkIdTipoIdentificacion);
+                persona.setFkIdIdentificationType(fkIdTipoIdentificacion);
             }
             List<TramitesPersonas> attachedTramitesPersonasList = new ArrayList<TramitesPersonas>();
             for (TramitesPersonas tramitesPersonasListTramitesPersonasToAttach : persona.getTramitesPersonasList()) {
@@ -154,7 +154,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 fkIdTipoIdentificacion = em.merge(fkIdTipoIdentificacion);
             }
             for (TramitesPersonas tramitesPersonasListTramitesPersonas : persona.getTramitesPersonasList()) {
-                Persona oldPersonaOfTramitesPersonasListTramitesPersonas = tramitesPersonasListTramitesPersonas
+                Person oldPersonaOfTramitesPersonasListTramitesPersonas = tramitesPersonasListTramitesPersonas
                         .getPersona();
                 tramitesPersonasListTramitesPersonas.setPersona(persona);
                 tramitesPersonasListTramitesPersonas = em.merge(tramitesPersonasListTramitesPersonas);
@@ -166,7 +166,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Presupuesto presupuestoListPresupuesto : persona.getPresupuestoList()) {
-                Persona oldFkIdPersonaOfPresupuestoListPresupuesto = presupuestoListPresupuesto.getFkIdPersona();
+                Person oldFkIdPersonaOfPresupuestoListPresupuesto = presupuestoListPresupuesto.getFkIdPersona();
                 presupuestoListPresupuesto.setFkIdPersona(persona);
                 presupuestoListPresupuesto = em.merge(presupuestoListPresupuesto);
                 if (oldFkIdPersonaOfPresupuestoListPresupuesto != null) {
@@ -176,7 +176,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (GestionDeEscritura gestionesDeEscriturasListGestionesDeEscrituras : persona
                     .getGestionDeEscrituraList()) {
-                Persona oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
+                Person oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
                         .getFkIdPersonaEscribano();
                 gestionesDeEscriturasListGestionesDeEscrituras.setFkIdPersonaEscribano(persona);
                 gestionesDeEscriturasListGestionesDeEscrituras = em
@@ -189,7 +189,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Folio folioListFolio : persona.getFolioList()) {
-                Persona oldFkIdPersonaEscribanoOfFolioListFolio = folioListFolio.getFkIdPersonaEscribano();
+                Person oldFkIdPersonaEscribanoOfFolioListFolio = folioListFolio.getFkIdPersonaEscribano();
                 folioListFolio.setFkIdPersonaEscribano(persona);
                 folioListFolio = em.merge(folioListFolio);
                 if (oldFkIdPersonaEscribanoOfFolioListFolio != null) {
@@ -198,7 +198,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Suplencia suplenciaListSuplencia : persona.getSuplenciaList()) {
-                Persona oldFkIdSuplenteOfSuplenciaListSuplencia = suplenciaListSuplencia.getFkIdSuplente();
+                Person oldFkIdSuplenteOfSuplenciaListSuplencia = suplenciaListSuplencia.getFkIdSuplente();
                 suplenciaListSuplencia.setFkIdSuplente(persona);
                 suplenciaListSuplencia = em.merge(suplenciaListSuplencia);
                 if (oldFkIdSuplenteOfSuplenciaListSuplencia != null) {
@@ -207,7 +207,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Suplencia suplenciaList1Suplencia : persona.getSuplenciaList1()) {
-                Persona oldFkIdSuplantadoOfSuplenciaList1Suplencia = suplenciaList1Suplencia.getFkIdSuplantado();
+                Person oldFkIdSuplantadoOfSuplenciaList1Suplencia = suplenciaList1Suplencia.getFkIdSuplantado();
                 suplenciaList1Suplencia.setFkIdSuplantado(persona);
                 suplenciaList1Suplencia = em.merge(suplenciaList1Suplencia);
                 if (oldFkIdSuplantadoOfSuplenciaList1Suplencia != null) {
@@ -216,7 +216,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Copia copiaListCopia : persona.getCopiaList()) {
-                Persona oldFkIdPersonaOfCopiaListCopia = copiaListCopia.getFkIdPersona();
+                Person oldFkIdPersonaOfCopiaListCopia = copiaListCopia.getFkIdPersona();
                 copiaListCopia.setFkIdPersona(persona);
                 copiaListCopia = em.merge(copiaListCopia);
                 if (oldFkIdPersonaOfCopiaListCopia != null) {
@@ -225,7 +225,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             for (Usuario usuarioListUsuario : persona.getUsuariosList()) {
-                Persona oldFkIdPersonaOfUsuarioListUsuario = usuarioListUsuario.getFkIdPersona();
+                Person oldFkIdPersonaOfUsuarioListUsuario = usuarioListUsuario.getFkIdPersona();
                 usuarioListUsuario.setFkIdPersona(persona);
                 usuarioListUsuario = em.merge(usuarioListUsuario);
                 if (oldFkIdPersonaOfUsuarioListUsuario != null) {
@@ -234,7 +234,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 }
             }
             em.getTransaction().commit();
-            oid = persona.getIdPersona();
+            oid = persona.getPersonId();
         } finally {
             if (em != null) {
                 em.close();
@@ -243,14 +243,14 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return oid;
     }
 
-    public void edit(Persona persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Person persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona persistentPersona = em.find(Persona.class, persona.getIdPersona());
-            TipoIdentificacion fkIdTipoIdentificacionOld = persistentPersona.getFkIdTipoIdentificacion();
-            TipoIdentificacion fkIdTipoIdentificacionNew = persona.getFkIdTipoIdentificacion();
+            Person persistentPersona = em.find(Person.class, persona.getPersonId());
+            TipoIdentificacion fkIdTipoIdentificacionOld = persistentPersona.getFkIdIdentificationType();
+            TipoIdentificacion fkIdTipoIdentificacionNew = persona.getFkIdIdentificationType();
             List<TramitesPersonas> tramitesPersonasListOld = persistentPersona.getTramitesPersonasList();
             List<TramitesPersonas> tramitesPersonasListNew = persona.getTramitesPersonasList();
             List<Presupuesto> presupuestoListOld = persistentPersona.getPresupuestoList();
@@ -347,7 +347,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             if (fkIdTipoIdentificacionNew != null) {
                 fkIdTipoIdentificacionNew = em.getReference(fkIdTipoIdentificacionNew.getClass(),
                         fkIdTipoIdentificacionNew.getIdTipoIdentificacion());
-                persona.setFkIdTipoIdentificacion(fkIdTipoIdentificacionNew);
+                persona.setFkIdIdentificationType(fkIdTipoIdentificacionNew);
             }
             List<TramitesPersonas> attachedTramitesPersonasListNew = new ArrayList<TramitesPersonas>();
             for (TramitesPersonas tramitesPersonasListNewTramitesPersonasToAttach : tramitesPersonasListNew) {
@@ -427,7 +427,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (TramitesPersonas tramitesPersonasListNewTramitesPersonas : tramitesPersonasListNew) {
                 if (!tramitesPersonasListOld.contains(tramitesPersonasListNewTramitesPersonas)) {
-                    Persona oldPersonaOfTramitesPersonasListNewTramitesPersonas = tramitesPersonasListNewTramitesPersonas
+                    Person oldPersonaOfTramitesPersonasListNewTramitesPersonas = tramitesPersonasListNewTramitesPersonas
                             .getPersona();
                     tramitesPersonasListNewTramitesPersonas.setPersona(persona);
                     tramitesPersonasListNewTramitesPersonas = em.merge(tramitesPersonasListNewTramitesPersonas);
@@ -442,7 +442,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Presupuesto presupuestoListNewPresupuesto : presupuestoListNew) {
                 if (!presupuestoListOld.contains(presupuestoListNewPresupuesto)) {
-                    Persona oldFkIdPersonaOfPresupuestoListNewPresupuesto = presupuestoListNewPresupuesto
+                    Person oldFkIdPersonaOfPresupuestoListNewPresupuesto = presupuestoListNewPresupuesto
                             .getFkIdPersona();
                     presupuestoListNewPresupuesto.setFkIdPersona(persona);
                     presupuestoListNewPresupuesto = em.merge(presupuestoListNewPresupuesto);
@@ -457,7 +457,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (GestionDeEscritura gestionesDeEscriturasListNewGestionesDeEscrituras : gestionesDeEscriturasListNew) {
                 if (!gestionesDeEscriturasListOld.contains(gestionesDeEscriturasListNewGestionesDeEscrituras)) {
-                    Persona oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
+                    Person oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
                             .getFkIdPersonaEscribano();
                     gestionesDeEscriturasListNewGestionesDeEscrituras.setFkIdPersonaEscribano(persona);
                     gestionesDeEscriturasListNewGestionesDeEscrituras = em
@@ -474,7 +474,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Folio folioListNewFolio : folioListNew) {
                 if (!folioListOld.contains(folioListNewFolio)) {
-                    Persona oldFkIdPersonaEscribanoOfFolioListNewFolio = folioListNewFolio.getFkIdPersonaEscribano();
+                    Person oldFkIdPersonaEscribanoOfFolioListNewFolio = folioListNewFolio.getFkIdPersonaEscribano();
                     folioListNewFolio.setFkIdPersonaEscribano(persona);
                     folioListNewFolio = em.merge(folioListNewFolio);
                     if (oldFkIdPersonaEscribanoOfFolioListNewFolio != null
@@ -487,7 +487,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Suplencia suplenciaListNewSuplencia : suplenciaListNew) {
                 if (!suplenciaListOld.contains(suplenciaListNewSuplencia)) {
-                    Persona oldFkIdSuplenteOfSuplenciaListNewSuplencia = suplenciaListNewSuplencia.getFkIdSuplente();
+                    Person oldFkIdSuplenteOfSuplenciaListNewSuplencia = suplenciaListNewSuplencia.getFkIdSuplente();
                     suplenciaListNewSuplencia.setFkIdSuplente(persona);
                     suplenciaListNewSuplencia = em.merge(suplenciaListNewSuplencia);
                     if (oldFkIdSuplenteOfSuplenciaListNewSuplencia != null
@@ -500,7 +500,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Suplencia suplenciaList1NewSuplencia : suplenciaList1New) {
                 if (!suplenciaList1Old.contains(suplenciaList1NewSuplencia)) {
-                    Persona oldFkIdSuplantadoOfSuplenciaList1NewSuplencia = suplenciaList1NewSuplencia
+                    Person oldFkIdSuplantadoOfSuplenciaList1NewSuplencia = suplenciaList1NewSuplencia
                             .getFkIdSuplantado();
                     suplenciaList1NewSuplencia.setFkIdSuplantado(persona);
                     suplenciaList1NewSuplencia = em.merge(suplenciaList1NewSuplencia);
@@ -515,7 +515,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Copia copiaListNewCopia : copiaListNew) {
                 if (!copiaListOld.contains(copiaListNewCopia)) {
-                    Persona oldFkIdPersonaOfCopiaListNewCopia = copiaListNewCopia.getFkIdPersona();
+                    Person oldFkIdPersonaOfCopiaListNewCopia = copiaListNewCopia.getFkIdPersona();
                     copiaListNewCopia.setFkIdPersona(persona);
                     copiaListNewCopia = em.merge(copiaListNewCopia);
                     if (oldFkIdPersonaOfCopiaListNewCopia != null
@@ -527,7 +527,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             }
             for (Usuario usuarioListNewUsuario : usuarioListNew) {
                 if (!usuarioListOld.contains(usuarioListNewUsuario)) {
-                    Persona oldFkIdPersonaOfUsuarioListNewUsuario = usuarioListNewUsuario.getFkIdPersona();
+                    Person oldFkIdPersonaOfUsuarioListNewUsuario = usuarioListNewUsuario.getFkIdPersona();
                     usuarioListNewUsuario.setFkIdPersona(persona);
                     usuarioListNewUsuario = em.merge(usuarioListNewUsuario);
                     if (oldFkIdPersonaOfUsuarioListNewUsuario != null
@@ -541,7 +541,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = persona.getIdPersona();
+                Integer id = persona.getPersonId();
                 if (findPersona(id) == null) {
                     throw new NonexistentEntityException("The persona with id " + id + " no longer exists.");
                 }
@@ -559,10 +559,10 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona persona;
+            Person persona;
             try {
-                persona = em.getReference(Persona.class, id);
-                persona.getIdPersona();
+                persona = em.getReference(Person.class, id);
+                persona.getPersonId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The persona with id " + id + " no longer exists.", enfe);
             }
@@ -643,7 +643,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdTipoIdentificacion();
+            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdIdentificationType();
             if (fkIdTipoIdentificacion != null) {
                 fkIdTipoIdentificacion.getPersonaList().remove(persona);
                 fkIdTipoIdentificacion = em.merge(fkIdTipoIdentificacion);
@@ -657,15 +657,15 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public List<Persona> findPersonaEntities() {
+    public List<Person> findPersonaEntities() {
         return findPersonaEntities(true, -1, -1);
     }
 
-    public List<Persona> findPersonaEntities(int maxResults, int firstResult) {
+    public List<Person> findPersonaEntities(int maxResults, int firstResult) {
         return findPersonaEntities(false, maxResults, firstResult);
     }
 
-    private List<Persona> findPersonaEntities(boolean all, int maxResults, int firstResult) {
+    private List<Person> findPersonaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             Query q = em.createQuery("select object(o) from Persona as o");
@@ -674,10 +674,10 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 q.setFirstResult(firstResult);
             }
 
-            List<Persona> listaPersonas = q.getResultList();
+            List<Person> listaPersonas = q.getResultList();
 
-            for (Iterator<Persona> it = listaPersonas.iterator(); it.hasNext();) {
-                Persona persona = it.next();
+            for (Iterator<Person> it = listaPersonas.iterator(); it.hasNext();) {
+                Person persona = it.next();
                 persona.setFolioList(null);
 
                 persona.setGestionDeEscrituraList(null);
@@ -686,7 +686,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                 persona.setSuplenciaList(null);
 
                 TramitesPersonasJpaController jpaTramitePersona = new TramitesPersonasJpaController(emf);
-                persona.setTramiteList(jpaTramitePersona.findTramitesPersona(persona.getIdPersona()));
+                persona.setTramiteList(jpaTramitePersona.findTramitesPersona(persona.getPersonId()));
 
                 persona.setTramitesPersonasList(null);
                 persona.setUsuariosList(null);
@@ -700,10 +700,10 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public Persona findPersona(Integer id) {
+    public Person findPersona(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Persona.class, id);
+            return em.find(Person.class, id);
         } finally {
             em.close();
         }
@@ -713,7 +713,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Persona> rt = cq.from(Persona.class);
+            Root<Person> rt = cq.from(Person.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -722,18 +722,18 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public static PersonaJpaController getInstancia() {
+    public static PersonJpaController getInstancia() {
 
         EntityManagerFactory emf = AdministradorJpa.getEmf();
 
         if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new PersonaJpaController(null, emf);
+            instancia = new PersonJpaController(null, emf);
         }
         return instancia;
 
     }
 
-    public Boolean modificarPersona(Persona pPersona) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarPersona(Person pPersona) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable para saber el resultado de la transaccion
         int oldVersion = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en memoria del Objeto
@@ -741,7 +741,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManager em = getEntityManager();
 
-        Persona persistentPersona = em.find(Persona.class, pPersona.getIdPersona());
+        Person persistentPersona = em.find(Person.class, pPersona.getPersonId());
 
         if (persistentPersona != null) {
             version = persistentPersona.getVersion(); // Version del Objeto en db
@@ -756,12 +756,12 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                     em.getTransaction().begin();
 
                     // Atributos Persona
-                    persistentPersona.setNombre(pPersona.getNombre());
-                    persistentPersona.setApellido(pPersona.getApellido());
-                    persistentPersona.setTelefono(pPersona.getTelefono());
-                    persistentPersona.setEMail(pPersona.getEMail());
-                    persistentPersona.setFkIdTipoIdentificacion(pPersona.getFkIdTipoIdentificacion());
-                    persistentPersona.setNumeroIdentificacion(pPersona.getNumeroIdentificacion());
+                    persistentPersona.setFirstName(pPersona.getFirstName());
+                    persistentPersona.setLastName(pPersona.getLastName());
+                    persistentPersona.setPhone(pPersona.getPhone());
+                    persistentPersona.setEmail(pPersona.getEmail());
+                    persistentPersona.setFkIdIdentificationType(pPersona.getFkIdIdentificationType());
+                    persistentPersona.setIdentificationNumber(pPersona.getIdentificationNumber());
 
                     /*
                      * Tira error cuando el registro de escribano vale NULL if
@@ -783,7 +783,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return flag;
     }
 
-    public Boolean registrarEscribano(Persona escribano) throws ClassModifiedException, NonexistentEntityException {
+    public Boolean registrarEscribano(Person escribano) throws ClassModifiedException, NonexistentEntityException {
 
         Boolean resultado = false; // Variable para saber el resultado de la transaccion
         int oldVersion = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en memoria del Objeto
@@ -791,7 +791,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManager em = getEntityManager();
 
-        Persona persistentPersona = em.find(Persona.class, escribano.getIdPersona());
+        Person persistentPersona = em.find(Person.class, escribano.getPersonId());
 
         if (persistentPersona != null) {
             version = persistentPersona.getVersion(); // Version del Objeto en db
@@ -806,8 +806,8 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
             } else {
                 em.getTransaction().begin();
 
-                if (escribano.getRegistroEscribano() != 0) {
-                    persistentPersona.setRegistroEscribano(escribano.getRegistroEscribano());
+                if (escribano.getNotaryRegistrationNumber() != 0) {
+                    persistentPersona.setNotaryRegistrationNumber(escribano.getNotaryRegistrationNumber());
                 }
                 em.getTransaction().commit();
                 resultado = true;
@@ -823,7 +823,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return resultado;
     }
 
-    public Boolean modificarCliente(Persona pCliente) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarCliente(Person pCliente) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable para saber el resultado de la transaccion
         int oldVersion = 0; // Variable para Version en memoria del Objeto
@@ -831,7 +831,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManager em = getEntityManager();
 
-        Persona persistentPersona = em.find(Persona.class, pCliente.getIdPersona());
+        Person persistentPersona = em.find(Person.class, pCliente.getPersonId());
 
         if (persistentPersona != null) {
             version = persistentPersona.getVersion(); // Version del Objeto en db
@@ -846,27 +846,27 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
                     em.getTransaction().begin();
 
                     // Atributos Persona
-                    persistentPersona.setNombre(pCliente.getNombre());
-                    persistentPersona.setApellido(pCliente.getApellido());
-                    persistentPersona.setTelefono(pCliente.getTelefono());
-                    persistentPersona.setEMail(pCliente.getEMail());
-                    persistentPersona.setFkIdTipoIdentificacion(pCliente.getFkIdTipoIdentificacion());
-                    persistentPersona.setNumeroIdentificacion(pCliente.getNumeroIdentificacion());
+                    persistentPersona.setFirstName(pCliente.getFirstName());
+                    persistentPersona.setLastName(pCliente.getLastName());
+                    persistentPersona.setPhone(pCliente.getPhone());
+                    persistentPersona.setEmail(pCliente.getEmail());
+                    persistentPersona.setFkIdIdentificationType(pCliente.getFkIdIdentificationType());
+                    persistentPersona.setIdentificationNumber(pCliente.getIdentificationNumber());
 
                     // La version del objeto queda a cargo de Hivernate
                     // Atributos Cliente
-                    persistentPersona.setNacionalidad(pCliente.getNacionalidad());
-                    persistentPersona.setFechaNacimiento(pCliente.getFechaNacimiento());
-                    persistentPersona.setCuit(pCliente.getCuit());
-                    persistentPersona.setEstadoCivil(pCliente.getEstadoCivil());
-                    persistentPersona.setNumeroNupcias(pCliente.getNumeroNupcias());
-                    persistentPersona.setSexo(pCliente.getSexo());
-                    persistentPersona.setOcupacion(pCliente.getOcupacion());
-                    persistentPersona.setDomicilio(pCliente.getDomicilio());
+                    persistentPersona.setNationality(pCliente.getNationality());
+                    persistentPersona.setBirthDate(pCliente.getBirthDate());
+                    persistentPersona.setTaxId(pCliente.getTaxId());
+                    persistentPersona.setMaritalStatus(pCliente.getMaritalStatus());
+                    persistentPersona.setMarriageCount(pCliente.getMarriageCount());
+                    persistentPersona.setSex(pCliente.getSex());
+                    persistentPersona.setOccupation(pCliente.getOccupation());
+                    persistentPersona.setAddress(pCliente.getAddress());
 
-                    persistentPersona.setEsCliente(pCliente.getEsCliente());
+                    persistentPersona.setIsClient(pCliente.getIsClient());
 
-                    persistentPersona.setRegistroEscribano(pCliente.getRegistroEscribano());
+                    persistentPersona.setNotaryRegistrationNumber(pCliente.getNotaryRegistrationNumber());
 
                     em.getTransaction().commit();
                     em.close();
@@ -891,19 +891,19 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
      * @param pTipoIdentificacion
      * @return Retorno una lista de personas
      */
-    public Persona findPersonaTipoNumeroIdentificacion(DtoPersona dtoPersona) { // No pueden repetirse un mismo numero y
+    public Person findPersonaTipoNumeroIdentificacion(DtoPerson dtoPersona) { // No pueden repetirse un mismo numero y
                                                                                 // tipo de identificacion
 
         EntityManager em = getEntityManager();
-        List<Persona> listaPersona = null;
-        Persona persona = null;
+        List<Person> listaPersona = null;
+        Person persona = null;
         // acocio el nombre de la identificacion con su id correspondiente, para la
         // busqueda
         // TODO: VIOLACION DE CAPAS!
         dtoPersona.getDtoTipoIdentificacion()
                 .setIdTipoIdentificacion(ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(dtoPersona));
 
-        String numeroIdentificacion = dtoPersona.getNumeroIdentificacion();
+        String numeroIdentificacion = dtoPersona.getIdentificationNumber();
         int idTipoIdentificacion = dtoPersona.getDtoTipoIdentificacion().getIdTipoIdentificacion();
 
         Query query = em.createNamedQuery("Persona.findByNumeroIdentificacion");
@@ -913,7 +913,7 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
 
         if (!listaPersona.isEmpty()) {
             for (int i = 0; i < listaPersona.size(); i++) {
-                if (listaPersona.get(i).getFkIdTipoIdentificacion().getIdTipoIdentificacion() == idTipoIdentificacion) {
+                if (listaPersona.get(i).getFkIdIdentificationType().getIdTipoIdentificacion() == idTipoIdentificacion) {
                     persona = listaPersona.get(i);
                 }
 
@@ -929,15 +929,15 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
      * @param dtoPersona
      * @return
      */
-    public List<Persona> findPersonaNombreApellido(DtoPersona dtoPersona) { // No pueden repetirse un mismo numero y
+    public List<Person> findPersonaNombreApellido(DtoPerson dtoPersona) { // No pueden repetirse un mismo numero y
                                                                             // tipo de identificacion
 
         EntityManager em = getEntityManager();
 
-        List<Persona> listaPersona = null;
-        Persona persona = null;
-        String nombre = "%" + dtoPersona.getNombre() + "%";
-        String apellido = "%" + dtoPersona.getApellido() + "%";
+        List<Person> listaPersona = null;
+        Person persona = null;
+        String nombre = "%" + dtoPersona.getFirstName() + "%";
+        String apellido = "%" + dtoPersona.getLastName() + "%";
 
         Query query = em.createNamedQuery("Persona.findByPersonaNombreApellido");
         query.setParameter("nombre", nombre);
@@ -953,11 +953,11 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
      *
      * @return
      */
-    public List<Persona> findPersonas() {
+    public List<Person> findPersonas() {
         EntityManager em = getEntityManager();
 
-        List<Persona> listaPersona = null;
-        Persona persona = null;
+        List<Person> listaPersona = null;
+        Person persona = null;
         try {
             Query query = em.createNamedQuery("Persona.findAll");
 
@@ -968,16 +968,16 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return listaPersona;
     }
 
-    public Persona findPersonaEscribano(Persona miPersona) { // No pueden repetirse un mismo numero y tipo de
+    public Person findPersonaEscribano(Person miPersona) { // No pueden repetirse un mismo numero y tipo de
                                                              // identificacion
 
         EntityManager em = getEntityManager();
 
-        List<Persona> listaPersona = null;
-        Persona persona = null;
+        List<Person> listaPersona = null;
+        Person persona = null;
 
         Query query = em.createNamedQuery("Persona.findByRegistroEscribano");
-        query.setParameter("registroEscribano", miPersona.getRegistroEscribano());
+        query.setParameter("registroEscribano", miPersona.getNotaryRegistrationNumber());
 
         listaPersona = query.getResultList();
 
@@ -988,15 +988,15 @@ public class PersonaJpaController implements Serializable, IPersistenciaJpa {
         return persona;
     }
 
-    public Persona findPersonaPorId(Integer idPersona) {
+    public Person findPersonaPorId(Integer idPersona) {
         EntityManager em = getEntityManager();
 
-        Persona persona = new Persona();
+        Person persona = new Person();
 
         Query query = em.createNamedQuery("Persona.findByIdPersona");
         query.setParameter("idPersona", idPersona);
 
-        persona = (Persona) query.getSingleResult();
+        persona = (Person) query.getSingleResult();
 
         return persona;
     }

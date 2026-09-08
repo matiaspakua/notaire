@@ -1,7 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.service.EscrituraFirmaService;
 import com.licensis.notaire.service.EscrituraService;
@@ -124,7 +124,7 @@ public class EscrituraController {
     @GetMapping("/escribanos-disponibles")
     @Operation(summary = "Obtener lista de escribanos disponibles (con registro)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Persona>> getEscribanosDisponibles() {
+    public ResponseEntity<List<Person>> getEscribanosDisponibles() {
         return ResponseEntity.ok(escrituraService.findEscribanosDisponibles());
     }
 

@@ -64,7 +64,7 @@ fi
 
 echo -e "${BLUE}=== TESTING CORE READ ENDPOINTS ===${NC}"
 assert_status 200 GET "$BASE_URL/api/v1/conceptos"
-assert_status 200 GET "$BASE_URL/api/v1/personas"
+assert_status 200 GET "$BASE_URL/api/v1/people"
 assert_status 200 GET "$BASE_URL/api/v1/tramites"
 assert_status 200 GET "$BASE_URL/api/v1/escrituras"
 assert_status 200 GET "$BASE_URL/api/v1/presupuestos"

@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface GestionDeEscrituraRepository extends JpaRepository<GestionDeEscritura, Integer> {
 
-    List<GestionDeEscritura> findByFkIdPersonaEscribano(Persona escribano);
+    List<GestionDeEscritura> findByFkIdPersonaEscribano(Person escribano);
 
     List<GestionDeEscritura> findByFkIdPersonaEscribanoIdPersona(Integer idEscribano);
 

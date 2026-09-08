@@ -13,7 +13,7 @@ public class DtoCopia implements DtoValido
 {
 
     private Integer idCopia;
-    private DtoPersona persona = null;
+    private DtoPerson persona = null;
     private DtoTestimonio testimonio = null;
     private int numero;
     private Date fechaImpresion;
@@ -46,12 +46,12 @@ public class DtoCopia implements DtoValido
         this.idCopia = idCopia;
     }
 
-    public DtoPersona getPersona()
+    public DtoPerson getPersona()
     {
         return this.persona;
     }
 
-    public void setPersona(DtoPersona personas)
+    public void setPersona(DtoPerson personas)
     {
         this.persona = personas;
     }

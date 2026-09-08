@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,17 +55,17 @@ class PresupuestoEntityTest {
         @Test
         @DisplayName("Should link presupuesto to persona")
         void shouldLinkPresupuestoToPersona() {
-            Persona persona = new Persona();
-            persona.setIdPersona(1);
-            persona.setNombre("Juan");
-            persona.setApellido("Perez");
+            Person persona = new Person();
+            persona.setPersonId(1);
+            persona.setFirstName("Juan");
+            persona.setLastName("Perez");
 
             Presupuesto presupuesto = new Presupuesto();
             presupuesto.setIdPresupuesto(1);
             presupuesto.setFkIdPersona(persona);
 
             assertThat(presupuesto.getFkIdPersona()).isNotNull();
-            assertThat(presupuesto.getFkIdPersona().getNombre()).isEqualTo("Juan");
+            assertThat(presupuesto.getFkIdPersona().getFirstName()).isEqualTo("Juan");
         }
 
         @Test
@@ -118,8 +118,8 @@ class PresupuestoEntityTest {
         @Test
         @DisplayName("Should filter presupuestos by persona")
         void shouldFilterPresupuestosByPersona() {
-            Persona persona1 = new Persona(1);
-            Persona persona2 = new Persona(2);
+            Person persona1 = new Person(1);
+            Person persona2 = new Person(2);
 
             Presupuesto presupuesto1 = new Presupuesto(1);
             presupuesto1.setFkIdPersona(persona1);
@@ -133,7 +133,7 @@ class PresupuestoEntityTest {
             List<Presupuesto> presupuestos = List.of(presupuesto1, presupuesto2, presupuesto3);
 
             var filtered = presupuestos.stream()
-                .filter(p -> p.getFkIdPersona() != null && p.getFkIdPersona().getIdPersona().equals(1))
+                .filter(p -> p.getFkIdPersona() != null && p.getFkIdPersona().getPersonId().equals(1))
                 .toList();
 
             assertThat(filtered).hasSize(2);

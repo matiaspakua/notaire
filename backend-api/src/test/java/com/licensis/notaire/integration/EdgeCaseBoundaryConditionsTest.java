@@ -110,7 +110,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(get("/api/v1/usuarios/abc"))
                     .andExpect(status().is4xxClientError());
 
-            mockMvc.perform(get("/api/v1/personas/xyz"))
+            mockMvc.perform(get("/api/v1/people/xyz"))
                     .andExpect(status().is4xxClientError());
 
             mockMvc.perform(get("/api/v1/gestiones/not-a-number"))
@@ -123,7 +123,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(get("/api/v1/usuarios/" + Integer.MAX_VALUE))
                     .andExpect(status().isNotFound());
 
-            mockMvc.perform(get("/api/v1/personas/" + Integer.MAX_VALUE))
+            mockMvc.perform(get("/api/v1/people/" + Integer.MAX_VALUE))
                     .andExpect(status().isNotFound());
         }
 
@@ -255,9 +255,9 @@ class EdgeCaseBoundaryConditionsTest {
         @Test
         @DisplayName("Search endpoint handles empty query without crash")
         void searchEndpointHandlesEmptyQuery() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/buscar")
-                            .param("nombre", "")
-                            .param("apellido", ""))
+            mockMvc.perform(get("/api/v1/people/search")
+                            .param("firstName", "")
+                            .param("lastName", ""))
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
                                     .as("Empty search query should not crash")

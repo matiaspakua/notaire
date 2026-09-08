@@ -10,7 +10,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Testimonio;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,10 +53,10 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdPersona = copia.getFkIdPersona();
+            Person fkIdPersona = copia.getFkIdPersona();
             if (fkIdPersona != null)
             {
-                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getIdPersona());
+                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getPersonId());
                 copia.setFkIdPersona(fkIdPersona);
             }
             Testimonio fkIdTestimonio = copia.getFkIdTestimonio();
@@ -109,15 +109,15 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
             em = getEntityManager();
             em.getTransaction().begin();
             Copia persistentCopia = em.find(Copia.class, copia.getIdCopia());
-            Persona fkIdPersonaOld = persistentCopia.getFkIdPersona();
-            Persona fkIdPersonaNew = copia.getFkIdPersona();
+            Person fkIdPersonaOld = persistentCopia.getFkIdPersona();
+            Person fkIdPersonaNew = copia.getFkIdPersona();
             Testimonio fkIdTestimonioOld = persistentCopia.getFkIdTestimonio();
             Testimonio fkIdTestimonioNew = copia.getFkIdTestimonio();
             List<Folio> folioListOld = persistentCopia.getFolioList();
             List<Folio> folioListNew = copia.getFolioList();
             if (fkIdPersonaNew != null)
             {
-                fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getIdPersona());
+                fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getPersonId());
                 copia.setFkIdPersona(fkIdPersonaNew);
             }
             if (fkIdTestimonioNew != null)
@@ -211,7 +211,7 @@ public class CopiaJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new NonexistentEntityException("The copia with id " + id + " no longer exists.", enfe);
             }
-            Persona fkIdPersona = copia.getFkIdPersona();
+            Person fkIdPersona = copia.getFkIdPersona();
             if (fkIdPersona != null)
             {
                 fkIdPersona.getCopiaList().remove(copia);

@@ -26,10 +26,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
@@ -45,7 +45,7 @@ class EstadoDeGestionReferentialIntegrityTest {
     private GestionDeEscrituraRepository gestionRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private EstadoDeGestionRepository estadoRepository;
@@ -70,7 +70,7 @@ class EstadoDeGestionReferentialIntegrityTest {
     }
 
     private void linkEstadoToGestion(int idEstadoGestion) {
-        Persona escribano = personaRepository.findById(1).orElseThrow();
+        Person escribano = personaRepository.findById(1).orElseThrow();
         EstadoDeGestion estado = estadoRepository.findById(idEstadoGestion).orElseThrow();
 
         GestionDeEscritura gestion = new GestionDeEscritura();

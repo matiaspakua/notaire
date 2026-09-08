@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.service.AdministradorJpa;
 import java.io.Serializable;
@@ -41,24 +41,24 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
 
     public void create(TipoIdentificacion tipoIdentificacion) {
         if (tipoIdentificacion.getPersonaList() == null) {
-            tipoIdentificacion.setPersonaList(new ArrayList<Persona>());
+            tipoIdentificacion.setPersonaList(new ArrayList<Person>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Persona> attachedPersonaList = new ArrayList<Persona>();
-            for (Persona personaListPersonaToAttach : tipoIdentificacion.getPersonaList()) {
+            List<Person> attachedPersonaList = new ArrayList<Person>();
+            for (Person personaListPersonaToAttach : tipoIdentificacion.getPersonaList()) {
                 personaListPersonaToAttach = em.getReference(personaListPersonaToAttach.getClass(),
-                        personaListPersonaToAttach.getIdPersona());
+                        personaListPersonaToAttach.getPersonId());
                 attachedPersonaList.add(personaListPersonaToAttach);
             }
             tipoIdentificacion.setPersonaList(attachedPersonaList);
             em.persist(tipoIdentificacion);
-            for (Persona personaListPersona : tipoIdentificacion.getPersonaList()) {
+            for (Person personaListPersona : tipoIdentificacion.getPersonaList()) {
                 TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListPersona = personaListPersona
-                        .getFkIdTipoIdentificacion();
-                personaListPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
+                        .getFkIdIdentificationType();
+                personaListPersona.setFkIdIdentificationType(tipoIdentificacion);
                 personaListPersona = em.merge(personaListPersona);
                 if (oldFkIdTipoIdentificacionOfPersonaListPersona != null) {
                     oldFkIdTipoIdentificacionOfPersonaListPersona.getPersonaList().remove(personaListPersona);
@@ -82,10 +82,10 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
             em.getTransaction().begin();
             TipoIdentificacion persistentTipoIdentificacion = em.find(TipoIdentificacion.class,
                     tipoIdentificacion.getIdTipoIdentificacion());
-            List<Persona> personaListOld = persistentTipoIdentificacion.getPersonaList();
-            List<Persona> personaListNew = tipoIdentificacion.getPersonaList();
+            List<Person> personaListOld = persistentTipoIdentificacion.getPersonaList();
+            List<Person> personaListNew = tipoIdentificacion.getPersonaList();
             List<String> illegalOrphanMessages = null;
-            for (Persona personaListOldPersona : personaListOld) {
+            for (Person personaListOldPersona : personaListOld) {
                 if (!personaListNew.contains(personaListOldPersona)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
@@ -97,20 +97,20 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            List<Persona> attachedPersonaListNew = new ArrayList<Persona>();
-            for (Persona personaListNewPersonaToAttach : personaListNew) {
+            List<Person> attachedPersonaListNew = new ArrayList<Person>();
+            for (Person personaListNewPersonaToAttach : personaListNew) {
                 personaListNewPersonaToAttach = em.getReference(personaListNewPersonaToAttach.getClass(),
-                        personaListNewPersonaToAttach.getIdPersona());
+                        personaListNewPersonaToAttach.getPersonId());
                 attachedPersonaListNew.add(personaListNewPersonaToAttach);
             }
             personaListNew = attachedPersonaListNew;
             tipoIdentificacion.setPersonaList(personaListNew);
             tipoIdentificacion = em.merge(tipoIdentificacion);
-            for (Persona personaListNewPersona : personaListNew) {
+            for (Person personaListNewPersona : personaListNew) {
                 if (!personaListOld.contains(personaListNewPersona)) {
                     TipoIdentificacion oldFkIdTipoIdentificacionOfPersonaListNewPersona = personaListNewPersona
-                            .getFkIdTipoIdentificacion();
-                    personaListNewPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
+                            .getFkIdIdentificationType();
+                    personaListNewPersona.setFkIdIdentificationType(tipoIdentificacion);
                     personaListNewPersona = em.merge(personaListNewPersona);
                     if (oldFkIdTipoIdentificacionOfPersonaListNewPersona != null
                             && !oldFkIdTipoIdentificacionOfPersonaListNewPersona.equals(tipoIdentificacion)) {
@@ -151,8 +151,8 @@ public class TipoIdentificacionJpaController implements Serializable, IPersisten
                         enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<Persona> personaListOrphanCheck = tipoIdentificacion.getPersonaList();
-            for (Persona personaListOrphanCheckPersona : personaListOrphanCheck) {
+            List<Person> personaListOrphanCheck = tipoIdentificacion.getPersonaList();
+            for (Person personaListOrphanCheckPersona : personaListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }

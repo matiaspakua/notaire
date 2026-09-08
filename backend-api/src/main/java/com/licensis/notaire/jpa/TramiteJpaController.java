@@ -11,7 +11,7 @@ import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
@@ -522,7 +522,7 @@ public class TramiteJpaController implements Serializable, IPersistenciaJpa
             for (Iterator<Tramite> it = listaTramites.iterator(); it.hasNext();)
             {
                 Tramite tramite = it.next();
-                tramite.setPersonaList(new ArrayList<Persona>());
+                tramite.setPersonaList(new ArrayList<Person>());
                 tramite.setDocumentoPresentadoList(new ArrayList<DocumentoPresentado>());
             }
 

@@ -1,9 +1,9 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,12 +24,12 @@ class PresupuestoRepositoryIntegrationTest extends ServiceIntegrationTest {
     private PresupuestoRepository presupuestoRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
-    private Persona persona;
+    private Person persona;
 
     @BeforeEach
     void setUp() {
@@ -38,12 +38,12 @@ class PresupuestoRepositoryIntegrationTest extends ServiceIntegrationTest {
         tipoId.setCaracteres("8");
         tipoId = tipoIdentificacionRepository.save(tipoId);
 
-        persona = new Persona();
-        persona.setNombre("Cliente");
-        persona.setApellido("Test");
-        persona.setNumeroIdentificacion("99999999");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoId);
+        persona = new Person();
+        persona.setFirstName("Cliente");
+        persona.setLastName("Test");
+        persona.setIdentificationNumber("99999999");
+        persona.setIsClient(true);
+        persona.setFkIdIdentificationType(tipoId);
         persona = personaRepository.save(persona);
     }
 

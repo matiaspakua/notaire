@@ -1,8 +1,8 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +14,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Persona Repository Integration Tests")
-class PersonaRepositoryIntegrationTest extends ServiceIntegrationTest {
+@DisplayName("Person Repository Integration Tests")
+class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
@@ -34,100 +34,100 @@ class PersonaRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create persona with required fields")
-    void shouldCreatePersonaWithRequiredFields() {
-        Persona persona = new Persona();
-        persona.setNombre("Juan");
-        persona.setApellido("Pérez");
-        persona.setNumeroIdentificacion("12345678");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoId);
+    @DisplayName("Should create person with required fields")
+    void shouldCreatePersonWithRequiredFields() {
+        Person person = new Person();
+        person.setFirstName("Juan");
+        person.setLastName("Pérez");
+        person.setIdentificationNumber("12345678");
+        person.setIsClient(true);
+        person.setFkIdIdentificationType(tipoId);
 
-        Persona saved = personaRepository.save(persona);
+        Person saved = personRepository.save(person);
 
-        assertThat(saved.getIdPersona()).isNotNull();
-        assertThat(saved.getNombre()).isEqualTo("Juan");
-        assertThat(saved.getApellido()).isEqualTo("Pérez");
-        assertThat(saved.getNumeroIdentificacion()).isEqualTo("12345678");
+        assertThat(saved.getPersonId()).isNotNull();
+        assertThat(saved.getFirstName()).isEqualTo("Juan");
+        assertThat(saved.getLastName()).isEqualTo("Pérez");
+        assertThat(saved.getIdentificationNumber()).isEqualTo("12345678");
     }
 
     @Test
-    @DisplayName("Should retrieve persona by ID")
-    void shouldRetrievePersonaById() {
-        Persona persona = new Persona();
-        persona.setNombre("María");
-        persona.setApellido("García");
-        persona.setNumeroIdentificacion("87654321");
-        persona.setEsCliente(false);
-        persona.setFkIdTipoIdentificacion(tipoId);
-        Persona saved = personaRepository.save(persona);
+    @DisplayName("Should retrieve person by ID")
+    void shouldRetrievePersonById() {
+        Person person = new Person();
+        person.setFirstName("María");
+        person.setLastName("García");
+        person.setIdentificationNumber("87654321");
+        person.setIsClient(false);
+        person.setFkIdIdentificationType(tipoId);
+        Person saved = personRepository.save(person);
 
-        Optional<Persona> found = personaRepository.findById(saved.getIdPersona());
+        Optional<Person> found = personRepository.findById(saved.getPersonId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().getNombre()).isEqualTo("María");
-        assertThat(found.get().getFkIdTipoIdentificacion()).isNotNull();
+        assertThat(found.get().getFirstName()).isEqualTo("María");
+        assertThat(found.get().getFkIdIdentificationType()).isNotNull();
     }
 
     @Test
-    @DisplayName("Should update persona data")
-    void shouldUpdatePersonaData() {
-        Persona persona = new Persona();
-        persona.setNombre("Carlos");
-        persona.setApellido("López");
-        persona.setNumeroIdentificacion("11111111");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoId);
-        Persona saved = personaRepository.save(persona);
+    @DisplayName("Should update person data")
+    void shouldUpdatePersonData() {
+        Person person = new Person();
+        person.setFirstName("Carlos");
+        person.setLastName("López");
+        person.setIdentificationNumber("11111111");
+        person.setIsClient(true);
+        person.setFkIdIdentificationType(tipoId);
+        Person saved = personRepository.save(person);
 
-        saved.setNombre("Carlos Alberto");
-        saved.setEsCliente(false);
-        Persona updated = personaRepository.save(saved);
+        saved.setFirstName("Carlos Alberto");
+        saved.setIsClient(false);
+        Person updated = personRepository.save(saved);
 
-        assertThat(updated.getNombre()).isEqualTo("Carlos Alberto");
-        assertThat(updated.getEsCliente()).isFalse();
+        assertThat(updated.getFirstName()).isEqualTo("Carlos Alberto");
+        assertThat(updated.getIsClient()).isFalse();
     }
 
     @Test
     @DisplayName("Should handle optional fields")
     void shouldHandleOptionalFields() {
-        Persona persona = new Persona();
-        persona.setNombre("Ana");
-        persona.setApellido("Martínez");
-        persona.setNumeroIdentificacion("22222222");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoId);
-        persona.setDomicilio("Calle Falsa 123");
-        persona.setTelefono("123-4567");
-        persona.setEMail("ana@example.com");
+        Person person = new Person();
+        person.setFirstName("Ana");
+        person.setLastName("Martínez");
+        person.setIdentificationNumber("22222222");
+        person.setIsClient(true);
+        person.setFkIdIdentificationType(tipoId);
+        person.setAddress("Calle Falsa 123");
+        person.setPhone("123-4567");
+        person.setEmail("ana@example.com");
 
-        Persona saved = personaRepository.save(persona);
+        Person saved = personRepository.save(person);
 
-        assertThat(saved.getDomicilio()).isEqualTo("Calle Falsa 123");
-        assertThat(saved.getTelefono()).isEqualTo("123-4567");
-        assertThat(saved.getEMail()).isEqualTo("ana@example.com");
+        assertThat(saved.getAddress()).isEqualTo("Calle Falsa 123");
+        assertThat(saved.getPhone()).isEqualTo("123-4567");
+        assertThat(saved.getEmail()).isEqualTo("ana@example.com");
     }
 
     @Test
-    @DisplayName("Should support multiple personas")
-    void shouldSupportMultiplePersonas() {
-        String apellidoUnico = "Apellido" + System.nanoTime();
+    @DisplayName("Should support multiple people")
+    void shouldSupportMultiplePeople() {
+        String uniqueLastName = "LastName" + System.nanoTime();
         for (int i = 0; i < 5; i++) {
-            Persona persona = new Persona();
-            persona.setNombre("Nombre" + i);
-            persona.setApellido(apellidoUnico + i);
-            persona.setNumeroIdentificacion("ID" + (10000000 + i));
-            persona.setEsCliente(i % 2 == 0);
-            persona.setFkIdTipoIdentificacion(tipoId);
-            personaRepository.save(persona);
+            Person person = new Person();
+            person.setFirstName("FirstName" + i);
+            person.setLastName(uniqueLastName + i);
+            person.setIdentificationNumber("ID" + (10000000 + i));
+            person.setIsClient(i % 2 == 0);
+            person.setFkIdIdentificationType(tipoId);
+            personRepository.save(person);
         }
 
-        List<Persona> creadas = personaRepository.findAll().stream()
-                .filter(p -> p.getApellido() != null && p.getApellido().startsWith(apellidoUnico))
+        List<Person> created = personRepository.findAll().stream()
+                .filter(p -> p.getLastName() != null && p.getLastName().startsWith(uniqueLastName))
                 .toList();
-        assertThat(creadas).hasSize(5);
+        assertThat(created).hasSize(5);
 
-        long clientes = creadas.stream().filter(Persona::getEsCliente).count();
-        assertThat(clientes).isEqualTo(3);
+        long clients = created.stream().filter(Person::getIsClient).count();
+        assertThat(clients).isEqualTo(3);
     }
 }

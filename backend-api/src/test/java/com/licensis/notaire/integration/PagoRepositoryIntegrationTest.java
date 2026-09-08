@@ -1,12 +1,12 @@
 package com.licensis.notaire.integration;
 
 import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.PagoRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,14 +29,14 @@ class PagoRepositoryIntegrationTest extends RepositoryIntegrationTest {
     private PresupuestoRepository presupuestoRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
     private Pago testPago;
     private Presupuesto testPresupuesto;
-    private Persona testPersona;
+    private Person testPersona;
 
     @BeforeEach
     void setUp() {
@@ -44,12 +44,12 @@ class PagoRepositoryIntegrationTest extends RepositoryIntegrationTest {
         tipoIdentificacion.setNombre("DNI");
         tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        testPersona = new Persona();
-        testPersona.setNombre("Cliente");
-        testPersona.setApellido("Test");
-        testPersona.setNumeroIdentificacion("12345678");
-        testPersona.setEsCliente(true);
-        testPersona.setFkIdTipoIdentificacion(tipoIdentificacion);
+        testPersona = new Person();
+        testPersona.setFirstName("Cliente");
+        testPersona.setLastName("Test");
+        testPersona.setIdentificationNumber("12345678");
+        testPersona.setIsClient(true);
+        testPersona.setFkIdIdentificationType(tipoIdentificacion);
         personaRepository.save(testPersona);
 
         testPresupuesto = new Presupuesto();

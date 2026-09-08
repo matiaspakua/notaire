@@ -10,7 +10,7 @@ public class DtoIdentificacion implements DtoValido
 {
 
     private DtoTipoIdentificacion tiposIdentificacion;
-    private DtoPersona personas;
+    private DtoPerson personas;
     private int numero;
 
     public DtoIdentificacion()
@@ -27,12 +27,12 @@ public class DtoIdentificacion implements DtoValido
         this.tiposIdentificacion = tiposIdentificacion;
     }
 
-    public DtoPersona getPersonas()
+    public DtoPerson getPersonas()
     {
         return this.personas;
     }
 
-    public void setPersonas(DtoPersona personas)
+    public void setPersonas(DtoPerson personas)
     {
         this.personas = personas;
     }

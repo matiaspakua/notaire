@@ -17,7 +17,7 @@ import com.licensis.notaire.dto.DtoInmueble;
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoMovimientoTestimonio;
 import com.licensis.notaire.dto.DtoPago;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoPlantillaPresupuesto;
 import com.licensis.notaire.dto.DtoPlantillaTramite;
 import com.licensis.notaire.dto.DtoPresupuesto;
@@ -45,7 +45,7 @@ import com.licensis.notaire.jpa.InmuebleJpaController;
 import com.licensis.notaire.jpa.ItemJpaController;
 import com.licensis.notaire.jpa.MovimientoTestimonioJpaController;
 import com.licensis.notaire.jpa.PagoJpaController;
-import com.licensis.notaire.jpa.PersonaJpaController;
+import com.licensis.notaire.jpa.PersonJpaController;
 import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
 import com.licensis.notaire.jpa.PlantillaTramiteJpaController;
 import com.licensis.notaire.jpa.PresupuestoJpaController;
@@ -97,7 +97,7 @@ public class ControllerNegocio
     private ConceptoJpaController miJpaConcepto;
     private EstadoDeGestionJpaController miJpaEstadoDeGestion;
     private TipoDeFolioJpaController miJpaTipoDeFolio;
-    private PersonaJpaController miJpaPersona;
+    private PersonJpaController miJpaPersona;
     private SuplenciaJpaController miJpaSuplencia;
     private AdministradorJpa miAdministradorJpa = null;
     private InmuebleJpaController miJpaInmueble;
@@ -131,7 +131,7 @@ public class ControllerNegocio
             miJpaTramitesPersonas = (TramitesPersonasJpaController) AdministradorJpa.getInstancia().obtenerJpa(TramitesPersonasJpaController.class.getName());
             miJpaItem = (ItemJpaController) AdministradorJpa.getInstancia().obtenerJpa(ItemJpaController.class.getName());
             miJpaPresupuesto = (PresupuestoJpaController) AdministradorJpa.getInstancia().obtenerJpa(PresupuestoJpaController.class.getName());
-            miJpaPersona = (PersonaJpaController) AdministradorJpa.getInstancia().obtenerJpa(PersonaJpaController.class.getName());
+            miJpaPersona = (PersonJpaController) AdministradorJpa.getInstancia().obtenerJpa(PersonJpaController.class.getName());
             miJpaPlantillaPresupuesto = (PlantillaPresupuestoJpaController) AdministradorJpa.getInstancia().obtenerJpa(PlantillaPresupuestoJpaController.class.getName());
             miJpaTipoDocumento = (TipoDeDocumentoJpaController) AdministradorJpa.getInstancia().obtenerJpa(TipoDeDocumentoJpaController.class.getName());
             miJpaTipoTramite = (TipoDeTramiteJpaController) AdministradorJpa.getInstancia().obtenerJpa(TipoDeTramiteJpaController.class.getName());
@@ -188,11 +188,11 @@ public class ControllerNegocio
      * @param dtoPersona La nueva persona para ser dada de alta.
      * @return Un DtoPersona para comprobar el resultado del metodo
      */
-    public DtoPersona darAltaPersona(DtoPersona dtoPersona) throws NonexistentJpaException
+    public DtoPerson darAltaPersona(DtoPerson dtoPersona) throws NonexistentJpaException
     {
 
         //Set atributos persona
-        Persona miPersona = new Persona();
+        Person miPersona = new Person();
         miPersona.setAtributos(dtoPersona);
 
         //Persisto persona
@@ -239,14 +239,14 @@ public class ControllerNegocio
      * @param dtoPersona
      * @return Si existe o no la persona
      */
-    public Boolean siExistePersona(DtoPersona dtoPersona)
+    public Boolean siExistePersona(DtoPerson dtoPersona)
     {
         Boolean existeEnPersistencia = false;
 
         //Busco el id del tipo de identificacion y lo asocio al dto persona
         dtoPersona.getDtoTipoIdentificacion().setIdTipoIdentificacion(this.asociarFkTipoIdentificacion(dtoPersona));
 
-        Persona miPersona = PersonaJpaController.getInstancia().findPersonaTipoNumeroIdentificacion(dtoPersona);
+        Person miPersona = PersonJpaController.getInstancia().findPersonaTipoNumeroIdentificacion(dtoPersona);
 
         if (miPersona != null)
         {
@@ -262,40 +262,40 @@ public class ControllerNegocio
      * @param miDtoPersona
      * @return Un DtoPersona con la persona indicada
      */
-    public DtoPersona buscarPersonaTipoNumeroIdentificacion(DtoPersona miDtoPersona)
+    public DtoPerson buscarPersonaTipoNumeroIdentificacion(DtoPerson miDtoPersona)
     {
 
-        Persona miPersona = null;
+        Person miPersona = null;
 
         //Busco la persona
         miPersona = miJpaPersona.findPersonaTipoNumeroIdentificacion(miDtoPersona);
-        String apellido = miPersona.getApellido();
+        String apellido = miPersona.getLastName();
         if (miPersona != null && !apellido.equals(ConstantesGui.ADMINISTRADOR))
         {
             //Control Version del objeto
             miDtoPersona.setVersion(miPersona.getVersion());
 
-            miDtoPersona.setIdPersona(miPersona.getIdPersona());
-            miDtoPersona.setNombre(miPersona.getNombre());
-            miDtoPersona.setApellido(miPersona.getApellido());
-            miDtoPersona.setNumeroIdentificacion(miPersona.getNumeroIdentificacion());
-            miDtoPersona.setTelefono(miPersona.getTelefono());
-            miDtoPersona.setEmail(miPersona.getEMail());
-            miDtoPersona.getDtoTipoIdentificacion().setNombre(miPersona.getFkIdTipoIdentificacion().getNombre());
-            miDtoPersona.getDtoTipoIdentificacion().setIdTipoIdentificacion(miPersona.getFkIdTipoIdentificacion().getIdTipoIdentificacion());
+            miDtoPersona.setId(miPersona.getPersonId());
+            miDtoPersona.setFirstName(miPersona.getFirstName());
+            miDtoPersona.setLastName(miPersona.getLastName());
+            miDtoPersona.setIdentificationNumber(miPersona.getIdentificationNumber());
+            miDtoPersona.setPhone(miPersona.getPhone());
+            miDtoPersona.setEmail(miPersona.getEmail());
+            miDtoPersona.getDtoTipoIdentificacion().setNombre(miPersona.getFkIdIdentificationType().getNombre());
+            miDtoPersona.getDtoTipoIdentificacion().setIdTipoIdentificacion(miPersona.getFkIdIdentificationType().getIdTipoIdentificacion());
 
-            miDtoPersona.setNacionalidad(miPersona.getNacionalidad());
-            miDtoPersona.setFechaNacimiento(miPersona.getFechaNacimiento());
-            miDtoPersona.setCuit(miPersona.getCuit());
-            miDtoPersona.setEstadoCivil(miPersona.getEstadoCivil());
-            miDtoPersona.setNumeroNupcias(miPersona.getNumeroNupcias());
-            miDtoPersona.setSexo(miPersona.getSexo());
-            miDtoPersona.setOcupacion(miPersona.getOcupacion());
-            miDtoPersona.setDomicilio(miPersona.getDomicilio());
+            miDtoPersona.setNationality(miPersona.getNationality());
+            miDtoPersona.setBirthDate(miPersona.getBirthDate());
+            miDtoPersona.setTaxId(miPersona.getTaxId());
+            miDtoPersona.setMaritalStatus(miPersona.getMaritalStatus());
+            miDtoPersona.setMarriageCount(miPersona.getMarriageCount());
+            miDtoPersona.setSex(miPersona.getSex());
+            miDtoPersona.setOccupation(miPersona.getOccupation());
+            miDtoPersona.setAddress(miPersona.getAddress());
 
-            miDtoPersona.setEsCliente(miPersona.getEsCliente());
+            miDtoPersona.setIsClient(miPersona.getIsClient());
 
-            miDtoPersona.setRegistroEscribano(miPersona.getRegistroEscribano());
+            miDtoPersona.setNotaryRegistrationNumber(miPersona.getNotaryRegistrationNumber());
         } else
         {
             miDtoPersona = null;
@@ -311,14 +311,14 @@ public class ControllerNegocio
      * @param miDtoPersona
      * @return
      */
-    public DtoPersona buscarPersonaTipoNumeroIdentificacionConGestion(DtoPersona miDtoPersona)
+    public DtoPerson buscarPersonaTipoNumeroIdentificacionConGestion(DtoPerson miDtoPersona)
     {
 
-        Persona miPersona = null;
+        Person miPersona = null;
 
         //Busco la persona
-        miPersona = PersonaJpaController.getInstancia().findPersonaTipoNumeroIdentificacion(miDtoPersona);
-        String apellido = miPersona.getApellido();
+        miPersona = PersonJpaController.getInstancia().findPersonaTipoNumeroIdentificacion(miDtoPersona);
+        String apellido = miPersona.getLastName();
 
         if (miPersona != null && miPersona.getGestionDeEscrituraList().size() > 0
                 && !apellido.equals(ConstantesGui.ADMINISTRADOR))
@@ -343,21 +343,21 @@ public class ControllerNegocio
      * coincidencias aproximadas.
      *
      */
-    public ArrayList<DtoPersona> buscarPersonaNombreApellido(DtoPersona dtoPersona)
+    public ArrayList<DtoPerson> buscarPersonaNombreApellido(DtoPerson dtoPersona)
     {
 
-        ArrayList<DtoPersona> listaDtoPersonas = new ArrayList<>();
+        ArrayList<DtoPerson> listaDtoPersonas = new ArrayList<>();
 
         try
         {
-            ArrayList<Persona> listaPersona = (ArrayList<Persona>) PersonaJpaController.getInstancia().findPersonaNombreApellido(dtoPersona);
+            ArrayList<Person> listaPersona = (ArrayList<Person>) PersonJpaController.getInstancia().findPersonaNombreApellido(dtoPersona);
 
             if (listaPersona != null)
             {
                 listaDtoPersonas = new ArrayList<>();
                 for (int i = 0; i < listaPersona.size(); i++)
                 {
-                    String apellido = listaPersona.get(i).getApellido();
+                    String apellido = listaPersona.get(i).getLastName();
 
                     if (!apellido.equals(ConstantesGui.ADMINISTRADOR))
                     {
@@ -380,16 +380,16 @@ public class ControllerNegocio
      * @param dtoPersona
      * @return
      */
-    public ArrayList<DtoPersona> buscarPersonaNombreApellidoConGestion(DtoPersona dtoPersona)
+    public ArrayList<DtoPerson> buscarPersonaNombreApellidoConGestion(DtoPerson dtoPersona)
     {
 
-        ArrayList<DtoPersona> listaDtoPersonas = new ArrayList<>();
-        ArrayList<DtoPersona> listaDtoPersonasConGestion = new ArrayList<>();
-        ArrayList<Persona> listaPersona;
+        ArrayList<DtoPerson> listaDtoPersonas = new ArrayList<>();
+        ArrayList<DtoPerson> listaDtoPersonasConGestion = new ArrayList<>();
+        ArrayList<Person> listaPersona;
 
         try
         {
-            listaPersona = (ArrayList<Persona>) PersonaJpaController.getInstancia().findPersonaNombreApellido(dtoPersona);
+            listaPersona = (ArrayList<Person>) PersonJpaController.getInstancia().findPersonaNombreApellido(dtoPersona);
 
             if (listaPersona != null)
             {
@@ -405,12 +405,12 @@ public class ControllerNegocio
                 //Recorro las personas buscando la que tienen gestion
                 for (int i = 0; i < listaDtoPersonas.size(); i++)
                 {
-                    String apellido = listaDtoPersonas.get(i).getApellido();
+                    String apellido = listaDtoPersonas.get(i).getLastName();
 
                     if (!listaDtoPersonas.get(i).getListaDtoGestionDeEscriturasPersona().isEmpty()
                             && !apellido.equals(ConstantesGui.ADMINISTRADOR))
                     {
-                        DtoPersona dtoPersonaConGestion = listaDtoPersonas.get(i);
+                        DtoPerson dtoPersonaConGestion = listaDtoPersonas.get(i);
                         listaDtoPersonasConGestion.add(dtoPersonaConGestion);
                     }
                 }
@@ -431,11 +431,11 @@ public class ControllerNegocio
      * registradas
      * @throws NonexistentJpaException
      */
-    public ArrayList<DtoPersona> buscarPersonasClientes() throws NonexistentJpaException
+    public ArrayList<DtoPerson> buscarPersonasClientes() throws NonexistentJpaException
     {
 
-        ArrayList<DtoPersona> listaDtoPersonas = new ArrayList<>();
-        List<Persona> listaPersona = new ArrayList<Persona>();
+        ArrayList<DtoPerson> listaDtoPersonas = new ArrayList<>();
+        List<Person> listaPersona = new ArrayList<Person>();
 
         //Llamo jpa Persona
         listaPersona = miJpaPersona.findPersonas();
@@ -446,7 +446,7 @@ public class ControllerNegocio
             listaDtoPersonas = new ArrayList<>();
             for (int i = 0; i < listaPersona.size(); i++)
             {
-                String apellido = listaPersona.get(i).getApellido();
+                String apellido = listaPersona.get(i).getLastName();
                 if (!apellido.equals(ConstantesGui.ADMINISTRADOR))
                 {
                     listaDtoPersonas.add(listaPersona.get(i).getDto());
@@ -464,10 +464,10 @@ public class ControllerNegocio
      * @param dtoPersona La persona a ser modificada.
      * @return Un Dtopersona para comprobar la modificacion.
      */
-    public DtoPersona modificarPersona(DtoPersona dtoPersona) throws ClassModifiedException, ClassEliminatedException
+    public DtoPerson modificarPersona(DtoPerson dtoPersona) throws ClassModifiedException, ClassEliminatedException
     {
 
-        Persona miPersona = new Persona();
+        Person miPersona = new Person();
 
         miPersona.setAtributos(dtoPersona);
 
@@ -490,10 +490,10 @@ public class ControllerNegocio
      * @param dtoCliente El cliente a ser modificado.
      * @return Un Dtopersona para comprobar la modificacien.
      */
-    public DtoPersona darAltaCliente(DtoPersona dtoCliente) throws ClassModifiedException, ClassEliminatedException
+    public DtoPerson darAltaCliente(DtoPerson dtoCliente) throws ClassModifiedException, ClassEliminatedException
     {
 
-        Persona miClientePersona = new Persona();
+        Person miClientePersona = new Person();
 
         miClientePersona.setAtributos(dtoCliente);
 
@@ -516,10 +516,10 @@ public class ControllerNegocio
      * @param dtoCliente El cliente a ser modificado.
      * @return Un Dtopersona para comprobar la modificacien.
      */
-    public DtoPersona modificarCliente(DtoPersona dtoCliente) throws ClassModifiedException, ClassEliminatedException
+    public DtoPerson modificarCliente(DtoPerson dtoCliente) throws ClassModifiedException, ClassEliminatedException
     {
 
-        Persona miClientePersona = new Persona();
+        Person miClientePersona = new Person();
 
         miClientePersona.setAtributos(dtoCliente);
 
@@ -544,7 +544,7 @@ public class ControllerNegocio
      * @return Un int, es el id_fk_identificaciones del tipo elegido en el
      * combo, para ser posteriormente update
      */
-    public int asociarFkTipoIdentificacion(DtoPersona dtoPersona)
+    public int asociarFkTipoIdentificacion(DtoPerson dtoPersona)
     {
         int id_fk_tipo_identificacion = 0;
 
@@ -572,7 +572,7 @@ public class ControllerNegocio
      * @return El nombre del tipo de identificacien, asociado a un
      * id_fk_tipoIdentificacion
      */
-    public String asociarNombreTipoIdentificacion(DtoPersona dtoPersona)
+    public String asociarNombreTipoIdentificacion(DtoPerson dtoPersona)
     {
         int id_fk_tipo_identificacion = 0;
 
@@ -602,15 +602,15 @@ public class ControllerNegocio
      * @param dtoPersonaOrginal
      * @return El dtoPersona modificado
      */
-    public Boolean controlModificacionPersona(DtoPersona dtoPersonaOrginal, DtoPersona dtoPersonaModificada)
+    public Boolean controlModificacionPersona(DtoPerson dtoPersonaOrginal, DtoPerson dtoPersonaModificada)
     {
         Boolean flag = false;
 
         //Control si fue modificado el  tipo o numero de identificacien
         if (dtoPersonaModificada.getDtoTipoIdentificacion().getNombre().equals(dtoPersonaOrginal.getDtoTipoIdentificacion().getNombre()) == false
-                || dtoPersonaModificada.getNumeroIdentificacion().equals(dtoPersonaOrginal.getNumeroIdentificacion()) == false)
+                || dtoPersonaModificada.getIdentificationNumber().equals(dtoPersonaOrginal.getIdentificationNumber()) == false)
         {
-            Persona miPersona = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersonaModificada);
+            Person miPersona = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersonaModificada);
 
             if (miPersona != null)
             {
@@ -711,7 +711,7 @@ public class ControllerNegocio
      * @param dtosItems datos de los Items del Presupuesto.
      * @return el numero del Presupuesto creado.
      */
-    public int crearPresupuesto(DtoPersona dtoPersona, DtoPresupuesto dtoPresupuesto, DtoTramite dtoTramite, DtoInmueble dtoInmueble, ArrayList<DtoItem> dtosItems)
+    public int crearPresupuesto(DtoPerson dtoPersona, DtoPresupuesto dtoPresupuesto, DtoTramite dtoTramite, DtoInmueble dtoInmueble, ArrayList<DtoItem> dtosItems)
     {
         int creado = -1;
 
@@ -731,7 +731,7 @@ public class ControllerNegocio
 
                     Tramite miTramite = miJpaTramite.findTramite(idTramite);
 
-                    Persona miPersona = miJpaPersona.findPersona(dtoPersona.getIdPersona());
+                    Person miPersona = miJpaPersona.findPersona(dtoPersona.getId());
 
                     //Creo el presupuesto:
                     Presupuesto miPresupuesto = new Presupuesto();
@@ -799,7 +799,7 @@ public class ControllerNegocio
      * @param dtosItems datos de los Items del Presupuesto.
      * @return el numero del Presupuesto creado.
      */
-    public int crearPresupuesto(DtoPersona dtoPersona, DtoPresupuesto dtoPresupuesto, DtoTramite dtoTramite, ArrayList<DtoItem> dtosItems)
+    public int crearPresupuesto(DtoPerson dtoPersona, DtoPresupuesto dtoPresupuesto, DtoTramite dtoTramite, ArrayList<DtoItem> dtosItems)
     {
         int creado = -1;
 
@@ -810,7 +810,7 @@ public class ControllerNegocio
 
             Tramite miTramite = miJpaTramite.findTramite(idTramite);
 
-            Persona miPersona = miJpaPersona.findPersona(dtoPersona.getIdPersona());
+            Person miPersona = miJpaPersona.findPersona(dtoPersona.getId());
 
             //Creo el presupuesto:
             Presupuesto miPresupuesto = new Presupuesto();
@@ -951,12 +951,12 @@ public class ControllerNegocio
      * encontrados. Retorna la lista vacia en caso de no haber presupuesto
      * registrados.
      */
-    public ArrayList<DtoPresupuesto> buscarPresupuestosPersona(DtoPersona dtoPersona) throws NonexistentJpaException
+    public ArrayList<DtoPresupuesto> buscarPresupuestosPersona(DtoPerson dtoPersona) throws NonexistentJpaException
     {
         ArrayList<DtoPresupuesto> dtosPresupuestosEncontrados = new ArrayList<>();
 
 //        Persona miPersona = miJpaPersona.findPersona(dtoPersona.getIdPersona());
-        ArrayList<Presupuesto> presupuestos = (ArrayList<Presupuesto>) miJpaPresupuesto.findPresupuestosPersona(dtoPersona.getIdPersona());
+        ArrayList<Presupuesto> presupuestos = (ArrayList<Presupuesto>) miJpaPresupuesto.findPresupuestosPersona(dtoPersona.getId());
 
         if ((presupuestos != null) && (!presupuestos.isEmpty()))
         {
@@ -966,7 +966,7 @@ public class ControllerNegocio
                 Presupuesto presupuesto = presupuestos.get(i);
 
                 //La persona no tiene la red de objetos, la busco
-                Persona persona = presupuesto.getFkIdPersona();
+                Person persona = presupuesto.getFkIdPersona();
                 persona = this.obtenerRedObjetosPersona(persona);
 
                 //Set persona con su red d objetos
@@ -988,17 +988,17 @@ public class ControllerNegocio
      * @return Persona La instancia de persona con la red de objetos asignada.
      * @throws NonexistentJpaException
      */
-    public Persona obtenerRedObjetosPersona(Persona persona) throws NonexistentJpaException
+    public Person obtenerRedObjetosPersona(Person persona) throws NonexistentJpaException
     {
 
         boolean flag = false;
 
-        ArrayList<Persona> listaPersona = (ArrayList<Persona>) miJpaPersona.findPersonas();
+        ArrayList<Person> listaPersona = (ArrayList<Person>) miJpaPersona.findPersonas();
         for (int j = 0; j < listaPersona.size() && !flag; j++)
         {
-            Persona personaList = listaPersona.get(j);
-            Integer idPersona = persona.getIdPersona();
-            Integer idPersonaList = personaList.getIdPersona();
+            Person personaList = listaPersona.get(j);
+            Integer idPersona = persona.getPersonId();
+            Integer idPersonaList = personaList.getPersonId();
             if (idPersona.equals(idPersonaList))
             {
                 persona = personaList;
@@ -1052,7 +1052,7 @@ public class ControllerNegocio
 
         if (miPresupuesto != null)
         {
-            Persona miPersona = miPresupuesto.getFkIdPersona();
+            Person miPersona = miPresupuesto.getFkIdPersona();
 
             if (miPersona != null)
             {
@@ -1174,8 +1174,8 @@ public class ControllerNegocio
         if (presupuesto != null)
         {
             //Busco red de objetos de la persona
-            Persona miPersona = null;
-            Persona miPersonaPresupuesto = presupuesto.getFkIdPersona();
+            Person miPersona = null;
+            Person miPersonaPresupuesto = presupuesto.getFkIdPersona();
             miPersona = ControllerNegocio.getInstancia().obtenerRedObjetosPersona(miPersonaPresupuesto);
             presupuesto.setFkIdPersona(miPersona);
             miPresupuesto = presupuesto.getDto();
@@ -1259,7 +1259,7 @@ public class ControllerNegocio
                 List<TramitesPersonas> relaciones = new ArrayList<>();
 
                 // Para el cliente de referencia.
-                Persona clienteReferencia = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoNuevaGestion.getClienteReferencia());
+                Person clienteReferencia = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoNuevaGestion.getClienteReferencia());
 
                 //  gestion -> lista tramites asociados
                 //  gestion <- tramite(s) (nueva)
@@ -1285,10 +1285,10 @@ public class ControllerNegocio
                 }
 
                 // Para la lista de clientes involucrados.
-                for (Iterator<DtoPersona> itClientes = dtoNuevaGestion.getListaClientesInvolucrados().iterator(); itClientes.hasNext();)
+                for (Iterator<DtoPerson> itClientes = dtoNuevaGestion.getListaClientesInvolucrados().iterator(); itClientes.hasNext();)
                 {
-                    DtoPersona dtoPersona = itClientes.next();
-                    Persona cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
+                    DtoPerson dtoPersona = itClientes.next();
+                    Person cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
 
                     for (Iterator<Tramite> itTramites = listaTramites.iterator(); itTramites.hasNext();)
                     {
@@ -1354,7 +1354,7 @@ public class ControllerNegocio
      * @return El dto gestion con el ID original si se pudo modificar, con el
      * ID_OBJETO_NO_VALIDO en caso contrario.
      */
-    public DtoGestionDeEscritura modificarGestionDeEscritura(DtoGestionDeEscritura dtoGestionModificar, List<DtoPersona> listaDtoClientesAgregados, List<DtoPersona> listaDtoClientesEliminados) throws ClassModifiedException
+    public DtoGestionDeEscritura modificarGestionDeEscritura(DtoGestionDeEscritura dtoGestionModificar, List<DtoPerson> listaDtoClientesAgregados, List<DtoPerson> listaDtoClientesEliminados) throws ClassModifiedException
     {
         try
         {
@@ -1365,10 +1365,10 @@ public class ControllerNegocio
             if (!listaDtoClientesEliminados.isEmpty())
             {
                 // eliminar clientes de la lista de tramites clientes, para una gestion dada.
-                for (Iterator<DtoPersona> itClientes = listaDtoClientesEliminados.iterator(); itClientes.hasNext();)
+                for (Iterator<DtoPerson> itClientes = listaDtoClientesEliminados.iterator(); itClientes.hasNext();)
                 {
-                    DtoPersona dtoPersona = itClientes.next();
-                    Persona cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
+                    DtoPerson dtoPersona = itClientes.next();
+                    Person cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
 
                     for (Iterator<DtoTramite> itTramites = dtoGestionModificar.getListaTramitesAsociados().iterator(); itTramites.hasNext();)
                     {
@@ -1380,13 +1380,13 @@ public class ControllerNegocio
                         relacionClienteTramite.setPersona(cliente);
                         relacionClienteTramite.setTramite(tramite);
 
-                        List<TramitesPersonas> listaEliminar = miJpaTramitesPersonas.findTramitesClientes(cliente.getIdPersona(), tramite.getIdTramite());
+                        List<TramitesPersonas> listaEliminar = miJpaTramitesPersonas.findTramitesClientes(cliente.getPersonId(), tramite.getIdTramite());
 
                         for (Iterator<TramitesPersonas> it = listaEliminar.iterator(); it.hasNext();)
                         {
                             TramitesPersonas tramitesPersonas = it.next();
 
-                            TramitesPersonasPK pk = new TramitesPersonasPK(tramite.getIdTramite(), cliente.getIdPersona());
+                            TramitesPersonasPK pk = new TramitesPersonasPK(tramite.getIdTramite(), cliente.getPersonId());
 
                             tramitesPersonas.setTramitesPersonasPK(pk);
 
@@ -1402,10 +1402,10 @@ public class ControllerNegocio
                 List<TramitesPersonas> relaciones = new ArrayList<>();
 
                 //  agregar clientes a la lista de clientes involucrados.
-                for (Iterator<DtoPersona> itClientes = listaDtoClientesAgregados.iterator(); itClientes.hasNext();)
+                for (Iterator<DtoPerson> itClientes = listaDtoClientesAgregados.iterator(); itClientes.hasNext();)
                 {
-                    DtoPersona dtoPersona = itClientes.next();
-                    Persona cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
+                    DtoPerson dtoPersona = itClientes.next();
+                    Person cliente = miJpaPersona.findPersonaTipoNumeroIdentificacion(dtoPersona);
 
                     for (Iterator<DtoTramite> itTramites = dtoGestionModificar.getListaTramitesAsociados().iterator(); itTramites.hasNext();)
                     {
@@ -1729,8 +1729,8 @@ public class ControllerNegocio
 
             GestionDeEscritura gestion = new GestionDeEscritura();
 
-            DtoPersona dtoEscribano = dtoGestion.getPersonaEscribano();
-            Persona escribano = miJpaPersona.findPersonaPorId(dtoEscribano.getIdPersona());
+            DtoPerson dtoEscribano = dtoGestion.getPersonaEscribano();
+            Person escribano = miJpaPersona.findPersonaPorId(dtoEscribano.getId());
 
             dtoGestion.setPersonaEscribano(escribano.getDto());
 
@@ -1761,9 +1761,9 @@ public class ControllerNegocio
      * @return clienteReferencia Un DTO tipo persona que representa el cliente
      * de referencia de la gestion indicada.
      */
-    public DtoPersona obtenerClienteReferenciaGestion(DtoGestionDeEscritura dtoGestion) throws NonexistentJpaException
+    public DtoPerson obtenerClienteReferenciaGestion(DtoGestionDeEscritura dtoGestion) throws NonexistentJpaException
     {
-        DtoPersona clienteReferencia = null;
+        DtoPerson clienteReferencia = null;
 
         DtoTramite unTramite = dtoGestion.getListaTramitesAsociados().get(0);
         Tramite tramiteGestion = new Tramite();
@@ -2344,8 +2344,8 @@ public class ControllerNegocio
                 DtoPresupuesto dtoPresupuesto = presupuesto.getDto();
 
                 // el cliente de referencia del preupuesto
-                Persona clienteReferencia = miJpaPersona.findPersonaPorId(presupuesto.getFkIdPersona().getIdPersona());
-                DtoPersona dtoPersona = clienteReferencia.getDto();
+                Person clienteReferencia = miJpaPersona.findPersonaPorId(presupuesto.getFkIdPersona().getPersonId());
+                DtoPerson dtoPersona = clienteReferencia.getDto();
 
                 dtoPresupuesto.setPersona(dtoPersona);
                 dtoGestion.setClienteReferencia(dtoPersona);
@@ -2472,8 +2472,8 @@ public class ControllerNegocio
             {
                 Escritura escritura = it.next();
 
-                if (escritura.getFolioList().get(0).getFkIdPersonaEscribano().getRegistroEscribano().intValue()
-                        == miDtoEscritura.getFolios().get(0).getPersonaEscribano().getRegistroEscribano().intValue())
+                if (escritura.getFolioList().get(0).getFkIdPersonaEscribano().getNotaryRegistrationNumber().intValue()
+                        == miDtoEscritura.getFolios().get(0).getPersonaEscribano().getNotaryRegistrationNumber().intValue())
                 {
                     existe = true;
                 }
@@ -2489,18 +2489,18 @@ public class ControllerNegocio
      * @param miEscribano, datos del Escribano a buscar (Numero de Registro)
      * @return Lista de DtoEscritura, de Escrituras encontradas.
      */
-    public List<DtoEscritura> buscarEscriturasPorRegistro(DtoPersona miEscribano)
+    public List<DtoEscritura> buscarEscriturasPorRegistro(DtoPerson miEscribano)
     {
         List<DtoEscritura> dtosEscriturasEncontradas = new ArrayList<>();
         List<Escritura> escrituras = new ArrayList<>();
         List<GestionDeEscritura> gestionesEscribano = new ArrayList<>();
-        Persona miPersonaEscribano = new Persona();
+        Person miPersonaEscribano = new Person();
 
-        miPersonaEscribano.setRegistroEscribano(miEscribano.getRegistroEscribano());
+        miPersonaEscribano.setNotaryRegistrationNumber(miEscribano.getNotaryRegistrationNumber());
 
         miPersonaEscribano = miJpaPersona.findPersonaEscribano(miPersonaEscribano);
 
-        if (miPersonaEscribano.getIdPersona() != null)
+        if (miPersonaEscribano.getPersonId() != null)
         {
 
             gestionesEscribano = miPersonaEscribano.getGestionDeEscrituraList();
@@ -2548,18 +2548,18 @@ public class ControllerNegocio
      * @param miEscribano, registro de escribano a buscar.
      * @return Lista de DtoEscritura, con las Escrituras encontradas.
      */
-    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadas(DtoPersona miEscribano)
+    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadas(DtoPerson miEscribano)
     {
         List<DtoEscritura> dtosEscriturasEncontradas = new ArrayList<>();
         List<Escritura> escrituras = new ArrayList<>();
         List<GestionDeEscritura> gestionesEscribano = new ArrayList<>();
-        Persona miPersonaEscribano = new Persona();
+        Person miPersonaEscribano = new Person();
 
-        miPersonaEscribano.setRegistroEscribano(miEscribano.getRegistroEscribano());
+        miPersonaEscribano.setNotaryRegistrationNumber(miEscribano.getNotaryRegistrationNumber());
 
         miPersonaEscribano = miJpaPersona.findPersonaEscribano(miPersonaEscribano);
 
-        if (miPersonaEscribano.getIdPersona() != null)
+        if (miPersonaEscribano.getPersonId() != null)
         {
             gestionesEscribano = miPersonaEscribano.getGestionDeEscrituraList();
 
@@ -2607,18 +2607,18 @@ public class ControllerNegocio
         return dtosEscriturasEncontradas;
     }
 
-    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadasSinArchivo(DtoPersona miEscribano)
+    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadasSinArchivo(DtoPerson miEscribano)
     {
         List<DtoEscritura> dtosEscriturasEncontradas = new ArrayList<>();
         List<Escritura> escrituras = new ArrayList<>();
         List<GestionDeEscritura> gestionesEscribano = new ArrayList<>();
-        Persona miPersonaEscribano = new Persona();
+        Person miPersonaEscribano = new Person();
 
-        miPersonaEscribano.setRegistroEscribano(miEscribano.getRegistroEscribano());
+        miPersonaEscribano.setNotaryRegistrationNumber(miEscribano.getNotaryRegistrationNumber());
 
         miPersonaEscribano = miJpaPersona.findPersonaEscribano(miPersonaEscribano);
 
-        if (miPersonaEscribano.getIdPersona() != null)
+        if (miPersonaEscribano.getPersonId() != null)
         {
             gestionesEscribano = miPersonaEscribano.getGestionDeEscrituraList();
 
@@ -2675,18 +2675,18 @@ public class ControllerNegocio
      * @param miEscribano, registro de escribano a buscar.
      * @return Lista de DtoEscritura, con las Escrituras encontradas.
      */
-    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadasInscriptas(DtoPersona miEscribano)
+    public List<DtoEscritura> buscarEscriturasPorRegistroFirmadasInscriptas(DtoPerson miEscribano)
     {
         List<DtoEscritura> dtosEscriturasEncontradas = new ArrayList<>();
         List<Escritura> escrituras = new ArrayList<>();
         List<GestionDeEscritura> gestionesEscribano = new ArrayList<>();
-        Persona miPersonaEscribano = new Persona();
+        Person miPersonaEscribano = new Person();
 
-        miPersonaEscribano.setRegistroEscribano(miEscribano.getRegistroEscribano());
+        miPersonaEscribano.setNotaryRegistrationNumber(miEscribano.getNotaryRegistrationNumber());
 
         miPersonaEscribano = miJpaPersona.findPersonaEscribano(miPersonaEscribano);
 
-        if (miPersonaEscribano.getIdPersona() != null)
+        if (miPersonaEscribano.getPersonId() != null)
         {
 
             gestionesEscribano = miPersonaEscribano.getGestionDeEscrituraList();
@@ -2981,15 +2981,15 @@ public class ControllerNegocio
      * @param miDtoEscritura, numero de la Escritura a buscar.
      * @return DtoPersona con el Escribano asociado.
      */
-    public DtoPersona obtenerEscribanoEscritura(DtoEscritura miDtoEscritura)
+    public DtoPerson obtenerEscribanoEscritura(DtoEscritura miDtoEscritura)
     {
-        DtoPersona miPersonaEscribano = null;
+        DtoPerson miPersonaEscribano = null;
         Escritura miEscritura = miJpaEscritura.findEscrituraById(miDtoEscritura.getIdEscritura());
         List<Tramite> tramites = miEscritura.getTramiteList();
 
         if (tramites != null)
         {
-            Persona miPersona = tramites.get(0).getFkIdGestion().getFkIdPersonaEscribano();
+            Person miPersona = tramites.get(0).getFkIdGestion().getFkIdPersonaEscribano();
 
             miPersonaEscribano = miPersona.getDto();
         }
@@ -3459,7 +3459,7 @@ public class ControllerNegocio
     {
         boolean resultado = false;
 
-        List<Folio> folios = miJpaFolio.findFoliosRegistroAnio(desde.getPersonaEscribano().getRegistroEscribano(), desde.getAnio());
+        List<Folio> folios = miJpaFolio.findFoliosRegistroAnio(desde.getPersonaEscribano().getNotaryRegistrationNumber(), desde.getAnio());
 
         if (!folios.isEmpty())
         {
@@ -3497,8 +3497,8 @@ public class ControllerNegocio
 
         try
         {
-            DtoPersona miDtoPersonaEscribano = this.buscarPersonaTipoNumeroIdentificacion(desde.getPersonaEscribano());
-            Persona escribano = new Persona();
+            DtoPerson miDtoPersonaEscribano = this.buscarPersonaTipoNumeroIdentificacion(desde.getPersonaEscribano());
+            Person escribano = new Person();
             escribano.setAtributos(miDtoPersonaEscribano);
 
             int j = hasta.getNumero();
@@ -3563,7 +3563,7 @@ public class ControllerNegocio
             {
                 miFolioJpaController = (FolioJpaController) this.getMiAdministradorJpa().obtenerJpa(FolioJpaController.class.getName());
 
-                listaFolios = miFolioJpaController.findFoliosRegistroAnio(dtoDatosRegistroAnio.getPersonaEscribano().getRegistroEscribano(), dtoDatosRegistroAnio.getAnio());
+                listaFolios = miFolioJpaController.findFoliosRegistroAnio(dtoDatosRegistroAnio.getPersonaEscribano().getNotaryRegistrationNumber(), dtoDatosRegistroAnio.getAnio());
             }
             catch (NonexistentJpaException e)
             {
@@ -3632,7 +3632,7 @@ public class ControllerNegocio
             for (Iterator<Folio> it = listaFolios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
-                Integer numeroRegistroFolio = folio.getFkIdPersonaEscribano().getRegistroEscribano();
+                Integer numeroRegistroFolio = folio.getFkIdPersonaEscribano().getNotaryRegistrationNumber();
                 if (numeroRegistroFolio.intValue() == numeroRegistro.intValue())
                 {
                     if (folio.getEstado().equals(ConstantesNegocio.ESTADO_FOLIO_NUEVOS))
@@ -3724,7 +3724,7 @@ public class ControllerNegocio
 
         List<Usuario> listaUsuarios = new ArrayList<>();
         Usuario miUsuario = null;
-        Integer idPersona = dtoUsuario.getPersonas().getIdPersona();
+        Integer idPersona = dtoUsuario.getPersonas().getId();
         boolean flag = false;
 
         //Busco los usuario actuales
@@ -3736,7 +3736,7 @@ public class ControllerNegocio
             //Busco coincidencia de id_persona con fk_id_usuario
             for (int i = 0; i < listaUsuarios.size(); i++)
             {
-                if (idPersona.intValue() == listaUsuarios.get(i).getFkIdPersona().getIdPersona().intValue())
+                if (idPersona.intValue() == listaUsuarios.get(i).getFkIdPersona().getPersonId().intValue())
                 {
                     flag = true;
                     miUsuario = listaUsuarios.get(i);
@@ -3909,18 +3909,18 @@ public class ControllerNegocio
      * @return resultado Verdadero si se pudo dar de alta al escribano, Falso en
      * caso contrario.
      */
-    public Boolean darAltaEscribano(DtoPersona dtoNuevoEscribano) throws ClassModifiedException
+    public Boolean darAltaEscribano(DtoPerson dtoNuevoEscribano) throws ClassModifiedException
     {
         Boolean resultado = Boolean.FALSE;
 
-        Persona nuevoEscribano = new Persona();
+        Person nuevoEscribano = new Person();
         nuevoEscribano.setAtributos(dtoNuevoEscribano);
 
         try
         {
-            if (nuevoEscribano.getRegistroEscribano() == null)
+            if (nuevoEscribano.getNotaryRegistrationNumber() == null)
             {
-                nuevoEscribano.setRegistroEscribano(dtoNuevoEscribano.getRegistroEscribano());
+                nuevoEscribano.setNotaryRegistrationNumber(dtoNuevoEscribano.getNotaryRegistrationNumber());
                 if (miJpaPersona.registrarEscribano(nuevoEscribano))
                 {
                     resultado = Boolean.TRUE;
@@ -3929,7 +3929,7 @@ public class ControllerNegocio
                 }
             } else
             {
-                nuevoEscribano.setRegistroEscribano(dtoNuevoEscribano.getRegistroEscribano());
+                nuevoEscribano.setNotaryRegistrationNumber(dtoNuevoEscribano.getNotaryRegistrationNumber());
                 if (miJpaPersona.registrarEscribano(nuevoEscribano))
                 {
                     resultado = Boolean.TRUE;
@@ -3953,21 +3953,21 @@ public class ControllerNegocio
      * @return listaDtoEscribanos Retorna una lista tipo DtoPersona de todos los
      * escribanos registrados.
      */
-    public List<DtoPersona> obtenerListaEscribanosDisponibles()
+    public List<DtoPerson> obtenerListaEscribanosDisponibles()
     {
-        List<DtoPersona> listaDtoEscribanos = new ArrayList<>();
-        List<Persona> listaPersonas = new ArrayList<>();
+        List<DtoPerson> listaDtoEscribanos = new ArrayList<>();
+        List<Person> listaPersonas = new ArrayList<>();
 
         try
         {
             listaPersonas = miJpaPersona.findPersonas();
             listaDtoEscribanos = new ArrayList<>();
 
-            for (Iterator<Persona> it = listaPersonas.iterator(); it.hasNext();)
+            for (Iterator<Person> it = listaPersonas.iterator(); it.hasNext();)
             {
-                Persona unaPersona = it.next();
+                Person unaPersona = it.next();
 
-                if ((unaPersona.getRegistroEscribano() != null) && (unaPersona.getRegistroEscribano() != 0))
+                if ((unaPersona.getNotaryRegistrationNumber() != null) && (unaPersona.getNotaryRegistrationNumber() != 0))
                 {
                     listaDtoEscribanos.add(unaPersona.getDto());
                 }

@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class PagoIntegrationTest extends ServiceIntegrationTest {
     private PresupuestoRepository presupuestoRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
@@ -52,12 +52,12 @@ class PagoIntegrationTest extends ServiceIntegrationTest {
         tipoIdentificacion.setNombre("DNI");
         tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        Persona persona = new Persona();
-        persona.setNombre("Cliente");
-        persona.setApellido("Test");
-        persona.setNumeroIdentificacion("87654321");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoIdentificacion);
+        Person persona = new Person();
+        persona.setFirstName("Cliente");
+        persona.setLastName("Test");
+        persona.setIdentificationNumber("87654321");
+        persona.setIsClient(true);
+        persona.setFkIdIdentificationType(tipoIdentificacion);
         persona = personaRepository.save(persona);
 
         Presupuesto presupuesto = new Presupuesto();

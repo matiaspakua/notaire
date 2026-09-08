@@ -51,9 +51,9 @@ public class TramitesPersonas implements Serializable, Persistable<TramitesPerso
     @Basic(optional = false)
     @Column(name = "observaciones")
     private String observaciones;
-    @JoinColumn(name = "fk_id_persona_cliente", referencedColumnName = "id_persona", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_persona_cliente", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Persona persona;
+    private Person persona;
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Tramite tramite;
@@ -123,12 +123,12 @@ public class TramitesPersonas implements Serializable, Persistable<TramitesPerso
         this.observaciones = observaciones;
     }
 
-    public Persona getPersona()
+    public Person getPersona()
     {
         return persona;
     }
 
-    public void setPersona(Persona persona)
+    public void setPersona(Person persona)
     {
         this.persona = persona;
     }

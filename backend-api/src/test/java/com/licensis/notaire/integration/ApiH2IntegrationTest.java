@@ -47,7 +47,7 @@ class ApiH2IntegrationTest {
         mockMvc.perform(get("/api/v1/conceptos"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/personas"))
+        mockMvc.perform(get("/api/v1/people"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/v1/tramites"))

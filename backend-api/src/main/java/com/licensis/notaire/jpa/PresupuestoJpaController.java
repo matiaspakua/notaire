@@ -10,7 +10,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
 import java.io.Serializable;
@@ -56,9 +56,9 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdPersona = presupuesto.getFkIdPersona();
+            Person fkIdPersona = presupuesto.getFkIdPersona();
             if (fkIdPersona != null) {
-                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getIdPersona());
+                fkIdPersona = em.getReference(fkIdPersona.getClass(), fkIdPersona.getPersonId());
                 presupuesto.setFkIdPersona(fkIdPersona);
             }
             java.util.Set<Pago> attachedPagoList = new java.util.HashSet<Pago>();
@@ -148,8 +148,8 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
 
             } else {
 
-                Persona fkIdPersonaOld = persistentPresupuesto.getFkIdPersona();
-                Persona fkIdPersonaNew = presupuesto.getFkIdPersona();
+                Person fkIdPersonaOld = persistentPresupuesto.getFkIdPersona();
+                Person fkIdPersonaNew = presupuesto.getFkIdPersona();
                 java.util.Set<Pago> pagoListOld = persistentPresupuesto.getPagoList();
                 java.util.Set<Pago> pagoListNew = presupuesto.getPagoList();
                 List<Tramite> tramiteListOld = persistentPresupuesto.getTramiteList();
@@ -188,7 +188,7 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
                     throw new IllegalOrphanException(illegalOrphanMessages);
                 }
                 if (fkIdPersonaNew != null) {
-                    fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getIdPersona());
+                    fkIdPersonaNew = em.getReference(fkIdPersonaNew.getClass(), fkIdPersonaNew.getPersonId());
                     presupuesto.setFkIdPersona(fkIdPersonaNew);
                 }
                 java.util.Set<Pago> attachedPagoListNew = new java.util.HashSet<Pago>();
@@ -314,7 +314,7 @@ public class PresupuestoJpaController implements Serializable, IPersistenciaJpa 
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Persona fkIdPersona = presupuesto.getFkIdPersona();
+            Person fkIdPersona = presupuesto.getFkIdPersona();
             if (fkIdPersona != null) {
                 fkIdPersona.getPresupuestoList().remove(presupuesto);
                 fkIdPersona = em.merge(fkIdPersona);

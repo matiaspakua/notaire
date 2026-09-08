@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.repository.RegistroAuditoriaRepository;
@@ -44,10 +44,10 @@ class RegistroAuditoriaServiceTest {
 
     @BeforeEach
     void setUp() {
-        Persona persona = new Persona();
-        persona.setIdPersona(10);
-        persona.setNombre("Test");
-        persona.setApellido("User");
+        Person persona = new Person();
+        persona.setPersonId(10);
+        persona.setFirstName("Test");
+        persona.setLastName("User");
 
         testUsuario = new Usuario();
         testUsuario.setIdUsuario(1);
@@ -110,7 +110,7 @@ class RegistroAuditoriaServiceTest {
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getIdRegistroAuditoria()).isEqualTo(1);
             assertThat(result.get(0).getUsuarios().getNombre()).isEqualTo("testuser");
-            assertThat(result.get(0).getUsuarios().getPersonas().getNombre()).isEqualTo("Test");
+            assertThat(result.get(0).getUsuarios().getPersonas().getFirstName()).isEqualTo("Test");
         }
 
         @Test
@@ -286,7 +286,7 @@ class RegistroAuditoriaServiceTest {
 
             assertThat(dto.getIdRegistroAuditoria()).isEqualTo(1);
             assertThat(dto.getUsuarios().getNombre()).isEqualTo("testuser");
-            assertThat(dto.getUsuarios().getPersonas().getApellido()).isEqualTo("User");
+            assertThat(dto.getUsuarios().getPersonas().getLastName()).isEqualTo("User");
         }
 
         @Test

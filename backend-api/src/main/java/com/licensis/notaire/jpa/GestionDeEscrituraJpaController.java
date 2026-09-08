@@ -18,7 +18,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import org.hibernate.StaleObjectStateException;
 
@@ -65,10 +65,10 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona fkIdPersonaEscribano = unaGestionDeEscritura.getFkIdPersonaEscribano();
+            Person fkIdPersonaEscribano = unaGestionDeEscritura.getFkIdPersonaEscribano();
             if (fkIdPersonaEscribano != null)
             {
-                fkIdPersonaEscribano = em.getReference(fkIdPersonaEscribano.getClass(), fkIdPersonaEscribano.getIdPersona());
+                fkIdPersonaEscribano = em.getReference(fkIdPersonaEscribano.getClass(), fkIdPersonaEscribano.getPersonId());
                 unaGestionDeEscritura.setFkIdPersonaEscribano(fkIdPersonaEscribano);
             }
             List<Historial> attachedHistorialList = new ArrayList<Historial>();
@@ -163,8 +163,8 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
 
                 em.getTransaction().begin();
                 GestionDeEscritura persistentGestionDeEscritura = em.find(GestionDeEscritura.class, gestionParaModificar.getIdGestion());
-                Persona fkIdPersonaEscribanoOld = persistentGestionDeEscritura.getFkIdPersonaEscribano();
-                Persona fkIdPersonaEscribanoNew = gestionParaModificar.getFkIdPersonaEscribano();
+                Person fkIdPersonaEscribanoOld = persistentGestionDeEscritura.getFkIdPersonaEscribano();
+                Person fkIdPersonaEscribanoNew = gestionParaModificar.getFkIdPersonaEscribano();
                 List<Historial> historialListOld = persistentGestionDeEscritura.getHistorialList();
                 List<Historial> historialListNew = gestionParaModificar.getHistorialList();
                 List<Tramite> tramiteListOld = persistentGestionDeEscritura.getTramiteList();
@@ -187,7 +187,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
                 }
                 if (fkIdPersonaEscribanoNew != null)
                 {
-                    fkIdPersonaEscribanoNew = em.getReference(fkIdPersonaEscribanoNew.getClass(), fkIdPersonaEscribanoNew.getIdPersona());
+                    fkIdPersonaEscribanoNew = em.getReference(fkIdPersonaEscribanoNew.getClass(), fkIdPersonaEscribanoNew.getPersonId());
                     gestionParaModificar.setFkIdPersonaEscribano(fkIdPersonaEscribanoNew);
                 }
                 List<Historial> attachedHistorialListNew = new ArrayList<Historial>();
@@ -305,7 +305,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
             {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Persona fkIdPersonaEscribano = GestionDeEscritura.getFkIdPersonaEscribano();
+            Person fkIdPersonaEscribano = GestionDeEscritura.getFkIdPersonaEscribano();
             if (fkIdPersonaEscribano != null)
             {
                 fkIdPersonaEscribano.getGestionDeEscrituraList().remove(GestionDeEscritura);
@@ -479,7 +479,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
         EntityManager em = getEntityManager();
 
         List<GestionDeEscritura> listaGestiones = null;
-        Persona persona = null;
+        Person persona = null;
         Query query = em.createNamedQuery("GestionDeEscritura.findAll");
         listaGestiones = query.getResultList();
 
@@ -491,7 +491,7 @@ public class GestionDeEscrituraJpaController implements Serializable, IPersisten
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto       
+        int version = 0;    //Variable para Version en bd del Objeto
 
         EntityManager em = getEntityManager();
 

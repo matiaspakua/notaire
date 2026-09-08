@@ -12,7 +12,7 @@ public class DtoTramite implements DtoValido {
     private DtoTipoDeTramite tipoDeTramite;
     private DtoPresupuesto presupuesto;
     private String observaciones;
-    private List<DtoPersona> listaPersonas;
+    private List<DtoPerson> listaPersonas;
     private List<DtoPresupuesto> listaPresupuestos;
     private List<DtoDocumentoPresentado> listaDocumentosPresentados;
     private List<DtoTipoDeDocumento> listaDocumentosNecesarios;
@@ -55,8 +55,8 @@ public class DtoTramite implements DtoValido {
     public void setListaDocumentosPresentados(List<DtoDocumentoPresentado> list) {
         if (list != null) for (DtoDocumentoPresentado d : list) this.listaDocumentosPresentados.add(d);
     }
-    public List<DtoPersona> getListaPersonas() { return listaPersonas; }
-    public void setListaPersonas(List<DtoPersona> listaPersonas) { this.listaPersonas = listaPersonas != null ? listaPersonas : new ArrayList<>(); }
+    public List<DtoPerson> getListaPersonas() { return listaPersonas; }
+    public void setListaPersonas(List<DtoPerson> listaPersonas) { this.listaPersonas = listaPersonas != null ? listaPersonas : new ArrayList<>(); }
     public List<DtoPresupuesto> getListaPresupuestos() { return listaPresupuestos; }
     public void setListaPresupuestos(List<DtoPresupuesto> listaPresupuestos) { this.listaPresupuestos = listaPresupuestos != null ? listaPresupuestos : new ArrayList<>(); }
     public List<DtoTipoDeDocumento> getListaDocumentosNecesarios() { return listaDocumentosNecesarios; }

@@ -16,7 +16,7 @@ import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
@@ -24,7 +24,7 @@ import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
 import com.licensis.notaire.repository.InmuebleRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
@@ -77,7 +77,7 @@ public class GestionController {
     private final HistorialRepository historialRepository;
     private final WorkflowTraceService workflowTraceService;
     private final GestionQueryService gestionQueryService;
-    private final PersonaRepository personaRepository;
+    private final PersonRepository personaRepository;
     private final EstadoDeGestionRepository estadoRepository;
     private final PresupuestoRepository presupuestoRepository;
     private final TipoDeTramiteRepository tipoTramiteRepository;
@@ -95,7 +95,7 @@ public class GestionController {
     public GestionController(GestionDeEscrituraRepository repository,
                              HistorialRepository historialRepository,
                              WorkflowTraceService workflowTraceService,
-                             GestionQueryService gestionQueryService, PersonaRepository personaRepository,
+                             GestionQueryService gestionQueryService, PersonRepository personaRepository,
                              EstadoDeGestionRepository estadoRepository, PresupuestoRepository presupuestoRepository,
                              TipoDeTramiteRepository tipoTramiteRepository, TramiteRepository tramiteRepository,
                              InmuebleRepository inmuebleRepository,
@@ -137,7 +137,7 @@ public class GestionController {
             Integer presupuestoId, Integer escribanoId, Integer estadoGestionId, Integer tipoTramiteId,
             Integer inmuebleId) {}
 
-    private record CaseDependencies(Presupuesto presupuesto, Persona escribano, EstadoDeGestion estado,
+    private record CaseDependencies(Presupuesto presupuesto, Person escribano, EstadoDeGestion estado,
             TipoDeTramite tipoTramite, Inmueble inmueble) {}
 
     private static boolean hasRequiredFields(CompleteCaseRequest request) {
@@ -147,7 +147,7 @@ public class GestionController {
 
     private Optional<CaseDependencies> resolveDependencies(CompleteCaseRequest request) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(request.presupuestoId());
-        Optional<Persona> escribano = personaRepository.findById(request.escribanoId());
+        Optional<Person> escribano = personaRepository.findById(request.escribanoId());
         Optional<EstadoDeGestion> estado = estadoRepository.findById(request.estadoGestionId());
         Optional<TipoDeTramite> tipoTramite = tipoTramiteRepository.findById(request.tipoTramiteId());
         if (presupuesto.isEmpty() || escribano.isEmpty() || estado.isEmpty() || tipoTramite.isEmpty()) {
@@ -176,7 +176,7 @@ public class GestionController {
         gestion.setFkIdEstadoDeGestion(dependencies.estado());
     }
 
-    private String buildObservaciones(String requestObservaciones, Persona escribanoSolicitado,
+    private String buildObservaciones(String requestObservaciones, Person escribanoSolicitado,
             GestionSuplenciaService.EscribanoAsignado asignado) {
         if (asignado.suplenciaAplicada() == null) {
             return requestObservaciones;

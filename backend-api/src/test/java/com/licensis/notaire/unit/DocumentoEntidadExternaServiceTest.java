@@ -9,7 +9,7 @@ import com.licensis.notaire.negocio.ConstantesNegocio;
 import com.licensis.notaire.negocio.DocumentoPresentado;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.DocumentoPresentadoRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
@@ -67,9 +67,9 @@ class DocumentoEntidadExternaServiceTest {
 
     @BeforeEach
     void setUp() {
-        Persona escribano = new Persona();
-        escribano.setNombre("Ana");
-        escribano.setApellido("Notaria");
+        Person escribano = new Person();
+        escribano.setFirstName("Ana");
+        escribano.setLastName("Notaria");
 
         gestion = new GestionDeEscritura();
         gestion.setIdGestion(1);

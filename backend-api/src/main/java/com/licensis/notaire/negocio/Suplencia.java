@@ -69,12 +69,12 @@ public class Suplencia implements Serializable, Persistable<Integer>
     private Integer idSuplencia;
     @Column(name = "observaciones")
     private String observaciones;
-    @JoinColumn(name = "fk_id_suplente", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_suplente", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Persona fkIdSuplente;
-    @JoinColumn(name = "fk_id_suplantado", referencedColumnName = "id_persona")
+    private Person fkIdSuplente;
+    @JoinColumn(name = "fk_id_suplantado", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Persona fkIdSuplantado;
+    private Person fkIdSuplantado;
 
     public Suplencia()
     {
@@ -147,22 +147,22 @@ public class Suplencia implements Serializable, Persistable<Integer>
         this.observaciones = observaciones;
     }
 
-    public Persona getFkIdSuplente()
+    public Person getFkIdSuplente()
     {
         return fkIdSuplente;
     }
 
-    public void setFkIdSuplente(Persona fkIdSuplente)
+    public void setFkIdSuplente(Person fkIdSuplente)
     {
         this.fkIdSuplente = fkIdSuplente;
     }
 
-    public Persona getFkIdSuplantado()
+    public Person getFkIdSuplantado()
     {
         return fkIdSuplantado;
     }
 
-    public void setFkIdSuplantado(Persona fkIdSuplantado)
+    public void setFkIdSuplantado(Person fkIdSuplantado)
     {
         this.fkIdSuplantado = fkIdSuplantado;
     }
@@ -207,14 +207,14 @@ public class Suplencia implements Serializable, Persistable<Integer>
 
             if (nuevaSuplencia.getPersonasByFkIdSuplantado().isValido())
             {
-                Persona escribanoSuplantado = new Persona();
+                Person escribanoSuplantado = new Person();
                 escribanoSuplantado.setAtributos(nuevaSuplencia.getPersonasByFkIdSuplantado());
                 this.setFkIdSuplantado(escribanoSuplantado);
             }
 
             if (nuevaSuplencia.getPersonasByFkIdSuplente().isValido())
             {
-                Persona escribanoSuplente = new Persona();
+                Person escribanoSuplente = new Person();
                 escribanoSuplente.setAtributos(nuevaSuplencia.getPersonasByFkIdSuplente());
                 this.setFkIdSuplente(escribanoSuplente);
             }

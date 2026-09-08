@@ -11,7 +11,7 @@ import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Inmueble;
 import com.licensis.notaire.negocio.MinutaInscripcion;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Rol;
@@ -73,7 +73,7 @@ class PersistableIdentityEntitiesIsNewTest {
                         (MinutaInscripcion e) -> e.setIdMinutaInscripcion(1)),
                 identityCase("MovimientoTestimonio", MovimientoTestimonio::new,
                         (MovimientoTestimonio e) -> e.setIdMovimientoTestimonio(1)),
-                identityCase("Persona", Persona::new, (Persona e) -> e.setIdPersona(1)),
+                identityCase("Persona", Person::new, (Person e) -> e.setPersonId(1)),
                 identityCase("Presupuesto", Presupuesto::new, (Presupuesto e) -> e.setIdPresupuesto(1)),
                 identityCase("RegistroAuditoria", RegistroAuditoria::new,
                         (RegistroAuditoria e) -> e.setIdRegistroAuditoria(1)),

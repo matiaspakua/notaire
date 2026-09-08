@@ -5,7 +5,7 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
@@ -85,7 +85,7 @@ class UsuarioJpaControllerTest {
         @Test
         @DisplayName("should persist usuario and manage FK references")
         void shouldPersistAndManageFK() {
-            Persona persona = new Persona(10);
+            Person persona = new Person(10);
             List<RegistroAuditoria> raList = new ArrayList<>();
             RegistroAuditoria ra = new RegistroAuditoria(99);
             raList.add(ra);
@@ -95,12 +95,12 @@ class UsuarioJpaControllerTest {
             usuario.setRegistroAuditoriaList(raList);
 
             // Mock FK references for getReference
-            Persona personaRef = new Persona(10);
+            Person personaRef = new Person(10);
             personaRef.setUsuariosList(new ArrayList<>());
             RegistroAuditoria raRef = new RegistroAuditoria(99);
             raRef.setFkIdUsuario(null);
 
-            when(em.getReference(Persona.class, 10)).thenReturn(personaRef);
+            when(em.getReference(Person.class, 10)).thenReturn(personaRef);
             when(em.getReference(RegistroAuditoria.class, 99)).thenReturn(raRef);
 
             controller.create(usuario);
@@ -154,7 +154,7 @@ class UsuarioJpaControllerTest {
         @DisplayName("should merge usuario with same FK and no orphan changes")
         void shouldMergeSuccessfully() throws Exception {
             Integer id = 1;
-            Persona persona = new Persona(10);
+            Person persona = new Person(10);
             persona.setUsuariosList(new ArrayList<>());
 
             Usuario persistentUsuario = new Usuario(id, "old", "oldp", true, "user");
@@ -204,9 +204,9 @@ class UsuarioJpaControllerTest {
         @DisplayName("should attach new FK persona reference")
         void shouldAttachNewFkPersona() throws Exception {
             Integer id = 1;
-            Persona oldPersona = new Persona(10);
+            Person oldPersona = new Person(10);
             oldPersona.setUsuariosList(new ArrayList<>());
-            Persona newPersona = new Persona(20);
+            Person newPersona = new Person(20);
             newPersona.setUsuariosList(new ArrayList<>());
 
             Usuario persistentUsuario = new Usuario(id, "u", "p", true, "user");
@@ -218,7 +218,7 @@ class UsuarioJpaControllerTest {
             inputUsuario.setRegistroAuditoriaList(new ArrayList<>());
 
             when(em.find(Usuario.class, id)).thenReturn(persistentUsuario);
-            when(em.getReference(Persona.class, 20)).thenReturn(newPersona);
+            when(em.getReference(Person.class, 20)).thenReturn(newPersona);
 
             controller.edit(inputUsuario);
 
@@ -294,7 +294,7 @@ class UsuarioJpaControllerTest {
         @DisplayName("should remove FK persona reference on destroy")
         void shouldRemoveFkPersonaRef() throws Exception {
             Integer id = 1;
-            Persona persona = new Persona(10);
+            Person persona = new Person(10);
             persona.setUsuariosList(new ArrayList<>());
             persona.getUsuariosList().add(new Usuario(id));
 

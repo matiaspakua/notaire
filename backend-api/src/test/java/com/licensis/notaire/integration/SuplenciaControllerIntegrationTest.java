@@ -38,15 +38,15 @@ class SuplenciaControllerIntegrationTest {
 
     private Integer createPersona(String nombre, String numeroIdentificacion) throws Exception {
         String body = """
-                {"nombre": "%s", "apellido": "Suplencia IT", "numeroIdentificacion": "%s",
-                 "esCliente": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
+                {"firstName": "%s", "lastName": "Suplencia IT", "identificationNumber": "%s",
+                 "isClient": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
                 """.formatted(nombre, numeroIdentificacion);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     private Integer createSuplencia() throws Exception {
@@ -55,7 +55,7 @@ class SuplenciaControllerIntegrationTest {
         Integer suplantado = createPersona("Suplantado IT", "411" + suffix);
         String body = """
                 {"fechaInicio": "2026-01-01", "fechaFin": "2026-01-31",
-                 "fkIdSuplente": {"idPersona": %d}, "fkIdSuplantado": {"idPersona": %d}}
+                 "fkIdSuplente": {"personId": %d}, "fkIdSuplantado": {"personId": %d}}
                 """.formatted(suplente, suplantado);
         MvcResult result = mockMvc.perform(post("/api/v1/suplencia")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,8 +73,8 @@ class SuplenciaControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/suplencia/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idSuplencia").value(id))
-                .andExpect(jsonPath("$.fkIdSuplente.idPersona").isNumber())
-                .andExpect(jsonPath("$.fkIdSuplantado.idPersona").isNumber());
+                .andExpect(jsonPath("$.fkIdSuplente.personId").isNumber())
+                .andExpect(jsonPath("$.fkIdSuplantado.personId").isNumber());
     }
 
     @Test

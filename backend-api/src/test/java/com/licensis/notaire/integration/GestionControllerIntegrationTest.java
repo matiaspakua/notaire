@@ -22,13 +22,13 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.SuplenciaRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
@@ -59,7 +59,7 @@ class GestionControllerIntegrationTest {
     private GestionDeEscrituraRepository gestionDeEscrituraRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private SuplenciaRepository suplenciaRepository;
@@ -78,21 +78,21 @@ class GestionControllerIntegrationTest {
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {
         String body = """
-                {"nombre": "Escribano IT", "apellido": "Gestion IT", "numeroIdentificacion": "%s",
-                 "esCliente": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
+                {"firstName": "Escribano IT", "lastName": "Gestion IT", "identificationNumber": "%s",
+                 "isClient": false, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
                 """.formatted(numeroIdentificacion);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     private Integer createPresupuesto(Integer clienteId) throws Exception {
         String body = """
                 {"numero": 1, "fecha": "2026-01-01", "encabezado": "Presupuesto IT", "estado": "PENDIENTE",
-                 "persona": {"idPersona": %d}}
+                 "persona": {"personId": %d}}
                 """.formatted(clienteId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,7 +124,7 @@ class GestionControllerIntegrationTest {
         Integer personaId = createPersona();
         String body = """
                 {"fechaInicio": "2026-01-01", "numero": 9101,
-                 "fkIdPersonaEscribano": {"idPersona": %d}}
+                 "fkIdPersonaEscribano": {"personId": %d}}
                 """.formatted(personaId);
 
         mockMvc.perform(post("/api/v1/gestiones")
@@ -141,7 +141,7 @@ class GestionControllerIntegrationTest {
         Integer personaId = createPersona();
         String body = """
                 {"encabezado": "Gestion IT", "fechaInicio": "2026-01-01", "numero": 9102,
-                 "fkIdPersonaEscribano": {"idPersona": %d}}
+                 "fkIdPersonaEscribano": {"personId": %d}}
                 """.formatted(personaId);
 
         mockMvc.perform(post("/api/v1/gestiones")
@@ -275,14 +275,14 @@ class GestionControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         GestionDeEscritura gestion = gestionDeEscrituraRepository.findById(gestionId).orElseThrow();
-        Persona suplente = personaRepository.findById(suplenteId).orElseThrow();
-        assertThat(gestion.getFkIdPersonaEscribano().getIdPersona())
+        Person suplente = personaRepository.findById(suplenteId).orElseThrow();
+        assertThat(gestion.getFkIdPersonaEscribano().getPersonId())
                 .as("the gestion should be redirected to the suplente, not the requested escribano")
                 .isEqualTo(suplenteId);
         assertThat(gestion.getObservaciones())
                 .as("the redirection should be recorded, identifying both escribanos")
-                .contains(suplente.getNombre())
-                .contains(suplente.getApellido());
+                .contains(suplente.getFirstName())
+                .contains(suplente.getLastName());
     }
 
     private void createActiveSuplencia(Integer escribanoId, Integer suplenteId) {

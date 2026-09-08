@@ -4,10 +4,10 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.CuadernoRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.CuadernoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,18 +37,18 @@ class CuadernoTest {
     private FolioRepository folioRepository;
 
     @Mock
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @InjectMocks
     private CuadernoService cuadernoService;
 
-    private Persona escribano;
+    private Person escribano;
 
     @BeforeEach
     void setUp() {
-        escribano = new Persona();
-        escribano.setIdPersona(1);
-        escribano.setRegistroEscribano(7);
+        escribano = new Person();
+        escribano.setPersonId(1);
+        escribano.setNotaryRegistrationNumber(7);
     }
 
     private Folio folio(Integer id, int numero, String estado) {

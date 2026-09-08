@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Persona request validation (issue #655)")
-class PersonaRequestValidationIntegrationTest {
+@DisplayName("Person request validation (issue #655)")
+class PersonRequestValidationIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -35,92 +35,92 @@ class PersonaRequestValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /personas with blank nombre returns 400")
-    void shouldRejectCreateWithBlankNombre() throws Exception {
-        mockMvc.perform(post("/api/v1/personas")
+    @DisplayName("POST /people with blank firstName returns 400")
+    void shouldRejectCreateWithBlankFirstName() throws Exception {
+        mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "", "apellido": "Perez", "numeroIdentificacion": "12345678", "esCliente": true}
+                                {"firstName": "", "lastName": "Perez", "identificationNumber": "12345678", "isClient": true}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /personas with missing apellido returns 400")
-    void shouldRejectCreateWithMissingApellido() throws Exception {
-        mockMvc.perform(post("/api/v1/personas")
+    @DisplayName("POST /people with missing lastName returns 400")
+    void shouldRejectCreateWithMissingLastName() throws Exception {
+        mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Ana", "numeroIdentificacion": "12345678", "esCliente": true}
+                                {"firstName": "Ana", "identificationNumber": "12345678", "isClient": true}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /personas with blank numeroIdentificacion returns 400")
-    void shouldRejectCreateWithBlankNumeroIdentificacion() throws Exception {
-        mockMvc.perform(post("/api/v1/personas")
+    @DisplayName("POST /people with blank identificationNumber returns 400")
+    void shouldRejectCreateWithBlankIdentificationNumber() throws Exception {
+        mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Ana", "apellido": "Perez", "numeroIdentificacion": "", "esCliente": true}
+                                {"firstName": "Ana", "lastName": "Perez", "identificationNumber": "", "isClient": true}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /personas with valid payload still succeeds")
+    @DisplayName("POST /people with valid payload still succeeds")
     void shouldAcceptCreateWithValidPayload() throws Exception {
-        mockMvc.perform(post("/api/v1/personas")
+        mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Ana", "apellido": "Perez655", "numeroIdentificacion": "99655321", "esCliente": true}
+                                {"firstName": "Ana", "lastName": "Perez655", "identificationNumber": "99655321", "isClient": true}
                                 """))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("PUT /personas/{id} with blank nombre returns 400")
-    void shouldRejectUpdateWithBlankNombre() throws Exception {
-        mockMvc.perform(put("/api/v1/personas/1")
+    @DisplayName("PUT /people/{id} with blank firstName returns 400")
+    void shouldRejectUpdateWithBlankFirstName() throws Exception {
+        mockMvc.perform(put("/api/v1/people/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "", "apellido": "Garcia", "numeroIdentificacion": "20123456", "esCliente": false}
+                                {"firstName": "", "lastName": "Garcia", "identificationNumber": "20123456", "isClient": false}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /personas with a document already registered returns 409 with the existing persona's id")
+    @DisplayName("POST /people with a document already registered returns 409 with the existing person's id")
     void shouldRejectCreateWithDuplicateDocument() throws Exception {
-        String response = mockMvc.perform(post("/api/v1/personas")
+        String response = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Otro", "apellido": "Duplicado", "numeroIdentificacion": "20123456", "esCliente": true}
+                                {"firstName": "Otro", "lastName": "Duplicado", "identificationNumber": "20123456", "isClient": true}
                                 """))
                 .andExpect(status().isConflict())
                 .andReturn().getResponse().getContentAsString();
 
         java.util.Map<String, Object> body = mapper.readValue(response, java.util.Map.class);
-        org.assertj.core.api.Assertions.assertThat(body).containsEntry("idPersonaExistente", 1);
+        org.assertj.core.api.Assertions.assertThat(body).containsEntry("existingPersonId", 1);
     }
 
     @Test
-    @DisplayName("PUT /personas/{id} with another persona's document returns 409")
-    void shouldRejectUpdateWithDocumentFromAnotherPersona() throws Exception {
-        String createResponse = mockMvc.perform(post("/api/v1/personas")
+    @DisplayName("PUT /people/{id} with another person's document returns 409")
+    void shouldRejectUpdateWithDocumentFromAnotherPerson() throws Exception {
+        String createResponse = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Nueva", "apellido": "Persona", "numeroIdentificacion": "88888888", "esCliente": true}
+                                {"firstName": "Nueva", "lastName": "Persona", "identificationNumber": "88888888", "isClient": true}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        Integer newPersonaId = (Integer) mapper.readValue(createResponse, java.util.Map.class).get("idPersona");
+        Integer newPersonId = (Integer) mapper.readValue(createResponse, java.util.Map.class).get("personId");
 
-        mockMvc.perform(put("/api/v1/personas/" + newPersonaId)
+        mockMvc.perform(put("/api/v1/people/" + newPersonId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "Nueva", "apellido": "Persona", "numeroIdentificacion": "20123456", "esCliente": true}
+                                {"firstName": "Nueva", "lastName": "Persona", "identificationNumber": "20123456", "isClient": true}
                                 """))
                 .andExpect(status().isConflict());
     }

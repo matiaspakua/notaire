@@ -39,9 +39,9 @@ public class Identificacion implements Serializable
     @Basic(optional = false)
     @Column(name = "numero")
     private int numero;
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Persona persona;
+    private Person persona;
     @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id_tipo_identificacion", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private TipoIdentificacion tipoIdentificacion;
@@ -86,12 +86,12 @@ public class Identificacion implements Serializable
         this.numero = numero;
     }
 
-    public Persona getPersona()
+    public Person getPersona()
     {
         return persona;
     }
 
-    public void setPersona(Persona persona)
+    public void setPersona(Person persona)
     {
         this.persona = persona;
     }

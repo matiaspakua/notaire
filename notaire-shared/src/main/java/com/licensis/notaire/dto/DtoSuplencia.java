@@ -10,8 +10,8 @@ import java.util.Date;
 public class DtoSuplencia implements DtoValido {
 
     private Integer idSuplencia;
-    private DtoPersona personasByFkIdSuplente;
-    private DtoPersona personasByFkIdSuplantado;
+    private DtoPerson personasByFkIdSuplente;
+    private DtoPerson personasByFkIdSuplantado;
     private Date fechaInicio;
     private Date fechaFin;
     private String observaciones;
@@ -19,7 +19,7 @@ public class DtoSuplencia implements DtoValido {
     public DtoSuplencia() {
     }
 
-    public DtoSuplencia(DtoPersona personasByFkIdSuplente, DtoPersona personasByFkIdSuplantado, Date fechaInicio,
+    public DtoSuplencia(DtoPerson personasByFkIdSuplente, DtoPerson personasByFkIdSuplantado, Date fechaInicio,
             Date fechaFin) {
         this.personasByFkIdSuplente = personasByFkIdSuplente;
         this.personasByFkIdSuplantado = personasByFkIdSuplantado;
@@ -27,7 +27,7 @@ public class DtoSuplencia implements DtoValido {
         this.fechaFin = fechaFin;
     }
 
-    public DtoSuplencia(DtoPersona personasByFkIdSuplente, DtoPersona personasByFkIdSuplantado, Date fechaInicio,
+    public DtoSuplencia(DtoPerson personasByFkIdSuplente, DtoPerson personasByFkIdSuplantado, Date fechaInicio,
             Date fechaFin, String observaciones) {
         this.personasByFkIdSuplente = personasByFkIdSuplente;
         this.personasByFkIdSuplantado = personasByFkIdSuplantado;
@@ -44,19 +44,19 @@ public class DtoSuplencia implements DtoValido {
         this.idSuplencia = idSuplencia;
     }
 
-    public DtoPersona getPersonasByFkIdSuplente() {
+    public DtoPerson getPersonasByFkIdSuplente() {
         return this.personasByFkIdSuplente;
     }
 
-    public void setPersonasByFkIdSuplente(DtoPersona personasByFkIdSuplente) {
+    public void setPersonasByFkIdSuplente(DtoPerson personasByFkIdSuplente) {
         this.personasByFkIdSuplente = personasByFkIdSuplente;
     }
 
-    public DtoPersona getPersonasByFkIdSuplantado() {
+    public DtoPerson getPersonasByFkIdSuplantado() {
         return this.personasByFkIdSuplantado;
     }
 
-    public void setPersonasByFkIdSuplantado(DtoPersona personasByFkIdSuplantado) {
+    public void setPersonasByFkIdSuplantado(DtoPerson personasByFkIdSuplantado) {
         this.personasByFkIdSuplantado = personasByFkIdSuplantado;
     }
 
@@ -101,7 +101,7 @@ public class DtoSuplencia implements DtoValido {
         }
 
         // verifica que el suplente y el suplantado no sean iguales.
-        if (this.getPersonasByFkIdSuplantado().getIdPersona().equals(this.getPersonasByFkIdSuplente().getIdPersona())) {
+        if (this.getPersonasByFkIdSuplantado().getId().equals(this.getPersonasByFkIdSuplente().getId())) {
             return false;
         }
 

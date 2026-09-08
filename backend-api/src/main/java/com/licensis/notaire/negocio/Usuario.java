@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.negocio;
 
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoUsuario;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -71,9 +71,9 @@ public class Usuario implements Serializable, Persistable<Integer> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUsuario", fetch = FetchType.LAZY)
     private List<RegistroAuditoria> registroAuditoriaList;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private Persona fkIdPersona;
+    private Person fkIdPersona;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "fk_id_rol", referencedColumnName = "id_rol")
@@ -161,11 +161,11 @@ public class Usuario implements Serializable, Persistable<Integer> {
         this.registroAuditoriaList = registroAuditoriaList;
     }
 
-    public Persona getFkIdPersona() {
+    public Person getFkIdPersona() {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona) {
+    public void setFkIdPersona(Person fkIdPersona) {
         this.fkIdPersona = fkIdPersona;
     }
 
@@ -210,7 +210,7 @@ public class Usuario implements Serializable, Persistable<Integer> {
     public void setAtributos(DtoUsuario dtoUsuario) {
 
         // Ref persona de Usuario
-        Persona miPersona = new Persona();
+        Person miPersona = new Person();
         miPersona.setAtributos(dtoUsuario.getPersonas());
         setFkIdPersona(miPersona);
 
@@ -238,7 +238,7 @@ public class Usuario implements Serializable, Persistable<Integer> {
             miDto.setIdUsuario(idUsuario);
             miDto.setNombre(nombre);
 
-            DtoPersona miDtoPersona = new DtoPersona();
+            DtoPerson miDtoPersona = new DtoPerson();
             miDtoPersona = this.getFkIdPersona().getDto();
 
             miDto.setPersonas(miDtoPersona);

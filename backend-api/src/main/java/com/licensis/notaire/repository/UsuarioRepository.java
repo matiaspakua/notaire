@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByNombre(String nombre);
 
-    Optional<Usuario> findByFkIdPersona(Persona persona);
+    Optional<Usuario> findByFkIdPersona(Person persona);
 
     Optional<Usuario> findByFkIdPersonaIdPersona(Integer idPersona);
 

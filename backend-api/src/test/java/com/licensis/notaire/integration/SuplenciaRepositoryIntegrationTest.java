@@ -1,9 +1,9 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.SuplenciaRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,13 +26,13 @@ class SuplenciaRepositoryIntegrationTest extends ServiceIntegrationTest {
     private SuplenciaRepository suplenciaRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
-    private Persona suplente;
-    private Persona suplantado;
+    private Person suplente;
+    private Person suplantado;
     private TipoIdentificacion tipoIdentificacion;
 
     @BeforeEach
@@ -45,20 +45,20 @@ class SuplenciaRepositoryIntegrationTest extends ServiceIntegrationTest {
         tipoIdentificacion.setCaracteres("8");
         tipoIdentificacion = tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        suplente = new Persona();
-        suplente.setNombre("Juan");
-        suplente.setApellido("Suplente");
-        suplente.setNumeroIdentificacion("12345678");
-        suplente.setEsCliente(true);
-        suplente.setFkIdTipoIdentificacion(tipoIdentificacion);
+        suplente = new Person();
+        suplente.setFirstName("Juan");
+        suplente.setLastName("Suplente");
+        suplente.setIdentificationNumber("12345678");
+        suplente.setIsClient(true);
+        suplente.setFkIdIdentificationType(tipoIdentificacion);
         suplente = personaRepository.save(suplente);
 
-        suplantado = new Persona();
-        suplantado.setNombre("Pedro");
-        suplantado.setApellido("Suplantado");
-        suplantado.setNumeroIdentificacion("87654321");
-        suplantado.setEsCliente(true);
-        suplantado.setFkIdTipoIdentificacion(tipoIdentificacion);
+        suplantado = new Person();
+        suplantado.setFirstName("Pedro");
+        suplantado.setLastName("Suplantado");
+        suplantado.setIdentificationNumber("87654321");
+        suplantado.setIsClient(true);
+        suplantado.setFkIdIdentificationType(tipoIdentificacion);
         suplantado = personaRepository.save(suplantado);
     }
 
@@ -75,8 +75,8 @@ class SuplenciaRepositoryIntegrationTest extends ServiceIntegrationTest {
         Suplencia saved = suplenciaRepository.save(suplencia);
 
         assertThat(saved.getIdSuplencia()).isNotNull();
-        assertThat(saved.getFkIdSuplente().getIdPersona()).isEqualTo(suplente.getIdPersona());
-        assertThat(saved.getFkIdSuplantado().getIdPersona()).isEqualTo(suplantado.getIdPersona());
+        assertThat(saved.getFkIdSuplente().getPersonId()).isEqualTo(suplente.getPersonId());
+        assertThat(saved.getFkIdSuplantado().getPersonId()).isEqualTo(suplantado.getPersonId());
         assertThat(saved.getObservaciones()).isEqualTo("Suplencia de prueba");
     }
 

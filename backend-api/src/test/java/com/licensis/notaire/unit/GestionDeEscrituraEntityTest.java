@@ -2,11 +2,11 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.dto.DtoEstadoDeGestion;
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,18 +40,18 @@ class GestionDeEscrituraEntityTest {
         @Test
         @DisplayName("Should link gestion to escribano")
         void shouldLinkGestionToEscribano() {
-            Persona escribano = new Persona();
-            escribano.setIdPersona(1);
-            escribano.setNombre("Juan Carlos");
-            escribano.setApellido("Garcia");
-            escribano.setRegistroEscribano(1001);
+            Person escribano = new Person();
+            escribano.setPersonId(1);
+            escribano.setFirstName("Juan Carlos");
+            escribano.setLastName("Garcia");
+            escribano.setNotaryRegistrationNumber(1001);
 
             GestionDeEscritura gestion = new GestionDeEscritura();
             gestion.setIdGestion(1);
             gestion.setFkIdPersonaEscribano(escribano);
 
             assertThat(gestion.getFkIdPersonaEscribano()).isNotNull();
-            assertThat(gestion.getFkIdPersonaEscribano().getRegistroEscribano()).isEqualTo(1001);
+            assertThat(gestion.getFkIdPersonaEscribano().getNotaryRegistrationNumber()).isEqualTo(1001);
         }
 
         @Test
@@ -184,10 +184,10 @@ class GestionDeEscrituraEntityTest {
             DtoTipoIdentificacion dtoTipoId = new DtoTipoIdentificacion();
             dtoTipoId.setIdTipoIdentificacion(1);
             dtoTipoId.setNombre("DNI");
-            DtoPersona dtoPersona = new DtoPersona();
-            dtoPersona.setIdPersona(10);
-            dtoPersona.setNombre("Juan");
-            dtoPersona.setApellido("García");
+            DtoPerson dtoPersona = new DtoPerson();
+            dtoPersona.setId(10);
+            dtoPersona.setFirstName("Juan");
+            dtoPersona.setLastName("García");
             dtoPersona.setVersion(0);
             dtoPersona.setDtoTipoIdentificacion(dtoTipoId);
             dto.setPersonaEscribano(dtoPersona);
