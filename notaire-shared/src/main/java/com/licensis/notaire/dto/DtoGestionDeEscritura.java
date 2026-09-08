@@ -7,9 +7,9 @@ import java.util.List;
 
 public class DtoGestionDeEscritura implements DtoValido {
     private Integer idGestion;
-    private DtoPersona personaEscribano;
-    private DtoPersona clienteReferencia;
-    private List<DtoPersona> listaClientesInvolucrados;
+    private DtoPerson personaEscribano;
+    private DtoPerson clienteReferencia;
+    private List<DtoPerson> listaClientesInvolucrados;
     private int numero;
     private Date fechaInicio;
     private String encabezado;
@@ -26,7 +26,7 @@ public class DtoGestionDeEscritura implements DtoValido {
         this.listaTramitesAsociados = new ArrayList<>();
     }
 
-    public DtoGestionDeEscritura(DtoPersona persona, int numero, Date fechaInicio, String encabezado) {
+    public DtoGestionDeEscritura(DtoPerson persona, int numero, Date fechaInicio, String encabezado) {
         this.personaEscribano = persona;
         this.numero = numero;
         this.fechaInicio = fechaInicio;
@@ -37,12 +37,12 @@ public class DtoGestionDeEscritura implements DtoValido {
 
     public Integer getIdGestion() { return idGestion; }
     public void setIdGestion(Integer idGestion) { this.idGestion = idGestion; }
-    public DtoPersona getPersonaEscribano() { return personaEscribano; }
-    public void setPersonaEscribano(DtoPersona personaEscribano) { this.personaEscribano = personaEscribano; }
-    public DtoPersona getClienteReferencia() { return clienteReferencia; }
-    public void setClienteReferencia(DtoPersona clienteReferencia) { this.clienteReferencia = clienteReferencia; }
-    public List<DtoPersona> getListaClientesInvolucrados() { return listaClientesInvolucrados; }
-    public void setListaClientesInvolucrados(List<DtoPersona> listaClientesInvolucrados) { if (listaClientesInvolucrados != null) this.listaClientesInvolucrados.addAll(listaClientesInvolucrados); }
+    public DtoPerson getPersonaEscribano() { return personaEscribano; }
+    public void setPersonaEscribano(DtoPerson personaEscribano) { this.personaEscribano = personaEscribano; }
+    public DtoPerson getClienteReferencia() { return clienteReferencia; }
+    public void setClienteReferencia(DtoPerson clienteReferencia) { this.clienteReferencia = clienteReferencia; }
+    public List<DtoPerson> getListaClientesInvolucrados() { return listaClientesInvolucrados; }
+    public void setListaClientesInvolucrados(List<DtoPerson> listaClientesInvolucrados) { if (listaClientesInvolucrados != null) this.listaClientesInvolucrados.addAll(listaClientesInvolucrados); }
     public int getNumero() { return numero; }
     public void setNumero(int numero) { this.numero = numero; }
     public Date getFechaInicio() { return fechaInicio; }

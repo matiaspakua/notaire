@@ -50,10 +50,10 @@ public class Cuaderno implements Serializable, Persistable<Integer> {
     @Column(name = "observaciones")
     private String observaciones;
 
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
-    private Persona fkIdPersonaEscribano;
+    private Person fkIdPersonaEscribano;
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -107,11 +107,11 @@ public class Cuaderno implements Serializable, Persistable<Integer> {
         this.observaciones = observaciones;
     }
 
-    public Persona getFkIdPersonaEscribano() {
+    public Person getFkIdPersonaEscribano() {
         return fkIdPersonaEscribano;
     }
 
-    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano) {
+    public void setFkIdPersonaEscribano(Person fkIdPersonaEscribano) {
         this.fkIdPersonaEscribano = fkIdPersonaEscribano;
     }
 

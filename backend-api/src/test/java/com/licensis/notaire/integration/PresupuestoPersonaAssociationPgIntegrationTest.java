@@ -49,15 +49,15 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {
         String body = """
-                {"nombre": "Cliente IT", "apellido": "CU01", "numeroIdentificacion": "%s",
-                 "esCliente": true, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
+                {"firstName": "Cliente IT", "lastName": "CU01", "identificationNumber": "%s",
+                 "isClient": true, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
                 """.formatted(numeroIdentificacion);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     @Test
@@ -66,14 +66,14 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
         Integer personaId = createPersona("883pg001");
         String body = """
                 {"numero": 883001, "fecha": "2026-01-01", "encabezado": "Presupuesto CU01 pg",
-                 "estado": "BORRADOR", "persona": {"idPersona": %d}}
+                 "estado": "BORRADOR", "persona": {"personId": %d}}
                 """.formatted(personaId);
 
         mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.persona.idPersona").value(personaId));
+                .andExpect(jsonPath("$.persona.personId").value(personaId));
     }
 
     @Test
@@ -94,14 +94,14 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
 
         String updateBody = """
                 {"numero": 883002, "fecha": "2026-01-01", "encabezado": "Presupuesto CU01 pg sin cliente",
-                 "estado": "BORRADOR", "persona": {"idPersona": %d}}
+                 "estado": "BORRADOR", "persona": {"personId": %d}}
                 """.formatted(personaId);
 
         mockMvc.perform(put("/api/v1/presupuestos/" + presupuestoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.persona.idPersona").value(personaId));
+                .andExpect(jsonPath("$.persona.personId").value(personaId));
     }
 
     @Test
@@ -125,7 +125,7 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
         Integer personaId = createPersona("883pg004");
         String body = """
                 {"numero": 883004, "fecha": "2026-01-01", "encabezado": "Presupuesto CU01 pg detalle",
-                 "estado": "BORRADOR", "persona": {"idPersona": %d}}
+                 "estado": "BORRADOR", "persona": {"personId": %d}}
                 """.formatted(personaId);
         MvcResult createResult = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
 
         mockMvc.perform(get("/api/v1/presupuestos/" + presupuestoId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.persona.idPersona").value(personaId));
+                .andExpect(jsonPath("$.persona.personId").value(personaId));
     }
 
     @Test
@@ -146,7 +146,7 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
         Integer personaId = createPersona("883pg005");
         String withPersonaBody = """
                 {"numero": 883005, "fecha": "2026-01-01", "encabezado": "Presupuesto CU01 pg con cliente",
-                 "estado": "BORRADOR", "persona": {"idPersona": %d}}
+                 "estado": "BORRADOR", "persona": {"personId": %d}}
                 """.formatted(personaId);
         String withoutPersonaBody = """
                 {"numero": 883006, "fecha": "2026-01-01", "encabezado": "Presupuesto CU01 pg sin cliente listado",
@@ -170,7 +170,7 @@ class PresupuestoPersonaAssociationPgIntegrationTest extends BaseIntegrationTest
                 .get("idPresupuesto").asInt();
 
         mockMvc.perform(get("/api/v1/presupuestos/" + withPersonaId))
-                .andExpect(jsonPath("$.persona.idPersona").value(personaId));
+                .andExpect(jsonPath("$.persona.personId").value(personaId));
         mockMvc.perform(get("/api/v1/presupuestos/" + withoutPersonaId))
                 .andExpect(jsonPath("$.persona").doesNotExist());
     }

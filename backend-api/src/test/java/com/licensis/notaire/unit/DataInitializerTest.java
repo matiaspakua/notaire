@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.config.DataInitializer;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import com.licensis.notaire.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class DataInitializerTest {
     @Mock
     private UsuarioRepository usuarioRepository;
     @Mock
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
     @Mock
     private TipoIdentificacionRepository tipoIdentificacionRepository;
     @Mock
@@ -79,7 +79,7 @@ class DataInitializerTest {
 
         dataInitializer.run(null);
 
-        verify(personaRepository).save(any(Persona.class));
+        verify(personaRepository).save(any(Person.class));
         ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
         verify(usuarioRepository).save(captor.capture());
         Usuario created = captor.getValue();

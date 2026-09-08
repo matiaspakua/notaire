@@ -5,7 +5,7 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoItem;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoPresupuesto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -89,9 +89,9 @@ public class Presupuesto implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Persona fkIdPersona;
+    private Person fkIdPersona;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPresupuesto", fetch = FetchType.EAGER)
     private java.util.Set<Pago> pagoList;
@@ -168,12 +168,12 @@ public class Presupuesto implements Serializable, Persistable<Integer> {
     }
 
     @JsonProperty("persona")
-    public Persona getFkIdPersona() {
+    public Person getFkIdPersona() {
         return fkIdPersona;
     }
 
     @JsonProperty("persona")
-    public void setFkIdPersona(Persona fkIdPersona) {
+    public void setFkIdPersona(Person fkIdPersona) {
         this.fkIdPersona = fkIdPersona;
     }
 
@@ -213,12 +213,12 @@ public class Presupuesto implements Serializable, Persistable<Integer> {
             try {
                 miDto.setPersona(fkIdPersona.getDto());
             } catch (Exception ex) {
-                DtoPersona personas = new DtoPersona();
-                personas.setIdPersona(fkIdPersona.getIdPersona());
-                personas.setNombre(fkIdPersona.getNombre());
-                personas.setApellido(fkIdPersona.getApellido());
-                personas.setDtoTipoIdentificacion(fkIdPersona.getFkIdTipoIdentificacion().getDto());
-                personas.setNumeroIdentificacion(fkIdPersona.getNumeroIdentificacion());
+                DtoPerson personas = new DtoPerson();
+                personas.setId(fkIdPersona.getPersonId());
+                personas.setFirstName(fkIdPersona.getFirstName());
+                personas.setLastName(fkIdPersona.getLastName());
+                personas.setDtoTipoIdentificacion(fkIdPersona.getFkIdIdentificationType().getDto());
+                personas.setIdentificationNumber(fkIdPersona.getIdentificationNumber());
             }
         } else {
             miDto.setPersona(null);
@@ -239,7 +239,7 @@ public class Presupuesto implements Serializable, Persistable<Integer> {
         this.setObservaciones(dtoPresupuesto.getObservaciones());
 
         if (dtoPresupuesto.getPersona() != null) {
-            Persona cliente = new Persona();
+            Person cliente = new Person();
             cliente.setAtributos(dtoPresupuesto.getPersona());
             this.setFkIdPersona(cliente);
         }

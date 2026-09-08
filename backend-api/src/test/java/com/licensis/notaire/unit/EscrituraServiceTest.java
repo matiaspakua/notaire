@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.EscrituraRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.EscrituraService;
 import com.licensis.notaire.service.NumeracionEscrituraService;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class EscrituraServiceTest {
     private EscrituraRepository escrituraRepository;
 
     @Mock
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Mock
     private FolioRepository folioRepository;
@@ -141,17 +141,17 @@ class EscrituraServiceTest {
         @Test
         @DisplayName("Should return all escribanos from repository")
         void shouldReturnAllEscribanos() {
-            Persona escribano = new Persona();
-            escribano.setIdPersona(1);
-            escribano.setNombre("Juan");
-            escribano.setApellido("García");
-            escribano.setRegistroEscribano(1001);
+            Person escribano = new Person();
+            escribano.setPersonId(1);
+            escribano.setFirstName("Juan");
+            escribano.setLastName("García");
+            escribano.setNotaryRegistrationNumber(1001);
             when(personaRepository.findAllEscribanos()).thenReturn(List.of(escribano));
 
-            List<Persona> result = escrituraService.findEscribanosDisponibles();
+            List<Person> result = escrituraService.findEscribanosDisponibles();
 
             assertThat(result).hasSize(1);
-            assertThat(result.get(0).getRegistroEscribano()).isEqualTo(1001);
+            assertThat(result.get(0).getNotaryRegistrationNumber()).isEqualTo(1001);
         }
 
         @Test
@@ -159,7 +159,7 @@ class EscrituraServiceTest {
         void shouldReturnEmptyListWhenNoEscribanos() {
             when(personaRepository.findAllEscribanos()).thenReturn(Collections.emptyList());
 
-            List<Persona> result = escrituraService.findEscribanosDisponibles();
+            List<Person> result = escrituraService.findEscribanosDisponibles();
 
             assertThat(result).isEmpty();
         }

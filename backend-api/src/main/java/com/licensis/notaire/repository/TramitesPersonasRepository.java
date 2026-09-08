@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.TramitesPersonas;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface TramitesPersonasRepository extends JpaRepository<TramitesPersonas, Integer> {
 
-    List<TramitesPersonas> findByPersona(Persona persona);
+    List<TramitesPersonas> findByPersona(Person persona);
 
     List<TramitesPersonas> findByPersonaIdPersona(Integer idPersona);
 

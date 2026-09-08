@@ -16,9 +16,9 @@ class AuditModuleResolverTest {
     }
 
     @Test
-    @DisplayName("Should map PersonaController to Personas")
-    void shouldMapPersonaControllerToPersonas() {
-        assertThat(AuditModuleResolver.resolve("PersonaController")).isEqualTo("Personas");
+    @DisplayName("Should map PersonController to People")
+    void shouldMapPersonControllerToPeople() {
+        assertThat(AuditModuleResolver.resolve("PersonController")).isEqualTo("People");
     }
 
     @Test

@@ -6,7 +6,7 @@ import com.licensis.notaire.negocio.Historial;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +47,7 @@ class GestionBitacoraControllerIntegrationTest {
     @Autowired
     private HistorialRepository historialRepository;
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     private MockMvc mockMvc;
     private Integer gestionConHistorialId;

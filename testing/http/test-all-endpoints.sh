@@ -68,30 +68,30 @@ curl -X POST "$BASE_URL/api/v1/conceptos" \
   -w "\nStatus: %{http_code}\n\n"
 
 # ============================================================================
-# PERSONAS
+# PEOPLE
 # ============================================================================
-echo -e "${BLUE}=== TESTING PERSONAS ===${NC}"
+echo -e "${BLUE}=== TESTING PEOPLE ===${NC}"
 
-# Get all personas
-echo -e "${GREEN}Test 7: Get all personas${NC}"
-curl -X GET "$BASE_URL/api/v1/personas" \
+# Get all people
+echo -e "${GREEN}Test 7: Get all people${NC}"
+curl -X GET "$BASE_URL/api/v1/people" \
   -H "Content-Type: application/json" \
   -w "\nStatus: %{http_code}\n\n"
 
-# Get persona by ID
-echo -e "${GREEN}Test 8: Get persona by ID (1)${NC}"
-curl -X GET "$BASE_URL/api/v1/personas/1" \
+# Get person by ID
+echo -e "${GREEN}Test 8: Get person by ID (1)${NC}"
+curl -X GET "$BASE_URL/api/v1/people/1" \
   -H "Content-Type: application/json" \
   -w "\nStatus: %{http_code}\n\n"
 
-# Create new persona
-echo -e "${GREEN}Test 9: Create new persona${NC}"
-curl -X POST "$BASE_URL/api/v1/personas" \
+# Create new person
+echo -e "${GREEN}Test 9: Create new person${NC}"
+curl -X POST "$BASE_URL/api/v1/people" \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Juan Pérez",
-    "apellido": "García",
-    "numeroIdentificacion": "12345678",
+    "firstName": "Juan Pérez",
+    "lastName": "García",
+    "identificationNumber": "12345678",
     "telefonoPersonal": "555-1234",
     "telefonoLaboral": "555-5678",
     "direccion": "Calle Principal 123",

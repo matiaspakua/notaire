@@ -1,7 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.config.JwtTokenService;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.observability.MetricsUtil;
@@ -76,7 +76,7 @@ public class UsuarioController {
         PersonaInfo persona = null;
         if (u.getFkIdPersona() != null) {
             var p = u.getFkIdPersona();
-            persona = new PersonaInfo(p.getIdPersona(), p.getNombre(), p.getApellido());
+            persona = new PersonaInfo(p.getPersonId(), p.getFirstName(), p.getLastName());
         }
         RolInfo rolInfo = null;
         if (u.getRol() != null) {
@@ -228,15 +228,15 @@ public class UsuarioController {
                             dtoUsuario.setTipo(usuario.getTipo());
                             dtoUsuario.setVersion(usuario.getVersion());
                             if (usuario.getFkIdPersona() != null) {
-                                DtoPersona dtoPersona = new DtoPersona();
-                                dtoPersona.setIdPersona(usuario.getFkIdPersona().getIdPersona());
-                                dtoPersona.setNombre(usuario.getFkIdPersona().getNombre());
-                                dtoPersona.setApellido(usuario.getFkIdPersona().getApellido());
+                                DtoPerson dtoPersona = new DtoPerson();
+                                dtoPersona.setId(usuario.getFkIdPersona().getPersonId());
+                                dtoPersona.setFirstName(usuario.getFkIdPersona().getFirstName());
+                                dtoPersona.setLastName(usuario.getFkIdPersona().getLastName());
                                 dtoUsuario.setPersonas(dtoPersona);
                             }
                             dtoUsuario.setValido(true);
                             log.debug("DTO Usuario creado - valido: {}, estado: {}", dtoUsuario.isValido(), dtoUsuario.isEstado());
-                            
+
                             // Create a map response to ensure 'valido' field is included
                             Map<String, Object> response = new HashMap<>();
                             response.put("valido", true);
@@ -248,9 +248,9 @@ public class UsuarioController {
                             response.put("version", dtoUsuario.getVersion());
                             if (dtoUsuario.getPersonas() != null) {
                                 Map<String, Object> personaMap = new HashMap<>();
-                                personaMap.put("idPersona", dtoUsuario.getPersonas().getIdPersona());
-                                personaMap.put("nombre", dtoUsuario.getPersonas().getNombre());
-                                personaMap.put("apellido", dtoUsuario.getPersonas().getApellido());
+                                personaMap.put("idPersona", dtoUsuario.getPersonas().getId());
+                                personaMap.put("nombre", dtoUsuario.getPersonas().getFirstName());
+                                personaMap.put("apellido", dtoUsuario.getPersonas().getLastName());
                                 response.put("personas", personaMap);
                             }
                             return ResponseEntity.ok(response);

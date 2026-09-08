@@ -1,9 +1,9 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.SuplenciaRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     private SuplenciaRepository suplenciaRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
@@ -47,8 +47,8 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should perform CRUD lifecycle")
     void shouldPerformCRUDLifecycle() {
-        Persona suplente = createPersona("Suplente 1");
-        Persona suplantado = createPersona("Suplantado 1");
+        Person suplente = createPersona("Suplente 1");
+        Person suplantado = createPersona("Suplantado 1");
 
         // Create
         Suplencia suplencia = new Suplencia();
@@ -78,9 +78,9 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle multiple suplencias for same substitute")
     void shouldHandleMultipleSuplenciasForSameSubstitute() {
-        Persona suplente = createPersona("Suplente Activo");
-        Persona suplantado1 = createPersona("Suplantado 1");
-        Persona suplantado2 = createPersona("Suplantado 2");
+        Person suplente = createPersona("Suplente Activo");
+        Person suplantado1 = createPersona("Suplantado 1");
+        Person suplantado2 = createPersona("Suplantado 2");
 
         for (int i = 0; i < 3; i++) {
             Suplencia suplencia = new Suplencia();
@@ -98,8 +98,8 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle date range scenarios")
     void shouldHandleDateRangeScenarios() {
-        Persona suplente = createPersona("Suplente 2");
-        Persona suplantado = createPersona("Suplantado 2");
+        Person suplente = createPersona("Suplente 2");
+        Person suplantado = createPersona("Suplantado 2");
 
         Suplencia suplencia1 = new Suplencia();
         suplencia1.setFkIdSuplente(suplente);
@@ -122,8 +122,8 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should maintain relationship integrity")
     void shouldMaintainRelationshipIntegrity() {
-        Persona suplente = createPersona("Suplente 3");
-        Persona suplantado = createPersona("Suplantado 3");
+        Person suplente = createPersona("Suplente 3");
+        Person suplantado = createPersona("Suplantado 3");
 
         Suplencia suplencia = new Suplencia();
         suplencia.setFkIdSuplente(suplente);
@@ -135,17 +135,17 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
         Suplencia retrieved = suplenciaRepository.findById(suplencia.getIdSuplencia()).orElseThrow();
 
         assertThat(retrieved.getFkIdSuplente()).isNotNull();
-        assertThat(retrieved.getFkIdSuplente().getIdPersona()).isEqualTo(suplente.getIdPersona());
+        assertThat(retrieved.getFkIdSuplente().getPersonId()).isEqualTo(suplente.getPersonId());
         assertThat(retrieved.getFkIdSuplantado()).isNotNull();
-        assertThat(retrieved.getFkIdSuplantado().getIdPersona()).isEqualTo(suplantado.getIdPersona());
+        assertThat(retrieved.getFkIdSuplantado().getPersonId()).isEqualTo(suplantado.getPersonId());
     }
 
     @Test
     @DisplayName("Should handle concurrent operations")
     void shouldHandleConcurrentOperations() {
-        Persona suplente1 = createPersona("Suplente A");
-        Persona suplente2 = createPersona("Suplente B");
-        Persona suplantado = createPersona("Suplantado Concurrente");
+        Person suplente1 = createPersona("Suplente A");
+        Person suplente2 = createPersona("Suplente B");
+        Person suplantado = createPersona("Suplantado Concurrente");
 
         Suplencia sup1 = new Suplencia();
         sup1.setFkIdSuplente(suplente1);
@@ -164,14 +164,14 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
         Suplencia read1 = suplenciaRepository.findById(saved1.getIdSuplencia()).orElseThrow();
         Suplencia read2 = suplenciaRepository.findById(saved2.getIdSuplencia()).orElseThrow();
 
-        assertThat(read1.getFkIdSuplente().getIdPersona()).isNotEqualTo(read2.getFkIdSuplente().getIdPersona());
+        assertThat(read1.getFkIdSuplente().getPersonId()).isNotEqualTo(read2.getFkIdSuplente().getPersonId());
     }
 
     @Test
     @DisplayName("Should support filtering operations")
     void shouldSupportFilteringOperations() {
-        Persona suplente = createPersona("Suplente Filtrado");
-        Persona suplantado = createPersona("Suplantado Filtrado");
+        Person suplente = createPersona("Suplente Filtrado");
+        Person suplantado = createPersona("Suplantado Filtrado");
 
         for (int i = 1; i <= 5; i++) {
             Suplencia suplencia = new Suplencia();
@@ -184,7 +184,7 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
 
         List<Suplencia> all = suplenciaRepository.findAll();
         List<Suplencia> filtered = all.stream()
-                .filter(s -> s.getFkIdSuplente().getIdPersona().equals(suplente.getIdPersona()))
+                .filter(s -> s.getFkIdSuplente().getPersonId().equals(suplente.getPersonId()))
                 .toList();
 
         assertThat(filtered).hasSize(5);
@@ -193,10 +193,10 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle batch operations")
     void shouldHandleBatchOperations() {
-        Persona suplente = createPersona("Suplente Batch");
+        Person suplente = createPersona("Suplente Batch");
 
         for (int i = 0; i < 10; i++) {
-            Persona suplantado = createPersona("Suplantado Batch " + i);
+            Person suplantado = createPersona("Suplantado Batch " + i);
             Suplencia suplencia = new Suplencia();
             suplencia.setFkIdSuplente(suplente);
             suplencia.setFkIdSuplantado(suplantado);
@@ -207,7 +207,7 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
 
         List<Suplencia> all = suplenciaRepository.findAll();
         long countBatch = all.stream()
-                .filter(s -> s.getFkIdSuplente().getNombre().startsWith("Suplente Batch"))
+                .filter(s -> s.getFkIdSuplente().getFirstName().startsWith("Suplente Batch"))
                 .count();
 
         assertThat(countBatch).isEqualTo(10);
@@ -217,10 +217,10 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should support complex scenarios")
     void shouldSupportComplexScenarios() {
         // Create multiple personas
-        Persona suplente1 = createPersona("Escribano Principal");
-        Persona suplente2 = createPersona("Escribano Suplente");
-        Persona suplantado1 = createPersona("Escribano A");
-        Persona suplantado2 = createPersona("Escribano B");
+        Person suplente1 = createPersona("Escribano Principal");
+        Person suplente2 = createPersona("Escribano Suplente");
+        Person suplantado1 = createPersona("Escribano A");
+        Person suplantado2 = createPersona("Escribano B");
 
         // Create overlapping suplencias
         Suplencia overlap1 = new Suplencia();
@@ -245,13 +245,13 @@ class SuplenciaServiceIntegrationTest extends ServiceIntegrationTest {
         assertThat(all).anyMatch(s -> "Período extendido".equals(s.getObservaciones()));
     }
 
-    private Persona createPersona(String nombre) {
-        Persona persona = new Persona();
-        persona.setNombre(nombre);
-        persona.setApellido("Test");
-        persona.setNumeroIdentificacion(System.nanoTime() % 100000000 + "");
-        persona.setEsCliente(true);
-        persona.setFkIdTipoIdentificacion(tipoIdentificacion);
+    private Person createPersona(String nombre) {
+        Person persona = new Person();
+        persona.setFirstName(nombre);
+        persona.setLastName("Test");
+        persona.setIdentificationNumber(System.nanoTime() % 100000000 + "");
+        persona.setIsClient(true);
+        persona.setFkIdIdentificationType(tipoIdentificacion);
         return personaRepository.save(persona);
     }
 

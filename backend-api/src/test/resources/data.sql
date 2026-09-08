@@ -29,14 +29,14 @@ INSERT INTO tipos_de_tramite (version, nombre, observaciones, habilitado, se_arc
 INSERT INTO conceptos (version, nombre, valor, porcentaje, habilitado, concepto_fijo) VALUES
 (0, 'Honorario base', 10000, 0, true, true);
 
--- Seed Data: Persona (Escribano) — required by Gestion, Folio, Usuario FKs
--- Entity columns: version, id_persona (auto), nombre, apellido, numero_identificacion,
---   cuit, sexo, estado_civil, ocupacion, domicilio, telefono, e_mail,
---   registro_escribano, es_cliente, fk_id_tipo_identificacion
-INSERT INTO personas (
-    version, nombre, apellido, numero_identificacion,
-    cuit, sexo, estado_civil, ocupacion, domicilio, telefono, e_mail,
-    registro_escribano, es_cliente, fk_id_tipo_identificacion
+-- Seed Data: Person (Escribano) — required by Gestion, Folio, Usuario FKs
+-- Entity columns: version, id (auto), first_name, last_name, identification_number,
+--   tax_id, sex, marital_status, occupation, address, phone, email,
+--   notary_registration_number, is_client, fk_id_tipo_identificacion
+INSERT INTO people (
+    version, first_name, last_name, identification_number,
+    tax_id, sex, marital_status, occupation, address, phone, email,
+    notary_registration_number, is_client, fk_id_tipo_identificacion
 ) VALUES (
     0, 'Juan Carlos', 'Garcia', '20123456',
     '20-20123456-3', 'M', 'Casado', 'Escribano', 'Av. Principal 123', '011-4555-1234', 'jcgarcia@notaria.com',

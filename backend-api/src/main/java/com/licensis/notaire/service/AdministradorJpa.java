@@ -12,7 +12,7 @@ import com.licensis.notaire.jpa.InmuebleJpaController;
 import com.licensis.notaire.jpa.ItemJpaController;
 import com.licensis.notaire.jpa.MovimientoTestimonioJpaController;
 import com.licensis.notaire.jpa.PagoJpaController;
-import com.licensis.notaire.jpa.PersonaJpaController;
+import com.licensis.notaire.jpa.PersonJpaController;
 import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
 import com.licensis.notaire.jpa.PlantillaTramiteJpaController;
 import com.licensis.notaire.jpa.PresupuestoJpaController;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
 public class AdministradorJpa {
 
@@ -91,7 +90,7 @@ public class AdministradorJpa {
 
         AdministradorJpa.milistaJpas.add(new EstadoDeGestionJpaController(null, emf));
         AdministradorJpa.milistaJpas.add(new TipoDeFolioJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(PersonaJpaController.getInstancia());
+        AdministradorJpa.milistaJpas.add(PersonJpaController.getInstancia());
         AdministradorJpa.milistaJpas.add(new SuplenciaJpaController(null, emf));
         AdministradorJpa.milistaJpas.add(UsuarioJpaController.getInstancia());
         AdministradorJpa.milistaJpas.add(new FolioJpaController(null, emf));

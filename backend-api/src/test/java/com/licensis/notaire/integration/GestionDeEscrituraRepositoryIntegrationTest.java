@@ -2,14 +2,14 @@ package com.licensis.notaire.integration;
 
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
@@ -34,7 +34,7 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
     private GestionDeEscrituraRepository gestionRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
@@ -52,7 +52,7 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
     private TipoDeTramiteRepository tipoDeTramiteRepository;
 
     private GestionDeEscritura testGestion;
-    private Persona testEscribano;
+    private Person testEscribano;
     private EstadoDeGestion testEstado;
 
     @BeforeEach
@@ -61,12 +61,12 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
         tipoIdentificacion.setNombre("Profesional");
         tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        testEscribano = new Persona();
-        testEscribano.setNombre("Escribano");
-        testEscribano.setApellido("Test");
-        testEscribano.setNumeroIdentificacion("87654321");
-        testEscribano.setEsCliente(false);
-        testEscribano.setFkIdTipoIdentificacion(tipoIdentificacion);
+        testEscribano = new Person();
+        testEscribano.setFirstName("Escribano");
+        testEscribano.setLastName("Test");
+        testEscribano.setIdentificationNumber("87654321");
+        testEscribano.setIsClient(false);
+        testEscribano.setFkIdIdentificationType(tipoIdentificacion);
         personaRepository.save(testEscribano);
 
         testEstado = new EstadoDeGestion();
@@ -113,10 +113,10 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
     void shouldFindByEscribano() {
         gestionRepository.save(testGestion);
 
-        List<GestionDeEscritura> found = gestionRepository.findByFkIdPersonaEscribanoIdPersona(testEscribano.getIdPersona());
+        List<GestionDeEscritura> found = gestionRepository.findByFkIdPersonaEscribanoIdPersona(testEscribano.getPersonId());
 
         assertThat(found).isNotEmpty()
-                .allMatch(g -> g.getFkIdPersonaEscribano().getIdPersona().equals(testEscribano.getIdPersona()));
+                .allMatch(g -> g.getFkIdPersonaEscribano().getPersonId().equals(testEscribano.getPersonId()));
     }
 
     @Test
@@ -137,11 +137,11 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
 
         List<GestionDeEscritura> found = gestionRepository
                 .findByFkIdPersonaEscribanoIdPersonaAndFkIdEstadoIdEstadoGestion(
-                        testEscribano.getIdPersona(),
+                        testEscribano.getPersonId(),
                         testEstado.getIdEstadoGestion());
 
         assertThat(found).isNotEmpty()
-                .allMatch(g -> g.getFkIdPersonaEscribano().getIdPersona().equals(testEscribano.getIdPersona())
+                .allMatch(g -> g.getFkIdPersonaEscribano().getPersonId().equals(testEscribano.getPersonId())
                         && g.getFkIdEstadoDeGestion().getIdEstadoGestion().equals(testEstado.getIdEstadoGestion()));
     }
 
@@ -207,7 +207,7 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(g -> {
                     assertThat(g.getFkIdPersonaEscribano()).isNotNull();
-                    assertThat(g.getFkIdPersonaEscribano().getIdPersona()).isEqualTo(testEscribano.getIdPersona());
+                    assertThat(g.getFkIdPersonaEscribano().getPersonId()).isEqualTo(testEscribano.getPersonId());
                 });
     }
 
@@ -229,12 +229,12 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
         tipoIdentificacion.setNombre("DNI");
         tipoIdentificacionRepository.save(tipoIdentificacion);
 
-        Persona cliente = new Persona();
-        cliente.setNombre("Cliente");
-        cliente.setApellido("Test");
-        cliente.setNumeroIdentificacion("12345678");
-        cliente.setEsCliente(true);
-        cliente.setFkIdTipoIdentificacion(tipoIdentificacion);
+        Person cliente = new Person();
+        cliente.setFirstName("Cliente");
+        cliente.setLastName("Test");
+        cliente.setIdentificationNumber("12345678");
+        cliente.setIsClient(true);
+        cliente.setFkIdIdentificationType(tipoIdentificacion);
         personaRepository.save(cliente);
 
         Presupuesto presupuesto = new Presupuesto();
@@ -258,7 +258,7 @@ class GestionDeEscrituraRepositoryIntegrationTest extends RepositoryIntegrationT
         tramite.setFkIdTipoTramite(tipoDeTramite);
         tramiteRepository.save(tramite);
 
-        List<GestionDeEscritura> found = gestionRepository.findByClientePersonaId(cliente.getIdPersona());
+        List<GestionDeEscritura> found = gestionRepository.findByClientePersonaId(cliente.getPersonId());
 
         assertThat(found).isNotEmpty()
                 .anyMatch(g -> g.getIdGestion().equals(saved.getIdGestion()));

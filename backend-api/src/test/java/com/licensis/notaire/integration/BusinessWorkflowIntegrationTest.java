@@ -96,13 +96,13 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU17/CU18 — Registro y consulta de personas")
-    class PersonasWorkflow {
+    class PeopleWorkflow {
 
         @Test
         @Order(1)
-        @DisplayName("GET /api/v1/personas returns array")
-        void getAllPersonasReturnsArray() throws Exception {
-            mockMvc.perform(get("/api/v1/personas"))
+        @DisplayName("GET /api/v1/people returns array")
+        void getAllPeopleReturnsArray() throws Exception {
+            mockMvc.perform(get("/api/v1/people"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -110,18 +110,18 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU18 — Create persona returns 201")
-        void createPersonaReturns200() throws Exception {
-            mockMvc.perform(post("/api/v1/personas")
+        @DisplayName("CU18 — Create person returns 201")
+        void createPersonReturns200() throws Exception {
+            mockMvc.perform(post("/api/v1/people")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "nombre": "Juan",
-                                      "apellido": "García",
+                                      "firstName": "Juan",
+                                      "lastName": "García",
                                       "dni": "30111222",
-                                      "numeroIdentificacion": "30111222",
+                                      "identificationNumber": "30111222",
                                       "email": "juan.garcia@example.com",
-                                      "esCliente": true,
+                                      "isClient": true,
                                       "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}
                                     }
                                     """))
@@ -130,9 +130,9 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(3)
-        @DisplayName("CU41 — Buscar persona endpoint is accessible")
-        void searchPersonaEndpointAccessible() throws Exception {
-            mockMvc.perform(get("/api/v1/personas/buscar").param("nombre", "García"))
+        @DisplayName("CU41 — Search person endpoint is accessible")
+        void searchPersonEndpointAccessible() throws Exception {
+            mockMvc.perform(get("/api/v1/people/search").param("firstName", "García"))
                     .andExpect(status().isOk());
         }
     }
@@ -165,7 +165,7 @@ class BusinessWorkflowIntegrationTest {
                                       "numero": 20250001,
                                       "encabezado": "Gestión de prueba",
                                       "fechaInicio": "2025-01-15",
-                                      "fkIdPersonaEscribano": {"idPersona": 1}
+                                      "fkIdPersonaEscribano": {"personId": 1}
                                     }
                                     """))
                     .andExpect(status().is2xxSuccessful());

@@ -40,27 +40,27 @@ class ReciboPagoReportIntegrationTest extends ServiceIntegrationTest {
         String dni = String.valueOf(System.currentTimeMillis() % 1_000_000_000);
         String body = """
                 {
-                  "nombre": "Ana",
-                  "apellido": "Gomez",
+                  "firstName": "Ana",
+                  "lastName": "Gomez",
                   "dni": "%s",
-                  "numeroIdentificacion": "%s",
+                  "identificationNumber": "%s",
                   "email": "ana.gomez.%s@example.com",
-                  "esCliente": true,
+                  "isClient": true,
                   "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}
                 }
                 """.formatted(dni, dni, dni);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     private int createPresupuesto(int idPersona) throws Exception {
         String body = """
                 {
-                  "fkIdPersona": {"idPersona": %d},
+                  "fkIdPersona": {"personId": %d},
                   "fecha": "2026-09-05",
                   "encabezado": "Presupuesto recibo E2E",
                   "estado": "Pendiente",

@@ -2,7 +2,7 @@ package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.api.RegistroAuditoriaController;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.dto.DtoUsuario;
 import com.licensis.notaire.negocio.RegistroAuditoria;
@@ -54,10 +54,10 @@ class RegistroAuditoriaControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         objectMapper = new ObjectMapper();
 
-        DtoPersona persona = new DtoPersona();
-        persona.setIdPersona(10);
-        persona.setNombre("Admin");
-        persona.setApellido("Sistema");
+        DtoPerson persona = new DtoPerson();
+        persona.setId(10);
+        persona.setFirstName("Admin");
+        persona.setLastName("Sistema");
 
         DtoUsuario usuario = new DtoUsuario();
         usuario.setIdUsuario(1);
@@ -91,7 +91,7 @@ class RegistroAuditoriaControllerTest {
                 .andExpect(jsonPath("$[0].modulo").value("Escrituras"))
                 .andExpect(jsonPath("$[0].detalleOperacion").value("Consulta de listado de escrituras"))
                 .andExpect(jsonPath("$[0].usuarios.nombre").value("admin"))
-                .andExpect(jsonPath("$[0].usuarios.personas.nombre").value("Admin"));
+                .andExpect(jsonPath("$[0].usuarios.personas.firstName").value("Admin"));
     }
 
     @Test

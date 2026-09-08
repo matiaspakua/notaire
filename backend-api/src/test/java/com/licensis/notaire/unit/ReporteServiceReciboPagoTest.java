@@ -3,7 +3,7 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PagoRepository;
@@ -44,7 +44,7 @@ class ReporteServiceReciboPagoTest {
         reporteService = new ReporteService(dataSource, null, null, null, pagoRepository, itemRepository);
     }
 
-    private Pago buildPago(Integer idPago, float monto, Persona cliente) {
+    private Pago buildPago(Integer idPago, float monto, Person cliente) {
         Presupuesto presupuesto = new Presupuesto();
         presupuesto.setIdPresupuesto(10);
         presupuesto.setFkIdPersona(cliente);
@@ -57,17 +57,17 @@ class ReporteServiceReciboPagoTest {
         return pago;
     }
 
-    private Persona buildCliente() {
-        Persona persona = new Persona();
-        persona.setNombre("Ana");
-        persona.setApellido("Gomez");
+    private Person buildCliente() {
+        Person persona = new Person();
+        persona.setFirstName("Ana");
+        persona.setLastName("Gomez");
         return persona;
     }
 
     @Test
     @DisplayName("Should generate a PDF recibo with cliente, fecha, concepto and total for a simple pago")
     void shouldGenerarReciboConDatosDelPago() throws Exception {
-        Persona cliente = buildCliente();
+        Person cliente = buildCliente();
         Pago pago = buildPago(1, 500000f, cliente);
 
         Item item = new Item();
@@ -89,7 +89,7 @@ class ReporteServiceReciboPagoTest {
     @Test
     @DisplayName("Should print the monto of a partial/installment pago, not the presupuesto total")
     void shouldGenerarReciboParaPagoParcial() throws Exception {
-        Persona cliente = buildCliente();
+        Person cliente = buildCliente();
         Pago pagoParcial = buildPago(2, 100000f, cliente);
 
         when(pagoRepository.findById(2)).thenReturn(Optional.of(pagoParcial));

@@ -5,7 +5,7 @@
 package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoGestionDeEscritura;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoTipoIdentificacion;
 import com.licensis.notaire.dto.DtoTramite;
 import java.io.Serializable;
@@ -73,7 +73,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author juanca
  */
 @Entity
-@Table(name = "personas")
+@Table(name = "people")
 @XmlRootElement
 @JsonIgnoreProperties({
         "hibernateLazyInitializer", "handler",
@@ -82,17 +82,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
         "usuariosList", "copiaList"
 })
 @NamedQueries({
-        @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
-        @NamedQuery(name = "Persona.findByIdPersona", query = "SELECT p FROM Persona p WHERE p.idPersona = :idPersona"),
-        @NamedQuery(name = "Persona.findByNumeroIdentificacion", query = "SELECT p FROM Persona p WHERE p.numeroIdentificacion = :numeroIdentificacion"),
-        @NamedQuery(name = "Persona.findBySexo", query = "SELECT p FROM Persona p WHERE p.sexo = :sexo"),
-        @NamedQuery(name = "Persona.findByFechaNacimiento", query = "SELECT p FROM Persona p WHERE p.fechaNacimiento = :fechaNacimiento"),
-        @NamedQuery(name = "Persona.findByNumeroNupcias", query = "SELECT p FROM Persona p WHERE p.numeroNupcias = :numeroNupcias"),
-        @NamedQuery(name = "Persona.findByRegistroEscribano", query = "SELECT p FROM Persona p WHERE p.registroEscribano = :registroEscribano"),
-        @NamedQuery(name = "Persona.findByEsCliente", query = "SELECT p FROM Persona p WHERE p.esCliente = :esCliente"),
-        @NamedQuery(name = "Persona.findByPersonaNombreApellido", query = "SELECT p FROM Persona p WHERE p.nombre LIKE :nombre and p.apellido LIKE :apellido"),
+        @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
+        @NamedQuery(name = "Person.findByIdPersona", query = "SELECT p FROM Person p WHERE p.idPersona = :idPersona"),
+        @NamedQuery(name = "Person.findByNumeroIdentificacion", query = "SELECT p FROM Person p WHERE p.numeroIdentificacion = :numeroIdentificacion"),
+        @NamedQuery(name = "Person.findBySexo", query = "SELECT p FROM Person p WHERE p.sexo = :sexo"),
+        @NamedQuery(name = "Person.findByFechaNacimiento", query = "SELECT p FROM Person p WHERE p.fechaNacimiento = :fechaNacimiento"),
+        @NamedQuery(name = "Person.findByNumeroNupcias", query = "SELECT p FROM Person p WHERE p.numeroNupcias = :numeroNupcias"),
+        @NamedQuery(name = "Person.findByRegistroEscribano", query = "SELECT p FROM Person p WHERE p.registroEscribano = :registroEscribano"),
+        @NamedQuery(name = "Person.findByEsCliente", query = "SELECT p FROM Person p WHERE p.esCliente = :esCliente"),
+        @NamedQuery(name = "Person.findByPersonaNombreApellido", query = "SELECT p FROM Person p WHERE p.nombre LIKE :nombre and p.apellido LIKE :apellido"),
 })
-public class Persona implements Serializable, Persistable<Integer> {
+public class Person implements Serializable, Persistable<Integer> {
 
     @Column(name = "fecha_nacimiento")
     @Temporal(TemporalType.DATE)
@@ -109,42 +109,42 @@ public class Persona implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_persona")
+    @Column(name = "id")
     private Integer idPersona;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "first_name")
     @NotBlank
     private String nombre;
     @Basic(optional = false)
-    @Column(name = "apellido")
+    @Column(name = "last_name")
     @NotBlank
     private String apellido;
-    @Column(name = "nacionalidad")
+    @Column(name = "nationality")
     private String nacionalidad;
     @Basic(optional = false)
-    @Column(name = "numero_identificacion")
+    @Column(name = "identification_number")
     @NotBlank
     private String numeroIdentificacion;
-    @Column(name = "cuit")
+    @Column(name = "tax_id")
     private String cuit;
-    @Column(name = "sexo")
+    @Column(name = "sex")
     private String sexo;
-    @Column(name = "estado_civil")
+    @Column(name = "marital_status")
     private String estadoCivil;
-    @Column(name = "numero_nupcias")
+    @Column(name = "marriage_count")
     private Integer numeroNupcias;
-    @Column(name = "ocupacion")
+    @Column(name = "occupation")
     private String ocupacion;
-    @Column(name = "domicilio")
+    @Column(name = "address")
     private String domicilio;
-    @Column(name = "telefono")
+    @Column(name = "phone")
     private String telefono;
-    @Column(name = "e_mail")
+    @Column(name = "email")
     private String eMail;
-    @Column(name = "registro_escribano")
+    @Column(name = "notary_registration_number")
     private Integer registroEscribano;
     @Basic(optional = false)
-    @Column(name = "es_cliente")
+    @Column(name = "is_client")
     private boolean esCliente;
     @XmlTransient
     @JsonIgnore
@@ -182,14 +182,14 @@ public class Persona implements Serializable, Persistable<Integer> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
     private List<Copia> copiaList;
 
-    public Persona() {
+    public Person() {
     }
 
-    public Persona(Integer idPersona) {
+    public Person(Integer idPersona) {
         this.idPersona = idPersona;
     }
 
-    public Persona(Integer idPersona, String nombre, String apellido, String numeroIdentificacion, boolean esCliente) {
+    public Person(Integer idPersona, String nombre, String apellido, String numeroIdentificacion, boolean esCliente) {
         this.idPersona = idPersona;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -212,133 +212,133 @@ public class Persona implements Serializable, Persistable<Integer> {
     }
 
 
-    public Integer getIdPersona() {
+    public Integer getPersonId() {
         return idPersona;
     }
 
-    public void setIdPersona(Integer idPersona) {
+    public void setPersonId(Integer idPersona) {
         this.idPersona = idPersona;
     }
 
-    public String getNombre() {
+    public String getFirstName() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
+    public void setFirstName(String nombre) {
         this.nombre = nombre;
     }
 
-    public String getApellido() {
+    public String getLastName() {
         return apellido;
     }
 
-    public void setApellido(String apellido) {
+    public void setLastName(String apellido) {
         this.apellido = apellido;
     }
 
-    public String getNacionalidad() {
+    public String getNationality() {
         return nacionalidad;
     }
 
-    public void setNacionalidad(String nacionalidad) {
+    public void setNationality(String nacionalidad) {
         this.nacionalidad = nacionalidad;
     }
 
-    public String getNumeroIdentificacion() {
+    public String getIdentificationNumber() {
         return numeroIdentificacion;
     }
 
     @JsonAlias("dni")
-    public void setNumeroIdentificacion(String numeroIdentificacion) {
+    public void setIdentificationNumber(String numeroIdentificacion) {
         this.numeroIdentificacion = numeroIdentificacion;
     }
 
-    public String getCuit() {
+    public String getTaxId() {
         return cuit;
     }
 
     @JsonAlias("cuil")
-    public void setCuit(String cuit) {
+    public void setTaxId(String cuit) {
         this.cuit = cuit;
     }
 
-    public String getSexo() {
+    public String getSex() {
         return sexo;
     }
 
-    public void setSexo(String sexo) {
+    public void setSex(String sexo) {
         this.sexo = sexo;
     }
 
-    public Date getFechaNacimiento() {
+    public Date getBirthDate() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
+    public void setBirthDate(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public String getEstadoCivil() {
+    public String getMaritalStatus() {
         return estadoCivil;
     }
 
-    public void setEstadoCivil(String estadoCivil) {
+    public void setMaritalStatus(String estadoCivil) {
         this.estadoCivil = estadoCivil;
     }
 
-    public Integer getNumeroNupcias() {
+    public Integer getMarriageCount() {
         return numeroNupcias;
     }
 
-    public void setNumeroNupcias(Integer numeroNupcias) {
+    public void setMarriageCount(Integer numeroNupcias) {
         this.numeroNupcias = numeroNupcias;
     }
 
-    public String getOcupacion() {
+    public String getOccupation() {
         return ocupacion;
     }
 
-    public void setOcupacion(String ocupacion) {
+    public void setOccupation(String ocupacion) {
         this.ocupacion = ocupacion;
     }
 
-    public String getDomicilio() {
+    public String getAddress() {
         return domicilio;
     }
 
-    public void setDomicilio(String domicilio) {
+    public void setAddress(String domicilio) {
         this.domicilio = domicilio;
     }
 
-    public String getTelefono() {
+    public String getPhone() {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
+    public void setPhone(String telefono) {
         this.telefono = telefono;
     }
 
-    public String getEMail() {
+    public String getEmail() {
         return eMail;
     }
 
-    public void setEMail(String eMail) {
+    public void setEmail(String eMail) {
         this.eMail = eMail;
     }
 
-    public Integer getRegistroEscribano() {
+    public Integer getNotaryRegistrationNumber() {
         return registroEscribano;
     }
 
-    public void setRegistroEscribano(Integer registroEscribano) {
+    public void setNotaryRegistrationNumber(Integer registroEscribano) {
         this.registroEscribano = registroEscribano;
     }
 
-    public boolean getEsCliente() {
+    public boolean getIsClient() {
         return esCliente;
     }
 
-    public void setEsCliente(boolean esCliente) {
+    public void setIsClient(boolean esCliente) {
         this.esCliente = esCliente;
     }
 
@@ -352,11 +352,11 @@ public class Persona implements Serializable, Persistable<Integer> {
         this.tramiteList = tramiteList;
     }
 
-    public TipoIdentificacion getFkIdTipoIdentificacion() {
+    public TipoIdentificacion getFkIdIdentificationType() {
         return fkIdTipoIdentificacion;
     }
 
-    public void setFkIdTipoIdentificacion(TipoIdentificacion fkIdTipoIdentificacion) {
+    public void setFkIdIdentificationType(TipoIdentificacion fkIdTipoIdentificacion) {
         this.fkIdTipoIdentificacion = fkIdTipoIdentificacion;
     }
 
@@ -440,10 +440,10 @@ public class Persona implements Serializable, Persistable<Integer> {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Persona)) {
+        if (!(object instanceof Person)) {
             return false;
         }
-        Persona other = (Persona) object;
+        Person other = (Person) object;
         if ((this.idPersona == null && other.idPersona != null)
                 || (this.idPersona != null && !this.idPersona.equals(other.idPersona))) {
             return false;
@@ -453,37 +453,37 @@ public class Persona implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Persona[ idPersona=" + idPersona + " ]"
+        return "Person[ idPersona=" + idPersona + " ]"
                 + "[ nombre=" + nombre + " ]"
                 + "[ apellido=" + apellido + " ]";
     }
 
     @JsonIgnore
-    public DtoPersona getDto() {
+    public DtoPerson getDto() {
 
-        DtoPersona dtoPersona = new DtoPersona();
+        DtoPerson dtoPersona = new DtoPerson();
 
         // Version del objeto
         dtoPersona.setVersion(this.version);
-        dtoPersona.setIdPersona(this.idPersona);
-        dtoPersona.setNombre(this.nombre);
-        dtoPersona.setApellido(this.apellido);
-        dtoPersona.setCuit(this.cuit);
+        dtoPersona.setId(this.idPersona);
+        dtoPersona.setFirstName(this.nombre);
+        dtoPersona.setLastName(this.apellido);
+        dtoPersona.setTaxId(this.cuit);
         dtoPersona.setEmail(this.eMail);
-        dtoPersona.setEsCliente(this.esCliente);
-        dtoPersona.setEstadoCivil(this.estadoCivil);
-        dtoPersona.setFechaNacimiento(this.fechaNacimiento);
-        dtoPersona.setNacionalidad(this.nacionalidad);
-        dtoPersona.setNumeroIdentificacion(this.getNumeroIdentificacion());
-        dtoPersona.setNumeroNupcias(this.numeroNupcias);
-        dtoPersona.setOcupacion(this.ocupacion);
-        dtoPersona.setDomicilio(this.domicilio);
-        dtoPersona.setRegistroEscribano(this.registroEscribano);
-        dtoPersona.setSexo(this.sexo);
-        dtoPersona.setTelefono(this.telefono);
+        dtoPersona.setIsClient(this.esCliente);
+        dtoPersona.setMaritalStatus(this.estadoCivil);
+        dtoPersona.setBirthDate(this.fechaNacimiento);
+        dtoPersona.setNationality(this.nacionalidad);
+        dtoPersona.setIdentificationNumber(this.getIdentificationNumber());
+        dtoPersona.setMarriageCount(this.numeroNupcias);
+        dtoPersona.setOccupation(this.ocupacion);
+        dtoPersona.setAddress(this.domicilio);
+        dtoPersona.setNotaryRegistrationNumber(this.registroEscribano);
+        dtoPersona.setSex(this.sexo);
+        dtoPersona.setPhone(this.telefono);
 
         DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-        dtoTipoIdentificacion.setIdTipoIdentificacion(getFkIdTipoIdentificacion().getIdTipoIdentificacion());
+        dtoTipoIdentificacion.setIdTipoIdentificacion(getFkIdIdentificationType().getIdTipoIdentificacion());
 
         dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
 
@@ -491,7 +491,7 @@ public class Persona implements Serializable, Persistable<Integer> {
         dtoTipoIdentificacion.setNombre(ControllerNegocio.getInstancia().asociarNombreTipoIdentificacion(dtoPersona));
 
         // Asocio la lista de gestiones que tiene la persona si es Escribano
-        if (this.getRegistroEscribano() != null) {
+        if (this.getNotaryRegistrationNumber() != null) {
             ArrayList<DtoGestionDeEscritura> miListaDtoGestionEscribano = new ArrayList<>();
 
             if (!this.GestionDeEscrituraList.isEmpty()) {
@@ -557,34 +557,34 @@ public class Persona implements Serializable, Persistable<Integer> {
 
     }
 
-    public void setAtributos(DtoPersona dtoPersona) {
+    public void setAtributos(DtoPerson dtoPersona) {
 
         // Version del objeto
         this.setVersion(dtoPersona.getVersion());
 
-        this.setNombre(dtoPersona.getNombre());
-        this.setApellido(dtoPersona.getApellido());
-        this.setTelefono(dtoPersona.getTelefono());
-        this.setEMail(dtoPersona.getEmail());
-        this.setIdPersona(dtoPersona.getIdPersona());
-        this.setNumeroIdentificacion(dtoPersona.getNumeroIdentificacion());
+        this.setFirstName(dtoPersona.getFirstName());
+        this.setLastName(dtoPersona.getLastName());
+        this.setPhone(dtoPersona.getPhone());
+        this.setEmail(dtoPersona.getEmail());
+        this.setPersonId(dtoPersona.getId());
+        this.setIdentificationNumber(dtoPersona.getIdentificationNumber());
 
         TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
         tipoIdentificacion.setIdTipoIdentificacion(dtoPersona.getDtoTipoIdentificacion().getIdTipoIdentificacion());
         tipoIdentificacion.setNombre(dtoPersona.getDtoTipoIdentificacion().getNombre());
-        this.setFkIdTipoIdentificacion(tipoIdentificacion);
+        this.setFkIdIdentificationType(tipoIdentificacion);
 
         // Set atributos Cliente
-        if (dtoPersona.getEsCliente()) {
-            this.setNacionalidad(dtoPersona.getNacionalidad());
-            this.setFechaNacimiento(dtoPersona.getFechaNacimiento());
-            this.setCuit(dtoPersona.getCuit());
-            this.setEstadoCivil(dtoPersona.getEstadoCivil());
-            this.setNumeroNupcias(dtoPersona.getNumeroNupcias());
-            this.setSexo(dtoPersona.getSexo());
-            this.setOcupacion(dtoPersona.getOcupacion());
-            this.setDomicilio(dtoPersona.getDomicilio());
-            this.setEsCliente(dtoPersona.getEsCliente());
+        if (dtoPersona.getIsClient()) {
+            this.setNationality(dtoPersona.getNationality());
+            this.setBirthDate(dtoPersona.getBirthDate());
+            this.setTaxId(dtoPersona.getTaxId());
+            this.setMaritalStatus(dtoPersona.getMaritalStatus());
+            this.setMarriageCount(dtoPersona.getMarriageCount());
+            this.setSex(dtoPersona.getSex());
+            this.setOccupation(dtoPersona.getOccupation());
+            this.setAddress(dtoPersona.getAddress());
+            this.setIsClient(dtoPersona.getIsClient());
         }
 
     }

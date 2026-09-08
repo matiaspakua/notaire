@@ -55,10 +55,10 @@ class UseCaseDomainsIntegrationTest {
 
     @Test
     void clientesPersonasDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/personas")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/personas/buscar")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/personas/buscar").param("nombre", "Admin")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/personas/buscar").param("idTipoIdentificacion", "1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/people")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/people/search")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/people/search").param("firstName", "Admin")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/people/search").param("idTipoIdentificacion", "1")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/tipo-identificacion")).andExpect(status().isOk());
     }
 

@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ class ProtocoloAuxiliarControllerTest {
     private FolioRepository folioRepository;
 
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     @Autowired
     private TipoDeFolioRepository tipoDeFolioRepository;
@@ -48,7 +48,7 @@ class ProtocoloAuxiliarControllerTest {
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private Persona escribano;
+    private Person escribano;
 
     @BeforeEach
     void setUp() {

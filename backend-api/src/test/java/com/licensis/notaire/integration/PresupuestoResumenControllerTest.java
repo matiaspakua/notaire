@@ -38,21 +38,21 @@ class PresupuestoResumenControllerTest {
 
     private Integer createPersona(String numeroIdentificacion) throws Exception {
         String body = """
-                {"nombre": "Cliente IT", "apellido": "Resumen IT", "numeroIdentificacion": "%s",
-                 "esCliente": true, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
+                {"firstName": "Cliente IT", "lastName": "Resumen IT", "identificationNumber": "%s",
+                 "isClient": true, "tipoIdentificacion": {"idTipoIdentificacion": 1}}
                 """.formatted(numeroIdentificacion);
-        MvcResult result = mockMvc.perform(post("/api/v1/personas")
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idPersona").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
     private Integer createPresupuesto(Integer clienteId, Float montoInmueble) throws Exception {
         String body = """
                 {"numero": %d, "fecha": "2026-01-01", "encabezado": "Presupuesto Resumen IT",
-                 "estado": "PENDIENTE", "monto": %s, "persona": {"idPersona": %d}}
+                 "estado": "PENDIENTE", "monto": %s, "persona": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), montoInmueble, clienteId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)

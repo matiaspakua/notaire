@@ -11,7 +11,7 @@ import com.licensis.notaire.negocio.WorkflowTransition;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoDeTramiteRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
@@ -70,7 +70,7 @@ class GestionTransitionControllerIntegrationTest {
     @Autowired
     private HistorialRepository historialRepository;
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
     @Autowired
     private EntityManager entityManager;
 

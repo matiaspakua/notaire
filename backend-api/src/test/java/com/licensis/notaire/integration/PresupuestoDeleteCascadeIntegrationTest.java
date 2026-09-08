@@ -1,11 +1,11 @@
 package com.licensis.notaire.integration;
 
 import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.PagoRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.PresupuestoRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ class PresupuestoDeleteCascadeIntegrationTest {
     @Autowired
     private PagoRepository pagoRepository;
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
@@ -59,11 +59,11 @@ class PresupuestoDeleteCascadeIntegrationTest {
     private Integer createAndCommitPresupuestoWithPago() {
         TipoIdentificacion tipo = tipoIdentificacionRepository.findById(1).orElseThrow();
 
-        Persona persona = new Persona();
-        persona.setNombre("X");
-        persona.setApellido("Y");
-        persona.setNumeroIdentificacion("cascade-test-1");
-        persona.setFkIdTipoIdentificacion(tipo);
+        Person persona = new Person();
+        persona.setFirstName("X");
+        persona.setLastName("Y");
+        persona.setIdentificationNumber("cascade-test-1");
+        persona.setFkIdIdentificationType(tipo);
         persona = personaRepository.save(persona);
 
         Presupuesto presupuesto = new Presupuesto();

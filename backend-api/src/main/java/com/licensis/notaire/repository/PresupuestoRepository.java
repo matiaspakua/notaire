@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +16,7 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Intege
 
     Optional<Presupuesto> findByNumero(Integer numero);
 
-    List<Presupuesto> findByFkIdPersona(Persona persona);
+    List<Presupuesto> findByFkIdPersona(Person persona);
 
     List<Presupuesto> findByFkIdPersonaIdPersona(Integer idPersona);
 

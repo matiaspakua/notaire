@@ -4,10 +4,10 @@ import com.licensis.notaire.exception.NumeroEscrituraDuplicadoException;
 import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.EscrituraRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,11 +25,11 @@ public class EscrituraService {
     private static final Logger logger = LoggerFactory.getLogger(EscrituraService.class);
 
     private final EscrituraRepository escrituraRepository;
-    private final PersonaRepository personaRepository;
+    private final PersonRepository personaRepository;
     private final FolioRepository folioRepository;
     private final NumeracionEscrituraService numeracionEscrituraService;
 
-    public EscrituraService(EscrituraRepository escrituraRepository, PersonaRepository personaRepository,
+    public EscrituraService(EscrituraRepository escrituraRepository, PersonRepository personaRepository,
             FolioRepository folioRepository, NumeracionEscrituraService numeracionEscrituraService) {
         this.escrituraRepository = escrituraRepository;
         this.personaRepository = personaRepository;
@@ -61,8 +61,8 @@ public class EscrituraService {
 
     private void validarNumeracion(Escritura entity) {
         resolveFolioParaNumeracion(entity).ifPresent(folio -> {
-            Persona escribano = folio.getFkIdPersonaEscribano();
-            if (escribano == null || escribano.getIdPersona() == null) {
+            Person escribano = folio.getFkIdPersonaEscribano();
+            if (escribano == null || escribano.getPersonId() == null) {
                 return;
             }
             boolean esAuxiliar = folio.getFkIdTipoFolio() != null && folio.getFkIdTipoFolio().isEsAuxiliar();
@@ -99,7 +99,7 @@ public class EscrituraService {
     }
 
     @Transactional(readOnly = true)
-    public List<Persona> findEscribanosDisponibles() {
+    public List<Person> findEscribanosDisponibles() {
         logger.debug("Finding all available escribanos");
         return personaRepository.findAllEscribanos();
     }

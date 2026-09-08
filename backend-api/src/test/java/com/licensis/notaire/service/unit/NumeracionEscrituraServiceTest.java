@@ -1,6 +1,6 @@
 package com.licensis.notaire.service.unit;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.service.NumeracionEscrituraService;
 import com.licensis.notaire.service.ResultadoValidacionNumeracion;
@@ -27,13 +27,13 @@ class NumeracionEscrituraServiceTest {
     @InjectMocks
     private NumeracionEscrituraService numeracionEscrituraService;
 
-    private Persona escribano;
+    private Person escribano;
 
     @BeforeEach
     void setUp() {
-        escribano = new Persona();
-        escribano.setIdPersona(1);
-        escribano.setRegistroEscribano(100);
+        escribano = new Person();
+        escribano.setPersonId(1);
+        escribano.setNotaryRegistrationNumber(100);
     }
 
     @Test

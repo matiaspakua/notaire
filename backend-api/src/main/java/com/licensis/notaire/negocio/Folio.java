@@ -6,7 +6,7 @@ package com.licensis.notaire.negocio;
 
 import com.licensis.notaire.dto.DtoEscritura;
 import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.jpa.ConstantesPersistencia;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -92,10 +92,10 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToMany(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})
     private List<Copia> copiaList;
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
-    private Persona fkIdPersonaEscribano;
+    private Person fkIdPersonaEscribano;
     @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id_tipo_folio")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
@@ -206,12 +206,12 @@ public class Folio implements Serializable, Persistable<Integer>
         this.copiaList = copiaList;
     }
 
-    public Persona getFkIdPersonaEscribano()
+    public Person getFkIdPersonaEscribano()
     {
         return fkIdPersonaEscribano;
     }
 
-    public void setFkIdPersonaEscribano(Persona fkIdPersonaEscribano)
+    public void setFkIdPersonaEscribano(Person fkIdPersonaEscribano)
     {
         this.fkIdPersonaEscribano = fkIdPersonaEscribano;
     }
@@ -309,9 +309,9 @@ public class Folio implements Serializable, Persistable<Integer>
 
         if (this.getFkIdPersonaEscribano() != null)
         {
-            DtoPersona miPersona = new DtoPersona();
-            miPersona.setIdPersona(fkIdPersonaEscribano.getIdPersona());
-            miPersona.setRegistroEscribano(fkIdPersonaEscribano.getRegistroEscribano());
+            DtoPerson miPersona = new DtoPerson();
+            miPersona.setId(fkIdPersonaEscribano.getPersonId());
+            miPersona.setNotaryRegistrationNumber(fkIdPersonaEscribano.getNotaryRegistrationNumber());
 
             miDtoFolio.setPersonaEscribano(miPersona);
         }

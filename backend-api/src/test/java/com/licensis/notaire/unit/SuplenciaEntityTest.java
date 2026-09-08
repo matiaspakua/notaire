@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Suplencia;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.DisplayName;
@@ -86,29 +86,29 @@ class SuplenciaEntityTest {
         @Test
         @DisplayName("Should set and get suplente")
         void shouldSetAndGetSuplente() {
-            Persona suplente = new Persona();
-            suplente.setNombre("Carlos");
-            suplente.setApellido("Rodriguez");
+            Person suplente = new Person();
+            suplente.setFirstName("Carlos");
+            suplente.setLastName("Rodriguez");
 
             Suplencia suplencia = new Suplencia();
             suplencia.setFkIdSuplente(suplente);
 
             assertThat(suplencia.getFkIdSuplente()).isNotNull();
-            assertThat(suplencia.getFkIdSuplente().getNombre()).isEqualTo("Carlos");
+            assertThat(suplencia.getFkIdSuplente().getFirstName()).isEqualTo("Carlos");
         }
 
         @Test
         @DisplayName("Should set and get suplantado")
         void shouldSetAndGetSuplantado() {
-            Persona suplantado = new Persona();
-            suplantado.setNombre("Maria");
-            suplantado.setApellido("Gomez");
+            Person suplantado = new Person();
+            suplantado.setFirstName("Maria");
+            suplantado.setLastName("Gomez");
 
             Suplencia suplencia = new Suplencia();
             suplencia.setFkIdSuplantado(suplantado);
 
             assertThat(suplencia.getFkIdSuplantado()).isNotNull();
-            assertThat(suplencia.getFkIdSuplantado().getNombre()).isEqualTo("Maria");
+            assertThat(suplencia.getFkIdSuplantado().getFirstName()).isEqualTo("Maria");
         }
 
         @Test

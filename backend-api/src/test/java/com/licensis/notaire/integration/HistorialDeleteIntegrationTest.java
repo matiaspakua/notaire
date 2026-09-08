@@ -4,12 +4,12 @@ import com.licensis.notaire.api.HistorialController;
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
 import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoIdentificacion;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
 import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoIdentificacionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class HistorialDeleteIntegrationTest {
     @Autowired
     private EstadoDeGestionRepository estadoRepository;
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
     @Autowired
     private TipoIdentificacionRepository tipoIdentificacionRepository;
 
@@ -66,11 +66,11 @@ class HistorialDeleteIntegrationTest {
     private Integer createAndCommitHistorial() {
         TipoIdentificacion tipo = tipoIdentificacionRepository.findById(1).orElseThrow();
 
-        Persona persona = new Persona();
-        persona.setNombre("X");
-        persona.setApellido("Y");
-        persona.setNumeroIdentificacion("1");
-        persona.setFkIdTipoIdentificacion(tipo);
+        Person persona = new Person();
+        persona.setFirstName("X");
+        persona.setLastName("Y");
+        persona.setIdentificationNumber("1");
+        persona.setFkIdIdentificationType(tipo);
         persona = personaRepository.save(persona);
 
         EstadoDeGestion estado = estadoRepository.findById(1).orElseThrow();

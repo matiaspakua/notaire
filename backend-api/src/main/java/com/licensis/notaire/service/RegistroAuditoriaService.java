@@ -1,9 +1,9 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.DtoPersona;
+import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoRegistroAuditoria;
 import com.licensis.notaire.dto.DtoUsuario;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Usuario;
 import com.licensis.notaire.repository.RegistroAuditoriaRepository;
@@ -131,12 +131,12 @@ public class RegistroAuditoriaService {
             dtoUsuario.setTipo(usuario.getTipo());
             dtoUsuario.setEstado(usuario.getEstado());
 
-            Persona persona = usuario.getFkIdPersona();
+            Person persona = usuario.getFkIdPersona();
             if (persona != null) {
-                DtoPersona dtoPersona = new DtoPersona();
-                dtoPersona.setIdPersona(persona.getIdPersona());
-                dtoPersona.setNombre(persona.getNombre());
-                dtoPersona.setApellido(persona.getApellido());
+                DtoPerson dtoPersona = new DtoPerson();
+                dtoPersona.setId(persona.getPersonId());
+                dtoPersona.setFirstName(persona.getFirstName());
+                dtoPersona.setLastName(persona.getLastName());
                 dtoUsuario.setPersonas(dtoPersona);
             }
 

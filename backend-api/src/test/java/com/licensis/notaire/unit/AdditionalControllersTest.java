@@ -140,7 +140,7 @@ class AdditionalControllersTest {
             var documentoEntidadExternaService = mock(com.licensis.notaire.service.DocumentoEntidadExternaService.class);
             var reingresoDocumentacionService = mock(com.licensis.notaire.service.ReingresoDocumentacionService.class);
             var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService,
-                    mock(com.licensis.notaire.repository.PersonaRepository.class),
+                    mock(com.licensis.notaire.repository.PersonRepository.class),
                     mock(com.licensis.notaire.repository.EstadoDeGestionRepository.class),
                     mock(com.licensis.notaire.repository.PresupuestoRepository.class),
                     mock(com.licensis.notaire.repository.TipoDeTramiteRepository.class),
@@ -156,8 +156,8 @@ class AdditionalControllersTest {
                     .build();
 
             GestionDeEscritura g = new GestionDeEscritura(1);
-            com.licensis.notaire.negocio.Persona escr = new com.licensis.notaire.negocio.Persona();
-            escr.setIdPersona(99);
+            com.licensis.notaire.negocio.Person escr = new com.licensis.notaire.negocio.Person();
+            escr.setPersonId(99);
             g.setFkIdPersonaEscribano(escr);
             var summary = new com.licensis.notaire.dto.DtoGestionSummary(1, 10, "Gestion", new Date(), null, 0, null);
             when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))

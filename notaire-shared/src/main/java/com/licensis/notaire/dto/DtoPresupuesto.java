@@ -19,7 +19,7 @@ public class DtoPresupuesto implements DtoValido {
     private Float montoInmueble;
     private String observaciones;
     private Integer version = 0;
-    private DtoPersona persona;
+    private DtoPerson persona;
     private List<DtoTramite> listaTramites = new ArrayList<>();
     private List<DtoItem> items = new ArrayList<>();
 
@@ -90,11 +90,11 @@ public class DtoPresupuesto implements DtoValido {
         this.observaciones = observaciones;
     }
 
-    public DtoPersona getPersona() {
+    public DtoPerson getPersona() {
         return this.persona;
     }
 
-    public void setPersona(DtoPersona personas) {
+    public void setPersona(DtoPerson personas) {
         this.persona = personas;
     }
 

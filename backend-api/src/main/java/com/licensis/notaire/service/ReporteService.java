@@ -6,7 +6,7 @@ import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.MinutaInscripcion;
 import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.Testimonio;
 import com.licensis.notaire.repository.CuadernoRepository;
@@ -138,7 +138,7 @@ public class ReporteService {
         return generarPdfTextoSimple(
                 "Carátula de Cuaderno N° " + cuaderno.getNumero() + "/" + cuaderno.getAnio(),
                 "CU80",
-                "Registro N° " + cuaderno.getFkIdPersonaEscribano().getRegistroEscribano()
+                "Registro N° " + cuaderno.getFkIdPersonaEscribano().getNotaryRegistrationNumber()
                         + " - Folios " + folioDesde + " a " + folioHasta,
                 "Generado: " + LocalDate.now()
         );
@@ -172,9 +172,9 @@ public class ReporteService {
                 .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPago));
 
         Presupuesto presupuesto = pago.getPresupuesto();
-        Persona cliente = presupuesto != null ? presupuesto.getFkIdPersona() : null;
+        Person cliente = presupuesto != null ? presupuesto.getFkIdPersona() : null;
         String nombreCliente = cliente != null
-                ? (cliente.getNombre() + " " + cliente.getApellido()).trim()
+                ? (cliente.getFirstName() + " " + cliente.getLastName()).trim()
                 : "Cliente no identificado";
 
         String conceptos = presupuesto != null

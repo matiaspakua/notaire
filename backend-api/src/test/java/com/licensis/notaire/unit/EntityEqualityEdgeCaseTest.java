@@ -4,7 +4,7 @@ import com.licensis.notaire.negocio.Copia;
 import com.licensis.notaire.negocio.Folio;
 import com.licensis.notaire.negocio.Inmueble;
 import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Presupuesto;
 import com.licensis.notaire.negocio.RegistroAuditoria;
 import com.licensis.notaire.negocio.Suplencia;
@@ -86,37 +86,37 @@ class EntityEqualityEdgeCaseTest {
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new Persona()).isNotEqualTo(new Persona(1));
+            assertThat(new Person()).isNotEqualTo(new Person(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new Persona()).isEqualTo(new Persona());
+            assertThat(new Person()).isEqualTo(new Person());
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new Persona(1)).isNotEqualTo(null);
+            assertThat(new Person(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("not equal to different type")
         void notEqualToDifferentType() {
-            assertThat(new Persona(1)).isNotEqualTo("not a persona");
+            assertThat(new Person(1)).isNotEqualTo("not a persona");
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            assertThat(new Persona().hashCode()).isEqualTo(0);
+            assertThat(new Person().hashCode()).isEqualTo(0);
         }
 
         @Test
         @DisplayName("toString includes id")
         void toStringIncludesId() {
-            assertThat(new Persona(5).toString()).contains("5");
+            assertThat(new Person(5).toString()).contains("5");
         }
     }
 

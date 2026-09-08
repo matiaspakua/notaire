@@ -2,7 +2,7 @@ package com.licensis.notaire.repository;
 
 import com.licensis.notaire.negocio.Cuaderno;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +21,7 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
     List<Folio> findByFkIdTipoFolioIdTipoFolio(Integer idTipoFolio);
 
-    List<Folio> findByFkIdPersonaEscribano(Persona escribano);
+    List<Folio> findByFkIdPersonaEscribano(Person escribano);
 
     List<Folio> findByFkIdPersonaEscribanoIdPersona(Integer idEscribano);
 

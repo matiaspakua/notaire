@@ -23,7 +23,7 @@ import com.licensis.notaire.negocio.IdentificacionPK;
 import com.licensis.notaire.negocio.Inmueble;
 import com.licensis.notaire.negocio.Item;
 import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.PlantillaPresupuesto;
 import com.licensis.notaire.negocio.PlantillaPresupuestoPK;
 import com.licensis.notaire.negocio.PlantillaTramite;
@@ -200,7 +200,7 @@ class EntitiesBasicTest {
             c1.setObservaciones("obs");
             c1.setVersion(1);
             c1.setFolioList(new ArrayList<>());
-            c1.setFkIdPersona(new Persona());
+            c1.setFkIdPersona(new Person());
             Testimonio t = new Testimonio();
             t.setIdTestimonio(99);
             c1.setFkIdTestimonio(t);
@@ -262,9 +262,9 @@ class EntitiesBasicTest {
             f1.setVersion(1);
             f1.setCopiaList(new ArrayList<>());
             f1.setFoliosCopiasCollection(new ArrayList<>());
-            Persona escribano = new Persona();
-            escribano.setIdPersona(11);
-            escribano.setRegistroEscribano(1);
+            Person escribano = new Person();
+            escribano.setPersonId(11);
+            escribano.setNotaryRegistrationNumber(1);
             f1.setFkIdPersonaEscribano(escribano);
             TipoDeFolio tf = new TipoDeFolio(7);
             tf.setNombre("Protocolo");
@@ -424,7 +424,7 @@ class EntitiesBasicTest {
 
             i1.setIdentificacionPK(new IdentificacionPK(5, 6));
             i1.setNumero(99);
-            Persona p = new Persona();
+            Person p = new Person();
             i1.setPersona(p);
             TipoIdentificacion t = new TipoIdentificacion();
             i1.setTipoIdentificacion(t);
@@ -999,7 +999,7 @@ class EntitiesBasicTest {
 
             tp1.setTramitesPersonasPK(pk1);
             tp1.setTramite(new Tramite());
-            tp1.setPersona(new Persona());
+            tp1.setPersona(new Person());
             assertThat(tp1.getTramite()).isNotNull();
             assertThat(tp1.getPersona()).isNotNull();
 
@@ -1029,8 +1029,8 @@ class EntitiesBasicTest {
             u1.setTipo("Escribano");
             u1.setVersion(1);
             u1.setRegistroAuditoriaList(new ArrayList<>());
-            Persona p = new Persona();
-            p.setIdPersona(99);
+            Person p = new Person();
+            p.setPersonId(99);
             u1.setFkIdPersona(p);
 
             assertThat(u1.getNombre()).isEqualTo("X");
@@ -1073,8 +1073,8 @@ class EntitiesBasicTest {
             s1.setFechaFin(d);
             s1.setObservaciones("obs");
             s1.setVersion(1);
-            s1.setFkIdSuplente(new Persona());
-            s1.setFkIdSuplantado(new Persona());
+            s1.setFkIdSuplente(new Person());
+            s1.setFkIdSuplantado(new Person());
 
             assertThat(s1.getObservaciones()).isEqualTo("obs");
             assertThat(s1.getVersion()).isEqualTo(1);

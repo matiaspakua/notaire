@@ -8,7 +8,7 @@ import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.negocio.TramitesPersonas;
 import com.licensis.notaire.negocio.TramitesPersonasPK;
@@ -47,17 +47,17 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         {
             tramitesPersonas.setTramitesPersonasPK(new TramitesPersonasPK());
         }
-        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getIdPersona());
+        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getPersonId());
         tramitesPersonas.getTramitesPersonasPK().setFkIdTramite(tramitesPersonas.getTramite().getIdTramite());
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona persona = tramitesPersonas.getPersona();
+            Person persona = tramitesPersonas.getPersona();
             if (persona != null)
             {
-                persona = em.getReference(persona.getClass(), persona.getIdPersona());
+                persona = em.getReference(persona.getClass(), persona.getPersonId());
                 tramitesPersonas.setPersona(persona);
             }
             Tramite tramite = tramitesPersonas.getTramite();
@@ -113,7 +113,7 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
         {
             tramitesPersonas.setTramitesPersonasPK(new TramitesPersonasPK());
         }
-        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getIdPersona());
+        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getPersonId());
         tramitesPersonas.getTramitesPersonasPK().setFkIdTramite(tramitesPersonas.getTramite().getIdTramite());
         EntityManager em = null;
 
@@ -154,7 +154,7 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
 
     public void edit(TramitesPersonas tramitesPersonas) throws NonexistentEntityException, Exception
     {
-        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getIdPersona());
+        tramitesPersonas.getTramitesPersonasPK().setFkIdPersonaCliente(tramitesPersonas.getPersona().getPersonId());
         tramitesPersonas.getTramitesPersonasPK().setFkIdTramite(tramitesPersonas.getTramite().getIdTramite());
         EntityManager em = null;
         try
@@ -162,13 +162,13 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
             em = getEntityManager();
             em.getTransaction().begin();
             TramitesPersonas persistentTramitesPersonas = em.find(TramitesPersonas.class, tramitesPersonas.getTramitesPersonasPK());
-            Persona personaOld = persistentTramitesPersonas.getPersona();
-            Persona personaNew = tramitesPersonas.getPersona();
+            Person personaOld = persistentTramitesPersonas.getPersona();
+            Person personaNew = tramitesPersonas.getPersona();
             Tramite tramiteOld = persistentTramitesPersonas.getTramite();
             Tramite tramiteNew = tramitesPersonas.getTramite();
             if (personaNew != null)
             {
-                personaNew = em.getReference(personaNew.getClass(), personaNew.getIdPersona());
+                personaNew = em.getReference(personaNew.getClass(), personaNew.getPersonId());
                 tramitesPersonas.setPersona(personaNew);
             }
             if (tramiteNew != null)
@@ -238,7 +238,7 @@ public class TramitesPersonasJpaController implements Serializable, IPersistenci
             {
                 throw new NonexistentEntityException("The tramitesPersonas with id " + id + " no longer exists.", enfe);
             }
-            Persona persona = tramitesPersonas.getPersona();
+            Person persona = tramitesPersonas.getPersona();
             if (persona != null)
             {
                 persona.getTramitesPersonasList().remove(tramitesPersonas);

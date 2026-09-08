@@ -7,12 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.licensis.notaire.negocio.EstadoDeGestion;
 import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeTramite;
 import com.licensis.notaire.negocio.Tramite;
 import com.licensis.notaire.repository.EstadoDeGestionRepository;
 import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TramiteRepository;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ class TramiteSerializationIntegrationTest {
     @Autowired
     private EstadoDeGestionRepository estadoRepository;
     @Autowired
-    private PersonaRepository personaRepository;
+    private PersonRepository personaRepository;
 
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -146,7 +146,7 @@ class TramiteSerializationIntegrationTest {
         estado.setNombre("Ciclo IT Estado");
         estado = estadoRepository.save(estado);
 
-        Persona escribano = personaRepository.findAll().get(0);
+        Person escribano = personaRepository.findAll().get(0);
 
         GestionDeEscritura gestion = new GestionDeEscritura();
         gestion.setIdGestion(null);

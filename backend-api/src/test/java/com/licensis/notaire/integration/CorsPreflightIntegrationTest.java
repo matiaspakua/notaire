@@ -32,7 +32,7 @@ class CorsPreflightIntegrationTest {
     @Test
     @DisplayName("preflight from an unauthorized origin gets no Access-Control-Allow-Origin header")
     void shouldRejectPreflightFromUnauthorizedOrigin() throws Exception {
-        mockMvc.perform(options("/api/v1/personas")
+        mockMvc.perform(options("/api/v1/people")
                         .header(HttpHeaders.ORIGIN, "https://malicious-site.example")
                         .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpMethod.GET.name())
                         .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "Authorization"))
@@ -42,7 +42,7 @@ class CorsPreflightIntegrationTest {
     @Test
     @DisplayName("preflight from an allowed origin does not echo back a wildcard Access-Control-Allow-Headers")
     void shouldNotEchoWildcardAllowedHeadersForAuthorizedOrigin() throws Exception {
-        mockMvc.perform(options("/api/v1/personas")
+        mockMvc.perform(options("/api/v1/people")
                         .header(HttpHeaders.ORIGIN, "http://localhost:3000")
                         .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpMethod.GET.name())
                         .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "Authorization"))

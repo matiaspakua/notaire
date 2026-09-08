@@ -63,7 +63,7 @@ public class TipoIdentificacion implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @JsonIgnoreProperties("fkIdTipoIdentificacion")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTipoIdentificacion", fetch = FetchType.LAZY)
-    private List<Persona> personaList;
+    private List<Person> personaList;
 
     public TipoIdentificacion() {
     }
@@ -118,11 +118,11 @@ public class TipoIdentificacion implements Serializable, Persistable<Integer> {
 
     @XmlTransient
     @JsonIgnore
-    public List<Persona> getPersonaList() {
+    public List<Person> getPersonaList() {
         return personaList;
     }
 
-    public void setPersonaList(List<Persona> personaList) {
+    public void setPersonaList(List<Person> personaList) {
         this.personaList = personaList;
     }
 

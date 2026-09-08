@@ -15,7 +15,7 @@ import com.licensis.notaire.jpa.PagoJpaController;
 import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
 import com.licensis.notaire.jpa.PlantillaTramiteJpaController;
 import com.licensis.notaire.jpa.PresupuestoJpaController;
-import com.licensis.notaire.jpa.PersonaJpaController;
+import com.licensis.notaire.jpa.PersonJpaController;
 import com.licensis.notaire.jpa.RegistroAuditoriaJpaController;
 import com.licensis.notaire.jpa.SuplenciaJpaController;
 import com.licensis.notaire.jpa.TestimonioJpaController;
@@ -160,8 +160,8 @@ class IPersistenciaJpaTest {
     @Test
     @DisplayName("PersonaJpaController.getNombreJpa should return its class name via reflection")
     void personaJpaControllerGetNombreJpa() {
-        PersonaJpaController ctrl = createWithReflection(PersonaJpaController.class, utx, emf);
-        assertThat(ctrl.getNombreJpa()).isEqualTo(PersonaJpaController.class.getName());
+        PersonJpaController ctrl = createWithReflection(PersonJpaController.class, utx, emf);
+        assertThat(ctrl.getNombreJpa()).isEqualTo(PersonJpaController.class.getName());
     }
 
     @Test

@@ -80,9 +80,9 @@ public class Copia implements Serializable, Persistable<Integer>
     @ManyToMany(mappedBy = "copiaList", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList"})
     private List<Folio> folioList;
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id_persona")
+    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private Persona fkIdPersona;
+    private Person fkIdPersona;
     @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id_testimonio")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList", "movimientoTestimonioList"})
@@ -181,12 +181,12 @@ public class Copia implements Serializable, Persistable<Integer>
         this.folioList = folioList;
     }
 
-    public Persona getFkIdPersona()
+    public Person getFkIdPersona()
     {
         return fkIdPersona;
     }
 
-    public void setFkIdPersona(Persona fkIdPersona)
+    public void setFkIdPersona(Person fkIdPersona)
     {
         this.fkIdPersona = fkIdPersona;
     }

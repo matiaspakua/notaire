@@ -15,7 +15,7 @@ public final class AuditModuleResolver {
 
     private static final Map<String, String> CONTROLLER_TO_MODULE = Map.ofEntries(
             Map.entry("EscrituraController", "Escrituras"),
-            Map.entry("PersonaController", "Personas"),
+            Map.entry("PersonController", "People"),
             Map.entry("PresupuestoController", "Presupuestos"),
             Map.entry("ConceptoController", "Conceptos"),
             Map.entry("UsuarioController", "Usuarios"),

@@ -13,7 +13,7 @@ public class DtoFolio implements DtoValido {
     private Integer idFolio;
     private DtoTipoDeFolio tiposDeFolio;
     private DtoEscritura escritura;
-    private DtoPersona personaEscribano;
+    private DtoPerson personaEscribano;
     private int numero;
     private int anio;
     private String estado;
@@ -25,7 +25,7 @@ public class DtoFolio implements DtoValido {
         this.version = 0;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoPersona personas, int numero, int anio, String estado) {
+    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoPerson personas, int numero, int anio, String estado) {
         this.tiposDeFolio = tiposDeFolio;
         this.personaEscribano = personas;
         this.numero = numero;
@@ -33,7 +33,7 @@ public class DtoFolio implements DtoValido {
         this.estado = estado;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoEscritura escrituras, DtoPersona personas, int numero, int anio,
+    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoEscritura escrituras, DtoPerson personas, int numero, int anio,
             String estado, String observaciones, List<DtoCopia> copias) {
         this.tiposDeFolio = tiposDeFolio;
         this.escritura = escrituras;
@@ -69,11 +69,11 @@ public class DtoFolio implements DtoValido {
         this.escritura = escrituras;
     }
 
-    public DtoPersona getPersonaEscribano() {
+    public DtoPerson getPersonaEscribano() {
         return this.personaEscribano;
     }
 
-    public void setPersonaEscribano(DtoPersona personaEscribano) {
+    public void setPersonaEscribano(DtoPerson personaEscribano) {
         this.personaEscribano = personaEscribano;
     }
 

@@ -3,11 +3,11 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.negocio.Escritura;
 import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Persona;
+import com.licensis.notaire.negocio.Person;
 import com.licensis.notaire.negocio.TipoDeFolio;
 import com.licensis.notaire.repository.EscrituraRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonaRepository;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.TipoDeFolioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,12 +55,12 @@ public class FolioController {
 
     private final FolioRepository folioRepository;
     private final TipoDeFolioRepository tipoDeFolioRepository;
-    private final PersonaRepository personaRepository;
+    private final PersonRepository personaRepository;
     private final EscrituraRepository escrituraRepository;
 
     public FolioController(FolioRepository folioRepository,
                            TipoDeFolioRepository tipoDeFolioRepository,
-                           PersonaRepository personaRepository,
+                           PersonRepository personaRepository,
                            EscrituraRepository escrituraRepository) {
         this.folioRepository = folioRepository;
         this.tipoDeFolioRepository = tipoDeFolioRepository;
@@ -123,7 +123,7 @@ public class FolioController {
             return ResponseEntity.badRequest().build();
         }
         Optional<TipoDeFolio> tipo = tipoDeFolioRepository.findById(request.tipoFolioId());
-        Optional<Persona> escribano = personaRepository.findById(request.escribanoId());
+        Optional<Person> escribano = personaRepository.findById(request.escribanoId());
         if (tipo.isEmpty() || escribano.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
