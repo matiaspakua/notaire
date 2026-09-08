@@ -103,6 +103,7 @@ export interface Folio {
   personaEscribano?: { idPersona?: number; registroEscribano?: number };
   /** Raw JPA entity field name, as returned by ProtocoloAuxiliarController (no DTO layer). */
   fkIdTipoFolio?: { idTipoFolio?: number; nombre?: string };
+  escritura?: { idEscritura?: number; numero?: number };
   disponible?: boolean;
   version?: number;
 }

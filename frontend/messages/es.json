@@ -253,7 +253,8 @@
       "fecha": "Fecha",
       "tipo": "Tipo",
       "estado": "Estado",
-      "observaciones": "Observaciones"
+      "observaciones": "Observaciones",
+      "folio": "Folio"
     }
   },
   "testimonios": {
@@ -731,15 +732,18 @@
         "estado": "Estado",
         "year": "Año",
         "escribano": "Escribano",
+        "escritura": "Escritura",
         "estadoPlaceholder": "Seleccionar estado",
         "tipoPlaceholder": "Seleccionar tipo",
-        "escribanoPlaceholder": "Seleccionar escribano"
+        "escribanoPlaceholder": "Seleccionar escribano",
+        "escrituraPlaceholder": "Sin vincular"
       },
       "updated": "Folio actualizado",
       "deleted": "Folio eliminado",
       "errorDelete": "Error al eliminar el folio",
       "editFolio": "Editar Folio",
       "inUseCannotModify": "Este folio está en uso (Utilizado) y no puede modificarse",
+      "linkedToEscritura": "Vinculado a la Escritura Nº {numero}",
       "tiposDeFolio": {
         "title": "Tipos de Folio",
         "newTipo": "Nuevo Tipo de Folio",

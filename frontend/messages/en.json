@@ -253,7 +253,8 @@
       "fecha": "Date",
       "tipo": "Type",
       "estado": "Status",
-      "observaciones": "Observations"
+      "observaciones": "Observations",
+      "folio": "Folio"
     }
   },
   "testimonios": {
@@ -731,15 +732,18 @@
         "estado": "Status",
         "year": "Year",
         "escribano": "Notary",
+        "escritura": "Deed",
         "estadoPlaceholder": "Select status",
         "tipoPlaceholder": "Select type",
-        "escribanoPlaceholder": "Select notary"
+        "escribanoPlaceholder": "Select notary",
+        "escrituraPlaceholder": "Not linked"
       },
       "updated": "Folio updated",
       "deleted": "Folio deleted",
       "errorDelete": "Error deleting folio",
       "editFolio": "Edit Folio",
       "inUseCannotModify": "This folio is in use (Utilizado) and cannot be modified",
+      "linkedToEscritura": "Linked to Deed No. {numero}",
       "tiposDeFolio": {
         "title": "Folio Types",
         "newTipo": "New Folio Type",

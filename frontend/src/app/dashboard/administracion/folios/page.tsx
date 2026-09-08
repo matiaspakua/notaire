@@ -12,13 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
+import { useEscrituras } from "@/hooks/useEscrituras";
 import type { Folio, Persona } from "@/types";
 
 const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
 const ESTADO_UTILIZADO = "Utilizado";
+const ESTADO_ESCRITURA_FIRMADA = "Firmada";
 
 interface TipoDeFolioRow {
   idTipoFolio: number;
@@ -34,6 +36,7 @@ interface FolioFormState {
   observaciones: string;
   tipoFolioId?: number;
   escribanoId?: number;
+  escrituraId?: number;
 }
 
 const EMPTY: FolioFormState = {
@@ -43,12 +46,14 @@ const EMPTY: FolioFormState = {
   observaciones: "",
   tipoFolioId: undefined,
   escribanoId: undefined,
+  escrituraId: undefined,
 };
 
 export default function FoliosAdminPage() {
   const t = useTranslations("administracion.folios");
   const tc = useTranslations("common");
 
+  const queryClient = useQueryClient();
   const [estadoFilter, setEstadoFilter] = useState<string>("");
 
   const { data = [], isLoading, refetch } = useQuery({
@@ -151,8 +156,21 @@ export default function FoliosAdminPage() {
     queryFn: () => apiGet<Persona[]>("/escrituras/escribanos-disponibles"),
   });
 
+  const { data: escrituras = [] } = useEscrituras();
+  const { data: allFolios = [] } = useQuery({
+    queryKey: ["folios"],
+    queryFn: () => apiGet<Folio[]>("/folio"),
+  });
+
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FolioFormState>(EMPTY);
+  const escriturasVinculables = escrituras.filter((e) => {
+    if (e.estado !== ESTADO_ESCRITURA_FIRMADA) return false;
+    const yaVinculada = allFolios.some(
+      (f) => f.escritura?.idEscritura === e.idEscritura && f.idFolio !== form.idFolio
+    );
+    return !yaVinculada;
+  });
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -173,6 +191,7 @@ export default function FoliosAdminPage() {
       observaciones: folio.observaciones ?? "",
       tipoFolioId: folio.tiposDeFolio?.idTipoFolio,
       escribanoId: folio.personaEscribano?.idPersona,
+      escrituraId: folio.escritura?.idEscritura,
     });
     setIsEditMode(true);
     setModalOpen(true);
@@ -200,6 +219,7 @@ export default function FoliosAdminPage() {
         observaciones: form.observaciones,
         tipoFolioId: form.tipoFolioId,
         escribanoId: form.escribanoId,
+        escrituraId: form.escrituraId,
       };
       if (isEditMode && form.idFolio) {
         await apiPut(`/folio/${form.idFolio}`, body);
@@ -210,6 +230,7 @@ export default function FoliosAdminPage() {
       }
       setModalOpen(false);
       refetch();
+      queryClient.invalidateQueries({ queryKey: ["folios"] });
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorCreate"));
     } finally {
@@ -241,6 +262,11 @@ export default function FoliosAdminPage() {
       key: "estado",
       header: t("fields.estado"),
       render: (f) => (f.estado ? <Badge variant="secondary">{f.estado}</Badge> : "—"),
+    },
+    {
+      key: "escritura",
+      header: t("fields.escritura"),
+      render: (f) => (f.escritura?.numero != null ? `Nº ${f.escritura.numero}` : "—"),
     },
     {
       key: "actions",
@@ -367,6 +393,24 @@ export default function FoliosAdminPage() {
                     {escribanos.map((e) => (
                       <SelectItem key={e.idPersona} value={String(e.idPersona)}>
                         {e.apellido} {e.nombre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.escritura")}>
+                <Select
+                  value={form.escrituraId !== undefined ? String(form.escrituraId) : "none"}
+                  onValueChange={(v) => setForm({ ...form, escrituraId: v === "none" ? undefined : Number(v) })}
+                >
+                  <SelectTrigger data-testid="select-escritura-folio">
+                    <SelectValue placeholder={t("fields.escrituraPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
+                    {escriturasVinculables.map((e) => (
+                      <SelectItem key={e.idEscritura} value={String(e.idEscritura)}>
+                        Escritura Nº {e.numero}
                       </SelectItem>
                     ))}
                   </SelectContent>
