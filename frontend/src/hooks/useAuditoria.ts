@@ -1,7 +1,7 @@
 /**
  * React Query hooks for RegistroAuditoria (CU — Auditoría del sistema).
- * Endpoints: GET /api/v1/registro-auditoria
- *            GET /api/v1/registro-auditoria/usuario/{id}
+ * Endpoints: GET /api/v1/audit-log
+ *            GET /api/v1/audit-log/user/{id}
  * Read-only — audit logs are not editable.
  */
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +16,7 @@ export const auditoriaKeys = {
 export function useAuditoria() {
   return useQuery({
     queryKey: auditoriaKeys.all,
-    queryFn: () => apiGetPaged<RegistroAuditoria>("/registro-auditoria"),
+    queryFn: () => apiGetPaged<RegistroAuditoria>("/audit-log"),
   });
 }
 
@@ -24,7 +24,7 @@ export function useAuditoriaByUsuario(idUsuario: number | null) {
   return useQuery({
     queryKey: auditoriaKeys.byUsuario(idUsuario ?? 0),
     queryFn: () =>
-      apiGet<RegistroAuditoria[]>(`/registro-auditoria/usuario/${idUsuario}`),
+      apiGet<RegistroAuditoria[]>(`/audit-log/user/${idUsuario}`),
     enabled: idUsuario !== null && idUsuario > 0,
   });
 }

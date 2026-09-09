@@ -2,22 +2,22 @@ info:
   name: Create Persona
   type: http
   seq: 1
-  description: "## CU17 Dar alta persona — POST /api/v1/personas"
+  description: "## CU17 Dar alta persona — POST /api/v1/people"
 http:
   method: POST
-  url: "{{base_url}}/api/v1/personas"
+  url: "{{base_url}}/api/v1/people"
   body:
     type: json
     data: |-
         {
-          "nombre": "Ana",
-          "apellido": "Lopez E2E",
-          "numeroIdentificacion": "30555444",
-          "esCliente": true,
-          "tipoIdentificacion": { "idTipoIdentificacion": 1 },
-          "nacionalidad": "Argentina",
-          "estadoCivil": "Soltero",
-          "sexo": "Femenino"
+          "firstName": "Ana",
+          "lastName": "Lopez E2E",
+          "identificationNumber": "30555444",
+          "isClient": true,
+          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Femenino"
         }
   headers:
     - name: Content-Type
@@ -29,9 +29,9 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idPersona and is marked cliente", function () {
+          test("Returns personId and is marked cliente", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idPersona');
-            expect(b.esCliente).to.equal(true);
-            bru.setVar('persona_id', b.idPersona);
+            expect(b).to.have.property('personId');
+            expect(b.isClient).to.equal(true);
+            bru.setVar('persona_id', b.personId);
           });

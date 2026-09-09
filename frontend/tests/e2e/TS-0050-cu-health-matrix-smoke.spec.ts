@@ -94,7 +94,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU59", name: "Consultar Suplencias", method: "GET", path: "/suplencia", expectStatus: 200 },
 
   // ── Auditoría (CU23) ──
-  { id: "CU23-AUD", name: "Ver registro de actividades", method: "GET", path: () => `/registro-auditoria/usuario/${seedUsuarioId()}`, expectStatus: 200 },
+  { id: "CU23-AUD", name: "Ver registro de actividades", method: "GET", path: () => `/audit-log/user/${seedUsuarioId()}`, expectStatus: 200 },
 
   // ── Catálogos (CU26-CU40, CU57-CU68) ──
   { id: "CU26", name: "Ingresar nuevo tipo de trámite", method: "GET", path: "/tipo-tramite", expectStatus: 200 },

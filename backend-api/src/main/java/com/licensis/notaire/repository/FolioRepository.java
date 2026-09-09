@@ -1,9 +1,9 @@
 package com.licensis.notaire.repository;
 
-import com.licensis.notaire.negocio.Cuaderno;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoDeFolio;
+import com.licensis.notaire.business.Notebook;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.FolioType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,53 +15,53 @@ import java.util.Optional;
 @Repository
 public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
-    Optional<Folio> findByNumero(int numero);
+    Optional<Folio> findByNumber(int number);
 
-    List<Folio> findByFkIdTipoFolio(TipoDeFolio tipoFolio);
+    List<Folio> findByFkIdFolioType(FolioType typeFolio);
 
-    List<Folio> findByFkIdTipoFolioIdTipoFolio(Integer idTipoFolio);
+    List<Folio> findByFkIdFolioTypeIdFolioType(Integer idFolioType);
 
-    List<Folio> findByFkIdPersonaEscribano(Person escribano);
+    List<Folio> findByFkIdNotaryPerson(Person notary);
 
-    List<Folio> findByFkIdPersonaEscribanoIdPersona(Integer idEscribano);
+    List<Folio> findByFkIdNotaryPersonIdPerson(Integer idNotary);
 
-    boolean existsByFkIdEscrituraIdEscritura(Integer idEscritura);
+    boolean existsByFkIdDeedIdDeed(Integer idDeed);
 
-    Optional<Folio> findByFkIdEscrituraIdEscritura(Integer idEscritura);
+    Optional<Folio> findByFkIdDeedIdDeed(Integer idDeed);
 
-    List<Folio> findByAnio(int anio);
+    List<Folio> findByYear(int year);
 
-    List<Folio> findByEstado(String estado);
+    List<Folio> findByStatus(String status);
 
-    List<Folio> findByFkIdCuaderno(Cuaderno cuaderno);
+    List<Folio> findByFkIdNotebook(Notebook notebook);
 
     List<Folio> findAllByIdFolioIn(List<Integer> ids);
 
-    @Query("SELECT f FROM Folio f WHERE f.fkIdTipoFolio.esAuxiliar = true AND f.fkIdEscritura IS NULL")
+    @Query("SELECT f FROM Folio f WHERE f.fkIdFolioType.isAuxiliary = true AND f.fkIdDeed IS NULL")
     List<Folio> findFoliosAuxiliaresDisponibles();
 
-    @Query("SELECT MAX(f.fkIdEscritura.numero) FROM Folio f "
-            + "WHERE f.fkIdTipoFolio.esAuxiliar = true AND f.fkIdEscritura IS NOT NULL")
-    Optional<Integer> findMaxNumeroEscrituraAuxiliar();
+    @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
+            + "WHERE f.fkIdFolioType.isAuxiliary = true AND f.fkIdDeed IS NOT NULL")
+    Optional<Integer> findMaxNumberDeedAuxiliary();
 
-    @Query("SELECT MAX(f.fkIdEscritura.numero) FROM Folio f "
-            + "WHERE f.fkIdPersonaEscribano.idPersona = :idEscribano AND f.anio = :anio "
-            + "AND f.fkIdTipoFolio.esAuxiliar = :esAuxiliar AND f.fkIdEscritura IS NOT NULL "
-            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdEscritura.idEscritura <> :idEscrituraExcluir)")
-    Optional<Integer> findMaxNumeroEscrituraByEscribanoAnioYTipo(
-            @Param("idEscribano") Integer idEscribano,
-            @Param("anio") int anio,
-            @Param("esAuxiliar") boolean esAuxiliar,
-            @Param("idEscrituraExcluir") Integer idEscrituraExcluir);
+    @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
+            + "WHERE f.fkIdNotaryPerson.idPerson = :idEscribano AND f.year = :anio "
+            + "AND f.fkIdFolioType.isAuxiliary = :esAuxiliar AND f.fkIdDeed IS NOT NULL "
+            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdDeed.idDeed <> :idEscrituraExcluir)")
+    Optional<Integer> findMaxNumberDeedByNotaryYearYType(
+            @Param("idEscribano") Integer idNotary,
+            @Param("anio") int year,
+            @Param("esAuxiliar") boolean isAuxiliary,
+            @Param("idEscrituraExcluir") Integer idDeedExcluir);
 
     @Query("SELECT COUNT(f) > 0 FROM Folio f "
-            + "WHERE f.fkIdEscritura.numero = :numero AND f.fkIdPersonaEscribano.idPersona = :idEscribano "
-            + "AND f.anio = :anio AND f.fkIdTipoFolio.esAuxiliar = :esAuxiliar AND f.fkIdEscritura IS NOT NULL "
-            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdEscritura.idEscritura <> :idEscrituraExcluir)")
-    boolean existsNumeroEscrituraByEscribanoAnioYTipo(
-            @Param("numero") int numero,
-            @Param("idEscribano") Integer idEscribano,
-            @Param("anio") int anio,
-            @Param("esAuxiliar") boolean esAuxiliar,
-            @Param("idEscrituraExcluir") Integer idEscrituraExcluir);
+            + "WHERE f.fkIdDeed.number = :numero AND f.fkIdNotaryPerson.idPerson = :idEscribano "
+            + "AND f.year = :anio AND f.fkIdFolioType.isAuxiliary = :esAuxiliar AND f.fkIdDeed IS NOT NULL "
+            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdDeed.idDeed <> :idEscrituraExcluir)")
+    boolean existsNumberDeedByNotaryYearYType(
+            @Param("numero") int number,
+            @Param("idEscribano") Integer idNotary,
+            @Param("anio") int year,
+            @Param("esAuxiliar") boolean isAuxiliary,
+            @Param("idEscrituraExcluir") Integer idDeedExcluir);
 }

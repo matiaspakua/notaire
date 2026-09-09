@@ -49,7 +49,7 @@ class LoginRateLimitIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                        {"nombre": "admin", "contrasenia": "wrongpassword"}
+                        {"name": "admin", "password": "wrongpassword"}
                         """));
     }
 
@@ -63,7 +63,7 @@ class LoginRateLimitIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.valido").value(false));
@@ -77,7 +77,7 @@ class LoginRateLimitIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(true));
@@ -92,7 +92,7 @@ class LoginRateLimitIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(true));
@@ -103,7 +103,7 @@ class LoginRateLimitIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(true));

@@ -1,22 +1,22 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.DtoDocumentoNecesario;
-import com.licensis.notaire.dto.DtoDocumentoReingresado;
-import com.licensis.notaire.dto.DtoGestionReingresoDocumentacion;
+import com.licensis.notaire.dto.DtoDocumentNecesario;
+import com.licensis.notaire.dto.DtoDocumentReentered;
+import com.licensis.notaire.dto.DtoManagementReingresoDocumentacion;
 import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
-import com.licensis.notaire.dto.DtoTramiteDocumentacionNecesaria;
+import com.licensis.notaire.dto.DtoProcedureDocumentacionNecesaria;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.DocumentoPresentado;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.PlantillaTramitePK;
-import com.licensis.notaire.negocio.TipoDeDocumento;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.repository.DocumentoPresentadoRepository;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PlantillaTramiteRepository;
-import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.business.SubmittedDocument;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.ProcedureTemplate;
+import com.licensis.notaire.business.ProcedureTemplatePK;
+import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,110 +31,110 @@ import java.util.List;
 @Service
 public class ReingresoDocumentacionService {
 
-    private final GestionDeEscrituraRepository gestionRepository;
-    private final TramiteRepository tramiteRepository;
-    private final PlantillaTramiteRepository plantillaTramiteRepository;
-    private final DocumentoPresentadoRepository documentoPresentadoRepository;
+    private final DeedManagementRepository managementRepository;
+    private final ProcedureRepository procedureRepository;
+    private final ProcedureTemplateRepository procedureTemplateRepository;
+    private final SubmittedDocumentRepository submittedDocumentRepository;
 
-    public ReingresoDocumentacionService(GestionDeEscrituraRepository gestionRepository,
-            TramiteRepository tramiteRepository, PlantillaTramiteRepository plantillaTramiteRepository,
-            DocumentoPresentadoRepository documentoPresentadoRepository) {
-        this.gestionRepository = gestionRepository;
-        this.tramiteRepository = tramiteRepository;
-        this.plantillaTramiteRepository = plantillaTramiteRepository;
-        this.documentoPresentadoRepository = documentoPresentadoRepository;
+    public ReingresoDocumentacionService(DeedManagementRepository managementRepository,
+            ProcedureRepository procedureRepository, ProcedureTemplateRepository procedureTemplateRepository,
+            SubmittedDocumentRepository submittedDocumentRepository) {
+        this.managementRepository = managementRepository;
+        this.procedureRepository = procedureRepository;
+        this.procedureTemplateRepository = procedureTemplateRepository;
+        this.submittedDocumentRepository = submittedDocumentRepository;
     }
 
     @Transactional(readOnly = true)
-    public DtoGestionReingresoDocumentacion obtenerDocumentacionNecesaria(Integer idGestion) {
-        GestionDeEscritura gestion = findGestionOrThrow(idGestion);
-        List<DtoTramiteDocumentacionNecesaria> tramites = tramiteRepository
-                .findByFkIdGestionIdGestion(idGestion).stream()
-                .map(this::toDtoTramite)
+    public DtoManagementReingresoDocumentacion obtenerDocumentacionNecesaria(Integer idManagement) {
+        DeedManagement management = findManagementOrThrow(idManagement);
+        List<DtoProcedureDocumentacionNecesaria> procedures = procedureRepository
+                .findByFkIdManagementIdManagement(idManagement).stream()
+                .map(this::toDtoProcedure)
                 .toList();
-        return new DtoGestionReingresoDocumentacion(gestion.getIdGestion(), gestion.getNumero(),
-                gestion.getEncabezado(), tramites);
+        return new DtoManagementReingresoDocumentacion(management.getIdManagement(), management.getNumber(),
+                management.getEncabezado(), procedures);
     }
 
     @Transactional
-    public DtoDocumentoReingresado reingresar(Integer idGestion, DtoReingresoDocumentacionRequest request) {
-        findGestionOrThrow(idGestion);
-        Tramite tramite = tramiteRepository.findById(request.idTramite())
+    public DtoDocumentReentered reingresar(Integer idManagement, DtoReingresoDocumentacionRequest request) {
+        findManagementOrThrow(idManagement);
+        Procedure procedure = procedureRepository.findById(request.idProcedure())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trámite no encontrado con ID: " + request.idTramite()));
-        validarPerteneceAGestion(tramite, idGestion);
-        TipoDeDocumento tipoDocumento = validarDocumentacionNecesaria(tramite, request.idTipoDocumento());
+                        "Trámite no encontrado con ID: " + request.idProcedure()));
+        validarPerteneceAManagement(procedure, idManagement);
+        DocumentType typeDocument = validarDocumentacionNecesaria(procedure, request.idDocumentType());
 
-        DocumentoPresentado documento = crearDocumentoPresentado(tramite, tipoDocumento);
-        DocumentoPresentado guardado = documentoPresentadoRepository.save(documento);
+        SubmittedDocument document = crearSubmittedDocument(procedure, typeDocument);
+        SubmittedDocument guardado = submittedDocumentRepository.save(document);
 
         return toDto(guardado);
     }
 
-    private GestionDeEscritura findGestionOrThrow(Integer idGestion) {
-        return gestionRepository.findById(idGestion)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idGestion));
+    private DeedManagement findManagementOrThrow(Integer idManagement) {
+        return managementRepository.findById(idManagement)
+                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
     }
 
-    private static void validarPerteneceAGestion(Tramite tramite, Integer idGestion) {
-        GestionDeEscritura gestion = tramite.getFkIdGestion();
-        if (gestion == null || !idGestion.equals(gestion.getIdGestion())) {
+    private static void validarPerteneceAManagement(Procedure procedure, Integer idManagement) {
+        DeedManagement management = procedure.getFkIdManagement();
+        if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
-                    "El trámite " + tramite.getIdTramite() + " no pertenece a la gestión " + idGestion);
+                    "El trámite " + procedure.getIdProcedure() + " no pertenece a la gestión " + idManagement);
         }
     }
 
-    private TipoDeDocumento validarDocumentacionNecesaria(Tramite tramite, Integer idTipoDocumento) {
-        Integer idTipoTramite = tramite.getFkIdTipoTramite().getIdTipoTramite();
-        PlantillaTramitePK pk = new PlantillaTramitePK(idTipoTramite, idTipoDocumento);
-        PlantillaTramite plantilla = plantillaTramiteRepository.findById(pk)
+    private DocumentType validarDocumentacionNecesaria(Procedure procedure, Integer idDocumentType) {
+        Integer idProcedureType = procedure.getFkIdProcedureType().getIdProcedureType();
+        ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
+        ProcedureTemplate template = procedureTemplateRepository.findById(pk)
                 .orElseThrow(() -> new BusinessValidationException(
-                        "El tipo de documento " + idTipoDocumento
+                        "El tipo de documento " + idDocumentType
                                 + " no forma parte de la documentación necesaria del trámite "
-                                + tramite.getIdTramite()));
-        return plantilla.getTipoDeDocumento();
+                                + procedure.getIdProcedure()));
+        return template.getDocumentType();
     }
 
-    private static DocumentoPresentado crearDocumentoPresentado(Tramite tramite, TipoDeDocumento tipoDocumento) {
-        DocumentoPresentado documento = new DocumentoPresentado();
-        documento.setFkIdTramite(tramite);
-        documento.setFkIdTipoDocumento(tipoDocumento.getIdTipoDocumento());
-        documento.setNombre(tipoDocumento.getNombre());
-        documento.setVence(tipoDocumento.getVence());
-        documento.setDiasVencimiento(tipoDocumento.getDiasVencimiento());
-        documento.setQuienEntrega(tipoDocumento.getQuienEntrega());
-        documento.setReingresado(true);
+    private static SubmittedDocument crearSubmittedDocument(Procedure procedure, DocumentType typeDocument) {
+        SubmittedDocument document = new SubmittedDocument();
+        document.setFkIdProcedure(procedure);
+        document.setFkIdDocumentType(typeDocument.getIdDocumentType());
+        document.setName(typeDocument.getName());
+        document.setExpires(typeDocument.getExpires());
+        document.setDueDays(typeDocument.getDueDays());
+        document.setDeliveredBy(typeDocument.getDeliveredBy());
+        document.setReentered(true);
         // liberado/observado are NOT NULL in Postgres; a freshly reingresado
         // document starts as neither liberado nor observado.
-        documento.setLiberado(false);
-        documento.setObservado(false);
-        return documento;
+        document.setReleased(false);
+        document.setFlagged(false);
+        return document;
     }
 
-    private DtoTramiteDocumentacionNecesaria toDtoTramite(Tramite tramite) {
-        Integer idTipoTramite = tramite.getFkIdTipoTramite().getIdTipoTramite();
-        List<DtoDocumentoNecesario> documentos = plantillaTramiteRepository
-                .findByTipoDeTramiteIdTipoTramite(idTipoTramite).stream()
-                .map(plantilla -> toDtoDocumentoNecesario(plantilla.getTipoDeDocumento()))
+    private DtoProcedureDocumentacionNecesaria toDtoProcedure(Procedure procedure) {
+        Integer idProcedureType = procedure.getFkIdProcedureType().getIdProcedureType();
+        List<DtoDocumentNecesario> documents = procedureTemplateRepository
+                .findByProcedureTypeIdProcedureType(idProcedureType).stream()
+                .map(template -> toDtoDocumentNecesario(template.getDocumentType()))
                 .toList();
-        return new DtoTramiteDocumentacionNecesaria(tramite.getIdTramite(),
-                tramite.getFkIdTipoTramite().getNombre(), documentos);
+        return new DtoProcedureDocumentacionNecesaria(procedure.getIdProcedure(),
+                procedure.getFkIdProcedureType().getName(), documents);
     }
 
-    private static DtoDocumentoNecesario toDtoDocumentoNecesario(TipoDeDocumento tipoDocumento) {
-        return new DtoDocumentoNecesario(tipoDocumento.getIdTipoDocumento(), tipoDocumento.getNombre(),
-                tipoDocumento.getVence(), tipoDocumento.getDiasVencimiento(), tipoDocumento.getQuienEntrega());
+    private static DtoDocumentNecesario toDtoDocumentNecesario(DocumentType typeDocument) {
+        return new DtoDocumentNecesario(typeDocument.getIdDocumentType(), typeDocument.getName(),
+                typeDocument.getExpires(), typeDocument.getDueDays(), typeDocument.getDeliveredBy());
     }
 
-    private static DtoDocumentoReingresado toDto(DocumentoPresentado documento) {
-        return new DtoDocumentoReingresado(
-                documento.getIdDocumentoPresentado(),
-                documento.getFkIdTramite().getIdTramite(),
-                documento.getFkIdTipoDocumento(),
-                documento.getNombre(),
-                documento.getVence(),
-                documento.getDiasVencimiento(),
-                documento.getQuienEntrega(),
-                Boolean.TRUE.equals(documento.getReingresado()));
+    private static DtoDocumentReentered toDto(SubmittedDocument document) {
+        return new DtoDocumentReentered(
+                document.getIdSubmittedDocument(),
+                document.getFkIdProcedure().getIdProcedure(),
+                document.getFkIdDocumentType(),
+                document.getName(),
+                document.getExpires(),
+                document.getDueDays(),
+                document.getDeliveredBy(),
+                Boolean.TRUE.equals(document.getReentered()));
     }
 }

@@ -1,9 +1,9 @@
 package com.licensis.notaire.service.unit;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.service.WorkflowValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +52,7 @@ class WorkflowValidationServiceTest {
     @DisplayName("Should reject workflow with no initial node")
     void shouldRejectWorkflowWithNoInitialNode() {
         List<WorkflowNode> nodes = new ArrayList<>();
-        EstadoDeGestion estado1 = createEstado(1, "Estado1");
+        ManagementStatus estado1 = createStatus(1, "Estado1");
         nodes.add(createNode(1, WorkflowNodeType.FINAL, estado1));
         nodes.add(createNode(2, WorkflowNodeType.FINAL, null));
 
@@ -85,7 +85,7 @@ class WorkflowValidationServiceTest {
     void shouldRejectWorkflowWithNoFinalNode() {
         List<WorkflowNode> nodes = new ArrayList<>();
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, null));
-        nodes.add(createNode(2, WorkflowNodeType.INITIAL, createEstado(1, "Estado")));
+        nodes.add(createNode(2, WorkflowNodeType.INITIAL, createStatus(1, "Estado")));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
 
@@ -99,9 +99,9 @@ class WorkflowValidationServiceTest {
     @DisplayName("Should reject workflow with unreachable nodes")
     void shouldRejectWorkflowWithUnreachableNodes() {
         List<WorkflowNode> nodes = new ArrayList<>();
-        EstadoDeGestion estado1 = createEstado(1, "Inicio");
-        EstadoDeGestion estado2 = createEstado(2, "Fin");
-        EstadoDeGestion estado3 = createEstado(3, "Aislado");
+        ManagementStatus estado1 = createStatus(1, "Inicio");
+        ManagementStatus estado2 = createStatus(2, "Fin");
+        ManagementStatus estado3 = createStatus(3, "Aislado");
 
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, estado1));
         nodes.add(createNode(2, WorkflowNodeType.FINAL, estado2));
@@ -121,7 +121,7 @@ class WorkflowValidationServiceTest {
     void shouldValidateLinearWorkflow() {
         List<WorkflowNode> nodes = new ArrayList<>();
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, null));
-        nodes.add(createNode(2, WorkflowNodeType.FINAL, createEstado(1, "State1")));
+        nodes.add(createNode(2, WorkflowNodeType.FINAL, createStatus(1, "State1")));
         nodes.add(createNode(3, WorkflowNodeType.FINAL, null));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
@@ -139,8 +139,8 @@ class WorkflowValidationServiceTest {
     void shouldValidateWorkflowWithBranching() {
         List<WorkflowNode> nodes = new ArrayList<>();
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, null));
-        nodes.add(createNode(2, WorkflowNodeType.FINAL, createEstado(1, "State1")));
-        nodes.add(createNode(3, WorkflowNodeType.FINAL, createEstado(2, "State2")));
+        nodes.add(createNode(2, WorkflowNodeType.FINAL, createStatus(1, "State1")));
+        nodes.add(createNode(3, WorkflowNodeType.FINAL, createStatus(2, "State2")));
         nodes.add(createNode(4, WorkflowNodeType.FINAL, null));
 
         List<WorkflowTransition> transitions = new ArrayList<>();
@@ -189,7 +189,7 @@ class WorkflowValidationServiceTest {
     private List<WorkflowNode> createValidNodes() {
         List<WorkflowNode> nodes = new ArrayList<>();
         nodes.add(createNode(1, WorkflowNodeType.INITIAL, null));
-        nodes.add(createNode(2, WorkflowNodeType.FINAL, createEstado(1, "State")));
+        nodes.add(createNode(2, WorkflowNodeType.FINAL, createStatus(1, "State")));
         nodes.add(createNode(3, WorkflowNodeType.FINAL, null));
         return nodes;
     }
@@ -201,25 +201,25 @@ class WorkflowValidationServiceTest {
         return transitions;
     }
 
-    private WorkflowNode createNode(Integer id, WorkflowNodeType tipo, EstadoDeGestion estado) {
+    private WorkflowNode createNode(Integer id, WorkflowNodeType type, ManagementStatus status) {
         WorkflowNode node = new WorkflowNode();
         node.setId(id);
-        node.setTipo(tipo);
-        node.setEstadoDeGestion(estado);
+        node.setType(type);
+        node.setManagementStatus(status);
         return node;
     }
 
     private WorkflowTransition createTransition(Integer fromId, Integer toId, List<WorkflowNode> nodes) {
         WorkflowTransition transition = new WorkflowTransition();
-        transition.setNodoOrigen(nodes.stream().filter(n -> n.getId().equals(fromId)).findFirst().orElse(null));
-        transition.setNodoDestino(nodes.stream().filter(n -> n.getId().equals(toId)).findFirst().orElse(null));
+        transition.setOriginNode(nodes.stream().filter(n -> n.getId().equals(fromId)).findFirst().orElse(null));
+        transition.setDestinationNode(nodes.stream().filter(n -> n.getId().equals(toId)).findFirst().orElse(null));
         return transition;
     }
 
-    private EstadoDeGestion createEstado(Integer id, String nombre) {
-        EstadoDeGestion estado = new EstadoDeGestion();
-        estado.setIdEstadoGestion(id);
-        estado.setNombre(nombre);
-        return estado;
+    private ManagementStatus createStatus(Integer id, String name) {
+        ManagementStatus status = new ManagementStatus();
+        status.setIdManagementStatus(id);
+        status.setName(name);
+        return status;
     }
 }

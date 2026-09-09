@@ -11,17 +11,17 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 /**
- * Builds the human-readable Spanish description stored in
+ * Builds the human-readable description stored in
  * {@code registro_auditoria.detalle_operacion} from controller method
  * metadata.
  *
  * <p>The descriptions are intentionally written in plain, non-technical
- * Spanish so end users can read the audit trail without needing any
+ * English so end users can read the audit trail without needing any
  * implementation knowledge.
  */
 public final class AuditOperationDescriber {
 
-    private static final String GENERIC_OBJECT = "registro";
+    private static final String GENERIC_OBJECT = "record";
 
     private AuditOperationDescriber() {
         // Utility class.
@@ -33,7 +33,7 @@ public final class AuditOperationDescriber {
      * @param method   the invoked controller method
      * @param args     the runtime arguments passed to the method
      * @param module   the resolved business module name
-     * @return a Spanish sentence describing the user action
+     * @return an English sentence describing the user action
      */
     public static String describe(Method method, Object[] args, String module) {
         String resourceSingular = toSingularLower(module);
@@ -46,10 +46,10 @@ public final class AuditOperationDescriber {
         String methodName = method == null ? "" : method.getName().toLowerCase(Locale.ROOT);
 
         if (methodName.contains("login")) {
-            return "Inicio de sesión del usuario";
+            return "User login";
         }
         if (methodName.contains("logout")) {
-            return "Cierre de sesión del usuario";
+            return "User logout";
         }
 
         HttpVerb verb = detectHttpVerb(method);
@@ -57,22 +57,22 @@ public final class AuditOperationDescriber {
 
         switch (verb) {
             case POST:
-                return "Creación de nuevo " + resourceSingular;
+                return "Creation of new " + resourceSingular;
             case PUT:
             case PATCH:
                 return idText != null
-                        ? "Actualización de " + resourceSingular + " con ID " + idText
-                        : "Actualización de " + resourceSingular;
+                        ? "Update of " + resourceSingular + " with ID " + idText
+                        : "Update of " + resourceSingular;
             case DELETE:
                 return idText != null
-                        ? "Eliminación de " + resourceSingular + " con ID " + idText
-                        : "Eliminación de " + resourceSingular;
+                        ? "Deletion of " + resourceSingular + " with ID " + idText
+                        : "Deletion of " + resourceSingular;
             case GET:
             default:
                 if (idText != null) {
-                    return "Consulta de " + resourceSingular + " con ID " + idText;
+                    return "Lookup of " + resourceSingular + " with ID " + idText;
                 }
-                return "Consulta de listado de " + resourcePlural;
+                return "Listing query of " + resourcePlural;
         }
     }
 
@@ -120,16 +120,16 @@ public final class AuditOperationDescriber {
             return GENERIC_OBJECT;
         }
         String lower = module.toLowerCase(Locale.ROOT);
-        if (lower.endsWith("nes")) {
-            // gestiones -> gestion
+        if (lower.endsWith("ies")) {
+            // properties -> property, substitutions... (n/a) copies -> copy
+            return lower.substring(0, lower.length() - 3) + "y";
+        }
+        if (lower.endsWith("ses")) {
+            // statuses -> status
             return lower.substring(0, lower.length() - 2);
         }
-        if (lower.endsWith("es")) {
-            // tramites -> tramite, copies -> copy (we only deal with Spanish here)
-            return lower.substring(0, lower.length() - 1);
-        }
         if (lower.endsWith("s")) {
-            // escrituras -> escritura, personas -> persona
+            // deeds -> deed, people -> peopl (edge case handled below)
             return lower.substring(0, lower.length() - 1);
         }
         return lower;

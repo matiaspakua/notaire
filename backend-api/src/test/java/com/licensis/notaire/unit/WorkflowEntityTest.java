@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,25 +24,25 @@ class WorkflowEntityTest {
         @DisplayName("Should create workflow definition with required fields")
         void shouldCreateWorkflowDefinitionWithRequiredFields() {
             WorkflowDefinition wf = new WorkflowDefinition();
-            wf.setNombre("Workflow Compraventa");
-            wf.setDescripcion("Workflow estándar para trámites de compraventa");
-            wf.setActivo(false);
+            wf.setName("Workflow Compraventa");
+            wf.setDescription("Workflow estándar para trámites de compraventa");
+            wf.setActive(false);
 
-            assertThat(wf.getNombre()).isEqualTo("Workflow Compraventa");
-            assertThat(wf.getDescripcion()).isEqualTo("Workflow estándar para trámites de compraventa");
-            assertThat(wf.isActivo()).isFalse();
+            assertThat(wf.getName()).isEqualTo("Workflow Compraventa");
+            assertThat(wf.getDescription()).isEqualTo("Workflow estándar para trámites de compraventa");
+            assertThat(wf.isActive()).isFalse();
         }
 
         @Test
         @DisplayName("Should activate workflow definition")
         void shouldActivateWorkflowDefinition() {
             WorkflowDefinition wf = new WorkflowDefinition();
-            wf.setNombre("Workflow Test");
-            wf.setActivo(false);
+            wf.setName("Workflow Test");
+            wf.setActive(false);
 
-            wf.setActivo(true);
+            wf.setActive(true);
 
-            assertThat(wf.isActivo()).isTrue();
+            assertThat(wf.isActive()).isTrue();
         }
 
         @Test
@@ -73,41 +73,41 @@ class WorkflowEntityTest {
     class WorkflowNodeTests {
 
         @Test
-        @DisplayName("Should create initial node linked to a workflow and estado")
-        void shouldCreateInitialNodeLinkedToWorkflowAndEstado() {
+        @DisplayName("Should create initial node linked to a workflow and status")
+        void shouldCreateInitialNodeLinkedToWorkflowAndStatus() {
             WorkflowDefinition wf = new WorkflowDefinition(1);
-            EstadoDeGestion estado = new EstadoDeGestion(10);
-            estado.setNombre("Iniciado");
+            ManagementStatus status = new ManagementStatus(10);
+            status.setName("Iniciado");
 
             WorkflowNode node = new WorkflowNode();
             node.setWorkflowDefinition(wf);
-            node.setEstadoDeGestion(estado);
-            node.setTipo(WorkflowNodeType.INITIAL);
-            node.setPosicionX(100.0f);
-            node.setPosicionY(200.0f);
+            node.setManagementStatus(status);
+            node.setType(WorkflowNodeType.INITIAL);
+            node.setPositionX(100.0f);
+            node.setPositionY(200.0f);
 
             assertThat(node.getWorkflowDefinition()).isEqualTo(wf);
-            assertThat(node.getEstadoDeGestion().getNombre()).isEqualTo("Iniciado");
-            assertThat(node.getTipo()).isEqualTo(WorkflowNodeType.INITIAL);
-            assertThat(node.getPosicionX()).isEqualTo(100.0f);
-            assertThat(node.getPosicionY()).isEqualTo(200.0f);
+            assertThat(node.getManagementStatus().getName()).isEqualTo("Iniciado");
+            assertThat(node.getType()).isEqualTo(WorkflowNodeType.INITIAL);
+            assertThat(node.getPositionX()).isEqualTo(100.0f);
+            assertThat(node.getPositionY()).isEqualTo(200.0f);
         }
 
         @Test
         @DisplayName("Should distinguish node types")
         void shouldDistinguishNodeTypes() {
             WorkflowNode initial = new WorkflowNode();
-            initial.setTipo(WorkflowNodeType.INITIAL);
+            initial.setType(WorkflowNodeType.INITIAL);
 
             WorkflowNode intermediate = new WorkflowNode();
-            intermediate.setTipo(WorkflowNodeType.INTERMEDIATE);
+            intermediate.setType(WorkflowNodeType.INTERMEDIATE);
 
             WorkflowNode finalNode = new WorkflowNode();
-            finalNode.setTipo(WorkflowNodeType.FINAL);
+            finalNode.setType(WorkflowNodeType.FINAL);
 
-            assertThat(initial.getTipo()).isEqualTo(WorkflowNodeType.INITIAL);
-            assertThat(intermediate.getTipo()).isEqualTo(WorkflowNodeType.INTERMEDIATE);
-            assertThat(finalNode.getTipo()).isEqualTo(WorkflowNodeType.FINAL);
+            assertThat(initial.getType()).isEqualTo(WorkflowNodeType.INITIAL);
+            assertThat(intermediate.getType()).isEqualTo(WorkflowNodeType.INTERMEDIATE);
+            assertThat(finalNode.getType()).isEqualTo(WorkflowNodeType.FINAL);
         }
 
         @Test
@@ -130,28 +130,28 @@ class WorkflowEntityTest {
         @DisplayName("Should create transition between two nodes")
         void shouldCreateTransitionBetweenTwoNodes() {
             WorkflowDefinition wf = new WorkflowDefinition(1);
-            WorkflowNode origen = new WorkflowNode(1);
-            WorkflowNode destino = new WorkflowNode(2);
+            WorkflowNode origin = new WorkflowNode(1);
+            WorkflowNode destination = new WorkflowNode(2);
 
             WorkflowTransition transition = new WorkflowTransition();
             transition.setWorkflowDefinition(wf);
-            transition.setNodoOrigen(origen);
-            transition.setNodoDestino(destino);
-            transition.setDescripcion("Avance de estado");
+            transition.setOriginNode(origin);
+            transition.setDestinationNode(destination);
+            transition.setDescription("Avance de status");
 
             assertThat(transition.getWorkflowDefinition()).isEqualTo(wf);
-            assertThat(transition.getNodoOrigen()).isEqualTo(origen);
-            assertThat(transition.getNodoDestino()).isEqualTo(destino);
-            assertThat(transition.getDescripcion()).isEqualTo("Avance de estado");
+            assertThat(transition.getOriginNode()).isEqualTo(origin);
+            assertThat(transition.getDestinationNode()).isEqualTo(destination);
+            assertThat(transition.getDescription()).isEqualTo("Avance de status");
         }
 
         @Test
         @DisplayName("Should allow optional condition on transition")
         void shouldAllowOptionalConditionOnTransition() {
             WorkflowTransition transition = new WorkflowTransition();
-            transition.setCondicion("estado.documentosCompletos == true");
+            transition.setCondition("status.documentosCompletos == true");
 
-            assertThat(transition.getCondicion()).isEqualTo("estado.documentosCompletos == true");
+            assertThat(transition.getCondition()).isEqualTo("status.documentosCompletos == true");
         }
 
         @Test
@@ -159,7 +159,7 @@ class WorkflowEntityTest {
         void shouldAllowNullConditionWhenNoRestriction() {
             WorkflowTransition transition = new WorkflowTransition();
 
-            assertThat(transition.getCondicion()).isNull();
+            assertThat(transition.getCondition()).isNull();
         }
 
         @Test

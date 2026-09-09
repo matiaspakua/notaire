@@ -1,11 +1,11 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.TipoItem;
+import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.Item;
+import com.licensis.notaire.business.Item;
 import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.PresupuestoRepository;
+import com.licensis.notaire.repository.BudgetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,11 +24,11 @@ public class ItemService {
     private static final Logger log = LoggerFactory.getLogger(ItemService.class);
 
     private final ItemRepository itemRepository;
-    private final PresupuestoRepository presupuestoRepository;
+    private final BudgetRepository budgetRepository;
 
-    public ItemService(ItemRepository itemRepository, PresupuestoRepository presupuestoRepository) {
+    public ItemService(ItemRepository itemRepository, BudgetRepository budgetRepository) {
         this.itemRepository = itemRepository;
-        this.presupuestoRepository = presupuestoRepository;
+        this.budgetRepository = budgetRepository;
     }
 
     @Transactional(readOnly = true)
@@ -42,8 +42,8 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public List<Item> findByPresupuesto(Integer idPresupuesto) {
-        return itemRepository.findByFkIdPresupuestoIdPresupuesto(idPresupuesto);
+    public List<Item> findByBudget(Integer idBudget) {
+        return itemRepository.findByFkIdBudgetIdBudget(idBudget);
     }
 
     /**
@@ -51,18 +51,18 @@ public class ItemService {
      * de un presupuesto, junto con su motivo.
      */
     @Transactional(readOnly = true)
-    public List<Item> findDescuentosYRecargosByPresupuesto(Integer idPresupuesto) {
-        if (!presupuestoRepository.existsById(idPresupuesto)) {
-            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idPresupuesto);
+    public List<Item> findDescuentosYRecargosByBudget(Integer idBudget) {
+        if (!budgetRepository.existsById(idBudget)) {
+            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
         }
-        return itemRepository.findByFkIdPresupuestoIdPresupuesto(idPresupuesto).stream()
-                .filter(item -> item.getTipo() == TipoItem.DESCUENTO || item.getTipo() == TipoItem.RECARGO)
+        return itemRepository.findByFkIdBudgetIdBudget(idBudget).stream()
+                .filter(item -> item.getType() == TypeItem.DESCUENTO || item.getType() == TypeItem.RECARGO)
                 .toList();
     }
 
     @Transactional
     public Item create(Item item) {
-        validarMotivo(item);
+        validarReason(item);
         return itemRepository.save(item);
     }
 
@@ -71,7 +71,7 @@ public class ItemService {
         if (!itemRepository.existsById(id)) {
             throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
         }
-        validarMotivo(item);
+        validarReason(item);
         item.setIdItem(id);
         return itemRepository.save(item);
     }
@@ -89,14 +89,14 @@ public class ItemService {
      * CU45 - Exigir motivo estructurado en descuentos y recargos: rechaza items de tipo
      * DESCUENTO o RECARGO sin un motivo no vacío.
      */
-    private void validarMotivo(Item item) {
-        TipoItem tipo = item.getTipo();
-        boolean requiereMotivo = tipo == TipoItem.DESCUENTO || tipo == TipoItem.RECARGO;
-        boolean motivoVacio = item.getMotivo() == null || item.getMotivo().isBlank();
+    private void validarReason(Item item) {
+        TypeItem type = item.getType();
+        boolean requiereReason = type == TypeItem.DESCUENTO || type == TypeItem.RECARGO;
+        boolean reasonVacio = item.getReason() == null || item.getReason().isBlank();
 
-        if (requiereMotivo && motivoVacio) {
+        if (requiereReason && reasonVacio) {
             throw new BusinessValidationException(
-                    "El motivo es obligatorio para ítems de tipo " + tipo);
+                    "El motivo es obligatorio para ítems de tipo " + type);
         }
     }
 }

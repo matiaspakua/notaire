@@ -14,7 +14,7 @@ http:
     type: json
     data: |-
         {
-          "fkIdPersona": { "idPersona": 1 },
+          "fkIdPersona": { "personId": 1 },
           "fecha": "2026-09-05",
           "encabezado": "Presupuesto Pagos E2E",
           "estado": "Pendiente",

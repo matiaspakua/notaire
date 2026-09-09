@@ -1,11 +1,11 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.api.PresupuestoController;
-import com.licensis.notaire.service.PresupuestoCatalogoItemsService;
-import com.licensis.notaire.service.PresupuestoPlantillaService;
-import com.licensis.notaire.service.PresupuestoResumenService;
-import com.licensis.notaire.service.PresupuestoService;
-import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.api.BudgetController;
+import com.licensis.notaire.service.BudgetCatalogoItemsService;
+import com.licensis.notaire.service.BudgetTemplateService;
+import com.licensis.notaire.service.BudgetResumenService;
+import com.licensis.notaire.service.BudgetService;
+import com.licensis.notaire.business.Budget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,24 +32,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaginationTest {
 
     @Mock
-    private PresupuestoService presupuestoService;
+    private BudgetService budgetService;
 
     @Mock
-    private PresupuestoResumenService presupuestoResumenService;
+    private BudgetResumenService budgetResumenService;
 
     @Mock
-    private PresupuestoPlantillaService presupuestoPlantillaService;
+    private BudgetTemplateService budgetTemplateService;
 
     @Mock
-    private PresupuestoCatalogoItemsService presupuestoCatalogoItemsService;
+    private BudgetCatalogoItemsService budgetCatalogoItemsService;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
-                new PresupuestoController(presupuestoService, presupuestoResumenService,
-                        presupuestoPlantillaService, presupuestoCatalogoItemsService))
+                new BudgetController(budgetService, budgetResumenService,
+                        budgetTemplateService, budgetCatalogoItemsService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
@@ -57,8 +57,8 @@ class PaginationTest {
     @Test
     @DisplayName("GET /presupuestos returns page with content and metadata")
     void shouldReturnPagedPresupuestos() throws Exception {
-        Page<Presupuesto> page = new PageImpl<>(List.of(new Presupuesto()), PageRequest.of(0, 10), 1);
-        when(presupuestoService.findAllPaged(any())).thenReturn(page);
+        Page<Budget> page = new PageImpl<>(List.of(new Budget()), PageRequest.of(0, 10), 1);
+        when(budgetService.findAllPaged(any())).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/presupuestos?page=0&size=10"))
                 .andExpect(status().isOk())
@@ -70,8 +70,8 @@ class PaginationTest {
     @Test
     @DisplayName("GET /presupuestos defaults to page=0 size=20 when no params")
     void shouldUseDefaultPaginationParams() throws Exception {
-        Page<Presupuesto> page = new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
-        when(presupuestoService.findAllPaged(any())).thenReturn(page);
+        Page<Budget> page = new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
+        when(budgetService.findAllPaged(any())).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/presupuestos"))
                 .andExpect(status().isOk())
@@ -81,8 +81,8 @@ class PaginationTest {
     @Test
     @DisplayName("GET /presupuestos with page=1 returns correct page number")
     void shouldReturnCorrectPageNumber() throws Exception {
-        Page<Presupuesto> page = new PageImpl<>(List.of(), PageRequest.of(1, 5), 12);
-        when(presupuestoService.findAllPaged(any())).thenReturn(page);
+        Page<Budget> page = new PageImpl<>(List.of(), PageRequest.of(1, 5), 12);
+        when(budgetService.findAllPaged(any())).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/presupuestos?page=1&size=5"))
                 .andExpect(status().isOk())

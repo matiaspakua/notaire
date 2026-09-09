@@ -34,8 +34,8 @@ class ApiH2IntegrationTest {
                         .contentType("application/json")
                         .content("""
                                 {
-                                  "nombre": "admin",
-                                  "contrasenia": "admin"
+                                  "name": "admin",
+                                  "password": "admin"
                                 }
                                 """))
                 .andExpect(status().isOk())

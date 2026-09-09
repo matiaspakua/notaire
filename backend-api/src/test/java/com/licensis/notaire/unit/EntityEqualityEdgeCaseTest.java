@@ -1,18 +1,18 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.RegistroAuditoria;
-import com.licensis.notaire.negocio.Suplencia;
-import com.licensis.notaire.negocio.TipoDeFolio;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.Property;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.AuditRecord;
+import com.licensis.notaire.business.Substitution;
+import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,62 +26,62 @@ class EntityEqualityEdgeCaseTest {
 
     @Nested
     @DisplayName("Presupuesto")
-    class PresupuestoEqualityTests {
+    class BudgetEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            Presupuesto p = new Presupuesto();
-            p.setIdPresupuesto(null);
-            assertThat(p).isNotEqualTo(new Presupuesto(1));
+            Budget p = new Budget();
+            p.setIdBudget(null);
+            assertThat(p).isNotEqualTo(new Budget(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            Presupuesto p1 = new Presupuesto();
-            p1.setIdPresupuesto(null);
-            Presupuesto p2 = new Presupuesto();
-            p2.setIdPresupuesto(null);
+            Budget p1 = new Budget();
+            p1.setIdBudget(null);
+            Budget p2 = new Budget();
+            p2.setIdBudget(null);
             assertThat(p1).isEqualTo(p2);
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new Presupuesto(1)).isNotEqualTo(null);
+            assertThat(new Budget(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("not equal to different type")
         void notEqualToDifferentType() {
-            assertThat(new Presupuesto(1)).isNotEqualTo("not a presupuesto");
+            assertThat(new Budget(1)).isNotEqualTo("not a budget");
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            Presupuesto p = new Presupuesto();
-            p.setIdPresupuesto(null);
+            Budget p = new Budget();
+            p.setIdBudget(null);
             assertThat(p.hashCode()).isEqualTo(0);
         }
 
         @Test
         @DisplayName("hashCode is non-zero for non-null id")
         void hashCodeNonZeroForNonNullId() {
-            assertThat(new Presupuesto(42).hashCode()).isNotEqualTo(0);
+            assertThat(new Budget(42).hashCode()).isNotEqualTo(0);
         }
 
         @Test
         @DisplayName("toString includes id")
         void toStringIncludesId() {
-            assertThat(new Presupuesto(7).toString()).contains("7");
+            assertThat(new Budget(7).toString()).contains("7");
         }
     }
 
     @Nested
     @DisplayName("Persona")
-    class PersonaEqualityTests {
+    class PersonEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
@@ -104,7 +104,7 @@ class EntityEqualityEdgeCaseTest {
         @Test
         @DisplayName("not equal to different type")
         void notEqualToDifferentType() {
-            assertThat(new Person(1)).isNotEqualTo("not a persona");
+            assertThat(new Person(1)).isNotEqualTo("not a person");
         }
 
         @Test
@@ -122,70 +122,70 @@ class EntityEqualityEdgeCaseTest {
 
     @Nested
     @DisplayName("Tramite")
-    class TramiteEqualityTests {
+    class ProcedureEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            Tramite t = new Tramite();
-            t.setIdTramite(null);
-            assertThat(t).isNotEqualTo(new Tramite(1));
+            Procedure t = new Procedure();
+            t.setIdProcedure(null);
+            assertThat(t).isNotEqualTo(new Procedure(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            Tramite t1 = new Tramite();
-            t1.setIdTramite(null);
-            Tramite t2 = new Tramite();
-            t2.setIdTramite(null);
+            Procedure t1 = new Procedure();
+            t1.setIdProcedure(null);
+            Procedure t2 = new Procedure();
+            t2.setIdProcedure(null);
             assertThat(t1).isEqualTo(t2);
         }
     }
 
     @Nested
     @DisplayName("Suplencia")
-    class SuplenciaEqualityTests {
+    class SubstitutionEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new Suplencia()).isNotEqualTo(new Suplencia(1));
+            assertThat(new Substitution()).isNotEqualTo(new Substitution(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new Suplencia()).isEqualTo(new Suplencia());
+            assertThat(new Substitution()).isEqualTo(new Substitution());
         }
     }
 
     @Nested
     @DisplayName("Copia")
-    class CopiaEqualityTests {
+    class CopyEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new Copia()).isNotEqualTo(new Copia(1));
+            assertThat(new Copy()).isNotEqualTo(new Copy(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new Copia()).isEqualTo(new Copia());
+            assertThat(new Copy()).isEqualTo(new Copy());
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new Copia(1)).isNotEqualTo(null);
+            assertThat(new Copy(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            assertThat(new Copia().hashCode()).isEqualTo(0);
+            assertThat(new Copy().hashCode()).isEqualTo(0);
         }
     }
 
@@ -220,37 +220,37 @@ class EntityEqualityEdgeCaseTest {
 
     @Nested
     @DisplayName("Inmueble")
-    class InmuebleEqualityTests {
+    class PropertyEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            Inmueble i = new Inmueble();
-            i.setIdInmueble(null);
-            assertThat(i).isNotEqualTo(new Inmueble(1));
+            Property i = new Property();
+            i.setIdProperty(null);
+            assertThat(i).isNotEqualTo(new Property(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            Inmueble i1 = new Inmueble();
-            i1.setIdInmueble(null);
-            Inmueble i2 = new Inmueble();
-            i2.setIdInmueble(null);
+            Property i1 = new Property();
+            i1.setIdProperty(null);
+            Property i2 = new Property();
+            i2.setIdProperty(null);
             assertThat(i1).isEqualTo(i2);
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new Inmueble(1)).isNotEqualTo(null);
+            assertThat(new Property(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            Inmueble i = new Inmueble();
-            i.setIdInmueble(null);
+            Property i = new Property();
+            i.setIdProperty(null);
             assertThat(i.hashCode()).isEqualTo(0);
         }
     }
@@ -294,88 +294,88 @@ class EntityEqualityEdgeCaseTest {
 
     @Nested
     @DisplayName("TipoDeFolio")
-    class TipoDeFolioEqualityTests {
+    class FolioTypeEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new TipoDeFolio()).isNotEqualTo(new TipoDeFolio(1));
+            assertThat(new FolioType()).isNotEqualTo(new FolioType(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new TipoDeFolio()).isEqualTo(new TipoDeFolio());
+            assertThat(new FolioType()).isEqualTo(new FolioType());
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new TipoDeFolio(1)).isNotEqualTo(null);
+            assertThat(new FolioType(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            assertThat(new TipoDeFolio().hashCode()).isEqualTo(0);
+            assertThat(new FolioType().hashCode()).isEqualTo(0);
         }
     }
 
     @Nested
     @DisplayName("TipoIdentificacion")
-    class TipoIdentificacionEqualityTests {
+    class IdentificationTypeEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new TipoIdentificacion()).isNotEqualTo(new TipoIdentificacion(1));
+            assertThat(new IdentificationType()).isNotEqualTo(new IdentificationType(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new TipoIdentificacion()).isEqualTo(new TipoIdentificacion());
+            assertThat(new IdentificationType()).isEqualTo(new IdentificationType());
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new TipoIdentificacion(1)).isNotEqualTo(null);
+            assertThat(new IdentificationType(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            assertThat(new TipoIdentificacion().hashCode()).isEqualTo(0);
+            assertThat(new IdentificationType().hashCode()).isEqualTo(0);
         }
     }
 
     @Nested
     @DisplayName("RegistroAuditoria")
-    class RegistroAuditoriaEqualityTests {
+    class AuditRecordEqualityTests {
 
         @Test
         @DisplayName("null id is not equal to non-null id")
         void nullIdNotEqualToNonNull() {
-            assertThat(new RegistroAuditoria()).isNotEqualTo(new RegistroAuditoria(1));
+            assertThat(new AuditRecord()).isNotEqualTo(new AuditRecord(1));
         }
 
         @Test
         @DisplayName("both null ids are equal")
         void bothNullIdsAreEqual() {
-            assertThat(new RegistroAuditoria()).isEqualTo(new RegistroAuditoria());
+            assertThat(new AuditRecord()).isEqualTo(new AuditRecord());
         }
 
         @Test
         @DisplayName("not equal to null")
         void notEqualToNull() {
-            assertThat(new RegistroAuditoria(1)).isNotEqualTo(null);
+            assertThat(new AuditRecord(1)).isNotEqualTo(null);
         }
 
         @Test
         @DisplayName("hashCode is zero when id is null")
         void hashCodeZeroWhenIdNull() {
-            assertThat(new RegistroAuditoria().hashCode()).isEqualTo(0);
+            assertThat(new AuditRecord().hashCode()).isEqualTo(0);
         }
     }
 

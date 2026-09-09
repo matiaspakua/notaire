@@ -233,9 +233,9 @@ class ObservabilityTest {
         @Test
         @DisplayName("recordDatabaseOperation should register the timer")
         void recordDatabaseOperationShouldRegister() {
-            metrics.recordDatabaseOperation("select", "personas", 25);
+            metrics.recordDatabaseOperation("select", "persons", 25);
             assertThat(registry.timer("notaire_database_operation_duration",
-                    "operation", "select", "table", "personas").count()).isEqualTo(1L);
+                    "operation", "select", "table", "persons").count()).isEqualTo(1L);
         }
 
         @Test

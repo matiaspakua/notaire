@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoItem;
-import com.licensis.notaire.dto.TipoItem;
+import com.licensis.notaire.dto.TypeItem;
 import java.io.Serializable;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -38,23 +38,23 @@ import org.springframework.data.domain.Persistable;
         {
             @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
             @NamedQuery(name = "Item.findByIdItem", query = "SELECT i FROM Item i WHERE i.idItem = :idItem"),
-            @NamedQuery(name = "Item.findByValor", query = "SELECT i FROM Item i WHERE i.valor = :valor"),
-            @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.porcentaje = :porcentaje"),
-            @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdPresupuesto.idPresupuesto = :idPresupuesto")
+            @NamedQuery(name = "Item.findByValor", query = "SELECT i FROM Item i WHERE i.value = :valor"),
+            @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.percentage = :porcentaje"),
+            @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdBudget.idBudget = :idPresupuesto")
         })
 public class Item implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
     @Column(name = "concepto_fijo")
-    private boolean conceptoFijo;
+    private boolean fixedConcept;
     @Basic(optional = false)
     @Column(name = "version")
     @Version
     private int version = 0;
     @Basic(optional = false)
     @Column(name = "valor")
-    private float valor;
+    private float value;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,20 +63,20 @@ public class Item implements Serializable, Persistable<Integer>
     private Integer idItem;
     @Basic(optional = false)
     @Column(name = "nombre")
-    private String nombre;
+    private String name;
     @Column(name = "porcentaje")
-    private Integer porcentaje;
+    private Integer percentage;
     @Column(name = "observaciones")
-    private String observaciones;
+    private String notes;
     @Column(name = "tipo")
     @Enumerated(EnumType.STRING)
-    private TipoItem tipo = TipoItem.NORMAL;
+    private TypeItem type = TypeItem.NORMAL;
     @Column(name = "motivo")
-    private String motivo;
+    private String reason;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Presupuesto fkIdPresupuesto;
+    private Budget fkIdBudget;
 
     /**
      * Constructor por defaul de Item. Inicializa el ID presupuesto segun el campo
@@ -84,7 +84,7 @@ public class Item implements Serializable, Persistable<Integer>
      */
     public Item()
     {
-        this.idItem = ConstantesNegocio.ID_OBJETO_NO_VALIDO;
+        this.idItem = BusinessConstants.ID_OBJETO_NO_VALIDO;
     }
 
     public Item(Integer idItem)
@@ -92,11 +92,11 @@ public class Item implements Serializable, Persistable<Integer>
         this.idItem = idItem;
     }
 
-    public Item(Integer idItem, String nombre, Float valor)
+    public Item(Integer idItem, String name, Float value)
     {
         this.idItem = idItem;
-        this.nombre = nombre;
-        this.valor = valor;
+        this.name = name;
+        this.value = value;
     }
 
     public Integer getIdItem()
@@ -122,93 +122,93 @@ public class Item implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew()
     {
-        return idItem == null || idItem.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+        return idItem == null || idItem.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
     }
 
-    public String getNombre()
+    public String getName()
     {
-        return nombre;
+        return name;
     }
 
-    public void setNombre(String nombre)
+    public void setName(String name)
     {
-        this.nombre = nombre;
+        this.name = name;
     }
 
-    public Integer getPorcentaje()
+    public Integer getPercentage()
     {
-        return porcentaje;
+        return percentage;
     }
 
-    public void setPorcentaje(Integer porcentaje)
+    public void setPercentage(Integer percentage)
     {
-        this.porcentaje = porcentaje;
+        this.percentage = percentage;
     }
 
-    public String getObservaciones()
+    public String getNotes()
     {
-        return observaciones;
+        return notes;
     }
 
-    public void setObservaciones(String observaciones)
+    public void setNotes(String notes)
     {
-        this.observaciones = observaciones;
+        this.notes = notes;
     }
 
-    public Presupuesto getFkIdPresupuesto()
+    public Budget getFkIdBudget()
     {
-        return fkIdPresupuesto;
+        return fkIdBudget;
     }
 
-    public void setFkIdPresupuesto(Presupuesto fkIdPresupuesto)
+    public void setFkIdBudget(Budget fkIdBudget)
     {
-        this.fkIdPresupuesto = fkIdPresupuesto;
+        this.fkIdBudget = fkIdBudget;
     }
 
-    public TipoItem getTipo()
+    public TypeItem getType()
     {
-        return tipo;
+        return type;
     }
 
-    public void setTipo(TipoItem tipo)
+    public void setType(TypeItem type)
     {
-        this.tipo = tipo;
+        this.type = type;
     }
 
-    public String getMotivo()
+    public String getReason()
     {
-        return motivo;
+        return reason;
     }
 
-    public void setMotivo(String motivo)
+    public void setReason(String reason)
     {
-        this.motivo = motivo;
+        this.reason = reason;
     }
 
     public void setAtributos(DtoItem miDto)
     {
         idItem = miDto.getIdItem();
-        nombre = miDto.getNombre();
-        valor = miDto.getValor();
+        name = miDto.getName();
+        value = miDto.getValue();
 
-        if (miDto.getPorcentaje() != null)
+        if (miDto.getPercentage() != null)
         {
-            porcentaje = miDto.getPorcentaje();
+            percentage = miDto.getPercentage();
         }
 
-        if (miDto.getObservaciones() != null)
+        if (miDto.getNotes() != null)
         {
-            observaciones = miDto.getObservaciones();
+            notes = miDto.getNotes();
         }
 
-        conceptoFijo = miDto.isFijo();
+        fixedConcept = miDto.isFixed();
 
-        if (miDto.getTipo() != null)
+        if (miDto.getType() != null)
         {
-            tipo = miDto.getTipo();
+            type = miDto.getType();
         }
 
-        motivo = miDto.getMotivo();
+        reason = miDto.getReason();
 
         version = miDto.getVersion();
     }
@@ -218,14 +218,14 @@ public class Item implements Serializable, Persistable<Integer>
         DtoItem miDtoItem = new DtoItem();
 
         miDtoItem.setIdItem(idItem);
-        miDtoItem.setNombre(nombre);
-        miDtoItem.setObservaciones(observaciones);
-        miDtoItem.setPorcentaje(porcentaje);
-        miDtoItem.setValor(valor);
+        miDtoItem.setName(name);
+        miDtoItem.setNotes(notes);
+        miDtoItem.setPercentage(percentage);
+        miDtoItem.setValue(value);
         miDtoItem.setVersion(version);
-        miDtoItem.setConceptoFijo(conceptoFijo);
-        miDtoItem.setTipo(tipo);
-        miDtoItem.setMotivo(motivo);
+        miDtoItem.setFixedConcept(fixedConcept);
+        miDtoItem.setType(type);
+        miDtoItem.setReason(reason);
 
         return miDtoItem;
     }
@@ -258,7 +258,7 @@ public class Item implements Serializable, Persistable<Integer>
     public String toString()
     {
         return "negocio.Item[ idItem=" + idItem + " ]"
-                + "[ nombre=" + nombre + " ]";
+                + "[ nombre=" + name + " ]";
     }
 
     public int getVersion()
@@ -271,23 +271,23 @@ public class Item implements Serializable, Persistable<Integer>
         this.version = version;
     }
 
-    public float getValor()
+    public float getValue()
     {
-        return valor;
+        return value;
     }
 
-    public void setValor(float valor)
+    public void setValue(float value)
     {
-        this.valor = valor;
+        this.value = value;
     }
 
-    public boolean isFijo()
+    public boolean isFixed()
     {
-        return conceptoFijo;
+        return fixedConcept;
     }
 
-    public void setConceptoFijo(boolean conceptoFijo)
+    public void setFixedConcept(boolean fixedConcept)
     {
-        this.conceptoFijo = conceptoFijo;
+        this.fixedConcept = fixedConcept;
     }
 }

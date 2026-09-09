@@ -745,7 +745,7 @@ export async function brunoGetRegistrosAuditoria(
   page: Page,
   usuarioId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/registro-auditoria/usuario/${usuarioId}`);
+  return apiGet(page, `/audit-log/user/${usuarioId}`);
 }
 
 export async function brunoGetEstadoActualGestion(

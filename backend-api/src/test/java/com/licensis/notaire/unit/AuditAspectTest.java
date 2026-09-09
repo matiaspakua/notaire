@@ -35,7 +35,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("AuditoriaAspect unit tests")
+@DisplayName("AuditAspect unit tests")
 @ExtendWith(MockitoExtension.class)
 class AuditAspectTest {
 
@@ -205,7 +205,7 @@ class AuditAspectTest {
     }
 
     @Test
-    @DisplayName("Should resolve Usuarios module from UserController mutation")
+    @DisplayName("Should resolve Users module from UserController mutation")
     void shouldResolveUsersModuleFromUserController() throws NoSuchMethodException, ClassNotFoundException {
         authenticateAs("admin");
         when(userRepository.findAll()).thenReturn(List.of(adminUser));
@@ -218,7 +218,7 @@ class AuditAspectTest {
 
         ArgumentCaptor<AuditRecord> captor = ArgumentCaptor.forClass(AuditRecord.class);
         verify(auditService).save(captor.capture());
-        assertThat(captor.getValue().getModule()).isEqualTo("Usuarios");
+        assertThat(captor.getValue().getModule()).isEqualTo("Users");
     }
 
     @Test

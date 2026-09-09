@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoGestionDeEscritura;
+import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.dto.DtoTipoIdentificacion;
-import com.licensis.notaire.dto.DtoTramite;
+import com.licensis.notaire.dto.DtoIdentificationType;
+import com.licensis.notaire.dto.DtoProcedure;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -83,123 +83,123 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 })
 @NamedQueries({
         @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
-        @NamedQuery(name = "Person.findByIdPersona", query = "SELECT p FROM Person p WHERE p.idPersona = :idPersona"),
-        @NamedQuery(name = "Person.findByNumeroIdentificacion", query = "SELECT p FROM Person p WHERE p.numeroIdentificacion = :numeroIdentificacion"),
-        @NamedQuery(name = "Person.findBySexo", query = "SELECT p FROM Person p WHERE p.sexo = :sexo"),
-        @NamedQuery(name = "Person.findByFechaNacimiento", query = "SELECT p FROM Person p WHERE p.fechaNacimiento = :fechaNacimiento"),
-        @NamedQuery(name = "Person.findByNumeroNupcias", query = "SELECT p FROM Person p WHERE p.numeroNupcias = :numeroNupcias"),
-        @NamedQuery(name = "Person.findByRegistroEscribano", query = "SELECT p FROM Person p WHERE p.registroEscribano = :registroEscribano"),
-        @NamedQuery(name = "Person.findByEsCliente", query = "SELECT p FROM Person p WHERE p.esCliente = :esCliente"),
-        @NamedQuery(name = "Person.findByPersonaNombreApellido", query = "SELECT p FROM Person p WHERE p.nombre LIKE :nombre and p.apellido LIKE :apellido"),
+        @NamedQuery(name = "Person.findByIdPersona", query = "SELECT p FROM Person p WHERE p.idPerson = :idPersona"),
+        @NamedQuery(name = "Person.findByNumeroIdentificacion", query = "SELECT p FROM Person p WHERE p.identificationNumber = :numeroIdentificacion"),
+        @NamedQuery(name = "Person.findBySexo", query = "SELECT p FROM Person p WHERE p.sex = :sexo"),
+        @NamedQuery(name = "Person.findByFechaNacimiento", query = "SELECT p FROM Person p WHERE p.birthDate = :fechaNacimiento"),
+        @NamedQuery(name = "Person.findByNumeroNupcias", query = "SELECT p FROM Person p WHERE p.marriageCount = :numeroNupcias"),
+        @NamedQuery(name = "Person.findByRegistroEscribano", query = "SELECT p FROM Person p WHERE p.notaryRegistrationNumber = :registroEscribano"),
+        @NamedQuery(name = "Person.findByEsCliente", query = "SELECT p FROM Person p WHERE p.isClient = :esCliente"),
+        @NamedQuery(name = "Person.findByPersonaNombreApellido", query = "SELECT p FROM Person p WHERE p.name LIKE :nombre and p.lastName LIKE :apellido"),
 })
 public class Person implements Serializable, Persistable<Integer> {
 
     @Column(name = "fecha_nacimiento")
     @Temporal(TemporalType.DATE)
-    private Date fechaNacimiento;
+    private Date birthDate;
     @Basic(optional = false)
     @Column(name = "version")
     @Version
     private int version;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
-    private List<TramitesPersonas> tramitesPersonasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person", fetch = FetchType.LAZY)
+    private List<PersonProcedure> personProcedureList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer idPersona;
+    private Integer idPerson;
     @Basic(optional = false)
     @Column(name = "first_name")
     @NotBlank
-    private String nombre;
+    private String name;
     @Basic(optional = false)
     @Column(name = "last_name")
     @NotBlank
-    private String apellido;
+    private String lastName;
     @Column(name = "nationality")
-    private String nacionalidad;
+    private String nationality;
     @Basic(optional = false)
     @Column(name = "identification_number")
     @NotBlank
-    private String numeroIdentificacion;
+    private String identificationNumber;
     @Column(name = "tax_id")
-    private String cuit;
+    private String taxId;
     @Column(name = "sex")
-    private String sexo;
+    private String sex;
     @Column(name = "marital_status")
-    private String estadoCivil;
+    private String maritalStatus;
     @Column(name = "marriage_count")
-    private Integer numeroNupcias;
+    private Integer marriageCount;
     @Column(name = "occupation")
-    private String ocupacion;
+    private String occupation;
     @Column(name = "address")
-    private String domicilio;
+    private String address;
     @Column(name = "phone")
-    private String telefono;
+    private String phone;
     @Column(name = "email")
-    private String eMail;
+    private String email;
     @Column(name = "notary_registration_number")
-    private Integer registroEscribano;
+    private Integer notaryRegistrationNumber;
     @Basic(optional = false)
     @Column(name = "is_client")
-    private boolean esCliente;
+    private boolean isClient;
     @XmlTransient
     @JsonIgnore
-    @ManyToMany(mappedBy = "personaList", fetch = FetchType.LAZY)
-    private List<Tramite> tramiteList;
+    @ManyToMany(mappedBy = "personList", fetch = FetchType.LAZY)
+    private List<Procedure> procedureList;
     @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id_tipo_identificacion")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private TipoIdentificacion fkIdTipoIdentificacion;
+    private IdentificationType fkIdIdentificationType;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
-    private List<Presupuesto> presupuestoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPerson", fetch = FetchType.LAZY)
+    private List<Budget> budgetList;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersonaEscribano", fetch = FetchType.LAZY)
-    private List<GestionDeEscritura> GestionDeEscrituraList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdNotaryPerson", fetch = FetchType.LAZY)
+    private List<DeedManagement> DeedManagementList;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersonaEscribano", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdNotaryPerson", fetch = FetchType.LAZY)
     private List<Folio> folioList;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSuplente", fetch = FetchType.LAZY)
-    private List<Suplencia> suplenciaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSubstitute", fetch = FetchType.LAZY)
+    private List<Substitution> substitutionList;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSuplantado", fetch = FetchType.LAZY)
-    private List<Suplencia> suplenciaList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdSubstitute", fetch = FetchType.LAZY)
+    private List<Substitution> substitutionList1;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
-    private List<Usuario> usuariosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPerson", fetch = FetchType.LAZY)
+    private List<User> userList;
     @XmlTransient
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPersona", fetch = FetchType.LAZY)
-    private List<Copia> copiaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdPerson", fetch = FetchType.LAZY)
+    private List<Copy> copyList;
 
     public Person() {
     }
 
-    public Person(Integer idPersona) {
-        this.idPersona = idPersona;
+    public Person(Integer idPerson) {
+        this.idPerson = idPerson;
     }
 
-    public Person(Integer idPersona, String nombre, String apellido, String numeroIdentificacion, boolean esCliente) {
-        this.idPersona = idPersona;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.numeroIdentificacion = numeroIdentificacion;
-        this.esCliente = esCliente;
+    public Person(Integer idPerson, String name, String lastName, String identificationNumber, boolean isClient) {
+        this.idPerson = idPerson;
+        this.name = name;
+        this.lastName = lastName;
+        this.identificationNumber = identificationNumber;
+        this.isClient = isClient;
     }
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public Integer getId() {
-        return idPersona;
+        return idPerson;
     }
 
     // Overrides Spring Data's default isNew(), which infers "new" from a primitive
@@ -208,168 +208,168 @@ public class Person implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idPersona == null || idPersona.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+        return idPerson == null || idPerson.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
     }
 
 
     public Integer getPersonId() {
-        return idPersona;
+        return idPerson;
     }
 
-    public void setPersonId(Integer idPersona) {
-        this.idPersona = idPersona;
+    public void setPersonId(Integer idPerson) {
+        this.idPerson = idPerson;
     }
 
     public String getFirstName() {
-        return nombre;
+        return name;
     }
 
-    public void setFirstName(String nombre) {
-        this.nombre = nombre;
+    public void setFirstName(String name) {
+        this.name = name;
     }
 
     public String getLastName() {
-        return apellido;
+        return lastName;
     }
 
-    public void setLastName(String apellido) {
-        this.apellido = apellido;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getNationality() {
-        return nacionalidad;
+        return nationality;
     }
 
-    public void setNationality(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public String getIdentificationNumber() {
-        return numeroIdentificacion;
+        return identificationNumber;
     }
 
     @JsonAlias("dni")
-    public void setIdentificationNumber(String numeroIdentificacion) {
-        this.numeroIdentificacion = numeroIdentificacion;
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
     }
 
     public String getTaxId() {
-        return cuit;
+        return taxId;
     }
 
     @JsonAlias("cuil")
-    public void setTaxId(String cuit) {
-        this.cuit = cuit;
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
     }
 
     public String getSex() {
-        return sexo;
+        return sex;
     }
 
-    public void setSex(String sexo) {
-        this.sexo = sexo;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public Date getBirthDate() {
-        return fechaNacimiento;
+        return birthDate;
     }
 
-    public void setBirthDate(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getMaritalStatus() {
-        return estadoCivil;
+        return maritalStatus;
     }
 
-    public void setMaritalStatus(String estadoCivil) {
-        this.estadoCivil = estadoCivil;
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public Integer getMarriageCount() {
-        return numeroNupcias;
+        return marriageCount;
     }
 
-    public void setMarriageCount(Integer numeroNupcias) {
-        this.numeroNupcias = numeroNupcias;
+    public void setMarriageCount(Integer marriageCount) {
+        this.marriageCount = marriageCount;
     }
 
     public String getOccupation() {
-        return ocupacion;
+        return occupation;
     }
 
-    public void setOccupation(String ocupacion) {
-        this.ocupacion = ocupacion;
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
 
     public String getAddress() {
-        return domicilio;
+        return address;
     }
 
-    public void setAddress(String domicilio) {
-        this.domicilio = domicilio;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhone() {
-        return telefono;
+        return phone;
     }
 
-    public void setPhone(String telefono) {
-        this.telefono = telefono;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getEmail() {
-        return eMail;
+        return email;
     }
 
-    public void setEmail(String eMail) {
-        this.eMail = eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Integer getNotaryRegistrationNumber() {
-        return registroEscribano;
+        return notaryRegistrationNumber;
     }
 
-    public void setNotaryRegistrationNumber(Integer registroEscribano) {
-        this.registroEscribano = registroEscribano;
+    public void setNotaryRegistrationNumber(Integer notaryRegistrationNumber) {
+        this.notaryRegistrationNumber = notaryRegistrationNumber;
     }
 
     public boolean getIsClient() {
-        return esCliente;
+        return isClient;
     }
 
-    public void setIsClient(boolean esCliente) {
-        this.esCliente = esCliente;
-    }
-
-    @XmlTransient
-    @JsonIgnore
-    public List<Tramite> getTramiteList() {
-        return tramiteList;
-    }
-
-    public void setTramiteList(List<Tramite> tramiteList) {
-        this.tramiteList = tramiteList;
-    }
-
-    public TipoIdentificacion getFkIdIdentificationType() {
-        return fkIdTipoIdentificacion;
-    }
-
-    public void setFkIdIdentificationType(TipoIdentificacion fkIdTipoIdentificacion) {
-        this.fkIdTipoIdentificacion = fkIdTipoIdentificacion;
+    public void setIsClient(boolean isClient) {
+        this.isClient = isClient;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<Presupuesto> getPresupuestoList() {
-        return presupuestoList;
+    public List<Procedure> getProcedureList() {
+        return procedureList;
+    }
+
+    public void setProcedureList(List<Procedure> procedureList) {
+        this.procedureList = procedureList;
+    }
+
+    public IdentificationType getFkIdIdentificationType() {
+        return fkIdIdentificationType;
+    }
+
+    public void setFkIdIdentificationType(IdentificationType fkIdIdentificationType) {
+        this.fkIdIdentificationType = fkIdIdentificationType;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<GestionDeEscritura> getGestionDeEscrituraList() {
-        return GestionDeEscrituraList;
+    public List<Budget> getBudgetList() {
+        return budgetList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<DeedManagement> getDeedManagementList() {
+        return DeedManagementList;
     }
 
     @XmlTransient
@@ -380,60 +380,60 @@ public class Person implements Serializable, Persistable<Integer> {
 
     @XmlTransient
     @JsonIgnore
-    public List<Suplencia> getSuplenciaList() {
-        return suplenciaList;
+    public List<Substitution> getSubstitutionList() {
+        return substitutionList;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<Suplencia> getSuplenciaList1() {
-        return suplenciaList1;
+    public List<Substitution> getSubstitutionList1() {
+        return substitutionList1;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<Usuario> getUsuariosList() {
-        return usuariosList;
+    public List<User> getUserList() {
+        return userList;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<Copia> getCopiaList() {
-        return copiaList;
+    public List<Copy> getCopyList() {
+        return copyList;
     }
 
-    public void setPresupuestoList(List<Presupuesto> presupuestoList) {
-        this.presupuestoList = presupuestoList;
+    public void setBudgetList(List<Budget> budgetList) {
+        this.budgetList = budgetList;
     }
 
-    public void setGestionDeEscrituraList(List<GestionDeEscritura> GestionDeEscrituraList) {
-        this.GestionDeEscrituraList = GestionDeEscrituraList;
+    public void setDeedManagementList(List<DeedManagement> DeedManagementList) {
+        this.DeedManagementList = DeedManagementList;
     }
 
     public void setFolioList(List<Folio> folioList) {
         this.folioList = folioList;
     }
 
-    public void setSuplenciaList(List<Suplencia> suplenciaList) {
-        this.suplenciaList = suplenciaList;
+    public void setSubstitutionList(List<Substitution> substitutionList) {
+        this.substitutionList = substitutionList;
     }
 
-    public void setSuplenciaList1(List<Suplencia> suplenciaList1) {
-        this.suplenciaList1 = suplenciaList1;
+    public void setSubstitutionList1(List<Substitution> substitutionList1) {
+        this.substitutionList1 = substitutionList1;
     }
 
-    public void setUsuariosList(List<Usuario> usuariosList) {
-        this.usuariosList = usuariosList;
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
     }
 
-    public void setCopiaList(List<Copia> copiaList) {
-        this.copiaList = copiaList;
+    public void setCopyList(List<Copy> copyList) {
+        this.copyList = copyList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idPersona != null ? idPersona.hashCode() : 0);
+        hash += (idPerson != null ? idPerson.hashCode() : 0);
         return hash;
     }
 
@@ -444,8 +444,8 @@ public class Person implements Serializable, Persistable<Integer> {
             return false;
         }
         Person other = (Person) object;
-        if ((this.idPersona == null && other.idPersona != null)
-                || (this.idPersona != null && !this.idPersona.equals(other.idPersona))) {
+        if ((this.idPerson == null && other.idPerson != null)
+                || (this.idPerson != null && !this.idPerson.equals(other.idPerson))) {
             return false;
         }
         return true;
@@ -453,150 +453,150 @@ public class Person implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Person[ idPersona=" + idPersona + " ]"
-                + "[ nombre=" + nombre + " ]"
-                + "[ apellido=" + apellido + " ]";
+        return "Person[ idPersona=" + idPerson + " ]"
+                + "[ nombre=" + name + " ]"
+                + "[ apellido=" + lastName + " ]";
     }
 
     @JsonIgnore
     public DtoPerson getDto() {
 
-        DtoPerson dtoPersona = new DtoPerson();
+        DtoPerson dtoPerson = new DtoPerson();
 
         // Version del objeto
-        dtoPersona.setVersion(this.version);
-        dtoPersona.setId(this.idPersona);
-        dtoPersona.setFirstName(this.nombre);
-        dtoPersona.setLastName(this.apellido);
-        dtoPersona.setTaxId(this.cuit);
-        dtoPersona.setEmail(this.eMail);
-        dtoPersona.setIsClient(this.esCliente);
-        dtoPersona.setMaritalStatus(this.estadoCivil);
-        dtoPersona.setBirthDate(this.fechaNacimiento);
-        dtoPersona.setNationality(this.nacionalidad);
-        dtoPersona.setIdentificationNumber(this.getIdentificationNumber());
-        dtoPersona.setMarriageCount(this.numeroNupcias);
-        dtoPersona.setOccupation(this.ocupacion);
-        dtoPersona.setAddress(this.domicilio);
-        dtoPersona.setNotaryRegistrationNumber(this.registroEscribano);
-        dtoPersona.setSex(this.sexo);
-        dtoPersona.setPhone(this.telefono);
+        dtoPerson.setVersion(this.version);
+        dtoPerson.setId(this.idPerson);
+        dtoPerson.setFirstName(this.name);
+        dtoPerson.setLastName(this.lastName);
+        dtoPerson.setTaxId(this.taxId);
+        dtoPerson.setEmail(this.email);
+        dtoPerson.setIsClient(this.isClient);
+        dtoPerson.setMaritalStatus(this.maritalStatus);
+        dtoPerson.setBirthDate(this.birthDate);
+        dtoPerson.setNationality(this.nationality);
+        dtoPerson.setIdentificationNumber(this.getIdentificationNumber());
+        dtoPerson.setMarriageCount(this.marriageCount);
+        dtoPerson.setOccupation(this.occupation);
+        dtoPerson.setAddress(this.address);
+        dtoPerson.setNotaryRegistrationNumber(this.notaryRegistrationNumber);
+        dtoPerson.setSex(this.sex);
+        dtoPerson.setPhone(this.phone);
 
-        DtoTipoIdentificacion dtoTipoIdentificacion = new DtoTipoIdentificacion();
-        dtoTipoIdentificacion.setIdTipoIdentificacion(getFkIdIdentificationType().getIdTipoIdentificacion());
+        DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
+        dtoIdentificationType.setIdIdentificationType(getFkIdIdentificationType().getIdIdentificationType());
 
-        dtoPersona.setDtoTipoIdentificacion(dtoTipoIdentificacion);
+        dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
         // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
-        dtoTipoIdentificacion.setNombre(ControllerNegocio.getInstancia().asociarNombreTipoIdentificacion(dtoPersona));
+        dtoIdentificationType.setName(BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
 
         // Asocio la lista de gestiones que tiene la persona si es Escribano
         if (this.getNotaryRegistrationNumber() != null) {
-            ArrayList<DtoGestionDeEscritura> miListaDtoGestionEscribano = new ArrayList<>();
+            ArrayList<DtoDeedManagement> miListaDtoManagementNotary = new ArrayList<>();
 
-            if (!this.GestionDeEscrituraList.isEmpty()) {
-                for (int i = 0; i < this.GestionDeEscrituraList.size(); i++) {
-                    DtoGestionDeEscritura dtoGestionDeEscritura = this.GestionDeEscrituraList.get(i).getDto();
-                    miListaDtoGestionEscribano.add(dtoGestionDeEscritura);
+            if (!this.DeedManagementList.isEmpty()) {
+                for (int i = 0; i < this.DeedManagementList.size(); i++) {
+                    DtoDeedManagement dtoDeedManagement = this.DeedManagementList.get(i).getDto();
+                    miListaDtoManagementNotary.add(dtoDeedManagement);
                 }
-                dtoPersona.setListDtoGestionDeEscriturasDeEscribano(miListaDtoGestionEscribano);
+                dtoPerson.setListDtoManagementDeEscriturasDeNotary(miListaDtoManagementNotary);
             }
         }
 
         // Asocio la lista de tramites que pertenece a la persona
-        ArrayList<DtoTramite> miListaDtoTramites = new ArrayList<>();
-        if (this.tramiteList != null && !this.tramiteList.isEmpty()) {
-            for (int i = 0; i < this.tramiteList.size(); i++) {
-                DtoTramite dtoTramite = this.tramiteList.get(i).getDto();
-                miListaDtoTramites.add(dtoTramite);
+        ArrayList<DtoProcedure> miListaDtoProcedures = new ArrayList<>();
+        if (this.procedureList != null && !this.procedureList.isEmpty()) {
+            for (int i = 0; i < this.procedureList.size(); i++) {
+                DtoProcedure dtoProcedure = this.procedureList.get(i).getDto();
+                miListaDtoProcedures.add(dtoProcedure);
             }
-            dtoPersona.setListaTramitesPersona(miListaDtoTramites);
+            dtoPerson.setListaProceduresPerson(miListaDtoProcedures);
         }
 
         // Asocio la lista de gestiones que tiene la persona
-        ArrayList<DtoGestionDeEscritura> miListaDtoGestionPersona = new ArrayList<>();
+        ArrayList<DtoDeedManagement> miListaDtoManagementPerson = new ArrayList<>();
         ArrayList<Integer> listaIdGestiones = new ArrayList<>();
 
         try {
-            if (tramiteList != null && !tramiteList.isEmpty()) {
-                for (int i = 0; i < this.tramiteList.size(); i++) {
+            if (procedureList != null && !procedureList.isEmpty()) {
+                for (int i = 0; i < this.procedureList.size(); i++) {
                     // esto retorna tantas gestiones como tramites tenga la persona, si hay una
                     // tramite con una persona, esa persona tiene gestion
                     // si es otro tramite pero de la misma pgestion con la misma persona, repite la
                     // gestion
-                    DtoGestionDeEscritura dtoGestionDeEscritura = this.tramiteList.get(i).getFkIdGestion().getDto();
+                    DtoDeedManagement dtoDeedManagement = this.procedureList.get(i).getFkIdManagement().getDto();
 
                     // Elimino Gestiones duplicadas, a causa de los tramites
                     // Si retorna entero positivo esta, sino no.
-                    if (!listaIdGestiones.contains(dtoGestionDeEscritura.getIdGestion())) {
-                        listaIdGestiones.add(dtoGestionDeEscritura.getIdGestion());
-                        miListaDtoGestionPersona.add(dtoGestionDeEscritura);
+                    if (!listaIdGestiones.contains(dtoDeedManagement.getIdManagement())) {
+                        listaIdGestiones.add(dtoDeedManagement.getIdManagement());
+                        miListaDtoManagementPerson.add(dtoDeedManagement);
                     }
                 }
-                dtoPersona.setListaDtoGestionDeEscriturasPersona(miListaDtoGestionPersona);
+                dtoPerson.setListaDtoManagementDeEscriturasPerson(miListaDtoManagementPerson);
             }
         } catch (LazyInitializationException ex) {
-            dtoPersona.setListaDtoGestionDeEscriturasPersona(miListaDtoGestionPersona);
+            dtoPerson.setListaDtoManagementDeEscriturasPerson(miListaDtoManagementPerson);
         }
-        return dtoPersona;
+        return dtoPerson;
     }
 
-    public ArrayList<DtoGestionDeEscritura> elimimarDuplicados(ArrayList<DtoGestionDeEscritura> listaDtoEscritura) {
+    public ArrayList<DtoDeedManagement> elimimarDuplicados(ArrayList<DtoDeedManagement> listaDtoDeed) {
 
         // Creamos un objeto HashSet
         HashSet hs = new HashSet();
 
         // Lo cargamos con los valores del array, esto hace quite los repetidos
-        hs.addAll(listaDtoEscritura);
+        hs.addAll(listaDtoDeed);
 
         // Limpiamos el array
-        listaDtoEscritura.clear();
-        listaDtoEscritura.addAll(hs);
+        listaDtoDeed.clear();
+        listaDtoDeed.addAll(hs);
 
-        return listaDtoEscritura;
+        return listaDtoDeed;
 
     }
 
-    public void setAtributos(DtoPerson dtoPersona) {
+    public void setAtributos(DtoPerson dtoPerson) {
 
         // Version del objeto
-        this.setVersion(dtoPersona.getVersion());
+        this.setVersion(dtoPerson.getVersion());
 
-        this.setFirstName(dtoPersona.getFirstName());
-        this.setLastName(dtoPersona.getLastName());
-        this.setPhone(dtoPersona.getPhone());
-        this.setEmail(dtoPersona.getEmail());
-        this.setPersonId(dtoPersona.getId());
-        this.setIdentificationNumber(dtoPersona.getIdentificationNumber());
+        this.setFirstName(dtoPerson.getFirstName());
+        this.setLastName(dtoPerson.getLastName());
+        this.setPhone(dtoPerson.getPhone());
+        this.setEmail(dtoPerson.getEmail());
+        this.setPersonId(dtoPerson.getId());
+        this.setIdentificationNumber(dtoPerson.getIdentificationNumber());
 
-        TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setIdTipoIdentificacion(dtoPersona.getDtoTipoIdentificacion().getIdTipoIdentificacion());
-        tipoIdentificacion.setNombre(dtoPersona.getDtoTipoIdentificacion().getNombre());
-        this.setFkIdIdentificationType(tipoIdentificacion);
+        IdentificationType identificationType = new IdentificationType();
+        identificationType.setIdIdentificationType(dtoPerson.getDtoIdentificationType().getIdIdentificationType());
+        identificationType.setName(dtoPerson.getDtoIdentificationType().getName());
+        this.setFkIdIdentificationType(identificationType);
 
         // Set atributos Cliente
-        if (dtoPersona.getIsClient()) {
-            this.setNationality(dtoPersona.getNationality());
-            this.setBirthDate(dtoPersona.getBirthDate());
-            this.setTaxId(dtoPersona.getTaxId());
-            this.setMaritalStatus(dtoPersona.getMaritalStatus());
-            this.setMarriageCount(dtoPersona.getMarriageCount());
-            this.setSex(dtoPersona.getSex());
-            this.setOccupation(dtoPersona.getOccupation());
-            this.setAddress(dtoPersona.getAddress());
-            this.setIsClient(dtoPersona.getIsClient());
+        if (dtoPerson.getIsClient()) {
+            this.setNationality(dtoPerson.getNationality());
+            this.setBirthDate(dtoPerson.getBirthDate());
+            this.setTaxId(dtoPerson.getTaxId());
+            this.setMaritalStatus(dtoPerson.getMaritalStatus());
+            this.setMarriageCount(dtoPerson.getMarriageCount());
+            this.setSex(dtoPerson.getSex());
+            this.setOccupation(dtoPerson.getOccupation());
+            this.setAddress(dtoPerson.getAddress());
+            this.setIsClient(dtoPerson.getIsClient());
         }
 
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<TramitesPersonas> getTramitesPersonasList() {
-        return tramitesPersonasList;
+    public List<PersonProcedure> getPersonProcedureList() {
+        return personProcedureList;
     }
 
-    public void setTramitesPersonasList(List<TramitesPersonas> tramitesPersonasList) {
-        this.tramitesPersonasList = tramitesPersonasList;
+    public void setPersonProcedureList(List<PersonProcedure> personProcedureList) {
+        this.personProcedureList = personProcedureList;
     }
 
     public int getVersion() {

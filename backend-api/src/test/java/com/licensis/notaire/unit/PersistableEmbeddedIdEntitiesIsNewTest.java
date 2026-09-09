@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.FoliosCopias;
-import com.licensis.notaire.negocio.PlantillaCostoDocumento;
-import com.licensis.notaire.negocio.PlantillaPresupuesto;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.TramitesPersonas;
+import com.licensis.notaire.business.FolioCopies;
+import com.licensis.notaire.business.DocumentCostTemplate;
+import com.licensis.notaire.business.BudgetTemplate;
+import com.licensis.notaire.business.ProcedureTemplate;
+import com.licensis.notaire.business.PersonProcedure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,11 +42,11 @@ class PersistableEmbeddedIdEntitiesIsNewTest {
 
     static Stream<Arguments> entities() {
         return Stream.of(
-                Arguments.of("FoliosCopias", new FoliosCopias(), "markNotNew"),
-                Arguments.of("PlantillaCostoDocumento", new PlantillaCostoDocumento(), "markNotNew"),
-                Arguments.of("PlantillaPresupuesto", new PlantillaPresupuesto(), "markNotNew"),
-                Arguments.of("PlantillaTramite", new PlantillaTramite(), "markNotNew"),
-                Arguments.of("TramitesPersonas", new TramitesPersonas(), "markNotNew")
+                Arguments.of("FoliosCopias", new FolioCopies(), "markNotNew"),
+                Arguments.of("PlantillaCostoDocumento", new DocumentCostTemplate(), "markNotNew"),
+                Arguments.of("PlantillaPresupuesto", new BudgetTemplate(), "markNotNew"),
+                Arguments.of("PlantillaTramite", new ProcedureTemplate(), "markNotNew"),
+                Arguments.of("TramitesPersonas", new PersonProcedure(), "markNotNew")
         );
     }
 }

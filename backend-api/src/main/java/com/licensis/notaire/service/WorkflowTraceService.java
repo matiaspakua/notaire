@@ -1,19 +1,19 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.DtoGestionWorkflowTrace;
-import com.licensis.notaire.dto.DtoGestionWorkflowTrace.DtoHistorialEntry;
+import com.licensis.notaire.dto.DtoManagementWorkflowTrace;
+import com.licensis.notaire.dto.DtoManagementWorkflowTrace.DtoHistoryEntry;
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
 import com.licensis.notaire.dto.DtoWorkflowNode;
 import com.licensis.notaire.dto.DtoWorkflowTransition;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowTransition;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.HistorialRepository;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowTransition;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
 import org.slf4j.Logger;
@@ -32,18 +32,18 @@ public class WorkflowTraceService {
 
     private static final Logger log = LoggerFactory.getLogger(WorkflowTraceService.class);
 
-    private final GestionDeEscrituraRepository gestionRepository;
-    private final HistorialRepository historialRepository;
+    private final DeedManagementRepository managementRepository;
+    private final HistoryRepository historyRepository;
     private final WorkflowNodeRepository workflowNodeRepository;
     private final WorkflowTransitionRepository workflowTransitionRepository;
 
     public WorkflowTraceService(
-            GestionDeEscrituraRepository gestionRepository,
-            HistorialRepository historialRepository,
+            DeedManagementRepository managementRepository,
+            HistoryRepository historyRepository,
             WorkflowNodeRepository workflowNodeRepository,
             WorkflowTransitionRepository workflowTransitionRepository) {
-        this.gestionRepository = gestionRepository;
-        this.historialRepository = historialRepository;
+        this.managementRepository = managementRepository;
+        this.historyRepository = historyRepository;
         this.workflowNodeRepository = workflowNodeRepository;
         this.workflowTransitionRepository = workflowTransitionRepository;
     }
@@ -56,28 +56,28 @@ public class WorkflowTraceService {
      * {@code TipoDeTramite.workflowDefinition}) inside the same persistence context.
      */
     @Transactional(readOnly = true)
-    public DtoGestionWorkflowTrace buildTrace(Integer gestionId) {
+    public DtoManagementWorkflowTrace buildTrace(Integer managementId) {
         // 1. Load gestión
-        GestionDeEscritura gestion = gestionRepository.findById(gestionId)
+        DeedManagement management = managementRepository.findById(managementId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Gestion not found with id: " + gestionId));
+                        "Gestion not found with id: " + managementId));
 
         // 2. Resolve workflow definition from the first tramite's tipo
-        List<Tramite> tramites = gestion.getTramiteList();
-        if (tramites == null || tramites.isEmpty()) {
-            throw new IllegalArgumentException("Gestion " + gestionId + " has no tramites");
+        List<Procedure> procedures = management.getProcedureList();
+        if (procedures == null || procedures.isEmpty()) {
+            throw new IllegalArgumentException("Gestion " + managementId + " has no tramites");
         }
 
-        TipoDeTramite tipoTramite = tramites.get(0).getFkIdTipoTramite();
-        if (tipoTramite == null) {
+        ProcedureType typeProcedure = procedures.get(0).getFkIdProcedureType();
+        if (typeProcedure == null) {
             throw new IllegalArgumentException(
-                    "Tramite for gestion " + gestionId + " has no tipo de tramite");
+                    "Tramite for gestion " + managementId + " has no tipo de tramite");
         }
 
-        WorkflowDefinition workflowDef = tipoTramite.getWorkflowDefinition();
+        WorkflowDefinition workflowDef = typeProcedure.getWorkflowDefinition();
         if (workflowDef == null) {
             throw new IllegalArgumentException(
-                    "TipoDeTramite " + tipoTramite.getIdTipoTramite()
+                    "TipoDeTramite " + typeProcedure.getIdProcedureType()
                             + " has no workflow definition assigned");
         }
 
@@ -88,27 +88,27 @@ public class WorkflowTraceService {
                 .findByWorkflowDefinitionId(workflowDef.getId());
 
         // 4. Fetch historial for the gestión
-        List<Historial> historialEntities = historialRepository
-                .findByFkIdGestionIdGestion(gestionId);
+        List<History> historyEntities = historyRepository
+                .findByFkIdManagementIdManagement(managementId);
 
         // 5. Compute node statuses
-        Map<Integer, String> nodeStatuses = computeNodeStatuses(nodeEntities, historialEntities);
+        Map<Integer, String> nodeStatuses = computeNodeStatuses(nodeEntities, historyEntities);
 
         // 6. Assemble DTO
-        DtoGestionWorkflowTrace trace = new DtoGestionWorkflowTrace();
-        trace.setGestionId(gestion.getIdGestion());
-        trace.setNumero(gestion.getNumero());
-        trace.setEncabezado(gestion.getEncabezado());
-        trace.setFechaInicio(gestion.getFechaInicio());
-        trace.setEstadoActual(gestion.getFkIdEstadoDeGestion() != null
-                ? gestion.getFkIdEstadoDeGestion().getNombre() : null);
+        DtoManagementWorkflowTrace trace = new DtoManagementWorkflowTrace();
+        trace.setManagementId(management.getIdManagement());
+        trace.setNumber(management.getNumber());
+        trace.setEncabezado(management.getEncabezado());
+        trace.setDateStart(management.getDateStart());
+        trace.setStatusActual(management.getFkIdManagementStatus() != null
+                ? management.getFkIdManagementStatus().getName() : null);
 
         // Workflow definition DTO
         DtoWorkflowDefinition defDto = new DtoWorkflowDefinition();
         defDto.setId(workflowDef.getId());
-        defDto.setNombre(workflowDef.getNombre());
-        defDto.setDescripcion(workflowDef.getDescripcion());
-        defDto.setActivo(workflowDef.isActivo());
+        defDto.setName(workflowDef.getName());
+        defDto.setDescription(workflowDef.getDescription());
+        defDto.setActive(workflowDef.isActive());
         defDto.setVersion(workflowDef.getVersion());
         trace.setWorkflowDefinition(defDto);
 
@@ -127,17 +127,17 @@ public class WorkflowTraceService {
         trace.setTransitions(transitionDtos);
 
         // Historial DTOs
-        List<DtoHistorialEntry> historialDtos = new ArrayList<>();
-        for (Historial h : historialEntities) {
-            DtoHistorialEntry entry = new DtoHistorialEntry();
-            entry.setIdHistorial(h.getIdHistorial());
-            entry.setEstadoGestionId(h.getFkIdEstadoGestion().getIdEstadoGestion());
-            entry.setEstadoGestionNombre(h.getFkIdEstadoGestion().getNombre());
-            entry.setFecha(h.getFecha());
-            entry.setObservaciones(h.getObservaciones());
-            historialDtos.add(entry);
+        List<DtoHistoryEntry> historyDtos = new ArrayList<>();
+        for (History h : historyEntities) {
+            DtoHistoryEntry entry = new DtoHistoryEntry();
+            entry.setIdHistory(h.getIdHistory());
+            entry.setStatusManagementId(h.getFkIdManagementStatus().getIdManagementStatus());
+            entry.setStatusManagementName(h.getFkIdManagementStatus().getName());
+            entry.setDate(h.getDate());
+            entry.setNotes(h.getNotes());
+            historyDtos.add(entry);
         }
-        trace.setHistorial(historialDtos);
+        trace.setHistory(historyDtos);
 
         // Node statuses
         trace.setNodeStatuses(nodeStatuses);
@@ -157,29 +157,29 @@ public class WorkflowTraceService {
      * </ul>
      */
     public static Map<Integer, String> computeNodeStatuses(
-            List<WorkflowNode> nodes, List<Historial> historialList) {
+            List<WorkflowNode> nodes, List<History> historyList) {
 
         // Sort historial by fecha ASC
-        List<Historial> sorted = new ArrayList<>(historialList);
-        sorted.sort(Comparator.comparing(Historial::getFecha));
+        List<History> sorted = new ArrayList<>(historyList);
+        sorted.sort(Comparator.comparing(History::getDate));
 
         // Collect distinct estadoGestionIds in order
-        List<Integer> distinctEstadoIds = new ArrayList<>();
-        for (Historial h : sorted) {
-            Integer estadoId = h.getFkIdEstadoGestion().getIdEstadoGestion();
-            if (!distinctEstadoIds.contains(estadoId)) {
-                distinctEstadoIds.add(estadoId);
+        List<Integer> distinctStatusIds = new ArrayList<>();
+        for (History h : sorted) {
+            Integer statusId = h.getFkIdManagementStatus().getIdManagementStatus();
+            if (!distinctStatusIds.contains(statusId)) {
+                distinctStatusIds.add(statusId);
             }
         }
 
         // Classify each node
         Map<Integer, String> statuses = new HashMap<>();
         for (WorkflowNode node : nodes) {
-            Integer nodeEstadoId = node.getEstadoDeGestion().getIdEstadoGestion();
-            int idx = distinctEstadoIds.indexOf(nodeEstadoId);
+            Integer nodeStatusId = node.getManagementStatus().getIdManagementStatus();
+            int idx = distinctStatusIds.indexOf(nodeStatusId);
             if (idx == -1) {
                 statuses.put(node.getId(), "pending");
-            } else if (idx == distinctEstadoIds.size() - 1) {
+            } else if (idx == distinctStatusIds.size() - 1) {
                 statuses.put(node.getId(), "in_progress");
             } else {
                 statuses.put(node.getId(), "completed");

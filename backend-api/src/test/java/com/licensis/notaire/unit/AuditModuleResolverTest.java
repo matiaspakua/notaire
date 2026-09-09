@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuditModuleResolverTest {
 
     @Test
-    @DisplayName("Should map EscrituraController to Escrituras")
-    void shouldMapEscrituraControllerToEscrituras() {
-        assertThat(AuditModuleResolver.resolve("EscrituraController")).isEqualTo("Escrituras");
+    @DisplayName("Should map DeedController to Deeds")
+    void shouldMapDeedControllerToDeeds() {
+        assertThat(AuditModuleResolver.resolve("DeedController")).isEqualTo("Deeds");
     }
 
     @Test
@@ -22,9 +22,9 @@ class AuditModuleResolverTest {
     }
 
     @Test
-    @DisplayName("Should map UsuarioController to Usuarios")
-    void shouldMapUsuarioControllerToUsuarios() {
-        assertThat(AuditModuleResolver.resolve("UsuarioController")).isEqualTo("Usuarios");
+    @DisplayName("Should map UserController to Users")
+    void shouldMapUserControllerToUsers() {
+        assertThat(AuditModuleResolver.resolve("UserController")).isEqualTo("Users");
     }
 
     @Test

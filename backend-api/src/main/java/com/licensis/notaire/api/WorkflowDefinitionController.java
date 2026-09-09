@@ -1,7 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -72,9 +72,9 @@ public class WorkflowDefinitionController {
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowDefinition dto) {
         try {
             WorkflowDefinition entity = new WorkflowDefinition();
-            entity.setNombre(dto.getNombre());
-            entity.setDescripcion(dto.getDescripcion());
-            entity.setActivo(dto.isActivo());
+            entity.setName(dto.getName());
+            entity.setDescription(dto.getDescription());
+            entity.setActive(dto.isActive());
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.toDto());
         } catch (Exception e) {
@@ -95,9 +95,9 @@ public class WorkflowDefinitionController {
         }
         try {
             WorkflowDefinition entity = existing.get();
-            entity.setNombre(dto.getNombre());
-            entity.setDescripcion(dto.getDescripcion());
-            entity.setActivo(dto.isActivo());
+            entity.setName(dto.getName());
+            entity.setDescription(dto.getDescription());
+            entity.setActive(dto.isActive());
             if (dto.getVersion() != null) {
                 entity.setVersion(dto.getVersion());
             }

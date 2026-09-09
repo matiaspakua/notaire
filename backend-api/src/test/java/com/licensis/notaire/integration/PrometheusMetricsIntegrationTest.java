@@ -69,7 +69,7 @@ class PrometheusMetricsIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk());
 
@@ -77,7 +77,7 @@ class PrometheusMetricsIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "wrong"}
+                                {"name": "admin", "password": "wrong"}
                                 """))
                 .andExpect(status().isOk());
 

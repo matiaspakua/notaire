@@ -2,18 +2,18 @@ package com.licensis.notaire.service;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.Cuaderno;
-import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.MinutaInscripcion;
-import com.licensis.notaire.negocio.Pago;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.Testimonio;
-import com.licensis.notaire.repository.CuadernoRepository;
+import com.licensis.notaire.business.Notebook;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.business.RegistrationDraft;
+import com.licensis.notaire.business.Payment;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.repository.NotebookRepository;
 import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.MinutaInscripcionRepository;
-import com.licensis.notaire.repository.PagoRepository;
-import com.licensis.notaire.repository.TestimonioRepository;
+import com.licensis.notaire.repository.RegistrationDraftRepository;
+import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.repository.TestimonyRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -36,159 +36,159 @@ import java.util.Map;
 public class ReporteService {
 
     private final DataSource dataSource;
-    private final TestimonioRepository testimonioRepository;
-    private final CuadernoRepository cuadernoRepository;
-    private final MinutaInscripcionRepository minutaInscripcionRepository;
-    private final PagoRepository pagoRepository;
+    private final TestimonyRepository testimonyRepository;
+    private final NotebookRepository notebookRepository;
+    private final RegistrationDraftRepository registrationDraftRepository;
+    private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
 
-    private static final String RUTA_REPORTE_PRESUPUESTO = "reportes/reportePresupuestoSinInmueble.jasper";
-    private static final String RUTA_REPORTE_PRESUPUESTO_INMUEBLES = "reportes/reportePresupuestoInmuebles.jasper";
-    private static final String RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE = "reportes/reporteListaDocumetosTramite.jasper";
-    private static final String RUTA_REPORTE_HISTORIAL_GESTION = "reportes/reporteHistorialGestion.jasper";
-    private static final String RUTA_REPORTE_CONSULTAR_VENCIMIENTOS_DOCUMENTOS = "reportes/reporteConsultarVencimientosDocumentos.jasper";
-    private static final String RUTA_REPORTE_CONSULTAR_DEUDA_DOCUMENTOS = "reportes/reporteConsultarDeudaDocumentos.jasper";
-    private static final int FOLIOS_POR_CUADERNO = 10;
+    private static final String RUTAREPORTEBudget = "reportes/reportePresupuestoSinInmueble.jasper";
+    private static final String RUTAREPORTEBudgetProperties = "reportes/reportePresupuestoInmuebles.jasper";
+    private static final String RUTAREPORTELISTADocumentsProcedure = "reportes/reporteListaDocumetosTramite.jasper";
+    private static final String RUTAREPORTEHistoryManagement = "reportes/reporteHistorialGestion.jasper";
+    private static final String RUTAREPORTECONSULTARVENCIMIENTOSDocuments = "reportes/reporteConsultarVencimientosDocumentos.jasper";
+    private static final String RUTAREPORTECONSULTARDebtDocuments = "reportes/reporteConsultarDeudaDocumentos.jasper";
+    private static final int FOLIOSPORNotebook = 10;
 
-    public ReporteService(DataSource dataSource, TestimonioRepository testimonioRepository,
-                           CuadernoRepository cuadernoRepository,
-                           MinutaInscripcionRepository minutaInscripcionRepository,
-                           PagoRepository pagoRepository,
+    public ReporteService(DataSource dataSource, TestimonyRepository testimonyRepository,
+                           NotebookRepository notebookRepository,
+                           RegistrationDraftRepository registrationDraftRepository,
+                           PaymentRepository paymentRepository,
                            ItemRepository itemRepository) {
         this.dataSource = dataSource;
-        this.testimonioRepository = testimonioRepository;
-        this.cuadernoRepository = cuadernoRepository;
-        this.minutaInscripcionRepository = minutaInscripcionRepository;
-        this.pagoRepository = pagoRepository;
+        this.testimonyRepository = testimonyRepository;
+        this.notebookRepository = notebookRepository;
+        this.registrationDraftRepository = registrationDraftRepository;
+        this.paymentRepository = paymentRepository;
         this.itemRepository = itemRepository;
     }
 
-    public byte[] generarReportePresupuesto(Integer idPresupuesto) throws Exception {
-        Map<String, Object> parameters = Map.of("pIdPresupuesto", idPresupuesto);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_PRESUPUESTO, parameters);
+    public byte[] generarReporteBudget(Integer idBudget) throws Exception {
+        Map<String, Object> parameters = Map.of("pIdPresupuesto", idBudget);
+        return generarPdfDesdeTemplate(RUTAREPORTEBudget, parameters);
     }
 
-    public byte[] generarReportePresupuestoInmuebles(Integer idPresupuesto) throws Exception {
-        Map<String, Object> parameters = Map.of("idPresupuestoParam", idPresupuesto);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_PRESUPUESTO_INMUEBLES, parameters);
+    public byte[] generarReporteBudgetProperties(Integer idBudget) throws Exception {
+        Map<String, Object> parameters = Map.of("idPresupuestoParam", idBudget);
+        return generarPdfDesdeTemplate(RUTAREPORTEBudgetProperties, parameters);
     }
 
-    public byte[] generarReporteListaDocumentosTramite(String nombreTipoTramite) throws Exception {
-        Map<String, Object> parameters = Map.of("nombreTipoTramite", nombreTipoTramite);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_LISTA_DOCUMENTOS_TRAMITE, parameters);
+    public byte[] generarReporteListaDocumentsProcedure(String nameTypeProcedure) throws Exception {
+        Map<String, Object> parameters = Map.of("nombreTipoTramite", nameTypeProcedure);
+        return generarPdfDesdeTemplate(RUTAREPORTELISTADocumentsProcedure, parameters);
     }
 
-    public byte[] generarReporteHistorialGestion(Integer idGestion) throws Exception {
-        Map<String, Object> parameters = Map.of("idGestion", idGestion);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_HISTORIAL_GESTION, parameters);
+    public byte[] generarReporteHistoryManagement(Integer idManagement) throws Exception {
+        Map<String, Object> parameters = Map.of("idGestion", idManagement);
+        return generarPdfDesdeTemplate(RUTAREPORTEHistoryManagement, parameters);
     }
 
-    public byte[] generarReporteDocumentosPorVencer(Integer idDocumentoPresentado) throws Exception {
-        Map<String, Object> parameters = Map.of("idDocumentoPresentado", idDocumentoPresentado);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_CONSULTAR_VENCIMIENTOS_DOCUMENTOS, parameters);
+    public byte[] generarReporteDocumentsPorVencer(Integer idSubmittedDocument) throws Exception {
+        Map<String, Object> parameters = Map.of("idDocumentoPresentado", idSubmittedDocument);
+        return generarPdfDesdeTemplate(RUTAREPORTECONSULTARVENCIMIENTOSDocuments, parameters);
     }
 
-    public byte[] generarReporteConsultarDeudaDocumentos(Integer numeroGestion) throws Exception {
-        Map<String, Object> parameters = Map.of("numeroGestion", numeroGestion);
-        return generarPdfDesdeTemplate(RUTA_REPORTE_CONSULTAR_DEUDA_DOCUMENTOS, parameters);
+    public byte[] generarReporteConsultarDebtDocuments(Integer numberManagement) throws Exception {
+        Map<String, Object> parameters = Map.of("numeroGestion", numberManagement);
+        return generarPdfDesdeTemplate(RUTAREPORTECONSULTARDebtDocuments, parameters);
     }
 
-    public byte[] generarReporteLibroIndice(Integer anio) throws Exception {
+    public byte[] generarReporteLibroIndice(Integer year) throws Exception {
         return generarPdfTextoSimple(
                 "Libro de Indice",
                 "CU24",
-                "Periodo: " + anio,
+                "Periodo: " + year,
                 "Generado: " + LocalDate.now()
         );
     }
 
-    public byte[] generarReporteDeclaracionJuradaMensual(Integer anio, Integer mes) throws Exception {
+    public byte[] generarReporteDeclaracionJuradaMensual(Integer year, Integer mes) throws Exception {
         return generarPdfTextoSimple(
                 "Declaracion Jurada Mensual",
                 "CU25",
-                "Periodo: " + mes + "/" + anio,
+                "Periodo: " + mes + "/" + year,
                 "Generado: " + LocalDate.now()
         );
     }
 
-    public byte[] generarReporteCopiaTestimonio(Integer idTestimonio) {
-        Testimonio testimonio = testimonioRepository.findById(idTestimonio)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimonio));
+    public byte[] generarReporteCopyTestimony(Integer idTestimony) {
+        Testimony testimony = testimonyRepository.findById(idTestimony)
+                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
 
-        if (!testimonio.getVerificado()) {
+        if (!testimony.getVerified()) {
             throw new BusinessValidationException(
                     "El testimonio debe estar verificado para emitir la copia impresa");
         }
 
         return generarPdfTextoSimple(
-                "Copia de Testimonio N° " + testimonio.getNumero(),
+                "Copia de Testimonio N° " + testimony.getNumber(),
                 "CU08",
                 "Testimonio verificado",
                 "Generado: " + LocalDate.now()
         );
     }
 
-    public byte[] generarReporteCaratulaCuaderno(Integer idCuaderno) {
-        Cuaderno cuaderno = cuadernoRepository.findById(idCuaderno)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idCuaderno));
+    public byte[] generarReporteCaratulaNotebook(Integer idNotebook) {
+        Notebook notebook = notebookRepository.findById(idNotebook)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idNotebook));
 
-        int folioDesde = (cuaderno.getNumero() - 1) * FOLIOS_POR_CUADERNO + 1;
-        int folioHasta = cuaderno.getNumero() * FOLIOS_POR_CUADERNO;
+        int folioDesde = (notebook.getNumber() - 1) * FOLIOSPORNotebook + 1;
+        int folioHasta = notebook.getNumber() * FOLIOSPORNotebook;
 
         return generarPdfTextoSimple(
-                "Carátula de Cuaderno N° " + cuaderno.getNumero() + "/" + cuaderno.getAnio(),
+                "Carátula de Cuaderno N° " + notebook.getNumber() + "/" + notebook.getYear(),
                 "CU80",
-                "Registro N° " + cuaderno.getFkIdPersonaEscribano().getNotaryRegistrationNumber()
+                "Registro N° " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
                         + " - Folios " + folioDesde + " a " + folioHasta,
                 "Generado: " + LocalDate.now()
         );
     }
 
-    public byte[] generarReporteDeclaracionJuradaRentas(Integer anio, Integer mes) throws Exception {
+    public byte[] generarReporteDeclaracionJuradaRentas(Integer year, Integer mes) throws Exception {
         return generarPdfTextoSimple(
                 "Declaracion Jurada de Rentas",
                 "CU50",
-                "Periodo: " + mes + "/" + anio,
+                "Periodo: " + mes + "/" + year,
                 "Generado: " + LocalDate.now()
         );
     }
 
-    public byte[] generarReporteMinutaInscripcion(Integer idMinutaInscripcion) {
-        MinutaInscripcion minuta = minutaInscripcionRepository.findById(idMinutaInscripcion)
+    public byte[] generarReporteRegistrationDraft(Integer idRegistrationDraft) {
+        RegistrationDraft draft = registrationDraftRepository.findById(idRegistrationDraft)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe la minuta de inscripción con ID: " + idMinutaInscripcion));
+                        "No existe la minuta de inscripción con ID: " + idRegistrationDraft));
 
         return generarPdfTextoSimple(
-                "Minuta de Inscripción N° " + minuta.getNumero(),
+                "Minuta de Inscripción N° " + draft.getNumber(),
                 "CU82",
-                "Escritura N° " + minuta.getFkIdEscritura().getNumero() + " - Estado: " + minuta.getEstado(),
+                "Escritura N° " + draft.getFkIdDeed().getNumber() + " - Estado: " + draft.getStatus(),
                 "Generado: " + LocalDate.now()
         );
     }
 
     @Transactional(readOnly = true)
-    public byte[] generarReporteReciboPago(Integer idPago) {
-        Pago pago = pagoRepository.findById(idPago)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPago));
+    public byte[] generarReporteReciboPayment(Integer idPayment) {
+        Payment payment = paymentRepository.findById(idPayment)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPayment));
 
-        Presupuesto presupuesto = pago.getPresupuesto();
-        Person cliente = presupuesto != null ? presupuesto.getFkIdPersona() : null;
-        String nombreCliente = cliente != null
-                ? (cliente.getFirstName() + " " + cliente.getLastName()).trim()
+        Budget budget = payment.getBudget();
+        Person client = budget != null ? budget.getFkIdPerson() : null;
+        String nameClient = client != null
+                ? (client.getFirstName() + " " + client.getLastName()).trim()
                 : "Cliente no identificado";
 
-        String conceptos = presupuesto != null
-                ? itemRepository.findByFkIdPresupuestoIdPresupuesto(presupuesto.getIdPresupuesto()).stream()
-                        .map(Item::getNombre)
-                        .filter(nombre -> nombre != null && !nombre.isBlank())
+        String conceptos = budget != null
+                ? itemRepository.findByFkIdBudgetIdBudget(budget.getIdBudget()).stream()
+                        .map(Item::getName)
+                        .filter(name -> name != null && !name.isBlank())
                         .reduce((a, b) -> a + ", " + b)
                         .orElse("Sin conceptos detallados")
                 : "Sin conceptos detallados";
 
-        return generarPdfRecibo(nombreCliente, pago.getFecha(), conceptos, pago.getMonto());
+        return generarPdfRecibo(nameClient, payment.getDate(), conceptos, payment.getAmount());
     }
 
-    private byte[] generarPdfRecibo(String cliente, java.util.Date fecha, String conceptos, float monto) {
+    private byte[] generarPdfRecibo(String client, java.util.Date date, String conceptos, float amount) {
         try {
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");
@@ -197,13 +197,13 @@ public class ReporteService {
             stream.append("(Recibo de Pago) Tj\n");
             stream.append("/F1 12 Tf\n");
             stream.append("0 -30 Td\n");
-            stream.append("(Cliente: ").append(escapePdfText(cliente)).append(") Tj\n");
+            stream.append("(Cliente: ").append(escapePdfText(client)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Fecha de pago: ").append(escapePdfText(String.valueOf(fecha))).append(") Tj\n");
+            stream.append("(Fecha de pago: ").append(escapePdfText(String.valueOf(date))).append(") Tj\n");
             stream.append("0 -20 Td\n");
             stream.append("(Concepto(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Total abonado: ").append(escapePdfText(String.valueOf(monto))).append(") Tj\n");
+            stream.append("(Total abonado: ").append(escapePdfText(String.valueOf(amount))).append(") Tj\n");
             stream.append("0 -40 Td\n");
             stream.append("(Recibo generado por backend API - CU15.) Tj\n");
             stream.append("ET\n");
@@ -233,7 +233,7 @@ public class ReporteService {
         }
     }
 
-    private byte[] generarPdfTextoSimple(String titulo, String cuId, String lineaPeriodo, String lineaFecha) {
+    private byte[] generarPdfTextoSimple(String titulo, String cuId, String lineaPeriodo, String lineaDate) {
         try {
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");
@@ -246,7 +246,7 @@ public class ReporteService {
             stream.append("0 -20 Td\n");
             stream.append("(").append(escapePdfText(lineaPeriodo)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(").append(escapePdfText(lineaFecha)).append(") Tj\n");
+            stream.append("(").append(escapePdfText(lineaDate)).append(") Tj\n");
             stream.append("0 -40 Td\n");
             stream.append("(Reporte operativo generado por backend API.) Tj\n");
             stream.append("ET\n");

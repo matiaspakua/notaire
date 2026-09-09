@@ -10,16 +10,16 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.Suplencia;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.TramitesPersonas;
-import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.business.BusinessController;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Substitution;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.PersonProcedure;
+import com.licensis.notaire.business.User;
 import com.licensis.notaire.service.AdministradorJpa;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,188 +53,188 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         return emf.createEntityManager();
     }
 
-    public int create(Person persona) {
+    public int create(Person person) {
         int oid = 0;
-        if (persona.getTramitesPersonasList() == null) {
-            persona.setTramitesPersonasList(new ArrayList<TramitesPersonas>());
+        if (person.getPersonProcedureList() == null) {
+            person.setPersonProcedureList(new ArrayList<PersonProcedure>());
         }
-        if (persona.getPresupuestoList() == null) {
-            persona.setPresupuestoList(new ArrayList<Presupuesto>());
+        if (person.getBudgetList() == null) {
+            person.setBudgetList(new ArrayList<Budget>());
         }
-        if (persona.getGestionDeEscrituraList() == null) {
-            persona.setGestionDeEscrituraList(new ArrayList<GestionDeEscritura>());
+        if (person.getDeedManagementList() == null) {
+            person.setDeedManagementList(new ArrayList<DeedManagement>());
         }
-        if (persona.getFolioList() == null) {
-            persona.setFolioList(new ArrayList<Folio>());
+        if (person.getFolioList() == null) {
+            person.setFolioList(new ArrayList<Folio>());
         }
-        if (persona.getSuplenciaList() == null) {
-            persona.setSuplenciaList(new ArrayList<Suplencia>());
+        if (person.getSubstitutionList() == null) {
+            person.setSubstitutionList(new ArrayList<Substitution>());
         }
-        if (persona.getSuplenciaList1() == null) {
-            persona.setSuplenciaList1(new ArrayList<Suplencia>());
+        if (person.getSubstitutionList1() == null) {
+            person.setSubstitutionList1(new ArrayList<Substitution>());
         }
-        if (persona.getCopiaList() == null) {
-            persona.setCopiaList(new ArrayList<Copia>());
+        if (person.getCopyList() == null) {
+            person.setCopyList(new ArrayList<Copy>());
         }
-        if (persona.getUsuariosList() == null) {
-            persona.setUsuariosList(new ArrayList<Usuario>());
+        if (person.getUserList() == null) {
+            person.setUserList(new ArrayList<User>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdIdentificationType();
-            if (fkIdTipoIdentificacion != null) {
-                fkIdTipoIdentificacion = em.getReference(fkIdTipoIdentificacion.getClass(),
-                        fkIdTipoIdentificacion.getIdTipoIdentificacion());
-                persona.setFkIdIdentificationType(fkIdTipoIdentificacion);
+            IdentificationType fkIdIdentificationType = person.getFkIdIdentificationType();
+            if (fkIdIdentificationType != null) {
+                fkIdIdentificationType = em.getReference(fkIdIdentificationType.getClass(),
+                        fkIdIdentificationType.getIdIdentificationType());
+                person.setFkIdIdentificationType(fkIdIdentificationType);
             }
-            List<TramitesPersonas> attachedTramitesPersonasList = new ArrayList<TramitesPersonas>();
-            for (TramitesPersonas tramitesPersonasListTramitesPersonasToAttach : persona.getTramitesPersonasList()) {
-                tramitesPersonasListTramitesPersonasToAttach = em.getReference(
-                        tramitesPersonasListTramitesPersonasToAttach.getClass(),
-                        tramitesPersonasListTramitesPersonasToAttach.getTramitesPersonasPK());
-                attachedTramitesPersonasList.add(tramitesPersonasListTramitesPersonasToAttach);
+            List<PersonProcedure> attachedPersonProcedureList = new ArrayList<PersonProcedure>();
+            for (PersonProcedure personProcedureListPersonProcedureToAttach : person.getPersonProcedureList()) {
+                personProcedureListPersonProcedureToAttach = em.getReference(
+                        personProcedureListPersonProcedureToAttach.getClass(),
+                        personProcedureListPersonProcedureToAttach.getPersonProcedurePK());
+                attachedPersonProcedureList.add(personProcedureListPersonProcedureToAttach);
             }
-            persona.setTramitesPersonasList(attachedTramitesPersonasList);
-            List<Presupuesto> attachedPresupuestoList = new ArrayList<Presupuesto>();
-            for (Presupuesto presupuestoListPresupuestoToAttach : persona.getPresupuestoList()) {
-                presupuestoListPresupuestoToAttach = em.getReference(presupuestoListPresupuestoToAttach.getClass(),
-                        presupuestoListPresupuestoToAttach.getIdPresupuesto());
-                attachedPresupuestoList.add(presupuestoListPresupuestoToAttach);
+            person.setPersonProcedureList(attachedPersonProcedureList);
+            List<Budget> attachedBudgetList = new ArrayList<Budget>();
+            for (Budget budgetListBudgetToAttach : person.getBudgetList()) {
+                budgetListBudgetToAttach = em.getReference(budgetListBudgetToAttach.getClass(),
+                        budgetListBudgetToAttach.getIdBudget());
+                attachedBudgetList.add(budgetListBudgetToAttach);
             }
-            persona.setPresupuestoList(attachedPresupuestoList);
-            List<GestionDeEscritura> attachedGestionesDeEscriturasList = new ArrayList<GestionDeEscritura>();
-            for (GestionDeEscritura gestionesDeEscriturasListGestionesDeEscriturasToAttach : persona
-                    .getGestionDeEscrituraList()) {
+            person.setBudgetList(attachedBudgetList);
+            List<DeedManagement> attachedGestionesDeEscriturasList = new ArrayList<DeedManagement>();
+            for (DeedManagement gestionesDeEscriturasListGestionesDeEscriturasToAttach : person
+                    .getDeedManagementList()) {
                 gestionesDeEscriturasListGestionesDeEscriturasToAttach = em.getReference(
                         gestionesDeEscriturasListGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getIdGestion());
+                        gestionesDeEscriturasListGestionesDeEscriturasToAttach.getIdManagement());
                 attachedGestionesDeEscriturasList.add(gestionesDeEscriturasListGestionesDeEscriturasToAttach);
             }
-            persona.setGestionDeEscrituraList(attachedGestionesDeEscriturasList);
+            person.setDeedManagementList(attachedGestionesDeEscriturasList);
             List<Folio> attachedFolioList = new ArrayList<Folio>();
-            for (Folio folioListFolioToAttach : persona.getFolioList()) {
+            for (Folio folioListFolioToAttach : person.getFolioList()) {
                 folioListFolioToAttach = em.getReference(folioListFolioToAttach.getClass(),
                         folioListFolioToAttach.getIdFolio());
                 attachedFolioList.add(folioListFolioToAttach);
             }
-            persona.setFolioList(attachedFolioList);
-            List<Suplencia> attachedSuplenciaList = new ArrayList<Suplencia>();
-            for (Suplencia suplenciaListSuplenciaToAttach : persona.getSuplenciaList()) {
-                suplenciaListSuplenciaToAttach = em.getReference(suplenciaListSuplenciaToAttach.getClass(),
-                        suplenciaListSuplenciaToAttach.getIdSuplencia());
-                attachedSuplenciaList.add(suplenciaListSuplenciaToAttach);
+            person.setFolioList(attachedFolioList);
+            List<Substitution> attachedSubstitutionList = new ArrayList<Substitution>();
+            for (Substitution substitutionListSubstitutionToAttach : person.getSubstitutionList()) {
+                substitutionListSubstitutionToAttach = em.getReference(substitutionListSubstitutionToAttach.getClass(),
+                        substitutionListSubstitutionToAttach.getIdSubstitution());
+                attachedSubstitutionList.add(substitutionListSubstitutionToAttach);
             }
-            persona.setSuplenciaList(attachedSuplenciaList);
-            List<Suplencia> attachedSuplenciaList1 = new ArrayList<Suplencia>();
-            for (Suplencia suplenciaList1SuplenciaToAttach : persona.getSuplenciaList1()) {
-                suplenciaList1SuplenciaToAttach = em.getReference(suplenciaList1SuplenciaToAttach.getClass(),
-                        suplenciaList1SuplenciaToAttach.getIdSuplencia());
-                attachedSuplenciaList1.add(suplenciaList1SuplenciaToAttach);
+            person.setSubstitutionList(attachedSubstitutionList);
+            List<Substitution> attachedSubstitutionList1 = new ArrayList<Substitution>();
+            for (Substitution substitutionList1SubstitutionToAttach : person.getSubstitutionList1()) {
+                substitutionList1SubstitutionToAttach = em.getReference(substitutionList1SubstitutionToAttach.getClass(),
+                        substitutionList1SubstitutionToAttach.getIdSubstitution());
+                attachedSubstitutionList1.add(substitutionList1SubstitutionToAttach);
             }
-            persona.setSuplenciaList1(attachedSuplenciaList1);
-            List<Copia> attachedCopiaList = new ArrayList<Copia>();
-            for (Copia copiaListCopiaToAttach : persona.getCopiaList()) {
-                copiaListCopiaToAttach = em.getReference(copiaListCopiaToAttach.getClass(),
-                        copiaListCopiaToAttach.getIdCopia());
-                attachedCopiaList.add(copiaListCopiaToAttach);
+            person.setSubstitutionList1(attachedSubstitutionList1);
+            List<Copy> attachedCopyList = new ArrayList<Copy>();
+            for (Copy copyListCopyToAttach : person.getCopyList()) {
+                copyListCopyToAttach = em.getReference(copyListCopyToAttach.getClass(),
+                        copyListCopyToAttach.getIdCopy());
+                attachedCopyList.add(copyListCopyToAttach);
             }
-            persona.setCopiaList(attachedCopiaList);
-            List<Usuario> attachedUsuarioList = new ArrayList<Usuario>();
-            for (Usuario usuarioListUsuarioToAttach : persona.getUsuariosList()) {
-                usuarioListUsuarioToAttach = em.getReference(usuarioListUsuarioToAttach.getClass(),
-                        usuarioListUsuarioToAttach.getIdUsuario());
-                attachedUsuarioList.add(usuarioListUsuarioToAttach);
+            person.setCopyList(attachedCopyList);
+            List<User> attachedUserList = new ArrayList<User>();
+            for (User userListUserToAttach : person.getUserList()) {
+                userListUserToAttach = em.getReference(userListUserToAttach.getClass(),
+                        userListUserToAttach.getIdUser());
+                attachedUserList.add(userListUserToAttach);
             }
-            persona.setUsuariosList(attachedUsuarioList);
-            em.persist(persona);
-            if (fkIdTipoIdentificacion != null) {
-                fkIdTipoIdentificacion.getPersonaList().add(persona);
-                fkIdTipoIdentificacion = em.merge(fkIdTipoIdentificacion);
+            person.setUserList(attachedUserList);
+            em.persist(person);
+            if (fkIdIdentificationType != null) {
+                fkIdIdentificationType.getPersonList().add(person);
+                fkIdIdentificationType = em.merge(fkIdIdentificationType);
             }
-            for (TramitesPersonas tramitesPersonasListTramitesPersonas : persona.getTramitesPersonasList()) {
-                Person oldPersonaOfTramitesPersonasListTramitesPersonas = tramitesPersonasListTramitesPersonas
-                        .getPersona();
-                tramitesPersonasListTramitesPersonas.setPersona(persona);
-                tramitesPersonasListTramitesPersonas = em.merge(tramitesPersonasListTramitesPersonas);
-                if (oldPersonaOfTramitesPersonasListTramitesPersonas != null) {
-                    oldPersonaOfTramitesPersonasListTramitesPersonas.getTramitesPersonasList()
-                            .remove(tramitesPersonasListTramitesPersonas);
-                    oldPersonaOfTramitesPersonasListTramitesPersonas = em
-                            .merge(oldPersonaOfTramitesPersonasListTramitesPersonas);
+            for (PersonProcedure personProcedureListPersonProcedure : person.getPersonProcedureList()) {
+                Person oldPersonOfPersonProcedureListPersonProcedure = personProcedureListPersonProcedure
+                        .getPerson();
+                personProcedureListPersonProcedure.setPerson(person);
+                personProcedureListPersonProcedure = em.merge(personProcedureListPersonProcedure);
+                if (oldPersonOfPersonProcedureListPersonProcedure != null) {
+                    oldPersonOfPersonProcedureListPersonProcedure.getPersonProcedureList()
+                            .remove(personProcedureListPersonProcedure);
+                    oldPersonOfPersonProcedureListPersonProcedure = em
+                            .merge(oldPersonOfPersonProcedureListPersonProcedure);
                 }
             }
-            for (Presupuesto presupuestoListPresupuesto : persona.getPresupuestoList()) {
-                Person oldFkIdPersonaOfPresupuestoListPresupuesto = presupuestoListPresupuesto.getFkIdPersona();
-                presupuestoListPresupuesto.setFkIdPersona(persona);
-                presupuestoListPresupuesto = em.merge(presupuestoListPresupuesto);
-                if (oldFkIdPersonaOfPresupuestoListPresupuesto != null) {
-                    oldFkIdPersonaOfPresupuestoListPresupuesto.getPresupuestoList().remove(presupuestoListPresupuesto);
-                    oldFkIdPersonaOfPresupuestoListPresupuesto = em.merge(oldFkIdPersonaOfPresupuestoListPresupuesto);
+            for (Budget budgetListBudget : person.getBudgetList()) {
+                Person oldFkIdPersonOfBudgetListBudget = budgetListBudget.getFkIdPerson();
+                budgetListBudget.setFkIdPerson(person);
+                budgetListBudget = em.merge(budgetListBudget);
+                if (oldFkIdPersonOfBudgetListBudget != null) {
+                    oldFkIdPersonOfBudgetListBudget.getBudgetList().remove(budgetListBudget);
+                    oldFkIdPersonOfBudgetListBudget = em.merge(oldFkIdPersonOfBudgetListBudget);
                 }
             }
-            for (GestionDeEscritura gestionesDeEscriturasListGestionesDeEscrituras : persona
-                    .getGestionDeEscrituraList()) {
-                Person oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
-                        .getFkIdPersonaEscribano();
-                gestionesDeEscriturasListGestionesDeEscrituras.setFkIdPersonaEscribano(persona);
+            for (DeedManagement gestionesDeEscriturasListGestionesDeEscrituras : person
+                    .getDeedManagementList()) {
+                Person oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = gestionesDeEscriturasListGestionesDeEscrituras
+                        .getFkIdNotaryPerson();
+                gestionesDeEscriturasListGestionesDeEscrituras.setFkIdNotaryPerson(person);
                 gestionesDeEscriturasListGestionesDeEscrituras = em
                         .merge(gestionesDeEscriturasListGestionesDeEscrituras);
-                if (oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras != null) {
-                    oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras.getGestionDeEscrituraList()
+                if (oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras != null) {
+                    oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras.getDeedManagementList()
                             .remove(gestionesDeEscriturasListGestionesDeEscrituras);
-                    oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras = em
-                            .merge(oldFkIdPersonaEscribanoOfGestionesDeEscriturasListGestionesDeEscrituras);
+                    oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras = em
+                            .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListGestionesDeEscrituras);
                 }
             }
-            for (Folio folioListFolio : persona.getFolioList()) {
-                Person oldFkIdPersonaEscribanoOfFolioListFolio = folioListFolio.getFkIdPersonaEscribano();
-                folioListFolio.setFkIdPersonaEscribano(persona);
+            for (Folio folioListFolio : person.getFolioList()) {
+                Person oldFkIdNotaryPersonOfFolioListFolio = folioListFolio.getFkIdNotaryPerson();
+                folioListFolio.setFkIdNotaryPerson(person);
                 folioListFolio = em.merge(folioListFolio);
-                if (oldFkIdPersonaEscribanoOfFolioListFolio != null) {
-                    oldFkIdPersonaEscribanoOfFolioListFolio.getFolioList().remove(folioListFolio);
-                    oldFkIdPersonaEscribanoOfFolioListFolio = em.merge(oldFkIdPersonaEscribanoOfFolioListFolio);
+                if (oldFkIdNotaryPersonOfFolioListFolio != null) {
+                    oldFkIdNotaryPersonOfFolioListFolio.getFolioList().remove(folioListFolio);
+                    oldFkIdNotaryPersonOfFolioListFolio = em.merge(oldFkIdNotaryPersonOfFolioListFolio);
                 }
             }
-            for (Suplencia suplenciaListSuplencia : persona.getSuplenciaList()) {
-                Person oldFkIdSuplenteOfSuplenciaListSuplencia = suplenciaListSuplencia.getFkIdSuplente();
-                suplenciaListSuplencia.setFkIdSuplente(persona);
-                suplenciaListSuplencia = em.merge(suplenciaListSuplencia);
-                if (oldFkIdSuplenteOfSuplenciaListSuplencia != null) {
-                    oldFkIdSuplenteOfSuplenciaListSuplencia.getSuplenciaList().remove(suplenciaListSuplencia);
-                    oldFkIdSuplenteOfSuplenciaListSuplencia = em.merge(oldFkIdSuplenteOfSuplenciaListSuplencia);
+            for (Substitution substitutionListSubstitution : person.getSubstitutionList()) {
+                Person oldFkIdSubstituteOfSubstitutionListSubstitution = substitutionListSubstitution.getFkIdSubstitute();
+                substitutionListSubstitution.setFkIdSubstitute(person);
+                substitutionListSubstitution = em.merge(substitutionListSubstitution);
+                if (oldFkIdSubstituteOfSubstitutionListSubstitution != null) {
+                    oldFkIdSubstituteOfSubstitutionListSubstitution.getSubstitutionList().remove(substitutionListSubstitution);
+                    oldFkIdSubstituteOfSubstitutionListSubstitution = em.merge(oldFkIdSubstituteOfSubstitutionListSubstitution);
                 }
             }
-            for (Suplencia suplenciaList1Suplencia : persona.getSuplenciaList1()) {
-                Person oldFkIdSuplantadoOfSuplenciaList1Suplencia = suplenciaList1Suplencia.getFkIdSuplantado();
-                suplenciaList1Suplencia.setFkIdSuplantado(persona);
-                suplenciaList1Suplencia = em.merge(suplenciaList1Suplencia);
-                if (oldFkIdSuplantadoOfSuplenciaList1Suplencia != null) {
-                    oldFkIdSuplantadoOfSuplenciaList1Suplencia.getSuplenciaList1().remove(suplenciaList1Suplencia);
-                    oldFkIdSuplantadoOfSuplenciaList1Suplencia = em.merge(oldFkIdSuplantadoOfSuplenciaList1Suplencia);
+            for (Substitution substitutionList1Substitution : person.getSubstitutionList1()) {
+                Person oldFkIdSubstitutedOfSubstitutionList1Substitution = substitutionList1Substitution.getFkIdSubstituted();
+                substitutionList1Substitution.setFkIdSubstituted(person);
+                substitutionList1Substitution = em.merge(substitutionList1Substitution);
+                if (oldFkIdSubstitutedOfSubstitutionList1Substitution != null) {
+                    oldFkIdSubstitutedOfSubstitutionList1Substitution.getSubstitutionList1().remove(substitutionList1Substitution);
+                    oldFkIdSubstitutedOfSubstitutionList1Substitution = em.merge(oldFkIdSubstitutedOfSubstitutionList1Substitution);
                 }
             }
-            for (Copia copiaListCopia : persona.getCopiaList()) {
-                Person oldFkIdPersonaOfCopiaListCopia = copiaListCopia.getFkIdPersona();
-                copiaListCopia.setFkIdPersona(persona);
-                copiaListCopia = em.merge(copiaListCopia);
-                if (oldFkIdPersonaOfCopiaListCopia != null) {
-                    oldFkIdPersonaOfCopiaListCopia.getCopiaList().remove(copiaListCopia);
-                    oldFkIdPersonaOfCopiaListCopia = em.merge(oldFkIdPersonaOfCopiaListCopia);
+            for (Copy copyListCopy : person.getCopyList()) {
+                Person oldFkIdPersonOfCopyListCopy = copyListCopy.getFkIdPerson();
+                copyListCopy.setFkIdPerson(person);
+                copyListCopy = em.merge(copyListCopy);
+                if (oldFkIdPersonOfCopyListCopy != null) {
+                    oldFkIdPersonOfCopyListCopy.getCopyList().remove(copyListCopy);
+                    oldFkIdPersonOfCopyListCopy = em.merge(oldFkIdPersonOfCopyListCopy);
                 }
             }
-            for (Usuario usuarioListUsuario : persona.getUsuariosList()) {
-                Person oldFkIdPersonaOfUsuarioListUsuario = usuarioListUsuario.getFkIdPersona();
-                usuarioListUsuario.setFkIdPersona(persona);
-                usuarioListUsuario = em.merge(usuarioListUsuario);
-                if (oldFkIdPersonaOfUsuarioListUsuario != null) {
-                    oldFkIdPersonaOfUsuarioListUsuario.getUsuariosList().remove(usuarioListUsuario);
-                    oldFkIdPersonaOfUsuarioListUsuario = em.merge(oldFkIdPersonaOfUsuarioListUsuario);
+            for (User userListUser : person.getUserList()) {
+                Person oldFkIdPersonOfUserListUser = userListUser.getFkIdPerson();
+                userListUser.setFkIdPerson(person);
+                userListUser = em.merge(userListUser);
+                if (oldFkIdPersonOfUserListUser != null) {
+                    oldFkIdPersonOfUserListUser.getUserList().remove(userListUser);
+                    oldFkIdPersonOfUserListUser = em.merge(oldFkIdPersonOfUserListUser);
                 }
             }
             em.getTransaction().commit();
-            oid = persona.getPersonId();
+            oid = person.getPersonId();
         } finally {
             if (em != null) {
                 em.close();
@@ -243,50 +243,50 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         return oid;
     }
 
-    public void edit(Person persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Person person) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Person persistentPersona = em.find(Person.class, persona.getPersonId());
-            TipoIdentificacion fkIdTipoIdentificacionOld = persistentPersona.getFkIdIdentificationType();
-            TipoIdentificacion fkIdTipoIdentificacionNew = persona.getFkIdIdentificationType();
-            List<TramitesPersonas> tramitesPersonasListOld = persistentPersona.getTramitesPersonasList();
-            List<TramitesPersonas> tramitesPersonasListNew = persona.getTramitesPersonasList();
-            List<Presupuesto> presupuestoListOld = persistentPersona.getPresupuestoList();
-            List<Presupuesto> presupuestoListNew = persona.getPresupuestoList();
-            List<GestionDeEscritura> gestionesDeEscriturasListOld = persistentPersona.getGestionDeEscrituraList();
-            List<GestionDeEscritura> gestionesDeEscriturasListNew = persona.getGestionDeEscrituraList();
-            List<Folio> folioListOld = persistentPersona.getFolioList();
-            List<Folio> folioListNew = persona.getFolioList();
-            List<Suplencia> suplenciaListOld = persistentPersona.getSuplenciaList();
-            List<Suplencia> suplenciaListNew = persona.getSuplenciaList();
-            List<Suplencia> suplenciaList1Old = persistentPersona.getSuplenciaList1();
-            List<Suplencia> suplenciaList1New = persona.getSuplenciaList1();
-            List<Copia> copiaListOld = persistentPersona.getCopiaList();
-            List<Copia> copiaListNew = persona.getCopiaList();
-            List<Usuario> usuarioListOld = persistentPersona.getUsuariosList();
-            List<Usuario> usuarioListNew = persona.getUsuariosList();
+            Person persistentPerson = em.find(Person.class, person.getPersonId());
+            IdentificationType fkIdIdentificationTypeOld = persistentPerson.getFkIdIdentificationType();
+            IdentificationType fkIdIdentificationTypeNew = person.getFkIdIdentificationType();
+            List<PersonProcedure> personProcedureListOld = persistentPerson.getPersonProcedureList();
+            List<PersonProcedure> personProcedureListNew = person.getPersonProcedureList();
+            List<Budget> budgetListOld = persistentPerson.getBudgetList();
+            List<Budget> budgetListNew = person.getBudgetList();
+            List<DeedManagement> gestionesDeEscriturasListOld = persistentPerson.getDeedManagementList();
+            List<DeedManagement> gestionesDeEscriturasListNew = person.getDeedManagementList();
+            List<Folio> folioListOld = persistentPerson.getFolioList();
+            List<Folio> folioListNew = person.getFolioList();
+            List<Substitution> substitutionListOld = persistentPerson.getSubstitutionList();
+            List<Substitution> substitutionListNew = person.getSubstitutionList();
+            List<Substitution> substitutionList1Old = persistentPerson.getSubstitutionList1();
+            List<Substitution> substitutionList1New = person.getSubstitutionList1();
+            List<Copy> copyListOld = persistentPerson.getCopyList();
+            List<Copy> copyListNew = person.getCopyList();
+            List<User> userListOld = persistentPerson.getUserList();
+            List<User> userListNew = person.getUserList();
             List<String> illegalOrphanMessages = null;
-            for (TramitesPersonas tramitesPersonasListOldTramitesPersonas : tramitesPersonasListOld) {
-                if (!tramitesPersonasListNew.contains(tramitesPersonasListOldTramitesPersonas)) {
+            for (PersonProcedure personProcedureListOldPersonProcedure : personProcedureListOld) {
+                if (!personProcedureListNew.contains(personProcedureListOldPersonProcedure)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain TramitesPersonas "
-                            + tramitesPersonasListOldTramitesPersonas + " since its persona field is not nullable.");
+                            + personProcedureListOldPersonProcedure + " since its persona field is not nullable.");
                 }
             }
-            for (Presupuesto presupuestoListOldPresupuesto : presupuestoListOld) {
-                if (!presupuestoListNew.contains(presupuestoListOldPresupuesto)) {
+            for (Budget budgetListOldBudget : budgetListOld) {
+                if (!budgetListNew.contains(budgetListOldBudget)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Presupuesto " + presupuestoListOldPresupuesto
+                    illegalOrphanMessages.add("You must retain Presupuesto " + budgetListOldBudget
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
-            for (GestionDeEscritura gestionesDeEscriturasListOldGestionesDeEscrituras : gestionesDeEscriturasListOld) {
+            for (DeedManagement gestionesDeEscriturasListOldGestionesDeEscrituras : gestionesDeEscriturasListOld) {
                 if (!gestionesDeEscriturasListNew.contains(gestionesDeEscriturasListOldGestionesDeEscrituras)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
@@ -305,77 +305,77 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                             + " since its fkIdPersonaEscribano field is not nullable.");
                 }
             }
-            for (Suplencia suplenciaListOldSuplencia : suplenciaListOld) {
-                if (!suplenciaListNew.contains(suplenciaListOldSuplencia)) {
+            for (Substitution substitutionListOldSubstitution : substitutionListOld) {
+                if (!substitutionListNew.contains(substitutionListOldSubstitution)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + suplenciaListOldSuplencia
+                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionListOldSubstitution
                             + " since its fkIdSuplente field is not nullable.");
                 }
             }
-            for (Suplencia suplenciaList1OldSuplencia : suplenciaList1Old) {
-                if (!suplenciaList1New.contains(suplenciaList1OldSuplencia)) {
+            for (Substitution substitutionList1OldSubstitution : substitutionList1Old) {
+                if (!substitutionList1New.contains(substitutionList1OldSubstitution)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + suplenciaList1OldSuplencia
+                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionList1OldSubstitution
                             + " since its fkIdSuplantado field is not nullable.");
                 }
             }
-            for (Copia copiaListOldCopia : copiaListOld) {
-                if (!copiaListNew.contains(copiaListOldCopia)) {
+            for (Copy copyListOldCopy : copyListOld) {
+                if (!copyListNew.contains(copyListOldCopy)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Copia " + copiaListOldCopia
+                    illegalOrphanMessages.add("You must retain Copia " + copyListOldCopy
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
-            for (Usuario usuarioListOldUsuario : usuarioListOld) {
-                if (!usuarioListNew.contains(usuarioListOldUsuario)) {
+            for (User userListOldUser : userListOld) {
+                if (!userListNew.contains(userListOldUser)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Usuario " + usuarioListOldUsuario
+                    illegalOrphanMessages.add("You must retain Usuario " + userListOldUser
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            if (fkIdTipoIdentificacionNew != null) {
-                fkIdTipoIdentificacionNew = em.getReference(fkIdTipoIdentificacionNew.getClass(),
-                        fkIdTipoIdentificacionNew.getIdTipoIdentificacion());
-                persona.setFkIdIdentificationType(fkIdTipoIdentificacionNew);
+            if (fkIdIdentificationTypeNew != null) {
+                fkIdIdentificationTypeNew = em.getReference(fkIdIdentificationTypeNew.getClass(),
+                        fkIdIdentificationTypeNew.getIdIdentificationType());
+                person.setFkIdIdentificationType(fkIdIdentificationTypeNew);
             }
-            List<TramitesPersonas> attachedTramitesPersonasListNew = new ArrayList<TramitesPersonas>();
-            for (TramitesPersonas tramitesPersonasListNewTramitesPersonasToAttach : tramitesPersonasListNew) {
-                tramitesPersonasListNewTramitesPersonasToAttach = em.getReference(
-                        tramitesPersonasListNewTramitesPersonasToAttach.getClass(),
-                        tramitesPersonasListNewTramitesPersonasToAttach.getTramitesPersonasPK());
-                attachedTramitesPersonasListNew.add(tramitesPersonasListNewTramitesPersonasToAttach);
+            List<PersonProcedure> attachedPersonProcedureListNew = new ArrayList<PersonProcedure>();
+            for (PersonProcedure personProcedureListNewPersonProcedureToAttach : personProcedureListNew) {
+                personProcedureListNewPersonProcedureToAttach = em.getReference(
+                        personProcedureListNewPersonProcedureToAttach.getClass(),
+                        personProcedureListNewPersonProcedureToAttach.getPersonProcedurePK());
+                attachedPersonProcedureListNew.add(personProcedureListNewPersonProcedureToAttach);
             }
-            tramitesPersonasListNew = attachedTramitesPersonasListNew;
-            persona.setTramitesPersonasList(tramitesPersonasListNew);
-            List<Presupuesto> attachedPresupuestoListNew = new ArrayList<Presupuesto>();
-            for (Presupuesto presupuestoListNewPresupuestoToAttach : presupuestoListNew) {
-                presupuestoListNewPresupuestoToAttach = em.getReference(
-                        presupuestoListNewPresupuestoToAttach.getClass(),
-                        presupuestoListNewPresupuestoToAttach.getIdPresupuesto());
-                attachedPresupuestoListNew.add(presupuestoListNewPresupuestoToAttach);
+            personProcedureListNew = attachedPersonProcedureListNew;
+            person.setPersonProcedureList(personProcedureListNew);
+            List<Budget> attachedBudgetListNew = new ArrayList<Budget>();
+            for (Budget budgetListNewBudgetToAttach : budgetListNew) {
+                budgetListNewBudgetToAttach = em.getReference(
+                        budgetListNewBudgetToAttach.getClass(),
+                        budgetListNewBudgetToAttach.getIdBudget());
+                attachedBudgetListNew.add(budgetListNewBudgetToAttach);
             }
-            presupuestoListNew = attachedPresupuestoListNew;
-            persona.setPresupuestoList(presupuestoListNew);
-            List<GestionDeEscritura> attachedGestionesDeEscriturasListNew = new ArrayList<GestionDeEscritura>();
-            for (GestionDeEscritura gestionesDeEscriturasListNewGestionesDeEscriturasToAttach : gestionesDeEscriturasListNew) {
+            budgetListNew = attachedBudgetListNew;
+            person.setBudgetList(budgetListNew);
+            List<DeedManagement> attachedGestionesDeEscriturasListNew = new ArrayList<DeedManagement>();
+            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscriturasToAttach : gestionesDeEscriturasListNew) {
                 gestionesDeEscriturasListNewGestionesDeEscriturasToAttach = em.getReference(
                         gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getClass(),
-                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getIdGestion());
+                        gestionesDeEscriturasListNewGestionesDeEscriturasToAttach.getIdManagement());
                 attachedGestionesDeEscriturasListNew.add(gestionesDeEscriturasListNewGestionesDeEscriturasToAttach);
             }
             gestionesDeEscriturasListNew = attachedGestionesDeEscriturasListNew;
-            persona.setGestionDeEscrituraList(gestionesDeEscriturasListNew);
+            person.setDeedManagementList(gestionesDeEscriturasListNew);
             List<Folio> attachedFolioListNew = new ArrayList<Folio>();
             for (Folio folioListNewFolioToAttach : folioListNew) {
                 folioListNewFolioToAttach = em.getReference(folioListNewFolioToAttach.getClass(),
@@ -383,157 +383,157 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 attachedFolioListNew.add(folioListNewFolioToAttach);
             }
             folioListNew = attachedFolioListNew;
-            persona.setFolioList(folioListNew);
-            List<Suplencia> attachedSuplenciaListNew = new ArrayList<Suplencia>();
-            for (Suplencia suplenciaListNewSuplenciaToAttach : suplenciaListNew) {
-                suplenciaListNewSuplenciaToAttach = em.getReference(suplenciaListNewSuplenciaToAttach.getClass(),
-                        suplenciaListNewSuplenciaToAttach.getIdSuplencia());
-                attachedSuplenciaListNew.add(suplenciaListNewSuplenciaToAttach);
+            person.setFolioList(folioListNew);
+            List<Substitution> attachedSubstitutionListNew = new ArrayList<Substitution>();
+            for (Substitution substitutionListNewSubstitutionToAttach : substitutionListNew) {
+                substitutionListNewSubstitutionToAttach = em.getReference(substitutionListNewSubstitutionToAttach.getClass(),
+                        substitutionListNewSubstitutionToAttach.getIdSubstitution());
+                attachedSubstitutionListNew.add(substitutionListNewSubstitutionToAttach);
             }
-            suplenciaListNew = attachedSuplenciaListNew;
-            persona.setSuplenciaList(suplenciaListNew);
-            List<Suplencia> attachedSuplenciaList1New = new ArrayList<Suplencia>();
-            for (Suplencia suplenciaList1NewSuplenciaToAttach : suplenciaList1New) {
-                suplenciaList1NewSuplenciaToAttach = em.getReference(suplenciaList1NewSuplenciaToAttach.getClass(),
-                        suplenciaList1NewSuplenciaToAttach.getIdSuplencia());
-                attachedSuplenciaList1New.add(suplenciaList1NewSuplenciaToAttach);
+            substitutionListNew = attachedSubstitutionListNew;
+            person.setSubstitutionList(substitutionListNew);
+            List<Substitution> attachedSubstitutionList1New = new ArrayList<Substitution>();
+            for (Substitution substitutionList1NewSubstitutionToAttach : substitutionList1New) {
+                substitutionList1NewSubstitutionToAttach = em.getReference(substitutionList1NewSubstitutionToAttach.getClass(),
+                        substitutionList1NewSubstitutionToAttach.getIdSubstitution());
+                attachedSubstitutionList1New.add(substitutionList1NewSubstitutionToAttach);
             }
-            suplenciaList1New = attachedSuplenciaList1New;
-            persona.setSuplenciaList1(suplenciaList1New);
-            List<Copia> attachedCopiaListNew = new ArrayList<Copia>();
-            for (Copia copiaListNewCopiaToAttach : copiaListNew) {
-                copiaListNewCopiaToAttach = em.getReference(copiaListNewCopiaToAttach.getClass(),
-                        copiaListNewCopiaToAttach.getIdCopia());
-                attachedCopiaListNew.add(copiaListNewCopiaToAttach);
+            substitutionList1New = attachedSubstitutionList1New;
+            person.setSubstitutionList1(substitutionList1New);
+            List<Copy> attachedCopyListNew = new ArrayList<Copy>();
+            for (Copy copyListNewCopyToAttach : copyListNew) {
+                copyListNewCopyToAttach = em.getReference(copyListNewCopyToAttach.getClass(),
+                        copyListNewCopyToAttach.getIdCopy());
+                attachedCopyListNew.add(copyListNewCopyToAttach);
             }
-            copiaListNew = attachedCopiaListNew;
-            persona.setCopiaList(copiaListNew);
-            List<Usuario> attachedUsuarioListNew = new ArrayList<Usuario>();
-            for (Usuario usuarioListNewUsuarioToAttach : usuarioListNew) {
-                usuarioListNewUsuarioToAttach = em.getReference(usuarioListNewUsuarioToAttach.getClass(),
-                        usuarioListNewUsuarioToAttach.getIdUsuario());
-                attachedUsuarioListNew.add(usuarioListNewUsuarioToAttach);
+            copyListNew = attachedCopyListNew;
+            person.setCopyList(copyListNew);
+            List<User> attachedUserListNew = new ArrayList<User>();
+            for (User userListNewUserToAttach : userListNew) {
+                userListNewUserToAttach = em.getReference(userListNewUserToAttach.getClass(),
+                        userListNewUserToAttach.getIdUser());
+                attachedUserListNew.add(userListNewUserToAttach);
             }
-            usuarioListNew = attachedUsuarioListNew;
-            persona.setUsuariosList(usuarioListNew);
-            persona = em.merge(persona);
-            if (fkIdTipoIdentificacionOld != null && !fkIdTipoIdentificacionOld.equals(fkIdTipoIdentificacionNew)) {
-                fkIdTipoIdentificacionOld.getPersonaList().remove(persona);
-                fkIdTipoIdentificacionOld = em.merge(fkIdTipoIdentificacionOld);
+            userListNew = attachedUserListNew;
+            person.setUserList(userListNew);
+            person = em.merge(person);
+            if (fkIdIdentificationTypeOld != null && !fkIdIdentificationTypeOld.equals(fkIdIdentificationTypeNew)) {
+                fkIdIdentificationTypeOld.getPersonList().remove(person);
+                fkIdIdentificationTypeOld = em.merge(fkIdIdentificationTypeOld);
             }
-            if (fkIdTipoIdentificacionNew != null && !fkIdTipoIdentificacionNew.equals(fkIdTipoIdentificacionOld)) {
-                fkIdTipoIdentificacionNew.getPersonaList().add(persona);
-                fkIdTipoIdentificacionNew = em.merge(fkIdTipoIdentificacionNew);
+            if (fkIdIdentificationTypeNew != null && !fkIdIdentificationTypeNew.equals(fkIdIdentificationTypeOld)) {
+                fkIdIdentificationTypeNew.getPersonList().add(person);
+                fkIdIdentificationTypeNew = em.merge(fkIdIdentificationTypeNew);
             }
-            for (TramitesPersonas tramitesPersonasListNewTramitesPersonas : tramitesPersonasListNew) {
-                if (!tramitesPersonasListOld.contains(tramitesPersonasListNewTramitesPersonas)) {
-                    Person oldPersonaOfTramitesPersonasListNewTramitesPersonas = tramitesPersonasListNewTramitesPersonas
-                            .getPersona();
-                    tramitesPersonasListNewTramitesPersonas.setPersona(persona);
-                    tramitesPersonasListNewTramitesPersonas = em.merge(tramitesPersonasListNewTramitesPersonas);
-                    if (oldPersonaOfTramitesPersonasListNewTramitesPersonas != null
-                            && !oldPersonaOfTramitesPersonasListNewTramitesPersonas.equals(persona)) {
-                        oldPersonaOfTramitesPersonasListNewTramitesPersonas.getTramitesPersonasList()
-                                .remove(tramitesPersonasListNewTramitesPersonas);
-                        oldPersonaOfTramitesPersonasListNewTramitesPersonas = em
-                                .merge(oldPersonaOfTramitesPersonasListNewTramitesPersonas);
+            for (PersonProcedure personProcedureListNewPersonProcedure : personProcedureListNew) {
+                if (!personProcedureListOld.contains(personProcedureListNewPersonProcedure)) {
+                    Person oldPersonOfPersonProcedureListNewPersonProcedure = personProcedureListNewPersonProcedure
+                            .getPerson();
+                    personProcedureListNewPersonProcedure.setPerson(person);
+                    personProcedureListNewPersonProcedure = em.merge(personProcedureListNewPersonProcedure);
+                    if (oldPersonOfPersonProcedureListNewPersonProcedure != null
+                            && !oldPersonOfPersonProcedureListNewPersonProcedure.equals(person)) {
+                        oldPersonOfPersonProcedureListNewPersonProcedure.getPersonProcedureList()
+                                .remove(personProcedureListNewPersonProcedure);
+                        oldPersonOfPersonProcedureListNewPersonProcedure = em
+                                .merge(oldPersonOfPersonProcedureListNewPersonProcedure);
                     }
                 }
             }
-            for (Presupuesto presupuestoListNewPresupuesto : presupuestoListNew) {
-                if (!presupuestoListOld.contains(presupuestoListNewPresupuesto)) {
-                    Person oldFkIdPersonaOfPresupuestoListNewPresupuesto = presupuestoListNewPresupuesto
-                            .getFkIdPersona();
-                    presupuestoListNewPresupuesto.setFkIdPersona(persona);
-                    presupuestoListNewPresupuesto = em.merge(presupuestoListNewPresupuesto);
-                    if (oldFkIdPersonaOfPresupuestoListNewPresupuesto != null
-                            && !oldFkIdPersonaOfPresupuestoListNewPresupuesto.equals(persona)) {
-                        oldFkIdPersonaOfPresupuestoListNewPresupuesto.getPresupuestoList()
-                                .remove(presupuestoListNewPresupuesto);
-                        oldFkIdPersonaOfPresupuestoListNewPresupuesto = em
-                                .merge(oldFkIdPersonaOfPresupuestoListNewPresupuesto);
+            for (Budget budgetListNewBudget : budgetListNew) {
+                if (!budgetListOld.contains(budgetListNewBudget)) {
+                    Person oldFkIdPersonOfBudgetListNewBudget = budgetListNewBudget
+                            .getFkIdPerson();
+                    budgetListNewBudget.setFkIdPerson(person);
+                    budgetListNewBudget = em.merge(budgetListNewBudget);
+                    if (oldFkIdPersonOfBudgetListNewBudget != null
+                            && !oldFkIdPersonOfBudgetListNewBudget.equals(person)) {
+                        oldFkIdPersonOfBudgetListNewBudget.getBudgetList()
+                                .remove(budgetListNewBudget);
+                        oldFkIdPersonOfBudgetListNewBudget = em
+                                .merge(oldFkIdPersonOfBudgetListNewBudget);
                     }
                 }
             }
-            for (GestionDeEscritura gestionesDeEscriturasListNewGestionesDeEscrituras : gestionesDeEscriturasListNew) {
+            for (DeedManagement gestionesDeEscriturasListNewGestionesDeEscrituras : gestionesDeEscriturasListNew) {
                 if (!gestionesDeEscriturasListOld.contains(gestionesDeEscriturasListNewGestionesDeEscrituras)) {
-                    Person oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
-                            .getFkIdPersonaEscribano();
-                    gestionesDeEscriturasListNewGestionesDeEscrituras.setFkIdPersonaEscribano(persona);
+                    Person oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = gestionesDeEscriturasListNewGestionesDeEscrituras
+                            .getFkIdNotaryPerson();
+                    gestionesDeEscriturasListNewGestionesDeEscrituras.setFkIdNotaryPerson(person);
                     gestionesDeEscriturasListNewGestionesDeEscrituras = em
                             .merge(gestionesDeEscriturasListNewGestionesDeEscrituras);
-                    if (oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras != null
-                            && !oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras
-                                    .equals(persona)) {
-                        oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras
-                                .getGestionDeEscrituraList().remove(gestionesDeEscriturasListNewGestionesDeEscrituras);
-                        oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras = em
-                                .merge(oldFkIdPersonaEscribanoOfGestionesDeEscriturasListNewGestionesDeEscrituras);
+                    if (oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras != null
+                            && !oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
+                                    .equals(person)) {
+                        oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras
+                                .getDeedManagementList().remove(gestionesDeEscriturasListNewGestionesDeEscrituras);
+                        oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras = em
+                                .merge(oldFkIdNotaryPersonOfGestionesDeEscriturasListNewGestionesDeEscrituras);
                     }
                 }
             }
             for (Folio folioListNewFolio : folioListNew) {
                 if (!folioListOld.contains(folioListNewFolio)) {
-                    Person oldFkIdPersonaEscribanoOfFolioListNewFolio = folioListNewFolio.getFkIdPersonaEscribano();
-                    folioListNewFolio.setFkIdPersonaEscribano(persona);
+                    Person oldFkIdNotaryPersonOfFolioListNewFolio = folioListNewFolio.getFkIdNotaryPerson();
+                    folioListNewFolio.setFkIdNotaryPerson(person);
                     folioListNewFolio = em.merge(folioListNewFolio);
-                    if (oldFkIdPersonaEscribanoOfFolioListNewFolio != null
-                            && !oldFkIdPersonaEscribanoOfFolioListNewFolio.equals(persona)) {
-                        oldFkIdPersonaEscribanoOfFolioListNewFolio.getFolioList().remove(folioListNewFolio);
-                        oldFkIdPersonaEscribanoOfFolioListNewFolio = em
-                                .merge(oldFkIdPersonaEscribanoOfFolioListNewFolio);
+                    if (oldFkIdNotaryPersonOfFolioListNewFolio != null
+                            && !oldFkIdNotaryPersonOfFolioListNewFolio.equals(person)) {
+                        oldFkIdNotaryPersonOfFolioListNewFolio.getFolioList().remove(folioListNewFolio);
+                        oldFkIdNotaryPersonOfFolioListNewFolio = em
+                                .merge(oldFkIdNotaryPersonOfFolioListNewFolio);
                     }
                 }
             }
-            for (Suplencia suplenciaListNewSuplencia : suplenciaListNew) {
-                if (!suplenciaListOld.contains(suplenciaListNewSuplencia)) {
-                    Person oldFkIdSuplenteOfSuplenciaListNewSuplencia = suplenciaListNewSuplencia.getFkIdSuplente();
-                    suplenciaListNewSuplencia.setFkIdSuplente(persona);
-                    suplenciaListNewSuplencia = em.merge(suplenciaListNewSuplencia);
-                    if (oldFkIdSuplenteOfSuplenciaListNewSuplencia != null
-                            && !oldFkIdSuplenteOfSuplenciaListNewSuplencia.equals(persona)) {
-                        oldFkIdSuplenteOfSuplenciaListNewSuplencia.getSuplenciaList().remove(suplenciaListNewSuplencia);
-                        oldFkIdSuplenteOfSuplenciaListNewSuplencia = em
-                                .merge(oldFkIdSuplenteOfSuplenciaListNewSuplencia);
+            for (Substitution substitutionListNewSubstitution : substitutionListNew) {
+                if (!substitutionListOld.contains(substitutionListNewSubstitution)) {
+                    Person oldFkIdSubstituteOfSubstitutionListNewSubstitution = substitutionListNewSubstitution.getFkIdSubstitute();
+                    substitutionListNewSubstitution.setFkIdSubstitute(person);
+                    substitutionListNewSubstitution = em.merge(substitutionListNewSubstitution);
+                    if (oldFkIdSubstituteOfSubstitutionListNewSubstitution != null
+                            && !oldFkIdSubstituteOfSubstitutionListNewSubstitution.equals(person)) {
+                        oldFkIdSubstituteOfSubstitutionListNewSubstitution.getSubstitutionList().remove(substitutionListNewSubstitution);
+                        oldFkIdSubstituteOfSubstitutionListNewSubstitution = em
+                                .merge(oldFkIdSubstituteOfSubstitutionListNewSubstitution);
                     }
                 }
             }
-            for (Suplencia suplenciaList1NewSuplencia : suplenciaList1New) {
-                if (!suplenciaList1Old.contains(suplenciaList1NewSuplencia)) {
-                    Person oldFkIdSuplantadoOfSuplenciaList1NewSuplencia = suplenciaList1NewSuplencia
-                            .getFkIdSuplantado();
-                    suplenciaList1NewSuplencia.setFkIdSuplantado(persona);
-                    suplenciaList1NewSuplencia = em.merge(suplenciaList1NewSuplencia);
-                    if (oldFkIdSuplantadoOfSuplenciaList1NewSuplencia != null
-                            && !oldFkIdSuplantadoOfSuplenciaList1NewSuplencia.equals(persona)) {
-                        oldFkIdSuplantadoOfSuplenciaList1NewSuplencia.getSuplenciaList1()
-                                .remove(suplenciaList1NewSuplencia);
-                        oldFkIdSuplantadoOfSuplenciaList1NewSuplencia = em
-                                .merge(oldFkIdSuplantadoOfSuplenciaList1NewSuplencia);
+            for (Substitution substitutionList1NewSubstitution : substitutionList1New) {
+                if (!substitutionList1Old.contains(substitutionList1NewSubstitution)) {
+                    Person oldFkIdSubstitutedOfSubstitutionList1NewSubstitution = substitutionList1NewSubstitution
+                            .getFkIdSubstituted();
+                    substitutionList1NewSubstitution.setFkIdSubstituted(person);
+                    substitutionList1NewSubstitution = em.merge(substitutionList1NewSubstitution);
+                    if (oldFkIdSubstitutedOfSubstitutionList1NewSubstitution != null
+                            && !oldFkIdSubstitutedOfSubstitutionList1NewSubstitution.equals(person)) {
+                        oldFkIdSubstitutedOfSubstitutionList1NewSubstitution.getSubstitutionList1()
+                                .remove(substitutionList1NewSubstitution);
+                        oldFkIdSubstitutedOfSubstitutionList1NewSubstitution = em
+                                .merge(oldFkIdSubstitutedOfSubstitutionList1NewSubstitution);
                     }
                 }
             }
-            for (Copia copiaListNewCopia : copiaListNew) {
-                if (!copiaListOld.contains(copiaListNewCopia)) {
-                    Person oldFkIdPersonaOfCopiaListNewCopia = copiaListNewCopia.getFkIdPersona();
-                    copiaListNewCopia.setFkIdPersona(persona);
-                    copiaListNewCopia = em.merge(copiaListNewCopia);
-                    if (oldFkIdPersonaOfCopiaListNewCopia != null
-                            && !oldFkIdPersonaOfCopiaListNewCopia.equals(persona)) {
-                        oldFkIdPersonaOfCopiaListNewCopia.getCopiaList().remove(copiaListNewCopia);
-                        oldFkIdPersonaOfCopiaListNewCopia = em.merge(oldFkIdPersonaOfCopiaListNewCopia);
+            for (Copy copyListNewCopy : copyListNew) {
+                if (!copyListOld.contains(copyListNewCopy)) {
+                    Person oldFkIdPersonOfCopyListNewCopy = copyListNewCopy.getFkIdPerson();
+                    copyListNewCopy.setFkIdPerson(person);
+                    copyListNewCopy = em.merge(copyListNewCopy);
+                    if (oldFkIdPersonOfCopyListNewCopy != null
+                            && !oldFkIdPersonOfCopyListNewCopy.equals(person)) {
+                        oldFkIdPersonOfCopyListNewCopy.getCopyList().remove(copyListNewCopy);
+                        oldFkIdPersonOfCopyListNewCopy = em.merge(oldFkIdPersonOfCopyListNewCopy);
                     }
                 }
             }
-            for (Usuario usuarioListNewUsuario : usuarioListNew) {
-                if (!usuarioListOld.contains(usuarioListNewUsuario)) {
-                    Person oldFkIdPersonaOfUsuarioListNewUsuario = usuarioListNewUsuario.getFkIdPersona();
-                    usuarioListNewUsuario.setFkIdPersona(persona);
-                    usuarioListNewUsuario = em.merge(usuarioListNewUsuario);
-                    if (oldFkIdPersonaOfUsuarioListNewUsuario != null
-                            && !oldFkIdPersonaOfUsuarioListNewUsuario.equals(persona)) {
-                        oldFkIdPersonaOfUsuarioListNewUsuario.getUsuariosList().remove(usuarioListNewUsuario);
-                        oldFkIdPersonaOfUsuarioListNewUsuario = em.merge(oldFkIdPersonaOfUsuarioListNewUsuario);
+            for (User userListNewUser : userListNew) {
+                if (!userListOld.contains(userListNewUser)) {
+                    Person oldFkIdPersonOfUserListNewUser = userListNewUser.getFkIdPerson();
+                    userListNewUser.setFkIdPerson(person);
+                    userListNewUser = em.merge(userListNewUser);
+                    if (oldFkIdPersonOfUserListNewUser != null
+                            && !oldFkIdPersonOfUserListNewUser.equals(person)) {
+                        oldFkIdPersonOfUserListNewUser.getUserList().remove(userListNewUser);
+                        oldFkIdPersonOfUserListNewUser = em.merge(oldFkIdPersonOfUserListNewUser);
                     }
                 }
             }
@@ -541,8 +541,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = persona.getPersonId();
-                if (findPersona(id) == null) {
+                Integer id = person.getPersonId();
+                if (findPerson(id) == null) {
                     throw new NonexistentEntityException("The persona with id " + id + " no longer exists.");
                 }
             }
@@ -559,96 +559,96 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Person persona;
+            Person person;
             try {
-                persona = em.getReference(Person.class, id);
-                persona.getPersonId();
+                person = em.getReference(Person.class, id);
+                person.getPersonId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The persona with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            List<TramitesPersonas> tramitesPersonasListOrphanCheck = persona.getTramitesPersonasList();
-            for (TramitesPersonas tramitesPersonasListOrphanCheckTramitesPersonas : tramitesPersonasListOrphanCheck) {
+            List<PersonProcedure> personProcedureListOrphanCheck = person.getPersonProcedureList();
+            for (PersonProcedure personProcedureListOrphanCheckPersonProcedure : personProcedureListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages
-                        .add("This Persona (" + persona + ") cannot be destroyed since the TramitesPersonas "
-                                + tramitesPersonasListOrphanCheckTramitesPersonas
+                        .add("This Persona (" + person + ") cannot be destroyed since the TramitesPersonas "
+                                + personProcedureListOrphanCheckPersonProcedure
                                 + " in its tramitesPersonasList field has a non-nullable persona field.");
             }
-            List<Presupuesto> presupuestoListOrphanCheck = persona.getPresupuestoList();
-            for (Presupuesto presupuestoListOrphanCheckPresupuesto : presupuestoListOrphanCheck) {
+            List<Budget> budgetListOrphanCheck = person.getBudgetList();
+            for (Budget budgetListOrphanCheckBudget : budgetListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Presupuesto "
-                        + presupuestoListOrphanCheckPresupuesto
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Presupuesto "
+                        + budgetListOrphanCheckBudget
                         + " in its presupuestoList field has a non-nullable fkIdPersona field.");
             }
-            List<GestionDeEscritura> gestionesDeEscriturasListOrphanCheck = persona.getGestionDeEscrituraList();
-            for (GestionDeEscritura gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras : gestionesDeEscriturasListOrphanCheck) {
+            List<DeedManagement> gestionesDeEscriturasListOrphanCheck = person.getDeedManagementList();
+            for (DeedManagement gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras : gestionesDeEscriturasListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona
+                illegalOrphanMessages.add("This Persona (" + person
                         + ") cannot be destroyed since the GestionesDeEscrituras "
                         + gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras
                         + " in its gestionesDeEscriturasList field has a non-nullable fkIdPersonaEscribano field.");
             }
-            List<Folio> folioListOrphanCheck = persona.getFolioList();
+            List<Folio> folioListOrphanCheck = person.getFolioList();
             for (Folio folioListOrphanCheckFolio : folioListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Folio "
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Folio "
                         + folioListOrphanCheckFolio
                         + " in its folioList field has a non-nullable fkIdPersonaEscribano field.");
             }
-            List<Suplencia> suplenciaListOrphanCheck = persona.getSuplenciaList();
-            for (Suplencia suplenciaListOrphanCheckSuplencia : suplenciaListOrphanCheck) {
+            List<Substitution> substitutionListOrphanCheck = person.getSubstitutionList();
+            for (Substitution substitutionListOrphanCheckSubstitution : substitutionListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Suplencia "
-                        + suplenciaListOrphanCheckSuplencia
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                        + substitutionListOrphanCheckSubstitution
                         + " in its suplenciaList field has a non-nullable fkIdSuplente field.");
             }
-            List<Suplencia> suplenciaList1OrphanCheck = persona.getSuplenciaList1();
-            for (Suplencia suplenciaList1OrphanCheckSuplencia : suplenciaList1OrphanCheck) {
+            List<Substitution> substitutionList1OrphanCheck = person.getSubstitutionList1();
+            for (Substitution substitutionList1OrphanCheckSubstitution : substitutionList1OrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Suplencia "
-                        + suplenciaList1OrphanCheckSuplencia
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                        + substitutionList1OrphanCheckSubstitution
                         + " in its suplenciaList1 field has a non-nullable fkIdSuplantado field.");
             }
-            List<Copia> copiaListOrphanCheck = persona.getCopiaList();
-            for (Copia copiaListOrphanCheckCopia : copiaListOrphanCheck) {
+            List<Copy> copyListOrphanCheck = person.getCopyList();
+            for (Copy copyListOrphanCheckCopy : copyListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Copia "
-                        + copiaListOrphanCheckCopia + " in its copiaList field has a non-nullable fkIdPersona field.");
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Copia "
+                        + copyListOrphanCheckCopy + " in its copiaList field has a non-nullable fkIdPersona field.");
             }
-            List<Usuario> usuarioListOrphanCheck = persona.getUsuariosList();
-            for (Usuario usuarioListOrphanCheckUsuario : usuarioListOrphanCheck) {
+            List<User> userListOrphanCheck = person.getUserList();
+            for (User userListOrphanCheckUser : userListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Usuario "
-                        + usuarioListOrphanCheckUsuario
+                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Usuario "
+                        + userListOrphanCheckUser
                         + " in its usuarioList field has a non-nullable fkIdPersona field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            TipoIdentificacion fkIdTipoIdentificacion = persona.getFkIdIdentificationType();
-            if (fkIdTipoIdentificacion != null) {
-                fkIdTipoIdentificacion.getPersonaList().remove(persona);
-                fkIdTipoIdentificacion = em.merge(fkIdTipoIdentificacion);
+            IdentificationType fkIdIdentificationType = person.getFkIdIdentificationType();
+            if (fkIdIdentificationType != null) {
+                fkIdIdentificationType.getPersonList().remove(person);
+                fkIdIdentificationType = em.merge(fkIdIdentificationType);
             }
-            em.remove(persona);
+            em.remove(person);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -657,15 +657,15 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public List<Person> findPersonaEntities() {
-        return findPersonaEntities(true, -1, -1);
+    public List<Person> findPersonEntities() {
+        return findPersonEntities(true, -1, -1);
     }
 
-    public List<Person> findPersonaEntities(int maxResults, int firstResult) {
-        return findPersonaEntities(false, maxResults, firstResult);
+    public List<Person> findPersonEntities(int maxResults, int firstResult) {
+        return findPersonEntities(false, maxResults, firstResult);
     }
 
-    private List<Person> findPersonaEntities(boolean all, int maxResults, int firstResult) {
+    private List<Person> findPersonEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             Query q = em.createQuery("select object(o) from Persona as o");
@@ -674,33 +674,33 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 q.setFirstResult(firstResult);
             }
 
-            List<Person> listaPersonas = q.getResultList();
+            List<Person> listaPersons = q.getResultList();
 
-            for (Iterator<Person> it = listaPersonas.iterator(); it.hasNext();) {
-                Person persona = it.next();
-                persona.setFolioList(null);
+            for (Iterator<Person> it = listaPersons.iterator(); it.hasNext();) {
+                Person person = it.next();
+                person.setFolioList(null);
 
-                persona.setGestionDeEscrituraList(null);
+                person.setDeedManagementList(null);
 
-                persona.setPresupuestoList(null);
-                persona.setSuplenciaList(null);
+                person.setBudgetList(null);
+                person.setSubstitutionList(null);
 
-                TramitesPersonasJpaController jpaTramitePersona = new TramitesPersonasJpaController(emf);
-                persona.setTramiteList(jpaTramitePersona.findTramitesPersona(persona.getPersonId()));
+                PersonProcedureJpaController jpaProcedurePerson = new PersonProcedureJpaController(emf);
+                person.setProcedureList(jpaProcedurePerson.findProceduresPerson(person.getPersonId()));
 
-                persona.setTramitesPersonasList(null);
-                persona.setUsuariosList(null);
+                person.setPersonProcedureList(null);
+                person.setUserList(null);
 
                 // persona.setTramiteList(new ArrayList<Tramite>());
             }
 
-            return listaPersonas;
+            return listaPersons;
         } finally {
             em.close();
         }
     }
 
-    public Person findPersona(Integer id) {
+    public Person findPerson(Integer id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Person.class, id);
@@ -709,7 +709,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         }
     }
 
-    public int getPersonaCount() {
+    public int getPersonCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
@@ -733,19 +733,19 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     }
 
-    public Boolean modificarPersona(Person pPersona) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en bd del Objeto
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
+        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
 
         EntityManager em = getEntityManager();
 
-        Person persistentPersona = em.find(Person.class, pPersona.getPersonId());
+        Person persistentPerson = em.find(Person.class, pPerson.getPersonId());
 
-        if (persistentPersona != null) {
-            version = persistentPersona.getVersion(); // Version del Objeto en db
-            oldVersion = pPersona.getVersion(); // Version del Objeto en memoria
+        if (persistentPerson != null) {
+            version = persistentPerson.getVersion(); // Version del Objeto en db
+            oldVersion = pPerson.getVersion(); // Version del Objeto en memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -756,12 +756,12 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.getTransaction().begin();
 
                     // Atributos Persona
-                    persistentPersona.setFirstName(pPersona.getFirstName());
-                    persistentPersona.setLastName(pPersona.getLastName());
-                    persistentPersona.setPhone(pPersona.getPhone());
-                    persistentPersona.setEmail(pPersona.getEmail());
-                    persistentPersona.setFkIdIdentificationType(pPersona.getFkIdIdentificationType());
-                    persistentPersona.setIdentificationNumber(pPersona.getIdentificationNumber());
+                    persistentPerson.setFirstName(pPerson.getFirstName());
+                    persistentPerson.setLastName(pPerson.getLastName());
+                    persistentPerson.setPhone(pPerson.getPhone());
+                    persistentPerson.setEmail(pPerson.getEmail());
+                    persistentPerson.setFkIdIdentificationType(pPerson.getFkIdIdentificationType());
+                    persistentPerson.setIdentificationNumber(pPerson.getIdentificationNumber());
 
                     /*
                      * Tira error cuando el registro de escribano vale NULL if
@@ -783,19 +783,19 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         return flag;
     }
 
-    public Boolean registrarEscribano(Person escribano) throws ClassModifiedException, NonexistentEntityException {
+    public Boolean registrarNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
         Boolean resultado = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VERSION_INICIAL; // Variable para Version en bd del Objeto
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
+        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
 
         EntityManager em = getEntityManager();
 
-        Person persistentPersona = em.find(Person.class, escribano.getPersonId());
+        Person persistentPerson = em.find(Person.class, notary.getPersonId());
 
-        if (persistentPersona != null) {
-            version = persistentPersona.getVersion(); // Version del Objeto en db
-            oldVersion = escribano.getVersion(); // Version del Objeto en memoria
+        if (persistentPerson != null) {
+            version = persistentPerson.getVersion(); // Version del Objeto en db
+            oldVersion = notary.getVersion(); // Version del Objeto en memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -806,8 +806,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
             } else {
                 em.getTransaction().begin();
 
-                if (escribano.getNotaryRegistrationNumber() != 0) {
-                    persistentPersona.setNotaryRegistrationNumber(escribano.getNotaryRegistrationNumber());
+                if (notary.getNotaryRegistrationNumber() != 0) {
+                    persistentPerson.setNotaryRegistrationNumber(notary.getNotaryRegistrationNumber());
                 }
                 em.getTransaction().commit();
                 resultado = true;
@@ -823,7 +823,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         return resultado;
     }
 
-    public Boolean modificarCliente(Person pCliente) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modificarClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable para saber el resultado de la transaccion
         int oldVersion = 0; // Variable para Version en memoria del Objeto
@@ -831,11 +831,11 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
         EntityManager em = getEntityManager();
 
-        Person persistentPersona = em.find(Person.class, pCliente.getPersonId());
+        Person persistentPerson = em.find(Person.class, pClient.getPersonId());
 
-        if (persistentPersona != null) {
-            version = persistentPersona.getVersion(); // Version del Objeto en db
-            oldVersion = pCliente.getVersion(); // Version del Objeto en memoria
+        if (persistentPerson != null) {
+            version = persistentPerson.getVersion(); // Version del Objeto en db
+            oldVersion = pClient.getVersion(); // Version del Objeto en memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -846,27 +846,27 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.getTransaction().begin();
 
                     // Atributos Persona
-                    persistentPersona.setFirstName(pCliente.getFirstName());
-                    persistentPersona.setLastName(pCliente.getLastName());
-                    persistentPersona.setPhone(pCliente.getPhone());
-                    persistentPersona.setEmail(pCliente.getEmail());
-                    persistentPersona.setFkIdIdentificationType(pCliente.getFkIdIdentificationType());
-                    persistentPersona.setIdentificationNumber(pCliente.getIdentificationNumber());
+                    persistentPerson.setFirstName(pClient.getFirstName());
+                    persistentPerson.setLastName(pClient.getLastName());
+                    persistentPerson.setPhone(pClient.getPhone());
+                    persistentPerson.setEmail(pClient.getEmail());
+                    persistentPerson.setFkIdIdentificationType(pClient.getFkIdIdentificationType());
+                    persistentPerson.setIdentificationNumber(pClient.getIdentificationNumber());
 
                     // La version del objeto queda a cargo de Hivernate
                     // Atributos Cliente
-                    persistentPersona.setNationality(pCliente.getNationality());
-                    persistentPersona.setBirthDate(pCliente.getBirthDate());
-                    persistentPersona.setTaxId(pCliente.getTaxId());
-                    persistentPersona.setMaritalStatus(pCliente.getMaritalStatus());
-                    persistentPersona.setMarriageCount(pCliente.getMarriageCount());
-                    persistentPersona.setSex(pCliente.getSex());
-                    persistentPersona.setOccupation(pCliente.getOccupation());
-                    persistentPersona.setAddress(pCliente.getAddress());
+                    persistentPerson.setNationality(pClient.getNationality());
+                    persistentPerson.setBirthDate(pClient.getBirthDate());
+                    persistentPerson.setTaxId(pClient.getTaxId());
+                    persistentPerson.setMaritalStatus(pClient.getMaritalStatus());
+                    persistentPerson.setMarriageCount(pClient.getMarriageCount());
+                    persistentPerson.setSex(pClient.getSex());
+                    persistentPerson.setOccupation(pClient.getOccupation());
+                    persistentPerson.setAddress(pClient.getAddress());
 
-                    persistentPersona.setIsClient(pCliente.getIsClient());
+                    persistentPerson.setIsClient(pClient.getIsClient());
 
-                    persistentPersona.setNotaryRegistrationNumber(pCliente.getNotaryRegistrationNumber());
+                    persistentPerson.setNotaryRegistrationNumber(pClient.getNotaryRegistrationNumber());
 
                     em.getTransaction().commit();
                     em.close();
@@ -891,36 +891,36 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
      * @param pTipoIdentificacion
      * @return Retorno una lista de personas
      */
-    public Person findPersonaTipoNumeroIdentificacion(DtoPerson dtoPersona) { // No pueden repetirse un mismo numero y
+    public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
                                                                                 // tipo de identificacion
 
         EntityManager em = getEntityManager();
-        List<Person> listaPersona = null;
-        Person persona = null;
+        List<Person> listaPerson = null;
+        Person person = null;
         // acocio el nombre de la identificacion con su id correspondiente, para la
         // busqueda
         // TODO: VIOLACION DE CAPAS!
-        dtoPersona.getDtoTipoIdentificacion()
-                .setIdTipoIdentificacion(ControllerNegocio.getInstancia().asociarFkTipoIdentificacion(dtoPersona));
+        dtoPerson.getDtoIdentificationType()
+                .setIdIdentificationType(BusinessController.getInstancia().asociarFkIdentificationType(dtoPerson));
 
-        String numeroIdentificacion = dtoPersona.getIdentificationNumber();
-        int idTipoIdentificacion = dtoPersona.getDtoTipoIdentificacion().getIdTipoIdentificacion();
+        String identificationNumber = dtoPerson.getIdentificationNumber();
+        int idIdentificationType = dtoPerson.getDtoIdentificationType().getIdIdentificationType();
 
         Query query = em.createNamedQuery("Persona.findByNumeroIdentificacion");
-        query.setParameter("numeroIdentificacion", numeroIdentificacion);
+        query.setParameter("numeroIdentificacion", identificationNumber);
 
-        listaPersona = query.getResultList();
+        listaPerson = query.getResultList();
 
-        if (!listaPersona.isEmpty()) {
-            for (int i = 0; i < listaPersona.size(); i++) {
-                if (listaPersona.get(i).getFkIdIdentificationType().getIdTipoIdentificacion() == idTipoIdentificacion) {
-                    persona = listaPersona.get(i);
+        if (!listaPerson.isEmpty()) {
+            for (int i = 0; i < listaPerson.size(); i++) {
+                if (listaPerson.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
+                    person = listaPerson.get(i);
                 }
 
             }
         }
 
-        return persona;
+        return person;
     }
 
     /**
@@ -929,23 +929,23 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
      * @param dtoPersona
      * @return
      */
-    public List<Person> findPersonaNombreApellido(DtoPerson dtoPersona) { // No pueden repetirse un mismo numero y
+    public List<Person> findPersonNameLastName(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
                                                                             // tipo de identificacion
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPersona = null;
-        Person persona = null;
-        String nombre = "%" + dtoPersona.getFirstName() + "%";
-        String apellido = "%" + dtoPersona.getLastName() + "%";
+        List<Person> listaPerson = null;
+        Person person = null;
+        String name = "%" + dtoPerson.getFirstName() + "%";
+        String lastName = "%" + dtoPerson.getLastName() + "%";
 
         Query query = em.createNamedQuery("Persona.findByPersonaNombreApellido");
-        query.setParameter("nombre", nombre);
-        query.setParameter("apellido", apellido);
+        query.setParameter("nombre", name);
+        query.setParameter("apellido", lastName);
 
-        listaPersona = query.getResultList();
+        listaPerson = query.getResultList();
 
-        return listaPersona;
+        return listaPerson;
     }
 
     /**
@@ -953,56 +953,56 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
      *
      * @return
      */
-    public List<Person> findPersonas() {
+    public List<Person> findPersons() {
         EntityManager em = getEntityManager();
 
-        List<Person> listaPersona = null;
-        Person persona = null;
+        List<Person> listaPerson = null;
+        Person person = null;
         try {
             Query query = em.createNamedQuery("Persona.findAll");
 
-            listaPersona = query.getResultList();
+            listaPerson = query.getResultList();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }
-        return listaPersona;
+        return listaPerson;
     }
 
-    public Person findPersonaEscribano(Person miPersona) { // No pueden repetirse un mismo numero y tipo de
+    public Person findPersonNotary(Person miPerson) { // No pueden repetirse un mismo numero y tipo de
                                                              // identificacion
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPersona = null;
-        Person persona = null;
+        List<Person> listaPerson = null;
+        Person person = null;
 
         Query query = em.createNamedQuery("Persona.findByRegistroEscribano");
-        query.setParameter("registroEscribano", miPersona.getNotaryRegistrationNumber());
+        query.setParameter("registroEscribano", miPerson.getNotaryRegistrationNumber());
 
-        listaPersona = query.getResultList();
+        listaPerson = query.getResultList();
 
-        if (listaPersona != null) {
-            persona = listaPersona.get(0);
+        if (listaPerson != null) {
+            person = listaPerson.get(0);
         }
 
-        return persona;
+        return person;
     }
 
-    public Person findPersonaPorId(Integer idPersona) {
+    public Person findPersonPorId(Integer idPerson) {
         EntityManager em = getEntityManager();
 
-        Person persona = new Person();
+        Person person = new Person();
 
         Query query = em.createNamedQuery("Persona.findByIdPersona");
-        query.setParameter("idPersona", idPersona);
+        query.setParameter("idPersona", idPerson);
 
-        persona = (Person) query.getSingleResult();
+        person = (Person) query.getSingleResult();
 
-        return persona;
+        return person;
     }
 
     @Override
-    public String getNombreJpa() {
+    public String getNameJpa() {
         return this.getClass().getName();
     }
 }

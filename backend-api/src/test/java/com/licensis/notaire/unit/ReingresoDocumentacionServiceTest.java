@@ -1,21 +1,21 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.dto.DtoDocumentoReingresado;
-import com.licensis.notaire.dto.DtoGestionReingresoDocumentacion;
+import com.licensis.notaire.dto.DtoDocumentReentered;
+import com.licensis.notaire.dto.DtoManagementReingresoDocumentacion;
 import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.DocumentoPresentado;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.PlantillaTramitePK;
-import com.licensis.notaire.negocio.TipoDeDocumento;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.repository.DocumentoPresentadoRepository;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.PlantillaTramiteRepository;
-import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.business.SubmittedDocument;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.ProcedureTemplate;
+import com.licensis.notaire.business.ProcedureTemplatePK;
+import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.service.ReingresoDocumentacionService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,49 +41,49 @@ import static org.mockito.Mockito.when;
 class ReingresoDocumentacionServiceTest {
 
     @Mock
-    private GestionDeEscrituraRepository gestionRepository;
+    private DeedManagementRepository managementRepository;
 
     @Mock
-    private TramiteRepository tramiteRepository;
+    private ProcedureRepository procedureRepository;
 
     @Mock
-    private PlantillaTramiteRepository plantillaTramiteRepository;
+    private ProcedureTemplateRepository procedureTemplateRepository;
 
     @Mock
-    private DocumentoPresentadoRepository documentoPresentadoRepository;
+    private SubmittedDocumentRepository submittedDocumentRepository;
 
     private ReingresoDocumentacionService service;
 
-    private GestionDeEscritura gestion;
-    private TipoDeTramite tipoTramite;
-    private Tramite tramite;
-    private TipoDeDocumento tipoDocumento;
+    private DeedManagement management;
+    private ProcedureType typeProcedure;
+    private Procedure procedure;
+    private DocumentType typeDocument;
 
     @BeforeEach
     void setUp() {
-        service = new ReingresoDocumentacionService(gestionRepository, tramiteRepository,
-                plantillaTramiteRepository, documentoPresentadoRepository);
+        service = new ReingresoDocumentacionService(managementRepository, procedureRepository,
+                procedureTemplateRepository, submittedDocumentRepository);
 
-        gestion = new GestionDeEscritura();
-        gestion.setIdGestion(1);
-        gestion.setNumero(100);
-        gestion.setEncabezado("Compraventa");
+        management = new DeedManagement();
+        management.setIdManagement(1);
+        management.setNumber(100);
+        management.setEncabezado("Compraventa");
 
-        tipoTramite = new TipoDeTramite();
-        tipoTramite.setIdTipoTramite(5);
-        tipoTramite.setNombre("Compraventa");
+        typeProcedure = new ProcedureType();
+        typeProcedure.setIdProcedureType(5);
+        typeProcedure.setName("Compraventa");
 
-        tramite = new Tramite();
-        tramite.setIdTramite(10);
-        tramite.setFkIdGestion(gestion);
-        tramite.setFkIdTipoTramite(tipoTramite);
+        procedure = new Procedure();
+        procedure.setIdProcedure(10);
+        procedure.setFkIdManagement(management);
+        procedure.setFkIdProcedureType(typeProcedure);
 
-        tipoDocumento = new TipoDeDocumento();
-        tipoDocumento.setIdTipoDocumento(7);
-        tipoDocumento.setNombre("Certificado de Dominio");
-        tipoDocumento.setVence(true);
-        tipoDocumento.setDiasVencimiento(30);
-        tipoDocumento.setQuienEntrega("Cliente");
+        typeDocument = new DocumentType();
+        typeDocument.setIdDocumentType(7);
+        typeDocument.setName("Certificado de Dominio");
+        typeDocument.setExpires(true);
+        typeDocument.setDueDays(30);
+        typeDocument.setDeliveredBy("Cliente");
     }
 
     @Nested
@@ -92,44 +92,44 @@ class ReingresoDocumentacionServiceTest {
 
         @Test
         @DisplayName("Devuelve los trámites de la gestión con su documentación necesaria")
-        void shouldReturnTramitesWithDocumentacionNecesaria() {
-            PlantillaTramite plantilla = new PlantillaTramite(new PlantillaTramitePK(5, 7));
-            plantilla.setTipoDeDocumento(tipoDocumento);
-            plantilla.setTipoDeTramite(tipoTramite);
+        void shouldReturnProceduresWithDocumentacionNecesaria() {
+            ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
+            template.setDocumentType(typeDocument);
+            template.setProcedureType(typeProcedure);
 
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramite));
-            when(plantillaTramiteRepository.findByTipoDeTramiteIdTipoTramite(5)).thenReturn(List.of(plantilla));
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
+            when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(template));
 
-            DtoGestionReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
+            DtoManagementReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
 
-            assertThat(resultado.idGestion()).isEqualTo(1);
-            assertThat(resultado.numero()).isEqualTo(100);
-            assertThat(resultado.tramites()).hasSize(1);
-            assertThat(resultado.tramites().get(0).idTramite()).isEqualTo(10);
-            assertThat(resultado.tramites().get(0).tipoTramiteNombre()).isEqualTo("Compraventa");
-            assertThat(resultado.tramites().get(0).documentosNecesarios()).hasSize(1);
-            assertThat(resultado.tramites().get(0).documentosNecesarios().get(0).nombre())
+            assertThat(resultado.idManagement()).isEqualTo(1);
+            assertThat(resultado.number()).isEqualTo(100);
+            assertThat(resultado.procedures()).hasSize(1);
+            assertThat(resultado.procedures().get(0).idProcedure()).isEqualTo(10);
+            assertThat(resultado.procedures().get(0).typeProcedureName()).isEqualTo("Compraventa");
+            assertThat(resultado.procedures().get(0).documentsNecesarios()).hasSize(1);
+            assertThat(resultado.procedures().get(0).documentsNecesarios().get(0).name())
                     .isEqualTo("Certificado de Dominio");
         }
 
         @Test
         @DisplayName("Devuelve documentación necesaria vacía cuando el trámite no tiene PlantillaTramite")
-        void shouldReturnEmptyDocumentacionWhenNoPlantilla() {
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findByFkIdGestionIdGestion(1)).thenReturn(List.of(tramite));
-            when(plantillaTramiteRepository.findByTipoDeTramiteIdTipoTramite(5)).thenReturn(List.of());
+        void shouldReturnEmptyDocumentacionWhenNoTemplate() {
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
+            when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of());
 
-            DtoGestionReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
+            DtoManagementReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
 
-            assertThat(resultado.tramites()).hasSize(1);
-            assertThat(resultado.tramites().get(0).documentosNecesarios()).isEmpty();
+            assertThat(resultado.procedures()).hasSize(1);
+            assertThat(resultado.procedures().get(0).documentsNecesarios()).isEmpty();
         }
 
         @Test
         @DisplayName("Lanza ResourceNotFoundException cuando la gestión no existe")
-        void shouldThrowWhenGestionNotFound() {
-            when(gestionRepository.findById(999)).thenReturn(Optional.empty());
+        void shouldThrowWhenManagementNotFound() {
+            when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> service.obtenerDocumentacionNecesaria(999))
                     .isInstanceOf(ResourceNotFoundException.class);
@@ -137,49 +137,49 @@ class ReingresoDocumentacionServiceTest {
     }
 
     @Nested
-    @DisplayName("Reingresar un tipo de documento")
+    @DisplayName("Reingresar un type de documento")
     class ReingresarTests {
 
         @Test
-        @DisplayName("Crea un DocumentoPresentado con reingresado=true heredando datos del TipoDeDocumento")
-        void shouldCreateDocumentoPresentadoWhenValid() {
-            PlantillaTramite plantilla = new PlantillaTramite(new PlantillaTramitePK(5, 7));
-            plantilla.setTipoDeDocumento(tipoDocumento);
-            plantilla.setTipoDeTramite(tipoTramite);
+        @DisplayName("Crea un DocumentoPresentado con reentered=true heredando datos del TipoDeDocumento")
+        void shouldCreateSubmittedDocumentWhenValid() {
+            ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
+            template.setDocumentType(typeDocument);
+            template.setProcedureType(typeProcedure);
 
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findById(10)).thenReturn(Optional.of(tramite));
-            when(plantillaTramiteRepository.findById(new PlantillaTramitePK(5, 7))).thenReturn(Optional.of(plantilla));
-            when(documentoPresentadoRepository.save(any(DocumentoPresentado.class))).thenAnswer(invocation -> {
-                DocumentoPresentado doc = invocation.getArgument(0);
-                doc.setIdDocumentoPresentado(50);
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
+            when(procedureTemplateRepository.findById(new ProcedureTemplatePK(5, 7))).thenReturn(Optional.of(template));
+            when(submittedDocumentRepository.save(any(SubmittedDocument.class))).thenAnswer(invocation -> {
+                SubmittedDocument doc = invocation.getArgument(0);
+                doc.setIdSubmittedDocument(50);
                 return doc;
             });
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
-            DtoDocumentoReingresado resultado = service.reingresar(1, request);
+            DtoDocumentReentered resultado = service.reingresar(1, request);
 
-            assertThat(resultado.idDocumentoPresentado()).isEqualTo(50);
-            assertThat(resultado.idTramite()).isEqualTo(10);
-            assertThat(resultado.idTipoDocumento()).isEqualTo(7);
-            assertThat(resultado.nombre()).isEqualTo("Certificado de Dominio");
-            assertThat(resultado.vence()).isTrue();
-            assertThat(resultado.diasVencimiento()).isEqualTo(30);
-            assertThat(resultado.quienEntrega()).isEqualTo("Cliente");
-            assertThat(resultado.reingresado()).isTrue();
+            assertThat(resultado.idSubmittedDocument()).isEqualTo(50);
+            assertThat(resultado.idProcedure()).isEqualTo(10);
+            assertThat(resultado.idDocumentType()).isEqualTo(7);
+            assertThat(resultado.name()).isEqualTo("Certificado de Dominio");
+            assertThat(resultado.expires()).isTrue();
+            assertThat(resultado.dueDays()).isEqualTo(30);
+            assertThat(resultado.deliveredBy()).isEqualTo("Cliente");
+            assertThat(resultado.reentered()).isTrue();
 
-            ArgumentCaptor<DocumentoPresentado> captor = ArgumentCaptor.forClass(DocumentoPresentado.class);
-            org.mockito.Mockito.verify(documentoPresentadoRepository).save(captor.capture());
-            assertThat(captor.getValue().getReingresado()).isTrue();
-            assertThat(captor.getValue().getFkIdTramite()).isSameAs(tramite);
+            ArgumentCaptor<SubmittedDocument> captor = ArgumentCaptor.forClass(SubmittedDocument.class);
+            org.mockito.Mockito.verify(submittedDocumentRepository).save(captor.capture());
+            assertThat(captor.getValue().getReentered()).isTrue();
+            assertThat(captor.getValue().getFkIdProcedure()).isSameAs(procedure);
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el tipo de documento no forma parte de la PlantillaTramite")
-        void shouldThrowWhenTipoDocumentoNotInPlantilla() {
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findById(10)).thenReturn(Optional.of(tramite));
-            when(plantillaTramiteRepository.findById(new PlantillaTramitePK(5, 7))).thenReturn(Optional.empty());
+        @DisplayName("Lanza BusinessValidationException cuando el type de documento no forma parte de la PlantillaTramite")
+        void shouldThrowWhenTypeDocumentNotInTemplate() {
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
+            when(procedureTemplateRepository.findById(new ProcedureTemplatePK(5, 7))).thenReturn(Optional.empty());
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 
@@ -189,13 +189,13 @@ class ReingresoDocumentacionServiceTest {
 
         @Test
         @DisplayName("Lanza BusinessValidationException cuando el trámite no pertenece a la gestión")
-        void shouldThrowWhenTramiteDoesNotBelongToGestion() {
-            GestionDeEscritura otraGestion = new GestionDeEscritura();
-            otraGestion.setIdGestion(2);
-            tramite.setFkIdGestion(otraGestion);
+        void shouldThrowWhenProcedureDoesNotBelongToManagement() {
+            DeedManagement otraManagement = new DeedManagement();
+            otraManagement.setIdManagement(2);
+            procedure.setFkIdManagement(otraManagement);
 
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findById(10)).thenReturn(Optional.of(tramite));
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 
@@ -205,9 +205,9 @@ class ReingresoDocumentacionServiceTest {
 
         @Test
         @DisplayName("Lanza ResourceNotFoundException cuando el trámite no existe")
-        void shouldThrowWhenTramiteNotFound() {
-            when(gestionRepository.findById(1)).thenReturn(Optional.of(gestion));
-            when(tramiteRepository.findById(999)).thenReturn(Optional.empty());
+        void shouldThrowWhenProcedureNotFound() {
+            when(managementRepository.findById(1)).thenReturn(Optional.of(management));
+            when(procedureRepository.findById(999)).thenReturn(Optional.empty());
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(999, 7);
 
@@ -217,8 +217,8 @@ class ReingresoDocumentacionServiceTest {
 
         @Test
         @DisplayName("Lanza ResourceNotFoundException cuando la gestión no existe")
-        void shouldThrowWhenGestionNotFound() {
-            when(gestionRepository.findById(999)).thenReturn(Optional.empty());
+        void shouldThrowWhenManagementNotFound() {
+            when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 

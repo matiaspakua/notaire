@@ -1,0 +1,151 @@
+package com.licensis.notaire.api;
+
+import com.licensis.notaire.dto.DtoConcept;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.repository.ConceptRepository;
+import com.licensis.notaire.repository.BudgetTemplateRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/v1/conceptos")
+@Tag(name = "Conceptos", description = "API para gestionar conceptos")
+public class ConceptController {
+
+    private final ConceptRepository repository;
+    private final BudgetTemplateRepository templateRepository;
+
+    public ConceptController(ConceptRepository repository,
+                              BudgetTemplateRepository templateRepository) {
+        this.repository = repository;
+        this.templateRepository = templateRepository;
+    }
+
+    @GetMapping
+    @Operation(summary = "Obtener todos los conceptos")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoConcept>> getAllConceptos() {
+        List<DtoConcept> result = repository.findAll().stream()
+                .map(Concept::getDto)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Buscar conceptos por nombre")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DtoConcept>> searchConceptos(@RequestParam String name) {
+        List<DtoConcept> result = repository.findByNameContaining(name).stream()
+                .map(Concept::getDto)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/in-use")
+    @Operation(summary = "Verificar si un concepto está en uso")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Map<String, Boolean>> isConceptInUse(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        boolean inUse = !templateRepository.findByConceptIdConcept(id).isEmpty();
+        return ResponseEntity.ok(Map.of("inUse", inUse));
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener concepto por ID")
+    @Transactional(readOnly = true)
+    public ResponseEntity<DtoConcept> getConceptById(@PathVariable Integer id) {
+        return repository.findById(id)
+                .map(e -> ResponseEntity.ok(e.getDto()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Creado"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "409", description = "Conflicto")
+})
+    @PostMapping
+    @Operation(summary = "Crear nuevo concepto")
+    public ResponseEntity<Object> createConcept(@RequestBody DtoConcept dto) {
+        try {
+            dto.setEnabled(true);
+            Concept entity = new Concept();
+            entity.setAtributos(dto);
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar concepto")
+    public ResponseEntity<Object> updateConcept(@PathVariable Integer id, @RequestBody DtoConcept dto) {
+        Optional<Concept> existing = repository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Este concepto está en uso y no puede modificarse. Cree un nuevo concepto."));
+        }
+        try {
+            dto.setIdConcept(id);
+            Concept entity = existing.get();
+            if (dto.getEnabled() == null) {
+                dto.setEnabled(entity.getEnabled());
+            }
+            entity.setAtributos(dto);
+            repository.save(entity);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+})
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar concepto")
+    public ResponseEntity<Object> deleteConcept(@PathVariable Integer id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "No se puede eliminar: el concepto está siendo utilizado en plantillas de presupuesto."));
+        }
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+}

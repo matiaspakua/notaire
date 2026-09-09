@@ -4,10 +4,10 @@ public class DtoWorkflowTransition {
 
     private Integer id;
     private Integer workflowDefinitionId;
-    private Integer nodoOrigenId;
-    private Integer nodoDestinoId;
-    private String condicion;
-    private String descripcion;
+    private Integer originNodeId;
+    private Integer destinationNodeId;
+    private String condition;
+    private String description;
     private Integer version = 0;
 
     public Integer getId() {
@@ -26,36 +26,36 @@ public class DtoWorkflowTransition {
         this.workflowDefinitionId = workflowDefinitionId;
     }
 
-    public Integer getNodoOrigenId() {
-        return nodoOrigenId;
+    public Integer getOriginNodeId() {
+        return originNodeId;
     }
 
-    public void setNodoOrigenId(Integer nodoOrigenId) {
-        this.nodoOrigenId = nodoOrigenId;
+    public void setOriginNodeId(Integer originNodeId) {
+        this.originNodeId = originNodeId;
     }
 
-    public Integer getNodoDestinoId() {
-        return nodoDestinoId;
+    public Integer getDestinationNodeId() {
+        return destinationNodeId;
     }
 
-    public void setNodoDestinoId(Integer nodoDestinoId) {
-        this.nodoDestinoId = nodoDestinoId;
+    public void setDestinationNodeId(Integer destinationNodeId) {
+        this.destinationNodeId = destinationNodeId;
     }
 
-    public String getCondicion() {
-        return condicion;
+    public String getCondition() {
+        return condition;
     }
 
-    public void setCondicion(String condicion) {
-        this.condicion = condicion;
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getVersion() {

@@ -1,6 +1,6 @@
 package com.licensis.notaire.repository;
 
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.WorkflowTransition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +11,5 @@ public interface WorkflowTransitionRepository extends JpaRepository<WorkflowTran
 
     List<WorkflowTransition> findByWorkflowDefinitionId(Integer workflowDefinitionId);
 
-    boolean existsByNodoOrigenIdOrNodoDestinoId(Integer nodoOrigenId, Integer nodoDestinoId);
+    boolean existsByOriginNodeIdOrDestinationNodeId(Integer originNodeId, Integer destinationNodeId);
 }

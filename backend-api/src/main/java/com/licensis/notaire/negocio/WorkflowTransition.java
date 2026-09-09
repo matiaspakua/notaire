@@ -1,4 +1,4 @@
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoWorkflowTransition;
 import jakarta.persistence.Column;
@@ -30,17 +30,17 @@ public class WorkflowTransition implements Serializable, Persistable<Integer> {
 
     @ManyToOne
     @JoinColumn(name = "fk_nodo_origen_id", nullable = false)
-    private WorkflowNode nodoOrigen;
+    private WorkflowNode originNode;
 
     @ManyToOne
     @JoinColumn(name = "fk_nodo_destino_id", nullable = false)
-    private WorkflowNode nodoDestino;
+    private WorkflowNode destinationNode;
 
     @Column(name = "condicion")
-    private String condicion;
+    private String condition;
 
     @Column(name = "descripcion")
-    private String descripcion;
+    private String description;
 
     @Version
     @Column(name = "version")
@@ -77,36 +77,36 @@ public class WorkflowTransition implements Serializable, Persistable<Integer> {
         this.workflowDefinition = workflowDefinition;
     }
 
-    public WorkflowNode getNodoOrigen() {
-        return nodoOrigen;
+    public WorkflowNode getOriginNode() {
+        return originNode;
     }
 
-    public void setNodoOrigen(WorkflowNode nodoOrigen) {
-        this.nodoOrigen = nodoOrigen;
+    public void setOriginNode(WorkflowNode originNode) {
+        this.originNode = originNode;
     }
 
-    public WorkflowNode getNodoDestino() {
-        return nodoDestino;
+    public WorkflowNode getDestinationNode() {
+        return destinationNode;
     }
 
-    public void setNodoDestino(WorkflowNode nodoDestino) {
-        this.nodoDestino = nodoDestino;
+    public void setDestinationNode(WorkflowNode destinationNode) {
+        this.destinationNode = destinationNode;
     }
 
-    public String getCondicion() {
-        return condicion;
+    public String getCondition() {
+        return condition;
     }
 
-    public void setCondicion(String condicion) {
-        this.condicion = condicion;
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getVersion() {
@@ -121,10 +121,10 @@ public class WorkflowTransition implements Serializable, Persistable<Integer> {
         DtoWorkflowTransition dto = new DtoWorkflowTransition();
         dto.setId(this.id);
         dto.setWorkflowDefinitionId(workflowDefinition != null ? workflowDefinition.getId() : null);
-        dto.setNodoOrigenId(nodoOrigen != null ? nodoOrigen.getId() : null);
-        dto.setNodoDestinoId(nodoDestino != null ? nodoDestino.getId() : null);
-        dto.setCondicion(this.condicion);
-        dto.setDescripcion(this.descripcion);
+        dto.setOriginNodeId(originNode != null ? originNode.getId() : null);
+        dto.setDestinationNodeId(destinationNode != null ? destinationNode.getId() : null);
+        dto.setCondition(this.condition);
+        dto.setDescription(this.description);
         dto.setVersion(this.version);
         return dto;
     }

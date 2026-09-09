@@ -14,7 +14,7 @@ public interface DtoValido {
      * Representa el ID con el cual se inicializan todos los DTO (id = -1).
      */
     int ID_DTO_INICIALIZADO = -1;
-    int VERSION_INICIAL = 0;
+    int VersionINICIAL = 0;
 
     /**
      * Determina si el DTO actual es válido o no, dependiendo del estado interno del

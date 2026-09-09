@@ -1,4 +1,4 @@
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
 public enum WorkflowNodeType {
     INITIAL,

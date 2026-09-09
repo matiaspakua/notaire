@@ -1,4 +1,4 @@
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoWorkflowNode;
 import jakarta.persistence.Column;
@@ -32,17 +32,17 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
 
     @ManyToOne
     @JoinColumn(name = "fk_estado_gestion_id", nullable = false)
-    private EstadoDeGestion estadoDeGestion;
+    private ManagementStatus managementStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false)
-    private WorkflowNodeType tipo;
+    private WorkflowNodeType type;
 
     @Column(name = "posicion_x")
-    private Float posicionX;
+    private Float positionX;
 
     @Column(name = "posicion_y")
-    private Float posicionY;
+    private Float positionY;
 
     @Version
     @Column(name = "version")
@@ -79,36 +79,36 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
         this.workflowDefinition = workflowDefinition;
     }
 
-    public EstadoDeGestion getEstadoDeGestion() {
-        return estadoDeGestion;
+    public ManagementStatus getManagementStatus() {
+        return managementStatus;
     }
 
-    public void setEstadoDeGestion(EstadoDeGestion estadoDeGestion) {
-        this.estadoDeGestion = estadoDeGestion;
+    public void setManagementStatus(ManagementStatus managementStatus) {
+        this.managementStatus = managementStatus;
     }
 
-    public WorkflowNodeType getTipo() {
-        return tipo;
+    public WorkflowNodeType getType() {
+        return type;
     }
 
-    public void setTipo(WorkflowNodeType tipo) {
-        this.tipo = tipo;
+    public void setType(WorkflowNodeType type) {
+        this.type = type;
     }
 
-    public Float getPosicionX() {
-        return posicionX;
+    public Float getPositionX() {
+        return positionX;
     }
 
-    public void setPosicionX(Float posicionX) {
-        this.posicionX = posicionX;
+    public void setPositionX(Float positionX) {
+        this.positionX = positionX;
     }
 
-    public Float getPosicionY() {
-        return posicionY;
+    public Float getPositionY() {
+        return positionY;
     }
 
-    public void setPosicionY(Float posicionY) {
-        this.posicionY = posicionY;
+    public void setPositionY(Float positionY) {
+        this.positionY = positionY;
     }
 
     public int getVersion() {
@@ -123,11 +123,11 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
         DtoWorkflowNode dto = new DtoWorkflowNode();
         dto.setId(this.id);
         dto.setWorkflowDefinitionId(workflowDefinition != null ? workflowDefinition.getId() : null);
-        dto.setEstadoGestionId(estadoDeGestion != null ? estadoDeGestion.getIdEstadoGestion() : null);
-        dto.setEstadoGestionNombre(estadoDeGestion != null ? estadoDeGestion.getNombre() : null);
-        dto.setTipo(tipo != null ? tipo.name() : null);
-        dto.setPosicionX(this.posicionX);
-        dto.setPosicionY(this.posicionY);
+        dto.setStatusManagementId(managementStatus != null ? managementStatus.getIdManagementStatus() : null);
+        dto.setStatusManagementName(managementStatus != null ? managementStatus.getName() : null);
+        dto.setType(type != null ? type.name() : null);
+        dto.setPositionX(this.positionX);
+        dto.setPositionY(this.positionY);
         dto.setVersion(this.version);
         return dto;
     }
@@ -147,6 +147,6 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "WorkflowNode[id=" + id + ", tipo=" + tipo + "]";
+        return "WorkflowNode[id=" + id + ", tipo=" + type + "]";
     }
 }

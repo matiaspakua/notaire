@@ -1,31 +1,31 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.jpa.ConceptoJpaController;
-import com.licensis.notaire.jpa.CopiaJpaController;
-import com.licensis.notaire.jpa.DocumentoPresentadoJpaController;
-import com.licensis.notaire.jpa.EscrituraJpaController;
-import com.licensis.notaire.jpa.EstadoDeGestionJpaController;
+import com.licensis.notaire.jpa.ConceptJpaController;
+import com.licensis.notaire.jpa.CopyJpaController;
+import com.licensis.notaire.jpa.SubmittedDocumentJpaController;
+import com.licensis.notaire.jpa.DeedJpaController;
+import com.licensis.notaire.jpa.ManagementStatusJpaController;
 import com.licensis.notaire.jpa.FolioJpaController;
-import com.licensis.notaire.jpa.GestionDeEscrituraJpaController;
-import com.licensis.notaire.jpa.HistorialJpaController;
-import com.licensis.notaire.jpa.InmuebleJpaController;
+import com.licensis.notaire.jpa.DeedManagementJpaController;
+import com.licensis.notaire.jpa.HistoryJpaController;
+import com.licensis.notaire.jpa.PropertyJpaController;
 import com.licensis.notaire.jpa.ItemJpaController;
-import com.licensis.notaire.jpa.MovimientoTestimonioJpaController;
-import com.licensis.notaire.jpa.PagoJpaController;
+import com.licensis.notaire.jpa.TestimonyMovementJpaController;
+import com.licensis.notaire.jpa.PaymentJpaController;
 import com.licensis.notaire.jpa.PersonJpaController;
-import com.licensis.notaire.jpa.PlantillaPresupuestoJpaController;
-import com.licensis.notaire.jpa.PlantillaTramiteJpaController;
-import com.licensis.notaire.jpa.PresupuestoJpaController;
-import com.licensis.notaire.jpa.RegistroAuditoriaJpaController;
-import com.licensis.notaire.jpa.SuplenciaJpaController;
-import com.licensis.notaire.jpa.TestimonioJpaController;
-import com.licensis.notaire.jpa.TipoDeDocumentoJpaController;
-import com.licensis.notaire.jpa.TipoDeFolioJpaController;
-import com.licensis.notaire.jpa.TipoDeTramiteJpaController;
-import com.licensis.notaire.jpa.TipoIdentificacionJpaController;
-import com.licensis.notaire.jpa.TramiteJpaController;
-import com.licensis.notaire.jpa.TramitesPersonasJpaController;
-import com.licensis.notaire.jpa.UsuarioJpaController;
+import com.licensis.notaire.jpa.BudgetTemplateJpaController;
+import com.licensis.notaire.jpa.ProcedureTemplateJpaController;
+import com.licensis.notaire.jpa.BudgetJpaController;
+import com.licensis.notaire.jpa.AuditRecordJpaController;
+import com.licensis.notaire.jpa.SubstitutionJpaController;
+import com.licensis.notaire.jpa.TestimonyJpaController;
+import com.licensis.notaire.jpa.DocumentTypeJpaController;
+import com.licensis.notaire.jpa.FolioTypeJpaController;
+import com.licensis.notaire.jpa.ProcedureTypeJpaController;
+import com.licensis.notaire.jpa.IdentificationTypeJpaController;
+import com.licensis.notaire.jpa.ProcedureJpaController;
+import com.licensis.notaire.jpa.PersonProcedureJpaController;
+import com.licensis.notaire.jpa.UserJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import java.util.ArrayList;
@@ -65,10 +65,10 @@ public class AdministradorJpa {
         return emf;
     }
 
-    public IPersistenciaJpa obtenerJpa(String nombreClase) throws NonexistentJpaException {
+    public IPersistenciaJpa obtenerJpa(String nameClase) throws NonexistentJpaException {
         for (Iterator<IPersistenciaJpa> it = milistaJpas.iterator(); it.hasNext();) {
             IPersistenciaJpa iPersistenciaJpa = it.next();
-            if (iPersistenciaJpa.getNombreJpa().contains(nombreClase)) {
+            if (iPersistenciaJpa.getNameJpa().contains(nameClase)) {
                 return iPersistenciaJpa;
             }
         }
@@ -86,33 +86,33 @@ public class AdministradorJpa {
 
     private static void cargarListaJpas() {
         AdministradorJpa.milistaJpas = new ArrayList<>();
-        AdministradorJpa.milistaJpas.add(new ConceptoJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new ConceptJpaController(null, emf));
 
-        AdministradorJpa.milistaJpas.add(new EstadoDeGestionJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TipoDeFolioJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new ManagementStatusJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new FolioTypeJpaController(null, emf));
         AdministradorJpa.milistaJpas.add(PersonJpaController.getInstancia());
-        AdministradorJpa.milistaJpas.add(new SuplenciaJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(UsuarioJpaController.getInstancia());
+        AdministradorJpa.milistaJpas.add(new SubstitutionJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(UserJpaController.getInstancia());
         AdministradorJpa.milistaJpas.add(new FolioJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TipoDeFolioJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TipoDeDocumentoJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TipoDeTramiteJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new PlantillaTramiteJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TipoIdentificacionJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new HistorialJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TramiteJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new GestionDeEscrituraJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(RegistroAuditoriaJpaController.getInstancia());
-        AdministradorJpa.milistaJpas.add(new PresupuestoJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new FolioTypeJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new DocumentTypeJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new ProcedureTypeJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new ProcedureTemplateJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new IdentificationTypeJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new HistoryJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new ProcedureJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new DeedManagementJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(AuditRecordJpaController.getInstancia());
+        AdministradorJpa.milistaJpas.add(new BudgetJpaController(null, emf));
         AdministradorJpa.milistaJpas.add(new ItemJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new InmuebleJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new PlantillaPresupuestoJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TramitesPersonasJpaController(emf));
-        AdministradorJpa.milistaJpas.add(new PagoJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new EscrituraJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new CopiaJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new TestimonioJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new MovimientoTestimonioJpaController(null, emf));
-        AdministradorJpa.milistaJpas.add(new DocumentoPresentadoJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new PropertyJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new BudgetTemplateJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new PersonProcedureJpaController(emf));
+        AdministradorJpa.milistaJpas.add(new PaymentJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new DeedJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new CopyJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new TestimonyJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new TestimonyMovementJpaController(null, emf));
+        AdministradorJpa.milistaJpas.add(new SubmittedDocumentJpaController(null, emf));
     }
 }

@@ -77,13 +77,13 @@ class FlywayMigrationScriptTest {
                 "tipos_de_folio",
                 "tipos_de_tramite",
                 "tipos_identificacion",
-                "personas",
+                "persons",
                 "inmuebles",
                 "escrituras",
                 "gestiones_de_escrituras",
                 "presupuestos",
-                "tramites",
-                "usuarios",
+                "procedures",
+                "users",
                 "registro_auditoria"
         };
 
@@ -103,8 +103,8 @@ class FlywayMigrationScriptTest {
         assertThat(dataContent).contains("INSERT INTO conceptos");
         assertThat(dataContent).contains("INSERT INTO estados_de_gestion");
         assertThat(dataContent).contains("INSERT INTO tipos_identificacion");
-        assertThat(dataContent).contains("INSERT INTO personas");
-        assertThat(dataContent).contains("INSERT INTO usuarios");
+        assertThat(dataContent).contains("INSERT INTO persons");
+        assertThat(dataContent).contains("INSERT INTO users");
     }
 
     @Test
@@ -120,12 +120,12 @@ class FlywayMigrationScriptTest {
         // Should have admin user insert
         assertThat(dataContent)
                 .as("Should insert admin user")
-                .contains("INSERT INTO usuarios");
+                .contains("INSERT INTO users");
 
         // Should reference the escribano persona
         assertThat(dataContent)
-                .as("Admin user should reference escribano")
-                .contains("escribano");
+                .as("Admin user should reference notary")
+                .contains("notary");
     }
 
     @Test

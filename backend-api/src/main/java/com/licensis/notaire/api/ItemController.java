@@ -2,7 +2,7 @@ package com.licensis.notaire.api;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.Item;
+import com.licensis.notaire.business.Item;
 import com.licensis.notaire.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,23 +57,23 @@ public class ItemController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/presupuesto/{idPresupuesto}")
+    @GetMapping("/presupuesto/{idBudget}")
     @Operation(summary = "Obtener ítems por presupuesto")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Item>> getByPresupuesto(@PathVariable Integer idPresupuesto) {
-        return ResponseEntity.ok(itemService.findByPresupuesto(idPresupuesto));
+    public ResponseEntity<List<Item>> getByBudget(@PathVariable Integer idBudget) {
+        return ResponseEntity.ok(itemService.findByBudget(idBudget));
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
-    @GetMapping("/presupuesto/{idPresupuesto}/descuentos-recargos")
+    @GetMapping("/presupuesto/{idBudget}/descuentos-recargos")
     @Operation(summary = "CU45/CU71 - Consultar descuentos y recargos de un presupuesto")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Item>> getDescuentosYRecargos(@PathVariable Integer idPresupuesto) {
+    public ResponseEntity<List<Item>> getDescuentosYRecargos(@PathVariable Integer idBudget) {
         try {
-            return ResponseEntity.ok(itemService.findDescuentosYRecargosByPresupuesto(idPresupuesto));
+            return ResponseEntity.ok(itemService.findDescuentosYRecargosByBudget(idBudget));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

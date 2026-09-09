@@ -1,4 +1,4 @@
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
 import jakarta.persistence.CascadeType;
@@ -28,13 +28,13 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
     private Integer id;
 
     @Column(name = "nombre", nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(name = "descripcion")
-    private String descripcion;
+    private String description;
 
     @Column(name = "activo", nullable = false)
-    private boolean activo = false;
+    private boolean active = false;
 
     @Version
     @Column(name = "version")
@@ -69,28 +69,28 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public boolean isActivo() {
-        return activo;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setActivo(boolean activo) {
-        this.activo = activo;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public int getVersion() {
@@ -120,9 +120,9 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
     public DtoWorkflowDefinition toDto() {
         DtoWorkflowDefinition dto = new DtoWorkflowDefinition();
         dto.setId(this.id);
-        dto.setNombre(this.nombre);
-        dto.setDescripcion(this.descripcion);
-        dto.setActivo(this.activo);
+        dto.setName(this.name);
+        dto.setDescription(this.description);
+        dto.setActive(this.active);
         dto.setVersion(this.version);
         return dto;
     }
@@ -142,6 +142,6 @@ public class WorkflowDefinition implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "WorkflowDefinition[id=" + id + ", nombre=" + nombre + "]";
+        return "WorkflowDefinition[id=" + id + ", nombre=" + name + "]";
     }
 }

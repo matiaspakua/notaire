@@ -4,19 +4,19 @@ info:
   seq: 5
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/personas/{{persona_id}}"
+  url: "{{base_url}}/api/v1/people/{{persona_id}}"
   body:
     type: json
     data: |-
         {
-          "nombre": "Ana Maria",
-          "apellido": "Lopez Actualizada",
-          "numeroIdentificacion": "30999888",
-          "esCliente": true,
-          "tipoIdentificacion": { "idTipoIdentificacion": 1 },
-          "nacionalidad": "Argentina",
-          "estadoCivil": "Casado",
-          "sexo": "Femenino"
+          "firstName": "Ana Maria",
+          "lastName": "Lopez Actualizada",
+          "identificationNumber": "30999888",
+          "isClient": true,
+          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Casado",
+          "sex": "Femenino"
         }
   headers:
     - name: Content-Type
@@ -28,4 +28,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Update persisted", function () { expect(res.getBody().nombre).to.equal('Ana Maria'); });
+          test("Update persisted", function () { expect(res.getBody().firstName).to.equal('Ana Maria'); });

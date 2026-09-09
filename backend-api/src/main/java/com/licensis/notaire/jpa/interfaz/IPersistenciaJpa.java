@@ -17,5 +17,5 @@ public interface IPersistenciaJpa
      *
      * @return Retorna el nombre del JPA actual.
      */
-    String getNombreJpa();
+    String getNameJpa();
 }

@@ -45,7 +45,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(true))
@@ -59,7 +59,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "wrongpassword"}
+                                {"name": "admin", "password": "wrongpassword"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));
@@ -71,7 +71,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "nosuchuser", "contrasenia": "any"}
+                                {"name": "nosuchuser", "password": "any"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));
@@ -116,7 +116,7 @@ class JwtAuthIntegrationTest {
         String loginResponse = mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andReturn().getResponse().getContentAsString();
 
@@ -134,7 +134,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "", "contrasenia": ""}
+                                {"name": "", "password": ""}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));
@@ -146,7 +146,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "ADMIN", "contrasenia": "admin"}
+                                {"name": "ADMIN", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(true))
@@ -161,7 +161,7 @@ class JwtAuthIntegrationTest {
         String loginResponse = mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "admin", "contrasenia": "admin"}
+                                {"name": "admin", "password": "admin"}
                                 """))
                 .andReturn().getResponse().getContentAsString();
 
@@ -173,7 +173,7 @@ class JwtAuthIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content("""
-                        {"nombre": "inactive_user", "contrasenia": "password123", "tipo": "EMPLEADO", "activo": false}
+                        {"name": "inactive_user", "password": "password123", "type": "EMPLEADO", "active": false}
                         """))
                 .andExpect(status().isCreated());
 
@@ -181,7 +181,7 @@ class JwtAuthIntegrationTest {
         mockMvc.perform(post("/api/v1/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"nombre": "inactive_user", "contrasenia": "password123"}
+                                {"name": "inactive_user", "password": "password123"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));

@@ -1,11 +1,11 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.DtoDocumentoPresentado;
-import com.licensis.notaire.dto.DtoUsuario;
-import com.licensis.notaire.jpa.UsuarioJpaController;
+import com.licensis.notaire.dto.DtoSubmittedDocument;
+import com.licensis.notaire.dto.DtoUser;
+import com.licensis.notaire.jpa.UserJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.negocio.ControllerNegocio;
-import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.business.BusinessController;
+import com.licensis.notaire.business.User;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -93,7 +93,7 @@ public class AdministradorValidaciones
         return resultado;
     }
 
-    public Boolean validarCaracteres(String pCampo)
+    public Boolean validarCharacters(String pCampo)
     {
         Boolean flag = false;
 
@@ -155,7 +155,7 @@ public class AdministradorValidaciones
         return flag;
     }
 
-    public Boolean validarCantidadCaracteres(int pCantCharter, String pCampo)
+    public Boolean validarCantidadCharacters(int pCantCharter, String pCampo)
     {
         Boolean flag = false;
         int count = 0;
@@ -173,11 +173,11 @@ public class AdministradorValidaciones
         return flag;
     }
 
-    public Boolean validarNumero(int numeroParaValidar)
+    public Boolean validarNumber(int numberParaValidar)
     {
         Boolean resultado = Boolean.TRUE;
 
-        if (numeroParaValidar < 0)
+        if (numberParaValidar < 0)
         {
             return false;
         }
@@ -202,13 +202,13 @@ public class AdministradorValidaciones
         return flag;
     }
 
-    public Boolean validarNumeroFloat(String numero)
+    public Boolean validarNumberFloat(String number)
     {
         Boolean valido = true;
 
         try
         {
-            Float numeroFloat = Float.parseFloat(numero);
+            Float numberFloat = Float.parseFloat(number);
         }
         catch (NumberFormatException e)
         {
@@ -220,11 +220,11 @@ public class AdministradorValidaciones
         }
     }
 
-    public Boolean validarFechaPosteriorHoy(Date fechaParaValidar)
+    public Boolean validarDatePosteriorHoy(Date dateParaValidar)
     {
         boolean resultado = true;
 
-        if (fechaParaValidar.before(Calendar.getInstance().getTime()))
+        if (dateParaValidar.before(Calendar.getInstance().getTime()))
         {
             return false;
         }
@@ -232,11 +232,11 @@ public class AdministradorValidaciones
         return resultado;
     }
 
-    public Boolean validarFechasPosterioresHoy(Date fechaDesde, Date fechaHasta)
+    public Boolean validarFechasPosterioresHoy(Date dateDesde, Date dateHasta)
     {
         try
         {
-            if (fechaHasta.after(fechaDesde))
+            if (dateHasta.after(dateDesde))
             {
                 return true;
             } else
@@ -251,17 +251,17 @@ public class AdministradorValidaciones
         }
     }
 
-    public Boolean validarFechaAnioLimite(Date anio)
+    public Boolean validarDateYearLimite(Date year)
     {
         boolean resultado = false;
 
         Date actual = Calendar.getInstance().getTime();
 
-        if (actual.before(anio))
+        if (actual.before(year))
         {
             resultado = true;
         }
-        if (anio.getYear() == actual.getYear())
+        if (year.getYear() == actual.getYear())
         {
             resultado = true;
         }

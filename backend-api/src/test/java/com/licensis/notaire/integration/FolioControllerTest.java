@@ -39,21 +39,21 @@ class FolioControllerTest {
     }
 
     /** Valid body with all required fields */
-    private String validBody(int numero, String estado) {
+    private String validBody(int number, String status) {
         return """
                 {
-                  "numero": %d,
-                  "anio": 2026,
-                  "estado": "%s",
-                  "tipoFolioId": 1,
-                  "escribanoId": 1
+                  "number": %d,
+                  "year": 2026,
+                  "status": "%s",
+                  "typeFolioId": 1,
+                  "notaryId": 1
                 }
-                """.formatted(numero, estado);
+                """.formatted(number, status);
     }
 
     @Test
-    @DisplayName("Should create folio with estado Nuevo")
-    void shouldCreateFolioWithEstadoNuevo() throws Exception {
+    @DisplayName("Should create folio with status Nuevo")
+    void shouldCreateFolioWithStatusNuevo() throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9001, "Nuevo")))
@@ -61,12 +61,12 @@ class FolioControllerTest {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        assertThat(mapper.readTree(response).get("estado").asText()).isEqualTo("Nuevo");
+        assertThat(mapper.readTree(response).get("status").asText()).isEqualTo("Nuevo");
     }
 
     @Test
-    @DisplayName("Should create folio with estado Utilizado")
-    void shouldCreateFolioWithEstadoUtilizado() throws Exception {
+    @DisplayName("Should create folio with status Utilizado")
+    void shouldCreateFolioWithStatusUtilizado() throws Exception {
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9002, "Utilizado")))
@@ -74,8 +74,8 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("Should create folio with estado Errose")
-    void shouldCreateFolioWithEstadoErrose() throws Exception {
+    @DisplayName("Should create folio with status Errose")
+    void shouldCreateFolioWithStatusErrose() throws Exception {
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9003, "Errose")))
@@ -84,9 +84,9 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("Should return 400 when tipoFolioId is missing")
-    void shouldReturn400WhenTipoFolioIdMissing() throws Exception {
+    void shouldReturn400WhenTypeFolioIdMissing() throws Exception {
         String body = """
-                {"numero": 9004, "anio": 2026, "estado": "Nuevo", "escribanoId": 1}
+                {"number": 9004, "year": 2026, "status": "Nuevo", "notaryId": 1}
                 """;
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,9 +96,9 @@ class FolioControllerTest {
 
     @Test
     @DisplayName("Should return 400 when escribanoId is missing")
-    void shouldReturn400WhenEscribanoIdMissing() throws Exception {
+    void shouldReturn400WhenNotaryIdMissing() throws Exception {
         String body = """
-                {"numero": 9005, "anio": 2026, "estado": "Nuevo", "tipoFolioId": 1}
+                {"number": 9005, "year": 2026, "status": "Nuevo", "typeFolioId": 1}
                 """;
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -118,8 +118,8 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("Should update folio estado from Nuevo to Utilizado")
-    void shouldUpdateFolioEstado() throws Exception {
+    @DisplayName("Should update folio status from Nuevo to Utilizado")
+    void shouldUpdateFolioStatus() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9007, "Nuevo")))
@@ -128,7 +128,7 @@ class FolioControllerTest {
         Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
 
         String updateBody = """
-                {"numero": 9007, "anio": 2026, "estado": "Utilizado", "tipoFolioId": 1, "escribanoId": 1}
+                {"number": 9007, "year": 2026, "status": "Utilizado", "typeFolioId": 1, "notaryId": 1}
                 """;
         MvcResult update = mockMvc.perform(put("/api/v1/folio/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +136,7 @@ class FolioControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertThat(mapper.readTree(update.getResponse().getContentAsString()).get("estado").asText())
+        assertThat(mapper.readTree(update.getResponse().getContentAsString()).get("status").asText())
                 .isEqualTo("Utilizado");
     }
 
@@ -165,25 +165,25 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("CU63 — GET /search?estado= should return only folios matching the estado")
-    void shouldSearchFoliosByEstado() throws Exception {
+    @DisplayName("CU63 — GET /search?status= should return only folios matching the status")
+    void shouldSearchFoliosByStatus() throws Exception {
         mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9010, "Errose")))
                 .andExpect(status().isCreated());
 
-        MvcResult result = mockMvc.perform(get("/api/v1/folio/search").param("estado", "Errose"))
+        MvcResult result = mockMvc.perform(get("/api/v1/folio/search").param("status", "Errose"))
                 .andExpect(status().isOk())
                 .andReturn();
 
         var nodes = mapper.readTree(result.getResponse().getContentAsString());
         assertThat(nodes.isArray()).isTrue();
         for (var node : nodes) {
-            assertThat(node.get("estado").asText()).isEqualTo("Errose");
+            assertThat(node.get("status").asText()).isEqualTo("Errose");
         }
     }
 
     @Test
-    @DisplayName("GET /{id}/in-use should report false for a folio with estado Nuevo")
+    @DisplayName("GET /{id}/in-use should report false for a folio with status Nuevo")
     void shouldReportNotInUseForNuevoFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9011, "Nuevo")))
@@ -197,7 +197,7 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("GET /{id}/in-use should report true for a folio with estado Utilizado")
+    @DisplayName("GET /{id}/in-use should report true for a folio with status Utilizado")
     void shouldReportInUseForUtilizadoFolio() throws Exception {
         MvcResult create = mockMvc.perform(post("/api/v1/folio").contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9012, "Utilizado")))
@@ -240,13 +240,13 @@ class FolioControllerTest {
                 .andExpect(jsonPath("$.error").exists());
     }
 
-    private int createEscritura() throws Exception {
+    private int createDeed() throws Exception {
         String body = """
                 {
-                  "numero": %d,
-                  "cuerpo": "Escritura de prueba para vinculación de folio",
-                  "estado": "Sin Firmar",
-                  "fechaEscrituracion": "2026-06-16"
+                  "number": %d,
+                  "body": "Deed de prueba para vinculación de folio",
+                  "status": "Sin Firmar",
+                  "dateDeedrecording": "2026-06-16"
                 }
                 """.formatted((int) (System.currentTimeMillis() % 1_000_000));
         MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
@@ -254,42 +254,42 @@ class FolioControllerTest {
                         .content(body))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readTree(result.getResponse().getContentAsString()).get("idEscritura").asInt();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("idDeed").asInt();
     }
 
-    private String bodyWithEscritura(int numero, String estado, Integer escrituraId) {
+    private String bodyWithDeed(int number, String status, Integer deedId) {
         return """
                 {
-                  "numero": %d,
-                  "anio": 2026,
-                  "estado": "%s",
-                  "tipoFolioId": 1,
-                  "escribanoId": 1,
-                  "escrituraId": %s
+                  "number": %d,
+                  "year": 2026,
+                  "status": "%s",
+                  "typeFolioId": 1,
+                  "notaryId": 1,
+                  "deedId": %s
                 }
-                """.formatted(numero, estado, escrituraId);
+                """.formatted(number, status, deedId);
     }
 
     @Test
-    @DisplayName("CU06/#838 — POST should link folio to escritura and force estado Utilizado")
-    void shouldLinkFolioToEscrituraOnCreate() throws Exception {
-        int idEscritura = createEscritura();
+    @DisplayName("CU06/#838 — POST should link folio to deed and force status Utilizado")
+    void shouldLinkFolioToDeedOnCreate() throws Exception {
+        int idDeed = createDeed();
 
         MvcResult result = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9020, "Nuevo", idEscritura)))
+                        .content(bodyWithDeed(9020, "Nuevo", idDeed)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         var json = mapper.readTree(result.getResponse().getContentAsString());
-        assertThat(json.get("estado").asText()).isEqualTo("Utilizado");
-        assertThat(json.get("escritura").get("idEscritura").asInt()).isEqualTo(idEscritura);
+        assertThat(json.get("status").asText()).isEqualTo("Utilizado");
+        assertThat(json.get("deed").get("idDeed").asInt()).isEqualTo(idDeed);
     }
 
     @Test
-    @DisplayName("CU06/#838 — PUT should link folio to escritura and force estado Utilizado")
-    void shouldLinkFolioToEscrituraOnUpdate() throws Exception {
-        int idEscritura = createEscritura();
+    @DisplayName("CU06/#838 — PUT should link folio to deed and force status Utilizado")
+    void shouldLinkFolioToDeedOnUpdate() throws Exception {
+        int idDeed = createDeed();
         MvcResult create = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validBody(9021, "Nuevo")))
@@ -299,58 +299,58 @@ class FolioControllerTest {
 
         MvcResult update = mockMvc.perform(put("/api/v1/folio/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9021, "Nuevo", idEscritura)))
+                        .content(bodyWithDeed(9021, "Nuevo", idDeed)))
                 .andExpect(status().isOk())
                 .andReturn();
 
         var json = mapper.readTree(update.getResponse().getContentAsString());
-        assertThat(json.get("estado").asText()).isEqualTo("Utilizado");
-        assertThat(json.get("escritura").get("idEscritura").asInt()).isEqualTo(idEscritura);
+        assertThat(json.get("status").asText()).isEqualTo("Utilizado");
+        assertThat(json.get("deed").get("idDeed").asInt()).isEqualTo(idDeed);
     }
 
     @Test
     @DisplayName("CU06/#838 — POST should return 400 when escrituraId does not exist")
-    void shouldReturn400WhenEscrituraIdNotFound() throws Exception {
+    void shouldReturn400WhenDeedIdNotFound() throws Exception {
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9022, "Nuevo", 999999)))
+                        .content(bodyWithDeed(9022, "Nuevo", 999999)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("CU06/#838 — PUT should return 409 when folio is already Utilizado by another escritura")
-    void shouldRejectLinkingFolioAlreadyUtilizadoByAnotherEscritura() throws Exception {
-        int idEscrituraA = createEscritura();
-        int idEscrituraB = createEscritura();
+    @DisplayName("CU06/#838 — PUT should return 409 when folio is already Utilizado by another deed")
+    void shouldRejectLinkingFolioAlreadyUtilizadoByAnotherDeed() throws Exception {
+        int idDeedA = createDeed();
+        int idDeedB = createDeed();
         MvcResult create = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9023, "Nuevo", idEscrituraA)))
+                        .content(bodyWithDeed(9023, "Nuevo", idDeedA)))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
 
         mockMvc.perform(put("/api/v1/folio/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9023, "Nuevo", idEscrituraB)))
+                        .content(bodyWithDeed(9023, "Nuevo", idDeedB)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("CU06/#838 — PUT should allow re-saving a folio already linked to the same escritura")
-    void shouldAllowReSavingFolioWithSameEscritura() throws Exception {
-        int idEscritura = createEscritura();
+    @DisplayName("CU06/#838 — PUT should allow re-saving a folio already linked to the same deed")
+    void shouldAllowReSavingFolioWithSameDeed() throws Exception {
+        int idDeed = createDeed();
         MvcResult create = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9024, "Nuevo", idEscritura)))
+                        .content(bodyWithDeed(9024, "Nuevo", idDeed)))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer id = mapper.readTree(create.getResponse().getContentAsString()).get("idFolio").asInt();
 
         mockMvc.perform(put("/api/v1/folio/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bodyWithEscritura(9024, "Utilizado", idEscritura)))
+                        .content(bodyWithDeed(9024, "Utilizado", idDeed)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("Utilizado"));
+                .andExpect(jsonPath("$.status").value("Utilizado"));
     }
 }

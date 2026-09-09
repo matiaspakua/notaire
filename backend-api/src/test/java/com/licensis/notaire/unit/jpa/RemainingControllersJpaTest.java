@@ -2,7 +2,7 @@ package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.*;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.negocio.*;
+import com.licensis.notaire.business.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -126,18 +126,18 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("CopiaJpaController")
-        class CopiaTest {
-            private CopiaJpaController controller;
+        class CopyTest {
+            private CopyJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(CopiaJpaController.class);
+                controller = createStandardController(CopyJpaController.class);
             }
 
             @Test
             @DisplayName("getNombreJpa returns class name")
-            void getNombreJpa() {
-                assertThat(controller.getNombreJpa()).contains("CopiaJpaController");
+            void getNameJpa() {
+                assertThat(controller.getNameJpa()).contains("CopyJpaController");
             }
 
             @Test
@@ -148,11 +148,11 @@ class RemainingControllersJpaTest {
 
             @Test
             @DisplayName("findCopiaEntities returns list from query")
-            void findCopiaEntities() {
-                Copia mockEntity = mock(Copia.class);
+            void findCopyEntities() {
+                Copy mockEntity = mock(Copy.class);
                 when(mockQuery.getResultList()).thenReturn(List.of(mockEntity));
 
-                List<Copia> result = controller.findCopiaEntities();
+                List<Copy> result = controller.findCopyEntities();
                 assertThat(result).containsExactly(mockEntity);
                 verify(mockEm).createQuery("select object(o) from Copia as o");
                 verify(mockQuery).getResultList();
@@ -160,11 +160,11 @@ class RemainingControllersJpaTest {
 
             @Test
             @DisplayName("findCopiaEntities paginated returns limited list")
-            void findCopiaEntitiesPaginated() {
-                Copia mockEntity = mock(Copia.class);
+            void findCopyEntitiesPaginated() {
+                Copy mockEntity = mock(Copy.class);
                 when(mockQuery.getResultList()).thenReturn(List.of(mockEntity));
 
-                List<Copia> result = controller.findCopiaEntities(10, 0);
+                List<Copy> result = controller.findCopyEntities(10, 0);
                 assertThat(result).containsExactly(mockEntity);
                 verify(mockQuery).setMaxResults(10);
                 verify(mockQuery).setFirstResult(0);
@@ -172,20 +172,20 @@ class RemainingControllersJpaTest {
 
             @Test
             @DisplayName("findCopia returns entity from EM")
-            void findCopia() {
-                Copia mockEntity = mock(Copia.class);
-                when(mockEm.find(Copia.class, 1)).thenReturn(mockEntity);
+            void findCopy() {
+                Copy mockEntity = mock(Copy.class);
+                when(mockEm.find(Copy.class, 1)).thenReturn(mockEntity);
 
-                Copia result = controller.findCopia(1);
+                Copy result = controller.findCopy(1);
                 assertThat(result).isSameAs(mockEntity);
             }
 
             @Test
             @DisplayName("getCopiaCount returns count from query")
-            void getCopiaCount() {
+            void getCopyCount() {
                 when(mockQuery.getSingleResult()).thenReturn(42L);
 
-                int count = controller.getCopiaCount();
+                int count = controller.getCopyCount();
                 assertThat(count).isEqualTo(42);
                 verify(mockEm).createQuery("select count(o) from Copia as o");
             }
@@ -193,8 +193,8 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("create persists entity")
             void create() throws Exception {
-                Copia entity = new Copia();
-                entity.setIdCopia(1);
+                Copy entity = new Copy();
+                entity.setIdCopy(1);
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).begin();
@@ -204,7 +204,7 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("create propagates exception without committing")
             void createRollback() {
-                Copia entity = new Copia();
+                Copy entity = new Copy();
                 doThrow(new RuntimeException("DB error")).when(mockEm).persist(entity);
 
                 assertThatThrownBy(() -> controller.create(entity))
@@ -216,9 +216,9 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("destroy removes entity")
             void destroy() throws Exception {
-                Copia entity = new Copia();
+                Copy entity = new Copy();
                 entity.setFolioList(new ArrayList<>());
-                when(mockEm.getReference(Copia.class, 1)).thenReturn(entity);
+                when(mockEm.getReference(Copy.class, 1)).thenReturn(entity);
 
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
@@ -228,9 +228,9 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("destroy throws NonexistentEntityException when reference not found")
             void destroyNotFound() {
-                Copia proxy = mock(Copia.class);
-                when(mockEm.getReference(Copia.class, 99)).thenReturn(proxy);
-                when(proxy.getIdCopia()).thenThrow(new jakarta.persistence.EntityNotFoundException());
+                Copy proxy = mock(Copy.class);
+                when(mockEm.getReference(Copy.class, 99)).thenReturn(proxy);
+                when(proxy.getIdCopy()).thenThrow(new jakarta.persistence.EntityNotFoundException());
 
                 assertThatThrownBy(() -> controller.destroy(99))
                         .isInstanceOf(com.licensis.notaire.jpa.exceptions.NonexistentEntityException.class);
@@ -240,47 +240,47 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("DocumentoPresentadoJpaController")
-        class DocumentoPresentadoTest {
-            private DocumentoPresentadoJpaController controller;
+        class SubmittedDocumentTest {
+            private SubmittedDocumentJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(DocumentoPresentadoJpaController.class);
+                controller = createStandardController(SubmittedDocumentJpaController.class);
             }
 
             @Test
             @DisplayName("getNombreJpa")
-            void getNombreJpa() {
-                assertThat(controller.getNombreJpa()).contains("DocumentoPresentadoJpaController");
+            void getNameJpa() {
+                assertThat(controller.getNameJpa()).contains("SubmittedDocumentJpaController");
             }
 
             @Test
             @DisplayName("findDocumentoPresentadoEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(DocumentoPresentado.class)));
-                assertThat(controller.findDocumentoPresentadoEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(SubmittedDocument.class)));
+                assertThat(controller.findSubmittedDocumentEntities()).hasSize(1);
             }
 
             @Test
             @DisplayName("findDocumentoPresentado")
             void findById() {
-                when(mockEm.find(DocumentoPresentado.class, 5)).thenReturn(mock(DocumentoPresentado.class));
-                assertThat(controller.findDocumentoPresentado(5)).isNotNull();
+                when(mockEm.find(SubmittedDocument.class, 5)).thenReturn(mock(SubmittedDocument.class));
+                assertThat(controller.findSubmittedDocument(5)).isNotNull();
             }
 
             @Test
             @DisplayName("getDocumentoPresentadoCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(7L);
-                assertThat(controller.getDocumentoPresentadoCount()).isEqualTo(7);
+                assertThat(controller.getSubmittedDocumentCount()).isEqualTo(7);
             }
 
             @Test
             @DisplayName("create persists and commits")
             void create() throws Exception {
                 when(mockQuery.getResultList()).thenReturn(new ArrayList<>());
-                DocumentoPresentado entity = new DocumentoPresentado();
-                entity.setFkIdTramite(new Tramite(1));
+                SubmittedDocument entity = new SubmittedDocument();
+                entity.setFkIdProcedure(new Procedure(1));
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -289,8 +289,8 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("destroy finds and removes")
             void destroy() throws Exception {
-                DocumentoPresentado entity = new DocumentoPresentado();
-                when(mockEm.getReference(DocumentoPresentado.class, 1)).thenReturn(entity);
+                SubmittedDocument entity = new SubmittedDocument();
+                when(mockEm.getReference(SubmittedDocument.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -299,43 +299,43 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("EscrituraJpaController")
-        class EscrituraTest {
-            private EscrituraJpaController controller;
+        class DeedTest {
+            private DeedJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(EscrituraJpaController.class);
+                controller = createStandardController(DeedJpaController.class);
             }
 
             @Test
             @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("EscrituraJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("DeedJpaController"); }
 
             @Test
             @DisplayName("findEscrituraEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Escritura.class)));
-                assertThat(controller.findEscrituraEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Deed.class)));
+                assertThat(controller.findDeedEntities()).hasSize(1);
             }
 
             @Test
             @DisplayName("findEscritura")
             void findById() {
-                when(mockEm.find(Escritura.class, 3)).thenReturn(mock(Escritura.class));
-                assertThat(controller.findEscritura(3)).isNotNull();
+                when(mockEm.find(Deed.class, 3)).thenReturn(mock(Deed.class));
+                assertThat(controller.findDeed(3)).isNotNull();
             }
 
             @Test
             @DisplayName("getEscrituraCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(15L);
-                assertThat(controller.getEscrituraCount()).isEqualTo(15);
+                assertThat(controller.getDeedCount()).isEqualTo(15);
             }
 
             @Test
             @DisplayName("create persists and commits")
             void create() throws Exception {
-                Escritura entity = new Escritura();
+                Deed entity = new Deed();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -344,11 +344,11 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("destroy finds and removes")
             void destroy() throws Exception {
-                Escritura entity = new Escritura();
-                entity.setTestimonioList(new ArrayList<>());
+                Deed entity = new Deed();
+                entity.setTestimonyList(new ArrayList<>());
                 entity.setFolioList(new ArrayList<>());
-                entity.setTramiteList(new ArrayList<>());
-                when(mockEm.getReference(Escritura.class, 1)).thenReturn(entity);
+                entity.setProcedureList(new ArrayList<>());
+                when(mockEm.getReference(Deed.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -357,43 +357,43 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("EstadoDeGestionJpaController")
-        class EstadoDeGestionTest {
-            private EstadoDeGestionJpaController controller;
+        class ManagementStatusTest {
+            private ManagementStatusJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(EstadoDeGestionJpaController.class);
+                controller = createStandardController(ManagementStatusJpaController.class);
             }
 
             @Test
             @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("EstadoDeGestionJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("ManagementStatusJpaController"); }
 
             @Test
             @DisplayName("findEstadoDeGestionEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(EstadoDeGestion.class)));
-                assertThat(controller.findEstadoDeGestionEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(ManagementStatus.class)));
+                assertThat(controller.findManagementStatusEntities()).hasSize(1);
             }
 
             @Test
             @DisplayName("findEstadoDeGestion")
             void findById() {
-                when(mockEm.find(EstadoDeGestion.class, 2)).thenReturn(mock(EstadoDeGestion.class));
-                assertThat(controller.findEstadoDeGestion(2)).isNotNull();
+                when(mockEm.find(ManagementStatus.class, 2)).thenReturn(mock(ManagementStatus.class));
+                assertThat(controller.findManagementStatus(2)).isNotNull();
             }
 
             @Test
             @DisplayName("getEstadoDeGestionCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(5L);
-                assertThat(controller.getEstadoDeGestionCount()).isEqualTo(5);
+                assertThat(controller.getManagementStatusCount()).isEqualTo(5);
             }
 
             @Test
             @DisplayName("create persists")
             void create() throws Exception {
-                EstadoDeGestion entity = new EstadoDeGestion();
+                ManagementStatus entity = new ManagementStatus();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -402,9 +402,9 @@ class RemainingControllersJpaTest {
             @Test
             @DisplayName("destroy removes")
             void destroy() throws Exception {
-                EstadoDeGestion entity = new EstadoDeGestion();
-                entity.setHistorialList(new java.util.HashSet<>());
-                when(mockEm.getReference(EstadoDeGestion.class, 1)).thenReturn(entity);
+                ManagementStatus entity = new ManagementStatus();
+                entity.setHistoryList(new java.util.HashSet<>());
+                when(mockEm.getReference(ManagementStatus.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -423,7 +423,7 @@ class RemainingControllersJpaTest {
 
             @Test
             @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("FolioJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("FolioJpaController"); }
 
             @Test @DisplayName("findFolioEntities")
             void findEntities() {
@@ -463,38 +463,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("GestionDeEscrituraJpaController")
-        class GestionDeEscrituraTest {
-            private GestionDeEscrituraJpaController controller;
+        class DeedManagementTest {
+            private DeedManagementJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(GestionDeEscrituraJpaController.class);
+                controller = createStandardController(DeedManagementJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("GestionDeEscrituraJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("DeedManagementJpaController"); }
 
             @Test @DisplayName("findGestionDeEscrituraEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(GestionDeEscritura.class)));
-                assertThat(controller.findGestionDeEscrituraEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(DeedManagement.class)));
+                assertThat(controller.findDeedManagementEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findGestionDeEscritura")
             void findById() {
-                when(mockEm.find(GestionDeEscritura.class, 7)).thenReturn(mock(GestionDeEscritura.class));
-                assertThat(controller.findGestionDeEscritura(7)).isNotNull();
+                when(mockEm.find(DeedManagement.class, 7)).thenReturn(mock(DeedManagement.class));
+                assertThat(controller.findDeedManagement(7)).isNotNull();
             }
 
             @Test @DisplayName("getGestionDeEscrituraCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(2L);
-                assertThat(controller.getGestionDeEscrituraCount()).isEqualTo(2);
+                assertThat(controller.getDeedManagementCount()).isEqualTo(2);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                GestionDeEscritura entity = new GestionDeEscritura();
+                DeedManagement entity = new DeedManagement();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -502,8 +502,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                GestionDeEscritura entity = new GestionDeEscritura();
-                when(mockEm.getReference(GestionDeEscritura.class, 1)).thenReturn(entity);
+                DeedManagement entity = new DeedManagement();
+                when(mockEm.getReference(DeedManagement.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -512,38 +512,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("HistorialJpaController")
-        class HistorialTest {
-            private HistorialJpaController controller;
+        class HistoryTest {
+            private HistoryJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(HistorialJpaController.class);
+                controller = createStandardController(HistoryJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("HistorialJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("HistoryJpaController"); }
 
             @Test @DisplayName("findHistorialEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Historial.class)));
-                assertThat(controller.findHistorialEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(History.class)));
+                assertThat(controller.findHistoryEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findHistorial")
             void findById() {
-                when(mockEm.find(Historial.class, 2)).thenReturn(mock(Historial.class));
-                assertThat(controller.findHistorial(2)).isNotNull();
+                when(mockEm.find(History.class, 2)).thenReturn(mock(History.class));
+                assertThat(controller.findHistory(2)).isNotNull();
             }
 
             @Test @DisplayName("getHistorialCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(10L);
-                assertThat(controller.getHistorialCount()).isEqualTo(10);
+                assertThat(controller.getHistoryCount()).isEqualTo(10);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Historial entity = new Historial();
+                History entity = new History();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -551,8 +551,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Historial entity = new Historial();
-                when(mockEm.getReference(Historial.class, 1)).thenReturn(entity);
+                History entity = new History();
+                when(mockEm.getReference(History.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -561,38 +561,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("InmuebleJpaController")
-        class InmuebleTest {
-            private InmuebleJpaController controller;
+        class PropertyTest {
+            private PropertyJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(InmuebleJpaController.class);
+                controller = createStandardController(PropertyJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("InmuebleJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("PropertyJpaController"); }
 
             @Test @DisplayName("findInmuebleEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Inmueble.class)));
-                assertThat(controller.findInmuebleEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Property.class)));
+                assertThat(controller.findPropertyEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findInmueble")
             void findById() {
-                when(mockEm.find(Inmueble.class, 3)).thenReturn(mock(Inmueble.class));
-                assertThat(controller.findInmueble(3)).isNotNull();
+                when(mockEm.find(Property.class, 3)).thenReturn(mock(Property.class));
+                assertThat(controller.findProperty(3)).isNotNull();
             }
 
             @Test @DisplayName("getInmuebleCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(6L);
-                assertThat(controller.getInmuebleCount()).isEqualTo(6);
+                assertThat(controller.getPropertyCount()).isEqualTo(6);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Inmueble entity = new Inmueble();
+                Property entity = new Property();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -600,8 +600,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Inmueble entity = new Inmueble();
-                when(mockEm.getReference(Inmueble.class, 1)).thenReturn(entity);
+                Property entity = new Property();
+                when(mockEm.getReference(Property.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -619,7 +619,7 @@ class RemainingControllersJpaTest {
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("ItemJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("ItemJpaController"); }
 
             @Test @DisplayName("findItemEntities")
             void findEntities() {
@@ -659,38 +659,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("MovimientoTestimonioJpaController")
-        class MovimientoTestimonioTest {
-            private MovimientoTestimonioJpaController controller;
+        class TestimonyMovementTest {
+            private TestimonyMovementJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(MovimientoTestimonioJpaController.class);
+                controller = createStandardController(TestimonyMovementJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("MovimientoTestimonioJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("TestimonyMovementJpaController"); }
 
             @Test @DisplayName("findMovimientoTestimonioEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(MovimientoTestimonio.class)));
-                assertThat(controller.findMovimientoTestimonioEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(TestimonyMovement.class)));
+                assertThat(controller.findTestimonyMovementEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findMovimientoTestimonio")
             void findById() {
-                when(mockEm.find(MovimientoTestimonio.class, 5)).thenReturn(mock(MovimientoTestimonio.class));
-                assertThat(controller.findMovimientoTestimonio(5)).isNotNull();
+                when(mockEm.find(TestimonyMovement.class, 5)).thenReturn(mock(TestimonyMovement.class));
+                assertThat(controller.findTestimonyMovement(5)).isNotNull();
             }
 
             @Test @DisplayName("getMovimientoTestimonioCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(9L);
-                assertThat(controller.getMovimientoTestimonioCount()).isEqualTo(9);
+                assertThat(controller.getTestimonyMovementCount()).isEqualTo(9);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                MovimientoTestimonio entity = new MovimientoTestimonio();
+                TestimonyMovement entity = new TestimonyMovement();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -698,8 +698,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                MovimientoTestimonio entity = new MovimientoTestimonio();
-                when(mockEm.getReference(MovimientoTestimonio.class, 1)).thenReturn(entity);
+                TestimonyMovement entity = new TestimonyMovement();
+                when(mockEm.getReference(TestimonyMovement.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -708,39 +708,39 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("PagoJpaController")
-        class PagoTest {
-            private PagoJpaController controller;
+        class PaymentTest {
+            private PaymentJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(PagoJpaController.class);
+                controller = createStandardController(PaymentJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("PagoJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("PaymentJpaController"); }
 
             @Test @DisplayName("findPagoEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Pago.class)));
-                assertThat(controller.findPagoEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Payment.class)));
+                assertThat(controller.findPaymentEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findPago")
             void findById() {
-                when(mockEm.find(Pago.class, 6)).thenReturn(mock(Pago.class));
-                assertThat(controller.findPago(6)).isNotNull();
+                when(mockEm.find(Payment.class, 6)).thenReturn(mock(Payment.class));
+                assertThat(controller.findPayment(6)).isNotNull();
             }
 
             @Test @DisplayName("getPagoCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(11L);
-                assertThat(controller.getPagoCount()).isEqualTo(11);
+                assertThat(controller.getPaymentCount()).isEqualTo(11);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Pago entity = new Pago();
-                entity.setIdPago(1);
+                Payment entity = new Payment();
+                entity.setIdPayment(1);
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -748,8 +748,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Pago entity = new Pago();
-                when(mockEm.getReference(Pago.class, 1)).thenReturn(entity);
+                Payment entity = new Payment();
+                when(mockEm.getReference(Payment.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -758,41 +758,41 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("PlantillaPresupuestoJpaController")
-        class PlantillaPresupuestoTest {
-            private PlantillaPresupuestoJpaController controller;
+        class BudgetTemplateTest {
+            private BudgetTemplateJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(PlantillaPresupuestoJpaController.class);
+                controller = createStandardController(BudgetTemplateJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("PlantillaPresupuestoJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("BudgetTemplateJpaController"); }
 
             @Test @DisplayName("findPlantillaPresupuestoEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(PlantillaPresupuesto.class)));
-                assertThat(controller.findPlantillaPresupuestoEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(BudgetTemplate.class)));
+                assertThat(controller.findBudgetTemplateEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findPlantillaPresupuesto")
             void findById() {
-                PlantillaPresupuestoPK id = new PlantillaPresupuestoPK(2, 2);
-                when(mockEm.find(PlantillaPresupuesto.class, id)).thenReturn(mock(PlantillaPresupuesto.class));
-                assertThat(controller.findPlantillaPresupuesto(id)).isNotNull();
+                BudgetTemplatePK id = new BudgetTemplatePK(2, 2);
+                when(mockEm.find(BudgetTemplate.class, id)).thenReturn(mock(BudgetTemplate.class));
+                assertThat(controller.findBudgetTemplate(id)).isNotNull();
             }
 
             @Test @DisplayName("getPlantillaPresupuestoCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(8L);
-                assertThat(controller.getPlantillaPresupuestoCount()).isEqualTo(8);
+                assertThat(controller.getBudgetTemplateCount()).isEqualTo(8);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                PlantillaPresupuesto entity = new PlantillaPresupuesto();
-                entity.setTipoDeTramite(new TipoDeTramite(1));
-                entity.setConcepto(new Concepto(1));
+                BudgetTemplate entity = new BudgetTemplate();
+                entity.setProcedureType(new ProcedureType(1));
+                entity.setConcept(new Concept(1));
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -800,9 +800,9 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                PlantillaPresupuestoPK id = new PlantillaPresupuestoPK(1, 1);
-                PlantillaPresupuesto entity = new PlantillaPresupuesto();
-                when(mockEm.getReference(PlantillaPresupuesto.class, id)).thenReturn(entity);
+                BudgetTemplatePK id = new BudgetTemplatePK(1, 1);
+                BudgetTemplate entity = new BudgetTemplate();
+                when(mockEm.getReference(BudgetTemplate.class, id)).thenReturn(entity);
                 controller.destroy(id);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -811,41 +811,41 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("PlantillaTramiteJpaController")
-        class PlantillaTramiteTest {
-            private PlantillaTramiteJpaController controller;
+        class ProcedureTemplateTest {
+            private ProcedureTemplateJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(PlantillaTramiteJpaController.class);
+                controller = createStandardController(ProcedureTemplateJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("PlantillaTramiteJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureTemplateJpaController"); }
 
             @Test @DisplayName("findPlantillaTramiteEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(PlantillaTramite.class)));
-                assertThat(controller.findPlantillaTramiteEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureTemplate.class)));
+                assertThat(controller.findProcedureTemplateEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findPlantillaTramite")
             void findById() {
-                PlantillaTramitePK id = new PlantillaTramitePK(4, 4);
-                when(mockEm.find(PlantillaTramite.class, id)).thenReturn(mock(PlantillaTramite.class));
-                assertThat(controller.findPlantillaTramite(id)).isNotNull();
+                ProcedureTemplatePK id = new ProcedureTemplatePK(4, 4);
+                when(mockEm.find(ProcedureTemplate.class, id)).thenReturn(mock(ProcedureTemplate.class));
+                assertThat(controller.findProcedureTemplate(id)).isNotNull();
             }
 
             @Test @DisplayName("getPlantillaTramiteCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(12L);
-                assertThat(controller.getPlantillaTramiteCount()).isEqualTo(12);
+                assertThat(controller.getProcedureTemplateCount()).isEqualTo(12);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                PlantillaTramite entity = new PlantillaTramite();
-                entity.setTipoDeTramite(new TipoDeTramite(1));
-                entity.setTipoDeDocumento(new TipoDeDocumento(1));
+                ProcedureTemplate entity = new ProcedureTemplate();
+                entity.setProcedureType(new ProcedureType(1));
+                entity.setDocumentType(new DocumentType(1));
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -853,9 +853,9 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                PlantillaTramitePK id = new PlantillaTramitePK(1, 1);
-                PlantillaTramite entity = new PlantillaTramite();
-                when(mockEm.getReference(PlantillaTramite.class, id)).thenReturn(entity);
+                ProcedureTemplatePK id = new ProcedureTemplatePK(1, 1);
+                ProcedureTemplate entity = new ProcedureTemplate();
+                when(mockEm.getReference(ProcedureTemplate.class, id)).thenReturn(entity);
                 controller.destroy(id);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -864,38 +864,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("PresupuestoJpaController")
-        class PresupuestoTest {
-            private PresupuestoJpaController controller;
+        class BudgetTest {
+            private BudgetJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(PresupuestoJpaController.class);
+                controller = createStandardController(BudgetJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("PresupuestoJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("BudgetJpaController"); }
 
             @Test @DisplayName("findPresupuestoEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Presupuesto.class)));
-                assertThat(controller.findPresupuestoEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Budget.class)));
+                assertThat(controller.findBudgetEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findPresupuesto")
             void findById() {
-                when(mockEm.find(Presupuesto.class, 9)).thenReturn(mock(Presupuesto.class));
-                assertThat(controller.findPresupuesto(9)).isNotNull();
+                when(mockEm.find(Budget.class, 9)).thenReturn(mock(Budget.class));
+                assertThat(controller.findBudget(9)).isNotNull();
             }
 
             @Test @DisplayName("getPresupuestoCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(20L);
-                assertThat(controller.getPresupuestoCount()).isEqualTo(20);
+                assertThat(controller.getBudgetCount()).isEqualTo(20);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Presupuesto entity = new Presupuesto();
+                Budget entity = new Budget();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -903,8 +903,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Presupuesto entity = new Presupuesto();
-                when(mockEm.getReference(Presupuesto.class, 1)).thenReturn(entity);
+                Budget entity = new Budget();
+                when(mockEm.getReference(Budget.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -914,44 +914,44 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("SuplenciaJpaController")
-        class SuplenciaTest {
-            private SuplenciaJpaController controller;
+        class SubstitutionTest {
+            private SubstitutionJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(SuplenciaJpaController.class);
+                controller = createStandardController(SubstitutionJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("SuplenciaJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("SubstitutionJpaController"); }
 
             @Test @DisplayName("findSuplenciaEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Suplencia.class)));
-                assertThat(controller.findSuplenciaEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Substitution.class)));
+                assertThat(controller.findSubstitutionEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findSuplencia")
             void findById() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Suplencia.class)));
-                assertThat(controller.findSuplencia(3)).isNotNull();
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Substitution.class)));
+                assertThat(controller.findSubstitution(3)).isNotNull();
             }
 
             @Test @DisplayName("findSuplencia returns null when not found")
             void findByIdNotFound() {
                 when(mockQuery.getResultList()).thenReturn(List.of());
-                assertThat(controller.findSuplencia(999)).isNull();
+                assertThat(controller.findSubstitution(999)).isNull();
             }
 
             @Test @DisplayName("getSuplenciaCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(1L);
-                assertThat(controller.getSuplenciaCount()).isEqualTo(1);
+                assertThat(controller.getSubstitutionCount()).isEqualTo(1);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Suplencia entity = new Suplencia();
+                Substitution entity = new Substitution();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -959,8 +959,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Suplencia entity = new Suplencia();
-                when(mockEm.find(Suplencia.class, 1)).thenReturn(entity);
+                Substitution entity = new Substitution();
+                when(mockEm.find(Substitution.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -969,38 +969,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("TestimonioJpaController")
-        class TestimonioTest {
-            private TestimonioJpaController controller;
+        class TestimonyTest {
+            private TestimonyJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(TestimonioJpaController.class);
+                controller = createStandardController(TestimonyJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TestimonioJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("TestimonyJpaController"); }
 
             @Test @DisplayName("findTestimonioEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(Testimonio.class)));
-                assertThat(controller.findTestimonioEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(Testimony.class)));
+                assertThat(controller.findTestimonyEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findTestimonio")
             void findById() {
-                when(mockEm.find(Testimonio.class, 7)).thenReturn(mock(Testimonio.class));
-                assertThat(controller.findTestimonio(7)).isNotNull();
+                when(mockEm.find(Testimony.class, 7)).thenReturn(mock(Testimony.class));
+                assertThat(controller.findTestimony(7)).isNotNull();
             }
 
             @Test @DisplayName("getTestimonioCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(3L);
-                assertThat(controller.getTestimonioCount()).isEqualTo(3);
+                assertThat(controller.getTestimonyCount()).isEqualTo(3);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                Testimonio entity = new Testimonio();
+                Testimony entity = new Testimony();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -1008,8 +1008,8 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                Testimonio entity = new Testimonio();
-                when(mockEm.getReference(Testimonio.class, 1)).thenReturn(entity);
+                Testimony entity = new Testimony();
+                when(mockEm.getReference(Testimony.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -1018,39 +1018,39 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("TipoDeDocumentoJpaController")
-        class TipoDeDocumentoTest {
-            private TipoDeDocumentoJpaController controller;
+        class DocumentTypeTest {
+            private DocumentTypeJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(TipoDeDocumentoJpaController.class);
+                controller = createStandardController(DocumentTypeJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TipoDeDocumentoJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("DocumentTypeJpaController"); }
 
             @Test @DisplayName("findTipoDeDocumentoEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(TipoDeDocumento.class)));
-                assertThat(controller.findTipoDeDocumentoEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(DocumentType.class)));
+                assertThat(controller.findDocumentTypeEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findTipoDeDocumento")
             void findById() {
-                when(mockEm.find(TipoDeDocumento.class, 4)).thenReturn(mock(TipoDeDocumento.class));
-                assertThat(controller.findTipoDeDocumento(4)).isNotNull();
+                when(mockEm.find(DocumentType.class, 4)).thenReturn(mock(DocumentType.class));
+                assertThat(controller.findDocumentType(4)).isNotNull();
             }
 
             @Test @DisplayName("getTipoDeDocumentoCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(16L);
-                assertThat(controller.getTipoDeDocumentoCount()).isEqualTo(16);
+                assertThat(controller.getDocumentTypeCount()).isEqualTo(16);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                TipoDeDocumento entity = new TipoDeDocumento();
-                entity.setIdTipoDocumento(1);
+                DocumentType entity = new DocumentType();
+                entity.setIdDocumentType(1);
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -1058,10 +1058,10 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                TipoDeDocumento entity = new TipoDeDocumento();
-                entity.setPlantillaTramiteList(new ArrayList<>());
-                when(mockEm.find(TipoDeDocumento.class, 1)).thenReturn(entity);
-                when(mockEm.getReference(TipoDeDocumento.class, 1)).thenReturn(entity);
+                DocumentType entity = new DocumentType();
+                entity.setProcedureTemplateList(new ArrayList<>());
+                when(mockEm.find(DocumentType.class, 1)).thenReturn(entity);
+                when(mockEm.getReference(DocumentType.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -1070,38 +1070,38 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("TipoDeFolioJpaController")
-        class TipoDeFolioTest {
-            private TipoDeFolioJpaController controller;
+        class FolioTypeTest {
+            private FolioTypeJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(TipoDeFolioJpaController.class);
+                controller = createStandardController(FolioTypeJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TipoDeFolioJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("FolioTypeJpaController"); }
 
             @Test @DisplayName("findTipoDeFolioEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(TipoDeFolio.class)));
-                assertThat(controller.findTipoDeFolioEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(FolioType.class)));
+                assertThat(controller.findFolioTypeEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findTipoDeFolio")
             void findById() {
-                when(mockEm.find(TipoDeFolio.class, 5)).thenReturn(mock(TipoDeFolio.class));
-                assertThat(controller.findTipoDeFolio(5)).isNotNull();
+                when(mockEm.find(FolioType.class, 5)).thenReturn(mock(FolioType.class));
+                assertThat(controller.findFolioType(5)).isNotNull();
             }
 
             @Test @DisplayName("getTipoDeFolioCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(2L);
-                assertThat(controller.getTipoDeFolioCount()).isEqualTo(2);
+                assertThat(controller.getFolioTypeCount()).isEqualTo(2);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                TipoDeFolio entity = new TipoDeFolio();
+                FolioType entity = new FolioType();
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -1109,9 +1109,9 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                TipoDeFolio entity = new TipoDeFolio();
+                FolioType entity = new FolioType();
                 entity.setFolioList(new ArrayList<>());
-                when(mockEm.getReference(TipoDeFolio.class, 1)).thenReturn(entity);
+                when(mockEm.getReference(FolioType.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -1120,39 +1120,39 @@ class RemainingControllersJpaTest {
 
         @Nested
         @DisplayName("TipoDeTramiteJpaController")
-        class TipoDeTramiteTest {
-            private TipoDeTramiteJpaController controller;
+        class ProcedureTypeTest {
+            private ProcedureTypeJpaController controller;
 
             @BeforeEach
             void setUp() {
-                controller = createStandardController(TipoDeTramiteJpaController.class);
+                controller = createStandardController(ProcedureTypeJpaController.class);
             }
 
             @Test @DisplayName("getNombreJpa")
-            void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TipoDeTramiteJpaController"); }
+            void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureTypeJpaController"); }
 
             @Test @DisplayName("findTipoDeTramiteEntities")
             void findEntities() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(TipoDeTramite.class)));
-                assertThat(controller.findTipoDeTramiteEntities()).hasSize(1);
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureType.class)));
+                assertThat(controller.findProcedureTypeEntities()).hasSize(1);
             }
 
             @Test @DisplayName("findTipoDeTramite")
             void findById() {
-                when(mockQuery.getResultList()).thenReturn(List.of(mock(TipoDeTramite.class)));
-                assertThat(controller.findTipoDeTramite(6)).isNotNull();
+                when(mockQuery.getResultList()).thenReturn(List.of(mock(ProcedureType.class)));
+                assertThat(controller.findProcedureType(6)).isNotNull();
             }
 
             @Test @DisplayName("getTipoDeTramiteCount")
             void getCount() {
                 when(mockQuery.getSingleResult()).thenReturn(7L);
-                assertThat(controller.getTipoDeTramiteCount()).isEqualTo(7);
+                assertThat(controller.getProcedureTypeCount()).isEqualTo(7);
             }
 
             @Test @DisplayName("create persists")
             void create() throws Exception {
-                TipoDeTramite entity = new TipoDeTramite();
-                entity.setIdTipoTramite(1);
+                ProcedureType entity = new ProcedureType();
+                entity.setIdProcedureType(1);
                 controller.create(entity);
                 verify(mockEm).persist(entity);
                 verify(mockTx).commit();
@@ -1160,12 +1160,12 @@ class RemainingControllersJpaTest {
 
             @Test @DisplayName("destroy removes")
             void destroy() throws Exception {
-                TipoDeTramite entity = new TipoDeTramite();
-                entity.setPlantillaPresupuestoList(new ArrayList<>());
-                entity.setPlantillaTramiteList(new ArrayList<>());
-                entity.setTramiteList(new ArrayList<>());
-                when(mockEm.find(TipoDeTramite.class, 1)).thenReturn(entity);
-                when(mockEm.getReference(TipoDeTramite.class, 1)).thenReturn(entity);
+                ProcedureType entity = new ProcedureType();
+                entity.setBudgetTemplateList(new ArrayList<>());
+                entity.setProcedureTemplateList(new ArrayList<>());
+                entity.setProcedureList(new ArrayList<>());
+                when(mockEm.find(ProcedureType.class, 1)).thenReturn(entity);
+                when(mockEm.getReference(ProcedureType.class, 1)).thenReturn(entity);
                 controller.destroy(1);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
@@ -1179,13 +1179,13 @@ class RemainingControllersJpaTest {
 
     @Nested
     @DisplayName("TipoIdentificacionJpaController (singleton)")
-    class TipoIdentificacionSingletonTest {
+    class IdentificationTypeSingletonTest {
 
         private void primeSingleton() {
             try {
-                TipoIdentificacionJpaController instance = new TipoIdentificacionJpaController(mockUtx, mockEmf);
+                IdentificationTypeJpaController instance = new IdentificationTypeJpaController(mockUtx, mockEmf);
                 java.lang.reflect.Field instanciaField =
-                        TipoIdentificacionJpaController.class.getDeclaredField("instancia");
+                        IdentificationTypeJpaController.class.getDeclaredField("instancia");
                 instanciaField.setAccessible(true);
                 instanciaField.set(null, instance);
             } catch (Exception e) {
@@ -1195,11 +1195,11 @@ class RemainingControllersJpaTest {
 
         @Test
         @DisplayName("getNombreJpa via singleton pattern")
-        void getNombreJpa() {
+        void getNameJpa() {
             primeSingleton();
 
-            TipoIdentificacionJpaController controller = TipoIdentificacionJpaController.getInstancia();
-            assertThat(controller.getNombreJpa()).contains("TipoIdentificacionJpaController");
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            assertThat(controller.getNameJpa()).contains("IdentificationTypeJpaController");
         }
 
         @Test
@@ -1207,8 +1207,8 @@ class RemainingControllersJpaTest {
         void getInstanceSingleton() {
             primeSingleton();
 
-            TipoIdentificacionJpaController first = TipoIdentificacionJpaController.getInstancia();
-            TipoIdentificacionJpaController second = TipoIdentificacionJpaController.getInstancia();
+            IdentificationTypeJpaController first = IdentificationTypeJpaController.getInstancia();
+            IdentificationTypeJpaController second = IdentificationTypeJpaController.getInstancia();
             assertThat(first).isSameAs(second);
         }
 
@@ -1217,8 +1217,8 @@ class RemainingControllersJpaTest {
         void create() throws Exception {
             primeSingleton();
 
-            TipoIdentificacionJpaController controller = TipoIdentificacionJpaController.getInstancia();
-            TipoIdentificacion entity = new TipoIdentificacion();
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            IdentificationType entity = new IdentificationType();
             controller.create(entity);
             verify(mockEm).persist(entity);
             verify(mockTx).commit();
@@ -1229,9 +1229,9 @@ class RemainingControllersJpaTest {
         void findEntities() {
             primeSingleton();
 
-            when(mockQuery.getResultList()).thenReturn(List.of(mock(TipoIdentificacion.class)));
-            TipoIdentificacionJpaController controller = TipoIdentificacionJpaController.getInstancia();
-            assertThat(controller.findTipoIdentificacionEntities()).hasSize(1);
+            when(mockQuery.getResultList()).thenReturn(List.of(mock(IdentificationType.class)));
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            assertThat(controller.findIdentificationTypeEntities()).hasSize(1);
         }
 
         @Test
@@ -1240,8 +1240,8 @@ class RemainingControllersJpaTest {
             primeSingleton();
 
             when(mockQuery.getSingleResult()).thenReturn(5L);
-            TipoIdentificacionJpaController controller = TipoIdentificacionJpaController.getInstancia();
-            assertThat(controller.getTipoIdentificacionCount()).isEqualTo(5);
+            IdentificationTypeJpaController controller = IdentificationTypeJpaController.getInstancia();
+            assertThat(controller.getIdentificationTypeCount()).isEqualTo(5);
         }
     }
 
@@ -1251,7 +1251,7 @@ class RemainingControllersJpaTest {
 
     @Nested
     @DisplayName("PersonJpaController (singleton)")
-    class PersonaSingletonTest {
+    class PersonSingletonTest {
         private PersonJpaController controller;
 
         @BeforeEach
@@ -1262,20 +1262,20 @@ class RemainingControllersJpaTest {
 
         @Test
         @DisplayName("getNombreJpa")
-        void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("PersonJpaController"); }
+        void getNameJpa() { assertThat(controller.getNameJpa()).contains("PersonJpaController"); }
 
         @Test
         @DisplayName("findPersonaEntities")
         void findEntities() {
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
-            assertThat(controller.findPersonaEntities()).hasSize(1);
+            assertThat(controller.findPersonEntities()).hasSize(1);
         }
 
         @Test
         @DisplayName("findPersonaEntities paginated")
         void findEntitiesPaginated() {
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
-            assertThat(controller.findPersonaEntities(20, 0)).hasSize(1);
+            assertThat(controller.findPersonEntities(20, 0)).hasSize(1);
             verify(mockQuery).setMaxResults(20);
             verify(mockQuery).setFirstResult(0);
         }
@@ -1284,7 +1284,7 @@ class RemainingControllersJpaTest {
         @DisplayName("findPersona")
         void findById() {
             when(mockEm.find(Person.class, 10)).thenReturn(mock(Person.class));
-            assertThat(controller.findPersona(10)).isNotNull();
+            assertThat(controller.findPerson(10)).isNotNull();
         }
 
         @Test
@@ -1301,7 +1301,7 @@ class RemainingControllersJpaTest {
             when(mockCq.from(Person.class)).thenReturn(mockRoot);
             when(mockEm.createQuery(mockCq)).thenReturn(mockTypedQuery);
             when(mockTypedQuery.getSingleResult()).thenReturn(50L);
-            assertThat(controller.getPersonaCount()).isEqualTo(50);
+            assertThat(controller.getPersonCount()).isEqualTo(50);
         }
 
         @Test
@@ -1318,14 +1318,14 @@ class RemainingControllersJpaTest {
         @DisplayName("destroy removes")
         void destroy() throws Exception {
             Person entity = new Person();
-            entity.setTramitesPersonasList(new ArrayList<>());
-            entity.setPresupuestoList(new ArrayList<>());
-            entity.setGestionDeEscrituraList(new ArrayList<>());
+            entity.setPersonProcedureList(new ArrayList<>());
+            entity.setBudgetList(new ArrayList<>());
+            entity.setDeedManagementList(new ArrayList<>());
             entity.setFolioList(new ArrayList<>());
-            entity.setSuplenciaList(new ArrayList<>());
-            entity.setSuplenciaList1(new ArrayList<>());
-            entity.setCopiaList(new ArrayList<>());
-            entity.setUsuariosList(new ArrayList<>());
+            entity.setSubstitutionList(new ArrayList<>());
+            entity.setSubstitutionList1(new ArrayList<>());
+            entity.setCopyList(new ArrayList<>());
+            entity.setUserList(new ArrayList<>());
             when(mockEm.getReference(Person.class, 1)).thenReturn(entity);
             controller.destroy(1);
             verify(mockEm).remove(entity);
@@ -1334,7 +1334,7 @@ class RemainingControllersJpaTest {
 
         @Test
         @DisplayName("findPersonaNombreApellido uses named query")
-        void findNombreApellido() {
+        void findNameLastName() {
             when(mockEm.createNamedQuery("Persona.findByPersonaNombreApellido")).thenReturn(mockQuery);
             when(mockQuery.setParameter(eq("nombre"), anyString())).thenReturn(mockQuery);
             when(mockQuery.setParameter(eq("apellido"), anyString())).thenReturn(mockQuery);
@@ -1343,7 +1343,7 @@ class RemainingControllersJpaTest {
             DtoPerson dto = new DtoPerson();
             dto.setFirstName("Juan");
             dto.setLastName("Perez");
-            List<Person> result = controller.findPersonaNombreApellido(dto);
+            List<Person> result = controller.findPersonNameLastName(dto);
             assertThat(result).hasSize(1);
             verify(mockQuery).setParameter("nombre", "%Juan%");
             verify(mockQuery).setParameter("apellido", "%Perez%");
@@ -1356,27 +1356,27 @@ class RemainingControllersJpaTest {
 
     @Nested
     @DisplayName("TramiteJpaController")
-    class TramiteTest {
-        private TramiteJpaController controller;
+    class ProcedureTest {
+        private ProcedureJpaController controller;
 
         @BeforeEach
         void setUp() {
-            controller = createStandardController(TramiteJpaController.class);
+            controller = createStandardController(ProcedureJpaController.class);
         }
 
         @Test @DisplayName("getNombreJpa")
-        void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TramiteJpaController"); }
+        void getNameJpa() { assertThat(controller.getNameJpa()).contains("ProcedureJpaController"); }
 
         @Test @DisplayName("findTramiteEntities")
         void findEntities() {
-            when(mockQuery.getResultList()).thenReturn(List.of(mock(Tramite.class)));
-            assertThat(controller.findTramiteEntities()).hasSize(1);
+            when(mockQuery.getResultList()).thenReturn(List.of(mock(Procedure.class)));
+            assertThat(controller.findProcedureEntities()).hasSize(1);
         }
 
         @Test @DisplayName("findTramite")
         void findById() {
-            when(mockEm.find(Tramite.class, 1)).thenReturn(mock(Tramite.class));
-            assertThat(controller.findTramite(1)).isNotNull();
+            when(mockEm.find(Procedure.class, 1)).thenReturn(mock(Procedure.class));
+            assertThat(controller.findProcedure(1)).isNotNull();
         }
 
         @Test @DisplayName("getTramiteCount")
@@ -1387,15 +1387,15 @@ class RemainingControllersJpaTest {
             jakarta.persistence.TypedQuery mockTypedQuery = mock(jakarta.persistence.TypedQuery.class);
             when(mockEm.getCriteriaBuilder()).thenReturn(mockCb);
             when(mockCb.createQuery()).thenReturn(mockCq);
-            when(mockCq.from(Tramite.class)).thenReturn(mockRoot);
+            when(mockCq.from(Procedure.class)).thenReturn(mockRoot);
             when(mockEm.createQuery(mockCq)).thenReturn(mockTypedQuery);
             when(mockTypedQuery.getSingleResult()).thenReturn(25L);
-            assertThat(controller.getTramiteCount()).isEqualTo(25);
+            assertThat(controller.getProcedureCount()).isEqualTo(25);
         }
 
         @Test @DisplayName("create persists")
         void create() throws Exception {
-            Tramite entity = new Tramite();
+            Procedure entity = new Procedure();
             controller.create(entity);
             verify(mockEm).persist(entity);
             verify(mockTx).commit();
@@ -1403,10 +1403,10 @@ class RemainingControllersJpaTest {
 
         @Test @DisplayName("destroy removes")
         void destroy() throws Exception {
-            Tramite entity = new Tramite();
-            entity.setDocumentoPresentadoList(new ArrayList<>());
-            entity.setTramitesPersonasList(new ArrayList<>());
-            when(mockEm.getReference(Tramite.class, 1)).thenReturn(entity);
+            Procedure entity = new Procedure();
+            entity.setSubmittedDocumentList(new ArrayList<>());
+            entity.setPersonProcedureList(new ArrayList<>());
+            when(mockEm.getReference(Procedure.class, 1)).thenReturn(entity);
             controller.destroy(1);
             verify(mockEm).remove(entity);
             verify(mockTx).commit();
@@ -1420,16 +1420,16 @@ class RemainingControllersJpaTest {
 
     @Nested
     @DisplayName("TramitesPersonasJpaController (single-arg constructor)")
-    class TramitesPersonasTest {
-        private TramitesPersonasJpaController controller;
+    class PersonProcedureTest {
+        private PersonProcedureJpaController controller;
 
         @BeforeEach
         void setUp() {
-            controller = new TramitesPersonasJpaController(mockEmf);
+            controller = new PersonProcedureJpaController(mockEmf);
         }
 
         @Test @DisplayName("getNombreJpa")
-        void getNombreJpa() { assertThat(controller.getNombreJpa()).contains("TramitesPersonasJpaController"); }
+        void getNameJpa() { assertThat(controller.getNameJpa()).contains("PersonProcedureJpaController"); }
 
         @Test @DisplayName("getEntityManager")
         void getEntityManager() { assertThat(controller.getEntityManager()).isSameAs(mockEm); }
@@ -1442,17 +1442,17 @@ class RemainingControllersJpaTest {
             jakarta.persistence.TypedQuery mockTypedQuery = mock(jakarta.persistence.TypedQuery.class);
             when(mockEm.getCriteriaBuilder()).thenReturn(mockCb);
             when(mockCb.createQuery()).thenReturn(mockCq);
-            when(mockCq.from(TramitesPersonas.class)).thenReturn(mockRoot);
+            when(mockCq.from(PersonProcedure.class)).thenReturn(mockRoot);
             when(mockEm.createQuery(mockCq)).thenReturn(mockTypedQuery);
-            when(mockTypedQuery.getResultList()).thenReturn(List.of(mock(TramitesPersonas.class)));
-            assertThat(controller.findTramitesPersonasEntities()).hasSize(1);
+            when(mockTypedQuery.getResultList()).thenReturn(List.of(mock(PersonProcedure.class)));
+            assertThat(controller.findPersonProcedureEntities()).hasSize(1);
         }
 
         @Test @DisplayName("findTramitesPersonas")
         void findById() {
-            TramitesPersonasPK id = new TramitesPersonasPK(2, 2);
-            when(mockEm.find(TramitesPersonas.class, id)).thenReturn(mock(TramitesPersonas.class));
-            assertThat(controller.findTramitesPersonas(id)).isNotNull();
+            PersonProcedurePK id = new PersonProcedurePK(2, 2);
+            when(mockEm.find(PersonProcedure.class, id)).thenReturn(mock(PersonProcedure.class));
+            assertThat(controller.findPersonProcedure(id)).isNotNull();
         }
 
         @Test @DisplayName("getTramitesPersonasCount")
@@ -1463,17 +1463,17 @@ class RemainingControllersJpaTest {
             jakarta.persistence.TypedQuery mockTypedQuery = mock(jakarta.persistence.TypedQuery.class);
             when(mockEm.getCriteriaBuilder()).thenReturn(mockCb);
             when(mockCb.createQuery()).thenReturn(mockCq);
-            when(mockCq.from(TramitesPersonas.class)).thenReturn(mockRoot);
+            when(mockCq.from(PersonProcedure.class)).thenReturn(mockRoot);
             when(mockEm.createQuery(mockCq)).thenReturn(mockTypedQuery);
             when(mockTypedQuery.getSingleResult()).thenReturn(8L);
-            assertThat(controller.getTramitesPersonasCount()).isEqualTo(8);
+            assertThat(controller.getPersonProcedureCount()).isEqualTo(8);
         }
 
         @Test @DisplayName("create persists")
         void create() throws Exception {
-            TramitesPersonas entity = new TramitesPersonas();
-            entity.setPersona(new Person(1));
-            entity.setTramite(new Tramite(1));
+            PersonProcedure entity = new PersonProcedure();
+            entity.setPerson(new Person(1));
+            entity.setProcedure(new Procedure(1));
             controller.create(entity);
             verify(mockEm).persist(entity);
             verify(mockTx).commit();
@@ -1481,9 +1481,9 @@ class RemainingControllersJpaTest {
 
         @Test @DisplayName("destroy removes")
         void destroy() throws Exception {
-            TramitesPersonasPK id = new TramitesPersonasPK(1, 1);
-            TramitesPersonas entity = new TramitesPersonas();
-            when(mockEm.getReference(TramitesPersonas.class, id)).thenReturn(entity);
+            PersonProcedurePK id = new PersonProcedurePK(1, 1);
+            PersonProcedure entity = new PersonProcedure();
+            when(mockEm.getReference(PersonProcedure.class, id)).thenReturn(entity);
             controller.destroy(id);
             verify(mockEm).remove(entity);
             verify(mockTx).commit();

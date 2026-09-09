@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.licensis.notaire.negocio;
+package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoEscritura;
+import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.jpa.ConstantesPersistencia;
@@ -51,9 +51,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
         {
             @NamedQuery(name = "Folio.findAll", query = "SELECT f FROM Folio f"),
             @NamedQuery(name = "Folio.findByIdFolio", query = "SELECT f FROM Folio f WHERE f.idFolio = :idFolio"),
-            @NamedQuery(name = "Folio.findByNumero", query = "SELECT f FROM Folio f WHERE f.numero = :numero"),
-            @NamedQuery(name = "Folio.findByAnio", query = "SELECT f FROM Folio f WHERE f.anio = :anio"),
-            @NamedQuery(name = "Folio.findByAnioAndRegistro", query = "SELECT f FROM Folio f WHERE f.anio = :anio AND f.fkIdPersonaEscribano.registroEscribano =:registro")
+            @NamedQuery(name = "Folio.findByNumero", query = "SELECT f FROM Folio f WHERE f.number = :numero"),
+            @NamedQuery(name = "Folio.findByAnio", query = "SELECT f FROM Folio f WHERE f.year = :anio"),
+            @NamedQuery(name = "Folio.findByAnioAndRegistro", query = "SELECT f FROM Folio f WHERE f.year = :anio AND f.fkIdNotaryPerson.notaryRegistrationNumber =:registro")
         })
 public class Folio implements Serializable, Persistable<Integer>
 {
@@ -61,10 +61,10 @@ public class Folio implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "version")
     @Version
-    private int version = ConstantesPersistencia.VERSION_INICIAL;
+    private int version = ConstantesPersistencia.VersionINICIAL;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "folio")
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio", "copia"})
-    private Collection<FoliosCopias> foliosCopiasCollection;
+    private Collection<FolioCopies> folioCopiesCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,15 +73,15 @@ public class Folio implements Serializable, Persistable<Integer>
     private Integer idFolio;
     @Basic(optional = false)
     @Column(name = "numero")
-    private int numero;
+    private int number;
     @Basic(optional = false)
     @Column(name = "anio")
-    private int anio;
+    private int year;
     @Basic(optional = false)
     @Column(name = "estado")
-    private String estado;
+    private String status;
     @Column(name = "observaciones")
-    private String observaciones;
+    private String notes;
     @JoinTable(name = "folios_copias", joinColumns =
     {
         @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio")
@@ -91,28 +91,28 @@ public class Folio implements Serializable, Persistable<Integer>
     })
     @ManyToMany(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})
-    private List<Copia> copiaList;
+    private List<Copy> copyList;
     @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
-    private Person fkIdPersonaEscribano;
+    private Person fkIdNotaryPerson;
     @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id_tipo_folio")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
-    private TipoDeFolio fkIdTipoFolio;
+    private FolioType fkIdFolioType;
     @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
     @ManyToOne(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
-    private Escritura fkIdEscritura;
+    private Deed fkIdDeed;
     @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id_cuaderno")
     @ManyToOne(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
-    private Cuaderno fkIdCuaderno;
+    private Notebook fkIdNotebook;
 
     public Folio()
     {
-        this.copiaList = new ArrayList<>();
-        this.foliosCopiasCollection = new ArrayList<>();
+        this.copyList = new ArrayList<>();
+        this.folioCopiesCollection = new ArrayList<>();
 
     }
 
@@ -121,12 +121,12 @@ public class Folio implements Serializable, Persistable<Integer>
         this.idFolio = idFolio;
     }
 
-    public Folio(Integer idFolio, int numero, int anio, String estado)
+    public Folio(Integer idFolio, int number, int year, String status)
     {
         this.idFolio = idFolio;
-        this.numero = numero;
-        this.anio = anio;
-        this.estado = estado;
+        this.number = number;
+        this.year = year;
+        this.status = status;
     }
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -140,7 +140,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idFolio == null || idFolio.equals(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+        return idFolio == null || idFolio.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
     }
 
 
@@ -154,96 +154,96 @@ public class Folio implements Serializable, Persistable<Integer>
         this.idFolio = idFolio;
     }
 
-    public int getNumero()
+    public int getNumber()
     {
-        return numero;
+        return number;
     }
 
-    public void setNumero(int numero)
+    public void setNumber(int number)
     {
-        this.numero = numero;
+        this.number = number;
     }
 
-    public int getAnio()
+    public int getYear()
     {
-        return anio;
+        return year;
     }
 
-    public void setAnio(int anio)
+    public void setYear(int year)
     {
-        this.anio = anio;
+        this.year = year;
     }
 
-    public String getEstado()
+    public String getStatus()
     {
-        return estado;
+        return status;
     }
 
-    public void setEstado(String estado)
+    public void setStatus(String status)
     {
-        this.estado = estado;
+        this.status = status;
     }
 
-    public String getObservaciones()
+    public String getNotes()
     {
-        return observaciones;
+        return notes;
     }
 
-    public void setObservaciones(String observaciones)
+    public void setNotes(String notes)
     {
-        this.observaciones = observaciones;
+        this.notes = notes;
     }
 
     @XmlTransient
     @JsonIgnore
-    public List<Copia> getCopiaList()
+    public List<Copy> getCopyList()
     {
-        return copiaList;
+        return copyList;
     }
 
-    public void setCopiaList(List<Copia> copiaList)
+    public void setCopyList(List<Copy> copyList)
     {
-        this.copiaList = copiaList;
+        this.copyList = copyList;
     }
 
-    public Person getFkIdPersonaEscribano()
+    public Person getFkIdNotaryPerson()
     {
-        return fkIdPersonaEscribano;
+        return fkIdNotaryPerson;
     }
 
-    public void setFkIdPersonaEscribano(Person fkIdPersonaEscribano)
+    public void setFkIdNotaryPerson(Person fkIdNotaryPerson)
     {
-        this.fkIdPersonaEscribano = fkIdPersonaEscribano;
+        this.fkIdNotaryPerson = fkIdNotaryPerson;
     }
 
-    public TipoDeFolio getFkIdTipoFolio()
+    public FolioType getFkIdFolioType()
     {
-        return fkIdTipoFolio;
+        return fkIdFolioType;
     }
 
-    public void setFkIdTipoFolio(TipoDeFolio fkIdTipoFolio)
+    public void setFkIdFolioType(FolioType fkIdFolioType)
     {
-        this.fkIdTipoFolio = fkIdTipoFolio;
+        this.fkIdFolioType = fkIdFolioType;
     }
 
-    public Escritura getFkIdEscritura()
+    public Deed getFkIdDeed()
     {
-        return fkIdEscritura;
+        return fkIdDeed;
     }
 
-    public void setFkIdEscritura(Escritura fkIdEscritura)
+    public void setFkIdDeed(Deed fkIdDeed)
     {
-        this.fkIdEscritura = fkIdEscritura;
+        this.fkIdDeed = fkIdDeed;
     }
 
-    public Cuaderno getFkIdCuaderno()
+    public Notebook getFkIdNotebook()
     {
-        return fkIdCuaderno;
+        return fkIdNotebook;
     }
 
-    public void setFkIdCuaderno(Cuaderno fkIdCuaderno)
+    public void setFkIdNotebook(Notebook fkIdNotebook)
     {
-        this.fkIdCuaderno = fkIdCuaderno;
+        this.fkIdNotebook = fkIdNotebook;
     }
 
     @Override
@@ -274,8 +274,8 @@ public class Folio implements Serializable, Persistable<Integer>
     public String toString()
     {
         return "Folio[ idFolio=" + idFolio + " ]"
-                + "[ numero=" + numero + " ]"
-                + "[ anio=" + anio + " ]";
+                + "[ numero=" + number + " ]"
+                + "[ anio=" + year + " ]";
     }
 
     public void setAtributos(DtoFolio unDtoFolio)
@@ -283,14 +283,14 @@ public class Folio implements Serializable, Persistable<Integer>
         if (unDtoFolio.isValido())
         {
             this.setIdFolio(unDtoFolio.getIdFolio());
-            this.setNumero(unDtoFolio.getNumero());
-            this.setAnio(unDtoFolio.getAnio());
-            this.setEstado(unDtoFolio.getEstado());
-            this.setObservaciones(unDtoFolio.getObservaciones());
+            this.setNumber(unDtoFolio.getNumber());
+            this.setYear(unDtoFolio.getYear());
+            this.setStatus(unDtoFolio.getStatus());
+            this.setNotes(unDtoFolio.getNotes());
             this.setVersion(unDtoFolio.getVersion());
-            if (unDtoFolio.getEscritura() != null)
+            if (unDtoFolio.getDeed() != null)
             {
-                this.setFkIdEscritura(new Escritura(unDtoFolio.getEscritura().getIdEscritura()));
+                this.setFkIdDeed(new Deed(unDtoFolio.getDeed().getIdDeed()));
             }
         }
     }
@@ -301,32 +301,32 @@ public class Folio implements Serializable, Persistable<Integer>
         DtoFolio miDtoFolio = new DtoFolio();
 
         miDtoFolio.setIdFolio(this.idFolio);
-        miDtoFolio.setNumero(this.numero);
-        miDtoFolio.setEstado(this.estado);
-        miDtoFolio.setObservaciones(this.observaciones);
-        miDtoFolio.setAnio(this.anio);
+        miDtoFolio.setNumber(this.number);
+        miDtoFolio.setStatus(this.status);
+        miDtoFolio.setNotes(this.notes);
+        miDtoFolio.setYear(this.year);
         miDtoFolio.setVersion(this.getVersion());
 
-        if (this.getFkIdPersonaEscribano() != null)
+        if (this.getFkIdNotaryPerson() != null)
         {
-            DtoPerson miPersona = new DtoPerson();
-            miPersona.setId(fkIdPersonaEscribano.getPersonId());
-            miPersona.setNotaryRegistrationNumber(fkIdPersonaEscribano.getNotaryRegistrationNumber());
+            DtoPerson miPerson = new DtoPerson();
+            miPerson.setId(fkIdNotaryPerson.getPersonId());
+            miPerson.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
 
-            miDtoFolio.setPersonaEscribano(miPersona);
+            miDtoFolio.setPersonNotary(miPerson);
         }
 
-        miDtoFolio.setTiposDeFolio(this.fkIdTipoFolio.getDto());
+        miDtoFolio.setTiposDeFolio(this.fkIdFolioType.getDto());
 
-        if (this.fkIdEscritura != null)
+        if (this.fkIdDeed != null)
         {
             // Not fkIdEscritura.getDto(): that walks Escritura's lazy folioList, which
             // includes this same Folio, and would recurse back into Folio.getDto().
-            DtoEscritura miDtoEscritura = new DtoEscritura();
-            miDtoEscritura.setIdEscritura(this.fkIdEscritura.getIdEscritura());
-            miDtoEscritura.setNumero(this.fkIdEscritura.getNumero());
-            miDtoEscritura.setEstado(this.fkIdEscritura.getEstado());
-            miDtoFolio.setEscritura(miDtoEscritura);
+            DtoDeed miDtoDeed = new DtoDeed();
+            miDtoDeed.setIdDeed(this.fkIdDeed.getIdDeed());
+            miDtoDeed.setNumber(this.fkIdDeed.getNumber());
+            miDtoDeed.setStatus(this.fkIdDeed.getStatus());
+            miDtoFolio.setDeed(miDtoDeed);
         }
 
         return miDtoFolio;
@@ -344,13 +344,13 @@ public class Folio implements Serializable, Persistable<Integer>
 
     @XmlTransient
     @JsonIgnore
-    public Collection<FoliosCopias> getFoliosCopiasCollection()
+    public Collection<FolioCopies> getFolioCopiesCollection()
     {
-        return foliosCopiasCollection;
+        return folioCopiesCollection;
     }
 
-    public void setFoliosCopiasCollection(Collection<FoliosCopias> foliosCopiasCollection)
+    public void setFolioCopiesCollection(Collection<FolioCopies> folioCopiesCollection)
     {
-        this.foliosCopiasCollection = foliosCopiasCollection;
+        this.folioCopiesCollection = folioCopiesCollection;
     }
 }

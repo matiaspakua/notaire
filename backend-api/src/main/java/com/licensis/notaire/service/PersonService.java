@@ -1,7 +1,7 @@
 package com.licensis.notaire.service;
 
 import com.licensis.notaire.exception.DuplicatePersonException;
-import com.licensis.notaire.negocio.Person;
+import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +43,8 @@ public class PersonService {
     }
 
     private void rejectDuplicateDocument(Person entity) {
-        personRepository.findByNumeroIdentificacion(entity.getIdentificationNumber())
-                .filter(existing -> isSameTipoIdentificacion(existing, entity))
+        personRepository.findByIdentificationNumber(entity.getIdentificationNumber())
+                .filter(existing -> isSameIdentificationType(existing, entity))
                 .filter(existing -> !existing.getPersonId().equals(entity.getPersonId()))
                 .ifPresent(existing -> {
                     throw new DuplicatePersonException(
@@ -53,10 +53,10 @@ public class PersonService {
                 });
     }
 
-    private boolean isSameTipoIdentificacion(Person a, Person b) {
+    private boolean isSameIdentificationType(Person a, Person b) {
         return a.getFkIdIdentificationType() != null && b.getFkIdIdentificationType() != null
-                && a.getFkIdIdentificationType().getIdTipoIdentificacion()
-                        .equals(b.getFkIdIdentificationType().getIdTipoIdentificacion());
+                && a.getFkIdIdentificationType().getIdIdentificationType()
+                        .equals(b.getFkIdIdentificationType().getIdIdentificationType());
     }
 
     public void deleteById(Integer id) {
@@ -66,37 +66,37 @@ public class PersonService {
 
     @Transactional(readOnly = true)
     public List<Person> search(String firstName, String lastName, String identificationNumber,
-                                 Integer idTipoIdentificacion, Boolean isClient) {
+                                 Integer idIdentificationType, Boolean isClient) {
         logger.debug("Searching people with filters - firstName: {}, lastName: {}, identificationNumber: {}, "
                 + "idTipoIdentificacion: {}, isClient: {}", firstName, lastName, identificationNumber,
-                idTipoIdentificacion, isClient);
+                idIdentificationType, isClient);
 
         List<Person> results = new ArrayList<>();
 
         if (identificationNumber != null && !identificationNumber.isBlank()) {
-            Optional<Person> person = personRepository.findByNumeroIdentificacion(identificationNumber);
+            Optional<Person> person = personRepository.findByIdentificationNumber(identificationNumber);
             person.ifPresent(results::add);
             return results;
         }
 
         if (firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank()) {
-            return personRepository.findByNombreAndApellidoContainingIgnoreCase(firstName, lastName);
+            return personRepository.findByNameAndLastNameContainingIgnoreCase(firstName, lastName);
         }
 
         if (firstName != null && !firstName.isBlank()) {
-            results.addAll(personRepository.findByNombreContainingIgnoreCase(firstName));
+            results.addAll(personRepository.findByNameContainingIgnoreCase(firstName));
         }
 
         if (lastName != null && !lastName.isBlank()) {
-            results.addAll(personRepository.findByApellidoContainingIgnoreCase(lastName));
+            results.addAll(personRepository.findByLastNameContainingIgnoreCase(lastName));
         }
 
-        if (idTipoIdentificacion != null) {
-            results.addAll(personRepository.findByFkIdTipoIdentificacionIdTipoIdentificacion(idTipoIdentificacion));
+        if (idIdentificationType != null) {
+            results.addAll(personRepository.findByFkIdIdentificationTypeIdIdentificationType(idIdentificationType));
         }
 
         if (isClient != null) {
-            results.addAll(personRepository.findByEsCliente(isClient));
+            results.addAll(personRepository.findByIsClient(isClient));
         }
 
         return results.stream().distinct().toList();

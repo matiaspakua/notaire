@@ -62,107 +62,114 @@ class AuditOperationDescriberTest {
     }
 
     @Test
-    @DisplayName("Should describe GET listing as listado consulta")
-    void shouldDescribeGetListAsListadoConsulta() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("listAll"), new Object[0], "Escrituras");
-        assertThat(result).isEqualTo("Consulta de listado de escrituras");
+    @DisplayName("Should describe GET listing as a listing query")
+    void shouldDescribeGetListAsListingQuery() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("listAll"), new Object[0], "Deeds");
+        assertThat(result).isEqualTo("Listing query of deeds");
     }
 
     @Test
-    @DisplayName("Should describe GET by id as consulta con ID")
-    void shouldDescribeGetByIdAsConsultaConId() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("getById"), new Object[]{7}, "Escrituras");
-        assertThat(result).isEqualTo("Consulta de escritura con ID 7");
+    @DisplayName("Should describe GET by id as a lookup with ID")
+    void shouldDescribeGetByIdAsLookupWithId() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("getById"), new Object[]{7}, "Deeds");
+        assertThat(result).isEqualTo("Lookup of deed with ID 7");
     }
 
     @Test
-    @DisplayName("Should describe POST as creacion")
-    void shouldDescribePostAsCreacion() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("create"), new Object[]{new Object()}, "Personas");
-        assertThat(result).isEqualTo("Creación de nuevo persona");
+    @DisplayName("Should describe POST as creation")
+    void shouldDescribePostAsCreation() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("create"), new Object[]{new Object()}, "People");
+        assertThat(result).isEqualTo("Creation of new people");
     }
 
     @Test
-    @DisplayName("Should describe PUT with id as actualizacion con ID")
-    void shouldDescribePutAsActualizacion() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("update"), new Object[]{42, new Object()}, "Presupuestos");
-        assertThat(result).isEqualTo("Actualización de presupuesto con ID 42");
+    @DisplayName("Should describe PUT with id as update with ID")
+    void shouldDescribePutAsUpdateWithId() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("update"), new Object[]{42, new Object()}, "Budgets");
+        assertThat(result).isEqualTo("Update of budget with ID 42");
     }
 
     @Test
-    @DisplayName("Should describe PATCH with id as actualizacion con ID")
-    void shouldDescribePatchAsActualizacion() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("patchUpdate"), new Object[]{10}, "Conceptos");
-        assertThat(result).isEqualTo("Actualización de concepto con ID 10");
+    @DisplayName("Should describe PATCH with id as update with ID")
+    void shouldDescribePatchAsUpdateWithId() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("patchUpdate"), new Object[]{10}, "Concepts");
+        assertThat(result).isEqualTo("Update of concept with ID 10");
     }
 
     @Test
-    @DisplayName("Should describe DELETE as eliminacion con ID")
-    void shouldDescribeDeleteAsEliminacionConId() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("delete"), new Object[]{99}, "Pagos");
-        assertThat(result).isEqualTo("Eliminación de pago con ID 99");
+    @DisplayName("Should describe DELETE as deletion with ID")
+    void shouldDescribeDeleteAsDeletionWithId() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("delete"), new Object[]{99}, "Payments");
+        assertThat(result).isEqualTo("Deletion of payment with ID 99");
     }
 
     @Test
-    @DisplayName("Should describe login method as inicio de sesion")
-    void shouldDescribeLoginAsInicioDeSesion() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("login"), new Object[0], "Usuarios");
-        assertThat(result).isEqualTo("Inicio de sesión del usuario");
+    @DisplayName("Should describe login method as user login")
+    void shouldDescribeLoginAsUserLogin() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("login"), new Object[0], "Users");
+        assertThat(result).isEqualTo("User login");
     }
 
     @Test
-    @DisplayName("Should describe logout method as cierre de sesion")
-    void shouldDescribeLogoutAsCierreDeSesion() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("logout"), new Object[0], "Usuarios");
-        assertThat(result).isEqualTo("Cierre de sesión del usuario");
+    @DisplayName("Should describe logout method as user logout")
+    void shouldDescribeLogoutAsUserLogout() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("logout"), new Object[0], "Users");
+        assertThat(result).isEqualTo("User logout");
     }
 
     @Test
     @DisplayName("Should default to GET listing when method is null")
     void shouldDefaultToGetListingWhenMethodNull() {
-        String result = AuditOperationDescriber.describe(null, new Object[0], "Escrituras");
-        assertThat(result).isEqualTo("Consulta de listado de escrituras");
+        String result = AuditOperationDescriber.describe(null, new Object[0], "Deeds");
+        assertThat(result).isEqualTo("Listing query of deeds");
     }
 
     @Test
     @DisplayName("Should default to listing when module is null")
     void shouldDefaultToListingWhenModuleNull() throws NoSuchMethodException {
         String result = AuditOperationDescriber.describe(method("listAll"), new Object[0], null);
-        assertThat(result).isEqualTo("Consulta de listado de registro");
+        assertThat(result).isEqualTo("Listing query of record");
     }
 
     @Test
     @DisplayName("Should describe PUT without id when no id argument")
     void shouldDescribePutWithoutIdWhenNoIdArgument() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("update"), new Object[]{null, new Object()}, "Personas");
-        assertThat(result).isEqualTo("Actualización de persona");
+        String result = AuditOperationDescriber.describe(method("update"), new Object[]{null, new Object()}, "People");
+        assertThat(result).isEqualTo("Update of people");
     }
 
     @Test
     @DisplayName("Should describe DELETE without id when no id argument")
     void shouldDescribeDeleteWithoutIdWhenNoIdArgument() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("delete"), new Object[]{}, "Personas");
-        assertThat(result).isEqualTo("Eliminación de persona");
+        String result = AuditOperationDescriber.describe(method("delete"), new Object[]{}, "People");
+        assertThat(result).isEqualTo("Deletion of people");
     }
 
     @Test
-    @DisplayName("Should handle plural ending in -nes correctly")
-    void shouldHandlePluralEndingInNes() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("create"), new Object[]{}, "Gestiones");
-        assertThat(result).isEqualTo("Creación de nuevo gestion");
+    @DisplayName("Should handle plural ending in -ies correctly")
+    void shouldHandlePluralEndingInIes() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("create"), new Object[]{}, "Copies");
+        assertThat(result).isEqualTo("Creation of new copy");
+    }
+
+    @Test
+    @DisplayName("Should handle plural ending in -ses correctly")
+    void shouldHandlePluralEndingInSes() throws NoSuchMethodException {
+        String result = AuditOperationDescriber.describe(method("create"), new Object[]{}, "ManagementStatuses");
+        assertThat(result).isEqualTo("Creation of new managementstatus");
     }
 
     @Test
     @DisplayName("Should handle module without plural ending")
     void shouldHandleModuleWithoutPluralEnding() throws NoSuchMethodException {
-        String result = AuditOperationDescriber.describe(method("create"), new Object[]{}, "Reportes");
-        assertThat(result).isEqualTo("Creación de nuevo reporte");
+        String result = AuditOperationDescriber.describe(method("create"), new Object[]{}, "History");
+        assertThat(result).isEqualTo("Creation of new history");
     }
 
     @Test
     @DisplayName("Should handle blank module")
     void shouldHandleBlankModule() throws NoSuchMethodException {
         String result = AuditOperationDescriber.describe(method("listAll"), new Object[0], "");
-        assertThat(result).isEqualTo("Consulta de listado de registro");
+        assertThat(result).isEqualTo("Listing query of record");
     }
 }

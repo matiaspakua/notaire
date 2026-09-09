@@ -1,8 +1,8 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,14 +23,14 @@ public class WorkflowValidationService {
             return ValidationResult.invalid(errors);
         }
 
-        long initialCount = nodes.stream().filter(n -> n.getTipo() == WorkflowNodeType.INITIAL).count();
+        long initialCount = nodes.stream().filter(n -> n.getType() == WorkflowNodeType.INITIAL).count();
         if (initialCount == 0) {
             errors.add("El workflow debe tener exactamente un nodo inicial.");
         } else if (initialCount > 1) {
             errors.add("El workflow tiene más de un nodo inicial (" + initialCount + ").");
         }
 
-        long finalCount = nodes.stream().filter(n -> n.getTipo() == WorkflowNodeType.FINAL).count();
+        long finalCount = nodes.stream().filter(n -> n.getType() == WorkflowNodeType.FINAL).count();
         if (finalCount == 0) {
             errors.add("El workflow debe tener al menos un nodo final.");
         }
@@ -40,7 +40,7 @@ public class WorkflowValidationService {
         }
 
         Set<Integer> reachable = reachableFrom(
-                nodes.stream().filter(n -> n.getTipo() == WorkflowNodeType.INITIAL)
+                nodes.stream().filter(n -> n.getType() == WorkflowNodeType.INITIAL)
                         .findFirst().map(WorkflowNode::getId).orElse(-1),
                 transitions);
 
@@ -51,7 +51,7 @@ public class WorkflowValidationService {
         if (!unreachable.isEmpty()) {
             String names = nodes.stream()
                     .filter(n -> unreachable.contains(n.getId()))
-                    .map(n -> n.getEstadoDeGestion() != null ? n.getEstadoDeGestion().getNombre() : String.valueOf(n.getId()))
+                    .map(n -> n.getManagementStatus() != null ? n.getManagementStatus().getName() : String.valueOf(n.getId()))
                     .collect(Collectors.joining(", "));
             errors.add("Nodos no alcanzables desde el nodo inicial (aislados): " + names + ".");
         }
@@ -62,8 +62,8 @@ public class WorkflowValidationService {
     private Set<Integer> reachableFrom(Integer startId, List<WorkflowTransition> transitions) {
         Map<Integer, List<Integer>> adjacency = transitions.stream()
                 .collect(Collectors.groupingBy(
-                        t -> t.getNodoOrigen().getId(),
-                        Collectors.mapping(t -> t.getNodoDestino().getId(), Collectors.toList())));
+                        t -> t.getOriginNode().getId(),
+                        Collectors.mapping(t -> t.getDestinationNode().getId(), Collectors.toList())));
 
         Set<Integer> visited = new HashSet<>();
         dfs(startId, adjacency, visited);

@@ -1,9 +1,9 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.exception.DuplicatePersonException;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,11 +32,11 @@ import java.util.Map;
 public class PersonController {
 
     private final PersonService personService;
-    private final TipoIdentificacionRepository tipoIdentificacionRepository;
+    private final IdentificationTypeRepository identificationTypeRepository;
 
-    public PersonController(PersonService personService, TipoIdentificacionRepository tipoIdentificacionRepository) {
+    public PersonController(PersonService personService, IdentificationTypeRepository identificationTypeRepository) {
         this.personService = personService;
-        this.tipoIdentificacionRepository = tipoIdentificacionRepository;
+        this.identificationTypeRepository = identificationTypeRepository;
     }
 
     @GetMapping
@@ -70,13 +70,13 @@ public class PersonController {
     public ResponseEntity<Object> createPerson(@Valid @RequestBody Person person) {
         try {
             if (person.getFkIdIdentificationType() == null) {
-                TipoIdentificacion defaultTipo = tipoIdentificacionRepository.findById(1)
+                IdentificationType defaultType = identificationTypeRepository.findById(1)
                         .orElseGet(() -> {
-                            TipoIdentificacion ti = new TipoIdentificacion();
-                            ti.setNombre("DNI");
-                            return tipoIdentificacionRepository.save(ti);
+                            IdentificationType ti = new IdentificationType();
+                            ti.setName("DNI");
+                            return identificationTypeRepository.save(ti);
                         });
-                person.setFkIdIdentificationType(defaultTipo);
+                person.setFkIdIdentificationType(defaultType);
             }
             Person saved = personService.save(person);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -115,7 +115,7 @@ public class PersonController {
     }
 
     private Map<String, Object> duplicateBody(DuplicatePersonException e) {
-        return Map.of("message", e.getMessage(), "existingPersonId", e.getIdPersonaExistente());
+        return Map.of("message", e.getMessage(), "existingPersonId", e.getIdPersonExistente());
     }
 
     @ApiResponses({
@@ -146,11 +146,11 @@ public class PersonController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String identificationNumber,
-            @RequestParam(required = false) Integer idTipoIdentificacion,
+            @RequestParam(required = false) Integer idIdentificationType,
             @RequestParam(required = false) Boolean isClient) {
 
         List<Person> people = personService.search(firstName, lastName, identificationNumber,
-                idTipoIdentificacion, isClient);
+                idIdentificationType, isClient);
         return ResponseEntity.ok(people);
     }
 }

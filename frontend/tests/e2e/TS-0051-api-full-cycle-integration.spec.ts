@@ -314,9 +314,9 @@ test.describe("API — Suplencias endpoints", () => {
 });
 
 test.describe("API — Auditoría endpoints", () => {
-  test("GET /api/v1/registro-auditoria — list auditoría entries", async ({ page }) => {
+  test("GET /api/v1/audit-log — list auditoría entries", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet(page, "/registro-auditoria");
+    const result = await apiGet(page, "/audit-log");
     expect(result.ok).toBe(true);
   });
 });

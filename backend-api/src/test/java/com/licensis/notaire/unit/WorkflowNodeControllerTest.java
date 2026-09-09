@@ -3,11 +3,11 @@ package com.licensis.notaire.unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.api.WorkflowNodeController;
 import com.licensis.notaire.dto.DtoWorkflowNode;
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -41,7 +41,7 @@ class WorkflowNodeControllerTest {
     @Mock
     private WorkflowDefinitionRepository workflowRepository;
     @Mock
-    private EstadoDeGestionRepository estadoRepository;
+    private ManagementStatusRepository statusRepository;
     @Mock
     private WorkflowTransitionRepository transitionRepository;
 
@@ -51,32 +51,32 @@ class WorkflowNodeControllerTest {
     @BeforeEach
     void setUp() {
         WorkflowNodeController controller = new WorkflowNodeController(
-                repository, workflowRepository, estadoRepository, transitionRepository);
+                repository, workflowRepository, statusRepository, transitionRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         mapper = new ObjectMapper();
     }
 
     private WorkflowNode buildEntity() {
         WorkflowDefinition wf = new WorkflowDefinition(1);
-        EstadoDeGestion estado = new EstadoDeGestion(10);
-        estado.setNombre("Iniciado");
+        ManagementStatus status = new ManagementStatus(10);
+        status.setName("Iniciado");
         WorkflowNode node = new WorkflowNode();
         node.setId(1);
         node.setWorkflowDefinition(wf);
-        node.setEstadoDeGestion(estado);
-        node.setTipo(WorkflowNodeType.INITIAL);
-        node.setPosicionX(100f);
-        node.setPosicionY(200f);
+        node.setManagementStatus(status);
+        node.setType(WorkflowNodeType.INITIAL);
+        node.setPositionX(100f);
+        node.setPositionY(200f);
         return node;
     }
 
     private DtoWorkflowNode buildDto() {
         DtoWorkflowNode dto = new DtoWorkflowNode();
         dto.setWorkflowDefinitionId(1);
-        dto.setEstadoGestionId(10);
-        dto.setTipo("INITIAL");
-        dto.setPosicionX(100f);
-        dto.setPosicionY(200f);
+        dto.setStatusManagementId(10);
+        dto.setType("INITIAL");
+        dto.setPositionX(100f);
+        dto.setPositionY(200f);
         dto.setVersion(0);
         return dto;
     }
@@ -87,7 +87,7 @@ class WorkflowNodeControllerTest {
         when(repository.findByWorkflowDefinitionId(1)).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-node/by-workflow/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].tipo").value("INITIAL"));
+                .andExpect(jsonPath("$[0].type").value("INITIAL"));
     }
 
     @Test
@@ -96,7 +96,7 @@ class WorkflowNodeControllerTest {
         when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-node/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tipo").value("INITIAL"));
+                .andExpect(jsonPath("$.type").value("INITIAL"));
     }
 
     @Test
@@ -111,10 +111,10 @@ class WorkflowNodeControllerTest {
     @DisplayName("POST /api/v1/workflow-node should return 201 when created")
     void shouldCreateNode() throws Exception {
         WorkflowDefinition wf = new WorkflowDefinition(1);
-        EstadoDeGestion estado = new EstadoDeGestion(10);
+        ManagementStatus status = new ManagementStatus(10);
         WorkflowNode saved = buildEntity();
         when(workflowRepository.findById(1)).thenReturn(Optional.of(wf));
-        when(estadoRepository.findById(10)).thenReturn(Optional.of(estado));
+        when(statusRepository.findById(10)).thenReturn(Optional.of(status));
         when(repository.save(any(WorkflowNode.class))).thenReturn(saved);
         mockMvc.perform(post("/api/v1/workflow-node")
                         .contentType("application/json")
@@ -148,7 +148,7 @@ class WorkflowNodeControllerTest {
     @DisplayName("DELETE /api/v1/workflow-node/{id} should return 200 when deleted")
     void shouldDeleteNode() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
-        when(transitionRepository.existsByNodoOrigenIdOrNodoDestinoId(1, 1)).thenReturn(false);
+        when(transitionRepository.existsByOriginNodeIdOrDestinationNodeId(1, 1)).thenReturn(false);
         mockMvc.perform(delete("/api/v1/workflow-node/1"))
                 .andExpect(status().isOk());
     }
@@ -157,7 +157,7 @@ class WorkflowNodeControllerTest {
     @DisplayName("DELETE /api/v1/workflow-node/{id} should return 409 when node has transitions")
     void shouldReturn409WhenNodeHasTransitions() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
-        when(transitionRepository.existsByNodoOrigenIdOrNodoDestinoId(1, 1)).thenReturn(true);
+        when(transitionRepository.existsByOriginNodeIdOrDestinationNodeId(1, 1)).thenReturn(true);
         mockMvc.perform(delete("/api/v1/workflow-node/1"))
                 .andExpect(status().isConflict());
     }

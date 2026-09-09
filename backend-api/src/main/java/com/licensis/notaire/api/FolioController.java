@@ -1,14 +1,14 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoDeFolio;
-import com.licensis.notaire.repository.EscrituraRepository;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoDeFolioRepository;
+import com.licensis.notaire.repository.FolioTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,31 +41,31 @@ public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
 
-    private static final String ESTADO_UTILIZADO = "Utilizado";
+    private static final String StatusUTILIZADO = "Utilizado";
 
     record FolioRequest(
-            int numero,
-            int anio,
-            @NotBlank String estado,
-            String observaciones,
-            Integer tipoFolioId,
-            Integer escribanoId,
-            Integer escrituraId
+            int number,
+            int year,
+            @NotBlank String status,
+            String notes,
+            Integer typeFolioId,
+            Integer notaryId,
+            Integer deedId
     ) {}
 
     private final FolioRepository folioRepository;
-    private final TipoDeFolioRepository tipoDeFolioRepository;
-    private final PersonRepository personaRepository;
-    private final EscrituraRepository escrituraRepository;
+    private final FolioTypeRepository folioTypeRepository;
+    private final PersonRepository personRepository;
+    private final DeedRepository deedRepository;
 
     public FolioController(FolioRepository folioRepository,
-                           TipoDeFolioRepository tipoDeFolioRepository,
-                           PersonRepository personaRepository,
-                           EscrituraRepository escrituraRepository) {
+                           FolioTypeRepository folioTypeRepository,
+                           PersonRepository personRepository,
+                           DeedRepository deedRepository) {
         this.folioRepository = folioRepository;
-        this.tipoDeFolioRepository = tipoDeFolioRepository;
-        this.personaRepository = personaRepository;
-        this.escrituraRepository = escrituraRepository;
+        this.folioTypeRepository = folioTypeRepository;
+        this.personRepository = personRepository;
+        this.deedRepository = deedRepository;
     }
 
     @GetMapping
@@ -84,8 +84,8 @@ public class FolioController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar folios por estado")
-    public ResponseEntity<List<DtoFolio>> search(@RequestParam String estado) {
-        List<DtoFolio> result = folioRepository.findByEstado(estado).stream()
+    public ResponseEntity<List<DtoFolio>> search(@RequestParam String status) {
+        List<DtoFolio> result = folioRepository.findByStatus(status).stream()
                 .map(Folio::getDto)
                 .toList();
         return ResponseEntity.ok(result);
@@ -95,7 +95,7 @@ public class FolioController {
     @Operation(summary = "Verificar si un folio está en uso")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         return folioRepository.findById(id)
-                .map(f -> ResponseEntity.ok(Map.of("inUse", ESTADO_UTILIZADO.equals(f.getEstado()))))
+                .map(f -> ResponseEntity.ok(Map.of("inUse", StatusUTILIZADO.equals(f.getStatus()))))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -119,33 +119,33 @@ public class FolioController {
     @PostMapping
     @Operation(summary = "Crear nuevo folio")
     public ResponseEntity<DtoFolio> create(@Valid @RequestBody FolioRequest request) {
-        if (request.tipoFolioId() == null || request.escribanoId() == null) {
+        if (request.typeFolioId() == null || request.notaryId() == null) {
             return ResponseEntity.badRequest().build();
         }
-        Optional<TipoDeFolio> tipo = tipoDeFolioRepository.findById(request.tipoFolioId());
-        Optional<Person> escribano = personaRepository.findById(request.escribanoId());
-        if (tipo.isEmpty() || escribano.isEmpty()) {
+        Optional<FolioType> type = folioTypeRepository.findById(request.typeFolioId());
+        Optional<Person> notary = personRepository.findById(request.notaryId());
+        if (type.isEmpty() || notary.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        Escritura escritura = null;
-        if (request.escrituraId() != null) {
-            Optional<Escritura> found = escrituraRepository.findById(request.escrituraId());
+        Deed deed = null;
+        if (request.deedId() != null) {
+            Optional<Deed> found = deedRepository.findById(request.deedId());
             if (found.isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
-            escritura = found.get();
+            deed = found.get();
         }
         try {
             Folio folio = new Folio();
-            folio.setNumero(request.numero());
-            folio.setAnio(request.anio());
-            folio.setEstado(request.estado());
-            folio.setObservaciones(request.observaciones());
-            folio.setFkIdTipoFolio(tipo.get());
-            folio.setFkIdPersonaEscribano(escribano.get());
-            if (escritura != null) {
-                folio.setFkIdEscritura(escritura);
-                folio.setEstado(ESTADO_UTILIZADO);
+            folio.setNumber(request.number());
+            folio.setYear(request.year());
+            folio.setStatus(request.status());
+            folio.setNotes(request.notes());
+            folio.setFkIdFolioType(type.get());
+            folio.setFkIdNotaryPerson(notary.get());
+            if (deed != null) {
+                folio.setFkIdDeed(deed);
+                folio.setStatus(StatusUTILIZADO);
             }
             Folio saved = folioRepository.save(folio);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved.getDto());
@@ -160,10 +160,10 @@ public class FolioController {
      * escritura it is already linked to (idempotent re-save); any other change
      * while Utilizado is rejected.
      */
-    private boolean linksSameEscritura(Folio folio, FolioRequest request) {
-        Escritura linked = folio.getFkIdEscritura();
-        return linked != null && request.escrituraId() != null
-                && linked.getIdEscritura().equals(request.escrituraId());
+    private boolean linksSameDeed(Folio folio, FolioRequest request) {
+        Deed linked = folio.getFkIdDeed();
+        return linked != null && request.deedId() != null
+                && linked.getIdDeed().equals(request.deedId());
     }
 
     @ApiResponses({
@@ -179,31 +179,31 @@ public class FolioController {
             return ResponseEntity.notFound().build();
         }
         Folio folio = existing.get();
-        if (ESTADO_UTILIZADO.equals(folio.getEstado()) && !linksSameEscritura(folio, request)) {
+        if (StatusUTILIZADO.equals(folio.getStatus()) && !linksSameDeed(folio, request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Este folio está en uso (Utilizado) y no puede modificarse."));
         }
-        Escritura escritura = null;
-        if (request.escrituraId() != null) {
-            Optional<Escritura> found = escrituraRepository.findById(request.escrituraId());
+        Deed deed = null;
+        if (request.deedId() != null) {
+            Optional<Deed> found = deedRepository.findById(request.deedId());
             if (found.isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
-            escritura = found.get();
+            deed = found.get();
         }
-        folio.setNumero(request.numero());
-        folio.setAnio(request.anio());
-        folio.setEstado(request.estado());
-        folio.setObservaciones(request.observaciones());
-        if (request.tipoFolioId() != null) {
-            tipoDeFolioRepository.findById(request.tipoFolioId()).ifPresent(folio::setFkIdTipoFolio);
+        folio.setNumber(request.number());
+        folio.setYear(request.year());
+        folio.setStatus(request.status());
+        folio.setNotes(request.notes());
+        if (request.typeFolioId() != null) {
+            folioTypeRepository.findById(request.typeFolioId()).ifPresent(folio::setFkIdFolioType);
         }
-        if (request.escribanoId() != null) {
-            personaRepository.findById(request.escribanoId()).ifPresent(folio::setFkIdPersonaEscribano);
+        if (request.notaryId() != null) {
+            personRepository.findById(request.notaryId()).ifPresent(folio::setFkIdNotaryPerson);
         }
-        if (escritura != null) {
-            folio.setFkIdEscritura(escritura);
-            folio.setEstado(ESTADO_UTILIZADO);
+        if (deed != null) {
+            folio.setFkIdDeed(deed);
+            folio.setStatus(StatusUTILIZADO);
         }
         try {
             Folio saved = folioRepository.save(folio);
@@ -226,7 +226,7 @@ public class FolioController {
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        if (ESTADO_UTILIZADO.equals(opt.get().getEstado())) {
+        if (StatusUTILIZADO.equals(opt.get().getStatus())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "No se puede eliminar: el folio está en uso (Utilizado)."));
         }
@@ -234,8 +234,8 @@ public class FolioController {
             Folio folio = opt.get();
             // TipoDeFolio.folioList is EAGER + CascadeType.ALL: Hibernate 6 would cascade-persist
             // the removed entity back through that collection. Remove it first.
-            if (folio.getFkIdTipoFolio() != null && folio.getFkIdTipoFolio().getFolioList() != null) {
-                folio.getFkIdTipoFolio().getFolioList().remove(folio);
+            if (folio.getFkIdFolioType() != null && folio.getFkIdFolioType().getFolioList() != null) {
+                folio.getFkIdFolioType().getFolioList().remove(folio);
             }
             folioRepository.delete(folio);
             return ResponseEntity.noContent().build();

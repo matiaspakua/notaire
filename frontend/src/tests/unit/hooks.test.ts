@@ -129,14 +129,14 @@ describe("API endpoint path contracts", () => {
     expect(path).toBe("/plantilla-presupuestos/tipo-tramite/3/concepto/7");
   });
 
-  it("RegistroAuditoria endpoint is /registro-auditoria", () => {
-    expect("/registro-auditoria").toBe("/registro-auditoria");
+  it("RegistroAuditoria endpoint is /audit-log", () => {
+    expect("/audit-log").toBe("/audit-log");
   });
 
   it("RegistroAuditoria by user path includes usuario segment", () => {
     const userId = 5;
-    const path = `/registro-auditoria/usuario/${userId}`;
-    expect(path).toBe("/registro-auditoria/usuario/5");
+    const path = `/audit-log/user/${userId}`;
+    expect(path).toBe("/audit-log/user/5");
   });
 });
 

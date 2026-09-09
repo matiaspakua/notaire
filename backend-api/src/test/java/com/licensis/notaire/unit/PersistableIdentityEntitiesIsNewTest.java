@@ -1,30 +1,30 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Concepto;
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Cuaderno;
-import com.licensis.notaire.negocio.DocumentoPresentado;
-import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.MinutaInscripcion;
-import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.RegistroAuditoria;
-import com.licensis.notaire.negocio.Rol;
-import com.licensis.notaire.negocio.Suplencia;
-import com.licensis.notaire.negocio.Testimonio;
-import com.licensis.notaire.negocio.TipoDeDocumento;
-import com.licensis.notaire.negocio.TipoDeFolio;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.Notebook;
+import com.licensis.notaire.business.SubmittedDocument;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.Property;
+import com.licensis.notaire.business.RegistrationDraft;
+import com.licensis.notaire.business.TestimonyMovement;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.AuditRecord;
+import com.licensis.notaire.business.Role;
+import com.licensis.notaire.business.Substitution;
+import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.User;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowTransition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -58,34 +58,34 @@ class PersistableIdentityEntitiesIsNewTest {
 
     static Stream<Arguments> entities() {
         return Stream.of(
-                identityCase("Concepto", Concepto::new, (Concepto e) -> e.setIdConcepto(1)),
-                identityCase("Copia", Copia::new, (Copia e) -> e.setIdCopia(1)),
-                identityCase("Cuaderno", Cuaderno::new, (Cuaderno e) -> e.setIdCuaderno(1)),
-                identityCase("DocumentoPresentado", DocumentoPresentado::new,
-                        (DocumentoPresentado e) -> e.setIdDocumentoPresentado(1)),
-                identityCase("Escritura", Escritura::new, (Escritura e) -> e.setIdEscritura(1)),
-                identityCase("EstadoDeGestion", EstadoDeGestion::new, (EstadoDeGestion e) -> e.setIdEstadoGestion(1)),
+                identityCase("Concepto", Concept::new, (Concept e) -> e.setIdConcept(1)),
+                identityCase("Copia", Copy::new, (Copy e) -> e.setIdCopy(1)),
+                identityCase("Cuaderno", Notebook::new, (Notebook e) -> e.setIdNotebook(1)),
+                identityCase("DocumentoPresentado", SubmittedDocument::new,
+                        (SubmittedDocument e) -> e.setIdSubmittedDocument(1)),
+                identityCase("Escritura", Deed::new, (Deed e) -> e.setIdDeed(1)),
+                identityCase("EstadoDeGestion", ManagementStatus::new, (ManagementStatus e) -> e.setIdManagementStatus(1)),
                 identityCase("Folio", Folio::new, (Folio e) -> e.setIdFolio(1)),
-                identityCase("GestionDeEscritura", GestionDeEscritura::new,
-                        (GestionDeEscritura e) -> e.setIdGestion(1)),
-                identityCase("Inmueble", Inmueble::new, (Inmueble e) -> e.setIdInmueble(1)),
-                identityCase("MinutaInscripcion", MinutaInscripcion::new,
-                        (MinutaInscripcion e) -> e.setIdMinutaInscripcion(1)),
-                identityCase("MovimientoTestimonio", MovimientoTestimonio::new,
-                        (MovimientoTestimonio e) -> e.setIdMovimientoTestimonio(1)),
+                identityCase("GestionDeEscritura", DeedManagement::new,
+                        (DeedManagement e) -> e.setIdManagement(1)),
+                identityCase("Inmueble", Property::new, (Property e) -> e.setIdProperty(1)),
+                identityCase("MinutaInscripcion", RegistrationDraft::new,
+                        (RegistrationDraft e) -> e.setIdRegistrationDraft(1)),
+                identityCase("MovimientoTestimonio", TestimonyMovement::new,
+                        (TestimonyMovement e) -> e.setIdTestimonyMovement(1)),
                 identityCase("Persona", Person::new, (Person e) -> e.setPersonId(1)),
-                identityCase("Presupuesto", Presupuesto::new, (Presupuesto e) -> e.setIdPresupuesto(1)),
-                identityCase("RegistroAuditoria", RegistroAuditoria::new,
-                        (RegistroAuditoria e) -> e.setIdRegistroAuditoria(1)),
-                identityCase("Rol", Rol::new, (Rol e) -> e.setIdRol(1)),
-                identityCase("Suplencia", Suplencia::new, (Suplencia e) -> e.setIdSuplencia(1)),
-                identityCase("Testimonio", Testimonio::new, (Testimonio e) -> e.setIdTestimonio(1)),
-                identityCase("TipoDeDocumento", TipoDeDocumento::new, (TipoDeDocumento e) -> e.setIdTipoDocumento(1)),
-                identityCase("TipoDeFolio", TipoDeFolio::new, (TipoDeFolio e) -> e.setIdTipoFolio(1)),
-                identityCase("TipoDeTramite", TipoDeTramite::new, (TipoDeTramite e) -> e.setIdTipoTramite(1)),
-                identityCase("TipoIdentificacion", TipoIdentificacion::new,
-                        (TipoIdentificacion e) -> e.setIdTipoIdentificacion(1)),
-                identityCase("Usuario", Usuario::new, (Usuario e) -> e.setIdUsuario(1)),
+                identityCase("Presupuesto", Budget::new, (Budget e) -> e.setIdBudget(1)),
+                identityCase("RegistroAuditoria", AuditRecord::new,
+                        (AuditRecord e) -> e.setIdAuditRecord(1)),
+                identityCase("Rol", Role::new, (Role e) -> e.setIdRole(1)),
+                identityCase("Suplencia", Substitution::new, (Substitution e) -> e.setIdSubstitution(1)),
+                identityCase("Testimonio", Testimony::new, (Testimony e) -> e.setIdTestimony(1)),
+                identityCase("TipoDeDocumento", DocumentType::new, (DocumentType e) -> e.setIdDocumentType(1)),
+                identityCase("TipoDeFolio", FolioType::new, (FolioType e) -> e.setIdFolioType(1)),
+                identityCase("TipoDeTramite", ProcedureType::new, (ProcedureType e) -> e.setIdProcedureType(1)),
+                identityCase("TipoIdentificacion", IdentificationType::new,
+                        (IdentificationType e) -> e.setIdIdentificationType(1)),
+                identityCase("Usuario", User::new, (User e) -> e.setIdUser(1)),
                 identityCase("WorkflowDefinition", WorkflowDefinition::new, (WorkflowDefinition e) -> e.setId(1)),
                 identityCase("WorkflowNode", WorkflowNode::new, (WorkflowNode e) -> e.setId(1)),
                 identityCase("WorkflowTransition", WorkflowTransition::new, (WorkflowTransition e) -> e.setId(1))

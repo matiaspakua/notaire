@@ -3,7 +3,7 @@ package com.licensis.notaire.unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.api.WorkflowDefinitionController;
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -53,17 +53,17 @@ class WorkflowDefinitionControllerTest {
     private WorkflowDefinition buildEntity() {
         WorkflowDefinition wf = new WorkflowDefinition();
         wf.setId(1);
-        wf.setNombre("Workflow Compraventa");
-        wf.setDescripcion("Workflow estándar");
-        wf.setActivo(false);
+        wf.setName("Workflow Compraventa");
+        wf.setDescription("Workflow estándar");
+        wf.setActive(false);
         return wf;
     }
 
     private DtoWorkflowDefinition buildDto() {
         DtoWorkflowDefinition dto = new DtoWorkflowDefinition();
-        dto.setNombre("Workflow Compraventa");
-        dto.setDescripcion("Workflow estándar");
-        dto.setActivo(false);
+        dto.setName("Workflow Compraventa");
+        dto.setDescription("Workflow estándar");
+        dto.setActive(false);
         dto.setVersion(0);
         return dto;
     }
@@ -74,7 +74,7 @@ class WorkflowDefinitionControllerTest {
         when(repository.findAll()).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-definition"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].nombre").value("Workflow Compraventa"));
+                .andExpect(jsonPath("$[0].name").value("Workflow Compraventa"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class WorkflowDefinitionControllerTest {
         when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-definition/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Workflow Compraventa"));
+                .andExpect(jsonPath("$.name").value("Workflow Compraventa"));
     }
 
     @Test
@@ -103,7 +103,7 @@ class WorkflowDefinitionControllerTest {
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nombre").value("Workflow Compraventa"));
+                .andExpect(jsonPath("$.name").value("Workflow Compraventa"));
     }
 
     @Test

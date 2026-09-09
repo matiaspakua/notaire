@@ -8,11 +8,11 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoDeFolio;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.FolioType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,60 +45,60 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
     public void create(Folio folio)
     {
-        if (folio.getCopiaList() == null)
+        if (folio.getCopyList() == null)
         {
-            folio.setCopiaList(new ArrayList<Copia>());
+            folio.setCopyList(new ArrayList<Copy>());
         }
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Person fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
-            if (fkIdPersonaEscribano != null)
+            Person fkIdNotaryPerson = folio.getFkIdNotaryPerson();
+            if (fkIdNotaryPerson != null)
             {
-                fkIdPersonaEscribano = em.getReference(fkIdPersonaEscribano.getClass(), fkIdPersonaEscribano.getPersonId());
-                folio.setFkIdPersonaEscribano(fkIdPersonaEscribano);
+                fkIdNotaryPerson = em.getReference(fkIdNotaryPerson.getClass(), fkIdNotaryPerson.getPersonId());
+                folio.setFkIdNotaryPerson(fkIdNotaryPerson);
             }
-            TipoDeFolio fkIdTipoFolio = folio.getFkIdTipoFolio();
-            if (fkIdTipoFolio != null)
+            FolioType fkIdFolioType = folio.getFkIdFolioType();
+            if (fkIdFolioType != null)
             {
-                fkIdTipoFolio = em.getReference(fkIdTipoFolio.getClass(), fkIdTipoFolio.getIdTipoFolio());
-                folio.setFkIdTipoFolio(fkIdTipoFolio);
+                fkIdFolioType = em.getReference(fkIdFolioType.getClass(), fkIdFolioType.getIdFolioType());
+                folio.setFkIdFolioType(fkIdFolioType);
             }
-            Escritura fkIdEscritura = folio.getFkIdEscritura();
-            if (fkIdEscritura != null)
+            Deed fkIdDeed = folio.getFkIdDeed();
+            if (fkIdDeed != null)
             {
-                fkIdEscritura = em.getReference(fkIdEscritura.getClass(), fkIdEscritura.getIdEscritura());
-                folio.setFkIdEscritura(fkIdEscritura);
+                fkIdDeed = em.getReference(fkIdDeed.getClass(), fkIdDeed.getIdDeed());
+                folio.setFkIdDeed(fkIdDeed);
             }
-            List<Copia> attachedCopiaList = new ArrayList<Copia>();
-            for (Copia copiaListCopiaToAttach : folio.getCopiaList())
+            List<Copy> attachedCopyList = new ArrayList<Copy>();
+            for (Copy copyListCopyToAttach : folio.getCopyList())
             {
-                copiaListCopiaToAttach = em.getReference(copiaListCopiaToAttach.getClass(), copiaListCopiaToAttach.getIdCopia());
-                attachedCopiaList.add(copiaListCopiaToAttach);
+                copyListCopyToAttach = em.getReference(copyListCopyToAttach.getClass(), copyListCopyToAttach.getIdCopy());
+                attachedCopyList.add(copyListCopyToAttach);
             }
-            folio.setCopiaList(attachedCopiaList);
+            folio.setCopyList(attachedCopyList);
             em.persist(folio);
-            if (fkIdPersonaEscribano != null)
+            if (fkIdNotaryPerson != null)
             {
-                fkIdPersonaEscribano.getFolioList().add(folio);
-                fkIdPersonaEscribano = em.merge(fkIdPersonaEscribano);
+                fkIdNotaryPerson.getFolioList().add(folio);
+                fkIdNotaryPerson = em.merge(fkIdNotaryPerson);
             }
-            if (fkIdTipoFolio != null)
+            if (fkIdFolioType != null)
             {
-                fkIdTipoFolio.getFolioList().add(folio);
-                fkIdTipoFolio = em.merge(fkIdTipoFolio);
+                fkIdFolioType.getFolioList().add(folio);
+                fkIdFolioType = em.merge(fkIdFolioType);
             }
-            if (fkIdEscritura != null)
+            if (fkIdDeed != null)
             {
-                fkIdEscritura.getFolioList().add(folio);
-                fkIdEscritura = em.merge(fkIdEscritura);
+                fkIdDeed.getFolioList().add(folio);
+                fkIdDeed = em.merge(fkIdDeed);
             }
-            for (Copia copiaListCopia : folio.getCopiaList())
+            for (Copy copyListCopy : folio.getCopyList())
             {
-                copiaListCopia.getFolioList().add(folio);
-                copiaListCopia = em.merge(copiaListCopia);
+                copyListCopy.getFolioList().add(folio);
+                copyListCopy = em.merge(copyListCopy);
             }
             em.getTransaction().commit();
         }
@@ -114,8 +114,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
     public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VERSION_INICIAL;
-        Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
+        Integer version = ConstantesPersistencia.VersionINICIAL;
+        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
 
         em = getEntityManager();
         em.getTransaction().begin();
@@ -135,28 +135,28 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 throw new ClassModifiedException();
             } else
             {
-                Person fkIdPersonaEscribanoOld = persistentFolio.getFkIdPersonaEscribano();
-                Person fkIdPersonaEscribanoNew = folio.getFkIdPersonaEscribano();
-                TipoDeFolio fkIdTipoFolioOld = persistentFolio.getFkIdTipoFolio();
-                TipoDeFolio fkIdTipoFolioNew = folio.getFkIdTipoFolio();
-                Escritura fkIdEscrituraOld = persistentFolio.getFkIdEscritura();
-                Escritura fkIdEscrituraNew = folio.getFkIdEscritura();
+                Person fkIdNotaryPersonOld = persistentFolio.getFkIdNotaryPerson();
+                Person fkIdNotaryPersonNew = folio.getFkIdNotaryPerson();
+                FolioType fkIdFolioTypeOld = persistentFolio.getFkIdFolioType();
+                FolioType fkIdFolioTypeNew = folio.getFkIdFolioType();
+                Deed fkIdDeedOld = persistentFolio.getFkIdDeed();
+                Deed fkIdDeedNew = folio.getFkIdDeed();
 //                List<Copia> copiaListOld = persistentFolio.getCopiaList();
 //                List<Copia> copiaListNew = folio.getCopiaList();
-                if (fkIdPersonaEscribanoNew != null)
+                if (fkIdNotaryPersonNew != null)
                 {
-                    fkIdPersonaEscribanoNew = em.getReference(fkIdPersonaEscribanoNew.getClass(), fkIdPersonaEscribanoNew.getPersonId());
-                    folio.setFkIdPersonaEscribano(fkIdPersonaEscribanoNew);
+                    fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
+                    folio.setFkIdNotaryPerson(fkIdNotaryPersonNew);
                 }
-                if (fkIdTipoFolioNew != null)
+                if (fkIdFolioTypeNew != null)
                 {
-                    fkIdTipoFolioNew = em.getReference(fkIdTipoFolioNew.getClass(), fkIdTipoFolioNew.getIdTipoFolio());
-                    folio.setFkIdTipoFolio(fkIdTipoFolioNew);
+                    fkIdFolioTypeNew = em.getReference(fkIdFolioTypeNew.getClass(), fkIdFolioTypeNew.getIdFolioType());
+                    folio.setFkIdFolioType(fkIdFolioTypeNew);
                 }
-                if (fkIdEscrituraNew != null)
+                if (fkIdDeedNew != null)
                 {
-                    fkIdEscrituraNew = em.getReference(fkIdEscrituraNew.getClass(), fkIdEscrituraNew.getIdEscritura());
-                    folio.setFkIdEscritura(fkIdEscrituraNew);
+                    fkIdDeedNew = em.getReference(fkIdDeedNew.getClass(), fkIdDeedNew.getIdDeed());
+                    folio.setFkIdDeed(fkIdDeedNew);
                 }
 //                List<Copia> attachedCopiaListNew = new ArrayList<Copia>();
 //                for (Copia copiaListNewCopiaToAttach : copiaListNew)
@@ -231,8 +231,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         boolean resultado = false;
 
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VERSION_INICIAL;
-        Integer oldVersion = ConstantesPersistencia.VERSION_INICIAL;
+        Integer version = ConstantesPersistencia.VersionINICIAL;
+        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
 
         em = getEntityManager();
         em.getTransaction().begin();
@@ -252,12 +252,12 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 throw new ClassModifiedException();
             } else
             {
-                persistentFolio.setAnio(folioModificado.getAnio());
-                persistentFolio.setEstado(folioModificado.getEstado());
+                persistentFolio.setYear(folioModificado.getYear());
+                persistentFolio.setStatus(folioModificado.getStatus());
 //                persistentFolio.setFkIdPersonaEscribano(folioModificado.getFkIdPersonaEscribano());
 //                persistentFolio.setFkIdTipoFolio(folioModificado.getFkIdTipoFolio());
-                persistentFolio.setNumero(folioModificado.getNumero());
-                persistentFolio.setObservaciones(folioModificado.getObservaciones());
+                persistentFolio.setNumber(folioModificado.getNumber());
+                persistentFolio.setNotes(folioModificado.getNotes());
 
                 em.getTransaction().commit();
 
@@ -291,29 +291,29 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new NonexistentEntityException("The folio with id " + id + " no longer exists.", enfe);
             }
-            Person fkIdPersonaEscribano = folio.getFkIdPersonaEscribano();
-            if (fkIdPersonaEscribano != null)
+            Person fkIdNotaryPerson = folio.getFkIdNotaryPerson();
+            if (fkIdNotaryPerson != null)
             {
-                fkIdPersonaEscribano.getFolioList().remove(folio);
-                fkIdPersonaEscribano = em.merge(fkIdPersonaEscribano);
+                fkIdNotaryPerson.getFolioList().remove(folio);
+                fkIdNotaryPerson = em.merge(fkIdNotaryPerson);
             }
-            TipoDeFolio fkIdTipoFolio = folio.getFkIdTipoFolio();
-            if (fkIdTipoFolio != null)
+            FolioType fkIdFolioType = folio.getFkIdFolioType();
+            if (fkIdFolioType != null)
             {
-                fkIdTipoFolio.getFolioList().remove(folio);
-                fkIdTipoFolio = em.merge(fkIdTipoFolio);
+                fkIdFolioType.getFolioList().remove(folio);
+                fkIdFolioType = em.merge(fkIdFolioType);
             }
-            Escritura fkIdEscritura = folio.getFkIdEscritura();
-            if (fkIdEscritura != null)
+            Deed fkIdDeed = folio.getFkIdDeed();
+            if (fkIdDeed != null)
             {
-                fkIdEscritura.getFolioList().remove(folio);
-                fkIdEscritura = em.merge(fkIdEscritura);
+                fkIdDeed.getFolioList().remove(folio);
+                fkIdDeed = em.merge(fkIdDeed);
             }
-            List<Copia> copiaList = folio.getCopiaList();
-            for (Copia copiaListCopia : copiaList)
+            List<Copy> copyList = folio.getCopyList();
+            for (Copy copyListCopy : copyList)
             {
-                copiaListCopia.getFolioList().remove(folio);
-                copiaListCopia = em.merge(copiaListCopia);
+                copyListCopy.getFolioList().remove(folio);
+                copyListCopy = em.merge(copyListCopy);
             }
             em.remove(folio);
             em.getTransaction().commit();
@@ -332,21 +332,21 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         return findFolioEntities(true, -1, -1);
     }
 
-    public List<Folio> findFoliosRegistroAnio(Integer registro, Integer anio)
+    public List<Folio> findFoliosRecordYear(Integer record, Integer year)
     {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByAnioAndRegistro");
-            q.setParameter("anio", anio);
-            q.setParameter("registro", registro);
+            q.setParameter("anio", year);
+            q.setParameter("registro", record);
             miListaFolios = q.getResultList();
 
             for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
-                folio.setFkIdPersonaEscribano(null);
+                folio.setFkIdNotaryPerson(null);
             }
 
             return miListaFolios;
@@ -358,21 +358,21 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public List<Folio> findFoliosbyNumero(Integer numero)
+    public List<Folio> findFoliosbyNumber(Integer number)
     {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByNumero");
-            q.setParameter("numero", numero);
+            q.setParameter("numero", number);
 
             miListaFolios = q.getResultList();
 
             for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
-                folio.setFkIdPersonaEscribano(null);
+                folio.setFkIdNotaryPerson(null);
             }
 
             return miListaFolios;
@@ -416,7 +416,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         {
             Folio folio = em.find(Folio.class, id);
 
-            folio.setCopiaList(new ArrayList<Copia>());
+            folio.setCopyList(new ArrayList<Copy>());
 
             return folio;
         }
@@ -462,7 +462,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
             }
 
-            persistentFolio.setEstado(miFolio.getEstado());
+            persistentFolio.setStatus(miFolio.getStatus());
 
             em.getTransaction().commit();
 
@@ -474,7 +474,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa()
+    public String getNameJpa()
     {
         return this.getClass().getName();
     }
