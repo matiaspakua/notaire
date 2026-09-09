@@ -317,7 +317,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Testimonio as o");
+            Query q = em.createQuery("select object(o) from Testimony as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -349,7 +349,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Testimonio as o");
+            Query q = em.createQuery("select count(o) from Testimony as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

@@ -265,7 +265,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from TipoDeTramite as o");
+            Query q = em.createQuery("select object(o) from ProcedureType as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -342,7 +342,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from TipoDeTramite as o");
+            Query q = em.createQuery("select count(o) from ProcedureType as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

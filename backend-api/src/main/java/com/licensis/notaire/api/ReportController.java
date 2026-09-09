@@ -63,7 +63,7 @@ public class ReportController {
                description = "Genera un PDF con el presupuesto especificado")
     public ResponseEntity<byte[]> generarReporteBudget(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable @Positive Integer idBudget) {
+            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_" + idBudget + ".pdf",
                 () -> reporteService.generarReporteBudget(idBudget));
     }
@@ -73,7 +73,7 @@ public class ReportController {
                description = "Genera un PDF con el presupuesto e información de inmuebles")
     public ResponseEntity<byte[]> generarReporteBudgetProperties(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable @Positive Integer idBudget) {
+            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_inmuebles_" + idBudget + ".pdf",
                 () -> reporteService.generarReporteBudgetProperties(idBudget));
     }
@@ -83,7 +83,7 @@ public class ReportController {
                description = "Genera un PDF con la lista de documentos requeridos para un tipo de trámite")
     public ResponseEntity<byte[]> generarReporteListaDocumentsProcedure(
             @Parameter(description = "Nombre del tipo de trámite")
-            @RequestParam @NotBlank String nameTypeProcedure) {
+            @RequestParam("nombreTipoTramite") @NotBlank String nameTypeProcedure) {
         return buildPdfResponse("lista_documentos.pdf",
                 () -> reporteService.generarReporteListaDocumentsProcedure(nameTypeProcedure));
     }
@@ -93,7 +93,7 @@ public class ReportController {
                description = "Genera un PDF con el historial de una gestión específica")
     public ResponseEntity<byte[]> generarReporteHistoryManagement(
             @Parameter(description = "ID de la gestión")
-            @PathVariable @Positive Integer idManagement) {
+            @PathVariable("idGestion") @Positive Integer idManagement) {
         return buildPdfResponse("historial_gestion_" + idManagement + ".pdf",
                 () -> reporteService.generarReporteHistoryManagement(idManagement));
     }
@@ -103,7 +103,7 @@ public class ReportController {
                description = "Genera un PDF con información de documentos próximos a vencer")
     public ResponseEntity<byte[]> generarReporteDocumentsPorVencer(
             @Parameter(description = "ID del documento presentado")
-            @PathVariable @Positive Integer idSubmittedDocument) {
+            @PathVariable("idDocumentoPresentado") @Positive Integer idSubmittedDocument) {
         return buildPdfResponse("documentos_vencer.pdf",
                 () -> reporteService.generarReporteDocumentsPorVencer(idSubmittedDocument));
     }
@@ -123,7 +123,7 @@ public class ReportController {
                description = "Endpoint base para CU24. Requiere plantilla Jasper de libro de indice")
     public ResponseEntity<byte[]> generarLibroIndice(
             @Parameter(description = "Año del libro de indice")
-            @RequestParam @Positive Integer year) {
+            @RequestParam("anio") @Positive Integer year) {
         return buildPdfResponse("libro_indice_" + year + ".pdf",
                 () -> reporteService.generarReporteLibroIndice(year));
     }
@@ -133,7 +133,7 @@ public class ReportController {
                description = "Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual")
     public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
             @Parameter(description = "Año del periodo")
-            @RequestParam @Positive Integer year,
+            @RequestParam("anio") @Positive Integer year,
             @Parameter(description = "Mes del periodo")
             @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {
@@ -153,7 +153,7 @@ public class ReportController {
                description = "Genera un PDF con la copia impresa de un testimonio, solo si ya fue verificado")
     public ResponseEntity<byte[]> generarReporteCopyTestimony(
             @Parameter(description = "ID del testimonio")
-            @PathVariable @Positive Integer idTestimony) {
+            @PathVariable("idTestimonio") @Positive Integer idTestimony) {
         byte[] pdfBytes = reporteService.generarReporteCopyTestimony(idTestimony);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -170,7 +170,7 @@ public class ReportController {
                description = "Genera un PDF con el formulario normalizado de una minuta de inscripción")
     public ResponseEntity<byte[]> generarReporteRegistrationDraft(
             @Parameter(description = "ID de la minuta de inscripción")
-            @PathVariable @Positive Integer idRegistrationDraft) {
+            @PathVariable("idMinutaInscripcion") @Positive Integer idRegistrationDraft) {
         byte[] pdfBytes = reporteService.generarReporteRegistrationDraft(idRegistrationDraft);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -188,7 +188,7 @@ public class ReportController {
                description = "Genera un PDF con el recibo de un pago existente")
     public ResponseEntity<byte[]> generarReporteReciboPayment(
             @Parameter(description = "ID del pago")
-            @PathVariable @Positive Integer idPayment) {
+            @PathVariable("idPago") @Positive Integer idPayment) {
         byte[] pdfBytes = reporteService.generarReporteReciboPayment(idPayment);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -201,7 +201,7 @@ public class ReportController {
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
     public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
             @Parameter(description = "Año del periodo")
-            @RequestParam @Positive Integer year,
+            @RequestParam("anio") @Positive Integer year,
             @Parameter(description = "Mes del periodo")
             @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {

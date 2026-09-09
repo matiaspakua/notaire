@@ -73,8 +73,8 @@ class SubstitutionControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/suplencia/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idSubstitution").value(id))
-                .andExpect(jsonPath("$.fkIdSuplente.personId").isNumber())
-                .andExpect(jsonPath("$.fkIdSuplantado.personId").isNumber());
+                .andExpect(jsonPath("$.fkIdSubstitute.personId").isNumber())
+                .andExpect(jsonPath("$.fkIdSubstituted.personId").isNumber());
     }
 
     @Test

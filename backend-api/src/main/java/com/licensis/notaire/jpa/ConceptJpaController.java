@@ -248,7 +248,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Concepto as o");
+            Query q = em.createQuery("select object(o) from Concept as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -295,7 +295,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Concepto as o");
+            Query q = em.createQuery("select count(o) from Concept as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

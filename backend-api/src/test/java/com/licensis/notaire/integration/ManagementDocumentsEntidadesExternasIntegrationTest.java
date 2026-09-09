@@ -140,7 +140,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
         procedure = procedureRepository.save(procedure);
 
         try {
-            mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/documents-entidades-externas"))
+            mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.idManagement").value(managementId))
                     .andExpect(jsonPath("$.cadastralDesignation").value("11-22-33"))
@@ -162,7 +162,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"prepared": true, "cardNumber": 5, "notes": "Retirado", "delivered": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documents-entidades-externas/"
+        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -183,7 +183,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documents-entidades-externas/"
+        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -199,7 +199,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documents-entidades-externas/999999")
+        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
@@ -215,7 +215,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documents-entidades-externas/"
+        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))

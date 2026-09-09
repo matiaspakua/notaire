@@ -228,7 +228,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from PlantillaPresupuesto as o");
+            Query q = em.createQuery("select object(o) from BudgetTemplate as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -260,7 +260,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from PlantillaPresupuesto as o");
+            Query q = em.createQuery("select count(o) from BudgetTemplate as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally
@@ -313,7 +313,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         {
 
             // Creo el query
-            Query query = em.createQuery("DELETE FROM PlantillaPresupuesto p WHERE p.plantillaPresupuestoPK.fkIdTipoTramite = ?1 AND  p.plantillaPresupuestoPK.fkIdConcepto = ?2");
+            Query query = em.createQuery("DELETE FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = ?1 AND  p.budgetTemplatePK.fkIdConcept = ?2");
 
             //Seteo el parametro 1 y 2
             query.setParameter(1, miTemplate.getBudgetTemplatePK().getFkIdProcedureType());

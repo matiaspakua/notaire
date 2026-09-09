@@ -344,7 +344,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Escritura as o");
+            Query q = em.createQuery("select object(o) from Deed as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -402,7 +402,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Escritura as o");
+            Query q = em.createQuery("select count(o) from Deed as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

@@ -188,7 +188,7 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
         try
         {
             Query q = em.createQuery(
-                "SELECT s FROM Suplencia s LEFT JOIN FETCH s.fkIdSuplantado LEFT JOIN FETCH s.fkIdSuplente");
+                "SELECT s FROM Substitution s LEFT JOIN FETCH s.fkIdSubstituted LEFT JOIN FETCH s.fkIdSubstitute");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -224,10 +224,10 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
             // JOIN FETCH: las personas son LAZY y la entidad se serializa con el
             // EntityManager ya cerrado (detached); sin fetch la serialización falla.
             Query q = em.createQuery(
-                    "SELECT s FROM Suplencia s "
-                            + "JOIN FETCH s.fkIdSuplente "
-                            + "JOIN FETCH s.fkIdSuplantado "
-                            + "WHERE s.idSuplencia = :id");
+                    "SELECT s FROM Substitution s "
+                            + "JOIN FETCH s.fkIdSubstitute "
+                            + "JOIN FETCH s.fkIdSubstituted "
+                            + "WHERE s.idSubstitution = :id");
             q.setParameter("id", id);
             @SuppressWarnings("unchecked")
             List<Substitution> resultado = q.getResultList();
@@ -244,7 +244,7 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Suplencia as o");
+            Query q = em.createQuery("select count(o) from Substitution as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

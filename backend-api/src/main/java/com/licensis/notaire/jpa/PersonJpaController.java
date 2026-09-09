@@ -668,7 +668,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     private List<Person> findPersonEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select object(o) from Persona as o");
+            Query q = em.createQuery("select object(o) from Person as o");
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);

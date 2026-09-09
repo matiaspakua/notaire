@@ -156,7 +156,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldApplyValidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"estadoDestino\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusActual").value(statusIntermedio.getName()));
 
@@ -173,7 +173,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldRejectInvalidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"estadoDestino\": \"" + statusInalcanzable.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + statusInalcanzable.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
 
@@ -189,7 +189,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldRejectTransitionWhenNoWorkflowDefinition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementSinProcedureId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"estadoDestino\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
@@ -199,7 +199,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/999999/transicionar")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"estadoDestino\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isNotFound());
     }
 }

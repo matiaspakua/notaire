@@ -305,7 +305,7 @@ class ConceptJpaControllerTest {
             expectedList.add(new Concept(1, "A", 100f, 10));
             expectedList.add(new Concept(2, "B", 200f, 20));
 
-            when(em.createQuery("select object(o) from Concepto as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from Concept as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
 
             List<Concept> result = controller.findConceptEntities();
@@ -321,7 +321,7 @@ class ConceptJpaControllerTest {
             List<Concept> expectedList = new ArrayList<>();
             expectedList.add(new Concept(1, "A", 100f, 10));
 
-            when(em.createQuery("select object(o) from Concepto as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from Concept as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
 
             List<Concept> result = controller.findConceptEntities(10, 0);
@@ -393,7 +393,7 @@ class ConceptJpaControllerTest {
         @Test
         @DisplayName("should return count of conceptos")
         void shouldReturnCount() {
-            when(em.createQuery("select count(o) from Concepto as o")).thenReturn(query);
+            when(em.createQuery("select count(o) from Concept as o")).thenReturn(query);
             when(query.getSingleResult()).thenReturn(42L);
 
             int result = controller.getConceptCount();

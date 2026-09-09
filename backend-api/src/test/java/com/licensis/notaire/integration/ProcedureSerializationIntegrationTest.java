@@ -35,8 +35,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * {@code Tramite} has two bidirectional EAGER/LAZY relationships that Jackson recurses through
  * unless the back-reference side is excluded:
  * <ul>
- *   <li>{@code Tramite.fkIdPresupuesto} (EAGER) &lt;-&gt; {@code Presupuesto.tramiteList} (LAZY)</li>
- *   <li>{@code Tramite.fkIdGestion} (EAGER) &lt;-&gt; {@code GestionDeEscritura.tramiteList} (LAZY)</li>
+ *   <li>{@code Procedure.fkIdBudget} (EAGER) &lt;-&gt; {@code Budget.procedureList} (LAZY)</li>
+ *   <li>{@code Procedure.fkIdManagement} (EAGER) &lt;-&gt; {@code DeedManagement.procedureList} (LAZY)</li>
  * </ul>
  * Both previously 500'd GET /api/v1/tramites ("Failed to write request") as soon as production
  * data populated either relation — which V1 seed data does via {@code fk_id_gestion}.
@@ -127,11 +127,11 @@ class ProcedureSerializationIntegrationTest {
         }
         assertThat(procedure).as("created tramite should be in the list").isNotNull();
 
-        JsonNode budget = procedure.get("fkIdPresupuesto");
-        assertThat(budget).as("tramite should embed its fkIdPresupuesto").isNotNull();
+        JsonNode budget = procedure.get("fkIdBudget");
+        assertThat(budget).as("tramite should embed its fkIdBudget").isNotNull();
         assertThat(budget.get("idBudget").asInt()).isEqualTo(budgetId);
-        assertThat(budget.has("tramiteList"))
-                .as("budget must not embed its tramiteList (cyclic reference)")
+        assertThat(budget.has("procedureList"))
+                .as("budget must not embed its procedureList (cyclic reference)")
                 .isFalse();
     }
 
@@ -173,7 +173,7 @@ class ProcedureSerializationIntegrationTest {
 
         JsonNode found = null;
         for (JsonNode candidate : content) {
-            JsonNode managementNode = candidate.get("fkIdGestion");
+            JsonNode managementNode = candidate.get("fkIdManagement");
             if (managementNode != null && !managementNode.isNull()
                     && managementNode.get("idManagement").asInt() == management.getIdManagement()) {
                 found = candidate;
@@ -181,8 +181,8 @@ class ProcedureSerializationIntegrationTest {
             }
         }
         assertThat(found).as("tramite linked to the gestion should be in the list").isNotNull();
-        assertThat(found.get("fkIdGestion").has("tramiteList"))
-                .as("gestion must not embed its tramiteList (cyclic reference)")
+        assertThat(found.get("fkIdManagement").has("procedureList"))
+                .as("gestion must not embed its procedureList (cyclic reference)")
                 .isFalse();
     }
 }

@@ -344,7 +344,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from GestionDeEscritura as o");
+            Query q = em.createQuery("select object(o) from DeedManagement as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -424,7 +424,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from GestionDeEscritura as o");
+            Query q = em.createQuery("select count(o) from DeedManagement as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally
@@ -439,7 +439,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         int resultado = 0;
         try
         {
-            Query q = em.createQuery("select max(numero) as ultimaGestion from GestionDeEscritura");
+            Query q = em.createQuery("select max(number) as ultimaGestion from DeedManagement");
 
             if (q.getSingleResult() != null)
             {
@@ -464,7 +464,8 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         try
         {
             Query q = em.createQuery(
-                    "SELECT DISTINCT t.fkIdGestion FROM com.licensis.notaire.negocio.TramitesPersonas tp JOIN tp.tramite t WHERE tp.tramitesPersonasPK.fkIdPersonaCliente = :idPersona");
+                    "SELECT DISTINCT t.fkIdManagement FROM com.licensis.notaire.business.PersonProcedure tp "
+                            + "JOIN tp.procedure t WHERE tp.personProcedurePK.fkIdClientPerson = :idPersona");
             q.setParameter("idPersona", idPerson);
             return (List<DeedManagement>) q.getResultList();
         }

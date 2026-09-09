@@ -247,7 +247,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from TipoDeDocumento as o");
+            Query q = em.createQuery("select object(o) from DocumentType as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -304,7 +304,7 @@ public class DocumentTypeJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from TipoDeDocumento as o");
+            Query q = em.createQuery("select count(o) from DocumentType as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

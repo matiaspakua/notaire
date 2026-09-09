@@ -226,7 +226,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from PlantillaTramite as o");
+            Query q = em.createQuery("select object(o) from ProcedureTemplate as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -258,7 +258,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from PlantillaTramite as o");
+            Query q = em.createQuery("select count(o) from ProcedureTemplate as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally
@@ -319,7 +319,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         tx.begin();
 
         // Creo el query
-        Query query = em.createQuery("DELETE FROM PlantillaTramite p WHERE p.plantillaTramitePK.fkIdTipoTramite = ?1 AND  p.plantillaTramitePK.fkIdTipoDocumento = ?2");
+        Query query = em.createQuery("DELETE FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = ?1 AND  p.procedureTemplatePK.fkIdDocumentType = ?2");
 
         //Seteo el parametro 1 y 2
         query.setParameter(1, miTemplate.getProcedureTemplatePK().getFkIdProcedureType());

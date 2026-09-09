@@ -207,7 +207,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from DocumentoPresentado as o");
+            Query q = em.createQuery("select object(o) from SubmittedDocument as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -239,7 +239,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from DocumentoPresentado as o");
+            Query q = em.createQuery("select count(o) from SubmittedDocument as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

@@ -176,7 +176,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from MovimientoTestimonio as o");
+            Query q = em.createQuery("select object(o) from TestimonyMovement as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -236,7 +236,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from MovimientoTestimonio as o");
+            Query q = em.createQuery("select count(o) from TestimonyMovement as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

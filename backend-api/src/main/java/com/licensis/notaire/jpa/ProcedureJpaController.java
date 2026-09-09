@@ -510,7 +510,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Tramite as o");
+            Query q = em.createQuery("select object(o) from Procedure as o");
 
             if (!all)
             {
@@ -623,7 +623,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         tx = em.getTransaction();
         tx.begin();
 
-        Query q = em.createQuery("UPDATE Tramite t SET t.fkIdPresupuesto.idPresupuesto = :idPresupuesto WHERE t.idTramite = :id");
+        Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idPresupuesto WHERE t.idProcedure = :id");
         q.setParameter("idPresupuesto", miProcedure.getFkIdBudget().getIdBudget());
         q.setParameter("id", miProcedure.getIdProcedure());
 

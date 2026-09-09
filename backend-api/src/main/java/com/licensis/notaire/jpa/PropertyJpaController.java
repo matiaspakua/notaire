@@ -198,7 +198,7 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Inmueble as o");
+            Query q = em.createQuery("select object(o) from Property as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -257,7 +257,7 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Inmueble as o");
+            Query q = em.createQuery("select count(o) from Property as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

@@ -157,7 +157,8 @@ public class BudgetController {
     @Operation(summary = "CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite")
     public ResponseEntity<List<Item>> cargarItemsDesdeTemplate(
             @PathVariable Integer id,
-            @Parameter(description = "ID del tipo de trámite") @RequestParam Integer typeProcedureId) {
+            @Parameter(description = "ID del tipo de trámite")
+            @RequestParam("tipoTramiteId") Integer typeProcedureId) {
         return ResponseEntity.ok(budgetTemplateService.cargarItemsDesdeTemplate(id, typeProcedureId));
     }
 

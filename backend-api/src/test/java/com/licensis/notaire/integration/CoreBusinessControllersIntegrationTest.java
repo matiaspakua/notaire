@@ -387,9 +387,9 @@ class CoreBusinessControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.matricula", is("M-1")))
-                    .andExpect(jsonPath("$.tomoFolioFinca", is("T1-F2-FN3")))
-                    .andExpect(jsonPath("$.linderos", is("Norte, Sur, Este, Oeste")));
+                    .andExpect(jsonPath("$.registrationNumber", is("M-1")))
+                    .andExpect(jsonPath("$.volumeFolioLandRecord", is("T1-F2-FN3")))
+                    .andExpect(jsonPath("$.boundaries", is("Norte, Sur, Este, Oeste")));
         }
     }
 }

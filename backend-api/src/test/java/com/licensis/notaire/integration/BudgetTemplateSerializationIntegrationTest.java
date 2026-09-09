@@ -96,18 +96,18 @@ class BudgetTemplateSerializationIntegrationTest {
         assertThat(body.isArray()).isTrue();
         JsonNode template = null;
         for (JsonNode candidate : body) {
-            JsonNode pk = candidate.get("plantillaPresupuestoPK");
-            if (pk != null && pk.get("fkIdConcepto").asInt() == conceptId
-                    && pk.get("fkIdTipoTramite").asInt() == typeProcedureId) {
+            JsonNode pk = candidate.get("budgetTemplatePK");
+            if (pk != null && pk.get("fkIdConcept").asInt() == conceptId
+                    && pk.get("fkIdProcedureType").asInt() == typeProcedureId) {
                 template = candidate;
                 break;
             }
         }
         assertThat(template).as("created plantilla should be in the list").isNotNull();
-        JsonNode concept = template.get("concepto");
+        JsonNode concept = template.get("concept");
         assertThat(concept).isNotNull();
-        assertThat(concept.has("plantillaPresupuestoList"))
-                .as("concepto must not embed its plantillaPresupuestoList (cyclic reference)")
+        assertThat(concept.has("budgetTemplateList"))
+                .as("concept must not embed its budgetTemplateList (cyclic reference)")
                 .isFalse();
     }
 

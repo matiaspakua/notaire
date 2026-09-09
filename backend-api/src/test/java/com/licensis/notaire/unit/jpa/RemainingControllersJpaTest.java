@@ -154,7 +154,7 @@ class RemainingControllersJpaTest {
 
                 List<Copy> result = controller.findCopyEntities();
                 assertThat(result).containsExactly(mockEntity);
-                verify(mockEm).createQuery("select object(o) from Copia as o");
+                verify(mockEm).createQuery("select object(o) from Copy as o");
                 verify(mockQuery).getResultList();
             }
 
@@ -187,7 +187,7 @@ class RemainingControllersJpaTest {
 
                 int count = controller.getCopyCount();
                 assertThat(count).isEqualTo(42);
-                verify(mockEm).createQuery("select count(o) from Copia as o");
+                verify(mockEm).createQuery("select count(o) from Copy as o");
             }
 
             @Test

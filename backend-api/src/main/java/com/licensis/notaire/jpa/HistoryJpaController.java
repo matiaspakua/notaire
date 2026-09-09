@@ -259,7 +259,7 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Historial as o");
+            Query q = em.createQuery("select object(o) from History as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -291,7 +291,7 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Historial as o");
+            Query q = em.createQuery("select count(o) from History as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

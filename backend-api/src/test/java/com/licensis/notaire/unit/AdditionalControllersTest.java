@@ -85,7 +85,7 @@ class AdditionalControllersTest {
                     .andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numeroGestion=10"))
+            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
                     .andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
@@ -114,7 +114,7 @@ class AdditionalControllersTest {
                     .andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numeroGestion=10"))
+            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
                     .andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
@@ -201,11 +201,11 @@ class AdditionalControllersTest {
                             "Gestión no encontrada con ID: 2"));
 
             mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isOk());
+                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
             mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
+                    .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
             mvc.perform(post("/api/v1/gestiones/2/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isNotFound());
+                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
 
             mvc.perform(get("/api/v1/gestiones/1/historial")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/gestiones/2/historial")).andExpect(status().isNotFound());

@@ -301,7 +301,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
             {
 
                 em.getTransaction().begin();
-                Query query = em.createQuery("DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = ?1 AND t.tramitesPersonasPK.fkIdTramite = ?2");
+                Query query = em.createQuery("DELETE FROM PersonProcedure t WHERE t.personProcedurePK.fkIdClientPerson = ?1 AND t.personProcedurePK.fkIdProcedure = ?2");
                 query.setParameter(1, record.getPersonProcedurePK().getFkIdClientPerson());
                 query.setParameter(2, record.getPersonProcedurePK().getFkIdProcedure());
                 rowCount = query.executeUpdate();

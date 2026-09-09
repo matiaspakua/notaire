@@ -229,7 +229,7 @@ class AuditRecordJpaControllerTest {
         void shouldFindAll() {
             List<AuditRecord> expected = new ArrayList<>();
             expected.add(new AuditRecord(1));
-            when(em.createQuery("select object(o) from RegistroAuditoria as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from AuditRecord as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expected);
 
             List<AuditRecord> result = controller.findAuditRecordEntities();
@@ -241,7 +241,7 @@ class AuditRecordJpaControllerTest {
         @Test
         @DisplayName("should return paginated")
         void shouldFindPaginated() {
-            when(em.createQuery("select object(o) from RegistroAuditoria as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from AuditRecord as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(new ArrayList<>());
 
             controller.findAuditRecordEntities(10, 0);
@@ -279,7 +279,7 @@ class AuditRecordJpaControllerTest {
         @Test
         @DisplayName("should return count")
         void shouldReturnCount() {
-            when(em.createQuery("select count(o) from RegistroAuditoria as o")).thenReturn(query);
+            when(em.createQuery("select count(o) from AuditRecord as o")).thenReturn(query);
             when(query.getSingleResult()).thenReturn(42L);
 
             assertThat(controller.getAuditRecordCount()).isEqualTo(42);

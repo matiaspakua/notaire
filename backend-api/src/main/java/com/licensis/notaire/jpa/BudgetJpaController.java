@@ -339,7 +339,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
     private List<Budget> findBudgetEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select object(o) from Presupuesto as o");
+            Query q = em.createQuery("select object(o) from Budget as o");
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
@@ -365,7 +365,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
     public int getBudgetCount() {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select count(o) from Presupuesto as o");
+            Query q = em.createQuery("select count(o) from Budget as o");
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();

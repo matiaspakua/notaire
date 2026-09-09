@@ -183,7 +183,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
     private List<IdentificationType> findIdentificationTypeEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select object(o) from TipoIdentificacion as o");
+            Query q = em.createQuery("select object(o) from IdentificationType as o");
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
@@ -206,7 +206,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
     public int getIdentificationTypeCount() {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select count(o) from TipoIdentificacion as o");
+            Query q = em.createQuery("select count(o) from IdentificationType as o");
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();

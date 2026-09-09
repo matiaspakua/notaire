@@ -256,7 +256,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from Copia as o");
+            Query q = em.createQuery("select object(o) from Copy as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -288,7 +288,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from Copia as o");
+            Query q = em.createQuery("select count(o) from Copy as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

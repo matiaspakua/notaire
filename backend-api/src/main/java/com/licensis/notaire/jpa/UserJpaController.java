@@ -229,7 +229,7 @@ public class UserJpaController implements Serializable, IPersistenciaJpa {
     private List<User> findUsersEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select object(o) from Usuarios as o");
+            Query q = em.createQuery("select object(o) from User as o");
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
@@ -252,7 +252,7 @@ public class UserJpaController implements Serializable, IPersistenciaJpa {
     public int getUsersCount() {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select count(o) from Usuarios as o");
+            Query q = em.createQuery("select count(o) from User as o");
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();

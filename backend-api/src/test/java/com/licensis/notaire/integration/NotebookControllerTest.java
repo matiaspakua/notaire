@@ -77,8 +77,8 @@ class NotebookControllerTest {
     private String crearNotebookBody(List<Integer> idsFolio, String notes) throws Exception {
         java.util.Map<String, Object> body = new java.util.HashMap<>();
         body.put("idsFolio", idsFolio);
-        body.put("idEscribano", notary.getPersonId());
-        body.put("anio", 2026);
+        body.put("idNotary", notary.getPersonId());
+        body.put("year", 2026);
         body.put("notes", notes);
         return mapper.writeValueAsString(body);
     }
@@ -159,7 +159,7 @@ class NotebookControllerTest {
                         .content(crearNotebookBody(ids, null)))
                 .andExpect(status().isCreated())
                 .andReturn();
-        Integer idNotebook = mapper.readTree(creado.getResponse().getContentAsString()).get("idCuaderno").asInt();
+        Integer idNotebook = mapper.readTree(creado.getResponse().getContentAsString()).get("idNotebook").asInt();
 
         MvcResult caratula = mockMvc.perform(get("/api/v1/cuadernos/" + idNotebook + "/caratula"))
                 .andExpect(status().isOk())

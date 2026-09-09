@@ -250,7 +250,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select object(o) from TipoDeFolio as o");
+            Query q = em.createQuery("select object(o) from FolioType as o");
             if (!all)
             {
                 q.setMaxResults(maxResults);
@@ -282,7 +282,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         try
         {
-            Query q = em.createQuery("select count(o) from TipoDeFolio as o");
+            Query q = em.createQuery("select count(o) from FolioType as o");
             return ((Long) q.getSingleResult()).intValue();
         }
         finally

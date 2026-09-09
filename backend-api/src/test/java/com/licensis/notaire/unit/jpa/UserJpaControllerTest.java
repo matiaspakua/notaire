@@ -323,7 +323,7 @@ class UserJpaControllerTest {
         void shouldFindAll() {
             List<User> expected = new ArrayList<>();
             expected.add(new User(1, "a", "p", true, "user"));
-            when(em.createQuery("select object(o) from Usuarios as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from User as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expected);
 
             List<User> result = controller.findUsersEntities();
@@ -335,7 +335,7 @@ class UserJpaControllerTest {
         @Test
         @DisplayName("should return paginated")
         void shouldFindPaginated() {
-            when(em.createQuery("select object(o) from Usuarios as o")).thenReturn(query);
+            when(em.createQuery("select object(o) from User as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(new ArrayList<>());
 
             controller.findUsersEntities(5, 2);
@@ -367,7 +367,7 @@ class UserJpaControllerTest {
         @Test
         @DisplayName("should return count")
         void shouldReturnCount() {
-            when(em.createQuery("select count(o) from Usuarios as o")).thenReturn(query);
+            when(em.createQuery("select count(o) from User as o")).thenReturn(query);
             when(query.getSingleResult()).thenReturn(5L);
 
             int result = controller.getUsersCount();

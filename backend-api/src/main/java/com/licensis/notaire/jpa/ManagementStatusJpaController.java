@@ -232,7 +232,7 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
     private List<ManagementStatus> findManagementStatusEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select object(o) from EstadoDeGestion as o");
+            Query q = em.createQuery("select object(o) from ManagementStatus as o");
             if (!all) {
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
@@ -256,7 +256,7 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
     public int getManagementStatusCount() {
         EntityManager em = getEntityManager();
         try {
-            Query q = em.createQuery("select count(o) from EstadoDeGestion as o");
+            Query q = em.createQuery("select count(o) from ManagementStatus as o");
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
