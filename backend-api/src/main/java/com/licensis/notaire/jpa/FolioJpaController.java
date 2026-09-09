@@ -226,7 +226,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public boolean modificarFoliosCompleto(Folio folioModificado) throws ClassModifiedException
+    public boolean updateFolioFull(Folio folioModificado) throws ClassModifiedException
     {
         boolean resultado = false;
 
@@ -332,7 +332,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         return findFolioEntities(true, -1, -1);
     }
 
-    public List<Folio> findFoliosRecordYear(Integer record, Integer year)
+    public List<Folio> findFoliosByRecordYear(Integer record, Integer year)
     {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
@@ -358,7 +358,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
     }
 
-    public List<Folio> findFoliosbyNumber(Integer number)
+    public List<Folio> findFoliosByNumber(Integer number)
     {
         EntityManager em = getEntityManager();
         List<Folio> miListaFolios = null;
@@ -440,7 +440,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public void modificarFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException
+    public void updateFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
 

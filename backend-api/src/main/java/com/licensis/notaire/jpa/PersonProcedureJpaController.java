@@ -295,7 +295,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
         int rowCount = 0;
         try
         {
-            PersonProcedure encontrado = (PersonProcedure) this.findProceduresClientes(record.getPersonProcedurePK().getFkIdClientPerson(), record.getPersonProcedurePK().getFkIdProcedure()).get(0);
+            PersonProcedure encontrado = (PersonProcedure) this.findClientProcedures(record.getPersonProcedurePK().getFkIdClientPerson(), record.getPersonProcedurePK().getFkIdProcedure()).get(0);
 
             if (encontrado != null)
             {
@@ -399,7 +399,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
      * @param idTramite
      * @return
      */
-    public List<PersonProcedure> findProceduresClientes(Integer idPerson, Integer idProcedure)
+    public List<PersonProcedure> findClientProcedures(Integer idPerson, Integer idProcedure)
     {
         EntityManager em = getEntityManager();
         List<PersonProcedure> listaPersonProcedure = null;

@@ -202,7 +202,7 @@ public class SubstitutionJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Substitution> findSuplenciasPorYear(Substitution unaSubstitution)
+    public List<Substitution> findSubstitutionsByYear(Substitution unaSubstitution)
     {
         List<Substitution> listaSuplencias = new ArrayList<>();
         EntityManager em = getEntityManager();

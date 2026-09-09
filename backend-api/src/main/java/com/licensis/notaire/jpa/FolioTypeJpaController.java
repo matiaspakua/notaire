@@ -73,7 +73,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
                 }
             }
 
-            if (this.verificarExistenciaFolioType(folioType.getName()))
+            if (this.checkFolioTypeExists(folioType.getName()))
             {
                 throw new PreexistingEntityException("El tipo de folio indicado ya existe");
             }
@@ -217,7 +217,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public boolean verificarExistenciaFolioType(String name)
+    public boolean checkFolioTypeExists(String name)
     {
 
         List<FolioType> listaTypeDeFolios = this.findFolioTypeEntities();

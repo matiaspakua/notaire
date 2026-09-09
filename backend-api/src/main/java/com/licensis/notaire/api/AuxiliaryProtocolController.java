@@ -42,8 +42,8 @@ public class AuxiliaryProtocolController {
     @GetMapping("/folios-disponibles")
     @Operation(summary = "Listar folios de Protocolo Auxiliar disponibles")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Folio>> getFoliosDisponibles() {
-        return ResponseEntity.ok(protocoloAuxiliaryService.listarFoliosDisponibles());
+    public ResponseEntity<List<Folio>> getAvailableFolios() {
+        return ResponseEntity.ok(protocoloAuxiliaryService.listAvailableFolios());
     }
 
     @ApiResponses({

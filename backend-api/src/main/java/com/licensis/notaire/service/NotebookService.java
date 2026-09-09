@@ -57,14 +57,14 @@ public class NotebookService {
             throw new ResourceNotFoundException("Uno o más folios indicados no existen");
         }
 
-        validarCantidadFolios(folios);
+        validateFolioCount(folios);
         List<Folio> foliosOrdenados = folios.stream()
                 .sorted(Comparator.comparingInt(Folio::getNumber))
                 .toList();
         validarMismoNotary(foliosOrdenados, notary);
         validarConsecutividad(foliosOrdenados);
         validarNoAsignados(foliosOrdenados);
-        validarJustificacionFoliosDanados(foliosOrdenados, notes);
+        validateDamagedFolioJustification(foliosOrdenados, notes);
 
         Notebook notebook = new Notebook();
         notebook.setYear(year);
@@ -73,7 +73,7 @@ public class NotebookService {
         notebook.setFkIdNotaryPerson(notary);
         Notebook guardado = notebookRepository.save(notebook);
 
-        marcarFoliosAsignados(foliosOrdenados, guardado);
+        markFoliosAssigned(foliosOrdenados, guardado);
         logger.info("Cuaderno {}/{} creado para escribano {} con {} folios",
                 guardado.getNumber(), guardado.getYear(), notary.getPersonId(), foliosOrdenados.size());
         return guardado;
@@ -87,7 +87,7 @@ public class NotebookService {
         return candidato;
     }
 
-    public void marcarFoliosAsignados(List<Folio> folios, Notebook notebook) {
+    public void markFoliosAssigned(List<Folio> folios, Notebook notebook) {
         for (Folio folio : folios) {
             folio.setFkIdNotebook(notebook);
             folio.setStatus(StatusASIGNADOANotebook);
@@ -95,7 +95,7 @@ public class NotebookService {
         folioRepository.saveAll(folios);
     }
 
-    private void validarCantidadFolios(List<Folio> folios) {
+    private void validateFolioCount(List<Folio> folios) {
         if (folios.isEmpty() || folios.size() % FOLIOSPORNotebook != 0) {
             throw new BusinessValidationException(
                     "La cantidad de folios debe ser un múltiplo exacto de " + FOLIOSPORNotebook);
@@ -128,7 +128,7 @@ public class NotebookService {
         }
     }
 
-    private void validarJustificacionFoliosDanados(List<Folio> folios, String notes) {
+    private void validateDamagedFolioJustification(List<Folio> folios, String notes) {
         boolean hayFolioDanado = folios.stream().anyMatch(f -> ESTADOS_DANADOS.contains(f.getStatus()));
         if (hayFolioDanado && (notes == null || notes.isBlank())) {
             throw new BusinessValidationException(

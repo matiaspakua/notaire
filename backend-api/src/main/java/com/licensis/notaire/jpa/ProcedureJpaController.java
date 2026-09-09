@@ -385,7 +385,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         return modificado;
     }
 
-    public Boolean editTramite2(Procedure procedureModificado)
+    public Boolean editProcedureManagementOnly(Procedure procedureModificado)
     {
         Boolean modificado = Boolean.FALSE;
 

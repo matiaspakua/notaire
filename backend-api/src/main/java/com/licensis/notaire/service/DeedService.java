@@ -60,7 +60,7 @@ public class DeedService {
     }
 
     private void validarNumeracion(Deed entity) {
-        resolveFolioParaNumeracion(entity).ifPresent(folio -> {
+        resolveFolioForNumbering(entity).ifPresent(folio -> {
             Person notary = folio.getFkIdNotaryPerson();
             if (notary == null || notary.getPersonId() == null) {
                 return;
@@ -83,7 +83,7 @@ public class DeedService {
         });
     }
 
-    private Optional<Folio> resolveFolioParaNumeracion(Deed entity) {
+    private Optional<Folio> resolveFolioForNumbering(Deed entity) {
         if (entity.getIdFolio() != null) {
             return folioRepository.findById(entity.getIdFolio());
         }

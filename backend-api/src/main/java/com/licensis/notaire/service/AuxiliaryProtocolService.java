@@ -28,7 +28,7 @@ public class AuxiliaryProtocolService {
     }
 
     @Transactional(readOnly = true)
-    public List<Folio> listarFoliosDisponibles() {
+    public List<Folio> listAvailableFolios() {
         return folioRepository.findFoliosAuxiliaresDisponibles();
     }
 

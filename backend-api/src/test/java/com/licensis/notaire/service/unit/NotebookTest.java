@@ -68,7 +68,7 @@ class NotebookTest {
         Notebook notebook = new Notebook();
         notebook.setIdNotebook(10);
 
-        notebookService.marcarFoliosAsignados(folios, notebook);
+        notebookService.markFoliosAssigned(folios, notebook);
 
         assertThat(folios).allSatisfy(f -> {
             assertThat(f.getStatus()).isEqualTo("Asignado a cuaderno");

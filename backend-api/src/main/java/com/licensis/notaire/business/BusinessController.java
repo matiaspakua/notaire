@@ -431,7 +431,7 @@ public class BusinessController
      * registradas
      * @throws NonexistentJpaException
      */
-    public ArrayList<DtoPerson> searchPersonsClientes() throws NonexistentJpaException
+    public ArrayList<DtoPerson> searchClientPersons() throws NonexistentJpaException
     {
 
         ArrayList<DtoPerson> listaDtoPersons = new ArrayList<>();
@@ -1380,7 +1380,7 @@ public class BusinessController
                         relacionClientProcedure.setPerson(client);
                         relacionClientProcedure.setProcedure(procedure);
 
-                        List<PersonProcedure> listaEliminar = myJpaPersonProcedure.findProceduresClientes(client.getPersonId(), procedure.getIdProcedure());
+                        List<PersonProcedure> listaEliminar = myJpaPersonProcedure.findClientProcedures(client.getPersonId(), procedure.getIdProcedure());
 
                         for (Iterator<PersonProcedure> it = listaEliminar.iterator(); it.hasNext();)
                         {
@@ -2434,7 +2434,7 @@ public class BusinessController
                 Folio miFolio = new Folio();
                 miFolio.setAtributos(dtoFolio);
 
-                myJpaFolio.modificarFolio(miFolio);
+                myJpaFolio.updateFolio(miFolio);
 
             }
             creada = myJpaDeed.create(miDeed);
@@ -2918,7 +2918,7 @@ public class BusinessController
                 Folio miFolio = new Folio();
                 miFolio.setAtributos(dtoFolio);
 
-                myJpaFolio.modificarFolio(miFolio);
+                myJpaFolio.updateFolio(miFolio);
 
                 this.registrarAudit(miFolio, ConstantesGui.MODIFICARDeed);
 
@@ -3455,11 +3455,11 @@ public class BusinessController
      * @return Verdadero si se puede ingresar el conjunto de folios indicados,
      * falso en caso contrario.
      */
-    public Boolean verificarExistenciaFolios(DtoFolio desde, DtoFolio hasta)
+    public Boolean checkFoliosExist(DtoFolio desde, DtoFolio hasta)
     {
         boolean resultado = false;
 
-        List<Folio> folios = myJpaFolio.findFoliosRecordYear(desde.getPersonNotary().getNotaryRegistrationNumber(), desde.getYear());
+        List<Folio> folios = myJpaFolio.findFoliosByRecordYear(desde.getPersonNotary().getNotaryRegistrationNumber(), desde.getYear());
 
         if (!folios.isEmpty())
         {
@@ -3491,7 +3491,7 @@ public class BusinessController
      * @return resultado Verdadero si se pudo registrar el ingreso o falso en
      * caso contrario.
      */
-    public Boolean registrarEntryNuevosFolios(DtoFolio desde, DtoFolio hasta)
+    public Boolean registerNewFolios(DtoFolio desde, DtoFolio hasta)
     {
         Boolean resultado = Boolean.FALSE;
 
@@ -3551,7 +3551,7 @@ public class BusinessController
      * @return listaFoliosDisponibles Una lista de todos los folios encontrados,
      * para el registro y anio indicados.
      */
-    public List<DtoFolio> obtenerListaFolios(DtoFolio dtoDatosRecordYear)
+    public List<DtoFolio> getFolioListByYear(DtoFolio dtoDatosRecordYear)
     {
         List<DtoFolio> dtoListaFolios = new ArrayList<>();
         List<Folio> listaFolios = null;
@@ -3563,7 +3563,7 @@ public class BusinessController
             {
                 miFolioJpaController = (FolioJpaController) this.getMiAdministradorJpa().obtenerJpa(FolioJpaController.class.getName());
 
-                listaFolios = miFolioJpaController.findFoliosRecordYear(dtoDatosRecordYear.getPersonNotary().getNotaryRegistrationNumber(), dtoDatosRecordYear.getYear());
+                listaFolios = miFolioJpaController.findFoliosByRecordYear(dtoDatosRecordYear.getPersonNotary().getNotaryRegistrationNumber(), dtoDatosRecordYear.getYear());
             }
             catch (NonexistentJpaException e)
             {
@@ -3595,7 +3595,7 @@ public class BusinessController
      * @throws ClassModifiedException
      * @throws ClassEliminatedException
      */
-    public Boolean modificarFolio(DtoFolio dtoFolioModificado) throws NonexistentJpaException, ClassModifiedException, ClassEliminatedException, NonexistentEntityException
+    public Boolean updateFolio(DtoFolio dtoFolioModificado) throws NonexistentJpaException, ClassModifiedException, ClassEliminatedException, NonexistentEntityException
     {
         Boolean resultado = Boolean.FALSE;
 
@@ -3604,7 +3604,7 @@ public class BusinessController
 
         folioModificado.setAtributos(dtoFolioModificado);
 
-        if (myJpaFolio.modificarFoliosCompleto(folioModificado))
+        if (myJpaFolio.updateFolioFull(folioModificado))
         {
             resultado = Boolean.TRUE;
 
@@ -3619,7 +3619,7 @@ public class BusinessController
      * @param numeroRegistro, numero del registro de Escribano
      * @return una lista de DtoFolio, de Folios disponibles.
      */
-    public List<DtoFolio> searchFoliosDisponibles(Integer numberRecord)
+    public List<DtoFolio> searchAvailableFolios(Integer numberRecord)
     {
         List<DtoFolio> listaDtoFoliosDisponibles = new ArrayList<>();
         List<Folio> listaFolios = null;
@@ -4029,7 +4029,7 @@ public class BusinessController
      * @return listaDtoSuplencias una lista tipo dto suplencia con todas las
      * suplencias registradas para el periodo indicado.
      */
-    public List<DtoSubstitution> consultarSuplencias(DtoSubstitution dtoSuplenciasDesde)
+    public List<DtoSubstitution> searchSubstitutions(DtoSubstitution dtoSuplenciasDesde)
     {
         List<DtoSubstitution> listaDtoSuplencias = new ArrayList<>();
         List<Substitution> listaSuplencias = new ArrayList<>();
@@ -4038,7 +4038,7 @@ public class BusinessController
         unaSubstitution.setDateStart(dtoSuplenciasDesde.getDateStart());
         unaSubstitution.setDateEnd(dtoSuplenciasDesde.getDateEnd());
 
-        listaSuplencias = myJpaSubstitution.findSuplenciasPorYear(unaSubstitution);
+        listaSuplencias = myJpaSubstitution.findSubstitutionsByYear(unaSubstitution);
 
         if (!listaSuplencias.isEmpty())
         {
@@ -4952,7 +4952,7 @@ public class BusinessController
      * @param nuevoDtoTipoDeFolio
      * @return Verdadero si pudo persistir los cambios, falso en caso contrario.
      */
-    public Boolean darDeAltaFolioType(DtoFolioType nuevoDtoFolioType) throws ClassModifiedException
+    public Boolean createFolioType(DtoFolioType nuevoDtoFolioType) throws ClassModifiedException
     {
         Boolean resultado = Boolean.FALSE;
 
@@ -5005,7 +5005,7 @@ public class BusinessController
      *
      * @return Una lista tipo DtoTipoDeFolio.
      */
-    public List<DtoFolioType> obtenerListaTiposDeFoliosDisponibles()
+    public List<DtoFolioType> getAvailableFolioTypeList()
     {
         List<FolioType> listaTiposDeFolios = null;
         List<DtoFolioType> miListaDtoFolios = null;
@@ -5037,7 +5037,7 @@ public class BusinessController
      * @param dtoTipoDeFolioModificar
      * @return Verdadero si pudo persistir los cambios, falso en caso contrario.
      */
-    public Boolean modificarTypeDeFolios(DtoFolioType dtoFolioTypeModificar) throws ClassModifiedException
+    public Boolean updateFolioType(DtoFolioType dtoFolioTypeModificar) throws ClassModifiedException
     {
         Boolean resultado = Boolean.FALSE;
         try
@@ -5070,7 +5070,7 @@ public class BusinessController
      * @param dtoTipoDeFolioEliminar
      * @return Verdadero si pudo persistir los cambios, falso en caso contrario.
      */
-    public Boolean eliminarFolioType(DtoFolioType dtoFolioTypeEliminar) throws ClassModifiedException
+    public Boolean deleteFolioType(DtoFolioType dtoFolioTypeEliminar) throws ClassModifiedException
     {
         Boolean resultado = Boolean.FALSE;
         FolioType miFolioType = null;
