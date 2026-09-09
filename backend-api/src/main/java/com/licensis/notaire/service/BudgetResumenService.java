@@ -30,12 +30,12 @@ public class BudgetResumenService {
     }
 
     @Transactional(readOnly = true)
-    public DtoBudgetResumen obtenerResumen(Integer idBudget) {
+    public DtoBudgetResumen getSummary(Integer idBudget) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + idBudget));
 
-        Float saldoPending = paymentService.calcularSaldoPending(idBudget);
+        Float saldoPending = paymentService.calculatePendingBalance(idBudget);
         var payments = paymentService.findPaymentsByBudget(idBudget);
         float totalPagado = (float) payments.stream().mapToDouble(p -> p.getAmount()).sum();
         Float total = saldoPending + totalPagado;

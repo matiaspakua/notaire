@@ -63,12 +63,12 @@ class ManagementResumenFinancieroServiceTest {
         @Test
         @DisplayName("Gestión con un único trámite y budget agrega su total, cobrado y saldo")
         void shouldSummarizeSingleProcedureManagement() {
-            when(managementArchiveDebtService.calcularSaldoPending(1)).thenReturn(3000.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(3000.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calcularSaldoPending(10)).thenReturn(3000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
             when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.obtenerResumen(1);
+            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.totalPresupuestado()).isEqualTo(5000.00f);
@@ -79,15 +79,15 @@ class ManagementResumenFinancieroServiceTest {
         @Test
         @DisplayName("Gestión con múltiples trámites y presupuestos suma los totales de cada uno")
         void shouldAggregateMultipleProcedures() {
-            when(managementArchiveDebtService.calcularSaldoPending(1)).thenReturn(4500.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(4500.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentService.calcularSaldoPending(10)).thenReturn(3000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
             when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
-            when(paymentService.calcularSaldoPending(20)).thenReturn(1500.00f);
+            when(paymentService.calculatePendingBalance(20)).thenReturn(1500.00f);
             when(paymentService.findPaymentsByBudget(20)).thenReturn(List.of(paymentOf(1000.00f)));
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.obtenerResumen(1);
+            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.totalPresupuestado()).isEqualTo(7500.00f);
             assertThat(resumen.totalCobrado()).isEqualTo(3000.00f);
@@ -97,12 +97,12 @@ class ManagementResumenFinancieroServiceTest {
         @Test
         @DisplayName("Gestión sin payments registrados devuelve cobrado en cero")
         void shouldReturnZeroCollectedWhenNoPayments() {
-            when(managementArchiveDebtService.calcularSaldoPending(1)).thenReturn(5000.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(5000.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calcularSaldoPending(10)).thenReturn(5000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(5000.00f);
             when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of());
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.obtenerResumen(1);
+            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.totalCobrado()).isEqualTo(0.00f);
             assertThat(resumen.totalPresupuestado()).isEqualTo(5000.00f);
@@ -111,10 +111,10 @@ class ManagementResumenFinancieroServiceTest {
         @Test
         @DisplayName("Should throw exception when gestión does not exist")
         void shouldThrowExceptionWhenManagementNotFound() {
-            when(managementArchiveDebtService.calcularSaldoPending(999))
+            when(managementArchiveDebtService.calculatePendingBalance(999))
                     .thenThrow(new IllegalArgumentException("Gestión no encontrada con ID: 999"));
 
-            assertThatThrownBy(() -> managementResumenFinancieroService.obtenerResumen(999))
+            assertThatThrownBy(() -> managementResumenFinancieroService.getSummary(999))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Gestión no encontrada");
         }

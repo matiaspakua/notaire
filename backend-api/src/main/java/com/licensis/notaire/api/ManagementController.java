@@ -395,7 +395,7 @@ public class ManagementController {
     @Operation(summary = "CU16 - Calcular saldo pendiente agregado de una gestión (RF-22)")
     public ResponseEntity<DtoSaldoPending> getSaldoPending(@PathVariable Integer id) {
         try {
-            Float saldo = managementArchiveDebtService.calcularSaldoPending(id);
+            Float saldo = managementArchiveDebtService.calculatePendingBalance(id);
             return ResponseEntity.ok(new DtoSaldoPending(saldo));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -410,7 +410,7 @@ public class ManagementController {
     @Operation(summary = "CU47/CU02 - Obtener resumen financiero agregado de una gestión")
     public ResponseEntity<DtoManagementResumenFinanciero> getResumenFinanciero(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(managementResumenFinancieroService.obtenerResumen(id));
+            return ResponseEntity.ok(managementResumenFinancieroService.getSummary(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

@@ -83,9 +83,9 @@ class BudgetResumenServiceTest {
             when(budgetRepository.findById(10)).thenReturn(Optional.of(budget));
             when(procedureRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(procedureFor(management)));
             when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of());
-            when(paymentService.calcularSaldoPending(10)).thenReturn(5000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(5000.00f);
 
-            DtoBudgetResumen resumen = budgetResumenService.obtenerResumen(10);
+            DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
             assertThat(resumen.saldoPending()).isEqualTo(5000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
@@ -106,9 +106,9 @@ class BudgetResumenServiceTest {
             when(budgetRepository.findById(10)).thenReturn(Optional.of(budget));
             when(procedureRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(procedureFor(management)));
             when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(paymentOf(1, 2000.00f)));
-            when(paymentService.calcularSaldoPending(10)).thenReturn(3000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
 
-            DtoBudgetResumen resumen = budgetResumenService.obtenerResumen(10);
+            DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
             assertThat(resumen.saldoPending()).isEqualTo(3000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
@@ -130,9 +130,9 @@ class BudgetResumenServiceTest {
             when(procedureRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(procedureFor(management)));
             when(paymentService.findPaymentsByBudget(10))
                     .thenReturn(List.of(paymentOf(1, 2000.00f), paymentOf(2, 1000.00f)));
-            when(paymentService.calcularSaldoPending(10)).thenReturn(2000.00f);
+            when(paymentService.calculatePendingBalance(10)).thenReturn(2000.00f);
 
-            DtoBudgetResumen resumen = budgetResumenService.obtenerResumen(10);
+            DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
             assertThat(resumen.saldoPending()).isEqualTo(2000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
@@ -144,7 +144,7 @@ class BudgetResumenServiceTest {
         void shouldThrowExceptionWhenBudgetNotFound() {
             when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> budgetResumenService.obtenerResumen(999))
+            assertThatThrownBy(() -> budgetResumenService.getSummary(999))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Presupuesto no encontrado");
         }

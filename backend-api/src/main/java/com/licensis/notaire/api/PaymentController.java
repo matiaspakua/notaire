@@ -64,7 +64,7 @@ public class PaymentController {
     @Transactional(readOnly = true)
     public ResponseEntity<DtoPaymentResponse> getById(@PathVariable Integer id) {
         try {
-            return paymentService.consultarPayment(id)
+            return paymentService.getPayment(id)
                     .map(PaymentMapper::toDto)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
@@ -92,7 +92,7 @@ public class PaymentController {
     @Transactional(readOnly = true)
     public ResponseEntity<Float> getSaldoPending(@PathVariable Integer idBudget) {
         try {
-            Float saldo = paymentService.calcularSaldoPending(idBudget);
+            Float saldo = paymentService.calculatePendingBalance(idBudget);
             return ResponseEntity.ok(saldo);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -111,7 +111,7 @@ public class PaymentController {
     @Transactional(readOnly = true)
     public ResponseEntity<StatusPayment> getStatusPayment(@PathVariable Integer idBudget) {
         try {
-            StatusPayment status = paymentService.calcularStatusPayment(idBudget);
+            StatusPayment status = paymentService.calculatePaymentStatus(idBudget);
             return ResponseEntity.ok(status);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -145,9 +145,9 @@ public class PaymentController {
 })
     @PostMapping
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
-    public ResponseEntity<DtoPaymentResponse> procesarPayment(@RequestBody PaymentRequest request) {
+    public ResponseEntity<DtoPaymentResponse> processPayment(@RequestBody PaymentRequest request) {
         try {
-            Payment payment = paymentService.procesarPayment(
+            Payment payment = paymentService.processPayment(
                     request.idBudget(),
                     request.amount(),
                     request.date(),
@@ -174,7 +174,7 @@ public class PaymentController {
 })
     @PostMapping("/params")
     @Operation(summary = "CU15 - Procesar pago (query params)")
-    public ResponseEntity<DtoPaymentResponse> procesarPaymentParams(
+    public ResponseEntity<DtoPaymentResponse> processPaymentParams(
             @Parameter(description = "ID del presupuesto") @RequestParam Integer idBudget,
             @Parameter(description = "Monto del pago") @RequestParam Float amount,
             @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
@@ -182,7 +182,7 @@ public class PaymentController {
             @Parameter(description = "Observaciones") @RequestParam(required = false) String notes,
             @Parameter(description = "Método de pago") @RequestParam(required = false) String paymentMethod) {
         try {
-            Payment payment = paymentService.procesarPayment(idBudget, amount, date, notes, paymentMethod);
+            Payment payment = paymentService.processPayment(idBudget, amount, date, notes, paymentMethod);
             return ResponseEntity.status(HttpStatus.CREATED).body(PaymentMapper.toDto(payment));
         } catch (SaldoPendingExcedidoException e) {
             log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());

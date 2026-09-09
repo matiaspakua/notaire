@@ -31,8 +31,8 @@ public class ManagementResumenFinancieroService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementResumenFinanciero obtenerResumen(Integer idManagement) {
-        Float saldoPending = managementArchiveDebtService.calcularSaldoPending(idManagement);
+    public DtoManagementResumenFinanciero getSummary(Integer idManagement) {
+        Float saldoPending = managementArchiveDebtService.calculatePendingBalance(idManagement);
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
         Set<Integer> idsBudgetContados = new HashSet<>();
@@ -44,7 +44,7 @@ public class ManagementResumenFinancieroService {
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            Float saldoBudget = paymentService.calcularSaldoPending(budget.getIdBudget());
+            Float saldoBudget = paymentService.calculatePendingBalance(budget.getIdBudget());
             float cobradoBudget = (float) paymentService.findPaymentsByBudget(budget.getIdBudget())
                     .stream().mapToDouble(p -> p.getAmount()).sum();
             totalCobrado += cobradoBudget;

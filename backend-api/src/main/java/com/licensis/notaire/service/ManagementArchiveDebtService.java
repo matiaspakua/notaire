@@ -52,7 +52,7 @@ public class ManagementArchiveDebtService {
      * Suma el saldo pendiente de cada presupuesto vinculado a los trámites de la gestión.
      */
     @Transactional(readOnly = true)
-    public Float calcularSaldoPending(Integer idManagement) {
+    public Float calculatePendingBalance(Integer idManagement) {
         managementRepository.findById(idManagement)
                 .orElseThrow(() -> new IllegalArgumentException("Gestión no encontrada con ID: " + idManagement));
 
@@ -64,7 +64,7 @@ public class ManagementArchiveDebtService {
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            Float saldoBudget = paymentService.calcularSaldoPending(budget.getIdBudget());
+            Float saldoBudget = paymentService.calculatePendingBalance(budget.getIdBudget());
             saldo += saldoBudget != null ? saldoBudget : 0f;
         }
 
@@ -107,7 +107,7 @@ public class ManagementArchiveDebtService {
                     carpetasEnWait);
         }
 
-        Float saldoPending = calcularSaldoPending(idManagement);
+        Float saldoPending = calculatePendingBalance(idManagement);
 
         DeedManagement management = managementTransitionService.transicionar(idManagement, StatusARCHIVADA);
         management.setPendingDebtAtArchiving(saldoPending != null && saldoPending > 0);

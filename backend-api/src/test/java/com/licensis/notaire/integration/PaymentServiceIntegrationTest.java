@@ -65,7 +65,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should process valid pago through service")
     void shouldProcessValidPaymentThroughService() {
-        Payment result = paymentService.procesarPayment(
+        Payment result = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -80,21 +80,21 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should throw exception when budget not found")
     void shouldThrowExceptionWhenBudgetNotFound() {
-        assertThatThrownBy(() -> paymentService.procesarPayment(9999, 100000f, new Date(), "Test"))
+        assertThatThrownBy(() -> paymentService.processPayment(9999, 100000f, new Date(), "Test"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("Should calculate saldo pendiente correctly")
     void shouldCalculateSaldoPendingCorrectly() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
                 "Pago 1"
         );
 
-        Float saldoPending = paymentService.calcularSaldoPending(testBudget.getIdBudget());
+        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
 
         assertThat(saldoPending).isEqualTo(400000f);
     }
@@ -102,20 +102,20 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should calculate saldo pendiente with multiple payments")
     void shouldCalculateSaldoPendingWithMultiplePayments() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
                 "Pago 1"
         );
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 150000f,
                 new Date(),
                 "Pago 2"
         );
 
-        Float saldoPending = paymentService.calcularSaldoPending(testBudget.getIdBudget());
+        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
 
         assertThat(saldoPending).isEqualTo(250000f);
     }
@@ -123,7 +123,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should reject a pago exceeding saldo pendiente and not persist it")
     void shouldRejectPaymentExceedingSaldoPending() {
-        assertThatThrownBy(() -> paymentService.procesarPayment(
+        assertThatThrownBy(() -> paymentService.processPayment(
                 testBudget.getIdBudget(),
                 600000f,
                 new Date(),
@@ -137,14 +137,14 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should reject a pago exceeding saldo already reduced by a prior payment")
     void shouldRejectPaymentExceedingSaldoReducedByPriorPayment() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 400000f,
                 new Date(),
                 "Pago 1"
         );
 
-        assertThatThrownBy(() -> paymentService.procesarPayment(
+        assertThatThrownBy(() -> paymentService.processPayment(
                 testBudget.getIdBudget(),
                 150000f,
                 new Date(),
@@ -158,7 +158,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find payments by budget through service")
     void shouldFindPaymentsByBudgetThroughService() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -175,7 +175,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find all payments through service")
     void shouldFindAllPaymentsThroughService() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -190,14 +190,14 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find pago by id through service")
     void shouldFindPaymentByIdThroughService() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
                 "Pago"
         );
 
-        Optional<Payment> found = paymentService.consultarPayment(saved.getIdPayment());
+        Optional<Payment> found = paymentService.getPayment(saved.getIdPayment());
 
         assertThat(found).isPresent()
                 .hasValueSatisfying(p -> assertThat(p.getAmount()).isEqualTo(100000f));
@@ -207,7 +207,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should find payments by date range through service")
     void shouldFindPaymentsByDateRangeThroughService() {
         Date now = new Date();
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 now,
@@ -225,7 +225,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should delete pago through service")
     void shouldDeletePaymentThroughService() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -234,14 +234,14 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
 
         paymentService.deletePayment(saved.getIdPayment());
 
-        Optional<Payment> deleted = paymentService.consultarPayment(saved.getIdPayment());
+        Optional<Payment> deleted = paymentService.getPayment(saved.getIdPayment());
         assertThat(deleted).isEmpty();
     }
 
     @Test
     @DisplayName("Should edit pago through service")
     void shouldEditPaymentThroughService() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -257,7 +257,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should enforce amount validation in service")
     void shouldEnforcAmountValidationInService() {
-        assertThatThrownBy(() -> paymentService.procesarPayment(
+        assertThatThrownBy(() -> paymentService.processPayment(
                 testBudget.getIdBudget(),
                 -100f,
                 new Date(),
@@ -268,7 +268,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should maintain transaction consistency across service methods")
     void shouldMaintainTransactionConsistency() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -284,7 +284,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle editarPago with null amount")
     void shouldHandleEditarPaymentWithNullAmount() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -302,7 +302,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle editarPago with null date")
     void shouldHandleEditarPaymentWithNullDate() {
         Date originalDate = new Date();
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 originalDate,
@@ -319,7 +319,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle editarPago with null notes")
     void shouldHandleEditarPaymentWithNullNotes() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -336,7 +336,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should reject negative amount in editarPago")
     void shouldRejectNegativeAmountInEditarPayment() {
-        Payment saved = paymentService.procesarPayment(
+        Payment saved = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 new Date(),
@@ -377,7 +377,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     void shouldHandleProcessPaymentWithNullDate() {
         long beforeTime = System.currentTimeMillis();
 
-        Payment result = paymentService.procesarPayment(
+        Payment result = paymentService.processPayment(
                 testBudget.getIdBudget(),
                 100000f,
                 null,
@@ -394,7 +394,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle zero amount in procesarPago")
     void shouldRejectZeroAmountInProcessarPayment() {
-        assertThatThrownBy(() -> paymentService.procesarPayment(
+        assertThatThrownBy(() -> paymentService.processPayment(
                 testBudget.getIdBudget(),
                 0f,
                 new Date(),
@@ -410,9 +410,9 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
         float monto2 = 75000f;
         float monto3 = 125000f;
 
-        paymentService.procesarPayment(testBudget.getIdBudget(), monto1, new Date(), "Pago 1");
-        paymentService.procesarPayment(testBudget.getIdBudget(), monto2, new Date(), "Pago 2");
-        paymentService.procesarPayment(testBudget.getIdBudget(), monto3, new Date(), "Pago 3");
+        paymentService.processPayment(testBudget.getIdBudget(), monto1, new Date(), "Pago 1");
+        paymentService.processPayment(testBudget.getIdBudget(), monto2, new Date(), "Pago 2");
+        paymentService.processPayment(testBudget.getIdBudget(), monto3, new Date(), "Pago 3");
 
         List<Payment> payments = paymentService.findPaymentsByBudget(testBudget.getIdBudget());
 
@@ -421,7 +421,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 .extracting(Payment::getAmount)
                 .containsExactlyInAnyOrder(monto1, monto2, monto3);
 
-        Float saldoPending = paymentService.calcularSaldoPending(testBudget.getIdBudget());
+        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
         float totalPagado = monto1 + monto2 + monto3;
         assertThat(saldoPending).isEqualTo(500000f - totalPagado);
     }
@@ -434,9 +434,9 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
         Date date2 = new Date(now - 86400000);
         Date date3 = new Date(now);
 
-        paymentService.procesarPayment(testBudget.getIdBudget(), 100000f, date1, "Pago 1");
-        paymentService.procesarPayment(testBudget.getIdBudget(), 100000f, date2, "Pago 2");
-        paymentService.procesarPayment(testBudget.getIdBudget(), 100000f, date3, "Pago 3");
+        paymentService.processPayment(testBudget.getIdBudget(), 100000f, date1, "Pago 1");
+        paymentService.processPayment(testBudget.getIdBudget(), 100000f, date2, "Pago 2");
+        paymentService.processPayment(testBudget.getIdBudget(), 100000f, date3, "Pago 3");
 
         Date startDate = new Date(now - 3 * 86400000);
         Date endDate = new Date(now + 86400000);
@@ -453,21 +453,21 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should calculate saldo correctly with full payment")
     void shouldCalculateSaldoWithFullPayment() {
-        paymentService.procesarPayment(
+        paymentService.processPayment(
                 testBudget.getIdBudget(),
                 500000f,
                 new Date(),
                 "Full payment"
         );
 
-        Float saldoPending = paymentService.calcularSaldoPending(testBudget.getIdBudget());
+        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
         assertThat(saldoPending).isZero();
     }
 
     @Test
     @DisplayName("Should throw exception when calcularSaldoPendiente for non-existent budget")
     void shouldThrowExceptionWhenCalculatingSaldoForNonExistentBudget() {
-        assertThatThrownBy(() -> paymentService.calcularSaldoPending(9999))
+        assertThatThrownBy(() -> paymentService.calculatePendingBalance(9999))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("no encontrado");
     }

@@ -79,7 +79,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 200 when pago found")
     void shouldGetPaymentById() throws Exception {
-        when(paymentService.consultarPayment(1)).thenReturn(Optional.of(buildPayment()));
+        when(paymentService.getPayment(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPayment").value(1));
@@ -88,7 +88,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404WhenPaymentNotFound() throws Exception {
-        when(paymentService.consultarPayment(999)).thenReturn(Optional.empty());
+        when(paymentService.getPayment(999)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/pagos/999"))
                 .andExpect(status().isNotFound());
     }
@@ -96,7 +96,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should include the associated presupuesto")
     void shouldIncludeBudgetWhenRetrievingPaymentById() throws Exception {
-        when(paymentService.consultarPayment(1)).thenReturn(Optional.of(buildPayment()));
+        when(paymentService.getPayment(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idBudget").value(10));
@@ -105,7 +105,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturnServerErrorOnGetById() throws Exception {
-        when(paymentService.consultarPayment(anyInt())).thenThrow(new RuntimeException("Service error"));
+        when(paymentService.getPayment(anyInt())).thenThrow(new RuntimeException("Service error"));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isInternalServerError());
     }
@@ -139,7 +139,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return saldo pendiente")
     void shouldGetSaldoPending() throws Exception {
-        when(paymentService.calcularSaldoPending(10)).thenReturn(1000.0f);
+        when(paymentService.calculatePendingBalance(10)).thenReturn(1000.0f);
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1000.0"));
@@ -148,7 +148,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return 404 for invalid presupuesto")
     void shouldReturn404ForInvalidBudget() throws Exception {
-        when(paymentService.calcularSaldoPending(999)).thenThrow(new IllegalArgumentException("Not found"));
+        when(paymentService.calculatePendingBalance(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/999/saldo"))
                 .andExpect(status().isNotFound());
     }
@@ -156,7 +156,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return 500 on error")
     void shouldReturnServerErrorOnSaldoCalculation() throws Exception {
-        when(paymentService.calcularSaldoPending(anyInt())).thenThrow(new RuntimeException("Calculation error"));
+        when(paymentService.calculatePendingBalance(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
                 .andExpect(status().isInternalServerError());
     }
@@ -164,7 +164,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return estado de pago")
     void shouldGetStatusPayment() throws Exception {
-        when(paymentService.calcularStatusPayment(10)).thenReturn(StatusPayment.PARCIAL);
+        when(paymentService.calculatePaymentStatus(10)).thenReturn(StatusPayment.PARCIAL);
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("\"PARCIAL\""));
@@ -173,7 +173,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 404 for invalid presupuesto")
     void shouldReturn404ForStatusOfInvalidBudget() throws Exception {
-        when(paymentService.calcularStatusPayment(999)).thenThrow(new IllegalArgumentException("Not found"));
+        when(paymentService.calculatePaymentStatus(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/999/estado"))
                 .andExpect(status().isNotFound());
     }
@@ -181,7 +181,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 500 on error")
     void shouldReturnServerErrorOnStatusCalculation() throws Exception {
-        when(paymentService.calcularStatusPayment(anyInt())).thenThrow(new RuntimeException("Calculation error"));
+        when(paymentService.calculatePaymentStatus(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isInternalServerError());
     }
@@ -217,7 +217,7 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/pagos should return 201 when pago created")
     void shouldCreatePaymentViaJson() throws Exception {
         Payment newPayment = buildPayment();
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
                 .thenReturn(newPayment);
 
         String json = """
@@ -235,14 +235,14 @@ class PaymentControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idPayment").value(1));
 
-        verify(paymentService, times(1)).procesarPayment(eq(10), eq(500.0f), any(Date.class), eq("Payment de prueba"), any());
+        verify(paymentService, times(1)).processPayment(eq(10), eq(500.0f), any(Date.class), eq("Payment de prueba"), any());
     }
 
     @Test
     @DisplayName("POST /api/v1/pagos should return the associated presupuesto when creating a payment")
     void shouldReturnBudgetWhenCreatingPayment() throws Exception {
         Payment newPayment = buildPayment();
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
                 .thenReturn(newPayment);
 
         String json = """
@@ -264,7 +264,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 400 on validation error")
     void shouldReturn400OnCreateValidationError() throws Exception {
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid amount"));
 
         String json = """
@@ -285,7 +285,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409WhenCreateExceedsSaldo() throws Exception {
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new SaldoPendingExcedidoException("no puede exceder el saldo pendiente"));
 
         String json = """
@@ -306,7 +306,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 500 on service error")
     void shouldReturn500OnCreateServiceError() throws Exception {
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """
@@ -328,7 +328,7 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/pagos/params should return 201 when pago created via params")
     void shouldCreatePaymentViaParams() throws Exception {
         Payment newPayment = buildPayment();
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenReturn(newPayment);
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -344,7 +344,7 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/pagos/params should handle missing optional params")
     void shouldHandleMissingOptionalParams() throws Exception {
         Payment newPayment = buildPayment();
-        when(paymentService.procesarPayment(eq(10), eq(500.0f), isNull(), isNull(), isNull()))
+        when(paymentService.processPayment(eq(10), eq(500.0f), isNull(), isNull(), isNull()))
                 .thenReturn(newPayment);
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -357,7 +357,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409OnParamsExceedsSaldo() throws Exception {
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), any(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), any(), any()))
                 .thenThrow(new SaldoPendingExcedidoException("no puede exceder el saldo pendiente"));
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -369,7 +369,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 500 on service error")
     void shouldReturn500OnParamsServiceError() throws Exception {
-        when(paymentService.procesarPayment(anyInt(), anyFloat(), any(), any(), any()))
+        when(paymentService.processPayment(anyInt(), anyFloat(), any(), any(), any()))
                 .thenThrow(new RuntimeException("Service error"));
 
         mockMvc.perform(post("/api/v1/pagos/params")

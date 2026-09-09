@@ -85,7 +85,7 @@ public class BudgetController {
     @Operation(summary = "CU47 - Obtener resumen financiero de un presupuesto (total, saldo y pagos)")
     public ResponseEntity<DtoBudgetResumen> getResumen(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(budgetResumenService.obtenerResumen(id));
+            return ResponseEntity.ok(budgetResumenService.getSummary(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

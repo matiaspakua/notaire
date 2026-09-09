@@ -34,8 +34,8 @@ public class PaymentService {
      * Calcula el saldo pendiente y valida que el monto no exceda el total.
      */
     @Transactional
-    public Payment procesarPayment(Integer idBudget, Float amount, Date date, String notes) {
-        return procesarPayment(idBudget, amount, date, notes, null);
+    public Payment processPayment(Integer idBudget, Float amount, Date date, String notes) {
+        return processPayment(idBudget, amount, date, notes, null);
     }
 
     /**
@@ -43,7 +43,7 @@ public class PaymentService {
      * Calcula el saldo pendiente y valida que el monto no exceda el total.
      */
     @Transactional
-    public Payment procesarPayment(Integer idBudget, Float amount, Date date, String notes,
+    public Payment processPayment(Integer idBudget, Float amount, Date date, String notes,
             String paymentMethod) {
         log.info("Procesando pago para presupuesto {}: monto={}", idBudget, amount);
 
@@ -55,7 +55,7 @@ public class PaymentService {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
 
-        Float saldoPending = calcularSaldoPending(idBudget);
+        Float saldoPending = calculatePendingBalance(idBudget);
         log.info("Saldo pendiente para presupuesto {}: {}", idBudget, saldoPending);
 
         if (amount > saldoPending) {
@@ -81,7 +81,7 @@ public class PaymentService {
      * CU47 - Consultar Pago: Obtiene un pago por su ID.
      */
     @Transactional(readOnly = true)
-    public Optional<Payment> consultarPayment(Integer idPayment) {
+    public Optional<Payment> getPayment(Integer idPayment) {
         log.debug("Consultando pago con ID: {}", idPayment);
         return paymentRepository.findById(idPayment);
     }
@@ -98,12 +98,12 @@ public class PaymentService {
      * Calcula el saldo pendiente de un presupuesto.
      */
     @Transactional(readOnly = true)
-    public Float calcularSaldoPending(Integer idBudget) {
+    public Float calculatePendingBalance(Integer idBudget) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + idBudget));
 
-        Float totalBudget = calcularTotalBudget(budget);
+        Float totalBudget = calculateBudgetTotal(budget);
         Float totalPagado = paymentRepository.sumAmountByBudgetId(idBudget);
         Float saldoPending = totalBudget - (totalPagado != null ? totalPagado : 0f);
 
@@ -117,7 +117,7 @@ public class PaymentService {
      * PARCIAL en cualquier otro caso.
      */
     @Transactional(readOnly = true)
-    public StatusPayment calcularStatusPayment(Integer idBudget) {
+    public StatusPayment calculatePaymentStatus(Integer idBudget) {
         budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + idBudget));
@@ -127,7 +127,7 @@ public class PaymentService {
             return StatusPayment.SINPayments;
         }
 
-        Float saldoPending = calcularSaldoPending(idBudget);
+        Float saldoPending = calculatePendingBalance(idBudget);
         return saldoPending <= 0f ? StatusPayment.SALDADO : StatusPayment.PARCIAL;
     }
 
@@ -136,7 +136,7 @@ public class PaymentService {
      * restando los items de descuento, y sumando los costos de documentos presentados
      * en sus trámites (Issue #823).
      */
-    private Float calcularTotalBudget(Budget budget) {
+    private Float calculateBudgetTotal(Budget budget) {
         float total;
         if (budget.getItemList() == null || budget.getItemList().isEmpty()) {
             total = budget.getPropertyAmount() != null ? budget.getPropertyAmount() : 0f;

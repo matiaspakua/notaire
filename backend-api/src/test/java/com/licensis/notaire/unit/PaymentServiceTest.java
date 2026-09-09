@@ -69,7 +69,7 @@ class PaymentServiceTest {
             when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
 
             // Act
-            Payment result = paymentService.procesarPayment(1, 2000.00f, new Date(), "Pago parcial");
+            Payment result = paymentService.processPayment(1, 2000.00f, new Date(), "Pago parcial");
 
             // Assert
             assertThat(result).isNotNull();
@@ -85,7 +85,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> paymentService.procesarPayment(999, 1000.00f, new Date(), "Test"))
+            assertThatThrownBy(() -> paymentService.processPayment(999, 1000.00f, new Date(), "Test"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Presupuesto no encontrado");
         }
@@ -97,7 +97,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
             // Act & Assert
-            assertThatThrownBy(() -> paymentService.procesarPayment(1, 0.00f, new Date(), "Test"))
+            assertThatThrownBy(() -> paymentService.processPayment(1, 0.00f, new Date(), "Test"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("El monto del pago debe ser mayor a cero");
         }
@@ -109,7 +109,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
             // Act & Assert
-            assertThatThrownBy(() -> paymentService.procesarPayment(1, -500.00f, new Date(), "Test"))
+            assertThatThrownBy(() -> paymentService.processPayment(1, -500.00f, new Date(), "Test"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("El monto del pago debe ser mayor a cero");
         }
@@ -121,7 +121,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
             // Act & Assert
-            assertThatThrownBy(() -> paymentService.procesarPayment(1, null, new Date(), "Test"))
+            assertThatThrownBy(() -> paymentService.processPayment(1, null, new Date(), "Test"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("El monto del pago debe ser mayor a cero");
         }
@@ -148,7 +148,7 @@ class PaymentServiceTest {
             });
 
             // Act
-            Payment result = paymentService.procesarPayment(1, 1000.00f, null, "Test");
+            Payment result = paymentService.processPayment(1, 1000.00f, null, "Test");
 
             // Assert
             assertThat(result.getDate()).isNotNull();
@@ -166,7 +166,7 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(4000.00f);
 
             // Act
-            Float saldoPending = paymentService.calcularSaldoPending(1);
+            Float saldoPending = paymentService.calculatePendingBalance(1);
 
             // Assert
             assertThat(saldoPending).isEqualTo(6000.00f);
@@ -180,7 +180,7 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
             // Act
-            Float saldoPending = paymentService.calcularSaldoPending(1);
+            Float saldoPending = paymentService.calculatePendingBalance(1);
 
             // Assert
             assertThat(saldoPending).isEqualTo(10000.00f);
@@ -201,7 +201,7 @@ class PaymentServiceTest {
             when(paymentRepository.findById(1)).thenReturn(Optional.of(expectedPayment));
 
             // Act
-            Optional<Payment> result = paymentService.consultarPayment(1);
+            Optional<Payment> result = paymentService.getPayment(1);
 
             // Assert
             assertThat(result).isPresent();
@@ -216,7 +216,7 @@ class PaymentServiceTest {
             when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
             // Act
-            Optional<Payment> result = paymentService.consultarPayment(999);
+            Optional<Payment> result = paymentService.getPayment(999);
 
             // Assert
             assertThat(result).isEmpty();
@@ -308,7 +308,7 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            Payment result = paymentService.procesarPayment(1, 2000.00f, new Date(), "Pago parcial", "Efectivo");
+            Payment result = paymentService.processPayment(1, 2000.00f, new Date(), "Pago parcial", "Efectivo");
 
             assertThat(result.getPaymentMethod()).isEqualTo("Efectivo");
         }
@@ -320,7 +320,7 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            Payment result = paymentService.procesarPayment(1, 2000.00f, new Date(), "Pago parcial");
+            Payment result = paymentService.processPayment(1, 2000.00f, new Date(), "Pago parcial");
 
             assertThat(result.getPaymentMethod()).isNull();
         }
@@ -369,7 +369,7 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(30000f); // Already paid 30k
 
             // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
-            assertThatThrownBy(() -> paymentService.procesarPayment(1, 25000f, new Date(), "Overpay attempt"))
+            assertThatThrownBy(() -> paymentService.processPayment(1, 25000f, new Date(), "Overpay attempt"))
                     .isInstanceOf(SaldoPendingExcedidoException.class)
                     .hasMessageContaining("no puede exceder el saldo pendiente");
 
@@ -392,7 +392,7 @@ class PaymentServiceTest {
             });
 
             // Saldo = 50k - 30k = 20k, paying exactly 20k should succeed
-            Payment result = paymentService.procesarPayment(1, 20000f, new Date(), "Exact payment");
+            Payment result = paymentService.processPayment(1, 20000f, new Date(), "Exact payment");
 
             assertThat(result).isNotNull();
             assertThat(result.getAmount()).isEqualTo(20000f);
@@ -415,7 +415,7 @@ class PaymentServiceTest {
             });
 
             // Saldo = 50k - 30k = 20k, paying 15k should succeed
-            Payment result = paymentService.procesarPayment(1, 15000f, new Date(), "Partial payment");
+            Payment result = paymentService.processPayment(1, 15000f, new Date(), "Partial payment");
 
             assertThat(result).isNotNull();
             assertThat(result.getAmount()).isEqualTo(15000f);
@@ -449,7 +449,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calcularSaldoPending(1);
+            Float saldoPending = paymentService.calculatePendingBalance(1);
 
             assertThat(saldoPending).isEqualTo(8000f);
         }
@@ -468,7 +468,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calcularSaldoPending(1);
+            Float saldoPending = paymentService.calculatePendingBalance(1);
 
             assertThat(saldoPending).isEqualTo(11500f);
         }
@@ -487,7 +487,7 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calcularSaldoPending(1);
+            Float saldoPending = paymentService.calculatePendingBalance(1);
 
             assertThat(saldoPending).isEqualTo(15000f);
         }

@@ -65,7 +65,7 @@ class PaymentServiceTest {
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
         when(paymentRepository.save(any(Payment.class))).thenReturn(testPayment);
 
-        Payment result = paymentService.procesarPayment(1, 1000f, testDate, "Test");
+        Payment result = paymentService.processPayment(1, 1000f, testDate, "Test");
 
         assertThat(result).isNotNull()
                 .extracting(Payment::getAmount, Payment::getIdPayment)
@@ -80,7 +80,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenBudgetNotFound() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> paymentService.procesarPayment(999, 1000f, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.processPayment(999, 1000f, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Presupuesto no encontrado");
 
@@ -93,7 +93,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsNull() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.procesarPayment(1, null, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.processPayment(1, null, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -105,7 +105,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsZero() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.procesarPayment(1, 0f, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.processPayment(1, 0f, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -117,7 +117,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsNegative() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.procesarPayment(1, -100f, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.processPayment(1, -100f, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -129,7 +129,7 @@ class PaymentServiceTest {
     void shouldConsultPaymentById() {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
 
-        Optional<Payment> result = paymentService.consultarPayment(1);
+        Optional<Payment> result = paymentService.getPayment(1);
 
         assertThat(result).isPresent()
                 .contains(testPayment);
@@ -142,7 +142,7 @@ class PaymentServiceTest {
     void shouldReturnEmptyWhenPaymentNotFound() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-        Optional<Payment> result = paymentService.consultarPayment(999);
+        Optional<Payment> result = paymentService.getPayment(999);
 
         assertThat(result).isEmpty();
 
@@ -173,7 +173,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(1000f);
 
-        Float result = paymentService.calcularSaldoPending(1);
+        Float result = paymentService.calculatePendingBalance(1);
 
         assertThat(result).isEqualTo(4000f);
 
@@ -187,7 +187,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calcularSaldoPending(1);
+        Float result = paymentService.calculatePendingBalance(1);
 
         assertThat(result).isEqualTo(5000f);
 
@@ -200,7 +200,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        StatusPayment result = paymentService.calcularStatusPayment(1);
+        StatusPayment result = paymentService.calculatePaymentStatus(1);
 
         assertThat(result).isEqualTo(StatusPayment.SINPayments);
     }
@@ -211,7 +211,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(1000f);
 
-        StatusPayment result = paymentService.calcularStatusPayment(1);
+        StatusPayment result = paymentService.calculatePaymentStatus(1);
 
         assertThat(result).isEqualTo(StatusPayment.PARCIAL);
     }
@@ -222,7 +222,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(5000f);
 
-        StatusPayment result = paymentService.calcularStatusPayment(1);
+        StatusPayment result = paymentService.calculatePaymentStatus(1);
 
         assertThat(result).isEqualTo(StatusPayment.SALDADO);
     }
@@ -340,7 +340,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calcularSaldoPending(1);
+        Float result = paymentService.calculatePendingBalance(1);
 
         assertThat(result).isEqualTo(6500f);
     }
@@ -353,7 +353,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calcularSaldoPending(1);
+        Float result = paymentService.calculatePendingBalance(1);
 
         assertThat(result).isEqualTo(6500f);
     }
@@ -366,7 +366,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calcularSaldoPending(1);
+        Float result = paymentService.calculatePendingBalance(1);
 
         assertThat(result).isEqualTo(5000f);
     }
