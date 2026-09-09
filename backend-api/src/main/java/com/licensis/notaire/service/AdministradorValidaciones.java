@@ -1,17 +1,7 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.dto.DtoSubmittedDocument;
-import com.licensis.notaire.dto.DtoUser;
-import com.licensis.notaire.jpa.UserJpaController;
-import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.business.BusinessController;
-import com.licensis.notaire.business.User;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AdministradorValidaciones
 {

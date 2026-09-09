@@ -45,7 +45,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
     {
 
         boolean flag = false; //Variable para saber el resultado de la transaccion
-        int version = 0;    //Variable para Version en bd del Objeto  
+        int version = 0;    //Variable para Version en bd del Objeto
 
         Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
         EntityManager em = null;
@@ -95,7 +95,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion
         int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto       
+        int version = 0;    //Variable para Version en bd del Objeto
 
         EntityManager em = getEntityManager();
 
