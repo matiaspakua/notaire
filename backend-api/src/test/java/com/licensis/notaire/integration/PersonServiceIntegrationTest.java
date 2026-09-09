@@ -288,8 +288,8 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
 
         assertThat(updated)
                 .hasFieldOrPropertyWithValue("name", "Carlos")
-                .hasFieldOrPropertyWithValue("apellido", "López")
-                .hasFieldOrPropertyWithValue("esCliente", true);
+                .hasFieldOrPropertyWithValue("lastName", "López")
+                .hasFieldOrPropertyWithValue("isClient", true);
     }
 
     @Test

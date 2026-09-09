@@ -173,7 +173,7 @@ class ManagementArchiveIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(managementId))
                 .andExpect(jsonPath("$.saldoPending").value(5000.00))
-                .andExpect(jsonPath("$.deudaPendienteAlArchivar").value(true));
+                .andExpect(jsonPath("$.pendingDebtAtArchiving").value(true));
     }
 
     @Test
@@ -199,7 +199,7 @@ class ManagementArchiveIntegrationTest {
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.saldoPending").value(0.00))
-                .andExpect(jsonPath("$.deudaPendienteAlArchivar").value(false));
+                .andExpect(jsonPath("$.pendingDebtAtArchiving").value(false));
     }
 
     @Test
@@ -213,7 +213,7 @@ class ManagementArchiveIntegrationTest {
         assertThat(deedManagementRepository.findById(managementId))
                 .isPresent()
                 .get()
-                .extracting("deudaPendienteAlArchivar")
+                .extracting("pendingDebtAtArchiving")
                 .isEqualTo(true);
     }
 
@@ -228,7 +228,7 @@ class ManagementArchiveIntegrationTest {
         assertThat(deedManagementRepository.findById(managementId))
                 .isPresent()
                 .get()
-                .extracting("deudaPendienteAlArchivar")
+                .extracting("pendingDebtAtArchiving")
                 .isEqualTo(false);
     }
 

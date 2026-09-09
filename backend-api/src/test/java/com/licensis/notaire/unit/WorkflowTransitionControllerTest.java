@@ -85,7 +85,7 @@ class WorkflowTransitionControllerTest {
         when(repository.findByWorkflowDefinitionId(1)).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/workflow-transition/by-workflow/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].descripcion").value("Inicio → Revisión"));
+                .andExpect(jsonPath("$[0].description").value("Inicio → Revisión"));
     }
 
     @Test

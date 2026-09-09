@@ -167,12 +167,12 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.paymentList = paymentList;
     }
 
-    @JsonProperty("persona")
+    @JsonProperty("person")
     public Person getFkIdPerson() {
         return fkIdPerson;
     }
 
-    @JsonProperty("persona")
+    @JsonProperty("person")
     public void setFkIdPerson(Person fkIdPerson) {
         this.fkIdPerson = fkIdPerson;
     }
@@ -305,12 +305,12 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.status = status;
     }
 
-    @JsonProperty("monto")
+    @JsonProperty("amount")
     public Float getPropertyAmount() {
         return propertyAmount;
     }
 
-    @JsonProperty("monto")
+    @JsonProperty("amount")
     public void setPropertyAmount(Float propertyAmount) {
         this.propertyAmount = propertyAmount;
     }
