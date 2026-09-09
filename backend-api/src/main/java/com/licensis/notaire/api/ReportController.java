@@ -30,13 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/reportes")
 @Validated
 @Tag(name = "Reportes", description = "API para generación de reportes PDF")
-public class ReporteController {
+public class ReportController {
 
-    private static final Logger log = LoggerFactory.getLogger(ReporteController.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportController.class);
 
     private final ReporteService reporteService;
 
-    public ReporteController(ReporteService reporteService) {
+    public ReportController(ReporteService reporteService) {
         this.reporteService = reporteService;
     }
 
@@ -61,61 +61,61 @@ public class ReporteController {
     @GetMapping(value = "/presupuesto/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de presupuesto",
                description = "Genera un PDF con el presupuesto especificado")
-    public ResponseEntity<byte[]> generarReportePresupuesto(
+    public ResponseEntity<byte[]> generarReporteBudget(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable @Positive Integer idPresupuesto) {
-        return buildPdfResponse("presupuesto_" + idPresupuesto + ".pdf",
-                () -> reporteService.generarReportePresupuesto(idPresupuesto));
+            @PathVariable @Positive Integer idBudget) {
+        return buildPdfResponse("presupuesto_" + idBudget + ".pdf",
+                () -> reporteService.generarReporteBudget(idBudget));
     }
 
     @GetMapping(value = "/presupuesto-inmuebles/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de presupuesto con inmuebles",
                description = "Genera un PDF con el presupuesto e información de inmuebles")
-    public ResponseEntity<byte[]> generarReportePresupuestoInmuebles(
+    public ResponseEntity<byte[]> generarReporteBudgetProperties(
             @Parameter(description = "ID del presupuesto")
-            @PathVariable @Positive Integer idPresupuesto) {
-        return buildPdfResponse("presupuesto_inmuebles_" + idPresupuesto + ".pdf",
-                () -> reporteService.generarReportePresupuestoInmuebles(idPresupuesto));
+            @PathVariable @Positive Integer idBudget) {
+        return buildPdfResponse("presupuesto_inmuebles_" + idBudget + ".pdf",
+                () -> reporteService.generarReporteBudgetProperties(idBudget));
     }
 
     @GetMapping(value = "/lista-documentos-tramite", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de lista de documentos por trámite",
                description = "Genera un PDF con la lista de documentos requeridos para un tipo de trámite")
-    public ResponseEntity<byte[]> generarReporteListaDocumentosTramite(
+    public ResponseEntity<byte[]> generarReporteListaDocumentsProcedure(
             @Parameter(description = "Nombre del tipo de trámite")
-            @RequestParam @NotBlank String nombreTipoTramite) {
+            @RequestParam @NotBlank String nameTypeProcedure) {
         return buildPdfResponse("lista_documentos.pdf",
-                () -> reporteService.generarReporteListaDocumentosTramite(nombreTipoTramite));
+                () -> reporteService.generarReporteListaDocumentsProcedure(nameTypeProcedure));
     }
 
     @GetMapping(value = "/historial-gestion/{idGestion}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de historial de gestión",
                description = "Genera un PDF con el historial de una gestión específica")
-    public ResponseEntity<byte[]> generarReporteHistorialGestion(
+    public ResponseEntity<byte[]> generarReporteHistoryManagement(
             @Parameter(description = "ID de la gestión")
-            @PathVariable @Positive Integer idGestion) {
-        return buildPdfResponse("historial_gestion_" + idGestion + ".pdf",
-                () -> reporteService.generarReporteHistorialGestion(idGestion));
+            @PathVariable @Positive Integer idManagement) {
+        return buildPdfResponse("historial_gestion_" + idManagement + ".pdf",
+                () -> reporteService.generarReporteHistoryManagement(idManagement));
     }
 
     @GetMapping(value = "/documentos-por-vencer/{idDocumentoPresentado}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de documentos por vencer",
                description = "Genera un PDF con información de documentos próximos a vencer")
-    public ResponseEntity<byte[]> generarReporteDocumentosPorVencer(
+    public ResponseEntity<byte[]> generarReporteDocumentsPorVencer(
             @Parameter(description = "ID del documento presentado")
-            @PathVariable @Positive Integer idDocumentoPresentado) {
+            @PathVariable @Positive Integer idSubmittedDocument) {
         return buildPdfResponse("documentos_vencer.pdf",
-                () -> reporteService.generarReporteDocumentosPorVencer(idDocumentoPresentado));
+                () -> reporteService.generarReporteDocumentsPorVencer(idSubmittedDocument));
     }
 
     @GetMapping(value = "/consultar-deuda-documentos", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de consulta de deuda de documentos",
                description = "Genera un PDF con la consulta de deuda de documentos para una gestión")
-    public ResponseEntity<byte[]> generarReporteConsultarDeudaDocumentos(
+    public ResponseEntity<byte[]> generarReporteConsultarDebtDocuments(
             @Parameter(description = "Número de gestión")
-            @RequestParam @Positive Integer numeroGestion) {
-        return buildPdfResponse("deuda_documentos_" + numeroGestion + ".pdf",
-                () -> reporteService.generarReporteConsultarDeudaDocumentos(numeroGestion));
+            @RequestParam @Positive Integer numberManagement) {
+        return buildPdfResponse("deuda_documentos_" + numberManagement + ".pdf",
+                () -> reporteService.generarReporteConsultarDebtDocuments(numberManagement));
     }
 
     @GetMapping(value = "/libro-indice", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -123,9 +123,9 @@ public class ReporteController {
                description = "Endpoint base para CU24. Requiere plantilla Jasper de libro de indice")
     public ResponseEntity<byte[]> generarLibroIndice(
             @Parameter(description = "Año del libro de indice")
-            @RequestParam @Positive Integer anio) {
-        return buildPdfResponse("libro_indice_" + anio + ".pdf",
-                () -> reporteService.generarReporteLibroIndice(anio));
+            @RequestParam @Positive Integer year) {
+        return buildPdfResponse("libro_indice_" + year + ".pdf",
+                () -> reporteService.generarReporteLibroIndice(year));
     }
 
     @GetMapping(value = "/declaracion-jurada-mensual", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -133,14 +133,14 @@ public class ReporteController {
                description = "Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual")
     public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
             @Parameter(description = "Año del periodo")
-            @RequestParam @Positive Integer anio,
+            @RequestParam @Positive Integer year,
             @Parameter(description = "Mes del periodo")
             @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_mensual_" + anio + "_" + mes + ".pdf",
-                () -> reporteService.generarReporteDeclaracionJuradaMensual(anio, mes));
+        return buildPdfResponse("ddjj_mensual_" + year + "_" + mes + ".pdf",
+                () -> reporteService.generarReporteDeclaracionJuradaMensual(year, mes));
     }
 
     @ApiResponses({
@@ -151,13 +151,13 @@ public class ReporteController {
     @GetMapping(value = "/testimonio/{idTestimonio}/copia", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar copia impresa de testimonio verificado",
                description = "Genera un PDF con la copia impresa de un testimonio, solo si ya fue verificado")
-    public ResponseEntity<byte[]> generarReporteCopiaTestimonio(
+    public ResponseEntity<byte[]> generarReporteCopyTestimony(
             @Parameter(description = "ID del testimonio")
-            @PathVariable @Positive Integer idTestimonio) {
-        byte[] pdfBytes = reporteService.generarReporteCopiaTestimonio(idTestimonio);
+            @PathVariable @Positive Integer idTestimony) {
+        byte[] pdfBytes = reporteService.generarReporteCopyTestimony(idTestimony);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"testimonio_" + idTestimonio + "_copia.pdf\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"testimonio_" + idTestimony + "_copia.pdf\"")
                 .body(pdfBytes);
     }
 
@@ -168,14 +168,14 @@ public class ReporteController {
     @GetMapping(value = "/minuta-inscripcion/{idMinutaInscripcion}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU82 - Generar el formulario normalizado de la minuta de inscripción",
                description = "Genera un PDF con el formulario normalizado de una minuta de inscripción")
-    public ResponseEntity<byte[]> generarReporteMinutaInscripcion(
+    public ResponseEntity<byte[]> generarReporteRegistrationDraft(
             @Parameter(description = "ID de la minuta de inscripción")
-            @PathVariable @Positive Integer idMinutaInscripcion) {
-        byte[] pdfBytes = reporteService.generarReporteMinutaInscripcion(idMinutaInscripcion);
+            @PathVariable @Positive Integer idRegistrationDraft) {
+        byte[] pdfBytes = reporteService.generarReporteRegistrationDraft(idRegistrationDraft);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"minuta_inscripcion_" + idMinutaInscripcion + ".pdf\"")
+                        "inline; filename=\"minuta_inscripcion_" + idRegistrationDraft + ".pdf\"")
                 .body(pdfBytes);
     }
 
@@ -186,13 +186,13 @@ public class ReporteController {
     @GetMapping(value = "/recibo-pago/{idPago}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU15 - Emitir recibo de pago",
                description = "Genera un PDF con el recibo de un pago existente")
-    public ResponseEntity<byte[]> generarReporteReciboPago(
+    public ResponseEntity<byte[]> generarReporteReciboPayment(
             @Parameter(description = "ID del pago")
-            @PathVariable @Positive Integer idPago) {
-        byte[] pdfBytes = reporteService.generarReporteReciboPago(idPago);
+            @PathVariable @Positive Integer idPayment) {
+        byte[] pdfBytes = reporteService.generarReporteReciboPayment(idPayment);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"recibo_pago_" + idPago + ".pdf\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"recibo_pago_" + idPayment + ".pdf\"")
                 .body(pdfBytes);
     }
 
@@ -201,13 +201,13 @@ public class ReporteController {
                description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
     public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
             @Parameter(description = "Año del periodo")
-            @RequestParam @Positive Integer anio,
+            @RequestParam @Positive Integer year,
             @Parameter(description = "Mes del periodo")
             @RequestParam @Min(1) @Max(12) Integer mes) {
         if (mes < 1 || mes > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_rentas_" + anio + "_" + mes + ".pdf",
-                () -> reporteService.generarReporteDeclaracionJuradaRentas(anio, mes));
+        return buildPdfResponse("ddjj_rentas_" + year + "_" + mes + ".pdf",
+                () -> reporteService.generarReporteDeclaracionJuradaRentas(year, mes));
     }
 }

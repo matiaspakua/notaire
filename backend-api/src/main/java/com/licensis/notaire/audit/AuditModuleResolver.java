@@ -13,35 +13,35 @@ import java.util.Map;
  */
 public final class AuditModuleResolver {
 
-    private static final Map<String, String> CONTROLLER_TO_MODULE = Map.ofEntries(
-            Map.entry("EscrituraController", "Escrituras"),
+    private static final Map<String, String> ControllerTOMODULE = Map.ofEntries(
+            Map.entry("DeedController", "Deeds"),
             Map.entry("PersonController", "People"),
-            Map.entry("PresupuestoController", "Presupuestos"),
-            Map.entry("ConceptoController", "Conceptos"),
-            Map.entry("UsuarioController", "Usuarios"),
-            Map.entry("PagoController", "Pagos"),
-            Map.entry("TramiteController", "Tramites"),
-            Map.entry("CopiaController", "Copias"),
-            Map.entry("TestimonioController", "Testimonios"),
+            Map.entry("BudgetController", "Budgets"),
+            Map.entry("ConceptController", "Concepts"),
+            Map.entry("UserController", "Users"),
+            Map.entry("PaymentController", "Payments"),
+            Map.entry("ProcedureController", "Procedures"),
+            Map.entry("CopyController", "Copies"),
+            Map.entry("TestimonyController", "Testimonies"),
             Map.entry("FolioController", "Folios"),
             Map.entry("ItemController", "Items"),
-            Map.entry("InmuebleController", "Inmuebles"),
-            Map.entry("HistorialController", "Historial"),
-            Map.entry("DocumentoPresentadoController", "Documentos"),
-            Map.entry("GestionController", "Gestiones"),
-            Map.entry("EstadoDeGestionController", "EstadosDeGestion"),
-            Map.entry("MovimientoTestimonioController", "MovimientosTestimonio"),
-            Map.entry("SuplenciaController", "Suplencias"),
-            Map.entry("PlantillaPresupuestoController", "PlantillasPresupuesto"),
-            Map.entry("PlantillaTramiteController", "PlantillasTramite"),
-            Map.entry("TipoDeDocumentoController", "TiposDeDocumento"),
-            Map.entry("TipoDeFolioController", "TiposDeFolio"),
-            Map.entry("TipoDeTramiteController", "TiposDeTramite"),
-            Map.entry("TipoIdentificacionController", "TiposIdentificacion"),
-            Map.entry("ReporteController", "Reportes")
+            Map.entry("PropertyController", "Properties"),
+            Map.entry("HistoryController", "History"),
+            Map.entry("SubmittedDocumentController", "Documents"),
+            Map.entry("ManagementController", "Managements"),
+            Map.entry("ManagementStatusController", "ManagementStatuses"),
+            Map.entry("TestimonyMovementController", "TestimonyMovements"),
+            Map.entry("SubstitutionController", "Substitutions"),
+            Map.entry("BudgetTemplateController", "BudgetTemplates"),
+            Map.entry("ProcedureTemplateController", "ProcedureTemplates"),
+            Map.entry("DocumentTypeController", "DocumentTypes"),
+            Map.entry("FolioTypeController", "FolioTypes"),
+            Map.entry("ProcedureTypeController", "ProcedureTypes"),
+            Map.entry("IdentificationTypeController", "IdentificationTypes"),
+            Map.entry("ReportController", "Reports")
     );
 
-    private static final String CONTROLLER_SUFFIX = "Controller";
+    private static final String ControllerSUFFIX = "Controller";
     private static final String DEFAULT_MODULE = "General";
 
     private AuditModuleResolver() {
@@ -58,13 +58,13 @@ public final class AuditModuleResolver {
         if (controllerSimpleName == null || controllerSimpleName.isBlank()) {
             return DEFAULT_MODULE;
         }
-        String mapped = CONTROLLER_TO_MODULE.get(controllerSimpleName);
+        String mapped = ControllerTOMODULE.get(controllerSimpleName);
         if (mapped != null) {
             return mapped;
         }
-        if (controllerSimpleName.endsWith(CONTROLLER_SUFFIX)) {
+        if (controllerSimpleName.endsWith(ControllerSUFFIX)) {
             return controllerSimpleName.substring(0,
-                    controllerSimpleName.length() - CONTROLLER_SUFFIX.length());
+                    controllerSimpleName.length() - ControllerSUFFIX.length());
         }
         return controllerSimpleName;
     }
