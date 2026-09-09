@@ -379,7 +379,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
      * @return misPresupuestos Una lista con todos los presupuestos asociados a la
      *         persona indicada.
      */
-    public List<Budget> findPresupuestosPerson(Integer pIdPerson) {
+    public List<Budget> findBudgetsPerson(Integer pIdPerson) {
         EntityManager em = getEntityManager();
 
         List<Budget> misPresupuestos = new ArrayList<>();
@@ -415,7 +415,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
      * @param pIdTramite
      * @return
      */
-    public List<Budget> findPresupuestosPersonProcedure(Integer pIdPerson, Integer pIdProcedure) {
+    public List<Budget> findBudgetsPersonProcedure(Integer pIdPerson, Integer pIdProcedure) {
         EntityManager em = getEntityManager();
 
         List<Budget> misPresupuestos = new ArrayList<>();
@@ -435,7 +435,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
         return misPresupuestos;
     }
 
-    public Budget findPresupuestosById(Integer idBudget) {
+    public Budget findBudgetsById(Integer idBudget) {
         EntityManager em = getEntityManager();
 
         Budget miBudget = null;

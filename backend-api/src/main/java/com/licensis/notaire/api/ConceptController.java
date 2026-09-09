@@ -42,7 +42,7 @@ public class ConceptController {
     @GetMapping
     @Operation(summary = "Obtener todos los conceptos")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DtoConcept>> getAllConceptos() {
+    public ResponseEntity<List<DtoConcept>> getAllConcepts() {
         List<DtoConcept> result = repository.findAll().stream()
                 .map(Concept::getDto)
                 .toList();
@@ -52,7 +52,7 @@ public class ConceptController {
     @GetMapping("/search")
     @Operation(summary = "Buscar conceptos por nombre")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DtoConcept>> searchConceptos(@RequestParam String name) {
+    public ResponseEntity<List<DtoConcept>> searchConcepts(@RequestParam String name) {
         List<DtoConcept> result = repository.findByNameContaining(name).stream()
                 .map(Concept::getDto)
                 .toList();

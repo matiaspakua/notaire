@@ -274,7 +274,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
      * buscar.
      * @return Una lista de las Plantillas de Tramite encontradas.
      */
-    public List<ProcedureTemplate> findPlantillasDeProcedure(int idProcedureType)
+    public List<ProcedureTemplate> findProcedureTemplatesByType(int idProcedureType)
     {
         EntityManager em = getEntityManager();
 
@@ -348,7 +348,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         return this.getClass().getName();
     }
 
-    public List<ProcedureTemplate> findPlantillasProcedures()
+    public List<ProcedureTemplate> findAllProcedureTemplates()
     {
 
         EntityManager em = getEntityManager();

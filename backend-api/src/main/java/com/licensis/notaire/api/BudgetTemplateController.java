@@ -66,7 +66,7 @@ public class BudgetTemplateController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetTemplate>> getByTypeProcedure(@PathVariable Integer idProcedureType) {
         try {
-            return ResponseEntity.ok(getJpaController().findPlantillasDeBudget(idProcedureType));
+            return ResponseEntity.ok(getJpaController().findBudgetTemplates(idProcedureType));
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error al obtener plantillas por tipo de tramite " + idProcedureType, e);
             return ResponseEntity.internalServerError().build();

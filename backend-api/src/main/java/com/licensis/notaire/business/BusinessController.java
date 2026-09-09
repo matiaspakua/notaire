@@ -678,12 +678,12 @@ public class BusinessController
      * conceptos.
      * @return los Dto de los Conceptos asociado al Tipo de Tramite indicado.
      */
-    public ArrayList<DtoConcept> obtenerConceptosProcedure(DtoProcedureType dtoTypeProcedure)
+    public ArrayList<DtoConcept> getConceptsProcedure(DtoProcedureType dtoTypeProcedure)
     {
         ArrayList<DtoConcept> dtosConceptos = new ArrayList<>();
         ArrayList<BudgetTemplate> plantillas = null;
 
-        plantillas = (ArrayList<BudgetTemplate>) myJpaBudgetTemplate.findPlantillasDeBudget(dtoTypeProcedure.getIdProcedureType());
+        plantillas = (ArrayList<BudgetTemplate>) myJpaBudgetTemplate.findBudgetTemplates(dtoTypeProcedure.getIdProcedureType());
 
         if (plantillas != null)
         {
@@ -951,12 +951,12 @@ public class BusinessController
      * encontrados. Retorna la lista vacia en caso de no haber presupuesto
      * registrados.
      */
-    public ArrayList<DtoBudget> searchPresupuestosPerson(DtoPerson dtoPerson) throws NonexistentJpaException
+    public ArrayList<DtoBudget> searchBudgetsPerson(DtoPerson dtoPerson) throws NonexistentJpaException
     {
         ArrayList<DtoBudget> dtosPresupuestosEncontrados = new ArrayList<>();
 
 //        Persona miPersona = miJpaPersona.findPersona(dtoPersona.getIdPersona());
-        ArrayList<Budget> presupuestos = (ArrayList<Budget>) myJpaBudget.findPresupuestosPerson(dtoPerson.getId());
+        ArrayList<Budget> presupuestos = (ArrayList<Budget>) myJpaBudget.findBudgetsPerson(dtoPerson.getId());
 
         if ((presupuestos != null) && (!presupuestos.isEmpty()))
         {
@@ -1169,7 +1169,7 @@ public class BusinessController
     public DtoBudget searchBudget(DtoBudget miDtoBudget) throws NonexistentJpaException
     {
         DtoBudget miBudget = null;
-        Budget budget = myJpaBudget.findPresupuestosById(miDtoBudget.getIdBudget());
+        Budget budget = myJpaBudget.findBudgetsById(miDtoBudget.getIdBudget());
 
         if (budget != null)
         {
@@ -1586,12 +1586,12 @@ public class BusinessController
      *
      * @return List<DtoGestionDeEscritura> listaDtoGestionDeEscrituras
      */
-    public List<DtoDeedManagement> obtenerGestionesEnProcedure() throws NonexistentJpaException
+    public List<DtoDeedManagement> getManagementsInProcedure() throws NonexistentJpaException
     {
         List<DtoDeedManagement> listaDtoManagementDeEscrituras = new ArrayList<>();
         List<DeedManagement> listaManagementDeEscrituras = new ArrayList<>();
 
-        listaManagementDeEscrituras = miJpaDeedManagement.findGestionesDeDeed();
+        listaManagementDeEscrituras = miJpaDeedManagement.findManagementsOfDeed();
 
         if (!listaManagementDeEscrituras.isEmpty())
         {
@@ -1645,7 +1645,7 @@ public class BusinessController
             deedManagement.setAtributos(listaDtoGestionesDeDeed.get(i));
             deedManagement.getFkIdManagementStatus().setIdManagementStatus(idManagementStatus);
             // lisGestionEscrituras.add(gestionDeEscritura);
-            flag.setFlag(miJpaDeedManagement.archivingGestiones(deedManagement));
+            flag.setFlag(miJpaDeedManagement.archivingManagements(deedManagement));
 
             this.registrarAudit(deedManagement, ConstantesGui.ArchivingManagement);
 
@@ -1797,7 +1797,7 @@ public class BusinessController
         ArrayList<ProcedureTemplate> listaTemplateProcedures = new ArrayList<>();
         ProcedureType typeProcedure = null;
 
-        listaTemplateProcedures = (ArrayList<ProcedureTemplate>) myJpaProcedureTemplate.findPlantillasProcedures();
+        listaTemplateProcedures = (ArrayList<ProcedureTemplate>) myJpaProcedureTemplate.findAllProcedureTemplates();
 
         for (int i = 0; i < listaTemplateProcedures.size(); i++)
         {
@@ -2489,7 +2489,7 @@ public class BusinessController
      * @param miEscribano, datos del Escribano a buscar (Numero de Registro)
      * @return Lista de DtoEscritura, de Escrituras encontradas.
      */
-    public List<DtoDeed> searchEscriturasPorRecord(DtoPerson miNotary)
+    public List<DtoDeed> searchDeedsByRecord(DtoPerson miNotary)
     {
         List<DtoDeed> dtosEscriturasEncontradas = new ArrayList<>();
         List<Deed> escrituras = new ArrayList<>();
@@ -2548,7 +2548,7 @@ public class BusinessController
      * @param miEscribano, registro de escribano a buscar.
      * @return Lista de DtoEscritura, con las Escrituras encontradas.
      */
-    public List<DtoDeed> searchEscriturasPorRecordFirmadas(DtoPerson miNotary)
+    public List<DtoDeed> searchDeedsByRecordSigned(DtoPerson miNotary)
     {
         List<DtoDeed> dtosEscriturasEncontradas = new ArrayList<>();
         List<Deed> escrituras = new ArrayList<>();
@@ -2607,7 +2607,7 @@ public class BusinessController
         return dtosEscriturasEncontradas;
     }
 
-    public List<DtoDeed> searchEscriturasPorRecordFirmadasSinArchivo(DtoPerson miNotary)
+    public List<DtoDeed> searchDeedsByRecordSignedUnfiled(DtoPerson miNotary)
     {
         List<DtoDeed> dtosEscriturasEncontradas = new ArrayList<>();
         List<Deed> escrituras = new ArrayList<>();
@@ -2675,7 +2675,7 @@ public class BusinessController
      * @param miEscribano, registro de escribano a buscar.
      * @return Lista de DtoEscritura, con las Escrituras encontradas.
      */
-    public List<DtoDeed> searchEscriturasPorRecordFirmadasInscriptas(DtoPerson miNotary)
+    public List<DtoDeed> searchDeedsByRecordSignedRegistered(DtoPerson miNotary)
     {
         List<DtoDeed> dtosEscriturasEncontradas = new ArrayList<>();
         List<Deed> escrituras = new ArrayList<>();
@@ -3004,7 +3004,7 @@ public class BusinessController
      * @return Lista de DtoEscritura, de las Escrituras asociadas a la Gestion
      * indicada.
      */
-    public List<DtoDeed> searchEscriturasManagement(DtoDeedManagement miDtoManagement)
+    public List<DtoDeed> searchDeedsManagement(DtoDeedManagement miDtoManagement)
     {
         List<DtoDeed> listaDtoEscrituras = new ArrayList<>();
         List<Procedure> proceduresManagement = null;
@@ -3120,12 +3120,12 @@ public class BusinessController
      * @param miDtoEscritura, id de la Escritura a buscar.
      * @return Lista de DtoTestimonio con los Testimonios encontrados.
      */
-    public List<DtoTestimony> obtenerTestimoniosDeed(DtoDeed miDtoDeed)
+    public List<DtoTestimony> getTestimoniesDeed(DtoDeed miDtoDeed)
     {
         List<DtoTestimony> listaDtoTestimonios = new ArrayList<>();
         List<Testimony> listaTestimonios = null;
 
-        listaTestimonios = myJpaTestimony.findTestimoniosDeed(miDtoDeed.getIdDeed());
+        listaTestimonios = myJpaTestimony.findTestimoniesDeed(miDtoDeed.getIdDeed());
 
         if (listaTestimonios != null && !listaTestimonios.isEmpty())
         {
@@ -3249,7 +3249,7 @@ public class BusinessController
         Testimony miTestimony = null;
         List<DtoTestimonyMovement> movimientos = null;
 
-        List<Testimony> misTestimonios = myJpaTestimony.findTestimoniosDeed(miDtoDeed.getIdDeed());
+        List<Testimony> misTestimonios = myJpaTestimony.findTestimoniesDeed(miDtoDeed.getIdDeed());
 
         miTestimony = misTestimonios.get(misTestimonios.size() - 1);
 
@@ -4230,7 +4230,7 @@ public class BusinessController
      * @return miListaDtoPlantillas Una lista con los dto de las Plantillas de
      * Tramite asociadas al Tipo de Tramite, o null en caso de no existir.
      */
-    public ArrayList<DtoProcedureTemplate> obtenerPlantillasProcedure(DtoProcedureType miDtoProcedureType)
+    public ArrayList<DtoProcedureTemplate> getProcedureTemplates(DtoProcedureType miDtoProcedureType)
     {
         ArrayList<DtoProcedureTemplate> miListaDtoPlantillas = new ArrayList<>();
 
@@ -4238,7 +4238,7 @@ public class BusinessController
         {
             ProcedureTemplateJpaController miProcedureTemplateJpaController = (ProcedureTemplateJpaController) this.getMiAdministradorJpa().obtenerJpa(ProcedureTemplateJpaController.class.getName());
 
-            List<ProcedureTemplate> miListaPlantillas = miProcedureTemplateJpaController.findPlantillasDeProcedure(miDtoProcedureType.getIdProcedureType().intValue());
+            List<ProcedureTemplate> miListaPlantillas = miProcedureTemplateJpaController.findProcedureTemplatesByType(miDtoProcedureType.getIdProcedureType().intValue());
 
             if (!miListaPlantillas.isEmpty() && miListaPlantillas != null)
             {
@@ -4294,7 +4294,7 @@ public class BusinessController
                 {
                     this.registrarAudit(procedureTypeModificar, ConstantesGui.MODIFICARProcedureType);
 
-                    List<ProcedureTemplate> plantillasActuales = myJpaProcedureTemplate.findPlantillasDeProcedure(procedureTypeModificar.getIdProcedureType());
+                    List<ProcedureTemplate> plantillasActuales = myJpaProcedureTemplate.findProcedureTemplatesByType(procedureTypeModificar.getIdProcedureType());
 
                     if (plantillasActuales != null && !plantillasActuales.isEmpty())
                     {
@@ -4643,7 +4643,7 @@ public class BusinessController
      * @return dtoListaConceptos Una lista de dto con todos los conceptos
      * encontrados.
      */
-    public List<DtoConcept> obtenerListaConceptosDisponibles()
+    public List<DtoConcept> getAvailableConceptsList()
     {
         List<Concept> miListaConceptos = null;
         List<DtoConcept> dtoListaConceptos = null;
@@ -5113,7 +5113,7 @@ public class BusinessController
         Boolean existe = Boolean.FALSE;
         ArrayList<DtoBudgetTemplate> plantillas = null;
 
-        plantillas = this.obtenerPlantillasBudget(dtoProcedureType);
+        plantillas = this.getBudgetTemplates(dtoProcedureType);
 
         if (plantillas != null && !plantillas.isEmpty())
         {
@@ -5174,11 +5174,11 @@ public class BusinessController
      * @return Una lista de DtoPlantillaPresupuesto, con los datos de las
      * plantillas encontradas.
      */
-    public ArrayList<DtoBudgetTemplate> obtenerPlantillasBudget(DtoProcedureType miDtoProcedureType)
+    public ArrayList<DtoBudgetTemplate> getBudgetTemplates(DtoProcedureType miDtoProcedureType)
     {
         ArrayList<DtoBudgetTemplate> miListaDtoPlantillas = new ArrayList<>();
 
-        List<BudgetTemplate> miListaPlantillas = myJpaBudgetTemplate.findPlantillasDeBudget(miDtoProcedureType.getIdProcedureType().intValue());
+        List<BudgetTemplate> miListaPlantillas = myJpaBudgetTemplate.findBudgetTemplates(miDtoProcedureType.getIdProcedureType().intValue());
 
         if (!miListaPlantillas.isEmpty() && miListaPlantillas != null)
         {
@@ -5227,7 +5227,7 @@ public class BusinessController
                 {
                     this.registrarAudit(procedureTypeModificar, ConstantesGui.MODIFICARProcedureType);
 
-                    List<BudgetTemplate> plantillasActuales = myJpaBudgetTemplate.findPlantillasDeBudget(procedureTypeModificar.getIdProcedureType());
+                    List<BudgetTemplate> plantillasActuales = myJpaBudgetTemplate.findBudgetTemplates(procedureTypeModificar.getIdProcedureType());
 
                     if (plantillasActuales != null && !plantillasActuales.isEmpty())
                     {

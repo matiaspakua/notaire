@@ -358,7 +358,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Testimony> findTestimoniosDeed(Integer idDeed)
+    public List<Testimony> findTestimoniesDeed(Integer idDeed)
     {
         EntityManager em = getEntityManager();
         List<Testimony> lista = null;

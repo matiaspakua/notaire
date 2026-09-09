@@ -458,7 +458,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
      * Gestiones en las que participa un cliente (persona) vía TramitesPersonas.
      */
     @SuppressWarnings("unchecked")
-    public List<DeedManagement> findGestionesByClient(Integer idPerson)
+    public List<DeedManagement> findManagementsByClient(Integer idPerson)
     {
         EntityManager em = getEntityManager();
         try
@@ -475,7 +475,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         }
     }
 
-    public List<DeedManagement> findGestionesDeDeed()
+    public List<DeedManagement> findManagementsOfDeed()
     {
         EntityManager em = getEntityManager();
 
@@ -487,7 +487,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         return listaGestiones;
     }
 
-    public boolean archivingGestiones(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
+    public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
     {
 
         Boolean flag = false; //Variable para saber el resultado de la transaccion

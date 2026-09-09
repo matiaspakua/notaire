@@ -269,7 +269,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         }
     }
 
-    public List<BudgetTemplate> findPlantillasDeBudget(int idProcedureType)
+    public List<BudgetTemplate> findBudgetTemplates(int idProcedureType)
     {
         EntityManager em = getEntityManager();
 

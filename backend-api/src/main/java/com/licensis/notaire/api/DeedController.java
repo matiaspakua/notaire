@@ -131,7 +131,7 @@ public class DeedController {
     @GetMapping("/buscar")
     @Operation(summary = "Buscar escrituras por numero")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Deed>> searchEscrituras(@RequestParam(required = false) Integer number) {
+    public ResponseEntity<List<Deed>> searchDeeds(@RequestParam(required = false) Integer number) {
         return ResponseEntity.ok(deedService.searchPorNumber(number));
     }
 
