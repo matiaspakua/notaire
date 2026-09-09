@@ -82,7 +82,7 @@ class NotebookTest {
         when(notebookRepository.findByYearAndFkIdNotaryPerson(2026, notary)).thenReturn(List.of());
         when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(1, 2026, notary)).thenReturn(false);
 
-        int number = notebookService.calcularSiguienteNumber(2026, notary);
+        int number = notebookService.calculateNextNumber(2026, notary);
 
         assertThat(number).isEqualTo(1);
     }
@@ -95,7 +95,7 @@ class NotebookTest {
         when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(2, 2026, notary)).thenReturn(true);
         when(notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(3, 2026, notary)).thenReturn(false);
 
-        int number = notebookService.calcularSiguienteNumber(2026, notary);
+        int number = notebookService.calculateNextNumber(2026, notary);
 
         assertThat(number).isEqualTo(3);
     }
@@ -105,7 +105,7 @@ class NotebookTest {
     void shouldRejectCreationWhenNotaryNotFound() {
         when(personRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> notebookService.crearNotebook(List.of(1, 2), 99, 2026, null))
+        assertThatThrownBy(() -> notebookService.createNotebook(List.of(1, 2), 99, 2026, null))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -116,7 +116,7 @@ class NotebookTest {
         List<Folio> folios = List.of(folio(1, 1, "Nuevo"), folio(2, 2, "Nuevo"));
         when(folioRepository.findAllByIdFolioIn(List.of(1, 2))).thenReturn(folios);
 
-        assertThatThrownBy(() -> notebookService.crearNotebook(List.of(1, 2), 1, 2026, null))
+        assertThatThrownBy(() -> notebookService.createNotebook(List.of(1, 2), 1, 2026, null))
                 .isInstanceOf(BusinessValidationException.class);
     }
 }

@@ -48,7 +48,7 @@ public class NotebookService {
         return notebookRepository.findById(id);
     }
 
-    public Notebook crearNotebook(List<Integer> idsFolio, Integer idNotary, int year, String notes) {
+    public Notebook createNotebook(List<Integer> idsFolio, Integer idNotary, int year, String notes) {
         Person notary = personRepository.findById(idNotary)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la persona escribano con ID: " + idNotary));
 
@@ -61,14 +61,14 @@ public class NotebookService {
         List<Folio> foliosOrdenados = folios.stream()
                 .sorted(Comparator.comparingInt(Folio::getNumber))
                 .toList();
-        validarMismoNotary(foliosOrdenados, notary);
-        validarConsecutividad(foliosOrdenados);
-        validarNoAsignados(foliosOrdenados);
+        validateSameNotary(foliosOrdenados, notary);
+        validateConsecutiveness(foliosOrdenados);
+        validateNotAssigned(foliosOrdenados);
         validateDamagedFolioJustification(foliosOrdenados, notes);
 
         Notebook notebook = new Notebook();
         notebook.setYear(year);
-        notebook.setNumber(calcularSiguienteNumber(year, notary));
+        notebook.setNumber(calculateNextNumber(year, notary));
         notebook.setNotes(notes);
         notebook.setFkIdNotaryPerson(notary);
         Notebook guardado = notebookRepository.save(notebook);
@@ -79,7 +79,7 @@ public class NotebookService {
         return guardado;
     }
 
-    public int calcularSiguienteNumber(int year, Person notary) {
+    public int calculateNextNumber(int year, Person notary) {
         int candidato = notebookRepository.findByYearAndFkIdNotaryPerson(year, notary).size() + 1;
         while (notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(candidato, year, notary)) {
             candidato++;
@@ -102,7 +102,7 @@ public class NotebookService {
         }
     }
 
-    private void validarMismoNotary(List<Folio> folios, Person notary) {
+    private void validateSameNotary(List<Folio> folios, Person notary) {
         boolean todosMismoNotary = folios.stream()
                 .allMatch(f -> notary.getPersonId().equals(f.getFkIdNotaryPerson().getPersonId()));
         if (!todosMismoNotary) {
@@ -110,7 +110,7 @@ public class NotebookService {
         }
     }
 
-    private void validarConsecutividad(List<Folio> foliosOrdenados) {
+    private void validateConsecutiveness(List<Folio> foliosOrdenados) {
         for (int i = 1; i < foliosOrdenados.size(); i++) {
             int anterior = foliosOrdenados.get(i - 1).getNumber();
             int actual = foliosOrdenados.get(i).getNumber();
@@ -121,7 +121,7 @@ public class NotebookService {
         }
     }
 
-    private void validarNoAsignados(List<Folio> folios) {
+    private void validateNotAssigned(List<Folio> folios) {
         boolean yaAsignado = folios.stream().anyMatch(f -> f.getFkIdNotebook() != null);
         if (yaAsignado) {
             throw new BusinessValidationException("Uno o más folios ya están asignados a otro cuaderno");

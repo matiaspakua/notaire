@@ -35,7 +35,7 @@ public class ProcedureFolderService {
 
     public ProcedureFolder generarFolderParaProcedure(Procedure procedure) {
         ProcedureFolder folder = new ProcedureFolder();
-        folder.setNumber(calcularSiguienteNumber());
+        folder.setNumber(calculateNextNumber());
         folder.setStatus(StatusACTIVA);
         folder.setFkIdManagement(procedure.getFkIdManagement());
         folder.setFkIdProcedure(procedure);
@@ -45,7 +45,7 @@ public class ProcedureFolderService {
         return guardada;
     }
 
-    private int calcularSiguienteNumber() {
+    private int calculateNextNumber() {
         return procedureFolderRepository.findTopByOrderByNumberDesc()
                 .map(c -> c.getNumber() + 1)
                 .orElse(1);

@@ -80,7 +80,7 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findTopByOrderByNumberDesc()).thenReturn(Optional.empty());
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft draft = registrationDraftService.generar(1);
+        RegistrationDraft draft = registrationDraftService.generate(1);
 
         assertThat(draft.getNumber()).isEqualTo(1);
         assertThat(draft.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftGENERADA);
@@ -95,7 +95,7 @@ class RegistrationDraftServiceTest {
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
         when(procedureRepository.findByFkIdDeedIdDeed(1)).thenReturn(List.of(procedure));
 
-        assertThatThrownBy(() -> registrationDraftService.generar(1))
+        assertThatThrownBy(() -> registrationDraftService.generate(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("matrícula");
     }
@@ -106,7 +106,7 @@ class RegistrationDraftServiceTest {
         deed.setStatus(BusinessConstants.DeedSINFIRMAR);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
-        assertThatThrownBy(() -> registrationDraftService.generar(1))
+        assertThatThrownBy(() -> registrationDraftService.generate(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("firmada");
     }
@@ -116,7 +116,7 @@ class RegistrationDraftServiceTest {
     void shouldThrowWhenDeedNotFound() {
         when(deedRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationDraftService.generar(999))
+        assertThatThrownBy(() -> registrationDraftService.generate(999))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

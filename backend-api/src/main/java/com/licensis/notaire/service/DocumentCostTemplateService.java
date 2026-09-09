@@ -33,9 +33,9 @@ public class DocumentCostTemplateService {
         this.documentTypeRepository = documentTypeRepository;
     }
 
-    public DocumentCostTemplate crear(Integer idProcedureType, Integer idDocumentType,
+    public DocumentCostTemplate create(Integer idProcedureType, Integer idDocumentType,
                                           Float fixedAmount, Float variablePercentage) {
-        validarExactamenteUnCost(fixedAmount, variablePercentage);
+        validateExactlyOneCost(fixedAmount, variablePercentage);
 
         ProcedureType procedureType = procedureTypeRepository.findById(idProcedureType)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -58,7 +58,7 @@ public class DocumentCostTemplateService {
         return documentCostTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType);
     }
 
-    private void validarExactamenteUnCost(Float fixedAmount, Float variablePercentage) {
+    private void validateExactlyOneCost(Float fixedAmount, Float variablePercentage) {
         boolean tieneFixedAmount = fixedAmount != null;
         boolean tieneVariablePercentage = variablePercentage != null;
         if (tieneFixedAmount == tieneVariablePercentage) {

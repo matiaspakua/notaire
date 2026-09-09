@@ -59,7 +59,7 @@ class DocumentCostTemplateServiceTest {
         when(documentCostTemplateRepository.save(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        DocumentCostTemplate result = documentCostTemplateService.crear(1, 1, 1500f, null);
+        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, 1500f, null);
 
         assertThat(result.getFixedAmount()).isEqualTo(1500f);
         assertThat(result.getVariablePercentage()).isNull();
@@ -73,7 +73,7 @@ class DocumentCostTemplateServiceTest {
         when(documentCostTemplateRepository.save(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        DocumentCostTemplate result = documentCostTemplateService.crear(1, 1, null, 5f);
+        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, null, 5f);
 
         assertThat(result.getVariablePercentage()).isEqualTo(5f);
         assertThat(result.getFixedAmount()).isNull();
@@ -82,7 +82,7 @@ class DocumentCostTemplateServiceTest {
     @Test
     @DisplayName("Should reject when both fixed and variable cost provided")
     void shouldRejectWhenBothFixedAndVariableCostProvided() {
-        assertThatThrownBy(() -> documentCostTemplateService.crear(1, 1, 1500f, 5f))
+        assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, 1500f, 5f))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("exactamente uno");
     }
@@ -90,7 +90,7 @@ class DocumentCostTemplateServiceTest {
     @Test
     @DisplayName("Should reject when neither fixed nor variable cost provided")
     void shouldRejectWhenNeitherFixedNorVariableCostProvided() {
-        assertThatThrownBy(() -> documentCostTemplateService.crear(1, 1, null, null))
+        assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, null, null))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("exactamente uno");
     }

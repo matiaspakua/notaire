@@ -35,7 +35,7 @@ public class RegistrationDraftController {
         this.registrationDraftService = registrationDraftService;
     }
 
-    public record GenerarRequest(Integer idDeed) {
+    public record GenerateRequest(Integer idDeed) {
     }
 
     public record PresentarRequest(Date dateSubmission, String registryEntryNumber) {
@@ -66,9 +66,9 @@ public class RegistrationDraftController {
     })
     @PostMapping
     @Operation(summary = "CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble")
-    public ResponseEntity<Object> generar(@RequestBody GenerarRequest request) {
+    public ResponseEntity<Object> generate(@RequestBody GenerateRequest request) {
         try {
-            DtoRegistrationDraft dto = registrationDraftService.generar(request.idDeed()).getDto();
+            DtoRegistrationDraft dto = registrationDraftService.generate(request.idDeed()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

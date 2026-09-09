@@ -38,7 +38,7 @@ public class RegistrationDraftService {
         this.procedureRepository = procedureRepository;
     }
 
-    public RegistrationDraft generar(Integer idDeed) {
+    public RegistrationDraft generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la escritura con ID: " + idDeed));
 
@@ -47,18 +47,18 @@ public class RegistrationDraftService {
                     "La escritura debe estar firmada para generar la minuta de inscripción");
         }
 
-        Property property = searchPropertyDelProcedure(idDeed);
-        validarDatosCompletos(property);
+        Property property = findProcedureProperty(idDeed);
+        validateCompleteData(property);
 
         RegistrationDraft draft = new RegistrationDraft();
-        draft.setNumber(calcularSiguienteNumber());
+        draft.setNumber(calculateNextNumber());
         draft.setStatus(BusinessConstants.RegistrationDraftGENERADA);
         draft.setDateGeneration(new Date());
         draft.setFkIdDeed(deed);
         return registrationDraftRepository.save(draft);
     }
 
-    private Property searchPropertyDelProcedure(Integer idDeed) {
+    private Property findProcedureProperty(Integer idDeed) {
         return procedureRepository.findByFkIdDeedIdDeed(idDeed).stream()
                 .map(Procedure::getFkIdProperty)
                 .filter(java.util.Objects::nonNull)
@@ -67,24 +67,24 @@ public class RegistrationDraftService {
                         "No existe un trámite con inmueble asociado a la escritura"));
     }
 
-    private void validarDatosCompletos(Property property) {
+    private void validateCompleteData(Property property) {
         List<String> faltantes = new ArrayList<>();
-        if (esVacio(property.getCadastralDesignation())) {
+        if (isEmptyValue(property.getCadastralDesignation())) {
             faltantes.add("nomenclatura catastral");
         }
         if (property.getFiscalAppraisal() == null) {
             faltantes.add("valuación fiscal");
         }
-        if (esVacio(property.getAddress())) {
+        if (isEmptyValue(property.getAddress())) {
             faltantes.add("domicilio");
         }
-        if (esVacio(property.getRegistrationNumber())) {
+        if (isEmptyValue(property.getRegistrationNumber())) {
             faltantes.add("matrícula");
         }
-        if (esVacio(property.getVolumeFolioLandRecord())) {
+        if (isEmptyValue(property.getVolumeFolioLandRecord())) {
             faltantes.add("tomo/folio/finca");
         }
-        if (esVacio(property.getBoundaries())) {
+        if (isEmptyValue(property.getBoundaries())) {
             faltantes.add("linderos");
         }
         if (!faltantes.isEmpty()) {
@@ -93,11 +93,11 @@ public class RegistrationDraftService {
         }
     }
 
-    private boolean esVacio(String value) {
+    private boolean isEmptyValue(String value) {
         return value == null || value.isBlank();
     }
 
-    private int calcularSiguienteNumber() {
+    private int calculateNextNumber() {
         return registrationDraftRepository.findTopByOrderByNumberDesc()
                 .map(m -> m.getNumber() + 1)
                 .orElse(1);

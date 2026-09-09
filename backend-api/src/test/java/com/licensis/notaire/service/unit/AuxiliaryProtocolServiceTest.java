@@ -50,7 +50,7 @@ class AuxiliaryProtocolServiceTest {
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.of(5));
 
-        int siguiente = protocoloAuxiliaryService.calcularSiguienteNumberAuxiliary();
+        int siguiente = protocoloAuxiliaryService.calculateNextNumberAuxiliary();
 
         assertThat(siguiente).isEqualTo(6);
     }
@@ -60,7 +60,7 @@ class AuxiliaryProtocolServiceTest {
     void shouldStartAuxiliaryNumberingAtOne() {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
 
-        int siguiente = protocoloAuxiliaryService.calcularSiguienteNumberAuxiliary();
+        int siguiente = protocoloAuxiliaryService.calculateNextNumberAuxiliary();
 
         assertThat(siguiente).isEqualTo(1);
     }

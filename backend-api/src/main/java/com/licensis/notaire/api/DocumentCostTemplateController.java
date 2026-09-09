@@ -35,7 +35,7 @@ public class DocumentCostTemplateController {
         this.documentCostTemplateService = documentCostTemplateService;
     }
 
-    public record CrearCostRequest(
+    public record CreateCostRequest(
             Integer idProcedureType,
             Integer idDocumentType,
             Float fixedAmount,
@@ -49,9 +49,9 @@ public class DocumentCostTemplateController {
     })
     @PostMapping
     @Operation(summary = "Definir el costo (fijo o variable) de un tipo de documento en la plantilla de un tipo de trámite")
-    public ResponseEntity<Object> crearCost(@RequestBody CrearCostRequest request) {
+    public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
         try {
-            DocumentCostTemplate creado = documentCostTemplateService.crear(
+            DocumentCostTemplate creado = documentCostTemplateService.create(
                     request.idProcedureType(), request.idDocumentType(),
                     request.fixedAmount(), request.variablePercentage());
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);

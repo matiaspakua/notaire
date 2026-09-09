@@ -47,7 +47,7 @@ public class NotebookController {
         this.reporteService = reporteService;
     }
 
-    public record CrearNotebookRequest(
+    public record CreateNotebookRequest(
             @NotEmpty List<Integer> idsFolio,
             Integer idNotary,
             int year,
@@ -81,9 +81,9 @@ public class NotebookController {
     })
     @PostMapping
     @Operation(summary = "Crear un nuevo cuaderno a partir de diez folios consecutivos")
-    public ResponseEntity<Object> crearNotebook(@RequestBody CrearNotebookRequest request) {
+    public ResponseEntity<Object> createNotebook(@RequestBody CreateNotebookRequest request) {
         try {
-            Notebook creado = notebookService.crearNotebook(
+            Notebook creado = notebookService.createNotebook(
                     request.idsFolio(), request.idNotary(), request.year(), request.notes());
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
         } catch (BusinessValidationException e) {

@@ -61,7 +61,7 @@ class DocumentCostTemplateControllerTest {
         return documentTypeRepository.save(documentType);
     }
 
-    private String crearCostBody(Integer idDocumentType, Float fixedAmount, Float variablePercentage) throws Exception {
+    private String createCostBody(Integer idDocumentType, Float fixedAmount, Float variablePercentage) throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("idProcedureType", procedureType.getIdProcedureType());
         body.put("idDocumentType", idDocumentType);
@@ -77,7 +77,7 @@ class DocumentCostTemplateControllerTest {
 
         mockMvc.perform(post("/api/v1/plantilla-costos-documento")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearCostBody(documentType.getIdDocumentType(), 2000f, null)))
+                        .content(createCostBody(documentType.getIdDocumentType(), 2000f, null)))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/api/v1/plantilla-costos-documento/tipo-tramite/" + procedureType.getIdProcedureType()))

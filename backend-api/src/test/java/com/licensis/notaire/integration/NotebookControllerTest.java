@@ -74,7 +74,7 @@ class NotebookControllerTest {
         return ids;
     }
 
-    private String crearNotebookBody(List<Integer> idsFolio, String notes) throws Exception {
+    private String createNotebookBody(List<Integer> idsFolio, String notes) throws Exception {
         java.util.Map<String, Object> body = new java.util.HashMap<>();
         body.put("idsFolio", idsFolio);
         body.put("idNotary", notary.getPersonId());
@@ -90,7 +90,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(ids, null)))
+                        .content(createNotebookBody(ids, null)))
                 .andExpect(status().isCreated())
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.number").exists());
     }
@@ -102,7 +102,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(ids, null)))
+                        .content(createNotebookBody(ids, null)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -115,7 +115,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(discontinuos, null)))
+                        .content(createNotebookBody(discontinuos, null)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -125,7 +125,7 @@ class NotebookControllerTest {
         List<Integer> primerLote = crearFolios(10, "Nuevo");
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(primerLote, null)))
+                        .content(createNotebookBody(primerLote, null)))
                 .andExpect(status().isCreated());
 
         List<Integer> segundoLote = crearFolios(10, "Nuevo");
@@ -134,7 +134,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(conFolioReasignado, null)))
+                        .content(createNotebookBody(conFolioReasignado, null)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -146,7 +146,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(ids, "Folio 10 dañado, se incluye igualmente")))
+                        .content(createNotebookBody(ids, "Folio 10 dañado, se incluye igualmente")))
                 .andExpect(status().isCreated());
     }
 
@@ -156,7 +156,7 @@ class NotebookControllerTest {
         List<Integer> ids = crearFolios(10, "Nuevo");
         MvcResult creado = mockMvc.perform(post("/api/v1/cuadernos")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(crearNotebookBody(ids, null)))
+                        .content(createNotebookBody(ids, null)))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer idNotebook = mapper.readTree(creado.getResponse().getContentAsString()).get("idNotebook").asInt();
