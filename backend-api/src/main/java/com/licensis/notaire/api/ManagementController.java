@@ -505,9 +505,9 @@ public class ManagementController {
     })
     @GetMapping("/{id}/reingreso-documentacion")
     @Operation(summary = "CU43 - Obtener los trámites de una gestión con su documentación necesaria")
-    public ResponseEntity<DtoManagementReingresoDocumentacion> getDocumentacionNecesariaReingreso(
+    public ResponseEntity<DtoManagementReingresoDocumentacion> getRequiredDocumentationForReentry(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(reingresoDocumentacionService.obtenerDocumentacionNecesaria(id));
+        return ResponseEntity.ok(reingresoDocumentacionService.getRequiredDocumentation(id));
     }
 
     @ApiResponses({
@@ -517,9 +517,9 @@ public class ManagementController {
     })
     @PostMapping("/{id}/reingreso-documentacion")
     @Operation(summary = "CU43 - Reingresar un tipo de documento para un trámite de la gestión")
-    public ResponseEntity<DtoDocumentReentered> reingresarDocumentacion(@PathVariable Integer id,
+    public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
             @RequestBody DtoReingresoDocumentacionRequest request) {
-        DtoDocumentReentered resultado = reingresoDocumentacionService.reingresar(id, request);
+        DtoDocumentReentered resultado = reingresoDocumentacionService.reenter(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
 }

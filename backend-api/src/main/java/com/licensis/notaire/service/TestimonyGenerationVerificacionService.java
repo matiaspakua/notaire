@@ -38,7 +38,7 @@ public class TestimonyGenerationVerificacionService {
      * @throws ResourceNotFoundException if no escritura with the given ID exists
      * @throws BusinessValidationException if the escritura is not "Firmada"
      */
-    public Testimony generar(Integer idDeed) {
+    public Testimony generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
                 .orElseThrow(() -> new ResourceNotFoundException("Escritura no encontrada con ID: " + idDeed));
 
@@ -66,7 +66,7 @@ public class TestimonyGenerationVerificacionService {
      * @return the verified testimonio
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
      */
-    public Testimony verificar(Integer idTestimony, boolean flagged, String notes) {
+    public Testimony verify(Integer idTestimony, boolean flagged, String notes) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
                 .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
 

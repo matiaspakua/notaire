@@ -46,7 +46,7 @@ public class ReingresoDocumentacionService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementReingresoDocumentacion obtenerDocumentacionNecesaria(Integer idManagement) {
+    public DtoManagementReingresoDocumentacion getRequiredDocumentation(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
         List<DtoProcedureDocumentacionNecesaria> procedures = procedureRepository
                 .findByFkIdManagementIdManagement(idManagement).stream()
@@ -57,15 +57,15 @@ public class ReingresoDocumentacionService {
     }
 
     @Transactional
-    public DtoDocumentReentered reingresar(Integer idManagement, DtoReingresoDocumentacionRequest request) {
+    public DtoDocumentReentered reenter(Integer idManagement, DtoReingresoDocumentacionRequest request) {
         findManagementOrThrow(idManagement);
         Procedure procedure = procedureRepository.findById(request.idProcedure())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trámite no encontrado con ID: " + request.idProcedure()));
-        validarPerteneceAManagement(procedure, idManagement);
-        DocumentType typeDocument = validarDocumentacionNecesaria(procedure, request.idDocumentType());
+        validateBelongsToManagement(procedure, idManagement);
+        DocumentType typeDocument = validateRequiredDocumentation(procedure, request.idDocumentType());
 
-        SubmittedDocument document = crearSubmittedDocument(procedure, typeDocument);
+        SubmittedDocument document = createSubmittedDocument(procedure, typeDocument);
         SubmittedDocument guardado = submittedDocumentRepository.save(document);
 
         return toDto(guardado);
@@ -76,7 +76,7 @@ public class ReingresoDocumentacionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
     }
 
-    private static void validarPerteneceAManagement(Procedure procedure, Integer idManagement) {
+    private static void validateBelongsToManagement(Procedure procedure, Integer idManagement) {
         DeedManagement management = procedure.getFkIdManagement();
         if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
@@ -84,7 +84,7 @@ public class ReingresoDocumentacionService {
         }
     }
 
-    private DocumentType validarDocumentacionNecesaria(Procedure procedure, Integer idDocumentType) {
+    private DocumentType validateRequiredDocumentation(Procedure procedure, Integer idDocumentType) {
         Integer idProcedureType = procedure.getFkIdProcedureType().getIdProcedureType();
         ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
         ProcedureTemplate template = procedureTemplateRepository.findById(pk)
@@ -95,7 +95,7 @@ public class ReingresoDocumentacionService {
         return template.getDocumentType();
     }
 
-    private static SubmittedDocument crearSubmittedDocument(Procedure procedure, DocumentType typeDocument) {
+    private static SubmittedDocument createSubmittedDocument(Procedure procedure, DocumentType typeDocument) {
         SubmittedDocument document = new SubmittedDocument();
         document.setFkIdProcedure(procedure);
         document.setFkIdDocumentType(typeDocument.getIdDocumentType());

@@ -130,7 +130,7 @@ public class TestimonyController {
                        + "'Firmada'")
     @Transactional
     public ResponseEntity<DtoTestimony> generar(@PathVariable Integer idDeed) {
-        Testimony testimony = generationVerificacionService.generar(idDeed);
+        Testimony testimony = generationVerificacionService.generate(idDeed);
         return ResponseEntity.status(HttpStatus.CREATED).body(testimony.getDto());
     }
 
@@ -143,7 +143,7 @@ public class TestimonyController {
                description = "Registra la verificación de un testimonio, marcando si fue observado y por qué")
     @Transactional
     public ResponseEntity<DtoTestimony> verificar(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
-        Testimony testimony = generationVerificacionService.verificar(id, dto.isFlagged(), dto.getNotes());
+        Testimony testimony = generationVerificacionService.verify(id, dto.isFlagged(), dto.getNotes());
         return ResponseEntity.ok(testimony.getDto());
     }
 }

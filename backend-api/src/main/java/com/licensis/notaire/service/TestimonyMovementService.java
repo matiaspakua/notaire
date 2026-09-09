@@ -33,7 +33,7 @@ public class TestimonyMovementService {
         this.testimonyRepository = testimonyRepository;
     }
 
-    private TestimonyMovement ultimoMovement(Integer idTestimony) {
+    private TestimonyMovement lastMovement(Integer idTestimony) {
         return testimonyMovementRepository
                 .findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(idTestimony)
                 .orElse(null);
@@ -53,7 +53,7 @@ public class TestimonyMovementService {
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
      * @throws BusinessValidationException if the testimonio is not verified, or already has an open movement
      */
-    public TestimonyMovement ingresarRegistration(Integer idTestimony) {
+    public TestimonyMovement registerEntry(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
                 .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
 
@@ -61,7 +61,7 @@ public class TestimonyMovementService {
             throw new BusinessValidationException("El testimonio debe estar verificado para ingresar a inscripción");
         }
 
-        TestimonyMovement ultimo = ultimoMovement(idTestimony);
+        TestimonyMovement ultimo = lastMovement(idTestimony);
         if (ultimo != null && ultimo.getDateExit() == null) {
             throw new BusinessValidationException("El testimonio ya está en trámite de inscripción");
         }
@@ -82,9 +82,9 @@ public class TestimonyMovementService {
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
      * @throws BusinessValidationException if the testimonio has no movement with fecha de ingreso registered
      */
-    public TestimonyMovement registrarRegistration(Integer idTestimony) {
+    public TestimonyMovement registerInscription(Integer idTestimony) {
         requireTestimonyExists(idTestimony);
-        TestimonyMovement movement = Optional.ofNullable(ultimoMovement(idTestimony))
+        TestimonyMovement movement = Optional.ofNullable(lastMovement(idTestimony))
                 .orElseThrow(() -> new BusinessValidationException(
                         "Falta el ingreso a inscripción del testimonio antes de registrar la inscripción"));
 
@@ -104,9 +104,9 @@ public class TestimonyMovementService {
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
      * @throws BusinessValidationException if the testimonio is not inscripto
      */
-    public TestimonyMovement retirar(Integer idTestimony, int cardNumber) {
+    public TestimonyMovement withdraw(Integer idTestimony, int cardNumber) {
         requireTestimonyExists(idTestimony);
-        TestimonyMovement movement = ultimoMovement(idTestimony);
+        TestimonyMovement movement = lastMovement(idTestimony);
         if (movement == null || !movement.getRegistered()) {
             throw new BusinessValidationException("El testimonio no está inscripto");
         }
@@ -126,11 +126,11 @@ public class TestimonyMovementService {
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
      * @throws BusinessValidationException if the testimonio was not previously withdrawn
      */
-    public TestimonyMovement reingresar(Integer idTestimony) {
+    public TestimonyMovement reenter(Integer idTestimony) {
         requireTestimonyExists(idTestimony);
-        TestimonyMovement ultimo = ultimoMovement(idTestimony);
+        TestimonyMovement ultimo = lastMovement(idTestimony);
         if (ultimo == null || ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("El testimonio no fue retirado, no se puede reingresar");
+            throw new BusinessValidationException("El testimonio no fue retirado, no se puede reenter");
         }
 
         TestimonyMovement nuevo = new TestimonyMovement();

@@ -70,7 +70,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement movement = testimonyMovementService.ingresarRegistration(5);
+            TestimonyMovement movement = testimonyMovementService.registerEntry(5);
 
             assertThat(movement.getDateEntry()).isNotNull();
             assertThat(movement.getTestimony().getIdTestimony()).isEqualTo(5);
@@ -84,7 +84,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.of(abierto));
 
-            assertThatThrownBy(() -> testimonyMovementService.ingresarRegistration(5))
+            assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("trámite de inscripción");
         }
@@ -95,7 +95,7 @@ class TestimonyMovementServiceTest {
             testimony.setVerified(false);
             when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
 
-            assertThatThrownBy(() -> testimonyMovementService.ingresarRegistration(5))
+            assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("verificado");
         }
@@ -105,7 +105,7 @@ class TestimonyMovementServiceTest {
         void shouldRejectEntryWhenTestimonyNotFound() {
             when(testimonyRepository.findById(999)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> testimonyMovementService.ingresarRegistration(999))
+            assertThatThrownBy(() -> testimonyMovementService.registerEntry(999))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -123,7 +123,7 @@ class TestimonyMovementServiceTest {
                     .thenReturn(Optional.of(ingresado));
             when(testimonyMovementRepository.save(ingresado)).thenReturn(ingresado);
 
-            TestimonyMovement resultado = testimonyMovementService.registrarRegistration(5);
+            TestimonyMovement resultado = testimonyMovementService.registerInscription(5);
 
             assertThat(resultado.getRegistered()).isTrue();
             assertThat(resultado.getDateRegistration()).isNotNull();
@@ -136,7 +136,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> testimonyMovementService.registrarRegistration(5))
+            assertThatThrownBy(() -> testimonyMovementService.registerInscription(5))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("ingreso");
         }
@@ -146,7 +146,7 @@ class TestimonyMovementServiceTest {
         void shouldRejectRegistrarRegistrationWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
-            assertThatThrownBy(() -> testimonyMovementService.registrarRegistration(999))
+            assertThatThrownBy(() -> testimonyMovementService.registerInscription(999))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -166,7 +166,7 @@ class TestimonyMovementServiceTest {
                     .thenReturn(Optional.of(inscripto));
             when(testimonyMovementRepository.save(inscripto)).thenReturn(inscripto);
 
-            TestimonyMovement resultado = testimonyMovementService.retirar(5, 123);
+            TestimonyMovement resultado = testimonyMovementService.withdraw(5, 123);
 
             assertThat(resultado.getDateExit()).isNotNull();
             assertThat(resultado.getCardNumber()).isEqualTo(123);
@@ -180,7 +180,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.of(ingresado));
 
-            assertThatThrownBy(() -> testimonyMovementService.retirar(5, 123))
+            assertThatThrownBy(() -> testimonyMovementService.withdraw(5, 123))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("inscripto");
         }
@@ -190,7 +190,7 @@ class TestimonyMovementServiceTest {
         void shouldRejectRetirarWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
-            assertThatThrownBy(() -> testimonyMovementService.retirar(999, 123))
+            assertThatThrownBy(() -> testimonyMovementService.withdraw(999, 123))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -214,7 +214,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement nuevo = testimonyMovementService.reingresar(5);
+            TestimonyMovement nuevo = testimonyMovementService.reenter(5);
 
             assertThat(nuevo.getDateEntry()).isNotNull();
             assertThat(nuevo.getDateExit()).isNull();
@@ -230,7 +230,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.of(ingresado));
 
-            assertThatThrownBy(() -> testimonyMovementService.reingresar(5))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(5))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("retirado");
         }
@@ -242,7 +242,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> testimonyMovementService.reingresar(5))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(5))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("retirado");
         }
@@ -252,7 +252,7 @@ class TestimonyMovementServiceTest {
         void shouldRejectReingresarWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
-            assertThatThrownBy(() -> testimonyMovementService.reingresar(999))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(999))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }

@@ -49,7 +49,7 @@ class TestimonyVerificacionServiceTest {
         when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
         when(testimonyRepository.save(testimony)).thenReturn(testimony);
 
-        Testimony verified = testimonyService.verificar(5, false, null);
+        Testimony verified = testimonyService.verify(5, false, null);
 
         assertThat(verified.getVerified()).isTrue();
         assertThat(verified.getFlagged()).isFalse();
@@ -62,7 +62,7 @@ class TestimonyVerificacionServiceTest {
         when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
         when(testimonyRepository.save(testimony)).thenReturn(testimony);
 
-        Testimony verified = testimonyService.verificar(5, true, "Falta una firma");
+        Testimony verified = testimonyService.verify(5, true, "Falta una firma");
 
         assertThat(verified.getVerified()).isTrue();
         assertThat(verified.getFlagged()).isTrue();
@@ -74,7 +74,7 @@ class TestimonyVerificacionServiceTest {
     void shouldRejectVerificationWhenTestimonyNotFound() {
         when(testimonyRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> testimonyService.verificar(999, false, null))
+        assertThatThrownBy(() -> testimonyService.verify(999, false, null))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

@@ -63,7 +63,7 @@ public class DocumentEntidadExternaService {
         SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Documento presentado no encontrado con ID: " + idSubmittedDocument));
-        validarPerteneceAManagement(document, idManagement);
+        validateBelongsToManagement(document, idManagement);
         validarEsEntidadExterna(document);
 
         aplicarMovement(document, movement);
@@ -104,7 +104,7 @@ public class DocumentEntidadExternaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
     }
 
-    private static void validarPerteneceAManagement(SubmittedDocument document, Integer idManagement) {
+    private static void validateBelongsToManagement(SubmittedDocument document, Integer idManagement) {
         Procedure procedure = document.getFkIdProcedure();
         DeedManagement management = procedure != null ? procedure.getFkIdManagement() : null;
         if (management == null || !idManagement.equals(management.getIdManagement())) {

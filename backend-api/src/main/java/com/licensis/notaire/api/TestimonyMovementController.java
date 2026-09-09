@@ -127,8 +127,8 @@ public class TestimonyMovementController {
     @PostMapping("/{idTestimony}/ingresar-inscripcion")
     @Operation(summary = "Ingresar testimonio para inscripción",
                description = "Registra la fecha de ingreso de un testimonio verificado al Registro de la Propiedad")
-    public ResponseEntity<DtoTestimonyMovement> ingresarRegistration(@PathVariable Integer idTestimony) {
-        TestimonyMovement movement = testimonyMovementService.ingresarRegistration(idTestimony);
+    public ResponseEntity<DtoTestimonyMovement> registerEntry(@PathVariable Integer idTestimony) {
+        TestimonyMovement movement = testimonyMovementService.registerEntry(idTestimony);
         return ResponseEntity.status(HttpStatus.CREATED).body(movement.getDto());
     }
 
@@ -140,8 +140,8 @@ public class TestimonyMovementController {
     @PostMapping("/{idTestimony}/registrar-inscripcion")
     @Operation(summary = "Registrar inscripción del testimonio",
                description = "Marca como inscripto el movimiento abierto de un testimonio, registrando la fecha")
-    public ResponseEntity<DtoTestimonyMovement> registrarRegistration(@PathVariable Integer idTestimony) {
-        TestimonyMovement movement = testimonyMovementService.registrarRegistration(idTestimony);
+    public ResponseEntity<DtoTestimonyMovement> registerInscription(@PathVariable Integer idTestimony) {
+        TestimonyMovement movement = testimonyMovementService.registerInscription(idTestimony);
         return ResponseEntity.ok(movement.getDto());
     }
 
@@ -150,12 +150,12 @@ public class TestimonyMovementController {
     @ApiResponse(responseCode = "400", description = "El testimonio no está inscripto"),
     @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
 })
-    @PostMapping("/{idTestimony}/retirar")
+    @PostMapping("/{idTestimony}/withdraw")
     @Operation(summary = "Retirar testimonio inscripto",
                description = "Registra la fecha de salida y el número de cartón de un testimonio inscripto")
-    public ResponseEntity<DtoTestimonyMovement> retirar(@PathVariable Integer idTestimony,
+    public ResponseEntity<DtoTestimonyMovement> withdraw(@PathVariable Integer idTestimony,
             @RequestBody DtoTestimonyMovement dto) {
-        TestimonyMovement movement = testimonyMovementService.retirar(idTestimony, dto.getCardNumber());
+        TestimonyMovement movement = testimonyMovementService.withdraw(idTestimony, dto.getCardNumber());
         return ResponseEntity.ok(movement.getDto());
     }
 
@@ -164,12 +164,12 @@ public class TestimonyMovementController {
     @ApiResponse(responseCode = "400", description = "El testimonio no fue retirado previamente"),
     @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
 })
-    @PostMapping("/{idTestimony}/reingresar")
+    @PostMapping("/{idTestimony}/reenter")
     @Operation(summary = "Reingresar testimonio retirado",
                description = "Crea un nuevo movimiento de ingreso para un testimonio previamente retirado, sin "
                        + "alterar el movimiento anterior")
-    public ResponseEntity<DtoTestimonyMovement> reingresar(@PathVariable Integer idTestimony) {
-        TestimonyMovement movement = testimonyMovementService.reingresar(idTestimony);
+    public ResponseEntity<DtoTestimonyMovement> reenter(@PathVariable Integer idTestimony) {
+        TestimonyMovement movement = testimonyMovementService.reenter(idTestimony);
         return ResponseEntity.status(HttpStatus.CREATED).body(movement.getDto());
     }
 }

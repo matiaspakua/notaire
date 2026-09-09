@@ -101,7 +101,7 @@ class ReingresoDocumentacionServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(template));
 
-            DtoManagementReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
+            DtoManagementReingresoDocumentacion resultado = service.getRequiredDocumentation(1);
 
             assertThat(resultado.idManagement()).isEqualTo(1);
             assertThat(resultado.number()).isEqualTo(100);
@@ -120,7 +120,7 @@ class ReingresoDocumentacionServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of());
 
-            DtoManagementReingresoDocumentacion resultado = service.obtenerDocumentacionNecesaria(1);
+            DtoManagementReingresoDocumentacion resultado = service.getRequiredDocumentation(1);
 
             assertThat(resultado.procedures()).hasSize(1);
             assertThat(resultado.procedures().get(0).documentsNecesarios()).isEmpty();
@@ -131,7 +131,7 @@ class ReingresoDocumentacionServiceTest {
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> service.obtenerDocumentacionNecesaria(999))
+            assertThatThrownBy(() -> service.getRequiredDocumentation(999))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -157,7 +157,7 @@ class ReingresoDocumentacionServiceTest {
             });
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
-            DtoDocumentReentered resultado = service.reingresar(1, request);
+            DtoDocumentReentered resultado = service.reenter(1, request);
 
             assertThat(resultado.idSubmittedDocument()).isEqualTo(50);
             assertThat(resultado.idProcedure()).isEqualTo(10);
@@ -183,7 +183,7 @@ class ReingresoDocumentacionServiceTest {
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 
-            assertThatThrownBy(() -> service.reingresar(1, request))
+            assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
@@ -199,7 +199,7 @@ class ReingresoDocumentacionServiceTest {
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 
-            assertThatThrownBy(() -> service.reingresar(1, request))
+            assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
@@ -211,7 +211,7 @@ class ReingresoDocumentacionServiceTest {
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(999, 7);
 
-            assertThatThrownBy(() -> service.reingresar(1, request))
+            assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
 
@@ -222,7 +222,7 @@ class ReingresoDocumentacionServiceTest {
 
             DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
 
-            assertThatThrownBy(() -> service.reingresar(999, request))
+            assertThatThrownBy(() -> service.reenter(999, request))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }

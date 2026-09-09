@@ -56,7 +56,7 @@ class TestimonyGenerationServiceTest {
         when(testimonyRepository.save(org.mockito.ArgumentMatchers.any(Testimony.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Testimony generado = testimonyService.generar(1);
+        Testimony generado = testimonyService.generate(1);
 
         ArgumentCaptor<Testimony> captor = ArgumentCaptor.forClass(Testimony.class);
         verify(testimonyRepository).save(captor.capture());
@@ -73,7 +73,7 @@ class TestimonyGenerationServiceTest {
         deed.setStatus(BusinessConstants.DeedSINFIRMAR);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
-        assertThatThrownBy(() -> testimonyService.generar(1))
+        assertThatThrownBy(() -> testimonyService.generate(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Firmada");
     }
@@ -83,7 +83,7 @@ class TestimonyGenerationServiceTest {
     void shouldRejectGenerationWhenDeedNotFound() {
         when(deedRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> testimonyService.generar(999))
+        assertThatThrownBy(() -> testimonyService.generate(999))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }
