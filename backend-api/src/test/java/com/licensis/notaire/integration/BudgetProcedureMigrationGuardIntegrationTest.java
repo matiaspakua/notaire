@@ -61,11 +61,11 @@ class BudgetProcedureMigrationGuardIntegrationTest {
         try (Connection connection = DriverManager.getConnection(POSTGRESQL_CONTAINER.getJdbcUrl(),
                 POSTGRESQL_CONTAINER.getUsername(), POSTGRESQL_CONTAINER.getPassword());
                 Statement statement = connection.createStatement()) {
-            statement.execute("INSERT INTO procedures (version, number, name) VALUES (0, 1, 'Compraventa')");
+            statement.execute("INSERT INTO tramites (version, numero, nombre) VALUES (0, 1, 'Compraventa')");
             statement.execute(
-                    "INSERT INTO presupuestos (version, number, date, encabezado, status, fk_id_tramite) "
+                    "INSERT INTO presupuestos (version, numero, fecha, encabezado, estado, fk_id_tramite) "
                             + "VALUES (0, 1, CURRENT_DATE, 'Test', 'pendiente', "
-                            + "(SELECT id_tramite FROM procedures ORDER BY id_tramite DESC LIMIT 1))");
+                            + "(SELECT id_tramite FROM tramites ORDER BY id_tramite DESC LIMIT 1))");
         }
 
         Flyway flywayToLatest = Flyway.configure()
