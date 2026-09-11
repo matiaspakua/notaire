@@ -47,24 +47,24 @@ export default function CopiasPage() {
   function openEdit(c: Copia) {
     setEditing(c);
     setForm({
-      numero: c.numero?.toString() ?? "",
-      fechaImpresion: c.fechaImpresion?.split("T")[0] ?? "",
-      fechaRetiro: c.fechaRetiro?.split("T")[0] ?? "",
-      observaciones: c.observaciones ?? "",
+      numero: c.number?.toString() ?? "",
+      fechaImpresion: c.datePrinting?.split("T")[0] ?? "",
+      fechaRetiro: c.dateWithdrawal?.split("T")[0] ?? "",
+      observaciones: c.notes ?? "",
     });
     setModalOpen(true);
   }
 
   async function handleSave() {
     const data: Partial<Copia> = {
-      numero: form.numero ? Number(form.numero) : undefined,
-      fechaImpresion: form.fechaImpresion || undefined,
-      fechaRetiro: form.fechaRetiro || undefined,
-      observaciones: form.observaciones || undefined,
+      number: form.numero ? Number(form.numero) : undefined,
+      datePrinting: form.fechaImpresion || undefined,
+      dateWithdrawal: form.fechaRetiro || undefined,
+      notes: form.observaciones || undefined,
     };
     try {
-      if (editing?.idCopia) {
-        await updateMutation.mutateAsync({ id: editing.idCopia, data });
+      if (editing?.idCopy) {
+        await updateMutation.mutateAsync({ id: editing.idCopy, data });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(data);
@@ -92,28 +92,28 @@ export default function CopiasPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (c) => <span className="text-muted-foreground text-xs">{c.idCopia}</span>,
+      render: (c) => <span className="text-muted-foreground text-xs">{c.idCopy}</span>,
       className: "w-16",
     },
     {
       key: "numero",
       header: tc("number"),
-      render: (c) => <span className="font-medium">{c.numero ?? "—"}</span>,
+      render: (c) => <span className="font-medium">{c.number ?? "—"}</span>,
     },
     {
       key: "fechaImpresion",
       header: "Fecha Impresión",
-      render: (c) => c.fechaImpresion ? new Date(c.fechaImpresion).toLocaleDateString("es-AR") : "—",
+      render: (c) => c.datePrinting ? new Date(c.datePrinting).toLocaleDateString("es-AR") : "—",
     },
     {
       key: "fechaRetiro",
       header: "Fecha Retiro",
-      render: (c) => c.fechaRetiro ? new Date(c.fechaRetiro).toLocaleDateString("es-AR") : "—",
+      render: (c) => c.dateWithdrawal ? new Date(c.dateWithdrawal).toLocaleDateString("es-AR") : "—",
     },
     {
       key: "testimonio",
       header: "Testimonio",
-      render: (c) => c.testimonio?.numero ? `#${c.testimonio.numero}` : "—",
+      render: (c) => c.fkIdTestimony?.number ? `#${c.fkIdTestimony.number}` : "—",
       className: "w-32",
     },
     {
@@ -128,7 +128,7 @@ export default function CopiasPage() {
             size="icon"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(c.idCopia!)}
+            onClick={() => setDeleteId(c.idCopy!)}
             aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
@@ -155,7 +155,7 @@ export default function CopiasPage() {
         data={copias}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(c) => c.idCopia!}
+        keyExtractor={(c) => c.idCopy!}
         emptyMessage={t("noData")}
       />
 
