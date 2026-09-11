@@ -17,7 +17,7 @@ import {
 } from "@/hooks/useWorkflow";
 import type { WorkflowDefinition } from "@/types";
 
-const EMPTY: Partial<WorkflowDefinition> = { nombre: "", descripcion: "", activo: false };
+const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
 
 export default function WorkflowsPage() {
   const { data = [], isLoading } = useWorkflowDefinitions();
@@ -33,7 +33,7 @@ export default function WorkflowsPage() {
   const [saving, setSaving] = useState(false);
 
   const filtered = search.trim()
-    ? data.filter((wf) => wf.nombre?.toLowerCase().includes(search.toLowerCase()))
+    ? data.filter((wf) => wf.name?.toLowerCase().includes(search.toLowerCase()))
     : data;
 
   function openCreate() {
@@ -49,7 +49,7 @@ export default function WorkflowsPage() {
   }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) {
+    if (!editing.name?.trim()) {
       toast.error("El nombre es requerido");
       return;
     }
@@ -84,14 +84,14 @@ export default function WorkflowsPage() {
 
   const columns: Column<WorkflowDefinition>[] = [
     { key: "id", header: "ID", render: (wf) => <span className="text-xs text-muted-foreground">{wf.id}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (wf) => <span className="font-medium">{wf.nombre}</span> },
-    { key: "desc", header: "Descripción", render: (wf) => wf.descripcion ?? "—" },
+    { key: "nombre", header: "Nombre", render: (wf) => <span className="font-medium">{wf.name}</span> },
+    { key: "desc", header: "Descripción", render: (wf) => wf.description ?? "—" },
     {
       key: "activo",
       header: "Estado",
       render: (wf) => (
-        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.activo ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"}`}>
-          {wf.activo ? "Activo" : "Inactivo"}
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"}`}>
+          {wf.active ? "Activo" : "Inactivo"}
         </span>
       ),
       className: "w-24",
@@ -151,16 +151,16 @@ export default function WorkflowsPage() {
             <FormSection title={isEditMode ? "Editar Workflow" : "Nuevo Workflow"}>
               <FormField label="Nombre" required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder="Ej: Workflow Compraventa"
                   data-testid="input-nombre-workflow"
                 />
               </FormField>
               <FormField label="Descripción">
                 <Input
-                  value={editing.descripcion ?? ""}
-                  onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
+                  value={editing.description ?? ""}
+                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   placeholder="Descripción opcional"
                 />
               </FormField>
@@ -168,8 +168,8 @@ export default function WorkflowsPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={editing.activo ?? false}
-                    onChange={(e) => setEditing({ ...editing, activo: e.target.checked })}
+                    checked={editing.active ?? false}
+                    onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
                     data-testid="checkbox-activo-workflow"
                   />
                   <span className="text-sm">Habilitado para asignación</span>
