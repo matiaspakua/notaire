@@ -58,13 +58,13 @@ export default function InmueblesPage() {
   function openEdit(i: Inmueble) {
     setEditing(i);
     setForm({
-      nomenclaturaCatastral: i.nomenclaturaCatastral ?? "",
-      domicilio: i.domicilio ?? "",
-      valuacionFiscal: i.valuacionFiscal !== undefined ? String(i.valuacionFiscal) : "",
-      observaciones: i.observaciones ?? "",
-      matricula: i.matricula ?? "",
-      tomoFolioFinca: i.tomoFolioFinca ?? "",
-      linderos: i.linderos ?? "",
+      nomenclaturaCatastral: i.cadastralDesignation ?? "",
+      domicilio: i.address ?? "",
+      valuacionFiscal: i.fiscalAppraisal !== undefined ? String(i.fiscalAppraisal) : "",
+      observaciones: i.notes ?? "",
+      matricula: i.registrationNumber ?? "",
+      tomoFolioFinca: i.volumeFolioLandRecord ?? "",
+      linderos: i.boundaries ?? "",
     });
     setModalOpen(true);
   }
@@ -72,16 +72,16 @@ export default function InmueblesPage() {
   async function handleSave() {
     try {
       const payload = {
-        nomenclaturaCatastral: form.nomenclaturaCatastral,
-        domicilio: form.domicilio,
-        observaciones: form.observaciones,
-        valuacionFiscal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
-        matricula: form.matricula || undefined,
-        tomoFolioFinca: form.tomoFolioFinca || undefined,
-        linderos: form.linderos || undefined,
+        cadastralDesignation: form.nomenclaturaCatastral,
+        address: form.domicilio,
+        notes: form.observaciones,
+        fiscalAppraisal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
+        registrationNumber: form.matricula || undefined,
+        volumeFolioLandRecord: form.tomoFolioFinca || undefined,
+        boundaries: form.linderos || undefined,
       };
-      if (editing?.idInmueble) {
-        await updateMutation.mutateAsync({ id: editing.idInmueble, data: payload });
+      if (editing?.idProperty) {
+        await updateMutation.mutateAsync({ id: editing.idProperty, data: payload });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(payload);
@@ -109,23 +109,23 @@ export default function InmueblesPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (i) => <span className="text-muted-foreground text-xs">{i.idInmueble}</span>,
+      render: (i) => <span className="text-muted-foreground text-xs">{i.idProperty}</span>,
       className: "w-16",
     },
     {
       key: "nomenclatura",
       header: "Nomenclatura Catastral",
-      render: (i) => <span className="font-medium">{i.nomenclaturaCatastral ?? "—"}</span>,
+      render: (i) => <span className="font-medium">{i.cadastralDesignation ?? "—"}</span>,
     },
     {
       key: "domicilio",
       header: t("fields.domicilio"),
-      render: (i) => i.domicilio ?? "—",
+      render: (i) => i.address ?? "—",
     },
     {
       key: "valuacion",
       header: t("fields.valuacionFiscal"),
-      render: (i) => i.valuacionFiscal ?? "—",
+      render: (i) => i.fiscalAppraisal ?? "—",
       className: "w-40",
     },
     {
@@ -140,7 +140,7 @@ export default function InmueblesPage() {
             size="icon"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(i.idInmueble!)}
+            onClick={() => setDeleteId(i.idProperty!)}
             aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
@@ -167,7 +167,7 @@ export default function InmueblesPage() {
         data={inmuebles}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(i) => i.idInmueble!}
+        keyExtractor={(i) => i.idProperty!}
         emptyMessage={t("noData")}
       />
 
