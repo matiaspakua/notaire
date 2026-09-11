@@ -75,10 +75,10 @@ export default function PlantillasPage() {
     setSavingCosto(true);
     try {
       await apiPost("/plantilla-costos-documento", {
-        idTipoTramite: Number(costoTramiteId),
-        idTipoDocumento,
-        montoFijo: tipoCosto === "fijo" ? valor : null,
-        porcentajeVariable: tipoCosto === "variable" ? valor : null,
+        idProcedureType: Number(costoTramiteId),
+        idDocumentType: idTipoDocumento,
+        fixedAmount: tipoCosto === "fijo" ? valor : null,
+        variablePercentage: tipoCosto === "variable" ? valor : null,
       });
       toast.success(t("costosDocumento.created"));
       setCostoModalOpen(false);
@@ -91,7 +91,7 @@ export default function PlantillasPage() {
   }
 
   const tipoDocumentoName = (id?: number) =>
-    tiposDocumento.find((x) => x.idTipoDocumento === id)?.nombre ?? `#${id}`;
+    tiposDocumento.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -112,9 +112,9 @@ export default function PlantillasPage() {
 
   function openEdit(p: PlantillaPresupuesto) {
     setIsEditMode(true);
-    setTipoTramiteId(String(p.plantillaPresupuestoPK?.fkIdTipoTramite ?? ""));
-    setConceptoId(String(p.plantillaPresupuestoPK?.fkIdConcepto ?? ""));
-    setObservaciones(p.observaciones ?? "");
+    setTipoTramiteId(String(p.budgetTemplatePK?.fkIdProcedureType ?? ""));
+    setConceptoId(String(p.budgetTemplatePK?.fkIdConcept ?? ""));
+    setObservaciones(p.notes ?? "");
     setModalOpen(true);
   }
 
@@ -130,12 +130,12 @@ export default function PlantillasPage() {
       // The backend derives the composite PK from the related entities. It reads
       // TipoDeTramite via getIdTipoTramite(), so the relation must carry the
       // `idTipoTramite` key (the typed field is idTipoDeTramite — hence the cast).
-      const body = {
-        plantillaPresupuestoPK: { fkIdTipoTramite: tt, fkIdConcepto: cc },
-        tipoDeTramite: { idTipoTramite: tt },
-        concepto: { idConcepto: cc },
-        observaciones: observaciones.trim() || undefined,
-      } as unknown as PlantillaPresupuesto;
+      const body: PlantillaPresupuesto = {
+        budgetTemplatePK: { fkIdProcedureType: tt, fkIdConcept: cc },
+        procedureType: { idProcedureType: tt },
+        concept: { idConcept: cc },
+        notes: observaciones.trim() || undefined,
+      };
       if (isEditMode) {
         await apiPut(`/plantilla-presupuestos/tipo-tramite/${tt}/concepto/${cc}`, body);
         toast.success(t("updated"));
@@ -167,21 +167,21 @@ export default function PlantillasPage() {
     }
   }
 
-  const tramiteName = (id?: number) => tiposTramite.find((x) => x.idTipoDeTramite === id)?.nombre ?? `#${id}`;
-  const conceptoName = (id?: number) => conceptos.find((x) => x.idConcepto === id)?.nombre ?? `#${id}`;
+  const tramiteName = (id?: number) => tiposTramite.find((x) => x.idProcedureType === id)?.name ?? `#${id}`;
+  const conceptoName = (id?: number) => conceptos.find((x) => x.idConcept === id)?.name ?? `#${id}`;
 
   const columns: Column<PlantillaPresupuesto>[] = [
     {
       key: "tramite",
       header: t("fields.tipoTramite"),
-      render: (p) => <span className="font-medium">{p.tipoDeTramite?.nombre ?? tramiteName(p.plantillaPresupuestoPK?.fkIdTipoTramite)}</span>,
+      render: (p) => <span className="font-medium">{p.procedureType?.name ?? tramiteName(p.budgetTemplatePK?.fkIdProcedureType)}</span>,
     },
     {
       key: "concepto",
       header: t("fields.concepto"),
-      render: (p) => p.concepto?.nombre ?? conceptoName(p.plantillaPresupuestoPK?.fkIdConcepto),
+      render: (p) => p.concept?.name ?? conceptoName(p.budgetTemplatePK?.fkIdConcept),
     },
-    { key: "obs", header: t("fields.observaciones"), render: (p) => p.observaciones ?? "—" },
+    { key: "obs", header: t("fields.observaciones"), render: (p) => p.notes ?? "—" },
     {
       key: "actions",
       header: "",
@@ -197,8 +197,8 @@ export default function PlantillasPage() {
             className="text-destructive hover:text-destructive"
             onClick={() =>
               setDeleteKey({
-                tipoTramiteId: p.plantillaPresupuestoPK!.fkIdTipoTramite,
-                conceptoId: p.plantillaPresupuestoPK!.fkIdConcepto,
+                tipoTramiteId: p.budgetTemplatePK!.fkIdProcedureType,
+                conceptoId: p.budgetTemplatePK!.fkIdConcept,
               })
             }
             data-testid="btn-delete-plantilla"
@@ -227,7 +227,7 @@ export default function PlantillasPage() {
         data={data}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(p) => `${p.plantillaPresupuestoPK?.fkIdTipoTramite}-${p.plantillaPresupuestoPK?.fkIdConcepto}`}
+        keyExtractor={(p) => `${p.budgetTemplatePK?.fkIdProcedureType}-${p.budgetTemplatePK?.fkIdConcept}`}
         emptyMessage={t("noData")}
       />
 
@@ -242,8 +242,8 @@ export default function PlantillasPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {tiposTramite.map((tt) => (
-                      <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>
-                        {tt.nombre}
+                      <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
+                        {tt.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -256,9 +256,9 @@ export default function PlantillasPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {conceptos.map((c) => (
-                      <SelectItem key={c.idConcepto} value={String(c.idConcepto)}>
-                        {c.nombre}
-                        {c.valor ? ` ($${c.valor})` : ""}
+                      <SelectItem key={c.idConcept} value={String(c.idConcept)}>
+                        {c.name}
+                        {c.value ? ` ($${c.value})` : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -296,8 +296,8 @@ export default function PlantillasPage() {
           </SelectTrigger>
           <SelectContent>
             {tiposTramite.map((tt) => (
-              <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>
-                {tt.nombre}
+              <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
+                {tt.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -317,24 +317,24 @@ export default function PlantillasPage() {
             isLoading={isLoadingCostos}
             emptyMessage={t("costosDocumento.noData")}
             keyExtractor={(c) =>
-              `${c.plantillaCostoDocumentoPK?.fkIdTipoTramite}-${c.plantillaCostoDocumentoPK?.fkIdTipoDocumento}`
+              `${c.documentCostTemplatePK?.fkIdProcedureType}-${c.documentCostTemplatePK?.fkIdDocumentType}`
             }
             columns={[
               {
                 key: "tipoDocumento",
                 header: t("costosDocumento.fields.tipoDocumento"),
                 render: (c) =>
-                  c.tipoDeDocumento?.nombre ?? tipoDocumentoName(c.plantillaCostoDocumentoPK?.fkIdTipoDocumento),
+                  c.documentType?.name ?? tipoDocumentoName(c.documentCostTemplatePK?.fkIdDocumentType),
               },
               {
                 key: "montoFijo",
                 header: t("costosDocumento.fields.montoFijo"),
-                render: (c) => (c.montoFijo != null ? `$${c.montoFijo}` : "—"),
+                render: (c) => (c.fixedAmount != null ? `$${c.fixedAmount}` : "—"),
               },
               {
                 key: "porcentajeVariable",
                 header: t("costosDocumento.fields.porcentajeVariable"),
-                render: (c) => (c.porcentajeVariable != null ? `${c.porcentajeVariable}%` : "—"),
+                render: (c) => (c.variablePercentage != null ? `${c.variablePercentage}%` : "—"),
               },
             ]}
           />
@@ -352,8 +352,8 @@ export default function PlantillasPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {tiposDocumento.map((td) => (
-                      <SelectItem key={td.idTipoDocumento} value={String(td.idTipoDocumento)}>
-                        {td.nombre}
+                      <SelectItem key={td.idDocumentType} value={String(td.idDocumentType)}>
+                        {td.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

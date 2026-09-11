@@ -229,27 +229,30 @@ export interface Item {
 }
 
 export interface PlantillaPresupuestoPK {
-  fkIdTipoTramite: number;
-  fkIdConcepto: number;
+  fkIdProcedureType: number;
+  fkIdConcept: number;
 }
 
+/** GET/POST /api/v1/plantilla-presupuestos — raw BudgetTemplate entity. */
 export interface PlantillaPresupuesto {
-  plantillaPresupuestoPK?: PlantillaPresupuestoPK;
-  tipoDeTramite?: TipoDeTramite;
-  concepto?: Concepto;
+  budgetTemplatePK?: PlantillaPresupuestoPK;
+  procedureType?: TipoDeTramite;
+  concept?: Concepto;
   notes?: string;
   version?: number;
 }
 
 export interface PlantillaCostoDocumentoPK {
-  fkIdTipoTramite: number;
-  fkIdTipoDocumento: number;
+  fkIdProcedureType: number;
+  fkIdDocumentType: number;
 }
 
+/** GET /api/v1/plantilla-costos-documento — raw DocumentCostTemplate entity;
+ * POST body is the flat CreateCostRequest shape. */
 export interface PlantillaCostoDocumento {
-  plantillaCostoDocumentoPK?: PlantillaCostoDocumentoPK;
-  tipoDeTramite?: TipoDeTramite;
-  tipoDeDocumento?: TipoDeDocumento;
+  documentCostTemplatePK?: PlantillaCostoDocumentoPK;
+  procedureType?: TipoDeTramite;
+  documentType?: TipoDeDocumento;
   fixedAmount?: number;
   variablePercentage?: number;
   version?: number;
