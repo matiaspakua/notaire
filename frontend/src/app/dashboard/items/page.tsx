@@ -24,15 +24,13 @@ import {
   useUpdateItem,
   useDeleteItem,
 } from "@/hooks/useItems";
-import { useConceptos } from "@/hooks/useConceptos";
-import type { Item, Concepto } from "@/types";
+import type { Item } from "@/types";
 
 export default function ItemsPage() {
   const t = useTranslations("items");
   const tc = useTranslations("common");
 
   const { data: items = [], isLoading } = useItems();
-  const { data: conceptos = [] } = useConceptos();
   const createMutation = useCreateItem();
   const updateMutation = useUpdateItem();
   const deleteMutation = useDeleteItem();
@@ -40,29 +38,28 @@ export default function ItemsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Item | null>(null);
-  const [form, setForm] = useState({ conceptoId: "", cantidad: "", precio: "" });
+  const [form, setForm] = useState({ nombre: "", cantidad: "", precio: "" });
 
   function openCreate() {
     setEditing(null);
-    setForm({ conceptoId: "", cantidad: "", precio: "" });
+    setForm({ nombre: "", cantidad: "", precio: "" });
     setModalOpen(true);
   }
 
   function openEdit(i: Item) {
     setEditing(i);
     setForm({
-      conceptoId: i.concepto?.idConcepto?.toString() ?? "",
-      cantidad: i.cantidad?.toString() ?? "",
-      precio: i.precio?.toString() ?? "",
+      nombre: i.name ?? "",
+      cantidad: i.value?.toString() ?? "",
+      precio: i.value?.toString() ?? "",
     });
     setModalOpen(true);
   }
 
   async function handleSave() {
     const data: Partial<Item> = {
-      concepto: form.conceptoId ? { idConcepto: Number(form.conceptoId) } as Concepto : undefined,
-      cantidad: form.cantidad ? Number(form.cantidad) : undefined,
-      precio: form.precio ? Number(form.precio) : undefined,
+      name: form.nombre || undefined,
+      value: form.precio ? Number(form.precio) : undefined,
     };
     try {
       if (editing?.idItem) {
@@ -100,27 +97,12 @@ export default function ItemsPage() {
     {
       key: "concepto",
       header: t("fields.concepto"),
-      render: (i) => <span className="font-medium">{i.concepto?.nombre ?? "—"}</span>,
-    },
-    {
-      key: "cantidad",
-      header: t("fields.cantidad"),
-      render: (i) => i.cantidad ?? "—",
-      className: "w-24",
+      render: (i) => <span className="font-medium">{i.name ?? "—"}</span>,
     },
     {
       key: "precio",
       header: t("fields.precio"),
-      render: (i) => i.precio ? `$${i.precio.toLocaleString("es-AR")}` : "—",
-      className: "w-32",
-    },
-    {
-      key: "subtotal",
-      header: "Subtotal",
-      render: (i) => {
-        const subtotal = (i.cantidad ?? 0) * (i.precio ?? 0);
-        return subtotal > 0 ? `$${subtotal.toLocaleString("es-AR")}` : "—";
-      },
+      render: (i) => i.value ? `$${i.value.toLocaleString("es-AR")}` : "—",
       className: "w-32",
     },
     {
@@ -171,37 +153,20 @@ export default function ItemsPage() {
           <FormContainer>
             <FormSection title={editing ? t("editItem") : t("newItem")}>
               <FormField label={t("fields.concepto")}>
-                <Select value={form.conceptoId} onValueChange={(v) => setForm({ ...form, conceptoId: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar concepto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {conceptos.map((c) => (
-                      <SelectItem key={c.idConcepto} value={c.idConcepto!.toString()}>
-                        {c.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  value={form.nombre}
+                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                  placeholder="Nombre del ítem"
+                />
               </FormField>
-              <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.cantidad")}>
-                  <Input
-                    type="number"
-                    value={form.cantidad}
-                    onChange={(e) => setForm({ ...form, cantidad: e.target.value })}
-                    placeholder="1"
-                  />
-                </FormField>
-                <FormField label={`${t("fields.precio")} ($)`}>
-                  <Input
-                    type="number"
-                    value={form.precio}
-                    onChange={(e) => setForm({ ...form, precio: e.target.value })}
-                    placeholder="0.00"
-                  />
-                </FormField>
-              </div>
+              <FormField label={`${t("fields.precio")} ($)`}>
+                <Input
+                  type="number"
+                  value={form.precio}
+                  onChange={(e) => setForm({ ...form, precio: e.target.value })}
+                  placeholder="0.00"
+                />
+              </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
