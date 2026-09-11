@@ -56,7 +56,7 @@ describe("useReingresoDocumentacion (CU43)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/gestiones/9/reingreso-documentacion");
-    expect(result.current.data?.procedures[0].documentosNecesarios[0].name).toBe("Certificado de Dominio");
+    expect(result.current.data?.procedures[0].documentsNecesarios[0].name).toBe("Certificado de Dominio");
   });
 
   it("does not fetch when gestionId is undefined", () => {

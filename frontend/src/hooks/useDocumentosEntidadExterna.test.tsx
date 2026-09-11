@@ -44,7 +44,7 @@ describe("useDocumentosEntidadExterna (CU10)", () => {
       numero: 1001,
       encabezado: "Gestion",
       nomenclaturaCatastral: "11-22-33",
-      documentos: [{ idDocumentoPresentado: 1, nombre: "Certificado de Dominio", entregado: false }],
+      documents: [{ idSubmittedDocument: 1, name: "Certificado de Dominio", delivered: false }],
     });
 
     const { Wrapper } = createWrapper();
@@ -52,7 +52,7 @@ describe("useDocumentosEntidadExterna (CU10)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/gestiones/9/documentos-entidades-externas");
-    expect(result.current.data?.documentos[0].nombre).toBe("Certificado de Dominio");
+    expect(result.current.data?.documents[0].name).toBe("Certificado de Dominio");
   });
 
   it("does not fetch when gestionId is undefined", () => {
@@ -68,7 +68,7 @@ describe("useRegistrarMovimientoDocumentoEntidadExterna (CU10)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("registers a movement via PUT", async () => {
-    vi.mocked(apiPut).mockResolvedValue({ idDocumentoPresentado: 1, entregado: true });
+    vi.mocked(apiPut).mockResolvedValue({ idSubmittedDocument: 1, delivered: true });
 
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useRegistrarMovimientoDocumentoEntidadExterna(), { wrapper: Wrapper });
@@ -76,9 +76,9 @@ describe("useRegistrarMovimientoDocumentoEntidadExterna (CU10)", () => {
     await result.current.mutateAsync({
       gestionId: 9,
       idDocumentoPresentado: 1,
-      movimiento: { entregado: true },
+      movimiento: { delivered: true },
     });
 
-    expect(apiPut).toHaveBeenCalledWith("/gestiones/9/documentos-entidades-externas/1", { entregado: true });
+    expect(apiPut).toHaveBeenCalledWith("/gestiones/9/documentos-entidades-externas/1", { delivered: true });
   });
 });
