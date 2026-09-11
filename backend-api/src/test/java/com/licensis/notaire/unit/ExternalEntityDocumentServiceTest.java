@@ -14,7 +14,7 @@ import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.service.DocumentEntidadExternaService;
+import com.licensis.notaire.service.ExternalEntityDocumentService;
 import com.licensis.notaire.service.ManagementTransitionService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 @RequirementCoverage({"CU10"})
 @DisplayName("DocumentoEntidadExternaService Tests")
 @ExtendWith(MockitoExtension.class)
-class DocumentEntidadExternaServiceTest {
+class ExternalEntityDocumentServiceTest {
 
     @Mock
     private DeedManagementRepository managementRepository;
@@ -59,7 +59,7 @@ class DocumentEntidadExternaServiceTest {
     private ManagementTransitionService managementTransitionService;
 
     @InjectMocks
-    private DocumentEntidadExternaService documentEntidadExternaService;
+    private ExternalEntityDocumentService documentEntidadExternaService;
 
     private DeedManagement management;
     private Procedure procedure;
@@ -106,7 +106,7 @@ class DocumentEntidadExternaServiceTest {
             when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
 
-            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.obtenerDocuments(1);
+            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.getDocuments(1);
 
             assertThat(resultado.idManagement()).isEqualTo(1);
             assertThat(resultado.number()).isEqualTo(100);
@@ -124,7 +124,7 @@ class DocumentEntidadExternaServiceTest {
             when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of());
 
-            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.obtenerDocuments(1);
+            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.getDocuments(1);
 
             assertThat(resultado.cadastralDesignation()).isNull();
             assertThat(resultado.documents()).isEmpty();
@@ -135,7 +135,7 @@ class DocumentEntidadExternaServiceTest {
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> documentEntidadExternaService.obtenerDocuments(999))
+            assertThatThrownBy(() -> documentEntidadExternaService.getDocuments(999))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -157,7 +157,7 @@ class DocumentEntidadExternaServiceTest {
                     true, 7, dateEntry, null, false, 1500f, null, null, "Retirado a tiempo", false);
 
             DtoDocumentEntidadExterna resultado =
-                    documentEntidadExternaService.registrarMovement(1, 50, movement);
+                    documentEntidadExternaService.registerMovement(1, 50, movement);
 
             assertThat(resultado.prepared()).isTrue();
             assertThat(resultado.cardNumber()).isEqualTo(7);
@@ -184,7 +184,7 @@ class DocumentEntidadExternaServiceTest {
             DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
                     true, null, null, null, null, null, null, null, null, null);
 
-            assertThatThrownBy(() -> documentEntidadExternaService.registrarMovement(1, 50, movement))
+            assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 50, movement))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
@@ -199,7 +199,7 @@ class DocumentEntidadExternaServiceTest {
             DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
                     true, null, null, null, null, null, null, null, null, null);
 
-            assertThatThrownBy(() -> documentEntidadExternaService.registrarMovement(1, 50, movement))
+            assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 50, movement))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
@@ -212,7 +212,7 @@ class DocumentEntidadExternaServiceTest {
             DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
                     true, null, null, null, null, null, null, null, null, null);
 
-            assertThatThrownBy(() -> documentEntidadExternaService.registrarMovement(1, 999, movement))
+            assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 999, movement))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -228,7 +228,7 @@ class DocumentEntidadExternaServiceTest {
             when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
 
-            documentEntidadExternaService.intentarCompletarDocumentacion(1);
+            documentEntidadExternaService.tryCompleteDocumentation(1);
 
             ArgumentCaptor<Integer> idManagementCaptor = ArgumentCaptor.forClass(Integer.class);
             ArgumentCaptor<String> statusCaptor = ArgumentCaptor.forClass(String.class);
@@ -243,7 +243,7 @@ class DocumentEntidadExternaServiceTest {
             when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
 
-            documentEntidadExternaService.intentarCompletarDocumentacion(1);
+            documentEntidadExternaService.tryCompleteDocumentation(1);
 
             verify(managementTransitionService, never()).transition(anyInt(), any());
         }
@@ -257,7 +257,7 @@ class DocumentEntidadExternaServiceTest {
             when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA)))
                     .thenThrow(new BusinessValidationException("Transición no permitida"));
 
-            documentEntidadExternaService.intentarCompletarDocumentacion(1);
+            documentEntidadExternaService.tryCompleteDocumentation(1);
 
             verify(managementTransitionService, times(1)).transition(1, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         }

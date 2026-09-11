@@ -14,7 +14,7 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.service.ReporteService;
+import com.licensis.notaire.service.ReportService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -66,18 +66,18 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("All endpoints — success and failure paths")
         void all() throws Exception {
-            ReporteService service = mock(ReporteService.class);
+            ReportService service = mock(ReportService.class);
             var mvc = standaloneSetup(new ReportController(service)).build();
             byte[] pdf = "PDF".getBytes();
-            when(service.generarReporteBudget(anyInt())).thenReturn(pdf);
-            when(service.generarReporteBudgetProperties(anyInt())).thenReturn(pdf);
-            when(service.generarReporteListaDocumentsProcedure(any())).thenReturn(pdf);
-            when(service.generarReporteHistoryManagement(anyInt())).thenReturn(pdf);
-            when(service.generarReporteDocumentsPorVencer(anyInt())).thenReturn(pdf);
-            when(service.generarReporteConsultarDebtDocuments(anyInt())).thenReturn(pdf);
-            when(service.generarReporteLibroIndice(anyInt())).thenReturn(pdf);
-            when(service.generarReporteDeclaracionJuradaMensual(anyInt(), anyInt())).thenReturn(pdf);
-            when(service.generarReporteDeclaracionJuradaRentas(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateBudgetReport(anyInt())).thenReturn(pdf);
+            when(service.generateBudgetPropertiesReport(anyInt())).thenReturn(pdf);
+            when(service.generateProcedureDocumentsListReport(any())).thenReturn(pdf);
+            when(service.generateManagementHistoryReport(anyInt())).thenReturn(pdf);
+            when(service.generateDocumentsDueSoonReport(anyInt())).thenReturn(pdf);
+            when(service.generateDebtDocumentsReport(anyInt())).thenReturn(pdf);
+            when(service.generateIndexBookReport(anyInt())).thenReturn(pdf);
+            when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
 
             mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isOk());
@@ -98,15 +98,15 @@ class AdditionalControllersTest {
                     .andExpect(status().isBadRequest());
 
             // Now all error paths
-            when(service.generarReporteBudget(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteBudgetProperties(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteListaDocumentsProcedure(any())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteHistoryManagement(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDocumentsPorVencer(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteConsultarDebtDocuments(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteLibroIndice(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDeclaracionJuradaMensual(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDeclaracionJuradaRentas(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateBudgetReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateBudgetPropertiesReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateProcedureDocumentsListReport(any())).thenThrow(new RuntimeException("e"));
+            when(service.generateManagementHistoryReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateDocumentsDueSoonReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateDebtDocumentsReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIndexBookReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
 
             mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isInternalServerError());
@@ -137,7 +137,7 @@ class AdditionalControllersTest {
             var queryService = mock(com.licensis.notaire.service.ManagementQueryService.class);
             var transitionService = mock(com.licensis.notaire.service.ManagementTransitionService.class);
             var bitacoraService = mock(com.licensis.notaire.service.ManagementBitacoraService.class);
-            var documentEntidadExternaService = mock(com.licensis.notaire.service.DocumentEntidadExternaService.class);
+            var documentEntidadExternaService = mock(com.licensis.notaire.service.ExternalEntityDocumentService.class);
             var reingresoDocumentacionService = mock(com.licensis.notaire.service.ReingresoDocumentacionService.class);
             var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonRepository.class),

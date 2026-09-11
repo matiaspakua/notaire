@@ -4,7 +4,7 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.service.NotebookService;
-import com.licensis.notaire.service.ReporteService;
+import com.licensis.notaire.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,9 +40,9 @@ public class NotebookController {
     private static final Logger logger = LoggerFactory.getLogger(NotebookController.class);
 
     private final NotebookService notebookService;
-    private final ReporteService reporteService;
+    private final ReportService reporteService;
 
-    public NotebookController(NotebookService notebookService, ReporteService reporteService) {
+    public NotebookController(NotebookService notebookService, ReportService reporteService) {
         this.notebookService = notebookService;
         this.reporteService = reporteService;
     }
@@ -101,7 +101,7 @@ public class NotebookController {
     @Operation(summary = "Generar la carátula PDF de un cuaderno")
     public ResponseEntity<byte[]> getCaratula(@PathVariable Integer id) {
         try {
-            byte[] pdf = reporteService.generarReporteCaratulaNotebook(id);
+            byte[] pdf = reporteService.generateNotebookCoverReport(id);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"cuaderno_" + id + "_caratula.pdf\"")

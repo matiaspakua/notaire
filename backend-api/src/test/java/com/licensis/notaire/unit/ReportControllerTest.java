@@ -5,7 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.licensis.notaire.api.ReportController;
-import com.licensis.notaire.service.ReporteService;
+import com.licensis.notaire.service.ReportService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class ReportControllerTest {
 
     @Mock
-    private ReporteService reporteService;
+    private ReportService reporteService;
 
     private ReportController controller;
     private ListAppender<ILoggingEvent> logAppender;
@@ -51,9 +51,9 @@ class ReportControllerTest {
     @DisplayName("Should return PDF bytes with correct headers when report generation succeeds")
     void shouldReturnPdfBytesWithCorrectHeadersWhenReportGenerationSucceeds() throws Exception {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generarReporteBudget(42)).thenReturn(pdfBytes);
+        when(reporteService.generateBudgetReport(42)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generarReporteBudget(42);
+        ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);
@@ -65,9 +65,9 @@ class ReportControllerTest {
     @DisplayName("Should log the exception when report generation fails")
     void shouldLogExceptionWhenReportGenerationFails() throws Exception {
         RuntimeException cause = new RuntimeException("jasper compile failure");
-        when(reporteService.generarReporteBudget(42)).thenThrow(cause);
+        when(reporteService.generateBudgetReport(42)).thenThrow(cause);
 
-        ResponseEntity<byte[]> response = controller.generarReporteBudget(42);
+        ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(logAppender.list)
@@ -80,9 +80,9 @@ class ReportControllerTest {
     @Test
     @DisplayName("Should return 500 and log when lista-documents-tramite report generation fails")
     void shouldReturn500AndLogWhenListaDocumentsProcedureReportFails() throws Exception {
-        when(reporteService.generarReporteListaDocumentsProcedure("Venta")).thenThrow(new RuntimeException("boom"));
+        when(reporteService.generateProcedureDocumentsListReport("Venta")).thenThrow(new RuntimeException("boom"));
 
-        ResponseEntity<byte[]> response = controller.generarReporteListaDocumentsProcedure("Venta");
+        ResponseEntity<byte[]> response = controller.generateProcedureDocumentsListReport("Venta");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(logAppender.list).isNotEmpty();
@@ -92,9 +92,9 @@ class ReportControllerTest {
     @DisplayName("CU82 - Should generate the minuta de inscripción report")
     void shouldGenerateRegistrationDraftReport() {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generarReporteRegistrationDraft(1)).thenReturn(pdfBytes);
+        when(reporteService.generateRegistrationDraftReport(1)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generarReporteRegistrationDraft(1);
+        ResponseEntity<byte[]> response = controller.generateRegistrationDraftReport(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);
@@ -106,9 +106,9 @@ class ReportControllerTest {
     @DisplayName("CU15 - Should generate the recibo de pago report")
     void shouldGenerateReciboPaymentReport() {
         byte[] pdfBytes = {1, 2, 3};
-        when(reporteService.generarReporteReciboPayment(1)).thenReturn(pdfBytes);
+        when(reporteService.generatePaymentReceiptReport(1)).thenReturn(pdfBytes);
 
-        ResponseEntity<byte[]> response = controller.generarReporteReciboPayment(1);
+        ResponseEntity<byte[]> response = controller.generatePaymentReceiptReport(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(pdfBytes);

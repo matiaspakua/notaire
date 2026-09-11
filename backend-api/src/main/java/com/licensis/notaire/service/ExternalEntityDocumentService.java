@@ -29,16 +29,16 @@ import java.util.List;
  * "Documentacion Completa" cuando todos esos documentos quedan entregados.
  */
 @Service
-public class DocumentEntidadExternaService {
+public class ExternalEntityDocumentService {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentEntidadExternaService.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalEntityDocumentService.class);
 
     private final DeedManagementRepository managementRepository;
     private final ProcedureRepository procedureRepository;
     private final SubmittedDocumentRepository submittedDocumentRepository;
     private final ManagementTransitionService managementTransitionService;
 
-    public DocumentEntidadExternaService(DeedManagementRepository managementRepository,
+    public ExternalEntityDocumentService(DeedManagementRepository managementRepository,
             ProcedureRepository procedureRepository, SubmittedDocumentRepository submittedDocumentRepository,
             ManagementTransitionService managementTransitionService) {
         this.managementRepository = managementRepository;
@@ -48,7 +48,7 @@ public class DocumentEntidadExternaService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementDocumentsEntidadesExternas obtenerDocuments(Integer idManagement) {
+    public DtoManagementDocumentsEntidadesExternas getDocuments(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
         List<SubmittedDocument> documents = submittedDocumentRepository
                 .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(idManagement,
@@ -57,16 +57,16 @@ public class DocumentEntidadExternaService {
     }
 
     @Transactional
-    public DtoDocumentEntidadExterna registrarMovement(Integer idManagement, Integer idSubmittedDocument,
+    public DtoDocumentEntidadExterna registerMovement(Integer idManagement, Integer idSubmittedDocument,
             DtoMovementDocumentEntidadExterna movement) {
         findManagementOrThrow(idManagement);
         SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Documento presentado no encontrado con ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
-        validarEsEntidadExterna(document);
+        validateIsExternalEntity(document);
 
-        aplicarMovement(document, movement);
+        applyMovement(document, movement);
         SubmittedDocument guardado = submittedDocumentRepository.save(document);
 
         return toDto(guardado);
@@ -82,7 +82,7 @@ public class DocumentEntidadExternaService {
      * registrarMovimiento} evita que Spring marque esa transacción como
      * rollback-only cuando {@link GestionTransitionService#transition} falla.
      */
-    public void intentarCompletarDocumentacion(Integer idManagement) {
+    public void tryCompleteDocumentation(Integer idManagement) {
         List<SubmittedDocument> documents = submittedDocumentRepository
                 .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(idManagement,
                         BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
@@ -114,14 +114,14 @@ public class DocumentEntidadExternaService {
         }
     }
 
-    private static void validarEsEntidadExterna(SubmittedDocument document) {
+    private static void validateIsExternalEntity(SubmittedDocument document) {
         if (!BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA.equals(document.getDeliveredBy())) {
             throw new BusinessValidationException(
                     "El documento " + document.getIdSubmittedDocument() + " no es de entidad externa");
         }
     }
 
-    private static void aplicarMovement(SubmittedDocument document,
+    private static void applyMovement(SubmittedDocument document,
             DtoMovementDocumentEntidadExterna movement) {
         if (movement.prepared() != null) {
             document.setPrepared(movement.prepared());
@@ -145,8 +145,8 @@ public class DocumentEntidadExternaService {
                 management.getEncabezado(),
                 management.getDateStart(),
                 nameNotary(management.getFkIdNotaryPerson()),
-                resolverCadastralDesignation(management.getIdManagement()),
-                documents.stream().map(DocumentEntidadExternaService::toDto).toList());
+                resolveCadastralDesignation(management.getIdManagement()),
+                documents.stream().map(ExternalEntityDocumentService::toDto).toList());
     }
 
     private static String nameNotary(Person notary) {
@@ -156,7 +156,7 @@ public class DocumentEntidadExternaService {
         return (notary.getFirstName() + " " + notary.getLastName()).trim();
     }
 
-    private String resolverCadastralDesignation(Integer idManagement) {
+    private String resolveCadastralDesignation(Integer idManagement) {
         return procedureRepository.findByFkIdManagementIdManagement(idManagement).stream()
                 .map(Procedure::getFkIdProperty)
                 .filter(java.util.Objects::nonNull)

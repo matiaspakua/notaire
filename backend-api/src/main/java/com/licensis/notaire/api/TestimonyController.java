@@ -3,7 +3,7 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.service.TestimonyGenerationVerificacionService;
+import com.licensis.notaire.service.TestimonyGenerationVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,10 +29,10 @@ import java.util.Optional;
 public class TestimonyController {
 
     private final TestimonyRepository repository;
-    private final TestimonyGenerationVerificacionService generationVerificacionService;
+    private final TestimonyGenerationVerificationService generationVerificacionService;
 
     public TestimonyController(TestimonyRepository repository,
-            TestimonyGenerationVerificacionService generationVerificacionService) {
+            TestimonyGenerationVerificationService generationVerificacionService) {
         this.repository = repository;
         this.generationVerificacionService = generationVerificacionService;
     }

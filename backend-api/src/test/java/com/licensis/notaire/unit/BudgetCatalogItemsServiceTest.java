@@ -5,7 +5,7 @@ import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.BudgetCatalogoItemsService;
+import com.licensis.notaire.service.BudgetCatalogItemsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("PresupuestoCatalogoItemsService Tests (CU71)")
 @ExtendWith(MockitoExtension.class)
-class BudgetCatalogoItemsServiceTest {
+class BudgetCatalogItemsServiceTest {
 
     @Mock
     private BudgetRepository budgetRepository;
@@ -32,7 +32,7 @@ class BudgetCatalogoItemsServiceTest {
     private ItemRepository itemRepository;
 
     @InjectMocks
-    private BudgetCatalogoItemsService budgetCatalogoItemsService;
+    private BudgetCatalogItemsService budgetCatalogoItemsService;
 
     private Item buildCatalogItem(Integer id, String name, float value) {
         Item item = new Item(id, name, value);
@@ -50,7 +50,7 @@ class BudgetCatalogoItemsServiceTest {
         when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", 500f)));
         when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogoItemsService.agregarItemsDesdeCatalogo(1, List.of(10));
+        List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10));
 
         assertThat(result).hasSize(1);
         Item copy = result.get(0);
@@ -70,7 +70,7 @@ class BudgetCatalogoItemsServiceTest {
         when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", 1000f)));
         when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogoItemsService.agregarItemsDesdeCatalogo(1, List.of(10, 11));
+        List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10, 11));
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting(Item::getName).containsExactlyInAnyOrder("Sellado", "Honorarios");
@@ -84,7 +84,7 @@ class BudgetCatalogoItemsServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(itemRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetCatalogoItemsService.agregarItemsDesdeCatalogo(1, List.of(999)))
+        assertThatThrownBy(() -> budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(999)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }
@@ -94,7 +94,7 @@ class BudgetCatalogoItemsServiceTest {
     void shouldRejectWhenBudgetDoesNotExist() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetCatalogoItemsService.agregarItemsDesdeCatalogo(999, List.of(10)))
+        assertThatThrownBy(() -> budgetCatalogoItemsService.addItemsFromCatalog(999, List.of(10)))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

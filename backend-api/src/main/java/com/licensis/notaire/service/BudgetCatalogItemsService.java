@@ -15,30 +15,30 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class BudgetCatalogoItemsService {
+public class BudgetCatalogItemsService {
 
     private final BudgetRepository budgetRepository;
     private final ItemRepository itemRepository;
 
-    public BudgetCatalogoItemsService(BudgetRepository budgetRepository,
+    public BudgetCatalogItemsService(BudgetRepository budgetRepository,
             ItemRepository itemRepository) {
         this.budgetRepository = budgetRepository;
         this.itemRepository = itemRepository;
     }
 
-    public List<Item> agregarItemsDesdeCatalogo(Integer idBudget, List<Integer> idItems) {
+    public List<Item> addItemsFromCatalog(Integer idBudget, List<Integer> idItems) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Presupuesto no encontrado con id: " + idBudget));
 
         List<Item> copies = idItems.stream()
-                .map(idItem -> copiarItemDeCatalogo(budget, idItem))
+                .map(idItem -> copyItemFromCatalog(budget, idItem))
                 .toList();
 
         return itemRepository.saveAll(copies);
     }
 
-    private Item copiarItemDeCatalogo(Budget budget, Integer idItem) {
+    private Item copyItemFromCatalog(Budget budget, Integer idItem) {
         Item catalogItem = itemRepository.findById(idItem)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Ítem de catálogo no encontrado con id: " + idItem));

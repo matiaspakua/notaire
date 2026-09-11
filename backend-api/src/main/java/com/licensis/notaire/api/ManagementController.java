@@ -29,7 +29,7 @@ import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.service.ProcedureFolderService;
-import com.licensis.notaire.service.DocumentEntidadExternaService;
+import com.licensis.notaire.service.ExternalEntityDocumentService;
 import com.licensis.notaire.service.ManagementArchiveDebtService;
 import com.licensis.notaire.service.ManagementBitacoraService;
 import com.licensis.notaire.service.ManagementQueryService;
@@ -88,7 +88,7 @@ public class ManagementController {
     private final ManagementResumenFinancieroService managementResumenFinancieroService;
     private final ManagementBitacoraService managementBitacoraService;
     private final ManagementTransitionService managementTransitionService;
-    private final DocumentEntidadExternaService documentEntidadExternaService;
+    private final ExternalEntityDocumentService documentEntidadExternaService;
     private final ReingresoDocumentacionService reingresoDocumentacionService;
     private final ProcedureFolderService procedureFolderService;
 
@@ -104,7 +104,7 @@ public class ManagementController {
                              ManagementResumenFinancieroService managementResumenFinancieroService,
                              ManagementBitacoraService managementBitacoraService,
                              ManagementTransitionService managementTransitionService,
-                             DocumentEntidadExternaService documentEntidadExternaService,
+                             ExternalEntityDocumentService documentEntidadExternaService,
                              ReingresoDocumentacionService reingresoDocumentacionService,
                              ProcedureFolderService procedureFolderService) {
         this.repository = repository;
@@ -480,7 +480,7 @@ public class ManagementController {
     @Operation(summary = "CU10 - Obtener la documentación de una gestión a cargo de entidades externas")
     public ResponseEntity<DtoManagementDocumentsEntidadesExternas> getDocumentsEntidadesExternas(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(documentEntidadExternaService.obtenerDocuments(id));
+        return ResponseEntity.ok(documentEntidadExternaService.getDocuments(id));
     }
 
     @ApiResponses({
@@ -490,12 +490,12 @@ public class ManagementController {
     })
     @PutMapping("/{id}/documentos-entidades-externas/{idSubmittedDocument}")
     @Operation(summary = "CU10 - Registrar el movimiento de un documento de entidad externa")
-    public ResponseEntity<DtoDocumentEntidadExterna> registrarMovementDocumentEntidadExterna(
+    public ResponseEntity<DtoDocumentEntidadExterna> registerMovementDocumentEntidadExterna(
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
             @RequestBody DtoMovementDocumentEntidadExterna movement) {
         DtoDocumentEntidadExterna resultado =
-                documentEntidadExternaService.registrarMovement(id, idSubmittedDocument, movement);
-        documentEntidadExternaService.intentarCompletarDocumentacion(id);
+                documentEntidadExternaService.registerMovement(id, idSubmittedDocument, movement);
+        documentEntidadExternaService.tryCompleteDocumentation(id);
         return ResponseEntity.ok(resultado);
     }
 

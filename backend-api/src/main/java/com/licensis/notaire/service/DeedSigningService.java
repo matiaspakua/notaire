@@ -16,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class DeedFirmaService {
+public class DeedSigningService {
 
-    private static final Logger log = LoggerFactory.getLogger(DeedFirmaService.class);
+    private static final Logger log = LoggerFactory.getLogger(DeedSigningService.class);
 
     private final DeedRepository deedRepository;
     private final FolioRepository folioRepository;
 
-    public DeedFirmaService(DeedRepository deedRepository, FolioRepository folioRepository) {
+    public DeedSigningService(DeedRepository deedRepository, FolioRepository folioRepository) {
         this.deedRepository = deedRepository;
         this.folioRepository = folioRepository;
     }
@@ -36,7 +36,7 @@ public class DeedFirmaService {
      * @throws ResourceNotFoundException if no escritura with the given ID exists
      * @throws BusinessValidationException if the escritura is not "Sin Firmar" or has no folio assigned
      */
-    public Deed firmar(Integer idDeed) {
+    public Deed sign(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
                 .orElseThrow(() -> new ResourceNotFoundException("Escritura no encontrada con ID: " + idDeed));
 

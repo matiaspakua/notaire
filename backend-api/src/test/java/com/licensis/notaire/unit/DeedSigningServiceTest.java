@@ -6,7 +6,7 @@ import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.service.DeedFirmaService;
+import com.licensis.notaire.service.DeedSigningService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 @RequirementCoverage({"CU06"})
 @DisplayName("EscrituraFirmaService Tests")
 @ExtendWith(MockitoExtension.class)
-class DeedFirmaServiceTest {
+class DeedSigningServiceTest {
 
     @Mock
     private DeedRepository deedRepository;
@@ -35,7 +35,7 @@ class DeedFirmaServiceTest {
     private FolioRepository folioRepository;
 
     @InjectMocks
-    private DeedFirmaService deedFirmaService;
+    private DeedSigningService deedFirmaService;
 
     private Deed deed;
 
@@ -54,7 +54,7 @@ class DeedFirmaServiceTest {
         when(folioRepository.existsByFkIdDeedIdDeed(1)).thenReturn(true);
         when(deedRepository.save(deed)).thenReturn(deed);
 
-        Deed firmada = deedFirmaService.firmar(1);
+        Deed firmada = deedFirmaService.sign(1);
 
         assertThat(firmada.getStatus()).isEqualTo(BusinessConstants.DeedFIRMADA);
         verify(deedRepository).save(deed);
@@ -66,7 +66,7 @@ class DeedFirmaServiceTest {
         deed.setStatus(BusinessConstants.DeedFIRMADA);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
-        assertThatThrownBy(() -> deedFirmaService.firmar(1))
+        assertThatThrownBy(() -> deedFirmaService.sign(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Sin Firmar");
     }
@@ -77,7 +77,7 @@ class DeedFirmaServiceTest {
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
         when(folioRepository.existsByFkIdDeedIdDeed(1)).thenReturn(false);
 
-        assertThatThrownBy(() -> deedFirmaService.firmar(1))
+        assertThatThrownBy(() -> deedFirmaService.sign(1))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("folio");
     }
@@ -87,7 +87,7 @@ class DeedFirmaServiceTest {
     void shouldRejectSignWhenDeedNotFound() {
         when(deedRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> deedFirmaService.firmar(999))
+        assertThatThrownBy(() -> deedFirmaService.sign(999))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

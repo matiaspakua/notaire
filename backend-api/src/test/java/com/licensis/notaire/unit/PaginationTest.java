@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.BudgetController;
-import com.licensis.notaire.service.BudgetCatalogoItemsService;
+import com.licensis.notaire.service.BudgetCatalogItemsService;
 import com.licensis.notaire.service.BudgetTemplateService;
 import com.licensis.notaire.service.BudgetResumenService;
 import com.licensis.notaire.service.BudgetService;
@@ -41,7 +41,7 @@ class PaginationTest {
     private BudgetTemplateService budgetTemplateService;
 
     @Mock
-    private BudgetCatalogoItemsService budgetCatalogoItemsService;
+    private BudgetCatalogItemsService budgetCatalogoItemsService;
 
     private MockMvc mockMvc;
 

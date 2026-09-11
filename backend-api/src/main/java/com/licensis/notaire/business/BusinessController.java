@@ -1316,7 +1316,7 @@ public class BusinessController
                 nuevaManagement.setIdManagement(idManagement);
                 dtoNuevaManagement.setIdManagement(idManagement);
 
-                DtoHistory history = this.registrarMovementHistory(dtoNuevaManagement);
+                DtoHistory history = this.registerMovementHistory(dtoNuevaManagement);
 
                 this.registrarAudit(nuevaManagement, ConstantesGui.INICIARManagement);
                 try
@@ -1449,7 +1449,7 @@ public class BusinessController
                 DtoManagementStatus nuevoStatus = nuevoStatusModificada.getDto();
                 dtoManagementModificar.setStatus(nuevoStatus);
 
-                this.registrarMovementHistory(dtoManagementModificar);
+                this.registerMovementHistory(dtoManagementModificar);
 
                 this.registrarAudit(managementParaModificar, ConstantesGui.MODIFICARManagement);
             } else
@@ -1649,7 +1649,7 @@ public class BusinessController
 
             this.registrarAudit(deedManagement, ConstantesGui.ArchivingManagement);
 
-            this.registrarMovementHistory(deedManagement.getDto());
+            this.registerMovementHistory(deedManagement.getDto());
 
         }
         return flag;
@@ -1716,7 +1716,7 @@ public class BusinessController
      * historial, si el ID es ID_OBJETO_NO_VALIDO, significa que ocurrio un
      * error al persistir el nuevo registro.
      */
-    public DtoHistory registrarMovementHistory(DtoDeedManagement dtoManagement)
+    public DtoHistory registerMovementHistory(DtoDeedManagement dtoManagement)
     {
         DtoHistory dtoNuevoHistory = new DtoHistory();
         try
@@ -1789,7 +1789,7 @@ public class BusinessController
      * @param dtoTramite
      * @return listaDtoDocumentosNecesarios para el tramite
      */
-    public ArrayList<DtoDocumentType> obtenerDocumentsNecesarioTypeProcedure(DtoProcedure dtoProcedure)
+    public ArrayList<DtoDocumentType> getDocumentsNecesarioTypeProcedure(DtoProcedure dtoProcedure)
     {
 
         ArrayList<DtoDocumentType> listaDtoDocumentsNecesarios = new ArrayList<>();
@@ -1826,7 +1826,7 @@ public class BusinessController
      * @param listaDtoTramitesDeGestion
      * @return Una lista de tramites, cada uno, con su documentos necesarios
      */
-    public ArrayList<DtoProcedure> obtenerDocumentsNecesariosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
+    public ArrayList<DtoProcedure> getDocumentsNecesariosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
     {
         ArrayList<DtoDocumentType> listaDocumentsNecesariosPorProcedure = null;
         ArrayList<DtoProcedure> listaProceduresConSusDocumentsNecesarios = new ArrayList<>();
@@ -1834,7 +1834,7 @@ public class BusinessController
         for (int i = 0; i < listaDtoProceduresDeManagement.size(); i++)
         {
             DtoProcedure dtoProcedureDeLaGesion = listaDtoProceduresDeManagement.get(i);
-            listaDocumentsNecesariosPorProcedure = BusinessController.getInstancia().obtenerDocumentsNecesarioTypeProcedure(dtoProcedureDeLaGesion);
+            listaDocumentsNecesariosPorProcedure = BusinessController.getInstancia().getDocumentsNecesarioTypeProcedure(dtoProcedureDeLaGesion);
 
             //Guardo los documentos necesarios para un tramite determinado
             dtoProcedureDeLaGesion.setListaDocumentsNecesarios(listaDocumentsNecesariosPorProcedure);
@@ -1852,7 +1852,7 @@ public class BusinessController
      * @param listaDtoTramitesDeGestion
      * @return
      */
-    public ArrayList<DtoProcedure> obtenerDocumentsPresentadosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
+    public ArrayList<DtoProcedure> getDocumentsPresentadosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
     {
         ArrayList<DtoProcedure> listaDtoProceduresConSusDocumentsEntregados = new ArrayList<>();
         List<SubmittedDocument> listaDocumentPresentados = null;
@@ -1894,7 +1894,7 @@ public class BusinessController
      * @param listaDtoTramitesDeGestion
      * @return
      */
-    public ArrayList<DtoProcedure> obtenerDocumentsNoPresentadosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
+    public ArrayList<DtoProcedure> getDocumentsNoPresentadosPorProcedure(ArrayList<DtoProcedure> listaDtoProceduresDeManagement)
     {
 
         boolean flag = false;
@@ -2080,7 +2080,7 @@ public class BusinessController
 
                 this.modificarManagementStatusDeDeed(dtoDeedManagement);
 
-                this.registrarMovementHistory(dtoDeedManagement);
+                this.registerMovementHistory(dtoDeedManagement);
 
                 this.registrarAudit(dtoManagement, ConstantesGui.DOCUMENTACIONEntry);
             }
@@ -2126,13 +2126,13 @@ public class BusinessController
 
         //Busco documentos necesarios para los tramites de la gestion, que obtuve
         //listaTramitesConSusDocumentosNecesarios Contiene el tramite, sus documentos y su gestion
-        listaDtoProceduresConStatusDeDocumentacion = this.obtenerDocumentsNecesariosPorProcedure(listaDtoProceduresDeManagement);
+        listaDtoProceduresConStatusDeDocumentacion = this.getDocumentsNecesariosPorProcedure(listaDtoProceduresDeManagement);
 
         //Busco los documentos entregados de cada tramite,  perteneciente a una gestion
-        listaDtoProceduresConStatusDeDocumentacion = this.obtenerDocumentsPresentadosPorProcedure(listaDtoProceduresDeManagement);
+        listaDtoProceduresConStatusDeDocumentacion = this.getDocumentsPresentadosPorProcedure(listaDtoProceduresDeManagement);
 
         //Busco los documentos no entregados de cada tramite, perteneciente a una gesion
-        listaDtoProceduresConStatusDeDocumentacion = this.obtenerDocumentsNoPresentadosPorProcedure(listaDtoProceduresDeManagement);
+        listaDtoProceduresConStatusDeDocumentacion = this.getDocumentsNoPresentadosPorProcedure(listaDtoProceduresDeManagement);
 
         return dtoManagement;
 

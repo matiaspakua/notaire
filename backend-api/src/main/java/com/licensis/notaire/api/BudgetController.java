@@ -4,7 +4,7 @@ import com.licensis.notaire.dto.DtoBudgetResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.service.BudgetCatalogoItemsService;
+import com.licensis.notaire.service.BudgetCatalogItemsService;
 import com.licensis.notaire.service.BudgetTemplateService;
 import com.licensis.notaire.service.BudgetResumenService;
 import com.licensis.notaire.service.BudgetService;
@@ -44,12 +44,12 @@ public class BudgetController {
     private final BudgetService budgetService;
     private final BudgetResumenService budgetResumenService;
     private final BudgetTemplateService budgetTemplateService;
-    private final BudgetCatalogoItemsService budgetCatalogoItemsService;
+    private final BudgetCatalogItemsService budgetCatalogoItemsService;
 
     public BudgetController(BudgetService budgetService,
             BudgetResumenService budgetResumenService,
             BudgetTemplateService budgetTemplateService,
-            BudgetCatalogoItemsService budgetCatalogoItemsService) {
+            BudgetCatalogItemsService budgetCatalogoItemsService) {
         this.budgetService = budgetService;
         this.budgetResumenService = budgetResumenService;
         this.budgetTemplateService = budgetTemplateService;
@@ -168,9 +168,9 @@ public class BudgetController {
 })
     @PostMapping("/{id}/items-desde-catalogo")
     @Operation(summary = "CU71 - Agregar al presupuesto copias de ítems existentes del catálogo")
-    public ResponseEntity<List<Item>> agregarItemsDesdeCatalogo(
+    public ResponseEntity<List<Item>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {
-        return ResponseEntity.ok(budgetCatalogoItemsService.agregarItemsDesdeCatalogo(id, idItems));
+        return ResponseEntity.ok(budgetCatalogoItemsService.addItemsFromCatalog(id, idItems));
     }
 }

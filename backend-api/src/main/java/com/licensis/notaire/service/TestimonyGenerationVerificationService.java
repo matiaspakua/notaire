@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class TestimonyGenerationVerificacionService {
+public class TestimonyGenerationVerificationService {
 
-    private static final Logger log = LoggerFactory.getLogger(TestimonyGenerationVerificacionService.class);
+    private static final Logger log = LoggerFactory.getLogger(TestimonyGenerationVerificationService.class);
 
     private final DeedRepository deedRepository;
     private final TestimonyRepository testimonyRepository;
 
-    public TestimonyGenerationVerificacionService(DeedRepository deedRepository,
+    public TestimonyGenerationVerificationService(DeedRepository deedRepository,
             TestimonyRepository testimonyRepository) {
         this.deedRepository = deedRepository;
         this.testimonyRepository = testimonyRepository;

@@ -7,7 +7,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
-import com.licensis.notaire.service.ReporteService;
+import com.licensis.notaire.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-@DisplayName("ReporteService recibo de pago unit tests (CU15/RF-21, issue #23)")
+@DisplayName("ReportService recibo de pago unit tests (CU15/RF-21, issue #23)")
 @ExtendWith(MockitoExtension.class)
-class ReporteServiceReciboPaymentTest {
+class ReportServiceReciboPaymentTest {
 
     @Mock
     private DataSource dataSource;
@@ -37,11 +37,11 @@ class ReporteServiceReciboPaymentTest {
     @Mock
     private ItemRepository itemRepository;
 
-    private ReporteService reporteService;
+    private ReportService reporteService;
 
     @BeforeEach
     void setUp() {
-        reporteService = new ReporteService(dataSource, null, null, null, paymentRepository, itemRepository);
+        reporteService = new ReportService(dataSource, null, null, null, paymentRepository, itemRepository);
     }
 
     private Payment buildPayment(Integer idPayment, float amount, Person client) {
@@ -76,7 +76,7 @@ class ReporteServiceReciboPaymentTest {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(payment));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(item));
 
-        byte[] pdf = reporteService.generarReporteReciboPayment(1);
+        byte[] pdf = reporteService.generatePaymentReceiptReport(1);
 
         assertThat(pdf).isNotEmpty();
         assertThat(new String(pdf, 0, Math.min(5, pdf.length))).startsWith("%PDF-");
@@ -95,7 +95,7 @@ class ReporteServiceReciboPaymentTest {
         when(paymentRepository.findById(2)).thenReturn(Optional.of(paymentParcial));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of());
 
-        byte[] pdf = reporteService.generarReporteReciboPayment(2);
+        byte[] pdf = reporteService.generatePaymentReceiptReport(2);
 
         String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
         assertThat(content).contains("100000");
@@ -106,7 +106,7 @@ class ReporteServiceReciboPaymentTest {
     void shouldThrowWhenPaymentNoExiste() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> reporteService.generarReporteReciboPayment(999))
+        assertThatThrownBy(() -> reporteService.generatePaymentReceiptReport(999))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

@@ -7,7 +7,7 @@ import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.service.TestimonyGenerationVerificacionService;
+import com.licensis.notaire.service.TestimonyGenerationVerificationService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class TestimonyGenerationServiceTest {
     private TestimonyRepository testimonyRepository;
 
     @InjectMocks
-    private TestimonyGenerationVerificacionService testimonyService;
+    private TestimonyGenerationVerificationService testimonyService;
 
     private Deed deed;
 

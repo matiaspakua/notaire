@@ -3,7 +3,7 @@ package com.licensis.notaire.api;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.service.DeedFirmaService;
+import com.licensis.notaire.service.DeedSigningService;
 import com.licensis.notaire.service.DeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
@@ -33,10 +33,10 @@ import java.util.List;
 public class DeedController {
 
     private final DeedService deedService;
-    private final DeedFirmaService deedFirmaService;
+    private final DeedSigningService deedFirmaService;
     private final FolioRepository folioRepository;
 
-    public DeedController(DeedService deedService, DeedFirmaService deedFirmaService,
+    public DeedController(DeedService deedService, DeedSigningService deedFirmaService,
             FolioRepository folioRepository) {
         this.deedService = deedService;
         this.deedFirmaService = deedFirmaService;
@@ -144,6 +144,6 @@ public class DeedController {
     @Operation(summary = "Firmar escritura",
                description = "Transiciona una escritura 'Sin Firmar' con folio asignado al estado 'Firmada'")
     public ResponseEntity<Deed> firmar(@PathVariable Integer id) {
-        return ResponseEntity.ok(deedFirmaService.firmar(id));
+        return ResponseEntity.ok(deedFirmaService.sign(id));
     }
 }

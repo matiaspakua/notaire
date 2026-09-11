@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Service
-public class ReporteService {
+public class ReportService {
 
     private final DataSource dataSource;
     private final TestimonyRepository testimonyRepository;
@@ -42,15 +42,15 @@ public class ReporteService {
     private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
 
-    private static final String RUTAREPORTEBudget = "reportes/reportePresupuestoSinInmueble.jasper";
-    private static final String RUTAREPORTEBudgetProperties = "reportes/reportePresupuestoInmuebles.jasper";
-    private static final String RUTAREPORTELISTADocumentsProcedure = "reportes/reporteListaDocumetosTramite.jasper";
-    private static final String RUTAREPORTEHistoryManagement = "reportes/reporteHistorialGestion.jasper";
-    private static final String RUTAREPORTECONSULTARVENCIMIENTOSDocuments = "reportes/reporteConsultarVencimientosDocumentos.jasper";
-    private static final String RUTAREPORTECONSULTARDebtDocuments = "reportes/reporteConsultarDeudaDocumentos.jasper";
-    private static final int FOLIOSPORNotebook = 10;
+    private static final String REPORT_PATH_BUDGET = "reportes/reportePresupuestoSinInmueble.jasper";
+    private static final String REPORT_PATH_BUDGET_PROPERTIES = "reportes/reportePresupuestoInmuebles.jasper";
+    private static final String REPORT_PATH_PROCEDURE_DOCUMENTS_LIST = "reportes/reporteListaDocumetosTramite.jasper";
+    private static final String REPORT_PATH_MANAGEMENT_HISTORY = "reportes/reporteHistorialGestion.jasper";
+    private static final String REPORT_PATH_DOCUMENTS_DUE_SOON = "reportes/reporteConsultarVencimientosDocumentos.jasper";
+    private static final String REPORT_PATH_DEBT_DOCUMENTS = "reportes/reporteConsultarDeudaDocumentos.jasper";
+    private static final int FOLIOS_PER_NOTEBOOK = 10;
 
-    public ReporteService(DataSource dataSource, TestimonyRepository testimonyRepository,
+    public ReportService(DataSource dataSource, TestimonyRepository testimonyRepository,
                            NotebookRepository notebookRepository,
                            RegistrationDraftRepository registrationDraftRepository,
                            PaymentRepository paymentRepository,
@@ -63,38 +63,38 @@ public class ReporteService {
         this.itemRepository = itemRepository;
     }
 
-    public byte[] generarReporteBudget(Integer idBudget) throws Exception {
+    public byte[] generateBudgetReport(Integer idBudget) throws Exception {
         Map<String, Object> parameters = Map.of("pIdPresupuesto", idBudget);
-        return generarPdfDesdeTemplate(RUTAREPORTEBudget, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_BUDGET, parameters);
     }
 
-    public byte[] generarReporteBudgetProperties(Integer idBudget) throws Exception {
+    public byte[] generateBudgetPropertiesReport(Integer idBudget) throws Exception {
         Map<String, Object> parameters = Map.of("idPresupuestoParam", idBudget);
-        return generarPdfDesdeTemplate(RUTAREPORTEBudgetProperties, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_BUDGET_PROPERTIES, parameters);
     }
 
-    public byte[] generarReporteListaDocumentsProcedure(String nameTypeProcedure) throws Exception {
+    public byte[] generateProcedureDocumentsListReport(String nameTypeProcedure) throws Exception {
         Map<String, Object> parameters = Map.of("nombreTipoTramite", nameTypeProcedure);
-        return generarPdfDesdeTemplate(RUTAREPORTELISTADocumentsProcedure, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_PROCEDURE_DOCUMENTS_LIST, parameters);
     }
 
-    public byte[] generarReporteHistoryManagement(Integer idManagement) throws Exception {
+    public byte[] generateManagementHistoryReport(Integer idManagement) throws Exception {
         Map<String, Object> parameters = Map.of("idGestion", idManagement);
-        return generarPdfDesdeTemplate(RUTAREPORTEHistoryManagement, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_MANAGEMENT_HISTORY, parameters);
     }
 
-    public byte[] generarReporteDocumentsPorVencer(Integer idSubmittedDocument) throws Exception {
+    public byte[] generateDocumentsDueSoonReport(Integer idSubmittedDocument) throws Exception {
         Map<String, Object> parameters = Map.of("idDocumentoPresentado", idSubmittedDocument);
-        return generarPdfDesdeTemplate(RUTAREPORTECONSULTARVENCIMIENTOSDocuments, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_DOCUMENTS_DUE_SOON, parameters);
     }
 
-    public byte[] generarReporteConsultarDebtDocuments(Integer numberManagement) throws Exception {
+    public byte[] generateDebtDocumentsReport(Integer numberManagement) throws Exception {
         Map<String, Object> parameters = Map.of("numeroGestion", numberManagement);
-        return generarPdfDesdeTemplate(RUTAREPORTECONSULTARDebtDocuments, parameters);
+        return generatePdfFromTemplate(REPORT_PATH_DEBT_DOCUMENTS, parameters);
     }
 
-    public byte[] generarReporteLibroIndice(Integer year) throws Exception {
-        return generarPdfTextoSimple(
+    public byte[] generateIndexBookReport(Integer year) throws Exception {
+        return generateSimpleTextPdf(
                 "Libro de Indice",
                 "CU24",
                 "Periodo: " + year,
@@ -102,8 +102,8 @@ public class ReporteService {
         );
     }
 
-    public byte[] generarReporteDeclaracionJuradaMensual(Integer year, Integer mes) throws Exception {
-        return generarPdfTextoSimple(
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer mes) throws Exception {
+        return generateSimpleTextPdf(
                 "Declaracion Jurada Mensual",
                 "CU25",
                 "Periodo: " + mes + "/" + year,
@@ -111,7 +111,7 @@ public class ReporteService {
         );
     }
 
-    public byte[] generarReporteCopyTestimony(Integer idTestimony) {
+    public byte[] generateTestimonyCopyReport(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
                 .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
 
@@ -120,7 +120,7 @@ public class ReporteService {
                     "El testimonio debe estar verificado para emitir la copia impresa");
         }
 
-        return generarPdfTextoSimple(
+        return generateSimpleTextPdf(
                 "Copia de Testimonio N° " + testimony.getNumber(),
                 "CU08",
                 "Testimonio verificado",
@@ -128,14 +128,14 @@ public class ReporteService {
         );
     }
 
-    public byte[] generarReporteCaratulaNotebook(Integer idNotebook) {
+    public byte[] generateNotebookCoverReport(Integer idNotebook) {
         Notebook notebook = notebookRepository.findById(idNotebook)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idNotebook));
 
-        int folioDesde = (notebook.getNumber() - 1) * FOLIOSPORNotebook + 1;
-        int folioHasta = notebook.getNumber() * FOLIOSPORNotebook;
+        int folioDesde = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
+        int folioHasta = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
 
-        return generarPdfTextoSimple(
+        return generateSimpleTextPdf(
                 "Carátula de Cuaderno N° " + notebook.getNumber() + "/" + notebook.getYear(),
                 "CU80",
                 "Registro N° " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
@@ -144,8 +144,8 @@ public class ReporteService {
         );
     }
 
-    public byte[] generarReporteDeclaracionJuradaRentas(Integer year, Integer mes) throws Exception {
-        return generarPdfTextoSimple(
+    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer mes) throws Exception {
+        return generateSimpleTextPdf(
                 "Declaracion Jurada de Rentas",
                 "CU50",
                 "Periodo: " + mes + "/" + year,
@@ -153,12 +153,12 @@ public class ReporteService {
         );
     }
 
-    public byte[] generarReporteRegistrationDraft(Integer idRegistrationDraft) {
+    public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
         RegistrationDraft draft = registrationDraftRepository.findById(idRegistrationDraft)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe la minuta de inscripción con ID: " + idRegistrationDraft));
 
-        return generarPdfTextoSimple(
+        return generateSimpleTextPdf(
                 "Minuta de Inscripción N° " + draft.getNumber(),
                 "CU82",
                 "Escritura N° " + draft.getFkIdDeed().getNumber() + " - Estado: " + draft.getStatus(),
@@ -167,7 +167,7 @@ public class ReporteService {
     }
 
     @Transactional(readOnly = true)
-    public byte[] generarReporteReciboPayment(Integer idPayment) {
+    public byte[] generatePaymentReceiptReport(Integer idPayment) {
         Payment payment = paymentRepository.findById(idPayment)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPayment));
 
@@ -185,10 +185,10 @@ public class ReporteService {
                         .orElse("Sin conceptos detallados")
                 : "Sin conceptos detallados";
 
-        return generarPdfRecibo(nameClient, payment.getDate(), conceptos, payment.getAmount());
+        return generateReceiptPdf(nameClient, payment.getDate(), conceptos, payment.getAmount());
     }
 
-    private byte[] generarPdfRecibo(String client, java.util.Date date, String conceptos, float amount) {
+    private byte[] generateReceiptPdf(String client, java.util.Date date, String conceptos, float amount) {
         try {
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");
@@ -214,7 +214,7 @@ public class ReporteService {
         }
     }
 
-    private byte[] generarPdfDesdeTemplate(String templatePath, Map<String, Object> parameters) throws Exception {
+    private byte[] generatePdfFromTemplate(String templatePath, Map<String, Object> parameters) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             InputStream reportStream = getClass().getClassLoader().getResourceAsStream(templatePath);
             if (reportStream == null) {
@@ -233,7 +233,7 @@ public class ReporteService {
         }
     }
 
-    private byte[] generarPdfTextoSimple(String titulo, String cuId, String lineaPeriodo, String lineaDate) {
+    private byte[] generateSimpleTextPdf(String titulo, String cuId, String lineaPeriodo, String lineaDate) {
         try {
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");

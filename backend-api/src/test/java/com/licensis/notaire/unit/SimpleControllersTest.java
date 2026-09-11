@@ -45,12 +45,12 @@ import com.licensis.notaire.repository.FolioTypeRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.service.DeedFirmaService;
+import com.licensis.notaire.service.DeedSigningService;
 import com.licensis.notaire.service.DeedService;
 import com.licensis.notaire.service.TestimonyMovementService;
 import com.licensis.notaire.service.PersonService;
 import com.licensis.notaire.service.BudgetService;
-import com.licensis.notaire.service.TestimonyGenerationVerificacionService;
+import com.licensis.notaire.service.TestimonyGenerationVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -353,7 +353,7 @@ class SimpleControllersTest {
     @DisplayName("EscrituraController")
     class DeedControllerTests {
         private final DeedService service = mock(DeedService.class);
-        private final DeedFirmaService firmaService = mock(DeedFirmaService.class);
+        private final DeedSigningService firmaService = mock(DeedSigningService.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepository =
                 mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
@@ -403,8 +403,8 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.service.BudgetResumenService.class);
         private final com.licensis.notaire.service.BudgetTemplateService budgetTemplateService =
                 mock(com.licensis.notaire.service.BudgetTemplateService.class);
-        private final com.licensis.notaire.service.BudgetCatalogoItemsService budgetCatalogoItemsService =
-                mock(com.licensis.notaire.service.BudgetCatalogoItemsService.class);
+        private final com.licensis.notaire.service.BudgetCatalogItemsService budgetCatalogoItemsService =
+                mock(com.licensis.notaire.service.BudgetCatalogItemsService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(service, budgetResumenService,
                         budgetTemplateService, budgetCatalogoItemsService))
@@ -449,7 +449,7 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-plantilla?tipoTramiteId=5"))
                     .andExpect(status().isOk());
 
-            when(budgetCatalogoItemsService.agregarItemsDesdeCatalogo(eq(1), anyList()))
+            when(budgetCatalogoItemsService.addItemsFromCatalog(eq(1), anyList()))
                     .thenReturn(List.of(item));
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-catalogo").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))
@@ -461,8 +461,8 @@ class SimpleControllersTest {
     @DisplayName("TestimonioController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
-        private final TestimonyGenerationVerificacionService generationVerificacionService =
-                mock(TestimonyGenerationVerificacionService.class);
+        private final TestimonyGenerationVerificationService generationVerificacionService =
+                mock(TestimonyGenerationVerificationService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new TestimonyController(repo, generationVerificacionService)).build();
 
