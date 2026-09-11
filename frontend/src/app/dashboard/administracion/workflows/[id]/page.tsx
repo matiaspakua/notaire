@@ -37,8 +37,8 @@ import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { theme } from "@/theme/tokens";
 import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
 
-function WorkflowNodeComponent({ data }: { data: { label: string; tipo: string } }) {
-  const meta = getNodeMeta(data.tipo);
+function WorkflowNodeComponent({ data }: { data: { label: string; type: string } }) {
+  const meta = getNodeMeta(data.type);
   return (
     <div
       style={{
@@ -88,18 +88,18 @@ export default function WorkflowEditorPage() {
   const flowNodes: Node[] = rawNodes.map((n) => ({
     id: String(n.id),
     type: "workflowNode",
-    position: { x: n.posicionX ?? 0, y: n.posicionY ?? 0 },
+    position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
     data: {
-      label: withNodeIcon(n.estadoGestionNombre ?? `Nodo ${n.id}`, n.tipo ?? "INTERMEDIATE"),
-      tipo: n.tipo ?? "INTERMEDIATE",
+      label: withNodeIcon(n.statusManagementName ?? `Nodo ${n.id}`, n.type ?? "INTERMEDIATE"),
+      tipo: n.type ?? "INTERMEDIATE",
     },
   }));
 
   const flowEdges: Edge[] = rawTransitions.map((t) => ({
     id: String(t.id),
-    source: String(t.nodoOrigenId),
-    target: String(t.nodoDestinoId),
-    label: t.descripcion ?? undefined,
+    source: String(t.originNodeId),
+    target: String(t.destinationNodeId),
+    label: t.description ?? undefined,
     animated: false,
     style: { stroke: theme.colors.neutral[500] },
   }));
@@ -114,8 +114,8 @@ export default function WorkflowEditorPage() {
       try {
         await createTransition.mutateAsync({
           workflowDefinitionId: workflowId,
-          nodoOrigenId: Number(connection.source),
-          nodoDestinoId: Number(connection.target),
+          originNodeId: Number(connection.source),
+          destinationNodeId: Number(connection.target),
         });
         refetchTransitions();
       } catch {
@@ -132,8 +132,8 @@ export default function WorkflowEditorPage() {
         id: Number(node.id),
         data: {
           workflowDefinitionId: workflowId,
-          posicionX: node.position.x,
-          posicionY: node.position.y,
+          positionX: node.position.x,
+          positionY: node.position.y,
         },
       });
     } catch {
@@ -149,10 +149,10 @@ export default function WorkflowEditorPage() {
     try {
       await createNode.mutateAsync({
         workflowDefinitionId: workflowId,
-        estadoGestionId: Number(newNodeEstadoId),
-        tipo: newNodeTipo,
-        posicionX: 100 + rawNodes.length * 160,
-        posicionY: 100,
+        statusManagementId: Number(newNodeEstadoId),
+        type: newNodeTipo,
+        positionX: 100 + rawNodes.length * 160,
+        positionY: 100,
       });
       setAddNodeOpen(false);
       setNewNodeEstadoId("");
@@ -205,8 +205,8 @@ export default function WorkflowEditorPage() {
   return (
     <div>
       <AppHeader
-        title={workflow?.nombre ?? "Editor de Workflow"}
-        description={workflow?.descripcion ?? ""}
+        title={workflow?.name ?? "Editor de Workflow"}
+        description={workflow?.description ?? ""}
         actions={
           <div className="flex gap-2">
             <Button variant="secondary" onClick={() => router.back()}>
@@ -289,7 +289,7 @@ export default function WorkflowEditorPage() {
                 >
                   <option value="">Seleccionar estado...</option>
                   {estados.map((e) => (
-                    <option key={e.idEstadoGestion} value={e.idEstadoGestion}>{e.nombre}</option>
+                    <option key={e.idManagementStatus} value={e.idManagementStatus}>{e.name}</option>
                   ))}
                 </select>
               </FormField>
