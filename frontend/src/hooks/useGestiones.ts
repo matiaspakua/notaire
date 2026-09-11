@@ -138,7 +138,7 @@ export function useHistorial(gestionId: number | undefined) {
 export function useCarpetasByGestion(gestionId: number | undefined) {
   return useQuery({
     queryKey: carpetasTramiteKeys.byGestion(gestionId ?? 0),
-    queryFn: () => apiGet<CarpetaTramite[]>(`/carpetas?gestionId=${gestionId}`),
+    queryFn: () => apiGet<CarpetaTramite[]>(`/carpetas?managementId=${gestionId}`),
     enabled: !!gestionId,
   });
 }
@@ -148,7 +148,7 @@ export function usePonerCarpetaEnEspera() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ idCarpeta, motivo }: { idCarpeta: number; motivo: string; gestionId: number }) =>
-      apiPut<CarpetaTramite>(`/carpetas/${idCarpeta}/espera`, { motivo }),
+      apiPut<CarpetaTramite>(`/carpetas/${idCarpeta}/espera`, { reason: motivo }),
     onSuccess: (_data, { gestionId }) => {
       qc.invalidateQueries({ queryKey: carpetasTramiteKeys.byGestion(gestionId) });
     },
