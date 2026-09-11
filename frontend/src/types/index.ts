@@ -303,9 +303,10 @@ export interface Testimonio {
   movimientosTestimonios?: MovimientoTestimonio[];
 }
 
-/** GET /api/v1/pagos — raw Payment entity. */
+/** GET /api/v1/pagos — raw Payment entity; POST/PUT body is the flat PaymentRequest shape. */
 export interface Pago {
   idPayment?: number;
+  idBudget?: number;
   amount?: number;
   date?: string;
   paymentMethod?: string;
