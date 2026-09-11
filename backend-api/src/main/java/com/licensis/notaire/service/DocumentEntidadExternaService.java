@@ -73,14 +73,14 @@ public class DocumentEntidadExternaService {
     }
 
     /**
-     * Intenta transicionar la gestión a "Documentacion Completa" cuando todos sus
+     * Intenta transition la gestión a "Documentacion Completa" cuando todos sus
      * documentos de entidad externa quedaron entregados. Se invoca como un paso
      * independiente después de {@link #registrarMovimiento}, en su propia
      * transacción de nivel superior: una transición no definida en el workflow es
      * un efecto colateral "best effort" que nunca debe invalidar el movimiento ya
      * guardado, y solo una llamada fuera de la transacción de {@code
      * registrarMovimiento} evita que Spring marque esa transacción como
-     * rollback-only cuando {@link GestionTransitionService#transicionar} falla.
+     * rollback-only cuando {@link GestionTransitionService#transition} falla.
      */
     public void intentarCompletarDocumentacion(Integer idManagement) {
         List<SubmittedDocument> documents = submittedDocumentRepository
@@ -92,9 +92,9 @@ public class DocumentEntidadExternaService {
             return;
         }
         try {
-            managementTransitionService.transicionar(idManagement, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
+            managementTransitionService.transition(idManagement, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         } catch (BusinessValidationException | ResourceNotFoundException e) {
-            log.warn("No se pudo transicionar automáticamente la gestión {} a '{}': {}", idManagement,
+            log.warn("No se pudo transition automáticamente la gestión {} a '{}': {}", idManagement,
                     BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA, e.getMessage());
         }
     }

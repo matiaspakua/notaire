@@ -53,7 +53,7 @@ class ManagementBitacoraServiceTest {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        History resultado = managementBitacoraService.registrarStatus(management, null);
+        History resultado = managementBitacoraService.registerStatus(management, null);
 
         verify(historyRepository).save(captor.capture());
         assertThat(captor.getValue().getFkIdManagement()).isEqualTo(management);
@@ -69,7 +69,7 @@ class ManagementBitacoraServiceTest {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        managementBitacoraService.registrarStatus(management, null);
+        managementBitacoraService.registerStatus(management, null);
 
         verify(historyRepository).save(captor.capture());
         assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(nuevoStatus);
@@ -83,7 +83,7 @@ class ManagementBitacoraServiceTest {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        managementBitacoraService.registrarStatus(management, "Archivado con deuda pendiente");
+        managementBitacoraService.registerStatus(management, "Archivado con deuda pendiente");
 
         verify(historyRepository).save(captor.capture());
         assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(archivada);
@@ -95,7 +95,7 @@ class ManagementBitacoraServiceTest {
     void shouldRejectRecordingWhenNoStatus() {
         management.setFkIdManagementStatus(null);
 
-        assertThatThrownBy(() -> managementBitacoraService.registrarStatus(management, null))
+        assertThatThrownBy(() -> managementBitacoraService.registerStatus(management, null))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -111,7 +111,7 @@ class ManagementBitacoraServiceTest {
 
         when(historyRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h1, h2, h3));
 
-        List<History> history = managementBitacoraService.obtenerHistory(1);
+        List<History> history = managementBitacoraService.getHistory(1);
 
         assertThat(history).containsExactly(h1, h3, h2);
     }

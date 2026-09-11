@@ -25,7 +25,7 @@ const MODULOS_DISPONIBLES = [
   { value: "workflows", label: "Workflows" },
 ];
 
-const EMPTY: Partial<Rol> = { nombre: "", descripcion: "", activo: true, modulos: [] };
+const EMPTY: Partial<Rol> = { name: "", description: "", active: true, modulos: [] };
 
 export default function RolesPage() {
   const { data: roles = [], isLoading } = useRoles();
@@ -50,10 +50,10 @@ export default function RolesPage() {
   }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!editing.name?.trim()) { toast.error("El nombre es obligatorio"); return; }
     try {
-      if (isEditMode && editing.idRol) {
-        await updateMutation.mutateAsync({ id: editing.idRol, data: editing });
+      if (isEditMode && editing.idRole) {
+        await updateMutation.mutateAsync({ id: editing.idRole, data: editing });
         toast.success("Rol actualizado");
       } else {
         await createMutation.mutateAsync(editing);
@@ -73,22 +73,22 @@ export default function RolesPage() {
   }
 
   const columns: Column<Rol>[] = [
-    { key: "id", header: "ID", render: (r) => <span className="text-xs text-muted-foreground">{r.idRol}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (r) => <span className="font-medium">{r.nombre}</span> },
-    { key: "descripcion", header: "Descripción", render: (r) => <span className="text-sm text-muted-foreground">{r.descripcion ?? "—"}</span> },
+    { key: "id", header: "ID", render: (r) => <span className="text-xs text-muted-foreground">{r.idRole}</span>, className: "w-12" },
+    { key: "nombre", header: "Nombre", render: (r) => <span className="font-medium">{r.name}</span> },
+    { key: "descripcion", header: "Descripción", render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
     { key: "modulos", header: "Módulos", render: (r) => (
       <div className="flex flex-wrap gap-1">
         {(r.modulos ?? []).map((m) => <Badge key={m} variant="outline" className="text-xs">{m}</Badge>)}
         {(r.modulos ?? []).length === 0 && <span className="text-xs text-muted-foreground">Sin permisos</span>}
       </div>
     )},
-    { key: "activo", header: "Estado", render: (r) => r.activo ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
+    { key: "activo", header: "Estado", render: (r) => r.active ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (r) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-rol-${r.idRol}`}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(r.idRol!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-rol-${r.idRole}`}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(r.idRole!)}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
     },
@@ -101,7 +101,7 @@ export default function RolesPage() {
         description="Gestión de roles de usuario y sus accesos a módulos"
         actions={<Button onClick={openCreate} data-testid="btn-nuevo-rol"><Plus className="h-4 w-4" />Nuevo Rol</Button>}
       />
-      <DataTable data={roles} columns={columns} isLoading={isLoading} keyExtractor={(r) => r.idRol!} emptyMessage="No hay roles registrados" />
+      <DataTable data={roles} columns={columns} isLoading={isLoading} keyExtractor={(r) => r.idRole!} emptyMessage="No hay roles registrados" />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
@@ -109,15 +109,15 @@ export default function RolesPage() {
             <FormSection title={isEditMode ? "Editar Rol" : "Nuevo Rol"}>
               <FormField label="Nombre" required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-nombre-rol"
                 />
               </FormField>
               <FormField label="Descripción">
                 <Input
-                  value={editing.descripcion ?? ""}
-                  onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
+                  value={editing.description ?? ""}
+                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                 />
               </FormField>
               <FormField label="Módulos permitidos">
@@ -140,8 +140,8 @@ export default function RolesPage() {
                 <label className="flex items-center gap-2 cursor-pointer text-sm">
                   <input
                     type="checkbox"
-                    checked={editing.activo ?? true}
-                    onChange={(e) => setEditing({ ...editing, activo: e.target.checked })}
+                    checked={editing.active ?? true}
+                    onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
                     className="rounded"
                   />
                   Rol activo

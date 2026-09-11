@@ -30,7 +30,7 @@ public class ManagementBitacoraService {
      * válida o archivado).
      */
     @Transactional
-    public History registrarStatus(DeedManagement management, String notes) {
+    public History registerStatus(DeedManagement management, String notes) {
         ManagementStatus statusActual = management.getFkIdManagementStatus();
         if (statusActual == null) {
             throw new BusinessValidationException(
@@ -51,7 +51,7 @@ public class ManagementBitacoraService {
      * Devuelve la bitácora completa de la gestión ordenada cronológicamente.
      */
     @Transactional(readOnly = true)
-    public List<History> obtenerHistory(Integer idManagement) {
+    public List<History> getHistory(Integer idManagement) {
         List<History> history = historyRepository.findByFkIdManagementIdManagement(idManagement);
         return history.stream()
                 .sorted(Comparator.comparing(History::getDate))

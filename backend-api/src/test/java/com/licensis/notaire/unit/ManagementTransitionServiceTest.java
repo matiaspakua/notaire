@@ -94,7 +94,7 @@ class ManagementTransitionServiceTest {
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of(transicion));
         when(managementRepository.save(management)).thenReturn(management);
 
-        DeedManagement result = managementTransitionService.transicionar(1, "En trámite");
+        DeedManagement result = managementTransitionService.transition(1, "En trámite");
 
         assertThat(result.getFkIdManagementStatus()).isEqualTo(statusDestination);
     }
@@ -106,7 +106,7 @@ class ManagementTransitionServiceTest {
         when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> managementTransitionService.transicionar(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Iniciada")
                 .hasMessageContaining("En trámite");
@@ -120,7 +120,7 @@ class ManagementTransitionServiceTest {
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
 
-        assertThatThrownBy(() -> managementTransitionService.transicionar(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("workflow");
     }
@@ -130,7 +130,7 @@ class ManagementTransitionServiceTest {
     void shouldRejectTransitionWhenManagementNotFound() {
         when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> managementTransitionService.transicionar(999, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(999, "En trámite"))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

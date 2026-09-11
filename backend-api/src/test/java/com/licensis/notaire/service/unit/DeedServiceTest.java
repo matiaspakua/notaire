@@ -1,7 +1,7 @@
 package com.licensis.notaire.service.unit;
 
-import com.licensis.notaire.exception.NumberDeedDuplicadoException;
-import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
+import com.licensis.notaire.exception.DuplicateDeedNumberException;
+import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -10,8 +10,8 @@ import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.DeedService;
-import com.licensis.notaire.service.NumeracionDeedService;
-import com.licensis.notaire.service.ResultadoValidacionNumeracion;
+import com.licensis.notaire.service.DeedNumberingService;
+import com.licensis.notaire.service.NumberingValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class DeedServiceTest {
     private FolioRepository folioRepository;
 
     @Mock
-    private NumeracionDeedService numeracionDeedService;
+    private DeedNumberingService deedNumberingService;
 
     @InjectMocks
     private DeedService deedService;
@@ -159,15 +159,15 @@ class DeedServiceTest {
 
     @Test
     @DisplayName("Should reject saving deed when número is a duplicate within its folio scope (CU86)")
-    void shouldRejectSaveWhenNumberIsDuplicado() {
+    void shouldRejectSaveWhenNumberIsDuplicate() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(numeracionDeedService.validar(100, testNotary, 2026, false, null, 1))
-                .thenReturn(ResultadoValidacionNumeracion.DUPLICADO);
+        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(NumberingValidationResult.DUPLICATE);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
-                .isInstanceOf(NumberDeedDuplicadoException.class);
+                .isInstanceOf(DuplicateDeedNumberException.class);
 
         verify(deedRepository, never()).save(any());
     }
@@ -178,23 +178,23 @@ class DeedServiceTest {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(numeracionDeedService.validar(100, testNotary, 2026, false, null, 1))
-                .thenReturn(ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR);
+        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(NumberingValidationResult.SKIP_UNJUSTIFIED);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
-                .isInstanceOf(SaltoNumeracionSinJustificarException.class);
+                .isInstanceOf(UnjustifiedNumberingGapException.class);
 
         verify(deedRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Should save deed when número correlativo is valid (CU86)")
-    void shouldSaveWhenNumeracionIsOk() {
+    void shouldSaveWhenNumberingIsOk() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(numeracionDeedService.validar(100, testNotary, 2026, false, null, 1))
-                .thenReturn(ResultadoValidacionNumeracion.OK);
+        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(NumberingValidationResult.OK);
         when(deedRepository.save(testDeed)).thenReturn(testDeed);
 
         Deed result = deedService.save(testDeed);

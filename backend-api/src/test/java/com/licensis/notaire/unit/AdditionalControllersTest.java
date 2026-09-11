@@ -192,19 +192,19 @@ class AdditionalControllersTest {
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
 
-            when(transitionService.transicionar(1, "En Progreso")).thenReturn(g);
-            when(transitionService.transicionar(1, "Estado Inexistente"))
+            when(transitionService.transition(1, "En Progreso")).thenReturn(g);
+            when(transitionService.transition(1, "Estado Inexistente"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
                             "Transición no permitida"));
-            when(transitionService.transicionar(2, "En Progreso"))
+            when(transitionService.transition(2, "En Progreso"))
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
                             "Gestión no encontrada con ID: 2"));
 
-            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
+            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
-            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
+            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
-            mvc.perform(post("/api/v1/gestiones/2/transicionar").contentType("application/json")
+            mvc.perform(post("/api/v1/gestiones/2/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
 
             mvc.perform(get("/api/v1/gestiones/1/historial")).andExpect(status().isOk());

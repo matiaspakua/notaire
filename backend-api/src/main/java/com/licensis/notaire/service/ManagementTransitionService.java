@@ -48,7 +48,7 @@ public class ManagementTransitionService {
      * gestión hacia {@code estadoDestino} y, de ser así, la aplica.
      */
     @Transactional
-    public DeedManagement transicionar(Integer idManagement, String statusDestination) {
+    public DeedManagement transition(Integer idManagement, String statusDestination) {
         DeedManagement management = managementRepository.findById(idManagement)
                 .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
 
@@ -59,11 +59,11 @@ public class ManagementTransitionService {
                 .orElseThrow(() -> new BusinessValidationException(
                         "Estado destino '" + statusDestination + "' no está definido en el sistema"));
 
-        validarTransicion(workflowDefinition, statusActual, destination);
+        validateTransition(workflowDefinition, statusActual, destination);
 
         management.setFkIdManagementStatus(destination);
         DeedManagement managementTransicionada = managementRepository.save(management);
-        managementBitacoraService.registrarStatus(managementTransicionada, null);
+        managementBitacoraService.registerStatus(managementTransicionada, null);
         log.info("Gestión {} transicionada a estado '{}'", idManagement, destination.getName());
         return managementTransicionada;
     }
@@ -83,7 +83,7 @@ public class ManagementTransitionService {
         return workflowDefinition;
     }
 
-    private void validarTransicion(WorkflowDefinition workflowDefinition, ManagementStatus origin,
+    private void validateTransition(WorkflowDefinition workflowDefinition, ManagementStatus origin,
             ManagementStatus destination) {
         List<WorkflowTransition> transiciones =
                 workflowTransitionRepository.findByWorkflowDefinitionId(workflowDefinition.getId());

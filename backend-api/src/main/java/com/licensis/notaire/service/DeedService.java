@@ -1,7 +1,7 @@
 package com.licensis.notaire.service;
 
-import com.licensis.notaire.exception.NumberDeedDuplicadoException;
-import com.licensis.notaire.exception.SaltoNumeracionSinJustificarException;
+import com.licensis.notaire.exception.DuplicateDeedNumberException;
+import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -27,14 +27,14 @@ public class DeedService {
     private final DeedRepository deedRepository;
     private final PersonRepository personRepository;
     private final FolioRepository folioRepository;
-    private final NumeracionDeedService numeracionDeedService;
+    private final DeedNumberingService deedNumberingService;
 
     public DeedService(DeedRepository deedRepository, PersonRepository personRepository,
-            FolioRepository folioRepository, NumeracionDeedService numeracionDeedService) {
+            FolioRepository folioRepository, DeedNumberingService deedNumberingService) {
         this.deedRepository = deedRepository;
         this.personRepository = personRepository;
         this.folioRepository = folioRepository;
-        this.numeracionDeedService = numeracionDeedService;
+        this.deedNumberingService = deedNumberingService;
     }
 
     @Transactional(readOnly = true)
@@ -55,28 +55,28 @@ public class DeedService {
 
     public Deed save(Deed entity) {
         logger.info("Saving escritura with numero: {}", entity.getNumber());
-        validarNumeracion(entity);
+        validateNumbering(entity);
         return deedRepository.save(entity);
     }
 
-    private void validarNumeracion(Deed entity) {
+    private void validateNumbering(Deed entity) {
         resolveFolioForNumbering(entity).ifPresent(folio -> {
             Person notary = folio.getFkIdNotaryPerson();
             if (notary == null || notary.getPersonId() == null) {
                 return;
             }
             boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
-            ResultadoValidacionNumeracion resultado = numeracionDeedService.validar(
+            NumberingValidationResult resultado = deedNumberingService.validate(
                     entity.getNumber(), notary, folio.getYear(), isAuxiliary,
                     entity.getNotes(), entity.getIdDeed());
 
-            if (resultado == ResultadoValidacionNumeracion.DUPLICADO) {
-                throw new NumberDeedDuplicadoException(
+            if (resultado == NumberingValidationResult.DUPLICATE) {
+                throw new DuplicateDeedNumberException(
                         "El número " + entity.getNumber() + " ya fue utilizado en el protocolo "
                                 + (isAuxiliary ? "auxiliar" : "principal") + " del año " + folio.getYear());
             }
-            if (resultado == ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR) {
-                throw new SaltoNumeracionSinJustificarException(
+            if (resultado == NumberingValidationResult.SKIP_UNJUSTIFIED) {
+                throw new UnjustifiedNumberingGapException(
                         "El número " + entity.getNumber() + " deja un salto en la numeración correlativa; "
                                 + "debe indicar una justificación en observaciones");
             }

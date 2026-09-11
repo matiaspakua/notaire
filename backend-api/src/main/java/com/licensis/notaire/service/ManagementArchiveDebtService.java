@@ -109,18 +109,18 @@ public class ManagementArchiveDebtService {
 
         Float saldoPending = calculatePendingBalance(idManagement);
 
-        DeedManagement management = managementTransitionService.transicionar(idManagement, StatusARCHIVADA);
+        DeedManagement management = managementTransitionService.transition(idManagement, StatusARCHIVADA);
         management.setPendingDebtAtArchiving(saldoPending != null && saldoPending > 0);
         DeedManagement archivedManagement = managementRepository.save(management);
 
-        archivingCarpetas(idManagement);
+        archiveFolders(idManagement);
 
         log.info("Gestión {} archivada con deudaPendienteAlArchivar={}", idManagement,
                 archivedManagement.getPendingDebtAtArchiving());
         return new ArchiveResult(archivedManagement, saldoPending);
     }
 
-    private void archivingCarpetas(Integer idManagement) {
+    private void archiveFolders(Integer idManagement) {
         List<ProcedureFolder> carpetas = procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
         carpetas.forEach(folder -> folder.setStatus(StatusARCHIVADA));
         procedureFolderRepository.saveAll(carpetas);

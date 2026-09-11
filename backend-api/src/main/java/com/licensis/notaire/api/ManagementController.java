@@ -193,7 +193,7 @@ public class ManagementController {
         procedure.setFkIdManagement(management);
         applyProcedureDependencies(procedure, dependencies);
         Procedure guardado = procedureRepository.save(procedure);
-        procedureFolderService.generarFolderParaProcedure(guardado);
+        procedureFolderService.generateFolderForProcedure(guardado);
     }
 
     private void updateProcedure(Procedure procedure, CaseDependencies dependencies) {
@@ -228,7 +228,7 @@ public class ManagementController {
         applyManagementFields(management, request, dependencies.get());
         management = repository.save(management);
         saveProcedure(management, dependencies.get());
-        managementBitacoraService.registrarStatus(management, null);
+        managementBitacoraService.registerStatus(management, null);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(managementQueryService.findById(management.getIdManagement()).orElseThrow());
     }
@@ -447,11 +447,11 @@ public class ManagementController {
         @ApiResponse(responseCode = "400", description = "Transición no válida para el workflow del tipo de trámite"),
         @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
     })
-    @PostMapping("/{id}/transicionar")
+    @PostMapping("/{id}/transition")
     @Operation(summary = "CU83 - Transicionar el estado de una gestión validando el workflow definido")
-    public ResponseEntity<DtoManagementSummary> transicionar(@PathVariable Integer id,
+    public ResponseEntity<DtoManagementSummary> transition(@PathVariable Integer id,
             @RequestBody DtoTransicionRequest request) {
-        managementTransitionService.transicionar(id, request.statusDestination());
+        managementTransitionService.transition(id, request.statusDestination());
         return ResponseEntity.ok(managementQueryService.findById(id).orElseThrow());
     }
 
@@ -466,7 +466,7 @@ public class ManagementController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        List<DtoHistorySummary> history = managementBitacoraService.obtenerHistory(id).stream()
+        List<DtoHistorySummary> history = managementBitacoraService.getHistory(id).stream()
                 .map(com.licensis.notaire.service.mappers.HistoryMapper::toDto)
                 .toList();
         return ResponseEntity.ok(history);

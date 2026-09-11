@@ -1431,7 +1431,7 @@ public class BusinessController
 
             }
 
-            List<DtoHistory> historyManagement = this.obtenerHistoryManagement(dtoManagementModificar);
+            List<DtoHistory> historyManagement = this.getHistoryManagement(dtoManagementModificar);
 
             for (Iterator<DtoHistory> it = historyManagement.iterator(); it.hasNext();)
             {
@@ -1684,7 +1684,7 @@ public class BusinessController
      * @return listaDtoHistorial Una lista tipo DTO con todos los registros de
      * historial de la gestion.
      */
-    public List<DtoHistory> obtenerHistoryManagement(DtoDeedManagement dtoManagement)
+    public List<DtoHistory> getHistoryManagement(DtoDeedManagement dtoManagement)
     {
         List<DtoHistory> listaDtoHistory = new ArrayList<>();
 

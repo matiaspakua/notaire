@@ -146,7 +146,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);  // No deuda - required for archive
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
@@ -161,7 +161,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
-            when(managementTransitionService.transicionar(1, "Archivada"))
+            when(managementTransitionService.transition(1, "Archivada"))
                     .thenThrow(new BusinessValidationException("Transición no permitida"));
 
             assertThatThrownBy(() -> managementArchiveDebtService.archiving(1))
@@ -178,7 +178,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(20000.00f);  // Deuda exists
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
@@ -196,7 +196,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);  // No deuda
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
@@ -216,7 +216,7 @@ class ManagementArchiveDebtServiceTest {
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(15000.00f);
             when(paymentService.calculatePendingBalance(20)).thenReturn(25000.00f);
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             // Total deuda = 40000
 
@@ -237,7 +237,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             when(procedureFolderRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(folder));
 
@@ -277,7 +277,7 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
-            when(managementTransitionService.transicionar(1, "Archivada")).thenReturn(testManagement);
+            when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1, true);

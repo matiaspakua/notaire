@@ -2,8 +2,8 @@ package com.licensis.notaire.service.unit;
 
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.service.NumeracionDeedService;
-import com.licensis.notaire.service.ResultadoValidacionNumeracion;
+import com.licensis.notaire.service.DeedNumberingService;
+import com.licensis.notaire.service.NumberingValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("NumeracionEscrituraService Unit Tests (CU86)")
-class NumeracionDeedServiceTest {
+@DisplayName("DeedNumberingService Unit Tests (CU86)")
+class DeedNumberingServiceTest {
 
     @Mock
     private FolioRepository folioRepository;
 
     @InjectMocks
-    private NumeracionDeedService numeracionDeedService;
+    private DeedNumberingService deedNumberingService;
 
     private Person notary;
 
@@ -42,7 +42,7 @@ class NumeracionDeedServiceTest {
         when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
                 .thenReturn(Optional.empty());
 
-        int siguiente = numeracionDeedService.calcularSiguienteCorrelativo(notary, 2026, false);
+        int siguiente = deedNumberingService.calculateNextSequenceNumber(notary, 2026, false);
 
         assertThat(siguiente).isEqualTo(1);
     }
@@ -55,10 +55,10 @@ class NumeracionDeedServiceTest {
         when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
-        ResultadoValidacionNumeracion resultado = numeracionDeedService.validar(
+        NumberingValidationResult resultado = deedNumberingService.validate(
                 6, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(ResultadoValidacionNumeracion.OK);
+        assertThat(resultado).isEqualTo(NumberingValidationResult.OK);
     }
 
     @Test
@@ -67,10 +67,10 @@ class NumeracionDeedServiceTest {
         when(folioRepository.existsNumberDeedByNotaryYearYType(5, 1, 2026, false, null))
                 .thenReturn(true);
 
-        ResultadoValidacionNumeracion resultado = numeracionDeedService.validar(
+        NumberingValidationResult resultado = deedNumberingService.validate(
                 5, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(ResultadoValidacionNumeracion.DUPLICADO);
+        assertThat(resultado).isEqualTo(NumberingValidationResult.DUPLICATE);
     }
 
     @Test
@@ -81,10 +81,10 @@ class NumeracionDeedServiceTest {
         when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
-        ResultadoValidacionNumeracion resultado = numeracionDeedService.validar(
+        NumberingValidationResult resultado = deedNumberingService.validate(
                 9, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR);
+        assertThat(resultado).isEqualTo(NumberingValidationResult.SKIP_UNJUSTIFIED);
     }
 
     @Test
@@ -95,10 +95,10 @@ class NumeracionDeedServiceTest {
         when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
-        ResultadoValidacionNumeracion resultado = numeracionDeedService.validar(
+        NumberingValidationResult resultado = deedNumberingService.validate(
                 9, notary, 2026, false, "Escritura anulada N° 6 a 8", null);
 
-        assertThat(resultado).isEqualTo(ResultadoValidacionNumeracion.SALTO_JUSTIFICADO);
+        assertThat(resultado).isEqualTo(NumberingValidationResult.SKIP_JUSTIFIED);
     }
 
     @Test
@@ -109,8 +109,8 @@ class NumeracionDeedServiceTest {
         when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
                 .thenReturn(Optional.of(40));
 
-        int siguienteAuxiliary = numeracionDeedService.calcularSiguienteCorrelativo(notary, 2026, true);
-        int siguientePrincipal = numeracionDeedService.calcularSiguienteCorrelativo(notary, 2026, false);
+        int siguienteAuxiliary = deedNumberingService.calculateNextSequenceNumber(notary, 2026, true);
+        int siguientePrincipal = deedNumberingService.calculateNextSequenceNumber(notary, 2026, false);
 
         assertThat(siguienteAuxiliary).isEqualTo(3);
         assertThat(siguientePrincipal).isEqualTo(41);

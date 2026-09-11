@@ -10,36 +10,36 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
-public class NumeracionDeedService {
+public class DeedNumberingService {
 
     private final FolioRepository folioRepository;
 
-    public NumeracionDeedService(FolioRepository folioRepository) {
+    public DeedNumberingService(FolioRepository folioRepository) {
         this.folioRepository = folioRepository;
     }
 
-    public int calcularSiguienteCorrelativo(Person notary, int year, boolean isAuxiliary) {
+    public int calculateNextSequenceNumber(Person notary, int year, boolean isAuxiliary) {
         return folioRepository.findMaxNumberDeedByNotaryYearYType(
                 notary.getPersonId(), year, isAuxiliary, null).orElse(0) + 1;
     }
 
-    public ResultadoValidacionNumeracion validar(int number, Person notary, int year, boolean isAuxiliary,
-            String justificacionSalto, Integer idDeedExcluir) {
-        boolean duplicado = folioRepository.existsNumberDeedByNotaryYearYType(
-                number, notary.getPersonId(), year, isAuxiliary, idDeedExcluir);
-        if (duplicado) {
-            return ResultadoValidacionNumeracion.DUPLICADO;
+    public NumberingValidationResult validate(int number, Person notary, int year, boolean isAuxiliary,
+            String skipJustification, Integer idDeedExclude) {
+        boolean duplicate = folioRepository.existsNumberDeedByNotaryYearYType(
+                number, notary.getPersonId(), year, isAuxiliary, idDeedExclude);
+        if (duplicate) {
+            return NumberingValidationResult.DUPLICATE;
         }
 
-        int siguienteEsperado = folioRepository.findMaxNumberDeedByNotaryYearYType(
-                notary.getPersonId(), year, isAuxiliary, idDeedExcluir).orElse(0) + 1;
-        if (number == siguienteEsperado) {
-            return ResultadoValidacionNumeracion.OK;
+        int nextExpected = folioRepository.findMaxNumberDeedByNotaryYearYType(
+                notary.getPersonId(), year, isAuxiliary, idDeedExclude).orElse(0) + 1;
+        if (number == nextExpected) {
+            return NumberingValidationResult.OK;
         }
 
-        boolean tieneJustificacion = justificacionSalto != null && !justificacionSalto.isBlank();
-        return tieneJustificacion
-                ? ResultadoValidacionNumeracion.SALTO_JUSTIFICADO
-                : ResultadoValidacionNumeracion.SALTO_SIN_JUSTIFICAR;
+        boolean hasJustification = skipJustification != null && !skipJustification.isBlank();
+        return hasJustification
+                ? NumberingValidationResult.SKIP_JUSTIFIED
+                : NumberingValidationResult.SKIP_UNJUSTIFIED;
     }
 }

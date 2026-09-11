@@ -55,7 +55,7 @@ class ProcedureFolderServiceTest {
         when(procedureFolderRepository.findTopByOrderByNumberDesc()).thenReturn(Optional.empty());
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ProcedureFolder folder = procedureFolderService.generarFolderParaProcedure(procedure);
+        ProcedureFolder folder = procedureFolderService.generateFolderForProcedure(procedure);
 
         assertThat(folder.getNumber()).isEqualTo(1);
         assertThat(folder.getStatus()).isEqualTo("Activa");
@@ -71,7 +71,7 @@ class ProcedureFolderServiceTest {
         when(procedureFolderRepository.findTopByOrderByNumberDesc()).thenReturn(Optional.of(ultima));
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ProcedureFolder folder = procedureFolderService.generarFolderParaProcedure(procedure);
+        ProcedureFolder folder = procedureFolderService.generateFolderForProcedure(procedure);
 
         assertThat(folder.getNumber()).isEqualTo(8);
     }

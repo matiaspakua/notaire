@@ -6,7 +6,7 @@ import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.DeedService;
-import com.licensis.notaire.service.NumeracionDeedService;
+import com.licensis.notaire.service.DeedNumberingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +38,7 @@ class DeedServiceTest {
     private FolioRepository folioRepository;
 
     @Mock
-    private NumeracionDeedService numeracionDeedService;
+    private DeedNumberingService deedNumberingService;
 
     @InjectMocks
     private DeedService deedService;

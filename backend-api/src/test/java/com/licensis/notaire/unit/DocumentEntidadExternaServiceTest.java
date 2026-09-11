@@ -165,7 +165,7 @@ class DocumentEntidadExternaServiceTest {
             assertThat(resultado.amountToPay()).isEqualTo(1500f);
             assertThat(resultado.notes()).isEqualTo("Retirado a tiempo");
             assertThat(resultado.delivered()).isFalse();
-            verify(managementTransitionService, never()).transicionar(anyInt(), any());
+            verify(managementTransitionService, never()).transition(anyInt(), any());
         }
 
         @Test
@@ -232,7 +232,7 @@ class DocumentEntidadExternaServiceTest {
 
             ArgumentCaptor<Integer> idManagementCaptor = ArgumentCaptor.forClass(Integer.class);
             ArgumentCaptor<String> statusCaptor = ArgumentCaptor.forClass(String.class);
-            verify(managementTransitionService, times(1)).transicionar(idManagementCaptor.capture(), statusCaptor.capture());
+            verify(managementTransitionService, times(1)).transition(idManagementCaptor.capture(), statusCaptor.capture());
             assertThat(idManagementCaptor.getValue()).isEqualTo(1);
             assertThat(statusCaptor.getValue()).isEqualTo(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         }
@@ -245,7 +245,7 @@ class DocumentEntidadExternaServiceTest {
 
             documentEntidadExternaService.intentarCompletarDocumentacion(1);
 
-            verify(managementTransitionService, never()).transicionar(anyInt(), any());
+            verify(managementTransitionService, never()).transition(anyInt(), any());
         }
 
         @Test
@@ -254,12 +254,12 @@ class DocumentEntidadExternaServiceTest {
             document.setDelivered(true);
             when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
-            when(managementTransitionService.transicionar(eq(1), eq(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA)))
+            when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA)))
                     .thenThrow(new BusinessValidationException("Transición no permitida"));
 
             documentEntidadExternaService.intentarCompletarDocumentacion(1);
 
-            verify(managementTransitionService, times(1)).transicionar(1, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
+            verify(managementTransitionService, times(1)).transition(1, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         }
     }
 }

@@ -33,7 +33,7 @@ public class ProcedureFolderService {
         this.procedureFolderRepository = procedureFolderRepository;
     }
 
-    public ProcedureFolder generarFolderParaProcedure(Procedure procedure) {
+    public ProcedureFolder generateFolderForProcedure(Procedure procedure) {
         ProcedureFolder folder = new ProcedureFolder();
         folder.setNumber(calculateNextNumber());
         folder.setStatus(StatusACTIVA);

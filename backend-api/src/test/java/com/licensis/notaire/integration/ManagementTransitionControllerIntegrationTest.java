@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration tests for POST /api/v1/gestiones/{id}/transicionar.
+ * Integration tests for POST /api/v1/gestiones/{id}/transition.
  * Seeds a workflow (INITIAL -&gt; INTERMEDIATE, no transition to a disconnected
  * FINAL node) and asserts the endpoint applies valid transitions and rejects
  * invalid ones, per CU83.
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("POST /gestiones/{id}/transicionar — validates against the workflow definition (CU83)")
+@DisplayName("POST /gestiones/{id}/transition — validates against the workflow definition (CU83)")
 class ManagementTransitionControllerIntegrationTest {
 
     @Autowired
@@ -154,7 +154,7 @@ class ManagementTransitionControllerIntegrationTest {
     @Test
     @DisplayName("Transición válida se aplica")
     void shouldApplyValidTransition() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementId)
+        mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isOk())
@@ -171,7 +171,7 @@ class ManagementTransitionControllerIntegrationTest {
     @Test
     @DisplayName("Transición inválida es rechazada")
     void shouldRejectInvalidTransition() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementId)
+        mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + statusInalcanzable.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
@@ -187,7 +187,7 @@ class ManagementTransitionControllerIntegrationTest {
     @Test
     @DisplayName("Gestión sin workflow definido rechaza cualquier transición")
     void shouldRejectTransitionWhenNoWorkflowDefinition() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/{id}/transicionar", managementSinProcedureId)
+        mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementSinProcedureId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
@@ -197,7 +197,7 @@ class ManagementTransitionControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when transitioning a gestión that does not exist")
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
-        mockMvc.perform(post("/api/v1/gestiones/999999/transicionar")
+        mockMvc.perform(post("/api/v1/gestiones/999999/transition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isNotFound());
