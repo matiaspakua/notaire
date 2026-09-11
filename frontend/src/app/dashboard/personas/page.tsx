@@ -24,13 +24,13 @@ import { fullName, extractApiError } from "@/lib/utils";
 import type { Persona } from "@/types";
 
 const EMPTY: Partial<Persona> = {
-  nombre: "",
-  apellido: "",
-  numeroIdentificacion: "",
+  firstName: "",
+  lastName: "",
+  identificationNumber: "",
   email: "",
-  telefono: "",
-  domicilio: "",
-  esCliente: false,
+  phone: "",
+  address: "",
+  isClient: false,
 };
 
 export default function PersonasPage() {
@@ -61,10 +61,10 @@ export default function PersonasPage() {
         return Promise.resolve(personas);
       }
       const params = new URLSearchParams();
-      if (searchNombre) params.set("nombre", searchNombre);
-      if (searchApellido) params.set("apellido", searchApellido);
-      if (searchDni) params.set("numeroIdentificacion", searchDni);
-      if (filterClientes) params.set("esCliente", "true");
+      if (searchNombre) params.set("firstName", searchNombre);
+      if (searchApellido) params.set("lastName", searchApellido);
+      if (searchDni) params.set("identificationNumber", searchDni);
+      if (filterClientes) params.set("isClient", "true");
       return apiGet<Persona[]>(`/personas/buscar?${params.toString()}`);
     },
   });
@@ -83,8 +83,8 @@ export default function PersonasPage() {
 
   async function handleSave() {
     try {
-      if (isEditMode && editing.idPersona) {
-        await updateMutation.mutateAsync({ id: editing.idPersona, data: editing });
+      if (isEditMode && editing.personId) {
+        await updateMutation.mutateAsync({ id: editing.personId, data: editing });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
@@ -102,7 +102,7 @@ export default function PersonasPage() {
       return;
     }
     const existingId = extractDuplicatePersonaId(err);
-    const existing = personas.find((p) => p.idPersona === existingId);
+    const existing = personas.find((p) => p.personId === existingId);
     toast.error(extractApiError(err) ?? t("duplicateDocument"), {
       action: existing
         ? { label: t("viewExisting"), onClick: () => openEdit(existing) }
@@ -134,18 +134,18 @@ export default function PersonasPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (p) => <span className="text-xs text-muted-foreground">{p.idPersona}</span>,
+      render: (p) => <span className="text-xs text-muted-foreground">{p.personId}</span>,
       className: "w-12",
     },
     {
-      key: "nombre",
+      key: "firstName",
       header: t("fields.nombre"),
       render: (p) => <span className="font-medium">{fullName(p)}</span>,
     },
     {
       key: "dni",
       header: `${t("fields.dni")} / ${t("fields.cuil")}`,
-      render: (p) => p.numeroIdentificacion ?? p.cuit ?? "—",
+      render: (p) => p.identificationNumber ?? p.taxId ?? "—",
     },
     {
       key: "email",
@@ -156,7 +156,7 @@ export default function PersonasPage() {
       key: "cliente",
       header: tc("type"),
       render: (p) =>
-        p.esCliente ? (
+        p.isClient ? (
           <Badge variant="success">{t("badges.client")}</Badge>
         ) : (
           <Badge variant="secondary">{t("badges.person")}</Badge>
@@ -174,7 +174,7 @@ export default function PersonasPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(p.idPersona!)}
+            onClick={() => setDeleteId(p.personId!)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -202,7 +202,7 @@ export default function PersonasPage() {
           aria-label={t("searchPlaceholders.nombre")}
           value={searchNombre}
           onChange={(e) => setSearchNombre(e.target.value)}
-          data-testid="input-search-nombre"
+          data-testid="input-search-firstName"
           className="w-40"
         />
         <Input
@@ -210,7 +210,7 @@ export default function PersonasPage() {
           aria-label={t("searchPlaceholders.apellido")}
           value={searchApellido}
           onChange={(e) => setSearchApellido(e.target.value)}
-          data-testid="input-search-apellido"
+          data-testid="input-search-lastName"
           className="w-40"
         />
         <Input
@@ -235,7 +235,7 @@ export default function PersonasPage() {
         data={filteredPersonas}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(p) => p.idPersona!}
+        keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
       />
 
@@ -246,30 +246,30 @@ export default function PersonasPage() {
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.nombre")} required>
                   <Input
-                    value={editing.nombre ?? ""}
-                    onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
-                    data-testid="input-nombre"
+                    value={editing.firstName ?? ""}
+                    onChange={(e) => setEditing({ ...editing, firstName: e.target.value })}
+                    data-testid="input-firstName"
                   />
                 </FormField>
                 <FormField label={t("fields.apellido")} required>
                   <Input
-                    value={editing.apellido ?? ""}
-                    onChange={(e) => setEditing({ ...editing, apellido: e.target.value })}
-                    data-testid="input-apellido"
+                    value={editing.lastName ?? ""}
+                    onChange={(e) => setEditing({ ...editing, lastName: e.target.value })}
+                    data-testid="input-lastName"
                   />
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.dni")}>
                   <Input
-                    value={editing.numeroIdentificacion ?? ""}
-                    onChange={(e) => setEditing({ ...editing, numeroIdentificacion: e.target.value })}
+                    value={editing.identificationNumber ?? ""}
+                    onChange={(e) => setEditing({ ...editing, identificationNumber: e.target.value })}
                   />
                 </FormField>
                 <FormField label={t("fields.cuil")}>
                   <Input
-                    value={editing.cuit ?? ""}
-                    onChange={(e) => setEditing({ ...editing, cuit: e.target.value })}
+                    value={editing.taxId ?? ""}
+                    onChange={(e) => setEditing({ ...editing, taxId: e.target.value })}
                   />
                 </FormField>
               </div>
@@ -282,24 +282,24 @@ export default function PersonasPage() {
               </FormField>
               <FormField label={t("fields.telefono")}>
                 <Input
-                  value={editing.telefono ?? ""}
-                  onChange={(e) => setEditing({ ...editing, telefono: e.target.value })}
+                  value={editing.phone ?? ""}
+                  onChange={(e) => setEditing({ ...editing, phone: e.target.value })}
                 />
               </FormField>
               <FormField label={t("fields.domicilio")}>
                 <Input
-                  value={editing.domicilio ?? ""}
-                  onChange={(e) => setEditing({ ...editing, domicilio: e.target.value })}
+                  value={editing.address ?? ""}
+                  onChange={(e) => setEditing({ ...editing, address: e.target.value })}
                 />
               </FormField>
               <FormField label={t("fields.registroEscribano")} helperText={t("helperText.registroEscribano")}>
                 <Input
                   type="number"
-                  value={editing.registroEscribano ?? ""}
+                  value={editing.notaryRegistrationNumber ?? ""}
                   onChange={(e) =>
                     setEditing({
                       ...editing,
-                      registroEscribano: e.target.value ? Number(e.target.value) : undefined,
+                      notaryRegistrationNumber: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
                   data-testid="input-registro-escribano"
@@ -307,8 +307,8 @@ export default function PersonasPage() {
               </FormField>
               <CheckboxField
                 label={t("fields.esCliente")}
-                checked={editing.esCliente ?? false}
-                onChange={(checked) => setEditing({ ...editing, esCliente: checked })}
+                checked={editing.isClient ?? false}
+                onChange={(checked) => setEditing({ ...editing, isClient: checked })}
                 data-testid="check-es-cliente"
               />
             </FormSection>

@@ -366,7 +366,7 @@ export default function PresupuestosPage() {
                 <FormSection title={t("resumen.gestionSection")}>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">{t("resumen.numberManagement")}</p>
+                      <p className="text-muted-foreground">{t("resumen.numeroGestion")}</p>
                       <p className="font-medium">{resumen.numberManagement ?? "—"}</p>
                     </div>
                     <div>
@@ -374,7 +374,7 @@ export default function PresupuestosPage() {
                       <p className="font-medium">{resumen.encabezadoManagement ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">{t("resumen.numberBudget")}</p>
+                      <p className="text-muted-foreground">{t("resumen.numeroPresupuesto")}</p>
                       <p className="font-medium">{resumen.numberBudget}</p>
                     </div>
                     <div>
@@ -387,7 +387,7 @@ export default function PresupuestosPage() {
                     </div>
                   </div>
                 </FormSection>
-                <FormSection title={t("resumen.paymentsSection")}>
+                <FormSection title={t("resumen.pagosSection")}>
                   {resumen.payments.length === 0 ? (
                     <p className="text-sm text-muted-foreground" data-testid="resumen-sin-pagos">
                       {t("resumen.noPagos")}
