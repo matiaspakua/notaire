@@ -60,42 +60,42 @@ import type {
 } from "@/types";
 
 describe("TypeScript type shape contracts", () => {
-  it("EstadoDeGestion uses idEstadoGestion", () => {
-    const e: EstadoDeGestion = { idEstadoGestion: 1, nombre: "En proceso" };
-    expect(e.idEstadoGestion).toBe(1);
+  it("EstadoDeGestion uses idManagementStatus", () => {
+    const e: EstadoDeGestion = { idManagementStatus: 1, name: "En proceso" };
+    expect(e.idManagementStatus).toBe(1);
   });
 
-  it("TipoDeTramite uses idTipoDeTramite", () => {
-    const t: TipoDeTramite = { idTipoDeTramite: 2, nombre: "Compraventa" };
-    expect(t.idTipoDeTramite).toBe(2);
+  it("TipoDeTramite uses idProcedureType", () => {
+    const t: TipoDeTramite = { idProcedureType: 2, name: "Compraventa" };
+    expect(t.idProcedureType).toBe(2);
   });
 
-  it("PlantillaPresupuesto uses idPlantillaPresupuesto", () => {
+  it("PlantillaPresupuesto uses budgetTemplatePK", () => {
     const p: PlantillaPresupuesto = {
-      idPlantillaPresupuesto: 1,
-      nombre: "Cobro base",
+      budgetTemplatePK: { fkIdProcedureType: 2, fkIdConcept: 1 },
+      procedureType: { name: "Cobro base" },
     };
-    expect(p.idPlantillaPresupuesto).toBe(1);
+    expect(p.budgetTemplatePK?.fkIdConcept).toBe(1);
   });
 
-  it("RegistroAuditoria uses idRegistroAuditoria and detalleOperacion", () => {
+  it("RegistroAuditoria uses idAuditRecord and operationDetail", () => {
     const r: RegistroAuditoria = {
-      idRegistroAuditoria: 100,
-      detalleOperacion: "Creó gestión #45",
-      modulo: "Gestiones",
+      idAuditRecord: 100,
+      operationDetail: "Creó gestión #45",
+      module: "Gestiones",
     };
-    expect(r.idRegistroAuditoria).toBe(100);
-    expect(r.detalleOperacion).toBe("Creó gestión #45");
+    expect(r.idAuditRecord).toBe(100);
+    expect(r.operationDetail).toBe("Creó gestión #45");
   });
 
-  it("Folio has numero and tipoDeFolio", () => {
+  it("Folio has number and fkIdFolioType", () => {
     const f: Folio = {
       idFolio: 1,
-      numero: 42,
-      tipoDeFolio: { idTipoDeFolio: 1, nombre: "Protocolo" },
+      number: 42,
+      fkIdFolioType: { idFolioType: 1, name: "Protocolo" },
     };
-    expect(f.numero).toBe(42);
-    expect(f.tipoDeFolio?.nombre).toBe("Protocolo");
+    expect(f.number).toBe(42);
+    expect(f.fkIdFolioType?.name).toBe("Protocolo");
   });
 });
 
