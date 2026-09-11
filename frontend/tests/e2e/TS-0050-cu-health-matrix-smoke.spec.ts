@@ -42,11 +42,11 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU-AUTH", name: "Login", method: "POST", path: "/usuarios/login", expectStatus: 200 },
 
   // ── Personas / Clientes (CU17, CU18, CU41, CU46, CU54, CU61) ──
-  { id: "CU17", name: "Dar Alta persona", method: "POST", path: "/personas", expectStatus: 201 },
-  { id: "CU18", name: "Dar Alta Cliente", method: "POST", path: "/personas", expectStatus: 201 },
-  { id: "CU46", name: "Ver detalle cliente", method: "GET", path: () => `/personas/${seedPersonaId()}`, expectStatus: 200 },
-  { id: "CU54", name: "Modificar Persona", method: "GET", path: "/personas", expectStatus: 200 },
-  { id: "CU61", name: "Buscar persona o cliente", method: "GET", path: "/personas/buscar?q=test", expectStatus: 200 },
+  { id: "CU17", name: "Dar Alta persona", method: "POST", path: "/people", expectStatus: 201 },
+  { id: "CU18", name: "Dar Alta Cliente", method: "POST", path: "/people", expectStatus: 201 },
+  { id: "CU46", name: "Ver detalle cliente", method: "GET", path: () => `/people/${seedPersonaId()}`, expectStatus: 200 },
+  { id: "CU54", name: "Modificar Persona", method: "GET", path: "/people", expectStatus: 200 },
+  { id: "CU61", name: "Buscar persona o cliente", method: "GET", path: "/people/search?firstName=test", expectStatus: 200 },
 
   // ── Presupuestos (CU01, CU45, CU60) ──
   { id: "CU01", name: "Preparar Presupuesto", method: "GET", path: "/presupuestos", expectStatus: 200 },
@@ -86,8 +86,8 @@ const CU_CHECKS: CuCheck[] = [
   // ── Usuarios (CU20, CU21, CU23, CU48, CU51) ──
   { id: "CU20", name: "Dar alta usuario", method: "GET", path: "/usuarios", expectStatus: 200 },
   { id: "CU21", name: "Modificar Usuario", method: "GET", path: "/usuarios", expectStatus: 200 },
-  { id: "CU48", name: "Dar alta escribano", method: "GET", path: "/personas", expectStatus: 200 },
-  { id: "CU51", name: "Modificar escribano", method: "GET", path: "/personas", expectStatus: 200 },
+  { id: "CU48", name: "Dar alta escribano", method: "GET", path: "/people", expectStatus: 200 },
+  { id: "CU51", name: "Modificar escribano", method: "GET", path: "/people", expectStatus: 200 },
 
   // ── Suplencias (CU22, CU59) ──
   { id: "CU22", name: "Registrar Suplencia", method: "GET", path: "/suplencia", expectStatus: 200 },
@@ -147,8 +147,8 @@ test.describe("CU Coverage Matrix — Health Check", () => {
     await page.goto("/login");
     // Authenticate via API
     await apiPost(page, "/usuarios/login", {
-      nombre: "admin",
-      contrasenia: "admin",
+      name: "admin",
+      password: "admin",
     });
   });
 

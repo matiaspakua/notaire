@@ -75,7 +75,7 @@ async function globalTeardown(): Promise<void> {
         ? [{ label: "usuario", path: `/usuarios/${idsToCleanup.usuarioId}` }]
         : []),
       ...(idsToCleanup.personaId
-        ? [{ label: "persona", path: `/personas/${idsToCleanup.personaId}` }]
+        ? [{ label: "persona", path: `/people/${idsToCleanup.personaId}` }]
         : []),
       ...(idsToCleanup.tipoTramiteId
         ? [{ label: "tipo-tramite", path: `/tipo-tramite/${idsToCleanup.tipoTramiteId}` }]

@@ -27,7 +27,7 @@ import {
 async function findEstadoArchivada(page: Page): Promise<{ idEstadoGestion: number; nombre: string }> {
   const result = await apiGet<{ idEstadoGestion: number; nombre: string }[]>(
     page,
-    "/estado-gestion/search?nombre=Archivada",
+    "/estado-gestion/search?name=Archivada",
   );
   const match = result.data!.find((e) => e.nombre === "Archivada");
   if (!match) {

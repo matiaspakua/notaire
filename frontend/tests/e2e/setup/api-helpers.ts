@@ -725,7 +725,7 @@ export async function brunoSearchPersonas(
   page: Page,
   query: string,
 ): Promise<ApiResult> {
-  return apiGet(page, `/people/buscar?q=${encodeURIComponent(query)}`);
+  return apiGet(page, `/people/search?firstName=${encodeURIComponent(query)}`);
 }
 
 export async function brunoGetRegistrosAuditoria(

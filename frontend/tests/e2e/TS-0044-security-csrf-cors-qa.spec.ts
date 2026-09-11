@@ -46,7 +46,7 @@ test.describe("CSRF posture (issue #691)", () => {
     await page.getByTestId("btn-ingresar").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
-    const response = await page.request.get(`${BACKEND_URL}/api/v1/personas`);
+    const response = await page.request.get(`${BACKEND_URL}/api/v1/people`);
     expect(response.status()).toBe(401);
   });
 });
@@ -54,7 +54,7 @@ test.describe("CSRF posture (issue #691)", () => {
 test.describe("CORS enforcement (issue #691)", () => {
   test("preflight from a disallowed origin gets no Access-Control-Allow-Origin header", async () => {
     const apiContext = await request.newContext();
-    const response = await apiContext.fetch(`${BACKEND_URL}/api/v1/personas`, {
+    const response = await apiContext.fetch(`${BACKEND_URL}/api/v1/people`, {
       method: "OPTIONS",
       headers: {
         Origin: DISALLOWED_ORIGIN,
@@ -68,7 +68,7 @@ test.describe("CORS enforcement (issue #691)", () => {
 
   test("preflight from an allowed origin gets an exact (non-wildcard) Access-Control-Allow-Origin", async () => {
     const apiContext = await request.newContext();
-    const response = await apiContext.fetch(`${BACKEND_URL}/api/v1/personas`, {
+    const response = await apiContext.fetch(`${BACKEND_URL}/api/v1/people`, {
       method: "OPTIONS",
       headers: {
         Origin: ALLOWED_ORIGIN,
