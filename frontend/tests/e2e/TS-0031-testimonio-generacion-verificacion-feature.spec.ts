@@ -11,17 +11,17 @@ import { GherkinSteps } from "./gherkin-helpers";
 import { apiGet, apiPost, uniqueId } from "./setup/api-helpers";
 
 interface TestimonioApiResult {
-  idTestimonio: number;
-  escritura?: { numero?: number };
+  idTestimony: number;
+  deed?: { number?: number };
 }
 
 async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
-  const seeded = await apiPost<{ idEscritura: number }>(page, "/escrituras", {
-    numero,
-    fechaEscrituracion: new Date().toISOString().split("T")[0],
-    cuerpo: `Contenido E2E ${numero}`,
-    estado: "Firmada",
+  const seeded = await apiPost<{ idDeed: number }>(page, "/escrituras", {
+    number: numero,
+    dateDeedrecording: new Date().toISOString().split("T")[0],
+    body: `Contenido E2E ${numero}`,
+    status: "Firmada",
   });
   return { idEscritura: seeded.data!.idDeed, numero };
 }
@@ -50,7 +50,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
     const list = await apiGet<TestimonioApiResult[]>(page, "/testimonio");
-    const idTestimonio = list.data!.find((te) => te.escritura?.numero === numero)!.idTestimonio;
+    const idTestimonio = list.data!.find((te) => te.deed?.number === numero)!.idTestimony;
 
     await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click();
     await steps.thenModalIsVisible();
@@ -66,7 +66,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
 
   test("Edge: verificar con observaciones muestra el testimonio como Observado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const generated = await apiPost<{ idTestimonio: number }>(page, `/testimonio/${idEscritura}/generar`, {});
+    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonio/${idEscritura}/generar`, {});
     const idTestimonio = generated.data!.idTestimony;
 
     await steps.givenUserIsOnPage("/dashboard/testimonios");
@@ -85,7 +85,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
 
   test("Edge: emitir copia está bloqueado hasta que el testimonio esté verificado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const generated = await apiPost<{ idTestimonio: number }>(page, `/testimonio/${idEscritura}/generar`, {});
+    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonio/${idEscritura}/generar`, {});
     const idTestimonio = generated.data!.idTestimony;
 
     await steps.givenUserIsOnPage("/dashboard/testimonios");

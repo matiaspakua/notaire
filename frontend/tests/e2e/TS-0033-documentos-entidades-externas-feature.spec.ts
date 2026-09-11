@@ -26,7 +26,7 @@ async function seedGestionConDocumentoEntidadExterna(page: Page, nombreDocumento
   });
   const tramite = await createTramite(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
   const documento = await createDocumentoEntidadExterna(page, tramite.data!.idProcedure, {
-    nombre: nombreDocumento,
+    name: nombreDocumento,
   });
 
   return {

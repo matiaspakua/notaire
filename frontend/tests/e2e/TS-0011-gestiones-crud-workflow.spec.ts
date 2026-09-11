@@ -28,7 +28,7 @@ interface SeededGestion {
 async function seedFullWorkflow(page: Page): Promise<SeededGestion> {
   const persona = await createPersona(page)
   const personaId = persona.data!.personId
-  const personaApellido = persona.data!.apellido!
+  const personaApellido = persona.data!.lastName!
   const presupuesto = await createPresupuesto(page, personaId)
   const gestion = await seedGestionWithWorkflow(page, presupuesto.data!.idBudget)
   return { ...gestion, personaId, personaApellido }
@@ -71,7 +71,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
     await createPresupuesto(page, personaId)
 
     // Fetch the persona's apellido from the seeded data to locate the option
-    const apellido = persona.data!.apellido ?? ''
+    const apellido = persona.data!.lastName ?? ''
 
     await page.goto('/dashboard/gestiones')
     await page.waitForLoadState('domcontentloaded')

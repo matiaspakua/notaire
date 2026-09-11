@@ -33,7 +33,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(tipoTramiteResult.ok).toBe(true);
     const idTipoTramite = tipoTramiteResult.data!.idProcedureType;
 
-    const conceptoResult = await createConcepto(page, { nombre: "Honorarios E2E", valor: 1500 });
+    const conceptoResult = await createConcepto(page, { name: "Honorarios E2E", value: 1500 });
     expect(conceptoResult.ok).toBe(true);
 
     const plantillaResult = await createPlantillaPresupuesto(
@@ -72,7 +72,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const tipoTramiteResult = await createTipoTramite(page, { nombre: `Sin Plantilla E2E ${Date.now()}` });
+    const tipoTramiteResult = await createTipoTramite(page, { name: `Sin Plantilla E2E ${Date.now()}` });
     expect(tipoTramiteResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/presupuestos");

@@ -90,7 +90,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
 
   test('CU87-EDGE01: escritura ya vinculada a otro folio no aparece disponible en el selector', async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page)
-    const linked = await createFolio(page, 1, { estado: 'Nuevo', escrituraId: idEscritura })
+    const linked = await createFolio(page, 1, { status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
     await page.goto('/dashboard/administracion/folios')
@@ -109,7 +109,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
   test('CU87-EDGE02: folio en estado Utilizado no puede editarse ni borrarse desde la grilla', async ({ page }) => {
     const { idEscritura } = await seedEscrituraFirmada(page)
     const numeroFolio = Math.floor(10000 + Math.random() * 90000)
-    const linked = await createFolio(page, 1, { numero: numeroFolio, estado: 'Nuevo', escrituraId: idEscritura })
+    const linked = await createFolio(page, 1, { number: numeroFolio, status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
     await page.goto('/dashboard/administracion/folios')

@@ -7,9 +7,9 @@ import { createPersona, createFolio, createTipoDeFolio } from "./setup/api-helpe
 
 async function seedFolioAuxiliarDisponible(page: import("@playwright/test").Page) {
   const persona = await createPersona(page);
-  const tipoAuxiliar = await createTipoDeFolio(page, { esAuxiliar: true });
+  const tipoAuxiliar = await createTipoDeFolio(page, { isAuxiliary: true });
   const folio = await createFolio(page, persona.data!.personId, {
-    tipoFolioId: tipoAuxiliar.data!.idTipoFolio,
+    typeFolioId: tipoAuxiliar.data!.idFolioType,
   });
   return folio.data!.idFolio;
 }

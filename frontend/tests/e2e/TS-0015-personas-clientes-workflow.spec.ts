@@ -362,11 +362,11 @@ test.describe('CU61 - Buscar persona o cliente', () => {
 
       // Given — a persona was created via API with a unique apellido
       const result = await createPersona(page, {
-        apellido: `BuscaApellido${uniqueId() % 100_000}`,
-        numeroIdentificacion: `CU61A${uniqueId() % 10_000_000}`,
+        lastName: `BuscaApellido${uniqueId() % 100_000}`,
+        identificationNumber: `CU61A${uniqueId() % 10_000_000}`,
       })
       expect(result.ok).toBe(true)
-      const apellido = result.data ? (result.data as any).apellido : undefined
+      const apellido = result.data ? (result.data as any).lastName : undefined
 
       // When — reload list and search by apellido
       await page.reload()
@@ -393,8 +393,8 @@ test.describe('CU61 - Buscar persona o cliente', () => {
       // Given — a persona with a unique DNI
       const dni = `CU61D${uniqueId() % 10_000_000}`
       const result = await createPersona(page, {
-        apellido: `BuscaDni${uniqueId() % 100_000}`,
-        numeroIdentificacion: dni,
+        lastName: `BuscaDni${uniqueId() % 100_000}`,
+        identificationNumber: dni,
       })
       expect(result.ok).toBe(true)
 

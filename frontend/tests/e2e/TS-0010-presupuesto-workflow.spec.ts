@@ -26,8 +26,8 @@ async function seedPresupuesto(
   const apellido = personaResult.data as any;
 
   const presupuestoResult = await createPresupuesto(page, idPersona, undefined, {
-    monto: montoOverride,
-    estado: "Pendiente",
+    propertyAmount: montoOverride,
+    status: "Pendiente",
   });
   expect(presupuestoResult.ok, `createPresupuesto failed: ${presupuestoResult.error}`).toBe(true);
   const idPresupuesto = presupuestoResult.data!.idBudget;
@@ -106,7 +106,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     expect(personaResult.ok).toBe(true);
     const idPersona = personaResult.data!.personId;
 
-    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { monto: 60000 });
+    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { propertyAmount: 60000 });
     expect(presupuestoResult.ok).toBe(true);
 
     // WHEN: recarga la lista
@@ -167,7 +167,7 @@ test.describe("CU47 - Consultar Pago / Saldo", () => {
 
     // WHEN: se registra un pago parcial (40000 < 80000) vía API — el registro de pagos
     // en sí se cubre en TS-0014 (CU15); aquí verificamos que CU47 refleje el saldo actualizado.
-    const pagoResult = await createPago(page, idPresupuesto, { monto: 40000 });
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 40000 });
     expect(pagoResult.ok, `createPago failed: ${pagoResult.error}`).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
@@ -206,7 +206,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     expect(personaResult.ok).toBe(true);
     const idPersona = personaResult.data!.personId;
 
-    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { monto: 30000 });
+    const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { propertyAmount: 30000 });
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 

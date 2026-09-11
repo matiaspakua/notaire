@@ -16,7 +16,7 @@ async function seedFoliosConsecutivos(
   for (let i = 0; i < count; i++) {
     const numero = base + i;
     const estado = overrides.estados?.[i] ?? "Nuevo";
-    const folio = await createFolio(page, escribanoId, { numero, estado });
+    const folio = await createFolio(page, escribanoId, { number: numero, status: estado });
     folios.push({ idFolio: folio.data!.idFolio, numero });
   }
   return folios;

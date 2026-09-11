@@ -29,16 +29,16 @@ async function seedGestionConDocumentacionNecesaria(page: Page, nombreDocumento:
     estadoGestionId: estado.data!.idManagementStatus,
     tipoTramiteId: tipoTramite.data!.idProcedureType,
   });
-  const tipoDocumento = await createTipoDocumento(page, { nombre: nombreDocumento });
-  await createPlantillaTramite(page, tipoTramite.data!.idProcedureType, tipoDocumento.data!.idTipoDocumento);
+  const tipoDocumento = await createTipoDocumento(page, { name: nombreDocumento });
+  await createPlantillaTramite(page, tipoTramite.data!.idProcedureType, tipoDocumento.data!.idDocumentType);
   const reingreso = await getReingresoDocumentacion(page, gestion.data!.idManagement);
-  const idTramite = reingreso.data!.tramites[0].idTramite;
+  const idTramite = reingreso.data!.procedures[0].idProcedure;
 
   return {
     idGestion: gestion.data!.idManagement,
     numero: gestion.data!.number,
     idTramite,
-    idTipoDocumento: tipoDocumento.data!.idTipoDocumento,
+    idTipoDocumento: tipoDocumento.data!.idDocumentType,
   };
 }
 

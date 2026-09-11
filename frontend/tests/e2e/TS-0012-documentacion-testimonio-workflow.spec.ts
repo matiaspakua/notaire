@@ -53,16 +53,16 @@ async function seedTestimonioVerificado(
 ): Promise<TestimonioCreado> {
   const { idEscritura, numero: escrituraNumero } = await seedEscrituraFirmada(page)
   const numero = uniqueId() % 1_000_000
-  const result = await apiPost<{ idTestimonio: number }>(page, '/testimonio', {
-    escritura: { idEscritura, numero: escrituraNumero },
-    numero,
-    observado: false,
-    verificado: true,
+  const result = await apiPost<{ idTestimony: number }>(page, '/testimonio', {
+    deed: { idDeed: idEscritura, number: escrituraNumero },
+    number: numero,
+    flagged: false,
+    verified: true,
   })
-  if (!result.ok || !result.data?.idTestimonio) {
+  if (!result.ok || !result.data?.idTestimony) {
     throw new Error(`seedTestimonioVerificado failed: status ${result.status} — ${result.error}`)
   }
-  return { idTestimonio: result.data.idTestimonio, numero }
+  return { idTestimonio: result.data.idTestimony, numero }
 }
 
 // ──────────────────────────────────────────────
@@ -210,7 +210,7 @@ test.describe('CU08 - Verificar testimonio', () => {
   test('CU08-GW01: Edge: verificar con observaciones → estado Observado', async ({ page }) => {
     // Seed escritura and generate testimonio via API so this test is independent
     const { idEscritura, numero } = await seedEscrituraFirmada(page)
-    const generated = await apiPost<{ idTestimonio: number }>(
+    const generated = await apiPost<{ idTestimony: number }>(
       page,
       `/testimonio/${idEscritura}/generar`,
       {},
@@ -235,7 +235,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     page,
   }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page)
-    const generated = await apiPost<{ idTestimonio: number }>(
+    const generated = await apiPost<{ idTestimony: number }>(
       page,
       `/testimonio/${idEscritura}/generar`,
       {},

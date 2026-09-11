@@ -29,7 +29,10 @@ export async function authenticateAsAdmin(
     { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
   ]);
 
-  const result = await apiPost<LoginResponse>(page, "/usuarios/login", { nombre, contrasenia });
+  const result = await apiPost<LoginResponse>(page, "/usuarios/login", {
+    name: nombre,
+    password: contrasenia,
+  });
   const data = result.ok ? result.data : undefined;
 
   await page.addInitScript(

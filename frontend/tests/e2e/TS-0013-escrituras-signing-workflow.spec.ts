@@ -19,7 +19,7 @@ import { apiPost } from './setup/api-helpers'
 
 /** Seed a folio in estado "Nuevo" and return its idFolio */
 async function seedFolioNuevo(page: Page): Promise<number> {
-  const result = await createFolio(page, 1, { estado: 'Nuevo' })
+  const result = await createFolio(page, 1, { status: 'Nuevo' })
   if (!result.ok || !result.data?.idFolio) {
     throw new Error(`Failed to seed folio: ${result.error ?? JSON.stringify(result.data)}`)
   }
@@ -33,18 +33,18 @@ async function seedFolioNuevo(page: Page): Promise<number> {
  */
 async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-    numero: id,
-    fechaEscrituracion: new Date().toISOString().split('T')[0],
-    cuerpo: `Escritura para firma E2E ${id}`,
-    estado: 'Sin Firmar',
+  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    number: id,
+    dateDeedrecording: new Date().toISOString().split('T')[0],
+    body: `Escritura para firma E2E ${id}`,
+    status: 'Sin Firmar',
     idFolio,
-    observaciones: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
+    notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
   })
-  if (!result.ok || !result.data?.idEscritura) {
+  if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idEscritura, numero: id }
+  return { idEscritura: result.data.idDeed, numero: id }
 }
 
 /**
