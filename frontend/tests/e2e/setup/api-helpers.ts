@@ -128,7 +128,7 @@ export interface PersonaPayload {
 }
 
 export interface PresupuestoPayload {
-  person?: { idPerson: number };
+  person?: { personId: number };
   date?: string;
   encabezado?: string;
   status?: string;
@@ -184,8 +184,8 @@ export interface DocumentoPresentadoPayload {
 }
 
 export interface SuplenciaPayload {
-  fkIdSubstitute: { idPerson: number };
-  fkIdSubstituted: { idPerson: number };
+  fkIdSubstitute: { personId: number };
+  fkIdSubstituted: { personId: number };
   dateStart: string;
   dateEnd?: string;
   notes?: string;
@@ -245,7 +245,7 @@ export async function createPresupuesto(
   overrides: Partial<PresupuestoPayload> = {},
 ): Promise<ApiResult<{ idBudget: number }>> {
   return apiPost(page, "/presupuestos", {
-    person: { idPerson: personaId },
+    person: { personId: personaId },
     date: new Date().toISOString().split("T")[0],
     encabezado: `Presupuesto E2E ${uniqueId()}`,
     status: "Pendiente",
@@ -261,7 +261,7 @@ export async function createCompleteCaseGestion(
   page: Page,
   overrides: Partial<CompleteCaseGestionPayload> & { presupuestoId: number },
 ): Promise<ApiResult<{ idManagement: number; number: number; statusActual: string }>> {
-  return apiPost(page, "/gestiones/complete-case", {
+  const merged: CompleteCaseGestionPayload = {
     // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
     number: uniqueId() % 1_000_000,
     encabezado: `Gestión E2E ${uniqueId()}`,
@@ -269,6 +269,19 @@ export async function createCompleteCaseGestion(
     estadoGestionId: 1,
     tipoTramiteId: 4,
     ...overrides,
+  };
+  // CompleteCaseRequest's real wire field names are (number, encabezado, notes, budgetId,
+  // notaryId, statusManagementId, typeProcedureId, propertyId) — not the presupuestoId/
+  // escribanoId/estadoGestionId/tipoTramiteId helper argument names kept for callers.
+  return apiPost(page, "/gestiones/complete-case", {
+    number: merged.number,
+    encabezado: merged.encabezado,
+    notes: merged.notes,
+    budgetId: merged.presupuestoId,
+    notaryId: merged.escribanoId,
+    statusManagementId: merged.estadoGestionId,
+    typeProcedureId: merged.tipoTramiteId,
+    propertyId: merged.inmuebleId,
   });
 }
 
@@ -298,7 +311,7 @@ export async function createGestionSinTramite(
     encabezado: `Gestión E2E ${uniqueId()}`,
     dateStart: new Date().toISOString().split("T")[0],
     number: uniqueId() % 1_000_000,
-    fkIdNotaryPerson: { idPerson: escribanoId },
+    fkIdNotaryPerson: { personId: escribanoId },
     ...overrides,
   });
 }
@@ -648,8 +661,8 @@ export async function createSuplencia(
   overrides: Partial<SuplenciaPayload> = {},
 ): Promise<ApiResult<{ idSubstitution: number }>> {
   return apiPost(page, "/suplencia", {
-    fkIdSubstitute: { idPerson: idSuplente },
-    fkIdSubstituted: { idPerson: idSuplantado },
+    fkIdSubstitute: { personId: idSuplente },
+    fkIdSubstituted: { personId: idSuplantado },
     dateStart: new Date().toISOString().split("T")[0],
     notes: "Suplencia E2E de prueba",
     ...overrides,

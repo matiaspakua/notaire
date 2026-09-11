@@ -167,7 +167,7 @@ async function seedCatalogData(page: Page): Promise<void> {
       page,
       "/presupuestos",
       {
-        person: { idPerson: seedData.seedPersonaId },
+        person: { personId: seedData.seedPersonaId },
         date: "2026-05-27",
         encabezado: "Presupuesto E2E Seed",
         status: "Pendiente",
