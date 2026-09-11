@@ -17,7 +17,7 @@ import { useConceptos, useCreateConcepto, useUpdateConcepto, useDeleteConcepto }
 import { formatCurrency, extractApiError } from "@/lib/utils";
 import type { Concepto } from "@/types";
 
-const EMPTY: Partial<Concepto> = { nombre: "", descripcion: "", valor: undefined };
+const EMPTY: Partial<Concepto> = { name: "", value: undefined };
 
 export default function ConceptosPage() {
   const t = useTranslations("administracion.conceptos");
@@ -46,10 +46,10 @@ export default function ConceptosPage() {
   function openEdit(c: Concepto) { setEditing(c); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
+    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
     try {
-      if (isEditMode && editing.idConcepto) {
-        await updateMutation.mutateAsync({ id: editing.idConcepto, data: editing });
+      if (isEditMode && editing.idConcept) {
+        await updateMutation.mutateAsync({ id: editing.idConcept, data: editing });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
@@ -68,12 +68,12 @@ export default function ConceptosPage() {
 
   async function handleDeleteClick(c: Concepto) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/conceptos/${c.idConcepto}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/conceptos/${c.idConcept}/in-use`);
       if (inUse) {
         toast.error(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(c.idConcepto!);
+      setDeleteId(c.idConcept!);
     } catch {
       toast.error(t("errorDelete"));
     }
@@ -95,10 +95,9 @@ export default function ConceptosPage() {
   }
 
   const columns: Column<Concepto>[] = [
-    { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcepto}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.nombre}</span> },
-    { key: "descripcion", header: t("fields.descripcion"), render: (c) => c.descripcion ?? "—" },
-    { key: "valor", header: "Valor base", render: (c) => formatCurrency(c.valor) },
+    { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
+    { key: "valor", header: "Valor base", render: (c) => formatCurrency(c.value) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (
@@ -129,7 +128,7 @@ export default function ConceptosPage() {
         />
       </div>
 
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcepto!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(c) => c.idConcept!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
@@ -137,23 +136,17 @@ export default function ConceptosPage() {
             <FormSection title={isEditMode ? t("editConcepto") : t("newConcepto")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-nombre-concepto"
-                />
-              </FormField>
-              <FormField label={t("fields.descripcion")}>
-                <Input
-                  value={editing.descripcion ?? ""}
-                  onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
                 />
               </FormField>
               <FormField label="Valor base ($)">
                 <Input
                   type="number"
                   step="0.01"
-                  value={editing.valor ?? ""}
-                  onChange={(e) => setEditing({ ...editing, valor: parseFloat(e.target.value) })}
+                  value={editing.value ?? ""}
+                  onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
                 />
               </FormField>
             </FormSection>
