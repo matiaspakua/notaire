@@ -8,6 +8,8 @@
  *  - Same endpoints as Bruno .bru files
  *  - Same JSON payload structure
  *  - Same environment variable naming
+ *
+ * Field names mirror the renamed (English) backend DTOs/entities — see #977.
  */
 
 import type { Page, APIResponse } from "@playwright/test";
@@ -105,40 +107,39 @@ async function parseResponse<T>(response: APIResponse): Promise<ApiResult<T>> {
 }
 
 // ──────────────────────────────────────────────
-// Domain-specific helper types (mirroring Bruno DTOs)
+// Domain-specific helper types (mirroring backend DTOs)
 // ──────────────────────────────────────────────
 
 export interface PersonaPayload {
-  nombre: string;
-  apellido: string;
-  numeroIdentificacion: string;
+  firstName: string;
+  lastName: string;
+  identificationNumber: string;
   email?: string;
-  telefono?: string;
-  esCliente?: boolean;
-  tipoIdentificacion?: { idTipoIdentificacion: number };
-  nacionalidad?: string;
-  fechaNacimiento?: string;
-  cuit?: string;
-  estadoCivil?: string;
-  sexo?: string;
-  domicilio?: string;
-  ocupacion?: string;
-  registroEscribano?: string;
+  phone?: string;
+  isClient?: boolean;
+  nationality?: string;
+  birthDate?: string;
+  taxId?: string;
+  maritalStatus?: string;
+  sex?: string;
+  address?: string;
+  occupation?: string;
+  notaryRegistrationNumber?: number;
 }
 
 export interface PresupuestoPayload {
-  persona?: { idPersona: number };
-  fecha?: string;
+  person?: { idPerson: number };
+  date?: string;
   encabezado?: string;
-  estado?: string;
-  observaciones?: string;
-  monto?: number;
+  status?: string;
+  notes?: string;
+  propertyAmount?: number;
 }
 
 export interface CompleteCaseGestionPayload {
-  numero: number;
+  number: number;
   encabezado?: string;
-  observaciones?: string;
+  notes?: string;
   presupuestoId: number;
   escribanoId: number;
   estadoGestionId: number;
@@ -147,61 +148,47 @@ export interface CompleteCaseGestionPayload {
 }
 
 export interface EscrituraPayload {
-  fecha?: string;
-  cuerpo?: string;
-  estado?: string;
-  idPersonaOtorgante?: number;
-  idPersonaFirmante?: number;
-  idGestion?: number;
+  dateDeedrecording?: string;
+  body?: string;
+  status?: string;
   idFolio?: number;
-  numeroEscritura?: string;
-  tomo?: string;
-  folio?: string;
+  notes?: string;
 }
 
 export interface UsuarioPayload {
-  nombre: string;
-  contrasenia: string;
-  tipo: string;
-  activo?: boolean;
+  name: string;
+  password: string;
+  type: string;
+  active?: boolean;
 }
 
 export interface PagoPayload {
-  idPresupuesto?: number;
-  monto: number;
-  fecha?: string;
-  metodoPago?: string;
-  observaciones?: string;
+  idBudget?: number;
+  amount: number;
+  date?: string;
+  paymentMethod?: string;
+  notes?: string;
 }
 
 export interface TestimonioPayload {
-  idEscritura: number;
-  fecha?: string;
-  estado?: string;
-  observaciones?: string;
+  idDeed: number;
+  notes?: string;
 }
 
 export interface DocumentoPresentadoPayload {
-  nombre: string;
-  tipoDocumento?: string;
-  idGestion?: number;
-  tieneDeuda?: boolean;
-  fechaVencimiento?: string;
-}
-
-export interface MovimientoTestimonioPayload {
-  idTestimonio: number;
-  fecha: string;
-  tipoMovimiento: string;
-  observaciones?: string;
+  name: string;
+  typeId?: number;
+  procedureId?: number;
+  deliveredBy?: string;
+  delivered?: boolean;
 }
 
 export interface SuplenciaPayload {
-  fkIdSuplente: { idPersona: number };
-  fkIdSuplantado: { idPersona: number };
-  fechaInicio: string;
-  fechaFin?: string;
-  observaciones?: string;
+  fkIdSubstitute: { idPerson: number };
+  fkIdSubstituted: { idPerson: number };
+  dateStart: string;
+  dateEnd?: string;
+  notes?: string;
 }
 
 // ──────────────────────────────────────────────
@@ -213,7 +200,7 @@ export interface SuplenciaPayload {
  */
 
 // Kept below Java's 32-bit `int` max (2,147,483,647) so IDs fed into `int`-typed
-// entity fields (e.g. Escritura.numero) don't overflow and fail JSON deserialization.
+// entity fields (e.g. Deed.number) don't overflow and fail JSON deserialization.
 let _testCounter = Date.now() % 1_000_000_000;
 
 /** Generate a unique test identifier */
@@ -227,43 +214,42 @@ export function uniqueLabel(prefix: string): string {
 }
 
 /**
- * Persona helpers
+ * Persona helpers — PersonController accepts the raw Person entity at /people.
  */
 export async function createPersona(
   page: Page,
   overrides: Partial<PersonaPayload> = {},
-): Promise<ApiResult<{ idPersona: number; nombre?: string; apellido?: string }>> {
+): Promise<ApiResult<{ personId: number; firstName?: string; lastName?: string }>> {
   const id = uniqueId();
-  return apiPost(page, "/personas", {
-    nombre: "Test",
-    apellido: `Persona-${id}`,
-    numeroIdentificacion: `E2E${id}`,
+  return apiPost(page, "/people", {
+    firstName: "Test",
+    lastName: `Persona-${id}`,
+    identificationNumber: `E2E${id}`,
     email: `e2e-${id}@notaire.test`,
-    esCliente: true,
-    tipoIdentificacion: { idTipoIdentificacion: 1 },
-    nacionalidad: "Argentina",
-    fechaNacimiento: "1990-01-01",
-    estadoCivil: "Soltero",
-    sexo: "Masculino",
+    isClient: true,
+    nationality: "Argentina",
+    birthDate: "1990-01-01",
+    maritalStatus: "Soltero",
+    sex: "Masculino",
     ...overrides,
   });
 }
 
 /**
- * Presupuesto helpers
+ * Presupuesto helpers — BudgetController accepts the raw Budget entity.
  */
 export async function createPresupuesto(
   page: Page,
   personaId: number,
   _conceptoId?: number,
   overrides: Partial<PresupuestoPayload> = {},
-): Promise<ApiResult<{ idPresupuesto: number }>> {
+): Promise<ApiResult<{ idBudget: number }>> {
   return apiPost(page, "/presupuestos", {
-    persona: { idPersona: personaId },
-    fecha: new Date().toISOString().split("T")[0],
+    person: { idPerson: personaId },
+    date: new Date().toISOString().split("T")[0],
     encabezado: `Presupuesto E2E ${uniqueId()}`,
-    estado: "Pendiente",
-    observaciones: `Presupuesto E2E ${uniqueId()}`,
+    status: "Pendiente",
+    notes: `Presupuesto E2E ${uniqueId()}`,
     ...overrides,
   });
 }
@@ -274,10 +260,10 @@ export async function createPresupuesto(
 export async function createCompleteCaseGestion(
   page: Page,
   overrides: Partial<CompleteCaseGestionPayload> & { presupuestoId: number },
-): Promise<ApiResult<{ idGestion: number; numero: number; estadoActual: string }>> {
+): Promise<ApiResult<{ idManagement: number; number: number; statusActual: string }>> {
   return apiPost(page, "/gestiones/complete-case", {
-    // `numero` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
-    numero: uniqueId() % 1_000_000,
+    // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
+    number: uniqueId() % 1_000_000,
     encabezado: `Gestión E2E ${uniqueId()}`,
     escribanoId: 1,
     estadoGestionId: 1,
@@ -287,126 +273,125 @@ export async function createCompleteCaseGestion(
 }
 
 /**
- * CU43 - trámites of a gestión with their required documentation. `DtoGestionSummary`
+ * CU43 - trámites of a gestión with their required documentation. `DtoManagementSummary`
  * (the `complete-case`/`GET /gestiones/{id}` read-model) never exposes trámite IDs, so
  * this is the only way to learn the ID of the trámite `complete-case` created.
  */
 export async function getReingresoDocumentacion(
   page: Page,
   idGestion: number,
-): Promise<ApiResult<{ idGestion: number; numero: number; tramites: Array<{ idTramite: number }> }>> {
+): Promise<ApiResult<{ idManagement: number; number: number; procedures: Array<{ idProcedure: number }> }>> {
   return apiGet(page, `/gestiones/${idGestion}/reingreso-documentacion`);
 }
 
 /**
  * Plain gestión helper (CU43) — unlike `createCompleteCaseGestion`, this does
  * not create a `Tramite`, so the resulting gestión has zero trámites.
+ * ManagementController accepts the raw DeedManagement entity.
  */
 export async function createGestionSinTramite(
   page: Page,
   escribanoId: number,
-  overrides: { encabezado?: string; numero?: number } = {},
-): Promise<ApiResult<{ idGestion: number; numero: number }>> {
+  overrides: { encabezado?: string; number?: number } = {},
+): Promise<ApiResult<{ idManagement: number; number: number }>> {
   return apiPost(page, "/gestiones", {
     encabezado: `Gestión E2E ${uniqueId()}`,
-    fechaInicio: new Date().toISOString().split("T")[0],
-    numero: uniqueId() % 1_000_000,
-    fkIdPersonaEscribano: { idPersona: escribanoId },
+    dateStart: new Date().toISOString().split("T")[0],
+    number: uniqueId() % 1_000_000,
+    fkIdNotaryPerson: { idPerson: escribanoId },
     ...overrides,
   });
 }
 
 /**
- * Escritura helpers
+ * Escritura helpers — DeedController accepts the raw Deed entity.
  */
 export async function createEscritura(
   page: Page,
   gestionId: number,
   personaId: number,
   overrides: Partial<EscrituraPayload> = {},
-): Promise<ApiResult<{ idEscritura: number }>> {
+): Promise<ApiResult<{ idDeed: number }>> {
   const id = uniqueId();
   return apiPost(page, "/escrituras", {
-    numeroEscritura: `E2E-${id}`,
-    fecha: new Date().toISOString().split("T")[0],
-    cuerpo: `Contenido de escritura E2E ${id}`,
-    estado: "Pendiente",
-    idPersonaOtorgante: personaId,
-    idPersonaFirmante: personaId,
-    idGestion: gestionId,
+    number: id % 1_000_000,
+    dateDeedrecording: new Date().toISOString().split("T")[0],
+    body: `Contenido de escritura E2E ${id}`,
+    status: "Pendiente",
     ...overrides,
   });
 }
 
 /**
- * Usuario helpers
+ * Usuario helpers — UserController's UserRequest is (name, password, type, active).
  */
 export async function createUsuario(
   page: Page,
   personaId?: number,
   overrides: Partial<UsuarioPayload> = {},
-): Promise<ApiResult<{ idUsuario: number }>> {
+): Promise<ApiResult<{ idUser: number }>> {
   const id = uniqueId();
   return apiPost(page, "/usuarios", {
-    nombre: `e2euser-${id}`,
-    contrasenia: "Test1234!",
-    tipo: "EMPLEADO",
-    activo: true,
+    name: `e2euser-${id}`,
+    password: "Test1234!",
+    type: "EMPLEADO",
+    active: true,
     ...overrides,
   });
 }
 
 /**
- * Pago helpers
+ * Pago helpers — PaymentController's PaymentRequest is (idBudget, amount, date, notes, paymentMethod).
  */
 export async function createPago(
   page: Page,
   presupuestoId: number,
   overrides: Partial<PagoPayload> = {},
-): Promise<ApiResult<{ idPago: number }>> {
+): Promise<ApiResult<{ idPayment: number }>> {
   return apiPost(page, "/pagos", {
-    idPresupuesto: presupuestoId,
-    monto: 5000,
-    fecha: new Date().toISOString().split("T")[0],
-    metodoPago: "Efectivo",
+    idBudget: presupuestoId,
+    amount: 5000,
+    date: new Date().toISOString().split("T")[0],
+    paymentMethod: "Efectivo",
     ...overrides,
   });
 }
 
 /**
- * Folio helpers
+ * Folio helpers — FolioController's FolioRequest is
+ * (number, year, status, notes, typeFolioId, notaryId, deedId).
  */
 export async function createFolio(
   page: Page,
   personaId?: number,
   overrides: {
-    numero?: number;
-    anio?: number;
-    estado?: string;
-    tipoFolioId?: number;
-    escribanoId?: number;
-    escrituraId?: number;
+    number?: number;
+    year?: number;
+    status?: string;
+    typeFolioId?: number;
+    notaryId?: number;
+    deedId?: number;
   } = {},
 ): Promise<ApiResult<{ idFolio: number }>> {
   return apiPost(page, "/folio", {
-    numero: Math.floor(10000 + Math.random() * 90000),
-    anio: 2026,
-    estado: "Nuevo",
-    tipoFolioId: 1,
-    escribanoId: personaId || 1,
+    number: Math.floor(10000 + Math.random() * 90000),
+    year: 2026,
+    status: "Nuevo",
+    typeFolioId: 1,
+    notaryId: personaId || 1,
     ...overrides,
   });
 }
 
 export async function createTipoDeFolio(
   page: Page,
-  overrides: { nombre?: string; esAuxiliar?: boolean; habilitado?: boolean } = {},
-): Promise<ApiResult<{ idTipoFolio: number }>> {
+  overrides: { name?: string; isAuxiliary?: boolean; enabled?: boolean } = {},
+): Promise<ApiResult<{ idFolioType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/tipo-folio", {
-    nombre: `Tipo Folio E2E ${id}`,
-    habilitado: true,
-    esAuxiliar: false,
+    name: `Tipo Folio E2E ${id}`,
+    enabled: true,
+    isAuxiliary: false,
     ...overrides,
   });
 }
@@ -416,41 +401,46 @@ export async function createTipoDeFolio(
  */
 export async function createTipoTramite(
   page: Page,
-  overrides: { nombre?: string; descripcion?: string } = {},
-): Promise<ApiResult<{ idTipoDeTramite: number }>> {
+  overrides: { name?: string; notes?: string } = {},
+): Promise<ApiResult<{ idProcedureType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/tipo-tramite", {
-    nombre: `Tipo Tramite E2E ${id}`,
-    descripcion: "Created by E2E test",
-    seArchiva: false,
-    seInscribe: false,
+    name: `Tipo Tramite E2E ${id}`,
+    notes: "Created by E2E test",
+    isArchived: false,
+    isRegistered: false,
     ...overrides,
   });
 }
 
 /**
- * Trámite / documento presentado helpers (CU10)
+ * Trámite / documento presentado helpers (CU10) — ProcedureController accepts
+ * the raw Procedure entity.
  */
 export async function createTramite(
   page: Page,
   gestionId: number,
   tipoTramiteId: number,
-): Promise<ApiResult<{ idTramite: number }>> {
+): Promise<ApiResult<{ idProcedure: number }>> {
   return apiPost(page, "/tramites", {
-    fkIdTipoTramite: { idTipoTramite: tipoTramiteId },
-    fkIdGestion: { idGestion: gestionId },
+    fkIdProcedureType: { idProcedureType: tipoTramiteId },
+    fkIdManagement: { idManagement: gestionId },
   });
 }
 
+/**
+ * SubmittedDocumentController's SubmittedDocumentRequest is
+ * (typeId, date, delivered, procedureId, deliveredBy, name).
+ */
 export async function createDocumentoEntidadExterna(
   page: Page,
   tramiteId: number,
-  overrides: { nombre?: string; quienEntrega?: string } = {},
-): Promise<ApiResult<{ idDocumentoPresentado: number }>> {
+  overrides: { name?: string; deliveredBy?: string } = {},
+): Promise<ApiResult<{ idSubmittedDocument: number }>> {
   return apiPost(page, "/documento-presentado", {
-    tramiteId,
-    quienEntrega: "Entidad Externa",
-    entregado: false,
+    procedureId: tramiteId,
+    deliveredBy: "Entidad Externa",
+    delivered: false,
     ...overrides,
   });
 }
@@ -462,13 +452,13 @@ export async function createDocumentoEntidadExterna(
  */
 export async function createWorkflowDefinition(
   page: Page,
-  overrides: { nombre?: string; descripcion?: string; activo?: boolean } = {},
+  overrides: { name?: string; description?: string; active?: boolean } = {},
 ): Promise<ApiResult<{ id: number }>> {
   const id = uniqueId();
   return apiPost(page, "/workflow-definition", {
-    nombre: `Workflow E2E ${id}`,
-    descripcion: "Created by E2E test",
-    activo: true,
+    name: `Workflow E2E ${id}`,
+    description: "Created by E2E test",
+    active: true,
     ...overrides,
   });
 }
@@ -477,27 +467,27 @@ export async function createWorkflowNode(
   page: Page,
   workflowDefinitionId: number,
   estadoGestionId: number,
-  tipo: "INITIAL" | "INTERMEDIATE" | "FINAL",
+  type: "INITIAL" | "INTERMEDIATE" | "FINAL",
 ): Promise<ApiResult<{ id: number }>> {
   return apiPost(page, "/workflow-node", {
     workflowDefinitionId,
-    estadoGestionId,
-    tipo,
-    posicionX: 0,
-    posicionY: 0,
+    statusManagementId: estadoGestionId,
+    type,
+    positionX: 0,
+    positionY: 0,
   });
 }
 
 export async function createWorkflowTransition(
   page: Page,
   workflowDefinitionId: number,
-  nodoOrigenId: number,
-  nodoDestinoId: number,
+  originNodeId: number,
+  destinationNodeId: number,
 ): Promise<ApiResult<{ id: number }>> {
   return apiPost(page, "/workflow-transition", {
     workflowDefinitionId,
-    nodoOrigenId,
-    nodoDestinoId,
+    originNodeId,
+    destinationNodeId,
   });
 }
 
@@ -532,49 +522,49 @@ export async function seedGestionWithWorkflow(
   const nodoInicial = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idEstadoGestion,
+    estadoInicial.data!.idManagementStatus,
     "INITIAL",
   );
   const nodoFinal = await createWorkflowNode(
     page,
     workflowId,
-    estadoFinal.data!.idEstadoGestion,
+    estadoFinal.data!.idManagementStatus,
     "FINAL",
   );
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoFinal.data!.id);
 
   const tipoTramite = await createTipoTramite(page);
-  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idTipoDeTramite, workflowId);
+  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
 
   const gestion = await createCompleteCaseGestion(page, {
     presupuestoId,
-    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
-    estadoGestionId: estadoInicial.data!.idEstadoGestion,
+    tipoTramiteId: tipoTramite.data!.idProcedureType,
+    estadoGestionId: estadoInicial.data!.idManagementStatus,
   });
 
   return {
-    idGestion: gestion.data!.idGestion,
-    numero: gestion.data!.numero,
-    estadoInicial: estadoInicial.data!.nombre,
-    estadoFinal: estadoFinal.data!.nombre,
+    idGestion: gestion.data!.idManagement,
+    numero: gestion.data!.number,
+    estadoInicial: estadoInicial.data!.name,
+    estadoFinal: estadoFinal.data!.name,
   };
 }
 
 export async function createConcepto(
   page: Page,
-  overrides: { nombre?: string; valor?: number } = {},
-): Promise<ApiResult<{ idConcepto: number }>> {
+  overrides: { name?: string; value?: number } = {},
+): Promise<ApiResult<{ idConcept: number }>> {
   const id = uniqueId();
   return apiPost(page, "/conceptos", {
-    nombre: `Concepto E2E ${id}`,
-    descripcion: "Created by E2E test",
-    valor: 1000,
+    name: `Concepto E2E ${id}`,
+    value: 1000,
     ...overrides,
   });
 }
 
 /**
  * CU39 - PlantillaPresupuesto: associates a Concepto's price with a TipoDeTramite.
+ * BudgetTemplateController accepts the raw BudgetTemplate entity.
  */
 export async function createPlantillaPresupuesto(
   page: Page,
@@ -582,9 +572,9 @@ export async function createPlantillaPresupuesto(
   conceptoId: number,
 ): Promise<ApiResult<Record<string, unknown>>> {
   return apiPost(page, "/plantilla-presupuestos", {
-    plantillaPresupuestoPK: { fkIdTipoTramite: tipoTramiteId, fkIdConcepto: conceptoId },
-    tipoDeTramite: { idTipoTramite: tipoTramiteId },
-    concepto: { idConcepto: conceptoId },
+    budgetTemplatePK: { fkIdProcedureType: tipoTramiteId, fkIdConcept: conceptoId },
+    procedureType: { idProcedureType: tipoTramiteId },
+    concept: { idConcept: conceptoId },
   });
 }
 
@@ -593,48 +583,48 @@ export async function createPlantillaPresupuesto(
  */
 export async function createItem(
   page: Page,
-  overrides: { nombre?: string; valor?: number } = {},
+  overrides: { name?: string; value?: number } = {},
 ): Promise<ApiResult<{ idItem: number }>> {
   const id = uniqueId();
   return apiPost(page, "/items", {
-    nombre: `Item E2E ${id}`,
-    valor: 500,
-    porcentaje: 0,
+    name: `Item E2E ${id}`,
+    value: 500,
+    percentage: 0,
     ...overrides,
   });
 }
 
 export async function createEstadoGestion(
   page: Page,
-  overrides: { nombre?: string } = {},
-): Promise<ApiResult<{ idEstadoGestion: number; nombre: string }>> {
+  overrides: { name?: string } = {},
+): Promise<ApiResult<{ idManagementStatus: number; name: string }>> {
   const id = uniqueId();
   return apiPost(page, "/estado-gestion", {
-    nombre: `Estado E2E ${id}`,
-    descripcion: "Created by E2E test",
+    name: `Estado E2E ${id}`,
+    notes: "Created by E2E test",
     ...overrides,
   });
 }
 
 export async function createTipoDocumento(
   page: Page,
-  overrides: { nombre?: string; vence?: boolean; diasVencimiento?: number; quienEntrega?: string } = {},
-): Promise<ApiResult<{ idTipoDocumento: number }>> {
+  overrides: { name?: string; expires?: boolean; dueDays?: number; deliveredBy?: string } = {},
+): Promise<ApiResult<{ idDocumentType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/tipo-de-documento", {
-    nombre: `Tipo Documento E2E ${id}`,
-    habilitado: true,
-    devuelto: false,
-    vence: true,
-    diasVencimiento: 30,
-    quienEntrega: "Cliente",
+    name: `Tipo Documento E2E ${id}`,
+    enabled: true,
+    expires: true,
+    dueDays: 30,
+    deliveredBy: "Cliente",
     ...overrides,
   });
 }
 
 /**
  * PlantillaTramite helper (CU03/CU43) — links a tipo de trámite to a tipo de
- * documento as required documentación necesaria.
+ * documento as required documentación necesaria. ProcedureTemplateController
+ * accepts the raw ProcedureTemplate entity.
  */
 export async function createPlantillaTramite(
   page: Page,
@@ -642,48 +632,46 @@ export async function createPlantillaTramite(
   idTipoDocumento: number,
 ): Promise<ApiResult<unknown>> {
   return apiPost(page, "/plantilla-tramite", {
-    plantillaTramitePK: { fkIdTipoTramite: idTipoTramite, fkIdTipoDocumento: idTipoDocumento },
-    tipoDeTramite: { idTipoTramite },
-    tipoDeDocumento: { idTipoDocumento },
+    procedureTemplatePK: { fkIdProcedureType: idTipoTramite, fkIdDocumentType: idTipoDocumento },
+    procedureType: { idProcedureType: idTipoTramite },
+    documentType: { idDocumentType: idTipoDocumento },
   });
 }
 
 /**
- * Suplencia helpers
+ * Suplencia helpers — SubstitutionController accepts the raw Substitution entity.
  */
 export async function createSuplencia(
   page: Page,
   idSuplente: number,
   idSuplantado: number,
   overrides: Partial<SuplenciaPayload> = {},
-): Promise<ApiResult<{ idSuplencia: number }>> {
+): Promise<ApiResult<{ idSubstitution: number }>> {
   return apiPost(page, "/suplencia", {
-    fkIdSuplente: { idPersona: idSuplente },
-    fkIdSuplantado: { idPersona: idSuplantado },
-    fechaInicio: new Date().toISOString().split("T")[0],
-    observaciones: "Suplencia E2E de prueba",
+    fkIdSubstitute: { idPerson: idSuplente },
+    fkIdSubstituted: { idPerson: idSuplantado },
+    dateStart: new Date().toISOString().split("T")[0],
+    notes: "Suplencia E2E de prueba",
     ...overrides,
   });
 }
 
 /**
- * Testimonio helpers
+ * Testimonio helpers — TestimonyController accepts a DtoTestimony (idTestimony, deed, notes).
  */
 export async function createTestimonio(
   page: Page,
   idEscritura: number,
   overrides: Partial<TestimonioPayload> = {},
-): Promise<ApiResult<{ idTestimonio: number }>> {
+): Promise<ApiResult<{ idTestimony: number }>> {
   return apiPost(page, "/testimonio", {
-    idEscritura,
-    fecha: new Date().toISOString().split("T")[0],
-    estado: "Pendiente",
+    deed: { idDeed: idEscritura },
     ...overrides,
   });
 }
 
 /**
- * Historial helpers
+ * Historial helpers — HistoryController accepts the raw History entity.
  */
 export async function createHistorialEntry(
   page: Page,
@@ -691,10 +679,9 @@ export async function createHistorialEntry(
   estado: string = "Iniciado",
 ): Promise<ApiResult<any>> {
   return apiPost(page, "/historial", {
-    idGestion,
-    estado,
-    fecha: new Date().toISOString().split("T")[0],
-    observaciones: `Historial E2E ${uniqueId()}`,
+    fkIdManagement: { idManagement: idGestion },
+    date: new Date().toISOString().split("T")[0],
+    notes: `Historial E2E ${uniqueId()}`,
   });
 }
 
@@ -708,8 +695,8 @@ export async function brunoLogin(
   password: string = "admin",
 ): Promise<ApiResult> {
   return apiPost(page, "/usuarios/login", {
-    nombre: username,
-    contrasenia: password,
+    name: username,
+    password,
   });
 }
 
@@ -738,7 +725,7 @@ export async function brunoSearchPersonas(
   page: Page,
   query: string,
 ): Promise<ApiResult> {
-  return apiGet(page, `/personas/buscar?q=${encodeURIComponent(query)}`);
+  return apiGet(page, `/people/buscar?q=${encodeURIComponent(query)}`);
 }
 
 export async function brunoGetRegistrosAuditoria(
@@ -761,7 +748,7 @@ export async function brunoActivarGestion(
 ): Promise<ApiResult> {
   return apiPut(page, `/gestiones/${gestionId}`, {
     detalle: "Activada desde Playwright",
-    fechaInicio: new Date().toISOString().split("T")[0],
+    dateStart: new Date().toISOString().split("T")[0],
   });
 }
 

@@ -215,7 +215,7 @@ test.describe('CU08 - Verificar testimonio', () => {
       `/testimonio/${idEscritura}/generar`,
       {},
     )
-    const idTestimonio = generated.data!.idTestimonio
+    const idTestimonio = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonios')
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
@@ -240,7 +240,7 @@ test.describe('CU08 - Verificar testimonio', () => {
       `/testimonio/${idEscritura}/generar`,
       {},
     )
-    const idTestimonio = generated.data!.idTestimonio
+    const idTestimonio = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonios')
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })

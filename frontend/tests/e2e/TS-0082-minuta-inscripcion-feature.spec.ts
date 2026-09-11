@@ -26,7 +26,7 @@ async function seedEscrituraFirmada(page: import("@playwright/test").Page): Prom
     cuerpo: `Contenido E2E ${numero}`,
     estado: "Firmada",
   });
-  return { idEscritura: seeded.data!.idEscritura, numero };
+  return { idEscritura: seeded.data!.idDeed, numero };
 }
 
 async function seedInmueble(

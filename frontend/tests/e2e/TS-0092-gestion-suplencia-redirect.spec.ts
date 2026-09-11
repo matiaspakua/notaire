@@ -54,10 +54,10 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 
   test("CU51-GW01: editar persona y modificar su registro de escribano", async ({ page }) => {
     const persona = await createPersona(page, {
-      apellido: `Modif${uniqueId() % 100_000}`,
-      numeroIdentificacion: `51${uniqueId() % 10_000_000}`,
+      lastName: `Modif${uniqueId() % 100_000}`,
+      identificationNumber: `51${uniqueId() % 10_000_000}`,
     });
-    const apellido = persona.data!.apellido!;
+    const apellido = persona.data!.lastName!;
 
     await page.reload();
     await page.waitForLoadState("domcontentloaded");
@@ -88,21 +88,21 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
 
   test("GW01: gestión creada para un escribano con suplencia activa se redirige al suplente", async ({ page }) => {
     const escribano = await createPersona(page, {
-      apellido: `Suplantado${uniqueId() % 100_000}`,
+      lastName: `Suplantado${uniqueId() % 100_000}`,
     });
     const suplente = await createPersona(page, {
-      apellido: `Suplente${uniqueId() % 100_000}`,
+      lastName: `Suplente${uniqueId() % 100_000}`,
     });
     const cliente = await createPersona(page, {
-      apellido: `Cliente${uniqueId() % 100_000}`,
+      lastName: `Cliente${uniqueId() % 100_000}`,
     });
-    const presupuesto = await createPresupuesto(page, cliente.data!.idPersona);
+    const presupuesto = await createPresupuesto(page, cliente.data!.personId);
 
     const hoy = new Date();
     const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000);
-    const suplencia = await createSuplencia(page, suplente.data!.idPersona, escribano.data!.idPersona, {
-      fechaInicio: hoy.toISOString().split("T")[0],
-      fechaFin: manana.toISOString().split("T")[0],
+    const suplencia = await createSuplencia(page, suplente.data!.personId, escribano.data!.personId, {
+      dateStart: hoy.toISOString().split("T")[0],
+      dateEnd: manana.toISOString().split("T")[0],
     });
     expect(suplencia.ok).toBe(true);
 
@@ -113,8 +113,8 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-numero-gestion").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.apellido!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.apellido!, "i"));
+    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
+    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 
@@ -130,12 +130,12 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
 
   test("EDGE: gestión creada para un escribano sin suplencia activa no dispara aviso de redirección", async ({ page }) => {
     const escribano = await createPersona(page, {
-      apellido: `SinSuplencia${uniqueId() % 100_000}`,
+      lastName: `SinSuplencia${uniqueId() % 100_000}`,
     });
     const cliente = await createPersona(page, {
-      apellido: `ClienteNorm${uniqueId() % 100_000}`,
+      lastName: `ClienteNorm${uniqueId() % 100_000}`,
     });
-    await createPresupuesto(page, cliente.data!.idPersona);
+    await createPresupuesto(page, cliente.data!.personId);
 
     await page.goto("/dashboard/gestiones");
     await page.waitForLoadState("domcontentloaded");
@@ -144,8 +144,8 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-numero-gestion").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.apellido!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.apellido!, "i"));
+    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
+    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 

@@ -29,7 +29,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
 
   test("golden path: creating a cuaderno from 10 consecutive folios shows it in the list", async ({ page }) => {
     const persona = await createPersona(page);
-    const escribanoId = persona.data!.idPersona;
+    const escribanoId = persona.data!.personId;
     const folios = await seedFoliosConsecutivos(page, escribanoId, 10);
 
     await page.goto("/dashboard/protocolo/cuadernos");
@@ -52,7 +52,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     page,
   }) => {
     const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.idPersona, 3);
+    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
 
     await page.goto("/dashboard/protocolo/cuadernos");
     await page.waitForLoadState("domcontentloaded");
@@ -74,7 +74,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
 
   test("edge path: selecting a count that is not a multiple of ten shows a validation error", async ({ page }) => {
     const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.idPersona, 3);
+    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
 
     await page.goto("/dashboard/protocolo/cuadernos");
     await page.waitForLoadState("domcontentloaded");
@@ -92,7 +92,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
 
   test("edge path: including a damaged folio without observaciones shows a validation error", async ({ page }) => {
     const persona = await createPersona(page);
-    const folios = await seedFoliosConsecutivos(page, persona.data!.idPersona, 10, {
+    const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 10, {
       estados: ["Errose"],
     });
 

@@ -22,7 +22,7 @@ async function seedPresupuesto(
 
   const personaResult = await createPersona(page);
   expect(personaResult.ok, `createPersona failed: ${personaResult.error}`).toBe(true);
-  const idPersona = personaResult.data!.idPersona;
+  const idPersona = personaResult.data!.personId;
   const apellido = personaResult.data as any;
 
   const presupuestoResult = await createPresupuesto(page, idPersona, undefined, {
@@ -30,7 +30,7 @@ async function seedPresupuesto(
     estado: "Pendiente",
   });
   expect(presupuestoResult.ok, `createPresupuesto failed: ${presupuestoResult.error}`).toBe(true);
-  const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+  const idPresupuesto = presupuestoResult.data!.idBudget;
 
   return { idPersona, idPresupuesto };
 }
@@ -53,7 +53,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     // GIVEN: persona creada via API helper (CU01 pre-condition)
     const personaResult = await createPersona(page);
     expect(personaResult.ok, `createPersona failed: ${personaResult.error}`).toBe(true);
-    const idPersona = personaResult.data!.idPersona;
+    const idPersona = personaResult.data!.personId;
 
     // Lean on any name-like field that the API returns; we search by idPersona
     // and verify the presupuesto row shows the client name automatically.
@@ -104,7 +104,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     // GIVEN: presupuesto sembrado via API
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.idPersona;
+    const idPersona = personaResult.data!.personId;
 
     const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { monto: 60000 });
     expect(presupuestoResult.ok).toBe(true);
@@ -204,11 +204,11 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     // GIVEN: presupuesto creado via API
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.idPersona;
+    const idPersona = personaResult.data!.personId;
 
     const presupuestoResult = await createPresupuesto(page, idPersona, undefined, { monto: 30000 });
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
     await page.waitForLoadState("networkidle");
@@ -253,7 +253,7 @@ for (const viewport of [
     // Seed a presupuesto so the list is not empty
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.idPersona;
+    const idPersona = personaResult.data!.personId;
     const presupuestoResult = await createPresupuesto(page, idPersona);
     expect(presupuestoResult.ok).toBe(true);
 

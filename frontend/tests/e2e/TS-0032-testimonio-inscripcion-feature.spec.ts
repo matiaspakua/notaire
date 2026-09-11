@@ -24,12 +24,12 @@ async function seedTestimonioVerificado(page: import("@playwright/test").Page): 
   // DtoEscritura.numero is primitive int — must be included in nested object to avoid 400
   // (see TestimonioControllerIntegrationTest#testimonioBody).
   const testimonio = await apiPost<{ idTestimonio: number }>(page, "/testimonio", {
-    escritura: { idEscritura: escritura.data!.idEscritura, numero: escrituraNumero },
+    escritura: { idEscritura: escritura.data!.idDeed, numero: escrituraNumero },
     numero,
     observado: false,
     verificado: true,
   });
-  return { idTestimonio: testimonio.data!.idTestimonio, numero };
+  return { idTestimonio: testimonio.data!.idTestimony, numero };
 }
 
 test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {

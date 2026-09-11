@@ -27,10 +27,10 @@ interface SeededGestion {
 
 async function seedFullWorkflow(page: Page): Promise<SeededGestion> {
   const persona = await createPersona(page)
-  const personaId = persona.data!.idPersona
+  const personaId = persona.data!.personId
   const personaApellido = persona.data!.apellido!
   const presupuesto = await createPresupuesto(page, personaId)
-  const gestion = await seedGestionWithWorkflow(page, presupuesto.data!.idPresupuesto)
+  const gestion = await seedGestionWithWorkflow(page, presupuesto.data!.idBudget)
   return { ...gestion, personaId, personaApellido }
 }
 
@@ -67,7 +67,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
   test('CU02-GW03: picker de presupuesto muestra el nombre del cliente asociado (#889)', async ({ page }) => {
     // Seed a fresh persona + presupuesto to ensure option exists
     const persona = await createPersona(page)
-    const personaId = persona.data!.idPersona
+    const personaId = persona.data!.personId
     await createPresupuesto(page, personaId)
 
     // Fetch the persona's apellido from the seeded data to locate the option

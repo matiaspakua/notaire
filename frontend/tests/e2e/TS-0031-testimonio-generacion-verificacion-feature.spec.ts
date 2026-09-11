@@ -23,7 +23,7 @@ async function seedEscrituraFirmada(page: import("@playwright/test").Page): Prom
     cuerpo: `Contenido E2E ${numero}`,
     estado: "Firmada",
   });
-  return { idEscritura: seeded.data!.idEscritura, numero };
+  return { idEscritura: seeded.data!.idDeed, numero };
 }
 
 test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
@@ -67,7 +67,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   test("Edge: verificar con observaciones muestra el testimonio como Observado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
     const generated = await apiPost<{ idTestimonio: number }>(page, `/testimonio/${idEscritura}/generar`, {});
-    const idTestimonio = generated.data!.idTestimonio;
+    const idTestimonio = generated.data!.idTestimony;
 
     await steps.givenUserIsOnPage("/dashboard/testimonios");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -86,7 +86,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   test("Edge: emitir copia está bloqueado hasta que el testimonio esté verificado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
     const generated = await apiPost<{ idTestimonio: number }>(page, `/testimonio/${idEscritura}/generar`, {});
-    const idTestimonio = generated.data!.idTestimonio;
+    const idTestimonio = generated.data!.idTestimony;
 
     await steps.givenUserIsOnPage("/dashboard/testimonios");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });

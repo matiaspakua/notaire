@@ -39,7 +39,7 @@ async function findEstadoArchivada(page: Page): Promise<{ idEstadoGestion: numbe
 /** Seeds a gestión whose workflow allows a direct transition to "Archivada". */
 async function seedArchivableGestion(page: Page) {
   const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
+  const presupuesto = await createPresupuesto(page, persona.data!.personId);
 
   const estadoInicial = await createEstadoGestion(page);
   const estadoArchivada = await findEstadoArchivada(page);
@@ -49,7 +49,7 @@ async function seedArchivableGestion(page: Page) {
   const nodoInicial = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idEstadoGestion,
+    estadoInicial.data!.idManagementStatus,
     "INITIAL",
   );
   const nodoArchivada = await createWorkflowNode(
@@ -61,15 +61,15 @@ async function seedArchivableGestion(page: Page) {
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);
 
   const tipoTramite = await createTipoTramite(page);
-  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idTipoDeTramite, workflowId);
+  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
 
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idPresupuesto,
-    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
-    estadoGestionId: estadoInicial.data!.idEstadoGestion,
+    presupuestoId: presupuesto.data!.idBudget,
+    tipoTramiteId: tipoTramite.data!.idProcedureType,
+    estadoGestionId: estadoInicial.data!.idManagementStatus,
   });
 
-  return { idGestion: gestion.data!.idGestion, numero: gestion.data!.numero };
+  return { idGestion: gestion.data!.idManagement, numero: gestion.data!.number };
 }
 
 test.describe("CU85 - Administrar Carpetas de Trámite", () => {

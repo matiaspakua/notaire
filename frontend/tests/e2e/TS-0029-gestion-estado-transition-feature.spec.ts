@@ -8,8 +8,8 @@ import { createPersona, createPresupuesto, seedGestionWithWorkflow } from "./set
 
 async function seedGestion(page: Page) {
   const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
-  return seedGestionWithWorkflow(page, presupuesto.data!.idPresupuesto);
+  const presupuesto = await createPresupuesto(page, persona.data!.personId);
+  return seedGestionWithWorkflow(page, presupuesto.data!.idBudget);
 }
 
 test.describe("CU83 - Cambiar estado de una gestión", () => {
