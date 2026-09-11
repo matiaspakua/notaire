@@ -32,16 +32,16 @@ async function seedEscrituraFirmada(
   page: import('@playwright/test').Page,
 ): Promise<EscrituraCreada> {
   const numero = uniqueId() % 1_000_000
-  const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-    numero,
-    fechaEscrituracion: new Date().toISOString().split('T')[0],
-    cuerpo: `Contenido E2E TS-0012 ${numero}`,
-    estado: 'Firmada',
+  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    number: numero,
+    dateDeedrecording: new Date().toISOString().split('T')[0],
+    body: `Contenido E2E TS-0012 ${numero}`,
+    status: 'Firmada',
   })
-  if (!result.ok || !result.data?.idEscritura) {
+  if (!result.ok || !result.data?.idDeed) {
     throw new Error(`seedEscrituraFirmada failed: status ${result.status} — ${result.error}`)
   }
-  return { idEscritura: result.data.idEscritura, numero }
+  return { idEscritura: result.data.idDeed, numero }
 }
 
 /**
@@ -124,13 +124,13 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await expect(rowTestimonios).toBeVisible({ timeout: 10_000 })
 
     // Retrieve the generated testimonio id from the API
-    const list = await apiGet<Array<{ idTestimonio: number; escritura?: { numero?: number } }>>(
+    const list = await apiGet<Array<{ idTestimony: number; deed?: { number?: number } }>>(
       page,
       '/testimonio',
     )
     const idTestimonio = list.data!.find(
-      (t) => t.escritura?.numero === escrituraNumero,
-    )!.idTestimonio
+      (t) => t.deed?.number === escrituraNumero,
+    )!.idTestimony
 
     // ── CU08: Verificar sin observaciones ─────────────
     await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click()

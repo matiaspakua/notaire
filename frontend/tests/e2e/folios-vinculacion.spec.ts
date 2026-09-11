@@ -12,17 +12,17 @@ const ESTADO_ESCRITURA_FIRMADA = 'Firmada'
 /** Seed a escritura already in estado "Firmada" (no folio linked) */
 async function seedEscrituraFirmada(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-    numero: id,
-    fechaEscrituracion: new Date().toISOString().split('T')[0],
-    cuerpo: `Escritura firmada E2E ${id}`,
-    estado: ESTADO_ESCRITURA_FIRMADA,
-    observaciones: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
+  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    number: id,
+    dateDeedrecording: new Date().toISOString().split('T')[0],
+    body: `Escritura firmada E2E ${id}`,
+    status: ESTADO_ESCRITURA_FIRMADA,
+    notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
   })
-  if (!result.ok || !result.data?.idEscritura) {
+  if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura firmada: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idEscritura, numero: id }
+  return { idEscritura: result.data.idDeed, numero: id }
 }
 
 /** Select the first option of an already-open Radix listbox */

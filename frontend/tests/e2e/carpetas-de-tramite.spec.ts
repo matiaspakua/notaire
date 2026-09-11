@@ -24,12 +24,12 @@ import {
  * GestionTransitionService) — reuse the existing row instead of creating a
  * duplicate, which would make that lookup ambiguous.
  */
-async function findEstadoArchivada(page: Page): Promise<{ idEstadoGestion: number; nombre: string }> {
-  const result = await apiGet<{ idEstadoGestion: number; nombre: string }[]>(
+async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: number; name: string }> {
+  const result = await apiGet<{ idManagementStatus: number; name: string }[]>(
     page,
     "/estado-gestion/search?name=Archivada",
   );
-  const match = result.data!.find((e) => e.nombre === "Archivada");
+  const match = result.data!.find((e) => e.name === "Archivada");
   if (!match) {
     throw new Error("Estado 'Archivada' not found — expected to be seeded by default data");
   }
@@ -55,7 +55,7 @@ async function seedArchivableGestion(page: Page) {
   const nodoArchivada = await createWorkflowNode(
     page,
     workflowId,
-    estadoArchivada.idEstadoGestion,
+    estadoArchivada.idManagementStatus,
     "FINAL",
   );
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);

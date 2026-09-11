@@ -51,9 +51,9 @@ async function seedTramite(
   idInmueble: number,
 ): Promise<void> {
   await apiPost(page, "/tramites", {
-    fkIdTipoTramite: { idTipoTramite: 1 },
-    fkIdEscritura: { idEscritura },
-    fkIdInmueble: { idInmueble },
+    fkIdProcedureType: { idProcedureType: 1 },
+    fkIdDeed: { idDeed: idEscritura },
+    fkIdProperty: { idProperty: idInmueble },
   });
 }
 
