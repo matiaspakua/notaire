@@ -73,18 +73,18 @@ function computeLayers(nodes: WorkflowNode[], transitions: WorkflowTransition[])
   const layers = new Map<number, number>();
   for (const n of nodes) {
     if (n.id != null) {
-      layers.set(n.id, n.tipo === "INITIAL" ? 0 : 0);
+      layers.set(n.id, n.type === "INITIAL" ? 0 : 0);
     }
   }
   for (let i = 0; i < nodes.length; i++) {
     let changed = false;
     for (const t of transitions) {
-      if (t.nodoOrigenId == null || t.nodoDestinoId == null) {
+      if (t.originNodeId == null || t.destinationNodeId == null) {
         continue;
       }
-      const candidate = (layers.get(t.nodoOrigenId) ?? 0) + 1;
-      if (candidate > (layers.get(t.nodoDestinoId) ?? 0)) {
-        layers.set(t.nodoDestinoId, candidate);
+      const candidate = (layers.get(t.originNodeId) ?? 0) + 1;
+      if (candidate > (layers.get(t.destinationNodeId) ?? 0)) {
+        layers.set(t.destinationNodeId, candidate);
         changed = true;
       }
     }
@@ -127,11 +127,11 @@ function buildEdges(
 ): Edge[] {
   const edges: Edge[] = [];
   for (const t of transitions) {
-    if (t.nodoOrigenId == null || t.nodoDestinoId == null) {
+    if (t.originNodeId == null || t.destinationNodeId == null) {
       continue;
     }
-    const from = positions.get(t.nodoOrigenId);
-    const to = positions.get(t.nodoDestinoId);
+    const from = positions.get(t.originNodeId);
+    const to = positions.get(t.destinationNodeId);
     if (!from || !to) {
       continue;
     }
@@ -140,11 +140,11 @@ function buildEdges(
     const x2 = to.lx + NODE_W / 2;
     const y2 = to.ly;
     const bend = Math.max((y2 - y1) / 2, 24);
-    const fromStatus = statuses[t.nodoOrigenId];
+    const fromStatus = statuses[t.originNodeId];
     edges.push({
       id: t.id ?? edges.length,
-      from: t.nodoOrigenId,
-      to: t.nodoDestinoId,
+      from: t.originNodeId,
+      to: t.destinationNodeId,
       path: `M ${x1} ${y1} C ${x1} ${y1 + bend}, ${x2} ${y2 - bend}, ${x2} ${y2}`,
       active: fromStatus === "completed" || fromStatus === "in_progress",
     });
@@ -176,12 +176,12 @@ interface NodeModalProps {
 function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
   const tw = useTranslations("dashboard.workflow");
   const nodeName = (id: number | undefined) =>
-    trace.nodes.find((n) => n.id === id)?.estadoGestionNombre ?? `#${id}`;
-  const history: HistorialEntry[] = trace.historial.filter(
-    (h) => h.estadoGestionId === node.estadoGestionId,
+    trace.nodes.find((n) => n.id === id)?.statusManagementName ?? `#${id}`;
+  const history: HistorialEntry[] = trace.history.filter(
+    (h) => h.statusManagementId === node.statusManagementId,
   );
-  const incoming = trace.transitions.filter((t) => t.nodoDestinoId === node.id);
-  const outgoing = trace.transitions.filter((t) => t.nodoOrigenId === node.id);
+  const incoming = trace.transitions.filter((t) => t.destinationNodeId === node.id);
+  const outgoing = trace.transitions.filter((t) => t.originNodeId === node.id);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -207,7 +207,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
       <motion.div
         role="dialog"
         aria-modal="true"
-        aria-label={node.estadoGestionNombre}
+        aria-label={node.statusManagementName}
         className="bg-white rounded-[28px] shadow-2xl w-full max-w-md p-8 max-h-[80vh] overflow-y-auto"
         initial={{ scale: 0.92, opacity: 0, y: 12 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -217,7 +217,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
       >
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-xl font-semibold tracking-tight" style={{ color: theme.colors.neutral[900] }}>
-            {node.estadoGestionNombre ?? `Nodo ${node.id}`}
+            {node.statusManagementName ?? `Nodo ${node.id}`}
           </h3>
           <button
             type="button"
@@ -231,12 +231,12 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
 
         <div className="mt-4 flex items-center gap-3">
           <StatusBadge status={status} />
-          {node.tipo && (
+          {node.type && (
             <span
               className="text-xs font-semibold uppercase tracking-wider"
               style={{ color: theme.colors.neutral[600] }}
             >
-              {tw(`type.${node.tipo}`)}
+              {tw(`type.${node.type}`)}
             </span>
           )}
         </div>
@@ -249,7 +249,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
               </p>
               <ul className="space-y-1" style={{ color: theme.colors.neutral[600] }}>
                 {incoming.map((t) => (
-                  <li key={t.id}>← {nodeName(t.nodoOrigenId)}{t.condicion ? ` · ${t.condicion}` : ""}</li>
+                  <li key={t.id}>← {nodeName(t.originNodeId)}{t.condition ? ` · ${t.condition}` : ""}</li>
                 ))}
               </ul>
             </div>
@@ -261,7 +261,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
               </p>
               <ul className="space-y-1" style={{ color: theme.colors.neutral[600] }}>
                 {outgoing.map((t) => (
-                  <li key={t.id}>→ {nodeName(t.nodoDestinoId)}{t.condicion ? ` · ${t.condicion}` : ""}</li>
+                  <li key={t.id}>→ {nodeName(t.destinationNodeId)}{t.condition ? ` · ${t.condition}` : ""}</li>
                 ))}
               </ul>
             </div>
@@ -276,16 +276,16 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
               <ul className="space-y-2">
                 {history.map((h) => (
                   <li
-                    key={h.idHistorial}
+                    key={h.idHistory}
                     className="rounded-xl px-4 py-2.5"
                     style={{ backgroundColor: theme.colors.neutral[100] }}
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {h.fecha ? new Date(h.fecha).toLocaleDateString() : "—"}
+                      {h.date ? new Date(h.date).toLocaleDateString() : "—"}
                     </p>
-                    {h.observaciones && (
+                    {h.notes && (
                       <p className="mt-0.5" style={{ color: theme.colors.neutral[600] }}>
-                        {h.observaciones}
+                        {h.notes}
                       </p>
                     )}
                   </li>
@@ -353,7 +353,7 @@ export default function WorkflowTracker({ trace }: Props) {
           className="w-full h-auto max-h-[640px] mx-auto"
           style={{ minWidth: Math.min(svgW, 720) }}
           role="img"
-          aria-label={trace.workflowDefinition?.nombre}
+          aria-label={trace.workflowDefinition?.name}
         >
           <defs>
             <marker id="wf-arrow-active" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
@@ -389,8 +389,8 @@ export default function WorkflowTracker({ trace }: Props) {
             const status = nodeStatus(node, trace.nodeStatuses);
             const style = STATUS_STYLE[status];
             const inProgress = status === "in_progress";
-            const isFinal = node.tipo === "FINAL";
-            const radius = node.tipo === "INITIAL" ? NODE_H / 2 : 14;
+            const isFinal = node.type === "FINAL";
+            const radius = node.type === "INITIAL" ? NODE_H / 2 : 14;
             const cx = node.lx + NODE_W / 2;
             const cy = node.ly + NODE_H / 2;
             return (
@@ -399,7 +399,7 @@ export default function WorkflowTracker({ trace }: Props) {
                 data-testid={`workflow-node-${node.id}`}
                 role="button"
                 tabIndex={0}
-                aria-label={`${node.estadoGestionNombre ?? node.id} — ${tw(`status.${status}`)}`}
+                aria-label={`${node.statusManagementName ?? node.id} — ${tw(`status.${status}`)}`}
                 style={{ cursor: "pointer", outline: "none" }}
                 initial={reduceMotion ? false : { opacity: 0, y: -14 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -496,7 +496,7 @@ export default function WorkflowTracker({ trace }: Props) {
                   fontWeight={600}
                   fontFamily={theme.typography.fontFamily.body}
                 >
-                  {node.estadoGestionNombre ?? `Nodo ${node.id}`}
+                  {node.statusManagementName ?? `Nodo ${node.id}`}
                 </text>
                 {inProgress && (
                   <text
