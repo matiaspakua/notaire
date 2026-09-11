@@ -24,7 +24,7 @@ import {
 import { formatDate, extractApiError } from "@/lib/utils";
 import type { Escritura, Folio } from "@/types";
 
-const EMPTY: Partial<Escritura> = { numero: undefined, fechaEscrituracion: "", cuerpo: "" };
+const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
 
 export default function EscriturasPage() {
@@ -61,8 +61,8 @@ export default function EscriturasPage() {
 
   async function handleSave() {
     try {
-      if (isEditMode && editing.idEscritura) {
-        await updateMutation.mutateAsync({ id: editing.idEscritura, data: editing });
+      if (isEditMode && editing.idDeed) {
+        await updateMutation.mutateAsync({ id: editing.idDeed, data: editing });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
@@ -91,15 +91,15 @@ export default function EscriturasPage() {
   }
 
   const columns: Column<Escritura>[] = [
-    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEscritura}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.numero ?? "—"}</span> },
-    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.fechaEscrituracion) },
-    { key: "estado", header: t("fields.estado"), render: (e) => e.estado ?? "—" },
+    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idDeed}</span>, className: "w-12" },
+    { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
+    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
+    { key: "estado", header: t("fields.estado"), render: (e) => e.status ?? "—" },
     {
       key: "folio",
       header: t("fields.folio"),
       render: (e) => {
-        const linked = folios.find((f) => f.escritura?.idEscritura === e.idEscritura);
+        const linked = folios.find((f) => f.fkIdDeed?.idDeed === e.idDeed);
         return linked ? `Folio #${linked.idFolio}` : "—";
       },
     },
@@ -107,19 +107,19 @@ export default function EscriturasPage() {
       key: "actions", header: "", className: "w-32",
       render: (e) => (
         <div className="flex gap-2 justify-end">
-          {e.estado === ESTADO_SIN_FIRMAR && (
+          {e.status === ESTADO_SIN_FIRMAR && (
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => setFirmarId(e.idEscritura!)}
+              onClick={() => setFirmarId(e.idDeed!)}
               aria-label={t("firmarEscritura")}
-              data-testid={`btn-firmar-escritura-${e.idEscritura}`}
+              data-testid={`btn-firmar-escritura-${e.idDeed}`}
             >
               <Signature className="h-4 w-4" />
             </Button>
           )}
           <Button size="sm" variant="ghost" onClick={() => openEdit(e)}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(e.idEscritura!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(e.idDeed!)}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
     },
@@ -142,17 +142,17 @@ export default function EscriturasPage() {
           data-testid="input-search-escritura"
         />
       </div>
-      <DataTable data={filteredEscrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEscritura!} emptyMessage={t("noData")} />
+      <DataTable data={filteredEscrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idDeed!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? t("editEscritura") : t("newEscritura")}>
               <FormField label={t("fields.numero")} required>
-                <Input type="number" value={editing.numero ?? ""} onChange={(e) => setEditing({ ...editing, numero: Number(e.target.value) })} />
+                <Input type="number" value={editing.number ?? ""} onChange={(e) => setEditing({ ...editing, number: Number(e.target.value) })} />
               </FormField>
               <FormField label={tc("date")} required>
-                <Input type="date" value={editing.fechaEscrituracion ?? ""} onChange={(e) => setEditing({ ...editing, fechaEscrituracion: e.target.value })} />
+                <Input type="date" value={editing.dateDeedrecording ?? ""} onChange={(e) => setEditing({ ...editing, dateDeedrecording: e.target.value })} />
               </FormField>
               <FormField label={t("fields.folio")} required={!isEditMode}>
                 <Select value={editing.idFolio?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, idFolio: parseInt(v) })}>
@@ -160,9 +160,9 @@ export default function EscriturasPage() {
                     <SelectValue placeholder={t("fields.folio")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {folios.filter(f => f.estado === "Nuevo").map(f => (
+                    {folios.filter(f => f.status === "Nuevo").map(f => (
                       <SelectItem key={f.idFolio} value={String(f.idFolio)}>
-                        Folio #{f.idFolio} — {f.tiposDeFolio?.nombre ?? "—"}
+                        Folio #{f.idFolio} — {f.fkIdFolioType?.name ?? "—"}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -170,8 +170,8 @@ export default function EscriturasPage() {
               </FormField>
               <FormField label={t("fields.observaciones")}>
                 <Input
-                  value={editing.observaciones ?? ""}
-                  onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })}
+                  value={editing.notes ?? ""}
+                  onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
                   data-testid="input-observaciones-escritura"
                 />
               </FormField>
