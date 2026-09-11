@@ -4,12 +4,12 @@ import { theme } from "@/theme/tokens";
 import { WorkflowViewer, toFlowNodes, toFlowEdges } from "@/components/shared/WorkflowViewer";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
 
-const node = (id: number, tipo: string): WorkflowNode => ({
+const node = (id: number, type: string): WorkflowNode => ({
   id,
-  estadoGestionNombre: `Estado ${id}`,
-  tipo,
-  posicionX: 0,
-  posicionY: 0,
+  statusManagementName: `Estado ${id}`,
+  type,
+  positionX: 0,
+  positionY: 0,
 } as WorkflowNode);
 
 describe("WorkflowViewer node styling (#613)", () => {
@@ -51,9 +51,9 @@ describe("WorkflowViewer node styling (#613)", () => {
   it("sources the edge stroke color from theme tokens", () => {
     const transition: WorkflowTransition = {
       id: 1,
-      nodoOrigenId: 1,
-      nodoDestinoId: 2,
-      descripcion: "next",
+      originNodeId: 1,
+      destinationNodeId: 2,
+      description: "next",
     } as WorkflowTransition;
 
     const [edge] = toFlowEdges([transition]);

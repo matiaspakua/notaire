@@ -46,7 +46,7 @@ describe("useReingresoDocumentacion (CU43)", () => {
         {
           idProcedure: 1,
           typeProcedureName: "Compraventa",
-          documentosNecesarios: [{ idDocumentType: 5, name: "Certificado de Dominio", expires: true }],
+          documentsNecesarios: [{ idDocumentType: 5, name: "Certificado de Dominio", expires: true }],
         },
       ],
     });
