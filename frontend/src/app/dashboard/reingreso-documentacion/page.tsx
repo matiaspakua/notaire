@@ -30,7 +30,7 @@ export default function ReingresoDocumentacionPage() {
     try {
       await reingresarMutation.mutateAsync({
         gestionId: selectedGestionId,
-        reingreso: { idTramite, idTipoDocumento: documento.idTipoDocumento },
+        reingreso: { idTramite, idTipoDocumento: documento.idDocumentType },
       });
       toast.success(t("documentoReingresado"));
     } catch (err) {
@@ -39,9 +39,9 @@ export default function ReingresoDocumentacionPage() {
   }
 
   const gestionColumns: Column<GestionDeEscritura>[] = [
-    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.numero}</span> },
+    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "encabezado", header: t("fields.encabezado"), render: (g) => g.encabezado ?? "—" },
-    { key: "estadoActual", header: tc("status"), render: (g) => g.estadoActual ?? "—" },
+    { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
       key: "actions",
       header: "",
@@ -51,9 +51,9 @@ export default function ReingresoDocumentacionPage() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setSelectedGestionId(g.idGestion!)}
+            onClick={() => setSelectedGestionId(g.idManagement!)}
             aria-label={t("verTramites")}
-            data-testid={`btn-ver-tramites-${g.idGestion}`}
+            data-testid={`btn-ver-tramites-${g.idManagement}`}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -64,18 +64,18 @@ export default function ReingresoDocumentacionPage() {
 
   function documentoColumns(idTramite: number): Column<DocumentoNecesario>[] {
     return [
-      { key: "nombre", header: t("fields.nombre"), render: (d) => d.nombre ?? "—" },
+      { key: "nombre", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
       {
         key: "vence",
         header: t("fields.vence"),
-        render: (d) => <Badge variant={d.vence ? "secondary" : "outline"}>{d.vence ? tc("yes") : tc("no")}</Badge>,
+        render: (d) => <Badge variant={d.expires ? "secondary" : "outline"}>{d.expires ? tc("yes") : tc("no")}</Badge>,
       },
       {
         key: "diasVencimiento",
         header: t("fields.diasVencimiento"),
-        render: (d) => (d.vence ? (d.diasVencimiento ?? "—") : "—"),
+        render: (d) => (d.expires ? (d.dueDays ?? "—") : "—"),
       },
-      { key: "quienEntrega", header: t("fields.quienEntrega"), render: (d) => d.quienEntrega ?? "—" },
+      { key: "quienEntrega", header: t("fields.quienEntrega"), render: (d) => d.deliveredBy ?? "—" },
       {
         key: "actions",
         header: "",
@@ -87,7 +87,7 @@ export default function ReingresoDocumentacionPage() {
               variant="secondary"
               onClick={() => handleReingresar(idTramite, d)}
               disabled={reingresarMutation.isPending}
-              data-testid={`btn-reingresar-${idTramite}-${d.idTipoDocumento}`}
+              data-testid={`btn-reingresar-${idTramite}-${d.idDocumentType}`}
             >
               <RotateCcw className="h-4 w-4 mr-1" />
               {t("reingresar")}
@@ -100,19 +100,19 @@ export default function ReingresoDocumentacionPage() {
 
   function renderTramite(tramite: TramiteDocumentacionNecesaria) {
     return (
-      <div key={tramite.idTramite} className="mb-6" data-testid={`tramite-${tramite.idTramite}`}>
+      <div key={tramite.idProcedure} className="mb-6" data-testid={`tramite-${tramite.idProcedure}`}>
         <h3 className="text-sm font-semibold mb-2">
-          {t("fields.tramite")}: {tramite.tipoTramiteNombre ?? "—"}
+          {t("fields.tramite")}: {tramite.typeProcedureName ?? "—"}
         </h3>
-        {tramite.documentosNecesarios.length === 0 ? (
-          <p className="text-sm text-muted-foreground" data-testid={`empty-documentos-${tramite.idTramite}`}>
+        {tramite.documentsNecesarios.length === 0 ? (
+          <p className="text-sm text-muted-foreground" data-testid={`empty-documentos-${tramite.idProcedure}`}>
             {t("noDocumentosNecesarios")}
           </p>
         ) : (
           <DataTable
-            data={tramite.documentosNecesarios}
-            columns={documentoColumns(tramite.idTramite)}
-            keyExtractor={(d) => d.idTipoDocumento}
+            data={tramite.documentsNecesarios}
+            columns={documentoColumns(tramite.idProcedure)}
+            keyExtractor={(d) => d.idDocumentType}
           />
         )}
       </div>
@@ -126,7 +126,7 @@ export default function ReingresoDocumentacionPage() {
         data={gestiones}
         columns={gestionColumns}
         isLoading={isLoading}
-        keyExtractor={(g) => g.idGestion!}
+        keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
       />
 
@@ -137,12 +137,12 @@ export default function ReingresoDocumentacionPage() {
           </DialogHeader>
           {isLoadingDetalle ? (
             <p className="text-sm text-muted-foreground">{tc("loading")}</p>
-          ) : !detalle || detalle.tramites.length === 0 ? (
+          ) : !detalle || detalle.procedures.length === 0 ? (
             <p className="text-sm text-muted-foreground" data-testid="empty-tramites">
               {t("noTramites")}
             </p>
           ) : (
-            detalle.tramites.map(renderTramite)
+            detalle.procedures.map(renderTramite)
           )}
         </DialogContent>
       </Dialog>
