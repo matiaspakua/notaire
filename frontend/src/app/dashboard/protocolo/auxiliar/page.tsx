@@ -61,8 +61,8 @@ export default function ProtocoloAuxiliarPage() {
       render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>,
       className: "w-12",
     },
-    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.numero ?? "—"}</span> },
-    { key: "tipo", header: tc("type"), render: (f) => f.fkIdTipoFolio?.nombre ?? "—" },
+    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
+    { key: "tipo", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "action",
       header: "",
@@ -93,7 +93,7 @@ export default function ProtocoloAuxiliarPage() {
             <FormSection title={t("iniciarEscritura")}>
               <FormField label={t("fields.folio")}>
                 <span className="text-sm font-medium">
-                  N° {selectedFolio?.numero} — {selectedFolio?.fkIdTipoFolio?.nombre}
+                  N° {selectedFolio?.number} — {selectedFolio?.fkIdFolioType?.name}
                 </span>
               </FormField>
               <FormField label={t("fields.cuerpo")} required helperText={t("cuerpoHelper")}>

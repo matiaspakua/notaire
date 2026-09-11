@@ -66,8 +66,8 @@ function WorkflowHero() {
   const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
   const byNumero = useGestionByNumero(searchedNumero);
 
-  const latestGestionId = gestiones && gestiones.length > 0 ? gestiones[0].idGestion : undefined;
-  const targetGestionId = searchedNumero != null ? byNumero.data?.idGestion : latestGestionId;
+  const latestGestionId = gestiones && gestiones.length > 0 ? gestiones[0].idManagement : undefined;
+  const targetGestionId = searchedNumero != null ? byNumero.data?.idManagement : latestGestionId;
   const { data: trace, isLoading: traceLoading } = useGestionWorkflowTrace(targetGestionId);
 
   const notFound = searchedNumero != null && byNumero.isError;
@@ -87,10 +87,10 @@ function WorkflowHero() {
           </h2>
           {trace && (
             <p className="text-sm text-[#86868b] mt-1" data-testid="workflow-subtitle">
-              {trace.encabezado ?? `Gestión #${trace.numero}`}
-              {trace.estadoActual && (
+              {trace.encabezado ?? `Gestión #${trace.number}`}
+              {trace.statusActual && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                  {trace.estadoActual}
+                  {trace.statusActual}
                 </span>
               )}
             </p>

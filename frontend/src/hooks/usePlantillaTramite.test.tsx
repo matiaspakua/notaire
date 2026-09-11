@@ -35,9 +35,9 @@ describe("usePlantillaTramite (CU03)", () => {
   it("fetches required documents via GET /plantilla-tramite/tipo-tramite/{id}", async () => {
     vi.mocked(apiGet).mockResolvedValue([
       {
-        observaciones: "",
-        tipoDeTramite: { idTipoTramite: 7, nombre: "Compraventa" },
-        tipoDeDocumento: { idTipoDocumento: 1, nombre: "DNI", vence: false, quienEntrega: "Cliente" },
+        notes: "",
+        tipoDeTramite: { idProcedureType: 7, name: "Compraventa" },
+        tipoDeDocumento: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
       },
     ]);
 
@@ -45,7 +45,7 @@ describe("usePlantillaTramite (CU03)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/plantilla-tramite/tipo-tramite/7");
-    expect(result.current.data?.[0].tipoDeDocumento?.nombre).toBe("DNI");
+    expect(result.current.data?.[0].tipoDeDocumento?.name).toBe("DNI");
   });
 
   it("does not fetch when idTipoTramite is undefined", () => {

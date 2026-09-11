@@ -69,13 +69,13 @@ export default function ProtocoloPage() {
 
   const columns: Column<Folio>[] = [
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
-    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.numero ?? "—"}</span> },
-    { key: "tipo", header: tc("type"), render: (f) => f.tiposDeFolio?.nombre ?? "—" },
+    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
+    { key: "tipo", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "disponible",
       header: tc("status"),
       render: (f) =>
-        f.disponible ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge>,
+        f.status !== "Utilizado" ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge>,
     },
   ];
 

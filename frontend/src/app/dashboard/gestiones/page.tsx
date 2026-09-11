@@ -85,12 +85,12 @@ export default function GestionesPage() {
   const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
   const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
 
-  const currentNode = trace?.nodes.find((n) => n.estadoGestionNombre === trace.estadoActual);
+  const currentNode = trace?.nodes.find((n) => n.statusManagementName === trace.statusActual);
   const validDestinations = trace && currentNode
     ? trace.transitions
-        .filter((tr) => tr.nodoOrigenId === currentNode.id)
-        .map((tr) => trace.nodes.find((n) => n.id === tr.nodoDestinoId))
-        .filter((n): n is NonNullable<typeof n> => !!n && !!n.estadoGestionNombre)
+        .filter((tr) => tr.originNodeId === currentNode.id)
+        .map((tr) => trace.nodes.find((n) => n.id === tr.destinationNodeId))
+        .filter((n): n is NonNullable<typeof n> => !!n && !!n.statusManagementName)
     : [];
 
   function openCreate() {
@@ -106,21 +106,21 @@ export default function GestionesPage() {
 
   function openEdit(g: GestionDeEscritura) {
     setEditing(g);
-    setNumero(g.numero?.toString() ?? "");
+    setNumero(g.number?.toString() ?? "");
     setModalOpen(true);
   }
 
   async function handleSave() {
     try {
-      if (editing?.idGestion) {
+      if (editing?.idManagement) {
         await updateMutation.mutateAsync({
-          id: editing.idGestion,
-          data: { numero: numero ? Number(numero) : undefined },
+          id: editing.idManagement,
+          data: { number: numero ? Number(numero) : undefined },
         });
         toast.success(t("updated"));
       } else {
         const created = await createCompleteMutation.mutateAsync({
-          numero: Number(numero),
+          number: Number(numero),
           presupuestoId: Number(presupuestoId),
           escribanoId: Number(escribanoId),
           estadoGestionId: Number(estadoId),
@@ -128,7 +128,7 @@ export default function GestionesPage() {
           inmuebleId: inmuebleId ? Number(inmuebleId) : undefined,
         });
         toast.success(t("created"));
-        notifySuplenciaRedirect(created.observaciones);
+        notifySuplenciaRedirect(created.notes);
       }
     } catch {
       toast.error(t("errorSave"));
@@ -224,23 +224,23 @@ export default function GestionesPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (g) => <span className="text-muted-foreground text-xs">{g.idGestion}</span>,
+      render: (g) => <span className="text-muted-foreground text-xs">{g.idManagement}</span>,
       className: "w-16",
     },
     {
       key: "numero",
       header: t("fields.numero"),
-      render: (g) => <span className="font-medium">{g.numero ?? "—"}</span>,
+      render: (g) => <span className="font-medium">{g.number ?? "—"}</span>,
     },
     {
       key: "tramites",
       header: t("fields.tipo"),
-      render: (g) => g.tramiteCount ?? 0,
+      render: (g) => g.procedureCount ?? 0,
     },
     {
       key: "estado",
       header: t("fields.estado"),
-      render: (g) => g.estadoActual ?? "—",
+      render: (g) => g.statusActual ?? "—",
     },
     {
       key: "actions",
@@ -250,13 +250,13 @@ export default function GestionesPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
-          {g.estadoActual !== ESTADO_ARCHIVADA && (
+          {g.statusActual !== ESTADO_ARCHIVADA && (
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => setTransitionId(g.idGestion!)}
+              onClick={() => setTransitionId(g.idManagement!)}
               aria-label={t("changeState")}
-              data-testid={`btn-cambiar-estado-${g.idGestion}`}
+              data-testid={`btn-cambiar-estado-${g.idManagement}`}
             >
               <RefreshCcw className="h-4 w-4" />
             </Button>
@@ -264,28 +264,28 @@ export default function GestionesPage() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setBitacoraId(g.idGestion!)}
+            onClick={() => setBitacoraId(g.idManagement!)}
             aria-label={t("viewBitacora")}
-            data-testid={`btn-ver-bitacora-${g.idGestion}`}
+            data-testid={`btn-ver-bitacora-${g.idManagement}`}
           >
             <History className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setCarpetasGestionId(g.idGestion!)}
+            onClick={() => setCarpetasGestionId(g.idManagement!)}
             aria-label={t("viewCarpetas")}
-            data-testid={`btn-ver-carpetas-${g.idGestion}`}
+            data-testid={`btn-ver-carpetas-${g.idManagement}`}
           >
             <FolderClock className="h-4 w-4" />
           </Button>
-          {g.estadoActual !== ESTADO_ARCHIVADA && (
+          {g.statusActual !== ESTADO_ARCHIVADA && (
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => setArchiveId(g.idGestion!)}
+              onClick={() => setArchiveId(g.idManagement!)}
               aria-label={t("archiveGestion")}
-              data-testid={`btn-archivar-gestion-${g.idGestion}`}
+              data-testid={`btn-archivar-gestion-${g.idManagement}`}
             >
               <Archive className="h-4 w-4" />
             </Button>
@@ -294,7 +294,7 @@ export default function GestionesPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(g.idGestion!)}
+            onClick={() => setDeleteId(g.idManagement!)}
             aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
@@ -324,8 +324,8 @@ export default function GestionesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{tc("all")}</SelectItem>
-            {personas.filter((p) => p.esCliente).map((p) => (
-              <SelectItem key={p.idPersona} value={String(p.idPersona)}>{fullName(p)}</SelectItem>
+            {personas.filter((p) => p.isClient).map((p) => (
+              <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -335,7 +335,7 @@ export default function GestionesPage() {
         data={visibleGestiones}
         columns={columns}
         isLoading={isLoadingVisible}
-        keyExtractor={(g) => g.idGestion!}
+        keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
       />
 
@@ -359,10 +359,10 @@ export default function GestionesPage() {
                       <SelectTrigger data-testid="select-presupuesto-gestion"><SelectValue placeholder="Seleccionar presupuesto..." /></SelectTrigger>
                       <SelectContent>
                         {presupuestos.map((p) => (
-                          <SelectItem key={p.idPresupuesto} value={String(p.idPresupuesto)}>
-                            {p.persona
-                              ? `Presupuesto #${p.idPresupuesto} — ${fullName(p.persona)} (${formatCurrency(p.monto)})`
-                              : `Presupuesto #${p.idPresupuesto}`}
+                          <SelectItem key={p.idBudget} value={String(p.idBudget)}>
+                            {p.person
+                              ? `Presupuesto #${p.idBudget} — ${fullName(p.person)} (${formatCurrency(p.propertyAmount)})`
+                              : `Presupuesto #${p.idBudget}`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -371,25 +371,25 @@ export default function GestionesPage() {
                   <FormField label={t("fields.escribano")} required>
                     <Select value={escribanoId} onValueChange={setEscribanoId}>
                       <SelectTrigger data-testid="select-escribano-gestion"><SelectValue placeholder="Seleccionar escribano..." /></SelectTrigger>
-                      <SelectContent>{personas.map((p) => <SelectItem key={p.idPersona} value={String(p.idPersona)}>{fullName(p)}</SelectItem>)}</SelectContent>
+                      <SelectContent>{personas.map((p) => <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.estado")} required>
                     <Select value={estadoId} onValueChange={setEstadoId}>
                       <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder="Seleccionar estado..." /></SelectTrigger>
-                      <SelectContent>{estados.map((e) => <SelectItem key={e.idEstadoGestion} value={String(e.idEstadoGestion)}>{e.nombre}</SelectItem>)}</SelectContent>
+                      <SelectContent>{estados.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.tipo")} required>
                     <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
                       <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder="Seleccionar trámite..." /></SelectTrigger>
-                      <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>{tt.nombre}</SelectItem>)}</SelectContent>
+                      <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>
                     <Select value={inmuebleId} onValueChange={setInmuebleId}>
                       <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder="Seleccionar inmueble..." /></SelectTrigger>
-                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idInmueble} value={String(i.idInmueble)}>{i.domicilio ?? `Inmueble #${i.idInmueble}`}</SelectItem>)}</SelectContent>
+                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? `Inmueble #${i.idProperty}`}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                 </>
@@ -427,8 +427,8 @@ export default function GestionesPage() {
         description={
           archiveConflict
             ? archiveConflict
-            : saldoPendiente && saldoPendiente.saldoPendiente > 0
-              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPendiente) })
+            : saldoPendiente && saldoPendiente.saldoPending > 0
+              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPending) })
               : t("archiveConfirmDescriptionNoDebt")
         }
         confirmLabel={archiveConflict ? t("archiveConfirmAnyway") : t("archiveGestion")}
@@ -446,8 +446,8 @@ export default function GestionesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {validDestinations.map((n) => (
-                      <SelectItem key={n.id} value={n.estadoGestionNombre!}>
-                        {n.estadoGestionNombre}
+                      <SelectItem key={n.id} value={n.statusManagementName!}>
+                        {n.statusManagementName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -479,10 +479,10 @@ export default function GestionesPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {historial.map((h) => (
-                  <div key={h.idHistorial} data-testid="bitacora-item" className="border-b pb-2">
-                    <div className="font-medium">{h.estadoGestionNombre}</div>
-                    <div className="text-xs text-muted-foreground">{formatDate(h.fecha)}</div>
-                    {h.observaciones && <div className="text-sm">{h.observaciones}</div>}
+                  <div key={h.idHistory} data-testid="bitacora-item" className="border-b pb-2">
+                    <div className="font-medium">{h.statusManagementName}</div>
+                    <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
+                    {h.notes && <div className="text-sm">{h.notes}</div>}
                   </div>
                 ))}
               </div>
@@ -543,21 +543,21 @@ export default function GestionesPage() {
                 <div className="flex flex-col gap-3">
                   {carpetas.map((c) => (
                     <div
-                      key={c.idCarpeta}
+                      key={c.idFolder}
                       data-testid="carpeta-item"
                       className="border-b pb-2 flex items-center justify-between"
                     >
                       <div>
-                        <div className="font-medium">{t("carpetaNumero", { numero: c.numero ?? 0 })}</div>
-                        <div className="text-xs text-muted-foreground">{c.estado}</div>
-                        {c.motivoEspera && <div className="text-sm">{c.motivoEspera}</div>}
+                        <div className="font-medium">{t("carpetaNumero", { numero: c.number ?? 0 })}</div>
+                        <div className="text-xs text-muted-foreground">{c.status}</div>
+                        {c.waitReason && <div className="text-sm">{c.waitReason}</div>}
                       </div>
-                      {c.estado === ESTADO_CARPETA_ACTIVA && (
+                      {c.status === ESTADO_CARPETA_ACTIVA && (
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => setEsperaCarpetaId(c.idCarpeta!)}
-                          data-testid={`btn-poner-en-espera-${c.idCarpeta}`}
+                          onClick={() => setEsperaCarpetaId(c.idFolder!)}
+                          data-testid={`btn-poner-en-espera-${c.idFolder}`}
                         >
                           {t("ponerEnEspera")}
                         </Button>

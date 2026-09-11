@@ -39,14 +39,14 @@ describe("useReingresoDocumentacion (CU43)", () => {
 
   it("fetches the gestión's trámites with documentación necesaria via GET", async () => {
     vi.mocked(apiGet).mockResolvedValue({
-      idGestion: 9,
-      numero: 1001,
+      idManagement: 9,
+      number: 1001,
       encabezado: "Gestion",
-      tramites: [
+      procedures: [
         {
-          idTramite: 1,
-          tipoTramiteNombre: "Compraventa",
-          documentosNecesarios: [{ idTipoDocumento: 5, nombre: "Certificado de Dominio", vence: true }],
+          idProcedure: 1,
+          typeProcedureName: "Compraventa",
+          documentosNecesarios: [{ idDocumentType: 5, name: "Certificado de Dominio", expires: true }],
         },
       ],
     });
@@ -56,7 +56,7 @@ describe("useReingresoDocumentacion (CU43)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/gestiones/9/reingreso-documentacion");
-    expect(result.current.data?.tramites[0].documentosNecesarios[0].nombre).toBe("Certificado de Dominio");
+    expect(result.current.data?.procedures[0].documentosNecesarios[0].name).toBe("Certificado de Dominio");
   });
 
   it("does not fetch when gestionId is undefined", () => {
