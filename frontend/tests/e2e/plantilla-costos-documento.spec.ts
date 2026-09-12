@@ -13,6 +13,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
+import { createTipoTramite, createTipoDocumento } from "./setup/api-helpers";
 
 test.describe("Plantillas - Costos de Documentos", () => {
   let steps: GherkinSteps;
@@ -35,14 +36,26 @@ test.describe("Plantillas - Costos de Documentos", () => {
   });
 
   test("CU27-GW01: Given costo form open, When creating a fixed cost, Then it is saved and listed", async ({ page }) => {
+    // A fresh tipo-trámite + tipo-documento pair avoids colliding with a
+    // combination already created (unique constraint) by an earlier/parallel
+    // run against the shared "first option" catalog entries.
+    const runId = Date.now();
+    const nombreTramite = `Tipo Tramite Costo E2E ${runId}`;
+    const nombreDocumento = `Tipo Documento Costo E2E ${runId}`;
+    const tipoTramiteResult = await createTipoTramite(page, { name: nombreTramite });
+    expect(tipoTramiteResult.ok).toBe(true);
+    const tipoDocumentoResult = await createTipoDocumento(page, { name: nombreDocumento });
+    expect(tipoDocumentoResult.ok).toBe(true);
+
+    await page.reload();
     await page.getByTestId("select-tipo-tramite-costos").click();
-    await page.getByRole("option").first().click();
+    await page.getByRole("option", { name: nombreTramite }).click();
 
     await page.getByTestId("btn-nuevo-costo-documento").click();
     await steps.thenModalIsVisible();
 
     await page.getByTestId("select-tipo-documento-costo").click();
-    await page.getByRole("option").first().click();
+    await page.getByRole("option", { name: nombreDocumento }).click();
     await page.getByTestId("input-valor-costo-documento").fill("1500");
 
     await page.getByTestId("btn-guardar-costo-documento").click();
