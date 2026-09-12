@@ -249,7 +249,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
 
     await steps.givenUserIsOnPage("/dashboard/pagos");
 
-    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await expect(row).toContainText("Transferencia");
     await expect(row).toContainText(`#${idPresupuesto}`);
@@ -264,7 +264,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
 
     await steps.givenUserIsOnPage("/dashboard/pagos");
 
-    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await row.getByRole("button").nth(1).click();
 
@@ -286,7 +286,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
 
     await steps.givenUserIsOnPage("/dashboard/pagos");
 
-    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await row.getByRole("button").nth(2).click();
 

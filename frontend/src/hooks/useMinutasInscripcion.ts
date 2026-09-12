@@ -19,7 +19,7 @@ export function useMinutaInscripcion(id: number | null) {
 export function useGenerarMinutaInscripcion() {
   return useMutation({
     mutationFn: (idEscritura: number) =>
-      apiPost<MinutaInscripcion>("/minutas-inscripcion", { idEscritura }),
+      apiPost<MinutaInscripcion>("/minutas-inscripcion", { idDeed: idEscritura }),
   });
 }
 
@@ -37,8 +37,8 @@ export function usePresentarMinutaInscripcion() {
       numeroEntradaRegistral: string;
     }) =>
       apiPut<MinutaInscripcion>(`/minutas-inscripcion/${id}/presentar`, {
-        fechaPresentacion,
-        numeroEntradaRegistral,
+        dateSubmission: fechaPresentacion,
+        registryEntryNumber: numeroEntradaRegistral,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
   });
@@ -58,8 +58,8 @@ export function useObservarMinutaInscripcion() {
       fechaSubsanacion: string;
     }) =>
       apiPut<MinutaInscripcion>(`/minutas-inscripcion/${id}/observar`, {
-        observacionesRegistro,
-        fechaSubsanacion,
+        registryNotes: observacionesRegistro,
+        dateCorrection: fechaSubsanacion,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
   });
@@ -79,8 +79,8 @@ export function useInscribirMinutaInscripcion() {
       numeroInscripcionDefinitivo: string;
     }) =>
       apiPut<MinutaInscripcion>(`/minutas-inscripcion/${id}/inscribir`, {
-        fechaRecepcion,
-        numeroInscripcionDefinitivo,
+        dateReception: fechaRecepcion,
+        finalRegistrationNumber: numeroInscripcionDefinitivo,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
   });
