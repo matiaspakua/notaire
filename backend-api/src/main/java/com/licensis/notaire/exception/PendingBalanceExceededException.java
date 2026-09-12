@@ -6,9 +6,9 @@ package com.licensis.notaire.exception;
  * subclass: {@code PagoController}'s local try/catch blocks map this directly to HTTP 409, so it
  * does not need {@code GlobalExceptionHandler} dispatch or the {@link ErrorResponse} body shape.
  */
-public class SaldoPendingExcedidoException extends RuntimeException {
+public class PendingBalanceExceededException extends RuntimeException {
 
-    public SaldoPendingExcedidoException(String message) {
+    public PendingBalanceExceededException(String message) {
         super(message);
     }
 }
