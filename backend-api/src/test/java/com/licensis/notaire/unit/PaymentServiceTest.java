@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.dto.TypeItem;
-import com.licensis.notaire.exception.SaldoPendingExcedidoException;
+import com.licensis.notaire.exception.PendingBalanceExceededException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
@@ -166,10 +166,10 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(4000.00f);
 
             // Act
-            Float saldoPending = paymentService.calculatePendingBalance(1);
+            Float pendingBalance = paymentService.calculatePendingBalance(1);
 
             // Assert
-            assertThat(saldoPending).isEqualTo(6000.00f);
+            assertThat(pendingBalance).isEqualTo(6000.00f);
         }
 
         @Test
@@ -180,10 +180,10 @@ class PaymentServiceTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
             // Act
-            Float saldoPending = paymentService.calculatePendingBalance(1);
+            Float pendingBalance = paymentService.calculatePendingBalance(1);
 
             // Assert
-            assertThat(saldoPending).isEqualTo(10000.00f);
+            assertThat(pendingBalance).isEqualTo(10000.00f);
         }
     }
 
@@ -336,7 +336,7 @@ class PaymentServiceTest {
             when(paymentRepository.findById(1)).thenReturn(Optional.of(existing));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            Payment result = paymentService.editarPayment(1, 1000f, new Date(), "Editado", "Transferencia");
+            Payment result = paymentService.editPayment(1, 1000f, new Date(), "Editado", "Transferencia");
 
             assertThat(result.getPaymentMethod()).isEqualTo("Transferencia");
         }
@@ -346,7 +346,7 @@ class PaymentServiceTest {
         void shouldThrowWhenEditingPaymentMethodOfMissingPayment() {
             when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> paymentService.editarPayment(999, 1000f, new Date(), "Test", "Efectivo"))
+            assertThatThrownBy(() -> paymentService.editPayment(999, 1000f, new Date(), "Test", "Efectivo"))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Pago no encontrado");
 
@@ -370,7 +370,7 @@ class PaymentServiceTest {
 
             // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
             assertThatThrownBy(() -> paymentService.processPayment(1, 25000f, new Date(), "Overpay attempt"))
-                    .isInstanceOf(SaldoPendingExcedidoException.class)
+                    .isInstanceOf(PendingBalanceExceededException.class)
                     .hasMessageContaining("no puede exceder el saldo pendiente");
 
             verify(paymentRepository, never()).save(any(Payment.class));
@@ -449,9 +449,9 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calculatePendingBalance(1);
+            Float pendingBalance = paymentService.calculatePendingBalance(1);
 
-            assertThat(saldoPending).isEqualTo(8000f);
+            assertThat(pendingBalance).isEqualTo(8000f);
         }
 
         @Test
@@ -468,9 +468,9 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calculatePendingBalance(1);
+            Float pendingBalance = paymentService.calculatePendingBalance(1);
 
-            assertThat(saldoPending).isEqualTo(11500f);
+            assertThat(pendingBalance).isEqualTo(11500f);
         }
 
         @Test
@@ -487,9 +487,9 @@ class PaymentServiceTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
 
-            Float saldoPending = paymentService.calculatePendingBalance(1);
+            Float pendingBalance = paymentService.calculatePendingBalance(1);
 
-            assertThat(saldoPending).isEqualTo(15000f);
+            assertThat(pendingBalance).isEqualTo(15000f);
         }
     }
 }

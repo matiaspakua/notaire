@@ -1,6 +1,6 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.exception.SaldoPendingExcedidoException;
+import com.licensis.notaire.exception.PendingBalanceExceededException;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -94,9 +94,9 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago 1"
         );
 
-        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
+        Float pendingBalance = paymentService.calculatePendingBalance(testBudget.getIdBudget());
 
-        assertThat(saldoPending).isEqualTo(400000f);
+        assertThat(pendingBalance).isEqualTo(400000f);
     }
 
     @Test
@@ -115,9 +115,9 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago 2"
         );
 
-        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
+        Float pendingBalance = paymentService.calculatePendingBalance(testBudget.getIdBudget());
 
-        assertThat(saldoPending).isEqualTo(250000f);
+        assertThat(pendingBalance).isEqualTo(250000f);
     }
 
     @Test
@@ -128,7 +128,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 600000f,
                 new Date(),
                 "Overpay attempt"
-        )).isInstanceOf(SaldoPendingExcedidoException.class);
+        )).isInstanceOf(PendingBalanceExceededException.class);
 
         List<Payment> payments = paymentService.findPaymentsByBudget(testBudget.getIdBudget());
         assertThat(payments).isEmpty();
@@ -149,7 +149,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 150000f,
                 new Date(),
                 "Overpay against reduced saldo"
-        )).isInstanceOf(SaldoPendingExcedidoException.class);
+        )).isInstanceOf(PendingBalanceExceededException.class);
 
         List<Payment> payments = paymentService.findPaymentsByBudget(testBudget.getIdBudget());
         assertThat(payments).hasSize(1);
@@ -248,7 +248,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago"
         );
 
-        Payment edited = paymentService.editarPayment(saved.getIdPayment(), 120000f, new Date(), "Editado");
+        Payment edited = paymentService.editPayment(saved.getIdPayment(), 120000f, new Date(), "Editado");
 
         assertThat(edited).isNotNull()
                 .hasFieldOrPropertyWithValue("amount", 120000f);
@@ -291,7 +291,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago Original"
         );
 
-        Payment edited = paymentService.editarPayment(saved.getIdPayment(), null, new Date(), "Updated");
+        Payment edited = paymentService.editPayment(saved.getIdPayment(), null, new Date(), "Updated");
 
         assertThat(edited).isNotNull()
                 .hasFieldOrPropertyWithValue("amount", 100000f)
@@ -309,7 +309,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago"
         );
 
-        Payment edited = paymentService.editarPayment(saved.getIdPayment(), 120000f, null, "Updated");
+        Payment edited = paymentService.editPayment(saved.getIdPayment(), 120000f, null, "Updated");
 
         assertThat(edited).isNotNull()
                 .hasFieldOrPropertyWithValue("amount", 120000f)
@@ -326,7 +326,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Original"
         );
 
-        Payment edited = paymentService.editarPayment(saved.getIdPayment(), 120000f, new Date(), null);
+        Payment edited = paymentService.editPayment(saved.getIdPayment(), 120000f, new Date(), null);
 
         assertThat(edited).isNotNull()
                 .hasFieldOrPropertyWithValue("amount", 120000f)
@@ -343,7 +343,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Pago"
         );
 
-        assertThatThrownBy(() -> paymentService.editarPayment(
+        assertThatThrownBy(() -> paymentService.editPayment(
                 saved.getIdPayment(),
                 -50000f,
                 new Date(),
@@ -355,7 +355,7 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should throw exception when editing non-existent pago")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
-        assertThatThrownBy(() -> paymentService.editarPayment(
+        assertThatThrownBy(() -> paymentService.editPayment(
                 9999,
                 100000f,
                 new Date(),
@@ -421,9 +421,9 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 .extracting(Payment::getAmount)
                 .containsExactlyInAnyOrder(monto1, monto2, monto3);
 
-        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
-        float totalPagado = monto1 + monto2 + monto3;
-        assertThat(saldoPending).isEqualTo(500000f - totalPagado);
+        Float pendingBalance = paymentService.calculatePendingBalance(testBudget.getIdBudget());
+        float totalPaid = monto1 + monto2 + monto3;
+        assertThat(pendingBalance).isEqualTo(500000f - totalPaid);
     }
 
     @Test
@@ -460,8 +460,8 @@ class PaymentServiceIntegrationTest extends ServiceIntegrationTest {
                 "Full payment"
         );
 
-        Float saldoPending = paymentService.calculatePendingBalance(testBudget.getIdBudget());
-        assertThat(saldoPending).isZero();
+        Float pendingBalance = paymentService.calculatePendingBalance(testBudget.getIdBudget());
+        assertThat(pendingBalance).isZero();
     }
 
     @Test

@@ -92,7 +92,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return discounts and surcharges")
     void shouldReturnDiscountsAndSurchargesForBudget() throws Exception {
-        when(itemService.findDescuentosYRecargosByBudget(10)).thenReturn(List.of(
+        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of(
                 buildItem(1, TypeItem.DESCUENTO, "Descuento por pronto pago")
         ));
 
@@ -105,7 +105,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return empty list when none exist")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() throws Exception {
-        when(itemService.findDescuentosYRecargosByBudget(10)).thenReturn(List.of());
+        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/items/presupuesto/10/descuentos-recargos"))
                 .andExpect(status().isOk())
@@ -115,7 +115,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return 404 for unknown presupuesto")
     void shouldReturn404ForUnknownBudgetOnReport() throws Exception {
-        when(itemService.findDescuentosYRecargosByBudget(999))
+        when(itemService.findDiscountsAndSurchargesByBudget(999))
                 .thenThrow(new ResourceNotFoundException("Presupuesto no encontrado con ID: 999"));
 
         mockMvc.perform(get("/api/v1/items/presupuesto/999/descuentos-recargos"))

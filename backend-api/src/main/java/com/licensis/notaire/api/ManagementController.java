@@ -127,9 +127,9 @@ public class ManagementController {
         this.procedureFolderService = procedureFolderService;
     }
 
-    public record DtoSaldoPending(Float saldoPending) {}
+    public record DtoSaldoPending(Float pendingBalance) {}
 
-    public record DtoManagementArchivada(Integer idManagement, Float saldoPending, boolean pendingDebtAtArchiving) {}
+    public record DtoManagementArchivada(Integer idManagement, Float pendingBalance, boolean pendingDebtAtArchiving) {}
 
     public record DtoTransicionRequest(String statusDestination) {}
 
@@ -430,7 +430,7 @@ public class ManagementController {
         try {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(id, confirmado);
             return ResponseEntity.ok(new DtoManagementArchivada(result.management().getIdManagement(),
-                    result.saldoPending(), Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
+                    result.pendingBalance(), Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (CarpetasEnWaitException e) {

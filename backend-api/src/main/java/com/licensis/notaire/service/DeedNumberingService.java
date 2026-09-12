@@ -19,19 +19,19 @@ public class DeedNumberingService {
     }
 
     public int calculateNextSequenceNumber(Person notary, int year, boolean isAuxiliary) {
-        return folioRepository.findMaxNumberDeedByNotaryYearYType(
+        return folioRepository.findMaxNumberDeedByNotaryYearAndType(
                 notary.getPersonId(), year, isAuxiliary, null).orElse(0) + 1;
     }
 
     public NumberingValidationResult validate(int number, Person notary, int year, boolean isAuxiliary,
             String skipJustification, Integer idDeedExclude) {
-        boolean duplicate = folioRepository.existsNumberDeedByNotaryYearYType(
+        boolean duplicate = folioRepository.existsNumberDeedByNotaryYearAndType(
                 number, notary.getPersonId(), year, isAuxiliary, idDeedExclude);
         if (duplicate) {
             return NumberingValidationResult.DUPLICATE;
         }
 
-        int nextExpected = folioRepository.findMaxNumberDeedByNotaryYearYType(
+        int nextExpected = folioRepository.findMaxNumberDeedByNotaryYearAndType(
                 notary.getPersonId(), year, isAuxiliary, idDeedExclude).orElse(0) + 1;
         if (number == nextExpected) {
             return NumberingValidationResult.OK;

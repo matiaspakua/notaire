@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.PaymentController;
-import com.licensis.notaire.exception.SaldoPendingExcedidoException;
+import com.licensis.notaire.exception.PendingBalanceExceededException;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.service.StatusPayment;
@@ -164,10 +164,10 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return estado de pago")
     void shouldGetStatusPayment() throws Exception {
-        when(paymentService.calculatePaymentStatus(10)).thenReturn(StatusPayment.PARCIAL);
+        when(paymentService.calculatePaymentStatus(10)).thenReturn(StatusPayment.PARTIAL);
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("\"PARCIAL\""));
+                .andExpect(content().string("\"PARTIAL\""));
     }
 
     @Test
@@ -286,7 +286,7 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/pagos should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409WhenCreateExceedsSaldo() throws Exception {
         when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
-                .thenThrow(new SaldoPendingExcedidoException("no puede exceder el saldo pendiente"));
+                .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
 
         String json = """
                 {
@@ -358,7 +358,7 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/pagos/params should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409OnParamsExceedsSaldo() throws Exception {
         when(paymentService.processPayment(anyInt(), anyFloat(), any(), any(), any()))
-                .thenThrow(new SaldoPendingExcedidoException("no puede exceder el saldo pendiente"));
+                .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
 
         mockMvc.perform(post("/api/v1/pagos/params")
                 .param("idBudget", "10")
@@ -382,7 +382,7 @@ class PaymentControllerTest {
     @DisplayName("PUT /api/v1/pagos/{id} should return 200 when updated")
     void shouldUpdatePayment() throws Exception {
         Payment updated = buildPayment();
-        when(paymentService.editarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenReturn(updated);
 
         String json = """
@@ -403,7 +403,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
-        when(paymentService.editarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new IllegalArgumentException("Pago no encontrado"));
 
         String json = """
@@ -423,7 +423,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturn500OnUpdateError() throws Exception {
-        when(paymentService.editarPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """

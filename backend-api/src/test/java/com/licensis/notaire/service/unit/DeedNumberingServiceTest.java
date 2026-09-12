@@ -39,7 +39,7 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should start correlativo at one when no deed exists yet in scope")
     void shouldStartCorrelativoAtOneWhenScopeIsEmpty() {
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, false, null))
                 .thenReturn(Optional.empty());
 
         int siguiente = deedNumberingService.calculateNextSequenceNumber(notary, 2026, false);
@@ -50,9 +50,9 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should accept a número matching the expected correlativo")
     void shouldAcceptNumberMatchingExpectedCorrelativo() {
-        when(folioRepository.existsNumberDeedByNotaryYearYType(6, 1, 2026, false, null))
+        when(folioRepository.existsNumberDeedByNotaryYearAndType(6, 1, 2026, false, null))
                 .thenReturn(false);
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
         NumberingValidationResult resultado = deedNumberingService.validate(
@@ -64,7 +64,7 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should reject a número already used within the same scope")
     void shouldRejectDuplicateNumber() {
-        when(folioRepository.existsNumberDeedByNotaryYearYType(5, 1, 2026, false, null))
+        when(folioRepository.existsNumberDeedByNotaryYearAndType(5, 1, 2026, false, null))
                 .thenReturn(true);
 
         NumberingValidationResult resultado = deedNumberingService.validate(
@@ -76,9 +76,9 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should require justificación when the número leaves a gap")
     void shouldRequireJustificationForGap() {
-        when(folioRepository.existsNumberDeedByNotaryYearYType(9, 1, 2026, false, null))
+        when(folioRepository.existsNumberDeedByNotaryYearAndType(9, 1, 2026, false, null))
                 .thenReturn(false);
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
         NumberingValidationResult resultado = deedNumberingService.validate(
@@ -90,9 +90,9 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should accept a gap when a justificación is provided")
     void shouldAcceptGapWithJustification() {
-        when(folioRepository.existsNumberDeedByNotaryYearYType(9, 1, 2026, false, null))
+        when(folioRepository.existsNumberDeedByNotaryYearAndType(9, 1, 2026, false, null))
                 .thenReturn(false);
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, false, null))
                 .thenReturn(Optional.of(5));
 
         NumberingValidationResult resultado = deedNumberingService.validate(
@@ -104,9 +104,9 @@ class DeedNumberingServiceTest {
     @Test
     @DisplayName("Should keep Protocolo Auxiliar numbering independent from Protocolo Principal")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, true, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, true, null))
                 .thenReturn(Optional.of(2));
-        when(folioRepository.findMaxNumberDeedByNotaryYearYType(1, 2026, false, null))
+        when(folioRepository.findMaxNumberDeedByNotaryYearAndType(1, 2026, false, null))
                 .thenReturn(Optional.of(40));
 
         int siguienteAuxiliary = deedNumberingService.calculateNextSequenceNumber(notary, 2026, true);

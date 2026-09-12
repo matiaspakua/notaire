@@ -140,7 +140,7 @@ class ItemServiceTest {
                 buildItem(TypeItem.RECARGO, "Recargo")
         ));
 
-        List<Item> result = itemService.findDescuentosYRecargosByBudget(1);
+        List<Item> result = itemService.findDiscountsAndSurchargesByBudget(1);
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting(Item::getType)
@@ -155,7 +155,7 @@ class ItemServiceTest {
                 buildItem(TypeItem.NORMAL, null)
         ));
 
-        List<Item> result = itemService.findDescuentosYRecargosByBudget(1);
+        List<Item> result = itemService.findDiscountsAndSurchargesByBudget(1);
 
         assertThat(result).isEmpty();
     }
@@ -165,7 +165,7 @@ class ItemServiceTest {
     void shouldThrowWhenBudgetDoesNotExistForReport() {
         when(budgetRepository.existsById(999)).thenReturn(false);
 
-        assertThatThrownBy(() -> itemService.findDescuentosYRecargosByBudget(999))
+        assertThatThrownBy(() -> itemService.findDiscountsAndSurchargesByBudget(999))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

@@ -73,7 +73,7 @@ public class ItemController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<Item>> getDescuentosYRecargos(@PathVariable Integer idBudget) {
         try {
-            return ResponseEntity.ok(itemService.findDescuentosYRecargosByBudget(idBudget));
+            return ResponseEntity.ok(itemService.findDiscountsAndSurchargesByBudget(idBudget));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

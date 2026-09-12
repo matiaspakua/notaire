@@ -21,9 +21,9 @@ import java.util.Optional;
 @Transactional
 public class NotebookService {
 
-    private static final int FOLIOSPORNotebook = 10;
-    private static final String StatusASIGNADOANotebook = "Asignado a cuaderno";
-    private static final List<String> ESTADOS_DANADOS = List.of("Errose", "no pasó");
+    private static final int FOLIOS_PER_NOTEBOOK = 10;
+    private static final String StatusAssignedToNotebook = "Asignado a cuaderno";
+    private static final List<String> DAMAGED_STATUSES = List.of("Errose", "no pasó");
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookService.class);
 
@@ -58,63 +58,63 @@ public class NotebookService {
         }
 
         validateFolioCount(folios);
-        List<Folio> foliosOrdenados = folios.stream()
+        List<Folio> sortedFolios = folios.stream()
                 .sorted(Comparator.comparingInt(Folio::getNumber))
                 .toList();
-        validateSameNotary(foliosOrdenados, notary);
-        validateConsecutiveness(foliosOrdenados);
-        validateNotAssigned(foliosOrdenados);
-        validateDamagedFolioJustification(foliosOrdenados, notes);
+        validateSameNotary(sortedFolios, notary);
+        validateConsecutiveness(sortedFolios);
+        validateNotAssigned(sortedFolios);
+        validateDamagedFolioJustification(sortedFolios, notes);
 
         Notebook notebook = new Notebook();
         notebook.setYear(year);
         notebook.setNumber(calculateNextNumber(year, notary));
         notebook.setNotes(notes);
         notebook.setFkIdNotaryPerson(notary);
-        Notebook guardado = notebookRepository.save(notebook);
+        Notebook savedNotebook = notebookRepository.save(notebook);
 
-        markFoliosAssigned(foliosOrdenados, guardado);
+        markFoliosAssigned(sortedFolios, savedNotebook);
         logger.info("Cuaderno {}/{} creado para escribano {} con {} folios",
-                guardado.getNumber(), guardado.getYear(), notary.getPersonId(), foliosOrdenados.size());
-        return guardado;
+                savedNotebook.getNumber(), savedNotebook.getYear(), notary.getPersonId(), sortedFolios.size());
+        return savedNotebook;
     }
 
     public int calculateNextNumber(int year, Person notary) {
-        int candidato = notebookRepository.findByYearAndFkIdNotaryPerson(year, notary).size() + 1;
-        while (notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(candidato, year, notary)) {
-            candidato++;
+        int candidate = notebookRepository.findByYearAndFkIdNotaryPerson(year, notary).size() + 1;
+        while (notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(candidate, year, notary)) {
+            candidate++;
         }
-        return candidato;
+        return candidate;
     }
 
     public void markFoliosAssigned(List<Folio> folios, Notebook notebook) {
         for (Folio folio : folios) {
             folio.setFkIdNotebook(notebook);
-            folio.setStatus(StatusASIGNADOANotebook);
+            folio.setStatus(StatusAssignedToNotebook);
         }
         folioRepository.saveAll(folios);
     }
 
     private void validateFolioCount(List<Folio> folios) {
-        if (folios.isEmpty() || folios.size() % FOLIOSPORNotebook != 0) {
+        if (folios.isEmpty() || folios.size() % FOLIOS_PER_NOTEBOOK != 0) {
             throw new BusinessValidationException(
-                    "La cantidad de folios debe ser un múltiplo exacto de " + FOLIOSPORNotebook);
+                    "La cantidad de folios debe ser un múltiplo exacto de " + FOLIOS_PER_NOTEBOOK);
         }
     }
 
     private void validateSameNotary(List<Folio> folios, Person notary) {
-        boolean todosMismoNotary = folios.stream()
+        boolean allSameNotary = folios.stream()
                 .allMatch(f -> notary.getPersonId().equals(f.getFkIdNotaryPerson().getPersonId()));
-        if (!todosMismoNotary) {
+        if (!allSameNotary) {
             throw new BusinessValidationException("Todos los folios deben pertenecer al mismo registro notarial");
         }
     }
 
-    private void validateConsecutiveness(List<Folio> foliosOrdenados) {
-        for (int i = 1; i < foliosOrdenados.size(); i++) {
-            int anterior = foliosOrdenados.get(i - 1).getNumber();
-            int actual = foliosOrdenados.get(i).getNumber();
-            if (actual != anterior + 1) {
+    private void validateConsecutiveness(List<Folio> sortedFolios) {
+        for (int i = 1; i < sortedFolios.size(); i++) {
+            int previous = sortedFolios.get(i - 1).getNumber();
+            int current = sortedFolios.get(i).getNumber();
+            if (current != previous + 1) {
                 throw new BusinessValidationException(
                         "Los folios deben ser estrictamente consecutivos y sin faltantes");
             }
@@ -122,15 +122,15 @@ public class NotebookService {
     }
 
     private void validateNotAssigned(List<Folio> folios) {
-        boolean yaAsignado = folios.stream().anyMatch(f -> f.getFkIdNotebook() != null);
-        if (yaAsignado) {
+        boolean alreadyAssigned = folios.stream().anyMatch(f -> f.getFkIdNotebook() != null);
+        if (alreadyAssigned) {
             throw new BusinessValidationException("Uno o más folios ya están asignados a otro cuaderno");
         }
     }
 
     private void validateDamagedFolioJustification(List<Folio> folios, String notes) {
-        boolean hayFolioDanado = folios.stream().anyMatch(f -> ESTADOS_DANADOS.contains(f.getStatus()));
-        if (hayFolioDanado && (notes == null || notes.isBlank())) {
+        boolean hasDamagedFolio = folios.stream().anyMatch(f -> DAMAGED_STATUSES.contains(f.getStatus()));
+        if (hasDamagedFolio && (notes == null || notes.isBlank())) {
             throw new BusinessValidationException(
                     "Un folio dañado o anulado en el lote requiere una justificación en observaciones");
         }

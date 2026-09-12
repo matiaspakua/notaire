@@ -29,7 +29,7 @@ public class AuxiliaryProtocolService {
 
     @Transactional(readOnly = true)
     public List<Folio> listAvailableFolios() {
-        return folioRepository.findFoliosAuxiliaresDisponibles();
+        return folioRepository.findAvailableAuxiliaryFolios();
     }
 
     public int calculateNextNumberAuxiliary() {

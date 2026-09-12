@@ -38,30 +38,30 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
     List<Folio> findAllByIdFolioIn(List<Integer> ids);
 
     @Query("SELECT f FROM Folio f WHERE f.fkIdFolioType.isAuxiliary = true AND f.fkIdDeed IS NULL")
-    List<Folio> findFoliosAuxiliaresDisponibles();
+    List<Folio> findAvailableAuxiliaryFolios();
 
     @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
             + "WHERE f.fkIdFolioType.isAuxiliary = true AND f.fkIdDeed IS NOT NULL")
     Optional<Integer> findMaxNumberDeedAuxiliary();
 
     @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
-            + "WHERE f.fkIdNotaryPerson.idPerson = :idEscribano AND f.year = :anio "
-            + "AND f.fkIdFolioType.isAuxiliary = :esAuxiliar AND f.fkIdDeed IS NOT NULL "
-            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdDeed.idDeed <> :idEscrituraExcluir)")
-    Optional<Integer> findMaxNumberDeedByNotaryYearYType(
-            @Param("idEscribano") Integer idNotary,
-            @Param("anio") int year,
-            @Param("esAuxiliar") boolean isAuxiliary,
-            @Param("idEscrituraExcluir") Integer idDeedExcluir);
+            + "WHERE f.fkIdNotaryPerson.idPerson = :notaryId AND f.year = :year "
+            + "AND f.fkIdFolioType.isAuxiliary = :auxiliary AND f.fkIdDeed IS NOT NULL "
+            + "AND (:excludedDeedId IS NULL OR f.fkIdDeed.idDeed <> :excludedDeedId)")
+    Optional<Integer> findMaxNumberDeedByNotaryYearAndType(
+            @Param("notaryId") Integer idNotary,
+            @Param("year") int year,
+            @Param("auxiliary") boolean isAuxiliary,
+            @Param("excludedDeedId") Integer excludedDeedId);
 
     @Query("SELECT COUNT(f) > 0 FROM Folio f "
-            + "WHERE f.fkIdDeed.number = :numero AND f.fkIdNotaryPerson.idPerson = :idEscribano "
-            + "AND f.year = :anio AND f.fkIdFolioType.isAuxiliary = :esAuxiliar AND f.fkIdDeed IS NOT NULL "
-            + "AND (:idEscrituraExcluir IS NULL OR f.fkIdDeed.idDeed <> :idEscrituraExcluir)")
-    boolean existsNumberDeedByNotaryYearYType(
-            @Param("numero") int number,
-            @Param("idEscribano") Integer idNotary,
-            @Param("anio") int year,
-            @Param("esAuxiliar") boolean isAuxiliary,
-            @Param("idEscrituraExcluir") Integer idDeedExcluir);
+            + "WHERE f.fkIdDeed.number = :number AND f.fkIdNotaryPerson.idPerson = :notaryId "
+            + "AND f.year = :year AND f.fkIdFolioType.isAuxiliary = :auxiliary AND f.fkIdDeed IS NOT NULL "
+            + "AND (:excludedDeedId IS NULL OR f.fkIdDeed.idDeed <> :excludedDeedId)")
+    boolean existsNumberDeedByNotaryYearAndType(
+            @Param("number") int number,
+            @Param("notaryId") Integer idNotary,
+            @Param("year") int year,
+            @Param("auxiliary") boolean isAuxiliary,
+            @Param("excludedDeedId") Integer excludedDeedId);
 }

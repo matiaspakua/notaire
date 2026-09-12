@@ -1,7 +1,7 @@
 package com.licensis.notaire.service;
 
 import com.licensis.notaire.dto.TypeItem;
-import com.licensis.notaire.exception.SaldoPendingExcedidoException;
+import com.licensis.notaire.exception.PendingBalanceExceededException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
@@ -55,13 +55,13 @@ public class PaymentService {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
 
-        Float saldoPending = calculatePendingBalance(idBudget);
-        log.info("Saldo pendiente para presupuesto {}: {}", idBudget, saldoPending);
+        Float pendingBalance = calculatePendingBalance(idBudget);
+        log.info("Saldo pendiente para presupuesto {}: {}", idBudget, pendingBalance);
 
-        if (amount > saldoPending) {
-            throw new SaldoPendingExcedidoException(
+        if (amount > pendingBalance) {
+            throw new PendingBalanceExceededException(
                     String.format("El monto del pago ($%.2f) no puede exceder el saldo pendiente ($%.2f)",
-                            amount, saldoPending));
+                            amount, pendingBalance));
         }
 
         Payment payment = new Payment();
@@ -104,17 +104,17 @@ public class PaymentService {
                         "Presupuesto no encontrado con ID: " + idBudget));
 
         Float totalBudget = calculateBudgetTotal(budget);
-        Float totalPagado = paymentRepository.sumAmountByBudgetId(idBudget);
-        Float saldoPending = totalBudget - (totalPagado != null ? totalPagado : 0f);
+        Float totalPaid = paymentRepository.sumAmountByBudgetId(idBudget);
+        Float pendingBalance = totalBudget - (totalPaid != null ? totalPaid : 0f);
 
-        log.debug("Saldo pendiente para presupuesto {}: {}", idBudget, saldoPending);
-        return saldoPending;
+        log.debug("Saldo pendiente para presupuesto {}: {}", idBudget, pendingBalance);
+        return pendingBalance;
     }
 
     /**
      * CU15/CU47 - Calcula el estado de pago agregado de un presupuesto (Issue #821):
-     * SIN_PAGOS si no se registró ningún pago, SALDADO si el saldo pendiente es cero,
-     * PARCIAL en cualquier otro caso.
+     * SIN_PAGOS si no se registró ningún pago, PAID si el saldo pendiente es cero,
+     * PARTIAL en cualquier otro caso.
      */
     @Transactional(readOnly = true)
     public StatusPayment calculatePaymentStatus(Integer idBudget) {
@@ -122,13 +122,13 @@ public class PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + idBudget));
 
-        Float totalPagado = paymentRepository.sumAmountByBudgetId(idBudget);
-        if (totalPagado == null || totalPagado == 0f) {
-            return StatusPayment.SINPayments;
+        Float totalPaid = paymentRepository.sumAmountByBudgetId(idBudget);
+        if (totalPaid == null || totalPaid == 0f) {
+            return StatusPayment.NoPayments;
         }
 
-        Float saldoPending = calculatePendingBalance(idBudget);
-        return saldoPending <= 0f ? StatusPayment.SALDADO : StatusPayment.PARCIAL;
+        Float pendingBalance = calculatePendingBalance(idBudget);
+        return pendingBalance <= 0f ? StatusPayment.PAID : StatusPayment.PARTIAL;
     }
 
     /**
@@ -149,10 +149,10 @@ public class PaymentService {
                 }
             }
         }
-        return total + sumarCostosDocumentsPresentados(budget);
+        return total + sumSubmittedDocumentCosts(budget);
     }
 
-    private float sumarCostosDocumentsPresentados(Budget budget) {
+    private float sumSubmittedDocumentCosts(Budget budget) {
         if (budget.getProcedureList() == null) {
             return 0f;
         }
@@ -200,15 +200,15 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment editarPayment(Integer idPayment, Float amount, Date date, String notes) {
-        return editarPayment(idPayment, amount, date, notes, null);
+    public Payment editPayment(Integer idPayment, Float amount, Date date, String notes) {
+        return editPayment(idPayment, amount, date, notes, null);
     }
 
     /**
      * Edita un pago existente.
      */
     @Transactional
-    public Payment editarPayment(Integer idPayment, Float amount, Date date, String notes, String paymentMethod) {
+    public Payment editPayment(Integer idPayment, Float amount, Date date, String notes, String paymentMethod) {
         log.info("Editando pago con ID: {}", idPayment);
         Payment payment = paymentRepository.findById(idPayment)
                 .orElseThrow(() -> new IllegalArgumentException("Pago no encontrado con ID: " + idPayment));

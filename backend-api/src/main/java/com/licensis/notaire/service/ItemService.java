@@ -51,7 +51,7 @@ public class ItemService {
      * de un presupuesto, junto con su motivo.
      */
     @Transactional(readOnly = true)
-    public List<Item> findDescuentosYRecargosByBudget(Integer idBudget) {
+    public List<Item> findDiscountsAndSurchargesByBudget(Integer idBudget) {
         if (!budgetRepository.existsById(idBudget)) {
             throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
         }
@@ -62,7 +62,7 @@ public class ItemService {
 
     @Transactional
     public Item create(Item item) {
-        validarReason(item);
+        validateReason(item);
         return itemRepository.save(item);
     }
 
@@ -71,7 +71,7 @@ public class ItemService {
         if (!itemRepository.existsById(id)) {
             throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
         }
-        validarReason(item);
+        validateReason(item);
         item.setIdItem(id);
         return itemRepository.save(item);
     }
@@ -89,12 +89,12 @@ public class ItemService {
      * CU45 - Exigir motivo estructurado en descuentos y recargos: rechaza items de tipo
      * DESCUENTO o RECARGO sin un motivo no vacío.
      */
-    private void validarReason(Item item) {
+    private void validateReason(Item item) {
         TypeItem type = item.getType();
-        boolean requiereReason = type == TypeItem.DESCUENTO || type == TypeItem.RECARGO;
-        boolean reasonVacio = item.getReason() == null || item.getReason().isBlank();
+        boolean requiresReason = type == TypeItem.DESCUENTO || type == TypeItem.RECARGO;
+        boolean reasonEmpty = item.getReason() == null || item.getReason().isBlank();
 
-        if (requiereReason && reasonVacio) {
+        if (requiresReason && reasonEmpty) {
             throw new BusinessValidationException(
                     "El motivo es obligatorio para ítems de tipo " + type);
         }

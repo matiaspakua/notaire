@@ -182,7 +182,7 @@ class PaymentServiceTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente with null totalPagado")
+    @DisplayName("Should calculate saldo pendiente with null totalPaid")
     void shouldCalculateSaldoPendingWithNullTotal() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
@@ -202,29 +202,29 @@ class PaymentServiceTest {
 
         StatusPayment result = paymentService.calculatePaymentStatus(1);
 
-        assertThat(result).isEqualTo(StatusPayment.SINPayments);
+        assertThat(result).isEqualTo(StatusPayment.NoPayments);
     }
 
     @Test
-    @DisplayName("Should report status PARCIAL when saldo pendiente is positive but some payments exist")
+    @DisplayName("Should report status PARTIAL when saldo pendiente is positive but some payments exist")
     void shouldCalculateStatusPaymentParcial() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(1000f);
 
         StatusPayment result = paymentService.calculatePaymentStatus(1);
 
-        assertThat(result).isEqualTo(StatusPayment.PARCIAL);
+        assertThat(result).isEqualTo(StatusPayment.PARTIAL);
     }
 
     @Test
-    @DisplayName("Should report status SALDADO when saldo pendiente is zero")
+    @DisplayName("Should report status PAID when saldo pendiente is zero")
     void shouldCalculateStatusPaymentSaldado() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(5000f);
 
         StatusPayment result = paymentService.calculatePaymentStatus(1);
 
-        assertThat(result).isEqualTo(StatusPayment.SALDADO);
+        assertThat(result).isEqualTo(StatusPayment.PAID);
     }
 
     @Test
@@ -298,7 +298,7 @@ class PaymentServiceTest {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
         when(paymentRepository.save(any(Payment.class))).thenReturn(editedPayment);
 
-        Payment result = paymentService.editarPayment(1, 2000f, testDate, "Edited");
+        Payment result = paymentService.editPayment(1, 2000f, testDate, "Edited");
 
         assertThat(result).isNotNull()
                 .extracting(Payment::getAmount)
@@ -313,7 +313,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> paymentService.editarPayment(999, 1000f, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.editPayment(999, 1000f, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Pago no encontrado");
 
@@ -325,7 +325,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenEditingWithInvalidAmount() {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
 
-        assertThatThrownBy(() -> paymentService.editarPayment(1, -100f, testDate, "Test"))
+        assertThatThrownBy(() -> paymentService.editPayment(1, -100f, testDate, "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
