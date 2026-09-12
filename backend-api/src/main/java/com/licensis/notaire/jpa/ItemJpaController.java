@@ -6,8 +6,8 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.Presupuesto;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.business.Budget;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.persistence.EntityManager;
@@ -45,17 +45,17 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Presupuesto fkIdPresupuesto = item.getFkIdPresupuesto();
-            if (fkIdPresupuesto != null)
+            Budget fkIdBudget = item.getFkIdBudget();
+            if (fkIdBudget != null)
             {
-                fkIdPresupuesto = em.getReference(fkIdPresupuesto.getClass(), fkIdPresupuesto.getIdPresupuesto());
-                item.setFkIdPresupuesto(fkIdPresupuesto);
+                fkIdBudget = em.getReference(fkIdBudget.getClass(), fkIdBudget.getIdBudget());
+                item.setFkIdBudget(fkIdBudget);
             }
             em.persist(item);
-            if (fkIdPresupuesto != null)
+            if (fkIdBudget != null)
             {
-                fkIdPresupuesto.getItemList().add(item);
-                fkIdPresupuesto = em.merge(fkIdPresupuesto);
+                fkIdBudget.getItemList().add(item);
+                fkIdBudget = em.merge(fkIdBudget);
             }
             em.getTransaction().commit();
             id = item.getIdItem();
@@ -79,23 +79,23 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
             em = getEntityManager();
             em.getTransaction().begin();
             Item persistentItem = em.find(Item.class, item.getIdItem());
-            Presupuesto fkIdPresupuestoOld = persistentItem.getFkIdPresupuesto();
-            Presupuesto fkIdPresupuestoNew = item.getFkIdPresupuesto();
-            if (fkIdPresupuestoNew != null)
+            Budget fkIdBudgetOld = persistentItem.getFkIdBudget();
+            Budget fkIdBudgetNew = item.getFkIdBudget();
+            if (fkIdBudgetNew != null)
             {
-                fkIdPresupuestoNew = em.getReference(fkIdPresupuestoNew.getClass(), fkIdPresupuestoNew.getIdPresupuesto());
-                item.setFkIdPresupuesto(fkIdPresupuestoNew);
+                fkIdBudgetNew = em.getReference(fkIdBudgetNew.getClass(), fkIdBudgetNew.getIdBudget());
+                item.setFkIdBudget(fkIdBudgetNew);
             }
             item = em.merge(item);
-            if (fkIdPresupuestoOld != null && !fkIdPresupuestoOld.equals(fkIdPresupuestoNew))
+            if (fkIdBudgetOld != null && !fkIdBudgetOld.equals(fkIdBudgetNew))
             {
-                fkIdPresupuestoOld.getItemList().remove(item);
-                fkIdPresupuestoOld = em.merge(fkIdPresupuestoOld);
+                fkIdBudgetOld.getItemList().remove(item);
+                fkIdBudgetOld = em.merge(fkIdBudgetOld);
             }
-            if (fkIdPresupuestoNew != null && !fkIdPresupuestoNew.equals(fkIdPresupuestoOld))
+            if (fkIdBudgetNew != null && !fkIdBudgetNew.equals(fkIdBudgetOld))
             {
-                fkIdPresupuestoNew.getItemList().add(item);
-                fkIdPresupuestoNew = em.merge(fkIdPresupuestoNew);
+                fkIdBudgetNew.getItemList().add(item);
+                fkIdBudgetNew = em.merge(fkIdBudgetNew);
             }
             em.getTransaction().commit();
             modificado = Boolean.TRUE;
@@ -142,11 +142,11 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
             {
                 throw new NonexistentEntityException("The item with id " + id + " no longer exists.", enfe);
             }
-            Presupuesto fkIdPresupuesto = item.getFkIdPresupuesto();
-            if (fkIdPresupuesto != null)
+            Budget fkIdBudget = item.getFkIdBudget();
+            if (fkIdBudget != null)
             {
-                fkIdPresupuesto.getItemList().remove(item);
-                fkIdPresupuesto = em.merge(fkIdPresupuesto);
+                fkIdBudget.getItemList().remove(item);
+                fkIdBudget = em.merge(fkIdBudget);
             }
             em.remove(item);
             em.getTransaction().commit();
@@ -218,7 +218,7 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public List<Item> findItemsPresupuesto(Integer pIdPresupuesto)
+    public List<Item> findItemsBudget(Integer pIdBudget)
     {
         EntityManager em = getEntityManager();
 
@@ -230,7 +230,7 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
             Query q = em.createNamedQuery("Item.findByPresupuesto");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPresupuesto", pIdPresupuesto);
+            q.setParameter("idPresupuesto", pIdBudget);
 
             misItems = (List<Item>) q.getResultList();
 
@@ -244,7 +244,7 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
     }
 
     @Override
-    public String getNombreJpa()
+    public String getNameJpa()
     {
         return this.getClass().getName();
     }

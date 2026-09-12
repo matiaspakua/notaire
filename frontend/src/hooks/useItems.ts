@@ -37,9 +37,9 @@ export function useCreateItem() {
     mutationFn: (data: Partial<Item>) => apiPost<void>("/items", data),
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: itemsKeys.all });
-      if (variables.presupuesto?.idPresupuesto) {
+      if (variables.fkIdBudget?.idBudget) {
         qc.invalidateQueries({
-          queryKey: itemsKeys.byPresupuesto(variables.presupuesto.idPresupuesto),
+          queryKey: itemsKeys.byPresupuesto(variables.fkIdBudget.idBudget),
         });
       }
     },

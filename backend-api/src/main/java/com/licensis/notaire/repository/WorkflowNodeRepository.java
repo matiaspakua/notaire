@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +12,5 @@ public interface WorkflowNodeRepository extends JpaRepository<WorkflowNode, Inte
 
     List<WorkflowNode> findByWorkflowDefinitionId(Integer workflowDefinitionId);
 
-    List<WorkflowNode> findByWorkflowDefinitionIdAndTipo(Integer workflowDefinitionId, WorkflowNodeType tipo);
+    List<WorkflowNode> findByWorkflowDefinitionIdAndType(Integer workflowDefinitionId, WorkflowNodeType type);
 }

@@ -17,7 +17,7 @@ http:
           "fechaInicio": "2026-09-05",
           "numero": 900001,
           "encabezado": "Gestion Historial E2E",
-          "fkIdPersonaEscribano": { "idPersona": {{_historial_escribano_id}} },
+          "fkIdPersonaEscribano": { "personId": {{_historial_escribano_id}} },
           "fkIdEstadoDeGestion": { "idEstadoGestion": 1 }
         }
   headers:

@@ -1,7 +1,7 @@
 package com.licensis.notaire.repository;
 
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,30 +13,30 @@ import java.util.Optional;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
-    Optional<Person> findByNumeroIdentificacion(String numeroIdentificacion);
+    Optional<Person> findByIdentificationNumber(String identificationNumber);
 
-    List<Person> findByEsCliente(boolean esCliente);
+    List<Person> findByIsClient(boolean isClient);
 
-    List<Person> findBySexo(String sexo);
+    List<Person> findBySex(String sex);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
-    List<Person> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nombre, '%'))")
+    List<Person> findByNameContainingIgnoreCase(@Param("nombre") String name);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.apellido) LIKE LOWER(CONCAT('%', :apellido, '%'))")
-    List<Person> findByApellidoContainingIgnoreCase(@Param("apellido") String apellido);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.lastName) LIKE LOWER(CONCAT('%', :apellido, '%'))")
+    List<Person> findByLastNameContainingIgnoreCase(@Param("apellido") String lastName);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) "
-            + "AND LOWER(p.apellido) LIKE LOWER(CONCAT('%', :apellido, '%'))")
-    List<Person> findByNombreAndApellidoContainingIgnoreCase(@Param("nombre") String nombre,
-            @Param("apellido") String apellido);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nombre, '%')) "
+            + "AND LOWER(p.lastName) LIKE LOWER(CONCAT('%', :apellido, '%'))")
+    List<Person> findByNameAndLastNameContainingIgnoreCase(@Param("nombre") String name,
+            @Param("apellido") String lastName);
 
-    List<Person> findByFkIdTipoIdentificacion(TipoIdentificacion tipoIdentificacion);
+    List<Person> findByFkIdIdentificationType(IdentificationType identificationType);
 
-    List<Person> findByFkIdTipoIdentificacionIdTipoIdentificacion(Integer idTipoIdentificacion);
+    List<Person> findByFkIdIdentificationTypeIdIdentificationType(Integer idIdentificationType);
 
-    @Query("SELECT p FROM Person p WHERE p.registroEscribano IS NOT NULL")
+    @Query("SELECT p FROM Person p WHERE p.notaryRegistrationNumber IS NOT NULL")
     List<Person> findAllEscribanos();
 
-    @Query("SELECT p FROM Person p WHERE p.esCliente = true")
+    @Query("SELECT p FROM Person p WHERE p.isClient = true")
     List<Person> findAllClientes();
 }

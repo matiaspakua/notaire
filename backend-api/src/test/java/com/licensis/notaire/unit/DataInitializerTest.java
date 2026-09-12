@@ -1,12 +1,12 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.config.DataInitializer;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
-import com.licensis.notaire.repository.UsuarioRepository;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
+import com.licensis.notaire.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,11 +33,11 @@ class DataInitializerTest {
     private static final String BCRYPT_ADMIN = "$2a$12$stub.bcrypt.hash.for.admin.password";
 
     @Mock
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
     @Mock
-    private PersonRepository personaRepository;
+    private PersonRepository personRepository;
     @Mock
-    private TipoIdentificacionRepository tipoIdentificacionRepository;
+    private IdentificationTypeRepository identificationTypeRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -46,7 +46,7 @@ class DataInitializerTest {
     @BeforeEach
     void setUp() {
         dataInitializer = new DataInitializer(
-                usuarioRepository, personaRepository, tipoIdentificacionRepository, passwordEncoder);
+                userRepository, personRepository, identificationTypeRepository, passwordEncoder);
         ReflectionTestUtils.setField(dataInitializer, "adminUsername", "admin");
         ReflectionTestUtils.setField(dataInitializer, "adminPassword", "admin");
     }
@@ -54,39 +54,39 @@ class DataInitializerTest {
     @Test
     @DisplayName("Should not modify an already-existing admin user (issue #553)")
     void shouldNotModifyExistingAdminUser() {
-        Usuario existing = new Usuario();
-        existing.setNombre("admin");
-        existing.setContrasenia("hash-ya-rotado-por-el-operador");
-        existing.setEstado(false);
-        when(usuarioRepository.findByNombre("admin")).thenReturn(Optional.of(existing));
+        User existing = new User();
+        existing.setName("admin");
+        existing.setPassword("hash-ya-rotado-por-el-operador");
+        existing.setStatus(false);
+        when(userRepository.findByName("admin")).thenReturn(Optional.of(existing));
 
         dataInitializer.run(null);
 
-        verify(usuarioRepository, never()).save(any());
-        verify(personaRepository, never()).save(any());
-        assertThat(existing.getContrasenia()).isEqualTo("hash-ya-rotado-por-el-operador");
-        assertThat(existing.getEstado()).isFalse();
+        verify(userRepository, never()).save(any());
+        verify(personRepository, never()).save(any());
+        assertThat(existing.getPassword()).isEqualTo("hash-ya-rotado-por-el-operador");
+        assertThat(existing.getStatus()).isFalse();
     }
 
     @Test
     @DisplayName("Should create admin user with BCrypt password when none exists")
     void shouldCreateAdminUserWhenNoneExists() {
-        when(usuarioRepository.findByNombre("admin")).thenReturn(Optional.empty());
-        TipoIdentificacion tipo = new TipoIdentificacion();
-        tipo.setNombre("DNI");
-        when(tipoIdentificacionRepository.findAll()).thenReturn(List.of(tipo));
+        when(userRepository.findByName("admin")).thenReturn(Optional.empty());
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        when(identificationTypeRepository.findAll()).thenReturn(List.of(type));
         when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_ADMIN);
 
         dataInitializer.run(null);
 
-        verify(personaRepository).save(any(Person.class));
-        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
-        verify(usuarioRepository).save(captor.capture());
-        Usuario created = captor.getValue();
-        assertThat(created.getNombre()).isEqualTo("admin");
-        assertThat(created.getContrasenia()).isEqualTo(BCRYPT_ADMIN);
-        assertThat(created.getEstado()).isTrue();
-        assertThat(created.getFkIdPersona()).isNotNull();
+        verify(personRepository).save(any(Person.class));
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+        User created = captor.getValue();
+        assertThat(created.getName()).isEqualTo("admin");
+        assertThat(created.getPassword()).isEqualTo(BCRYPT_ADMIN);
+        assertThat(created.getStatus()).isTrue();
+        assertThat(created.getFkIdPerson()).isNotNull();
     }
 
     @Test
@@ -94,28 +94,28 @@ class DataInitializerTest {
     void shouldUseConfiguredAdminCredentials() {
         ReflectionTestUtils.setField(dataInitializer, "adminUsername", "custom-admin");
         ReflectionTestUtils.setField(dataInitializer, "adminPassword", "custom-pass");
-        when(usuarioRepository.findByNombre("custom-admin")).thenReturn(Optional.empty());
-        TipoIdentificacion tipo = new TipoIdentificacion();
-        tipo.setNombre("DNI");
-        when(tipoIdentificacionRepository.findAll()).thenReturn(List.of(tipo));
+        when(userRepository.findByName("custom-admin")).thenReturn(Optional.empty());
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        when(identificationTypeRepository.findAll()).thenReturn(List.of(type));
         when(passwordEncoder.encode("custom-pass")).thenReturn(BCRYPT_ADMIN);
 
         dataInitializer.run(null);
 
-        ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
-        verify(usuarioRepository).save(captor.capture());
-        assertThat(captor.getValue().getNombre()).isEqualTo("custom-admin");
-        assertThat(captor.getValue().getContrasenia()).isEqualTo(BCRYPT_ADMIN);
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+        assertThat(captor.getValue().getName()).isEqualTo("custom-admin");
+        assertThat(captor.getValue().getPassword()).isEqualTo(BCRYPT_ADMIN);
     }
 
     @Test
     @DisplayName("Should not propagate exceptions when persistence fails")
     void shouldNotPropagateExceptionsWhenPersistenceFails() {
-        when(usuarioRepository.findByNombre("admin")).thenThrow(new RuntimeException("DB down"));
+        when(userRepository.findByName("admin")).thenThrow(new RuntimeException("DB down"));
 
         // Must not throw — startup should never be blocked by the seeder.
         dataInitializer.run(null);
 
-        verify(usuarioRepository, never()).save(any());
+        verify(userRepository, never()).save(any());
     }
 }

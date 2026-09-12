@@ -19,7 +19,7 @@ import { apiPost } from './setup/api-helpers'
 
 /** Seed a folio in estado "Nuevo" and return its idFolio */
 async function seedFolioNuevo(page: Page): Promise<number> {
-  const result = await createFolio(page, 1, { estado: 'Nuevo' })
+  const result = await createFolio(page, 1, { status: 'Nuevo' })
   if (!result.ok || !result.data?.idFolio) {
     throw new Error(`Failed to seed folio: ${result.error ?? JSON.stringify(result.data)}`)
   }
@@ -33,18 +33,18 @@ async function seedFolioNuevo(page: Page): Promise<number> {
  */
 async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-    numero: id,
-    fechaEscrituracion: new Date().toISOString().split('T')[0],
-    cuerpo: `Escritura para firma E2E ${id}`,
-    estado: 'Sin Firmar',
+  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    number: id,
+    dateDeedrecording: new Date().toISOString().split('T')[0],
+    body: `Escritura para firma E2E ${id}`,
+    status: 'Sin Firmar',
     idFolio,
-    observaciones: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
+    notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
   })
-  if (!result.ok || !result.data?.idEscritura) {
+  if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idEscritura, numero: id }
+  return { idEscritura: result.data.idDeed, numero: id }
 }
 
 /**
@@ -53,16 +53,16 @@ async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idE
  */
 async function seedEscrituraSinFolio(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-    numero: id,
-    fechaEscrituracion: new Date().toISOString().split('T')[0],
-    cuerpo: `Escritura sin folio E2E ${id}`,
-    estado: 'Sin Firmar',
+  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    number: id,
+    dateDeedrecording: new Date().toISOString().split('T')[0],
+    body: `Escritura sin folio E2E ${id}`,
+    status: 'Sin Firmar',
   })
-  if (!result.ok || !result.data?.idEscritura) {
+  if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura sin folio: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idEscritura, numero: id }
+  return { idEscritura: result.data.idDeed, numero: id }
 }
 
 // ──────────────────────────────────────────────
@@ -251,11 +251,11 @@ test.describe('CU63 - Buscar Escritura', () => {
     // Seed a known escritura via API so the search has something to find
     const id = uniqueId()
     const numero = `${id}`
-    const result = await apiPost<{ idEscritura: number }>(page, '/escrituras', {
-      numero: id,
-      fechaEscrituracion: new Date().toISOString().split('T')[0],
-      cuerpo: `Escritura de búsqueda E2E ${id}`,
-      estado: 'Sin Firmar',
+    const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+      number: id,
+      dateDeedrecording: new Date().toISOString().split('T')[0],
+      body: `Escritura de búsqueda E2E ${id}`,
+      status: 'Sin Firmar',
     })
     if (!result.ok) throw new Error(`Seed failed: ${result.error}`)
 

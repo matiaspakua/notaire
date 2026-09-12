@@ -64,7 +64,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
     idUsuario: number;
     nombre: string;
     tipo: string;
-  }>(page, "/usuarios/login", { nombre: "admin", contrasenia: "admin" });
+  }>(page, "/usuarios/login", { name: "admin", password: "admin" });
 
   if (loginResult.ok && loginResult.data?.valido && loginResult.data.token) {
     const { token, idUsuario, nombre, tipo } = loginResult.data;
@@ -110,118 +110,119 @@ async function authenticateAdmin(page: Page): Promise<void> {
  * Seed catalog data needed by most tests
  */
 async function seedCatalogData(page: Page): Promise<void> {
-  // 1. Create a tipo de trámite
-  const ttResult = await apiPost<{ idTipoDeTramite: number; nombre: string }>(
+  // 1. Create a tipo de trámite — ProcedureTypeController accepts a DtoProcedureType
+  // (name, notes, isArchived, isRegistered, associatesProperties).
+  const ttResult = await apiPost<{ idProcedureType: number; name: string }>(
     page,
     "/tipo-tramite",
     {
-      nombre: `Test Tramite ${seedData.testId}`,
-      descripcion: "Seeded by global-setup for E2E tests",
-      seArchiva: false,
-      seInscribe: false,
+      name: `Test Tramite ${seedData.testId}`,
+      notes: "Seeded by global-setup for E2E tests",
+      isArchived: false,
+      isRegistered: false,
     }
   );
-  if (ttResult.ok && ttResult.data?.idTipoDeTramite) {
-    seedData.seedTipoTramiteId = ttResult.data.idTipoDeTramite;
+  if (ttResult.ok && ttResult.data?.idProcedureType) {
+    seedData.seedTipoTramiteId = ttResult.data.idProcedureType;
   }
 
-  // 2. Create a concepto
-  const concResult = await apiPost<{ idConcepto: number; nombre: string }>(
+  // 2. Create a concepto — ConceptController accepts a DtoConcept (name, value, percentage).
+  const concResult = await apiPost<{ idConcept: number; name: string }>(
     page,
     "/conceptos",
     {
-      nombre: `Test Concepto ${seedData.testId}`,
-      descripcion: "Seeded by global-setup",
-      valor: 1000.0,
+      name: `Test Concepto ${seedData.testId}`,
+      value: 1000.0,
     }
   );
-  if (concResult.ok && concResult.data?.idConcepto) {
-    seedData.seedConceptoId = concResult.data.idConcepto;
+  if (concResult.ok && concResult.data?.idConcept) {
+    seedData.seedConceptoId = concResult.data.idConcept;
   }
 
-  // 3. Create a persona (client)
-  const persResult = await apiPost<{ idPersona: number; nombre: string; apellido: string }>(
+  // 3. Create a persona (client) — PersonController accepts the raw Person entity.
+  const persResult = await apiPost<{ personId: number; firstName: string; lastName: string }>(
     page,
-    "/personas",
+    "/people",
     {
-      nombre: "Seed",
-      apellido: `Persona-${seedData.testId}`,
-      numeroIdentificacion: `SEED${seedData.testId}`,
+      firstName: "Seed",
+      lastName: `Persona-${seedData.testId}`,
+      identificationNumber: `SEED${seedData.testId}`,
       email: `seed-${seedData.testId}@notaire.test`,
-      esCliente: true,
-      tipoIdentificacion: { idTipoIdentificacion: 1 },
-      nacionalidad: "Argentina",
-      fechaNacimiento: "1990-01-01",
-      cuit: `20-${String(seedData.testId).padStart(8, "0")}-9`,
-      estadoCivil: "Soltero",
-      sexo: "Masculino",
+      isClient: true,
+      nationality: "Argentina",
+      birthDate: "1990-01-01",
+      taxId: `20-${String(seedData.testId).padStart(8, "0")}-9`,
+      maritalStatus: "Soltero",
+      sex: "Masculino",
     }
   );
-  if (persResult.ok && persResult.data?.idPersona) {
-    seedData.seedPersonaId = persResult.data.idPersona;
+  if (persResult.ok && persResult.data?.personId) {
+    seedData.seedPersonaId = persResult.data.personId;
   }
 
-  // 4. Create a presupuesto (if we have a persona)
+  // 4. Create a presupuesto (if we have a persona) — BudgetController accepts the raw
+  // Budget entity (encabezado, status, notes, person).
   if (seedData.seedPersonaId && seedData.seedConceptoId) {
-    const presResult = await apiPost<{ idPresupuesto: number }>(
+    const presResult = await apiPost<{ idBudget: number }>(
       page,
       "/presupuestos",
       {
-        persona: { idPersona: seedData.seedPersonaId },
-        fecha: "2026-05-27",
+        person: { personId: seedData.seedPersonaId },
+        date: "2026-05-27",
         encabezado: "Presupuesto E2E Seed",
-        estado: "Pendiente",
-        observaciones: `Presupuesto semilla ${seedData.testId}`,
+        status: "Pendiente",
+        notes: `Presupuesto semilla ${seedData.testId}`,
       }
     );
-    if (presResult.ok && presResult.data?.idPresupuesto) {
-      seedData.seedPresupuestoId = presResult.data.idPresupuesto;
+    if (presResult.ok && presResult.data?.idBudget) {
+      seedData.seedPresupuestoId = presResult.data.idBudget;
     }
   }
 
-  // 5. Create a usuario — UsuarioController's record is (nombre, contrasenia, tipo, activo)
-  const usrResult = await apiPost<{ idUsuario: number }>(
+  // 5. Create a usuario — UserController's UserRequest is (name, password, type, active).
+  const usrResult = await apiPost<{ idUser: number }>(
     page,
     "/usuarios",
     {
-      nombre: `testuser-${seedData.testId}`,
-      contrasenia: "Test1234!",
-      tipo: "EMPLEADO",
-      activo: true,
+      name: `testuser-${seedData.testId}`,
+      password: "Test1234!",
+      type: "EMPLEADO",
+      active: true,
     }
   );
-  if (usrResult.ok && usrResult.data?.idUsuario) {
-    seedData.seedUsuarioId = usrResult.data.idUsuario;
+  if (usrResult.ok && usrResult.data?.idUser) {
+    seedData.seedUsuarioId = usrResult.data.idUser;
   }
 
-  // 6. Create a folio — FolioController's record is (numero, anio, estado, observaciones,
-  // tipoFolioId, escribanoId), not the nested fkIdTipoFolio/fkIdPersonaEscribano shape.
+  // 6. Create a folio — FolioController's FolioRequest is (number, year, status, notes,
+  // typeFolioId, notaryId, deedId).
   const folioResult = await apiPost<{ idFolio: number }>(
     page,
     "/folio",
     {
-      numero: Math.floor(10000 + Math.random() * 90000),
-      anio: 2026,
-      estado: "Nuevo",
-      tipoFolioId: 1,
-      escribanoId: seedData.seedPersonaId || 1,
+      number: Math.floor(10000 + Math.random() * 90000),
+      year: 2026,
+      status: "Nuevo",
+      typeFolioId: 1,
+      notaryId: seedData.seedPersonaId || 1,
     }
   );
   if (folioResult.ok && folioResult.data?.idFolio) {
     seedData.seedFolioId = folioResult.data.idFolio;
   }
 
-  // 7. Create an estado de gestión
-  const egResult = await apiPost<{ idEstadoGestion: number }>(
+  // 7. Create an estado de gestión — ManagementStatusController accepts a
+  // DtoManagementStatus (name, notes).
+  const egResult = await apiPost<{ idManagementStatus: number }>(
     page,
     "/estado-gestion",
     {
-      nombre: `Seed Estado ${seedData.testId}`,
-      descripcion: "Seeded by global-setup",
+      name: `Seed Estado ${seedData.testId}`,
+      notes: "Seeded by global-setup",
     }
   );
-  if (egResult.ok && egResult.data?.idEstadoGestion) {
-    seedData.seedEstadoGestionId = egResult.data.idEstadoGestion;
+  if (egResult.ok && egResult.data?.idManagementStatus) {
+    seedData.seedEstadoGestionId = egResult.data.idManagementStatus;
   }
 }
 

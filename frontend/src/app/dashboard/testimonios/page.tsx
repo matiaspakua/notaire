@@ -35,7 +35,7 @@ export default function TestimoniosPage() {
   const [observaciones, setObservaciones] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
-  const escriturasFirmadas = escrituras.filter((e) => e.estado === ESTADO_FIRMADA);
+  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
 
   function openGenerar() {
     setIdEscritura("");
@@ -43,7 +43,7 @@ export default function TestimoniosPage() {
   }
 
   function openVerificar(testimonio: Testimonio) {
-    setVerificarId(testimonio.idTestimonio!);
+    setVerificarId(testimonio.idTestimony!);
     setObservado(false);
     setObservaciones("");
   }
@@ -71,8 +71,8 @@ export default function TestimoniosPage() {
 
   async function handleDescargarCopia(testimonio: Testimonio) {
     try {
-      setDownloadingId(testimonio.idTestimonio!);
-      await descargarCopiaTestimonio(testimonio.idTestimonio!);
+      setDownloadingId(testimonio.idTestimony!);
+      await descargarCopiaTestimonio(testimonio.idTestimony!);
     } catch {
       toast.error(t("errorCopia"));
     } finally {
@@ -81,14 +81,14 @@ export default function TestimoniosPage() {
   }
 
   function estadoLabel(testimonio: Testimonio): string {
-    if (!testimonio.verificado) return t("estadoGenerado");
-    return testimonio.observado ? t("estadoObservado") : t("estadoVerificado");
+    if (!testimonio.verified) return t("estadoGenerado");
+    return testimonio.flagged ? t("estadoObservado") : t("estadoVerificado");
   }
 
   const columns: Column<Testimonio>[] = [
-    { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimonio}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.numero}</span> },
-    { key: "escritura", header: t("fields.escritura"), render: (te) => te.escritura?.numero ?? "—" },
+    { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimony}</span>, className: "w-12" },
+    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
+    { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
     { key: "estado", header: t("fields.estado"), render: (te) => estadoLabel(te) },
     {
       key: "actions",
@@ -96,25 +96,25 @@ export default function TestimoniosPage() {
       className: "w-32",
       render: (te) => (
         <div className="flex gap-2 justify-end">
-          {!te.verificado && (
+          {!te.verified && (
             <Button
               size="sm"
               variant="ghost"
               onClick={() => openVerificar(te)}
               aria-label={t("verificarTestimonio")}
-              data-testid={`btn-verificar-testimonio-${te.idTestimonio}`}
+              data-testid={`btn-verificar-testimonio-${te.idTestimony}`}
             >
               <CheckCircle2 className="h-4 w-4" />
             </Button>
           )}
-          {te.verificado && (
+          {te.verified && (
             <Button
               size="sm"
               variant="ghost"
               onClick={() => handleDescargarCopia(te)}
-              disabled={downloadingId === te.idTestimonio}
+              disabled={downloadingId === te.idTestimony}
               aria-label={t("emitirCopia")}
-              data-testid={`btn-emitir-copia-${te.idTestimonio}`}
+              data-testid={`btn-emitir-copia-${te.idTestimony}`}
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -136,7 +136,7 @@ export default function TestimoniosPage() {
         }
       />
 
-      <DataTable data={testimonios} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimonio!} emptyMessage={t("noData")} />
+      <DataTable data={testimonios} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
@@ -149,8 +149,8 @@ export default function TestimoniosPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {escriturasFirmadas.map((e) => (
-                      <SelectItem key={e.idEscritura} value={String(e.idEscritura)}>
-                        {t("fields.numero")} {e.numero}
+                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
+                        {t("fields.numero")} {e.number}
                       </SelectItem>
                     ))}
                   </SelectContent>

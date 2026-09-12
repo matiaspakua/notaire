@@ -15,24 +15,24 @@ import {
 
 async function seedGestionConDocumentoEntidadExterna(page: Page, nombreDocumento: string) {
   const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
+  const presupuesto = await createPresupuesto(page, persona.data!.personId);
   const estado = await createEstadoGestion(page);
   const tipoTramite = await createTipoTramite(page);
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idPresupuesto,
-    escribanoId: persona.data!.idPersona,
-    estadoGestionId: estado.data!.idEstadoGestion,
-    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
+    presupuestoId: presupuesto.data!.idBudget,
+    escribanoId: persona.data!.personId,
+    estadoGestionId: estado.data!.idManagementStatus,
+    tipoTramiteId: tipoTramite.data!.idProcedureType,
   });
-  const tramite = await createTramite(page, gestion.data!.idGestion, tipoTramite.data!.idTipoDeTramite);
-  const documento = await createDocumentoEntidadExterna(page, tramite.data!.idTramite, {
-    nombre: nombreDocumento,
+  const tramite = await createTramite(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
+  const documento = await createDocumentoEntidadExterna(page, tramite.data!.idProcedure, {
+    name: nombreDocumento,
   });
 
   return {
-    idGestion: gestion.data!.idGestion,
-    numero: gestion.data!.numero,
-    idDocumentoPresentado: documento.data!.idDocumentoPresentado,
+    idGestion: gestion.data!.idManagement,
+    numero: gestion.data!.number,
+    idDocumentoPresentado: documento.data!.idSubmittedDocument,
   };
 }
 
@@ -73,22 +73,22 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
 
   test("edge path: a gestión without entidad externa documents shows the empty state", async ({ page }) => {
     const persona = await createPersona(page);
-    const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
+    const presupuesto = await createPresupuesto(page, persona.data!.personId);
     const estado = await createEstadoGestion(page);
     const tipoTramite = await createTipoTramite(page);
     const gestion = await createCompleteCaseGestion(page, {
-      presupuestoId: presupuesto.data!.idPresupuesto,
-      escribanoId: persona.data!.idPersona,
-      estadoGestionId: estado.data!.idEstadoGestion,
-      tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
+      presupuestoId: presupuesto.data!.idBudget,
+      escribanoId: persona.data!.personId,
+      estadoGestionId: estado.data!.idManagementStatus,
+      tipoTramiteId: tipoTramite.data!.idProcedureType,
     });
 
     await page.goto("/dashboard/documentos-entidades-externas");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-documentos-${gestion.data!.idGestion}`).click();
+    await page.getByTestId(`btn-ver-documentos-${gestion.data!.idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();

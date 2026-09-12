@@ -48,7 +48,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(post("/api/v1/usuarios/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"nombre": "", "contrasenia": ""}
+                                    {"name": "", "password": ""}
                                     """))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.valido").value(false));
@@ -60,7 +60,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(post("/api/v1/usuarios/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"nombre": "admin", "contrasenia": null}
+                                    {"name": "admin", "password": null}
                                     """))
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
@@ -74,7 +74,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(post("/api/v1/usuarios/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"nombre": "admin' OR '1'='1", "contrasenia": "anything"}
+                                    {"name": "admin' OR '1'='1", "password": "anything"}
                                     """))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.valido").value(false));
@@ -87,7 +87,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(post("/api/v1/usuarios/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"nombre": "%s", "contrasenia": "pass"}
+                                    {"name": "%s", "password": "pass"}
                                     """.formatted(longName)))
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
@@ -113,7 +113,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(get("/api/v1/people/xyz"))
                     .andExpect(status().is4xxClientError());
 
-            mockMvc.perform(get("/api/v1/gestiones/not-a-number"))
+            mockMvc.perform(get("/api/v1/gestiones/not-a-numero"))
                     .andExpect(status().is4xxClientError());
         }
 
@@ -180,12 +180,12 @@ class EdgeCaseBoundaryConditionsTest {
     class InputValidationEdgeCases {
 
         @Test
-        @DisplayName("Creating concepto with missing nombre returns error, not crash")
-        void createConceptoWithMissingNameReturnsError() throws Exception {
+        @DisplayName("Creating concepto with missing name returns error, not crash")
+        void createConceptWithMissingNameReturnsError() throws Exception {
             mockMvc.perform(post("/api/v1/conceptos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"valor": 100}
+                                    {"value": 100}
                                     """))
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
@@ -195,7 +195,7 @@ class EdgeCaseBoundaryConditionsTest {
 
         @Test
         @DisplayName("Creating usuario with empty body returns error, not 200")
-        void createUsuarioWithEmptyBodyReturnsError() throws Exception {
+        void createUserWithEmptyBodyReturnsError() throws Exception {
             mockMvc.perform(post("/api/v1/usuarios")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}"))

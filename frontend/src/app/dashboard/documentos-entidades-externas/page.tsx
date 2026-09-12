@@ -21,16 +21,16 @@ import { extractApiError, formatDate } from "@/lib/utils";
 import type { DocumentoEntidadExterna, GestionDeEscritura, MovimientoDocumentoEntidadExternaInput } from "@/types";
 
 const emptyMovimiento: MovimientoDocumentoEntidadExternaInput = {
-  preparado: false,
-  numeroCarton: undefined,
-  fechaIngreso: "",
-  fechaSalida: "",
-  observado: false,
-  importeAPagar: undefined,
-  fechaPago: "",
-  fechaLiberado: "",
-  observaciones: "",
-  entregado: false,
+  prepared: false,
+  cardNumber: undefined,
+  dateEntry: "",
+  dateExit: "",
+  flagged: false,
+  amountToPay: undefined,
+  datePayment: "",
+  dateReleased: "",
+  notes: "",
+  delivered: false,
 };
 
 export default function DocumentosEntidadesExternasPage() {
@@ -51,16 +51,16 @@ export default function DocumentosEntidadesExternasPage() {
   function openEditar(documento: DocumentoEntidadExterna) {
     setEditingDocumento(documento);
     setMovimiento({
-      preparado: documento.preparado ?? false,
-      numeroCarton: documento.numeroCarton,
-      fechaIngreso: documento.fechaIngreso ?? "",
-      fechaSalida: documento.fechaSalida ?? "",
-      observado: documento.observado ?? false,
-      importeAPagar: documento.importeAPagar,
-      fechaPago: documento.fechaPago ?? "",
-      fechaLiberado: documento.fechaLiberado ?? "",
-      observaciones: documento.observaciones ?? "",
-      entregado: documento.entregado ?? false,
+      prepared: documento.prepared ?? false,
+      cardNumber: documento.cardNumber,
+      dateEntry: documento.dateEntry ?? "",
+      dateExit: documento.dateExit ?? "",
+      flagged: documento.flagged ?? false,
+      amountToPay: documento.amountToPay,
+      datePayment: documento.datePayment ?? "",
+      dateReleased: documento.dateReleased ?? "",
+      notes: documento.notes ?? "",
+      delivered: documento.delivered ?? false,
     });
   }
 
@@ -69,7 +69,7 @@ export default function DocumentosEntidadesExternasPage() {
     try {
       await registrarMutation.mutateAsync({
         gestionId: selectedGestionId,
-        idDocumentoPresentado: editingDocumento.idDocumentoPresentado,
+        idDocumentoPresentado: editingDocumento.idSubmittedDocument,
         movimiento,
       });
       toast.success(t("movimientoRegistrado"));
@@ -80,9 +80,9 @@ export default function DocumentosEntidadesExternasPage() {
   }
 
   const gestionColumns: Column<GestionDeEscritura>[] = [
-    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.numero}</span> },
+    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "encabezado", header: t("fields.encabezado"), render: (g) => g.encabezado ?? "—" },
-    { key: "estadoActual", header: tc("status"), render: (g) => g.estadoActual ?? "—" },
+    { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
       key: "actions",
       header: "",
@@ -92,9 +92,9 @@ export default function DocumentosEntidadesExternasPage() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setSelectedGestionId(g.idGestion!)}
+            onClick={() => setSelectedGestionId(g.idManagement!)}
             aria-label={t("verDocumentos")}
-            data-testid={`btn-ver-documentos-${g.idGestion}`}
+            data-testid={`btn-ver-documentos-${g.idManagement}`}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -104,18 +104,18 @@ export default function DocumentosEntidadesExternasPage() {
   ];
 
   const documentoColumns: Column<DocumentoEntidadExterna>[] = [
-    { key: "nombre", header: t("fields.nombre"), render: (d) => d.nombre ?? "—" },
+    { key: "nombre", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
     {
-      key: "entregado",
+      key: "delivered",
       header: t("fields.entregado"),
       render: (d) => (
-        <Badge variant={d.entregado ? "success" : "secondary"}>
-          {d.entregado ? tc("yes") : tc("no")}
+        <Badge variant={d.delivered ? "success" : "secondary"}>
+          {d.delivered ? tc("yes") : tc("no")}
         </Badge>
       ),
     },
-    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (d) => formatDate(d.fechaIngreso) },
-    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (d) => formatDate(d.fechaSalida) },
+    { key: "dateEntry", header: t("fields.fechaIngreso"), render: (d) => formatDate(d.dateEntry) },
+    { key: "dateExit", header: t("fields.fechaSalida"), render: (d) => formatDate(d.dateExit) },
     {
       key: "actions",
       header: "",
@@ -127,7 +127,7 @@ export default function DocumentosEntidadesExternasPage() {
             variant="ghost"
             onClick={() => openEditar(d)}
             aria-label={t("registrarMovimiento")}
-            data-testid={`btn-editar-documento-${d.idDocumentoPresentado}`}
+            data-testid={`btn-editar-documento-${d.idSubmittedDocument}`}
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -143,7 +143,7 @@ export default function DocumentosEntidadesExternasPage() {
         data={gestiones}
         columns={gestionColumns}
         isLoading={isLoading}
-        keyExtractor={(g) => g.idGestion!}
+        keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
       />
 
@@ -155,25 +155,25 @@ export default function DocumentosEntidadesExternasPage() {
           {detalle && (
             <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-semibold">{t("fields.numero")}:</span> {detalle.numero ?? "—"}
+                <span className="font-semibold">{t("fields.numero")}:</span> {detalle.number ?? "—"}
               </div>
               <div>
-                <span className="font-semibold">{t("fields.escribano")}:</span> {detalle.escribano ?? "—"}
+                <span className="font-semibold">{t("fields.escribano")}:</span> {detalle.notary ?? "—"}
               </div>
               <div>
                 <span className="font-semibold">{t("fields.encabezado")}:</span> {detalle.encabezado ?? "—"}
               </div>
               <div>
                 <span className="font-semibold">{t("fields.nomenclaturaCatastral")}:</span>{" "}
-                {detalle.nomenclaturaCatastral ?? "—"}
+                {detalle.cadastralDesignation ?? "—"}
               </div>
             </div>
           )}
           <DataTable
-            data={detalle?.documentos ?? []}
+            data={detalle?.documents ?? []}
             columns={documentoColumns}
             isLoading={isLoadingDetalle}
-            keyExtractor={(d) => d.idDocumentoPresentado}
+            keyExtractor={(d) => d.idSubmittedDocument}
             emptyMessage={t("noDocumentos")}
           />
         </DialogContent>
@@ -186,9 +186,9 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.numeroCarton")}>
                 <Input
                   type="number"
-                  value={movimiento.numeroCarton ?? ""}
+                  value={movimiento.cardNumber ?? ""}
                   onChange={(e) =>
-                    setMovimiento((m) => ({ ...m, numeroCarton: e.target.value ? Number(e.target.value) : undefined }))
+                    setMovimiento((m) => ({ ...m, cardNumber: e.target.value ? Number(e.target.value) : undefined }))
                   }
                   data-testid="input-numero-carton"
                 />
@@ -196,25 +196,25 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaIngreso")}>
                 <Input
                   type="date"
-                  value={movimiento.fechaIngreso ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, fechaIngreso: e.target.value }))}
+                  value={movimiento.dateEntry ?? ""}
+                  onChange={(e) => setMovimiento((m) => ({ ...m, dateEntry: e.target.value }))}
                   data-testid="input-fecha-ingreso"
                 />
               </FormField>
               <FormField label={t("fields.fechaSalida")}>
                 <Input
                   type="date"
-                  value={movimiento.fechaSalida ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, fechaSalida: e.target.value }))}
+                  value={movimiento.dateExit ?? ""}
+                  onChange={(e) => setMovimiento((m) => ({ ...m, dateExit: e.target.value }))}
                   data-testid="input-fecha-salida"
                 />
               </FormField>
               <FormField label={t("fields.importeAPagar")}>
                 <Input
                   type="number"
-                  value={movimiento.importeAPagar ?? ""}
+                  value={movimiento.amountToPay ?? ""}
                   onChange={(e) =>
-                    setMovimiento((m) => ({ ...m, importeAPagar: e.target.value ? Number(e.target.value) : undefined }))
+                    setMovimiento((m) => ({ ...m, amountToPay: e.target.value ? Number(e.target.value) : undefined }))
                   }
                   data-testid="input-importe-a-pagar"
                 />
@@ -222,44 +222,44 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaPago")}>
                 <Input
                   type="date"
-                  value={movimiento.fechaPago ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, fechaPago: e.target.value }))}
+                  value={movimiento.datePayment ?? ""}
+                  onChange={(e) => setMovimiento((m) => ({ ...m, datePayment: e.target.value }))}
                   data-testid="input-fecha-pago"
                 />
               </FormField>
               <FormField label={t("fields.fechaLiberado")}>
                 <Input
                   type="date"
-                  value={movimiento.fechaLiberado ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, fechaLiberado: e.target.value }))}
+                  value={movimiento.dateReleased ?? ""}
+                  onChange={(e) => setMovimiento((m) => ({ ...m, dateReleased: e.target.value }))}
                   data-testid="input-fecha-liberado"
                 />
               </FormField>
               <FormField label={t("fields.observaciones")}>
                 <textarea
                   className={themeClass("textarea")}
-                  value={movimiento.observaciones ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, observaciones: e.target.value }))}
-                  data-testid="input-observaciones"
+                  value={movimiento.notes ?? ""}
+                  onChange={(e) => setMovimiento((m) => ({ ...m, notes: e.target.value }))}
+                  data-testid="input-notes"
                 />
               </FormField>
               <CheckboxField
                 label={t("fields.preparado")}
-                checked={!!movimiento.preparado}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, preparado: checked }))}
-                data-testid="checkbox-preparado"
+                checked={!!movimiento.prepared}
+                onChange={(checked) => setMovimiento((m) => ({ ...m, prepared: checked }))}
+                data-testid="checkbox-prepared"
               />
               <CheckboxField
                 label={t("fields.observado")}
-                checked={!!movimiento.observado}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, observado: checked }))}
-                data-testid="checkbox-observado"
+                checked={!!movimiento.flagged}
+                onChange={(checked) => setMovimiento((m) => ({ ...m, flagged: checked }))}
+                data-testid="checkbox-flagged"
               />
               <CheckboxField
                 label={t("fields.entregado")}
-                checked={!!movimiento.entregado}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, entregado: checked }))}
-                data-testid="checkbox-entregado"
+                checked={!!movimiento.delivered}
+                onChange={(checked) => setMovimiento((m) => ({ ...m, delivered: checked }))}
+                data-testid="checkbox-delivered"
               />
             </FormSection>
             <FormActions align="right">

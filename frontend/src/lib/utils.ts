@@ -25,13 +25,14 @@ export function formatCurrency(amount?: number | null): string {
   }).format(amount);
 }
 
-/** Get full name from Persona */
+/** Get full name from Persona (firstName/lastName) or DtoPerson (name/lastName) */
 export function fullName(p?: {
-  nombre?: string;
-  apellido?: string;
+  firstName?: string;
+  name?: string;
+  lastName?: string;
 } | null): string {
   if (!p) return "—";
-  return [p.nombre, p.apellido].filter(Boolean).join(" ") || "—";
+  return [p.firstName ?? p.name, p.lastName].filter(Boolean).join(" ") || "—";
 }
 
 /**

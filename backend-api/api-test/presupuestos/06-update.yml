@@ -9,7 +9,7 @@ http:
     type: json
     data: |-
         {
-          "fkIdPersona": { "idPersona": 1 },
+          "fkIdPersona": { "personId": 1 },
           "fecha": "2026-06-02",
           "encabezado": "Presupuesto E2E Actualizado",
           "estado": "Aprobado",

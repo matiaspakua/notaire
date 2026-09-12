@@ -5,10 +5,10 @@ const slowMo = isHeaded ? Number(process.env.SLOW_MO ?? 600) : 0;
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 2 : 2,
   timeout: 300000, // 5 minutes for full end-to-end demo scenarios with multiple cases
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
@@ -44,8 +44,7 @@ export default defineConfig({
       name: "chromium",
       testMatch: "**/*.spec.ts",
       grepInvert: /@smoke|@health/,
-      // Use the real Google Chrome browser (channel) instead of bundled Chromium.
-      use: { ...devices["Desktop Chrome"], channel: "chrome" },
+      use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "mobile",

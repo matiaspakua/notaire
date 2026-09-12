@@ -23,8 +23,8 @@ echo -e "${GREEN}Test 1: Login${NC}"
 curl -X POST "$BASE_URL/api/v1/usuarios/login" \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "admin",
-    "contrasenia": "admin"
+    "name": "admin",
+    "password": "admin"
   }' \
   -w "\nStatus: %{http_code}\n\n"
 
@@ -62,8 +62,8 @@ echo -e "${GREEN}Test 6: Create new concepto${NC}"
 curl -X POST "$BASE_URL/api/v1/conceptos" \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Concepto de Prueba",
-    "valor": 100.00
+    "name": "Concepto de Prueba",
+    "value": 100.00
   }' \
   -w "\nStatus: %{http_code}\n\n"
 

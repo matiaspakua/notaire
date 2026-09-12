@@ -17,28 +17,28 @@ import {
 
 async function seedGestionConDocumentacionNecesaria(page: Page, nombreDocumento: string) {
   const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
+  const presupuesto = await createPresupuesto(page, persona.data!.personId);
   const estado = await createEstadoGestion(page);
   const tipoTramite = await createTipoTramite(page);
   // `complete-case` creates the gestión AND its single trámite in one call;
   // creating a second trámite for the same tipoTramite here would duplicate
   // the "Certificado de Dominio" row and break the dialog's strict-mode lookup.
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idPresupuesto,
-    escribanoId: persona.data!.idPersona,
-    estadoGestionId: estado.data!.idEstadoGestion,
-    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
+    presupuestoId: presupuesto.data!.idBudget,
+    escribanoId: persona.data!.personId,
+    estadoGestionId: estado.data!.idManagementStatus,
+    tipoTramiteId: tipoTramite.data!.idProcedureType,
   });
-  const tipoDocumento = await createTipoDocumento(page, { nombre: nombreDocumento });
-  await createPlantillaTramite(page, tipoTramite.data!.idTipoDeTramite, tipoDocumento.data!.idTipoDocumento);
-  const reingreso = await getReingresoDocumentacion(page, gestion.data!.idGestion);
-  const idTramite = reingreso.data!.tramites[0].idTramite;
+  const tipoDocumento = await createTipoDocumento(page, { name: nombreDocumento });
+  await createPlantillaTramite(page, tipoTramite.data!.idProcedureType, tipoDocumento.data!.idDocumentType);
+  const reingreso = await getReingresoDocumentacion(page, gestion.data!.idManagement);
+  const idTramite = reingreso.data!.procedures[0].idProcedure;
 
   return {
-    idGestion: gestion.data!.idGestion,
-    numero: gestion.data!.numero,
+    idGestion: gestion.data!.idManagement,
+    numero: gestion.data!.number,
     idTramite,
-    idTipoDocumento: tipoDocumento.data!.idTipoDocumento,
+    idTipoDocumento: tipoDocumento.data!.idDocumentType,
   };
 }
 
@@ -71,14 +71,14 @@ test.describe("CU43 - Reingresar documentación", () => {
 
   test("edge path: a gestión without trámites shows the empty state", async ({ page }) => {
     const persona = await createPersona(page);
-    const gestion = await createGestionSinTramite(page, persona.data!.idPersona);
+    const gestion = await createGestionSinTramite(page, persona.data!.personId);
 
     await page.goto("/dashboard/reingreso-documentacion");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-tramites-${gestion.data!.idGestion}`).click();
+    await page.getByTestId(`btn-ver-tramites-${gestion.data!.idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();

@@ -32,34 +32,34 @@ class FolioRequestValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /folio with blank estado returns 400")
-    void shouldRejectCreateWithBlankEstado() throws Exception {
+    @DisplayName("POST /folio with blank status returns 400")
+    void shouldRejectCreateWithBlankStatus() throws Exception {
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"numero": 1655, "anio": 2026, "estado": "", "tipoFolioId": 1, "escribanoId": 1}
+                                {"number": 1655, "year": 2026, "status": "", "typeFolioId": 1, "notaryId": 1}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("POST /folio with missing estado returns 400")
-    void shouldRejectCreateWithMissingEstado() throws Exception {
+    @DisplayName("POST /folio with missing status returns 400")
+    void shouldRejectCreateWithMissingStatus() throws Exception {
         mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"numero": 1656, "anio": 2026, "tipoFolioId": 1, "escribanoId": 1}
+                                {"number": 1656, "year": 2026, "typeFolioId": 1, "notaryId": 1}
                                 """))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("PUT /folio/{id} with blank estado returns 400")
-    void shouldRejectUpdateWithBlankEstado() throws Exception {
+    @DisplayName("PUT /folio/{id} with blank status returns 400")
+    void shouldRejectUpdateWithBlankStatus() throws Exception {
         String response = mockMvc.perform(post("/api/v1/folio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"numero": 1657, "anio": 2026, "estado": "Nuevo", "tipoFolioId": 1, "escribanoId": 1}
+                                {"number": 1657, "year": 2026, "status": "Nuevo", "typeFolioId": 1, "notaryId": 1}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -68,7 +68,7 @@ class FolioRequestValidationIntegrationTest {
         mockMvc.perform(put("/api/v1/folio/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"numero": 1657, "anio": 2026, "estado": "", "tipoFolioId": 1, "escribanoId": 1}
+                                {"number": 1657, "year": 2026, "status": "", "typeFolioId": 1, "notaryId": 1}
                                 """))
                 .andExpect(status().isBadRequest());
     }

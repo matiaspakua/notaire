@@ -51,9 +51,9 @@ export default function DocumentosPage() {
   function openEdit(d: DocumentoPresentado) {
     setEditing(d);
     setForm({
-      tipoId: d.tipo?.idTipoDocumento?.toString() ?? "",
-      fecha: d.fecha?.split("T")[0] ?? "",
-      entregado: d.entregado ?? false,
+      tipoId: d.fkDocumentType?.idDocumentType?.toString() ?? "",
+      fecha: d.dateEntry?.split("T")[0] ?? "",
+      entregado: d.delivered ?? false,
     });
     setModalOpen(true);
   }
@@ -65,8 +65,8 @@ export default function DocumentosPage() {
       entregado: form.entregado,
     };
     try {
-      if (editing?.idDocumentoPresentado) {
-        await updateMutation.mutateAsync({ id: editing.idDocumentoPresentado, data });
+      if (editing?.idSubmittedDocument) {
+        await updateMutation.mutateAsync({ id: editing.idSubmittedDocument, data });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(data);
@@ -94,30 +94,30 @@ export default function DocumentosPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (d) => <span className="text-muted-foreground text-xs">{d.idDocumentoPresentado}</span>,
+      render: (d) => <span className="text-muted-foreground text-xs">{d.idSubmittedDocument}</span>,
       className: "w-16",
     },
     {
       key: "tipo",
       header: tc("type"),
-      render: (d) => <span className="font-medium">{d.tipo?.nombre ?? "—"}</span>,
+      render: (d) => <span className="font-medium">{d.fkDocumentType?.name ?? "—"}</span>,
     },
     {
       key: "fecha",
       header: tc("date"),
-      render: (d) => d.fecha ? new Date(d.fecha).toLocaleDateString("es-AR") : "—",
+      render: (d) => d.dateEntry ? new Date(d.dateEntry).toLocaleDateString("es-AR") : "—",
     },
     {
       key: "entregado",
       header: t("delivered"),
       render: (d) => (
         <span className="flex items-center gap-1.5">
-          {d.entregado ? (
+          {d.delivered ? (
             <CheckCircle className="h-4 w-4 text-emerald-500" />
           ) : (
             <XCircle className="h-4 w-4 text-muted-foreground/40" />
           )}
-          <span className="text-sm">{d.entregado ? "Sí" : "No"}</span>
+          <span className="text-sm">{d.delivered ? "Sí" : "No"}</span>
         </span>
       ),
       className: "w-28",
@@ -134,7 +134,7 @@ export default function DocumentosPage() {
             size="icon"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(d.idDocumentoPresentado!)}
+            onClick={() => setDeleteId(d.idSubmittedDocument!)}
             aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
@@ -161,7 +161,7 @@ export default function DocumentosPage() {
         data={documentos}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(d) => d.idDocumentoPresentado!}
+        keyExtractor={(d) => d.idSubmittedDocument!}
         emptyMessage={t("noData")}
       />
 
@@ -176,8 +176,8 @@ export default function DocumentosPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {tiposDoc.map((tipo) => (
-                      <SelectItem key={tipo.idTipoDocumento} value={tipo.idTipoDocumento!.toString()}>
-                        {tipo.nombre}
+                      <SelectItem key={tipo.idDocumentType} value={tipo.idDocumentType!.toString()}>
+                        {tipo.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

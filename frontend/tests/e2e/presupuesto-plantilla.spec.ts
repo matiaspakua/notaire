@@ -25,21 +25,21 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     // GIVEN: presupuesto, tipo de trámite con plantilla configurada
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.idPersona);
+    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
     const tipoTramiteResult = await createTipoTramite(page);
     expect(tipoTramiteResult.ok).toBe(true);
-    const idTipoTramite = tipoTramiteResult.data!.idTipoDeTramite;
+    const idTipoTramite = tipoTramiteResult.data!.idProcedureType;
 
-    const conceptoResult = await createConcepto(page, { nombre: "Honorarios E2E", valor: 1500 });
+    const conceptoResult = await createConcepto(page, { name: "Honorarios E2E", value: 1500 });
     expect(conceptoResult.ok).toBe(true);
 
     const plantillaResult = await createPlantillaPresupuesto(
       page,
       idTipoTramite,
-      conceptoResult.data!.idConcepto,
+      conceptoResult.data!.idConcept,
     );
     expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
 
@@ -68,11 +68,11 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
   test("muestra un error cuando el tipo de trámite no tiene plantilla configurada", async ({ page }) => {
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.idPersona);
+    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const tipoTramiteResult = await createTipoTramite(page, { nombre: `Sin Plantilla E2E ${Date.now()}` });
+    const tipoTramiteResult = await createTipoTramite(page, { name: `Sin Plantilla E2E ${Date.now()}` });
     expect(tipoTramiteResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
@@ -104,9 +104,9 @@ for (const viewport of [
 
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.idPersona);
+    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await steps.givenUserIsOnPage("/dashboard/presupuestos");

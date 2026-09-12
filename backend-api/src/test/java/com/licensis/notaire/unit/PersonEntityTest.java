@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,16 +24,16 @@ class PersonEntityTest {
         @Test
         @DisplayName("Should create person with required fields")
         void shouldCreatePersonWithRequiredFields() {
-            TipoIdentificacion tipoId = new TipoIdentificacion();
-            tipoId.setIdTipoIdentificacion(1);
-            tipoId.setNombre("DNI");
+            IdentificationType typeId = new IdentificationType();
+            typeId.setIdIdentificationType(1);
+            typeId.setName("DNI");
 
             Person person = new Person();
             person.setPersonId(1);
             person.setFirstName("Juan");
             person.setLastName("Perez");
             person.setIdentificationNumber("12345678");
-            person.setFkIdIdentificationType(tipoId);
+            person.setFkIdIdentificationType(typeId);
             person.setIsClient(false);
 
             assertThat(person.getFirstName()).isEqualTo("Juan");
@@ -45,16 +45,16 @@ class PersonEntityTest {
         @Test
         @DisplayName("Should create client with all fields")
         void shouldCreateClientWithAllFields() {
-            TipoIdentificacion tipoId = new TipoIdentificacion();
-            tipoId.setIdTipoIdentificacion(1);
-            tipoId.setNombre("DNI");
+            IdentificationType typeId = new IdentificationType();
+            typeId.setIdIdentificationType(1);
+            typeId.setName("DNI");
 
             Person person = new Person();
             person.setPersonId(1);
             person.setFirstName("Maria");
             person.setLastName("Gonzalez");
             person.setIdentificationNumber("87654321");
-            person.setFkIdIdentificationType(tipoId);
+            person.setFkIdIdentificationType(typeId);
             person.setIsClient(true);
             person.setNationality("Argentina");
             person.setBirthDate(new Date(1990 - 1900, 5, 15));
@@ -73,16 +73,16 @@ class PersonEntityTest {
         @Test
         @DisplayName("Should create notary with registration number")
         void shouldCreateNotaryWithRegistration() {
-            TipoIdentificacion tipoId = new TipoIdentificacion();
-            tipoId.setIdTipoIdentificacion(1);
-            tipoId.setNombre("DNI");
+            IdentificationType typeId = new IdentificationType();
+            typeId.setIdIdentificationType(1);
+            typeId.setName("DNI");
 
             Person notary = new Person();
             notary.setPersonId(1);
             notary.setFirstName("Juan Carlos");
             notary.setLastName("Garcia");
             notary.setIdentificationNumber("20123456");
-            notary.setFkIdIdentificationType(tipoId);
+            notary.setFkIdIdentificationType(typeId);
             notary.setNotaryRegistrationNumber(1001);
             notary.setIsClient(false);
 
@@ -158,12 +158,12 @@ class PersonEntityTest {
         void shouldFilterByIdentificationType() {
             List<Person> people = createTestPeople();
 
-            TipoIdentificacion dni = new TipoIdentificacion();
-            dni.setIdTipoIdentificacion(1);
+            IdentificationType dni = new IdentificationType();
+            dni.setIdIdentificationType(1);
 
             List<Person> filtered = people.stream()
                 .filter(p -> p.getFkIdIdentificationType() != null
-                    && p.getFkIdIdentificationType().getIdTipoIdentificacion().equals(1))
+                    && p.getFkIdIdentificationType().getIdIdentificationType().equals(1))
                 .toList();
 
             assertThat(filtered).hasSize(3);
@@ -171,9 +171,9 @@ class PersonEntityTest {
     }
 
     private List<Person> createTestPeople() {
-        TipoIdentificacion dni = new TipoIdentificacion();
-        dni.setIdTipoIdentificacion(1);
-        dni.setNombre("DNI");
+        IdentificationType dni = new IdentificationType();
+        dni.setIdIdentificationType(1);
+        dni.setName("DNI");
 
         Person p1 = new Person(1, "Juan", "Perez", "12345678", false);
         p1.setFkIdIdentificationType(dni);

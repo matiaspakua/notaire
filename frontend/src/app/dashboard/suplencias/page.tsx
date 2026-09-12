@@ -20,13 +20,13 @@ import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
 
 const EMPTY: Partial<Suplencia> = {
-  fechaInicio: "",
-  fechaFin: "",
+  dateStart: "",
+  dateEnd: "",
 };
 
-function personaName(p: Suplencia["fkIdSuplantado"]): string {
+function personaName(p: Suplencia["fkIdSubstituted"]): string {
   if (!p) return "—";
-  return [p.nombre, p.apellido].filter(Boolean).join(" ") || `#${p.idPersona}`;
+  return [p.name, p.lastName].filter(Boolean).join(" ") || `#${p.idPerson}`;
 }
 
 export default function SuplenciasPage() {
@@ -53,22 +53,22 @@ export default function SuplenciasPage() {
 
   function openEdit(s: Suplencia) {
     setEditing(s);
-    setEscribanoId(s.fkIdSuplantado?.idPersona?.toString() ?? "");
-    setSuplenteId(s.fkIdSuplente?.idPersona?.toString() ?? "");
+    setEscribanoId(s.fkIdSubstituted?.idPerson?.toString() ?? "");
+    setSuplenteId(s.fkIdSubstitute?.idPerson?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
     const payload: Partial<Suplencia> = {
-      fechaInicio: editing.fechaInicio,
-      fechaFin: editing.fechaFin,
-      fkIdSuplantado: escribanoId ? { idPersona: Number(escribanoId) } : undefined,
-      fkIdSuplente: suplenteId ? { idPersona: Number(suplenteId) } : undefined,
+      dateStart: editing.dateStart,
+      dateEnd: editing.dateEnd,
+      fkIdSubstituted: escribanoId ? { idPerson: Number(escribanoId) } : undefined,
+      fkIdSubstitute: suplenteId ? { idPerson: Number(suplenteId) } : undefined,
     };
     try {
-      if (isEditMode && editing.idSuplencia) {
-        await updateMutation.mutateAsync({ id: editing.idSuplencia, data: payload });
+      if (isEditMode && editing.idSubstitution) {
+        await updateMutation.mutateAsync({ id: editing.idSubstitution, data: payload });
         toast.success("Suplencia actualizada");
       } else {
         await createMutation.mutateAsync(payload);
@@ -96,7 +96,7 @@ export default function SuplenciasPage() {
     {
       key: "id",
       header: "ID",
-      render: (s) => <span className="text-xs text-muted-foreground">{s.idSuplencia}</span>,
+      render: (s) => <span className="text-xs text-muted-foreground">{s.idSubstitution}</span>,
       className: "w-12",
     },
     {
@@ -105,24 +105,24 @@ export default function SuplenciasPage() {
       render: (s) => (
         <div className="flex items-center gap-2">
           <UserCheck className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{personaName(s.fkIdSuplantado)}</span>
+          <span className="font-medium">{personaName(s.fkIdSubstituted)}</span>
         </div>
       ),
     },
     {
       key: "suplente",
       header: "Suplente",
-      render: (s) => personaName(s.fkIdSuplente),
+      render: (s) => personaName(s.fkIdSubstitute),
     },
     {
       key: "desde",
       header: "Desde",
-      render: (s) => formatDate(s.fechaInicio),
+      render: (s) => formatDate(s.dateStart),
     },
     {
       key: "hasta",
       header: "Hasta",
-      render: (s) => formatDate(s.fechaFin),
+      render: (s) => formatDate(s.dateEnd),
     },
     {
       key: "actions",
@@ -137,7 +137,7 @@ export default function SuplenciasPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteId(s.idSuplencia!)}
+            onClick={() => setDeleteId(s.idSubstitution!)}
             aria-label="Eliminar"
           >
             <Trash2 className="h-4 w-4" />
@@ -164,7 +164,7 @@ export default function SuplenciasPage() {
         data={suplencias}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(s) => s.idSuplencia!}
+        keyExtractor={(s) => s.idSubstitution!}
         emptyMessage="No hay suplencias registradas"
       />
 
@@ -196,16 +196,16 @@ export default function SuplenciasPage() {
                 <FormField label="Desde">
                   <Input
                     type="date"
-                    value={editing.fechaInicio ?? ""}
-                    onChange={(e) => setEditing({ ...editing, fechaInicio: e.target.value })}
+                    value={editing.dateStart ?? ""}
+                    onChange={(e) => setEditing({ ...editing, dateStart: e.target.value })}
                     data-testid="input-desde"
                   />
                 </FormField>
                 <FormField label="Hasta">
                   <Input
                     type="date"
-                    value={editing.fechaFin ?? ""}
-                    onChange={(e) => setEditing({ ...editing, fechaFin: e.target.value })}
+                    value={editing.dateEnd ?? ""}
+                    onChange={(e) => setEditing({ ...editing, dateEnd: e.target.value })}
                     data-testid="input-hasta"
                   />
                 </FormField>

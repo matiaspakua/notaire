@@ -57,7 +57,7 @@ class BusinessWorkflowIntegrationTest {
             mockMvc.perform(post("/api/v1/usuarios/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
-                                    {"nombre": "admin", "contrasenia": "admin"}
+                                    {"name": "admin", "password": "admin"}
                                     """))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.valido").isBoolean());
@@ -80,10 +80,10 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "nombre": "test_workflow_user",
-                                      "contrasenia": "test123",
-                                      "tipo": "EMPLEADO",
-                                      "activo": true
+                                      "name": "testWorkflowUser",
+                                      "password": "test123",
+                                      "type": "EMPLEADO",
+                                      "active": true
                                     }
                                     """))
                     .andExpect(status().is2xxSuccessful());
@@ -95,7 +95,7 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU17/CU18 — Registro y consulta de personas")
+    @DisplayName("CU17/CU18 — Registro y consulta de persons")
     class PeopleWorkflow {
 
         @Test
@@ -122,7 +122,7 @@ class BusinessWorkflowIntegrationTest {
                                       "identificationNumber": "30111222",
                                       "email": "juan.garcia@example.com",
                                       "isClient": true,
-                                      "fkIdTipoIdentificacion": {"idTipoIdentificacion": 1}
+                                      "fkIdIdentificationType": {"idIdentificationType": 1}
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -157,15 +157,15 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(2)
         @DisplayName("CU02 — Create gestión returns 200")
-        void createGestionReturns200() throws Exception {
+        void createManagementReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/gestiones")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 20250001,
+                                      "number": 20250001,
                                       "encabezado": "Gestión de prueba",
-                                      "fechaInicio": "2025-01-15",
-                                      "fkIdPersonaEscribano": {"personId": 1}
+                                      "dateStart": "2025-01-15",
+                                      "fkIdNotaryPerson": {"personId": 1}
                                     }
                                     """))
                     .andExpect(status().is2xxSuccessful());
@@ -174,7 +174,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(3)
         @DisplayName("CU19 — GET gestiones by cliente returns array")
-        void getGestionesByClienteReturnsArray() throws Exception {
+        void getGestionesByClientReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/gestiones/cliente/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -183,7 +183,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(4)
         @DisplayName("Historial endpoint is accessible for gestión")
-        void historialEndpointAccessible() throws Exception {
+        void historyEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/historial"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -209,17 +209,17 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU01 — Create presupuesto returns 201")
-        void createPresupuestoReturns200() throws Exception {
+        @DisplayName("CU01 — Create budget returns 201")
+        void createBudgetReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/presupuestos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 20250001,
-                                      "fecha": "2025-01-15",
-                                      "encabezado": "Presupuesto de prueba",
-                                      "monto": 15000.00,
-                                      "estado": "PENDIENTE"
+                                      "number": 20250001,
+                                      "date": "2025-01-15",
+                                      "encabezado": "Budget de prueba",
+                                      "amount": 15000.00,
+                                      "status": "Pending"
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -227,8 +227,8 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(3)
-        @DisplayName("CU45 — GET presupuestos by persona returns array")
-        void getPresupuestosByPersonaReturnsArray() throws Exception {
+        @DisplayName("CU45 — GET presupuestos by person returns array")
+        void getPresupuestosByPersonReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/presupuestos/persona/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -236,7 +236,7 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(4)
-        @DisplayName("Items endpoint accessible for presupuesto")
+        @DisplayName("Items endpoint accessible for budget")
         void itemsEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/items"))
                     .andExpect(status().isOk())
@@ -245,8 +245,8 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(5)
-        @DisplayName("Items by presupuesto endpoint accessible")
-        void itemsByPresupuestoEndpointAccessible() throws Exception {
+        @DisplayName("Items by budget endpoint accessible")
+        void itemsByBudgetEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/items/presupuesto/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -258,13 +258,13 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU15/CU47 — Procesamiento de pagos")
-    class PagosWorkflow {
+    @DisplayName("CU15/CU47 — Procesamiento de payments")
+    class PaymentsWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/pagos returns array")
-        void getAllPagosReturnsArray() throws Exception {
+        void getAllPaymentsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/pagos"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -273,15 +273,15 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(2)
         @DisplayName("CU15 — Create pago returns 200")
-        void createPagoReturns200() throws Exception {
+        void createPaymentReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/pagos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "idPresupuesto": 1,
-                                      "monto": 5000.00,
-                                      "fecha": "2025-01-15",
-                                      "observaciones": "Test payment"
+                                      "idBudget": 1,
+                                      "amount": 5000.00,
+                                      "date": "2025-01-15",
+                                      "notes": "Test payment"
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -289,8 +289,8 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(3)
-        @DisplayName("CU47 — GET pagos by presupuesto returns array")
-        void getPagosByPresupuestoReturnsArray() throws Exception {
+        @DisplayName("CU47 — GET payments by budget returns array")
+        void getPaymentsByBudgetReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/pagos/presupuesto/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -316,16 +316,16 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU05 — Create escritura returns 201")
-        void createEscrituraReturns200() throws Exception {
+        @DisplayName("CU05 — Create deed returns 201")
+        void createDeedReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/escrituras")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 2025001,
-                                      "cuerpo": "Cuerpo de la escritura de prueba",
-                                      "estado": "BORRADOR",
-                                      "fechaEscrituracion": "2025-01-15"
+                                      "number": 2025001,
+                                      "body": "Body de la deed de prueba",
+                                      "status": "BORRADOR",
+                                      "dateDeedrecording": "2025-01-15"
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -334,7 +334,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(3)
         @DisplayName("Inmueble endpoint accessible")
-        void inmuebleEndpointAccessible() throws Exception {
+        void propertyEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/inmueble"))
                     .andExpect(status().isOk());
         }
@@ -342,7 +342,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(4)
         @DisplayName("Testimonio endpoint accessible")
-        void testimonioEndpointAccessible() throws Exception {
+        void testimonyEndpointAccessible() throws Exception {
             mockMvc.perform(get("/api/v1/testimonio"))
                     .andExpect(status().isOk());
         }
@@ -368,7 +368,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(2)
         @DisplayName("GET /api/v1/tipo-folio returns array")
-        void getTipoFolioReturnsArray() throws Exception {
+        void getTypeFolioReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/tipo-folio"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -382,11 +382,11 @@ class BusinessWorkflowIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "numero": 9001,
-                                      "anio": 2025,
-                                      "estado": "Nuevo",
-                                      "tipoFolioId": 1,
-                                      "escribanoId": 1
+                                      "number": 9001,
+                                      "year": 2025,
+                                      "status": "Nuevo",
+                                      "typeFolioId": 1,
+                                      "notaryId": 1
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -413,14 +413,14 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(2)
         @DisplayName("CU29 — Create concepto returns 201")
-        void createConceptoReturns200() throws Exception {
+        void createConceptReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/conceptos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "nombre": "Honorario base",
-                                      "descripcion": "Honorario base de escritura",
-                                      "valor": 10000.00
+                                      "name": "Honorario base",
+                                      "description": "Honorario base de deed",
+                                      "value": 10000.00
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -429,12 +429,12 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU26/CU57/CU64 — Tipos de trámite catalog")
-    class TiposTramiteWorkflow {
+    class TiposProcedureWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/tipo-tramite returns array")
-        void getAllTiposTramiteReturnsArray() throws Exception {
+        void getAllTiposProcedureReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/tipo-tramite"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -442,17 +442,17 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU26 — Create tipo tramite returns 201")
-        void createTipoTramiteReturns200() throws Exception {
+        @DisplayName("CU26 — Create type tramite returns 201")
+        void createTypeProcedureReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/tipo-tramite")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "nombre": "Compraventa inmueble",
-                                      "descripcion": "Operación de compraventa",
-                                      "seArchiva": true,
-                                      "seInscribe": false,
-                                      "asociaInmuebles": true
+                                      "name": "Compraventa property",
+                                      "description": "Operación de compraventa",
+                                      "isArchived": true,
+                                      "isRegistered": false,
+                                      "associatesProperties": true
                                     }
                                     """))
                     .andExpect(status().isCreated());
@@ -461,7 +461,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU67 — Estados de gestión catalog")
-    class EstadosGestionWorkflow {
+    class EstadosManagementWorkflow {
 
         @Test
         @Order(1)
@@ -475,22 +475,22 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("Auditoría — Registro de operaciones")
-    class AuditoriaWorkflow {
+    class AuditWorkflow {
 
         @Test
         @Order(1)
-        @DisplayName("GET /api/v1/registro-auditoria returns array")
-        void getAllAuditoriaReturnsArray() throws Exception {
-            mockMvc.perform(get("/api/v1/registro-auditoria"))
+        @DisplayName("GET /api/v1/audit-log returns array")
+        void getAllAuditReturnsArray() throws Exception {
+            mockMvc.perform(get("/api/v1/audit-log"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
         }
 
         @Test
         @Order(2)
-        @DisplayName("GET /api/v1/registro-auditoria/usuario/1 returns array")
-        void getAuditoriaByUsuarioReturnsArray() throws Exception {
-            mockMvc.perform(get("/api/v1/registro-auditoria/usuario/1"))
+        @DisplayName("GET /api/v1/audit-log/user/1 returns array")
+        void getAuditByUserReturnsArray() throws Exception {
+            mockMvc.perform(get("/api/v1/audit-log/user/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
         }
@@ -502,7 +502,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @DisplayName("CU39/CU49/CU55 — Plantillas de presupuesto")
+    @DisplayName("CU39/CU49/CU55 — Plantillas de budget")
     class PlantillasWorkflow {
 
         @Test
@@ -516,8 +516,8 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("GET plantillas by tipo-tramite returns array")
-        void getPlantillasByTipoTramiteReturnsArray() throws Exception {
+        @DisplayName("GET plantillas by type-tramite returns array")
+        void getPlantillasByTypeProcedureReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/plantilla-presupuestos/tipo-tramite/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -526,11 +526,11 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(3)
         @DisplayName("POST /api/v1/plantilla-presupuestos returns 201 with bounded response — no circular JSON")
-        void createPlantillaReturns201WithBoundedResponse() throws Exception {
+        void createTemplateReturns201WithBoundedResponse() throws Exception {
             String body = """
-                    {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},
-                     "tipoDeTramite":{"idTipoTramite":1},
-                     "concepto":{"idConcepto":1}}
+                    {"budgetTemplatePK":{"fkIdProcedureType":1,"fkIdConcept":1},
+                     "procedureType":{"idProcedureType":1},
+                     "concept":{"idConcept":1}}
                     """;
 
             MvcResult result = mockMvc.perform(post("/api/v1/plantilla-presupuestos")
@@ -551,13 +551,13 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(4)
-        @DisplayName("POST duplicate plantilla (same tipo=1/concepto=1 created in Order 3) returns 409 Conflict")
-        void createDuplicatePlantillaReturns409() throws Exception {
+        @DisplayName("POST duplicate plantilla (same type=1/concepto=1 created in Order 3) returns 409 Conflict")
+        void createDuplicateTemplateReturns409() throws Exception {
             // Order 3 already created (tipo=1, concepto=1). Re-posting the same PK must return 409.
             String body = """
-                    {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},
-                     "tipoDeTramite":{"idTipoTramite":1},
-                     "concepto":{"idConcepto":1}}
+                    {"budgetTemplatePK":{"fkIdProcedureType":1,"fkIdConcept":1},
+                     "procedureType":{"idProcedureType":1},
+                     "concept":{"idConcept":1}}
                     """;
             mockMvc.perform(post("/api/v1/plantilla-presupuestos")
                             .contentType(MediaType.APPLICATION_JSON)

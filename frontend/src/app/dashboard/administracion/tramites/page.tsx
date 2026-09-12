@@ -17,7 +17,7 @@ import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { TipoDeTramite } from "@/types";
 
-const EMPTY: Partial<TipoDeTramite> = { nombre: "", descripcion: "" };
+const EMPTY: Partial<TipoDeTramite> = { name: "", notes: "" };
 
 export default function TramitesPage() {
   const t = useTranslations("administracion.tramites");
@@ -49,15 +49,15 @@ export default function TramitesPage() {
   function openEdit(item: TipoDeTramite) { setEditing(item); setIsEditMode(true); setSelectedWorkflowId(item.workflowDefinitionId ? String(item.workflowDefinitionId) : ""); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
+    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
     try {
-      let savedId = editing.idTipoDeTramite;
-      if (isEditMode && editing.idTipoDeTramite) {
-        await updateMutation.mutateAsync({ id: editing.idTipoDeTramite, data: editing });
+      let savedId = editing.idProcedureType;
+      if (isEditMode && editing.idProcedureType) {
+        await updateMutation.mutateAsync({ id: editing.idProcedureType, data: editing });
         toast.success(t("updated"));
       } else {
         const created = await createMutation.mutateAsync(editing) as TipoDeTramite | undefined;
-        savedId = created?.idTipoDeTramite ?? editing.idTipoDeTramite;
+        savedId = created?.idProcedureType ?? editing.idProcedureType;
         toast.success(t("created"));
       }
       if (savedId) {
@@ -76,12 +76,12 @@ export default function TramitesPage() {
 
   async function handleDeleteClick(item: TipoDeTramite) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-tramite/${item.idTipoDeTramite}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-tramite/${item.idProcedureType}/in-use`);
       if (inUse) {
         toast.error(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(item.idTipoDeTramite!);
+      setDeleteId(item.idProcedureType!);
     } catch {
       toast.error(t("errorDelete"));
     }
@@ -101,10 +101,10 @@ export default function TramitesPage() {
   }
 
   const columns: Column<TipoDeTramite>[] = [
-    { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idTipoDeTramite}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.nombre}</span> },
-    { key: "desc", header: t("fields.descripcion"), render: (item) => item.descripcion ?? "—" },
-    { key: "workflow", header: "Workflow", render: (item) => item.workflowDefinitionNombre ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionNombre}</span> : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idProcedureType}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.name}</span> },
+    { key: "desc", header: t("fields.descripcion"), render: (item) => item.notes ?? "—" },
+    { key: "workflow", header: "Workflow", render: (item) => item.workflowDefinitionName ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionName}</span> : <span className="text-xs text-muted-foreground">—</span> },
     {
       key: "actions", header: "", className: "w-24",
       render: (item) => (
@@ -146,7 +146,7 @@ export default function TramitesPage() {
         data={filtered}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(item) => item.idTipoDeTramite!}
+        keyExtractor={(item) => item.idProcedureType!}
         emptyMessage={t("noData")}
       />
 
@@ -156,28 +156,28 @@ export default function TramitesPage() {
             <FormSection title={isEditMode ? t("editTramite") : t("newTramite")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-nombre-tramite"
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
                 <Input
-                  value={editing.descripcion ?? ""}
-                  onChange={(e) => setEditing({ ...editing, descripcion: e.target.value })}
+                  value={editing.notes ?? ""}
+                  onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
                   placeholder={t("fields.descripcionPlaceholder")}
                 />
               </FormField>
               <CheckboxField
                 label="Se archiva"
-                checked={editing.seArchiva ?? false}
-                onChange={(v) => setEditing({ ...editing, seArchiva: v })}
+                checked={editing.isArchived ?? false}
+                onChange={(v) => setEditing({ ...editing, isArchived: v })}
               />
               <CheckboxField
                 label="Se inscribe"
-                checked={editing.seInscribe ?? false}
-                onChange={(v) => setEditing({ ...editing, seInscribe: v })}
+                checked={editing.isRegistered ?? false}
+                onChange={(v) => setEditing({ ...editing, isRegistered: v })}
               />
               <FormField label="Workflow">
                 <select
@@ -187,8 +187,8 @@ export default function TramitesPage() {
                   data-testid="select-workflow-tramite"
                 >
                   <option value="">— Sin workflow —</option>
-                  {workflows.filter((w) => w.activo).map((w) => (
-                    <option key={w.id} value={String(w.id)}>{w.nombre}</option>
+                  {workflows.filter((w) => w.active).map((w) => (
+                    <option key={w.id} value={String(w.id)}>{w.name}</option>
                   ))}
                 </select>
               </FormField>

@@ -19,7 +19,7 @@ export default function AuditoriaPage() {
       header: "ID",
       render: (r) => (
         <span className="text-xs text-muted-foreground font-mono">
-          {r.idRegistroAuditoria}
+          {r.idAuditRecord}
         </span>
       ),
       className: "w-16",
@@ -27,14 +27,14 @@ export default function AuditoriaPage() {
     {
       key: "fecha",
       header: "Fecha",
-      render: (r) => formatDate(r.fecha),
+      render: (r) => formatDate(r.date),
       className: "w-36",
     },
     {
       key: "usuario",
       header: "Usuario",
       render: (r) => (
-        <span className="font-medium">{r.usuarios?.nombre ?? "—"}</span>
+        <span className="font-medium">{r.users?.name ?? "—"}</span>
       ),
       className: "w-32",
     },
@@ -42,7 +42,7 @@ export default function AuditoriaPage() {
       key: "modulo",
       header: "Módulo",
       render: (r) => (
-        <span className="text-sm text-muted-foreground">{r.modulo ?? "—"}</span>
+        <span className="text-sm text-muted-foreground">{r.module ?? "—"}</span>
       ),
       className: "w-36",
     },
@@ -50,7 +50,7 @@ export default function AuditoriaPage() {
       key: "detalle",
       header: "Detalle",
       render: (r) => (
-        <span className="text-sm">{r.detalleOperacion ?? "—"}</span>
+        <span className="text-sm">{r.operationDetail ?? "—"}</span>
       ),
     },
   ];
@@ -65,7 +65,7 @@ export default function AuditoriaPage() {
         data={registros}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(r) => r.idRegistroAuditoria!}
+        keyExtractor={(r) => r.idAuditRecord!}
         emptyMessage="No hay registros de auditoría"
       />
     </div>

@@ -17,7 +17,7 @@ import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from
 import { extractApiError } from "@/lib/utils";
 import type { EstadoDeGestion } from "@/types";
 
-const EMPTY: Partial<EstadoDeGestion> = { nombre: "", observaciones: "" };
+const EMPTY: Partial<EstadoDeGestion> = { name: "", notes: "" };
 
 export default function EstadosGestionPage() {
   const t = useTranslations("administracion.estadosGestion");
@@ -61,15 +61,15 @@ export default function EstadosGestionPage() {
   }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) {
+    if (!editing.name?.trim()) {
       toast.error(t("nameRequired"));
       return;
     }
     setSaving(true);
     try {
-      const body = { nombre: editing.nombre.trim(), observaciones: editing.observaciones?.trim() };
-      if (isEditMode && editing.idEstadoGestion) {
-        await apiPut(`/estado-gestion/${editing.idEstadoGestion}`, { ...body, version: editing.version });
+      const body = { name: editing.name.trim(), notes: editing.notes?.trim() };
+      if (isEditMode && editing.idManagementStatus) {
+        await apiPut(`/estado-gestion/${editing.idManagementStatus}`, { ...body, version: editing.version });
         toast.success(t("updated"));
       } else {
         await apiPost("/estado-gestion", body);
@@ -87,12 +87,12 @@ export default function EstadosGestionPage() {
 
   async function handleDeleteClick(estado: EstadoDeGestion) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/estado-gestion/${estado.idEstadoGestion}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/estado-gestion/${estado.idManagementStatus}/in-use`);
       if (inUse) {
         toast.error(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(estado.idEstadoGestion!);
+      setDeleteId(estado.idManagementStatus!);
     } catch {
       toast.error(t("errorDelete"));
     }
@@ -115,9 +115,9 @@ export default function EstadosGestionPage() {
   }
 
   const columns: Column<EstadoDeGestion>[] = [
-    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idEstadoGestion}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.nombre}</span> },
-    { key: "desc", header: tc("description"), render: (e) => e.observaciones ?? "—" },
+    { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idManagementStatus}</span>, className: "w-12" },
+    { key: "nombre", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.name}</span> },
+    { key: "desc", header: tc("description"), render: (e) => e.notes ?? "—" },
     {
       key: "actions",
       header: "",
@@ -164,7 +164,7 @@ export default function EstadosGestionPage() {
           data-testid="search-estados"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idEstadoGestion!} emptyMessage={t("noData")} />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} />
 
       {workflows.length > 0 && (
         <div className="mt-8">
@@ -178,7 +178,7 @@ export default function EstadosGestionPage() {
             >
               <option value="">{t("selectWorkflow")}</option>
               {workflows.map((wf) => (
-                <option key={wf.id} value={wf.id}>{wf.nombre}</option>
+                <option key={wf.id} value={wf.id}>{wf.name}</option>
               ))}
             </select>
           </div>
@@ -192,16 +192,16 @@ export default function EstadosGestionPage() {
             <FormSection title={isEditMode ? t("editEstado") : t("newEstado")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
                   data-testid="input-nombre-estado"
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
                 <Input
-                  value={editing.observaciones ?? ""}
-                  onChange={(e) => setEditing({ ...editing, observaciones: e.target.value })}
+                  value={editing.notes ?? ""}
+                  onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
                   placeholder={t("fields.descripcionPlaceholder")}
                 />
               </FormField>

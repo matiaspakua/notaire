@@ -1,11 +1,11 @@
 package com.licensis.notaire.config;
 
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
-import com.licensis.notaire.repository.UsuarioRepository;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
+import com.licensis.notaire.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>Username y password son configurables vía {@code APP_ADMIN_USER}/
  * {@code APP_ADMIN_PASSWORD} (issue #651); por defecto {@code admin}/{@code admin}
  * en desarrollo. La contraseña se almacena como hash BCrypt (issue #554),
- * coincidiendo con la verificación que realiza {@code UsuarioController#login}.
+ * coincidiendo con la verificación que realiza {@code UserController#login}.
  * Es un seed de una sola vez: si el usuario ya existe (sembrado por Flyway V2, o
  * porque un operador ya rotó su contraseña) no se toca — de lo contrario cualquier
  * cambio de credenciales quedaría deshecho en cada reinicio del backend (issue
@@ -38,18 +38,18 @@ public class DataInitializer implements ApplicationRunner {
     @Value("${app.admin.password:admin}")
     private String adminPassword;
 
-    private final UsuarioRepository usuarioRepository;
-    private final PersonRepository personaRepository;
-    private final TipoIdentificacionRepository tipoIdentificacionRepository;
+    private final UserRepository userRepository;
+    private final PersonRepository personRepository;
+    private final IdentificationTypeRepository identificationTypeRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(UsuarioRepository usuarioRepository,
-                           PersonRepository personaRepository,
-                           TipoIdentificacionRepository tipoIdentificacionRepository,
+    public DataInitializer(UserRepository userRepository,
+                           PersonRepository personRepository,
+                           IdentificationTypeRepository identificationTypeRepository,
                            PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.personaRepository = personaRepository;
-        this.tipoIdentificacionRepository = tipoIdentificacionRepository;
+        this.userRepository = userRepository;
+        this.personRepository = personRepository;
+        this.identificationTypeRepository = identificationTypeRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -64,43 +64,43 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void ensureAdminUser() {
-        if (usuarioRepository.findByNombre(adminUsername).isPresent()) {
+        if (userRepository.findByName(adminUsername).isPresent()) {
             log.debug("Usuario '{}' ya existe; no se modifican sus credenciales.", adminUsername);
             return;
         }
 
         log.info("Usuario '{}' no encontrado. Creando usuario administrador inicial...", adminUsername);
-        Person adminPersona = buildAdminPersona();
-        personaRepository.save(adminPersona);
+        Person adminPerson = buildAdminPerson();
+        personRepository.save(adminPerson);
 
-        Usuario admin = new Usuario();
-        admin.setNombre(adminUsername);
-        admin.setContrasenia(passwordEncoder.encode(adminPassword));
-        admin.setEstado(true);
-        admin.setTipo("Escribano");
-        admin.setFkIdPersona(adminPersona);
-        usuarioRepository.save(admin);
+        User admin = new User();
+        admin.setName(adminUsername);
+        admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setStatus(true);
+        admin.setType("Escribano");
+        admin.setFkIdPerson(adminPerson);
+        userRepository.save(admin);
         log.info("Usuario administrador inicial '{}' creado correctamente.", adminUsername);
     }
 
-    private Person buildAdminPersona() {
-        TipoIdentificacion tipo = tipoIdentificacionRepository.findAll().stream()
+    private Person buildAdminPerson() {
+        IdentificationType type = identificationTypeRepository.findAll().stream()
                 .findFirst()
-                .orElseGet(this::createDefaultTipoIdentificacion);
+                .orElseGet(this::createDefaultIdentificationType);
 
-        Person persona = new Person();
-        persona.setFirstName("Admin");
-        persona.setLastName("Sistema");
-        persona.setIsClient(false);
-        persona.setIdentificationNumber("00000000");
-        persona.setFkIdIdentificationType(tipo);
-        return persona;
+        Person person = new Person();
+        person.setFirstName("Admin");
+        person.setLastName("Sistema");
+        person.setIsClient(false);
+        person.setIdentificationNumber("00000000");
+        person.setFkIdIdentificationType(type);
+        return person;
     }
 
-    private TipoIdentificacion createDefaultTipoIdentificacion() {
-        TipoIdentificacion tipo = new TipoIdentificacion();
-        tipo.setNombre("DNI");
-        return tipoIdentificacionRepository.save(tipo);
+    private IdentificationType createDefaultIdentificationType() {
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        return identificationTypeRepository.save(type);
     }
 
 }

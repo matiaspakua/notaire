@@ -1,44 +1,44 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.dto.DtoCopia;
-import com.licensis.notaire.dto.DtoEstadoDeGestion;
+import com.licensis.notaire.dto.DtoCopy;
+import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.dto.DtoInmueble;
+import com.licensis.notaire.dto.DtoProperty;
 import com.licensis.notaire.dto.DtoItem;
-import com.licensis.notaire.dto.DtoMovimientoTestimonio;
-import com.licensis.notaire.dto.DtoTestimonio;
-import com.licensis.notaire.dto.DtoTipoDeDocumento;
-import com.licensis.notaire.dto.DtoTipoDeFolio;
-import com.licensis.notaire.dto.DtoTipoDeTramite;
-import com.licensis.notaire.negocio.Concepto;
-import com.licensis.notaire.negocio.ConstantesNegocio;
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.Folio;
-import com.licensis.notaire.negocio.FoliosCopias;
-import com.licensis.notaire.negocio.FoliosCopiasPK;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.Identificacion;
-import com.licensis.notaire.negocio.IdentificacionPK;
-import com.licensis.notaire.negocio.Inmueble;
-import com.licensis.notaire.negocio.Item;
-import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.PlantillaPresupuesto;
-import com.licensis.notaire.negocio.PlantillaPresupuestoPK;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.PlantillaTramitePK;
-import com.licensis.notaire.negocio.RegistroAuditoria;
-import com.licensis.notaire.negocio.Suplencia;
-import com.licensis.notaire.negocio.Testimonio;
-import com.licensis.notaire.negocio.TipoDeDocumento;
-import com.licensis.notaire.negocio.TipoDeFolio;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.negocio.TramitesPersonas;
-import com.licensis.notaire.negocio.TramitesPersonasPK;
-import com.licensis.notaire.negocio.Usuario;
+import com.licensis.notaire.dto.DtoTestimonyMovement;
+import com.licensis.notaire.dto.DtoTestimony;
+import com.licensis.notaire.dto.DtoDocumentType;
+import com.licensis.notaire.dto.DtoFolioType;
+import com.licensis.notaire.dto.DtoProcedureType;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.business.BusinessConstants;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.business.FolioCopies;
+import com.licensis.notaire.business.FolioCopiesPK;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.Identification;
+import com.licensis.notaire.business.IdentificationPK;
+import com.licensis.notaire.business.Property;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.business.TestimonyMovement;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.BudgetTemplate;
+import com.licensis.notaire.business.BudgetTemplatePK;
+import com.licensis.notaire.business.ProcedureTemplate;
+import com.licensis.notaire.business.ProcedureTemplatePK;
+import com.licensis.notaire.business.AuditRecord;
+import com.licensis.notaire.business.Substitution;
+import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.PersonProcedure;
+import com.licensis.notaire.business.PersonProcedurePK;
+import com.licensis.notaire.business.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,47 +54,47 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("Concepto")
-    class ConceptoTests {
+    class ConceptTests {
         @Test
         @DisplayName("Constructors and getters/setters")
         void constructorsAndAccessors() {
-            Concepto c1 = new Concepto();
+            Concept c1 = new Concept();
             assertThat(c1).isNotNull();
 
-            Concepto c2 = new Concepto(5);
-            assertThat(c2.getIdConcepto()).isEqualTo(5);
+            Concept c2 = new Concept(5);
+            assertThat(c2.getIdConcept()).isEqualTo(5);
 
-            Concepto c3 = new Concepto(10, "Honorarios", 100f, 5);
-            assertThat(c3.getNombre()).isEqualTo("Honorarios");
-            assertThat(c3.getValor()).isEqualTo(100f);
-            assertThat(c3.getPorcentaje()).isEqualTo(5);
+            Concept c3 = new Concept(10, "Honorarios", 100f, 5);
+            assertThat(c3.getName()).isEqualTo("Honorarios");
+            assertThat(c3.getValue()).isEqualTo(100f);
+            assertThat(c3.getPercentage()).isEqualTo(5);
 
-            c1.setIdConcepto(20);
-            c1.setNombre("X");
-            c1.setValor(50f);
-            c1.setPorcentaje(10);
+            c1.setIdConcept(20);
+            c1.setName("X");
+            c1.setValue(50f);
+            c1.setPercentage(10);
             c1.setVersion(1);
-            c1.setHabilitado(true);
-            c1.setConceptoFijo(true);
-            c1.setPlantillaPresupuestoList(new ArrayList<>());
+            c1.setEnabled(true);
+            c1.setFixedConcept(true);
+            c1.setBudgetTemplateList(new ArrayList<>());
 
-            assertThat(c1.getIdConcepto()).isEqualTo(20);
-            assertThat(c1.getNombre()).isEqualTo("X");
-            assertThat(c1.getValor()).isEqualTo(50f);
-            assertThat(c1.getPorcentaje()).isEqualTo(10);
+            assertThat(c1.getIdConcept()).isEqualTo(20);
+            assertThat(c1.getName()).isEqualTo("X");
+            assertThat(c1.getValue()).isEqualTo(50f);
+            assertThat(c1.getPercentage()).isEqualTo(10);
             assertThat(c1.getVersion()).isEqualTo(1);
-            assertThat(c1.getHabilitado()).isTrue();
-            assertThat(c1.isConceptoFijo()).isTrue();
-            assertThat(c1.getPlantillaPresupuestoList()).isNotNull();
+            assertThat(c1.getEnabled()).isTrue();
+            assertThat(c1.isFixedConcept()).isTrue();
+            assertThat(c1.getBudgetTemplateList()).isNotNull();
         }
 
         @Test
         @DisplayName("equals/hashCode/toString")
         void equalsHashCodeToString() {
-            Concepto a = new Concepto(1);
-            Concepto b = new Concepto(1);
-            Concepto c = new Concepto(2);
-            Concepto nulla = new Concepto();
+            Concept a = new Concept(1);
+            Concept b = new Concept(1);
+            Concept c = new Concept(2);
+            Concept nulla = new Concept();
 
             assertThat(a).isEqualTo(b);
             assertThat(a).isNotEqualTo(c);
@@ -107,136 +107,136 @@ class EntitiesBasicTest {
         @Test
         @DisplayName("getDto and setAtributos roundtrip")
         void getDtoAndSetAtributos() throws Exception {
-            Concepto c = new Concepto(1);
-            c.setNombre("X");
-            c.setValor(10f);
-            c.setPorcentaje(2);
+            Concept c = new Concept(1);
+            c.setName("X");
+            c.setValue(10f);
+            c.setPercentage(2);
             c.setVersion(3);
-            c.setHabilitado(true);
-            c.setConceptoFijo(true);
+            c.setEnabled(true);
+            c.setFixedConcept(true);
 
             var dto = c.getDto();
-            assertThat(dto.getIdConcepto()).isEqualTo(1);
-            assertThat(dto.getNombre()).isEqualTo("X");
-            assertThat(dto.getValor()).isEqualTo(10f);
-            assertThat(dto.getPorcentaje()).isEqualTo(2);
+            assertThat(dto.getIdConcept()).isEqualTo(1);
+            assertThat(dto.getName()).isEqualTo("X");
+            assertThat(dto.getValue()).isEqualTo(10f);
+            assertThat(dto.getPercentage()).isEqualTo(2);
             assertThat(dto.getVersion()).isEqualTo(3);
-            assertThat(dto.getHabilitado()).isTrue();
-            assertThat(dto.isFijo()).isTrue();
+            assertThat(dto.getEnabled()).isTrue();
+            assertThat(dto.isFixed()).isTrue();
 
-            Concepto c2 = new Concepto();
+            Concept c2 = new Concept();
             c2.setAtributos(dto);
-            assertThat(c2.getIdConcepto()).isEqualTo(1);
-            assertThat(c2.getNombre()).isEqualTo("X");
-            assertThat(c2.getValor()).isEqualTo(10f);
+            assertThat(c2.getIdConcept()).isEqualTo(1);
+            assertThat(c2.getName()).isEqualTo("X");
+            assertThat(c2.getValue()).isEqualTo(10f);
         }
     }
 
     @Nested
     @DisplayName("EstadoDeGestion")
-    class EstadoDeGestionTests {
+    class ManagementStatusTests {
         @Test
         @DisplayName("constructors/setters/equals/getDto")
         void all() throws Exception {
-            EstadoDeGestion e1 = new EstadoDeGestion();
-            assertThat(e1.getIdEstadoGestion()).isEqualTo(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+            ManagementStatus e1 = new ManagementStatus();
+            assertThat(e1.getIdManagementStatus()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
 
-            EstadoDeGestion e2 = new EstadoDeGestion(7);
-            assertThat(e2.getIdEstadoGestion()).isEqualTo(7);
+            ManagementStatus e2 = new ManagementStatus(7);
+            assertThat(e2.getIdManagementStatus()).isEqualTo(7);
 
-            EstadoDeGestion e3 = new EstadoDeGestion(8, "Activo");
-            assertThat(e3.getNombre()).isEqualTo("Activo");
+            ManagementStatus e3 = new ManagementStatus(8, "Activo");
+            assertThat(e3.getName()).isEqualTo("Activo");
 
-            e1.setIdEstadoGestion(10);
-            e1.setNombre("New");
-            e1.setObservaciones("Note");
+            e1.setIdManagementStatus(10);
+            e1.setName("New");
+            e1.setNotes("Note");
             e1.setVersion(1);
-            e1.setHistorialList(new HashSet<>());
-            e1.setGestionDeEscrituraCollection(new ArrayList<>());
+            e1.setHistoryList(new HashSet<>());
+            e1.setDeedManagementCollection(new ArrayList<>());
 
-            assertThat(e1.getIdEstadoGestion()).isEqualTo(10);
-            assertThat(e1.getNombre()).isEqualTo("New");
-            assertThat(e1.getObservaciones()).isEqualTo("Note");
+            assertThat(e1.getIdManagementStatus()).isEqualTo(10);
+            assertThat(e1.getName()).isEqualTo("New");
+            assertThat(e1.getNotes()).isEqualTo("Note");
             assertThat(e1.getVersion()).isEqualTo(1);
-            assertThat(e1.getHistorialList()).isNotNull();
-            assertThat(e1.getGestionDeEscrituraCollection()).isNotNull();
+            assertThat(e1.getHistoryList()).isNotNull();
+            assertThat(e1.getDeedManagementCollection()).isNotNull();
 
-            assertThat(new EstadoDeGestion(1)).isEqualTo(new EstadoDeGestion(1));
-            assertThat(new EstadoDeGestion(1)).isNotEqualTo(new EstadoDeGestion(2));
-            assertThat(new EstadoDeGestion(1)).isNotEqualTo("string");
-            assertThat(new EstadoDeGestion(1).hashCode()).isEqualTo(new EstadoDeGestion(1).hashCode());
+            assertThat(new ManagementStatus(1)).isEqualTo(new ManagementStatus(1));
+            assertThat(new ManagementStatus(1)).isNotEqualTo(new ManagementStatus(2));
+            assertThat(new ManagementStatus(1)).isNotEqualTo("string");
+            assertThat(new ManagementStatus(1).hashCode()).isEqualTo(new ManagementStatus(1).hashCode());
             assertThat(e1.toString()).contains("10");
 
-            var dto = new DtoEstadoDeGestion();
-            dto.setIdEstadoGestion(99);
-            dto.setNombre("X");
-            dto.setObservaciones("y");
+            var dto = new DtoManagementStatus();
+            dto.setIdManagementStatus(99);
+            dto.setName("X");
+            dto.setNotes("y");
             dto.setVersion(2);
             e1.setAtributo(dto);
-            assertThat(e1.getNombre()).isEqualTo("X");
+            assertThat(e1.getName()).isEqualTo("X");
 
-            DtoEstadoDeGestion outDto = e1.getDto();
-            assertThat(outDto.getIdEstadoGestion()).isEqualTo(99);
+            DtoManagementStatus outDto = e1.getDto();
+            assertThat(outDto.getIdManagementStatus()).isEqualTo(99);
         }
     }
 
     @Nested
     @DisplayName("Copia")
-    class CopiaTests {
+    class CopyTests {
         @Test
         @DisplayName("constructors and accessors and equals")
         void all() {
-            Copia c1 = new Copia();
-            Copia c2 = new Copia(1);
-            Copia c3 = new Copia(2, 100, new Date());
-            assertThat(c2.getIdCopia()).isEqualTo(1);
-            assertThat(c3.getNumero()).isEqualTo(100);
+            Copy c1 = new Copy();
+            Copy c2 = new Copy(1);
+            Copy c3 = new Copy(2, 100, new Date());
+            assertThat(c2.getIdCopy()).isEqualTo(1);
+            assertThat(c3.getNumber()).isEqualTo(100);
 
             Date d = new Date();
-            c1.setIdCopia(10);
-            c1.setNumero(5);
-            c1.setFechaImpresion(d);
-            c1.setFechaRetiro(d);
-            c1.setObservaciones("obs");
+            c1.setIdCopy(10);
+            c1.setNumber(5);
+            c1.setDatePrinting(d);
+            c1.setDateWithdrawal(d);
+            c1.setNotes("obs");
             c1.setVersion(1);
             c1.setFolioList(new ArrayList<>());
-            c1.setFkIdPersona(new Person());
-            Testimonio t = new Testimonio();
-            t.setIdTestimonio(99);
-            c1.setFkIdTestimonio(t);
-            c1.setFoliosCopiasCollection(new ArrayList<>());
+            c1.setFkIdPerson(new Person());
+            Testimony t = new Testimony();
+            t.setIdTestimony(99);
+            c1.setFkIdTestimony(t);
+            c1.setFolioCopiesCollection(new ArrayList<>());
 
-            assertThat(c1.getIdCopia()).isEqualTo(10);
-            assertThat(c1.getFechaImpresion()).isEqualTo(d);
-            assertThat(c1.getFechaRetiro()).isEqualTo(d);
-            assertThat(c1.getObservaciones()).isEqualTo("obs");
+            assertThat(c1.getIdCopy()).isEqualTo(10);
+            assertThat(c1.getDatePrinting()).isEqualTo(d);
+            assertThat(c1.getDateWithdrawal()).isEqualTo(d);
+            assertThat(c1.getNotes()).isEqualTo("obs");
             assertThat(c1.getVersion()).isEqualTo(1);
             assertThat(c1.getFolioList()).isEmpty();
-            assertThat(c1.getFkIdPersona()).isNotNull();
-            assertThat(c1.getFkIdTestimonio()).isNotNull();
-            assertThat(c1.getFoliosCopiasCollection()).isEmpty();
+            assertThat(c1.getFkIdPerson()).isNotNull();
+            assertThat(c1.getFkIdTestimony()).isNotNull();
+            assertThat(c1.getFolioCopiesCollection()).isEmpty();
 
-            assertThat(new Copia(1)).isEqualTo(new Copia(1));
-            assertThat(new Copia(1)).isNotEqualTo(new Copia(2));
-            assertThat(new Copia(1)).isNotEqualTo("x");
+            assertThat(new Copy(1)).isEqualTo(new Copy(1));
+            assertThat(new Copy(1)).isNotEqualTo(new Copy(2));
+            assertThat(new Copy(1)).isNotEqualTo("x");
             assertThat(c1.toString()).contains("10");
 
             // setAtributos and getDto: testimonio needs fkIdEscritura unset (works)
-            DtoCopia dto = new DtoCopia();
-            dto.setIdCopia(50);
-            dto.setNumero(2);
+            DtoCopy dto = new DtoCopy();
+            dto.setIdCopy(50);
+            dto.setNumber(2);
             dto.setVersion(1);
-            dto.setFechaImpresion(d);
-            dto.setFechaRetiro(d);
-            dto.setObservaciones("obs2");
-            DtoTestimonio dtoT = new DtoTestimonio();
-            dtoT.setIdTestimonio(99);
-            dto.setTestimonio(dtoT);
+            dto.setDatePrinting(d);
+            dto.setDateWithdrawal(d);
+            dto.setNotes("obs2");
+            DtoTestimony dtoT = new DtoTestimony();
+            dtoT.setIdTestimony(99);
+            dto.setTestimony(dtoT);
 
-            Copia c4 = new Copia();
+            Copy c4 = new Copy();
             c4.setAtributos(dto);
-            assertThat(c4.getIdCopia()).isEqualTo(50);
-            assertThat(c4.getFkIdTestimonio()).isNotNull();
+            assertThat(c4.getIdCopy()).isEqualTo(50);
+            assertThat(c4.getFkIdTestimony()).isNotNull();
         }
     }
 
@@ -250,31 +250,31 @@ class EntitiesBasicTest {
             Folio f2 = new Folio(1);
             Folio f3 = new Folio(2, 100, 2024, "Nuevo");
             assertThat(f2.getIdFolio()).isEqualTo(1);
-            assertThat(f3.getNumero()).isEqualTo(100);
-            assertThat(f3.getAnio()).isEqualTo(2024);
-            assertThat(f3.getEstado()).isEqualTo("Nuevo");
+            assertThat(f3.getNumber()).isEqualTo(100);
+            assertThat(f3.getYear()).isEqualTo(2024);
+            assertThat(f3.getStatus()).isEqualTo("Nuevo");
 
             f1.setIdFolio(5);
-            f1.setNumero(101);
-            f1.setAnio(2025);
-            f1.setEstado("Usado");
-            f1.setObservaciones("obs");
+            f1.setNumber(101);
+            f1.setYear(2025);
+            f1.setStatus("Usado");
+            f1.setNotes("obs");
             f1.setVersion(1);
-            f1.setCopiaList(new ArrayList<>());
-            f1.setFoliosCopiasCollection(new ArrayList<>());
-            Person escribano = new Person();
-            escribano.setPersonId(11);
-            escribano.setNotaryRegistrationNumber(1);
-            f1.setFkIdPersonaEscribano(escribano);
-            TipoDeFolio tf = new TipoDeFolio(7);
-            tf.setNombre("Protocolo");
-            f1.setFkIdTipoFolio(tf);
+            f1.setCopyList(new ArrayList<>());
+            f1.setFolioCopiesCollection(new ArrayList<>());
+            Person notary = new Person();
+            notary.setPersonId(11);
+            notary.setNotaryRegistrationNumber(1);
+            f1.setFkIdNotaryPerson(notary);
+            FolioType tf = new FolioType(7);
+            tf.setName("Protocolo");
+            f1.setFkIdFolioType(tf);
 
             assertThat(f1.getIdFolio()).isEqualTo(5);
-            assertThat(f1.getObservaciones()).isEqualTo("obs");
-            assertThat(f1.getFkIdPersonaEscribano()).isSameAs(escribano);
-            assertThat(f1.getFkIdTipoFolio()).isSameAs(tf);
-            assertThat(f1.getFkIdEscritura()).isNull();
+            assertThat(f1.getNotes()).isEqualTo("obs");
+            assertThat(f1.getFkIdNotaryPerson()).isSameAs(notary);
+            assertThat(f1.getFkIdFolioType()).isSameAs(tf);
+            assertThat(f1.getFkIdDeed()).isNull();
             assertThat(new Folio(1)).isEqualTo(new Folio(1));
             assertThat(new Folio(1)).isNotEqualTo(new Folio(2));
             assertThat(new Folio(1)).isNotEqualTo("x");
@@ -283,10 +283,10 @@ class EntitiesBasicTest {
             // setAtributos + getDto roundtrip (DtoFolio must be valid)
             DtoFolio dto = new DtoFolio();
             dto.setIdFolio(50);
-            dto.setNumero(5);
-            dto.setAnio(2022);
-            dto.setEstado("Nuevo");
-            dto.setObservaciones("obs");
+            dto.setNumber(5);
+            dto.setYear(2022);
+            dto.setStatus("Nuevo");
+            dto.setNotes("obs");
             dto.setVersion(1);
 
             Folio target = new Folio();
@@ -297,21 +297,21 @@ class EntitiesBasicTest {
 
             DtoFolio outDto = f1.getDto();
             assertThat(outDto.getIdFolio()).isEqualTo(5);
-            assertThat(outDto.getNumero()).isEqualTo(101);
+            assertThat(outDto.getNumber()).isEqualTo(101);
         }
     }
 
     @Nested
     @DisplayName("FoliosCopias + PK")
-    class FoliosCopiasTests {
+    class FolioCopiesTests {
         @Test
         @DisplayName("PK equality and hashCode")
         void pk() {
-            FoliosCopiasPK pk1 = new FoliosCopiasPK(1, 2);
-            FoliosCopiasPK pk2 = new FoliosCopiasPK(1, 2);
-            FoliosCopiasPK pk3 = new FoliosCopiasPK(1, 3);
-            FoliosCopiasPK pk4 = new FoliosCopiasPK(2, 2);
-            FoliosCopiasPK empty = new FoliosCopiasPK();
+            FolioCopiesPK pk1 = new FolioCopiesPK(1, 2);
+            FolioCopiesPK pk2 = new FolioCopiesPK(1, 2);
+            FolioCopiesPK pk3 = new FolioCopiesPK(1, 3);
+            FolioCopiesPK pk4 = new FolioCopiesPK(2, 2);
+            FolioCopiesPK empty = new FolioCopiesPK();
             assertThat(pk1).isEqualTo(pk2);
             assertThat(pk1.hashCode()).isEqualTo(pk2.hashCode());
             assertThat(pk1).isNotEqualTo(pk3);
@@ -319,31 +319,31 @@ class EntitiesBasicTest {
             assertThat(pk1).isNotEqualTo("x");
             assertThat(pk1.toString()).isNotBlank();
             empty.setFkIdFolio(5);
-            empty.setFkIdCopia(7);
+            empty.setFkIdCopy(7);
             assertThat(empty.getFkIdFolio()).isEqualTo(5);
-            assertThat(empty.getFkIdCopia()).isEqualTo(7);
+            assertThat(empty.getFkIdCopy()).isEqualTo(7);
         }
 
         @Test
         @DisplayName("Entity equality/getters")
         void entity() {
-            FoliosCopias fc1 = new FoliosCopias();
-            FoliosCopias fc2 = new FoliosCopias(new FoliosCopiasPK(1, 2));
-            FoliosCopias fc3 = new FoliosCopias(1, 2);
-            assertThat(fc2.getFoliosCopiasPK()).isEqualTo(new FoliosCopiasPK(1, 2));
-            assertThat(fc3.getFoliosCopiasPK().getFkIdFolio()).isEqualTo(1);
+            FolioCopies fc1 = new FolioCopies();
+            FolioCopies fc2 = new FolioCopies(new FolioCopiesPK(1, 2));
+            FolioCopies fc3 = new FolioCopies(1, 2);
+            assertThat(fc2.getFolioCopiesPK()).isEqualTo(new FolioCopiesPK(1, 2));
+            assertThat(fc3.getFolioCopiesPK().getFkIdFolio()).isEqualTo(1);
 
-            fc1.setFoliosCopiasPK(new FoliosCopiasPK(5, 6));
-            fc1.setCopia(new Copia());
+            fc1.setFolioCopiesPK(new FolioCopiesPK(5, 6));
+            fc1.setCopy(new Copy());
             fc1.setFolio(new Folio());
 
-            assertThat(fc1.getFoliosCopiasPK()).isNotNull();
-            assertThat(fc1.getCopia()).isNotNull();
+            assertThat(fc1.getFolioCopiesPK()).isNotNull();
+            assertThat(fc1.getCopy()).isNotNull();
             assertThat(fc1.getFolio()).isNotNull();
 
-            FoliosCopias a = new FoliosCopias(new FoliosCopiasPK(1, 2));
-            FoliosCopias b = new FoliosCopias(new FoliosCopiasPK(1, 2));
-            FoliosCopias c = new FoliosCopias(new FoliosCopiasPK(1, 3));
+            FolioCopies a = new FolioCopies(new FolioCopiesPK(1, 2));
+            FolioCopies b = new FolioCopies(new FolioCopiesPK(1, 2));
+            FolioCopies c = new FolioCopies(new FolioCopiesPK(1, 3));
             assertThat(a).isEqualTo(b);
             assertThat(a).isNotEqualTo(c);
             assertThat(a).isNotEqualTo("x");
@@ -354,33 +354,33 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("Historial")
-    class HistorialTests {
+    class HistoryTests {
         @Test
         @DisplayName("All members and equals")
         void all() {
-            Historial h1 = new Historial();
-            assertThat(h1.getIdHistorial()).isEqualTo(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
-            Historial h2 = new Historial(1);
-            assertThat(h2.getIdHistorial()).isEqualTo(1);
+            History h1 = new History();
+            assertThat(h1.getIdHistory()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            History h2 = new History(1);
+            assertThat(h2.getIdHistory()).isEqualTo(1);
             Date d = new Date();
-            Historial h3 = new Historial(2, d);
-            assertThat(h3.getFecha()).isEqualTo(d);
+            History h3 = new History(2, d);
+            assertThat(h3.getDate()).isEqualTo(d);
 
-            h1.setIdHistorial(3);
-            h1.setObservaciones("obs");
+            h1.setIdHistory(3);
+            h1.setNotes("obs");
             h1.setVersion(1);
-            h1.setFecha(d);
-            EstadoDeGestion ed = new EstadoDeGestion(1);
-            h1.setFkIdEstadoGestion(ed);
-            h1.setFkIdGestion(null);
-            assertThat(h1.getIdHistorial()).isEqualTo(3);
-            assertThat(h1.getObservaciones()).isEqualTo("obs");
+            h1.setDate(d);
+            ManagementStatus ed = new ManagementStatus(1);
+            h1.setFkIdManagementStatus(ed);
+            h1.setFkIdManagement(null);
+            assertThat(h1.getIdHistory()).isEqualTo(3);
+            assertThat(h1.getNotes()).isEqualTo("obs");
             assertThat(h1.getVersion()).isEqualTo(1);
-            assertThat(h1.getFkIdEstadoGestion()).isSameAs(ed);
+            assertThat(h1.getFkIdManagementStatus()).isSameAs(ed);
 
-            assertThat(new Historial(1)).isEqualTo(new Historial(1));
-            assertThat(new Historial(1)).isNotEqualTo(new Historial(2));
-            assertThat(new Historial(1)).isNotEqualTo("x");
+            assertThat(new History(1)).isEqualTo(new History(1));
+            assertThat(new History(1)).isNotEqualTo(new History(2));
+            assertThat(new History(1)).isNotEqualTo("x");
             assertThat(h1.toString()).contains("3");
 
             // setAtributos is a no-op
@@ -390,52 +390,52 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("Identificacion + PK")
-    class IdentificacionTests {
+    class IdentificationTests {
         @Test
         @DisplayName("PK behaviour")
         void pk() {
-            IdentificacionPK pk1 = new IdentificacionPK(1, 2);
-            IdentificacionPK pk2 = new IdentificacionPK(1, 2);
-            IdentificacionPK pk3 = new IdentificacionPK(1, 3);
-            IdentificacionPK pk4 = new IdentificacionPK(2, 2);
-            IdentificacionPK empty = new IdentificacionPK();
+            IdentificationPK pk1 = new IdentificationPK(1, 2);
+            IdentificationPK pk2 = new IdentificationPK(1, 2);
+            IdentificationPK pk3 = new IdentificationPK(1, 3);
+            IdentificationPK pk4 = new IdentificationPK(2, 2);
+            IdentificationPK empty = new IdentificationPK();
             assertThat(pk1).isEqualTo(pk2);
             assertThat(pk1).isNotEqualTo(pk3);
             assertThat(pk1).isNotEqualTo(pk4);
             assertThat(pk1).isNotEqualTo("x");
             assertThat(pk1.hashCode()).isEqualTo(pk2.hashCode());
             assertThat(pk1.toString()).isNotBlank();
-            empty.setFkIdPersona(5);
-            empty.setFkIdTipoIdentificacion(7);
-            assertThat(empty.getFkIdPersona()).isEqualTo(5);
-            assertThat(empty.getFkIdTipoIdentificacion()).isEqualTo(7);
+            empty.setFkIdPerson(5);
+            empty.setFkIdIdentificationType(7);
+            assertThat(empty.getFkIdPerson()).isEqualTo(5);
+            assertThat(empty.getFkIdIdentificationType()).isEqualTo(7);
         }
 
         @Test
         @DisplayName("Entity behaviour")
         void entity() {
-            Identificacion i1 = new Identificacion();
-            Identificacion i2 = new Identificacion(new IdentificacionPK(1, 2));
-            Identificacion i3 = new Identificacion(new IdentificacionPK(1, 2), 100);
-            Identificacion i4 = new Identificacion(3, 4);
-            assertThat(i2.getIdentificacionPK()).isNotNull();
-            assertThat(i3.getNumero()).isEqualTo(100);
-            assertThat(i4.getIdentificacionPK().getFkIdPersona()).isEqualTo(3);
+            Identification i1 = new Identification();
+            Identification i2 = new Identification(new IdentificationPK(1, 2));
+            Identification i3 = new Identification(new IdentificationPK(1, 2), 100);
+            Identification i4 = new Identification(3, 4);
+            assertThat(i2.getIdentificationPK()).isNotNull();
+            assertThat(i3.getNumber()).isEqualTo(100);
+            assertThat(i4.getIdentificationPK().getFkIdPerson()).isEqualTo(3);
 
-            i1.setIdentificacionPK(new IdentificacionPK(5, 6));
-            i1.setNumero(99);
+            i1.setIdentificationPK(new IdentificationPK(5, 6));
+            i1.setNumber(99);
             Person p = new Person();
-            i1.setPersona(p);
-            TipoIdentificacion t = new TipoIdentificacion();
-            i1.setTipoIdentificacion(t);
-            assertThat(i1.getNumero()).isEqualTo(99);
-            assertThat(i1.getPersona()).isSameAs(p);
-            assertThat(i1.getTipoIdentificacion()).isSameAs(t);
+            i1.setPerson(p);
+            IdentificationType t = new IdentificationType();
+            i1.setIdentificationType(t);
+            assertThat(i1.getNumber()).isEqualTo(99);
+            assertThat(i1.getPerson()).isSameAs(p);
+            assertThat(i1.getIdentificationType()).isSameAs(t);
 
-            Identificacion a = new Identificacion(new IdentificacionPK(1, 1));
-            Identificacion b = new Identificacion(new IdentificacionPK(1, 1));
-            Identificacion c = new Identificacion(new IdentificacionPK(2, 2));
-            Identificacion noPk = new Identificacion();
+            Identification a = new Identification(new IdentificationPK(1, 1));
+            Identification b = new Identification(new IdentificationPK(1, 1));
+            Identification c = new Identification(new IdentificationPK(2, 2));
+            Identification noPk = new Identification();
             assertThat(a).isEqualTo(b);
             assertThat(a).isNotEqualTo(c);
             assertThat(a).isNotEqualTo("x");
@@ -447,48 +447,48 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("Inmueble")
-    class InmuebleTests {
+    class PropertyTests {
         @Test
         @DisplayName("All")
         void all() {
-            Inmueble i1 = new Inmueble();
-            assertThat(i1.getIdInmueble()).isEqualTo(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
-            Inmueble i2 = new Inmueble(1);
-            assertThat(i2.getIdInmueble()).isEqualTo(1);
+            Property i1 = new Property();
+            assertThat(i1.getIdProperty()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            Property i2 = new Property(1);
+            assertThat(i2.getIdProperty()).isEqualTo(1);
 
-            i1.setIdInmueble(10);
-            i1.setNomenclaturaCatastral("N-1");
-            i1.setValuacionFiscal(10000f);
-            i1.setDomicilio("Address");
-            i1.setObservaciones("obs");
+            i1.setIdProperty(10);
+            i1.setCadastralDesignation("N-1");
+            i1.setFiscalAppraisal(10000f);
+            i1.setAddress("Address");
+            i1.setNotes("obs");
             i1.setVersion(1);
-            i1.setTramiteList(new ArrayList<>());
-            assertThat(i1.getNomenclaturaCatastral()).isEqualTo("N-1");
-            assertThat(i1.getValuacionFiscal()).isEqualTo(10000f);
-            assertThat(i1.getDomicilio()).isEqualTo("Address");
-            assertThat(i1.getObservaciones()).isEqualTo("obs");
+            i1.setProcedureList(new ArrayList<>());
+            assertThat(i1.getCadastralDesignation()).isEqualTo("N-1");
+            assertThat(i1.getFiscalAppraisal()).isEqualTo(10000f);
+            assertThat(i1.getAddress()).isEqualTo("Address");
+            assertThat(i1.getNotes()).isEqualTo("obs");
             assertThat(i1.getVersion()).isEqualTo(1);
-            assertThat(i1.getTramiteList()).isEmpty();
+            assertThat(i1.getProcedureList()).isEmpty();
 
-            assertThat(new Inmueble(1)).isEqualTo(new Inmueble(1));
-            assertThat(new Inmueble(1)).isNotEqualTo(new Inmueble(2));
-            assertThat(new Inmueble(1)).isNotEqualTo("x");
+            assertThat(new Property(1)).isEqualTo(new Property(1));
+            assertThat(new Property(1)).isNotEqualTo(new Property(2));
+            assertThat(new Property(1)).isNotEqualTo("x");
             assertThat(i1.toString()).contains("10");
 
-            DtoInmueble dto = i1.getDto();
-            assertThat(dto.getDomicilio()).isEqualTo("Address");
-            assertThat(dto.getIdInmueble()).isEqualTo(10);
-            assertThat(dto.getValuacionFiscal()).isEqualTo(10000f);
+            DtoProperty dto = i1.getDto();
+            assertThat(dto.getAddress()).isEqualTo("Address");
+            assertThat(dto.getIdProperty()).isEqualTo(10);
+            assertThat(dto.getFiscalAppraisal()).isEqualTo(10000f);
 
-            DtoInmueble dto2 = new DtoInmueble();
-            dto2.setIdInmueble(50);
-            dto2.setDomicilio("d2");
-            dto2.setNomenclaturaCatastral("n2");
-            dto2.setObservaciones("o2");
-            dto2.setValuacionFiscal(2f);
-            Inmueble i3 = new Inmueble();
+            DtoProperty dto2 = new DtoProperty();
+            dto2.setIdProperty(50);
+            dto2.setAddress("d2");
+            dto2.setCadastralDesignation("n2");
+            dto2.setNotes("o2");
+            dto2.setFiscalAppraisal(2f);
+            Property i3 = new Property();
             i3.setAtributos(dto2);
-            assertThat(i3.getDomicilio()).isEqualTo("d2");
+            assertThat(i3.getAddress()).isEqualTo("d2");
         }
     }
 
@@ -499,28 +499,28 @@ class EntitiesBasicTest {
         @DisplayName("All")
         void all() {
             Item i1 = new Item();
-            assertThat(i1.getIdItem()).isEqualTo(ConstantesNegocio.ID_OBJETO_NO_VALIDO);
+            assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
             Item i2 = new Item(1);
             assertThat(i2.getIdItem()).isEqualTo(1);
             Item i3 = new Item(2, "n", 100f);
-            assertThat(i3.getNombre()).isEqualTo("n");
-            assertThat(i3.getValor()).isEqualTo(100f);
+            assertThat(i3.getName()).isEqualTo("n");
+            assertThat(i3.getValue()).isEqualTo(100f);
 
             i1.setIdItem(10);
-            i1.setNombre("Item1");
-            i1.setValor(50f);
-            i1.setPorcentaje(5);
-            i1.setObservaciones("obs");
-            i1.setConceptoFijo(true);
+            i1.setName("Item1");
+            i1.setValue(50f);
+            i1.setPercentage(5);
+            i1.setNotes("obs");
+            i1.setFixedConcept(true);
             i1.setVersion(1);
-            i1.setFkIdPresupuesto(null);
-            assertThat(i1.getNombre()).isEqualTo("Item1");
-            assertThat(i1.getValor()).isEqualTo(50f);
-            assertThat(i1.getPorcentaje()).isEqualTo(5);
-            assertThat(i1.getObservaciones()).isEqualTo("obs");
-            assertThat(i1.isFijo()).isTrue();
+            i1.setFkIdBudget(null);
+            assertThat(i1.getName()).isEqualTo("Item1");
+            assertThat(i1.getValue()).isEqualTo(50f);
+            assertThat(i1.getPercentage()).isEqualTo(5);
+            assertThat(i1.getNotes()).isEqualTo("obs");
+            assertThat(i1.isFixed()).isTrue();
             assertThat(i1.getVersion()).isEqualTo(1);
-            assertThat(i1.getFkIdPresupuesto()).isNull();
+            assertThat(i1.getFkIdBudget()).isNull();
 
             assertThat(new Item(1)).isEqualTo(new Item(1));
             assertThat(new Item(1)).isNotEqualTo(new Item(2));
@@ -532,239 +532,239 @@ class EntitiesBasicTest {
 
             DtoItem dto2 = new DtoItem();
             dto2.setIdItem(50);
-            dto2.setNombre("n");
-            dto2.setValor(1f);
-            dto2.setPorcentaje(10);
-            dto2.setObservaciones("o");
+            dto2.setName("n");
+            dto2.setValue(1f);
+            dto2.setPercentage(10);
+            dto2.setNotes("o");
             dto2.setVersion(1);
-            dto2.setConceptoFijo(true);
+            dto2.setFixedConcept(true);
             Item i4 = new Item();
             i4.setAtributos(dto2);
-            assertThat(i4.getNombre()).isEqualTo("n");
+            assertThat(i4.getName()).isEqualTo("n");
         }
     }
 
     @Nested
     @DisplayName("Testimonio")
-    class TestimonioTests {
+    class TestimonyTests {
         @Test
         @DisplayName("All")
         void all() {
-            Testimonio t1 = new Testimonio();
-            Testimonio t2 = new Testimonio(1);
-            assertThat(t2.getIdTestimonio()).isEqualTo(1);
+            Testimony t1 = new Testimony();
+            Testimony t2 = new Testimony(1);
+            assertThat(t2.getIdTestimony()).isEqualTo(1);
 
-            t1.setIdTestimonio(10);
-            t1.setNumero(5);
-            t1.setObservaciones("obs");
-            t1.setObservado(true);
+            t1.setIdTestimony(10);
+            t1.setNumber(5);
+            t1.setNotes("obs");
+            t1.setFlagged(true);
             t1.setVersion(1);
-            com.licensis.notaire.negocio.Escritura escr = new com.licensis.notaire.negocio.Escritura();
-            escr.setIdEscritura(99);
-            t1.setFkIdEscritura(escr);
-            t1.setMovimientoTestimonioList(new ArrayList<>());
-            t1.setCopiaList(new ArrayList<>());
-            assertThat(t1.getIdTestimonio()).isEqualTo(10);
-            assertThat(t1.getNumero()).isEqualTo(5);
-            assertThat(t1.getObservaciones()).isEqualTo("obs");
-            assertThat(t1.getObservado()).isTrue();
+            com.licensis.notaire.business.Deed escr = new com.licensis.notaire.business.Deed();
+            escr.setIdDeed(99);
+            t1.setFkIdDeed(escr);
+            t1.setTestimonyMovementList(new ArrayList<>());
+            t1.setCopyList(new ArrayList<>());
+            assertThat(t1.getIdTestimony()).isEqualTo(10);
+            assertThat(t1.getNumber()).isEqualTo(5);
+            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getFlagged()).isTrue();
             assertThat(t1.getVersion()).isEqualTo(1);
-            assertThat(t1.getFkIdEscritura()).isNotNull();
-            assertThat(t1.getMovimientoTestimonioList()).isEmpty();
-            assertThat(t1.getCopiaList()).isEmpty();
+            assertThat(t1.getFkIdDeed()).isNotNull();
+            assertThat(t1.getTestimonyMovementList()).isEmpty();
+            assertThat(t1.getCopyList()).isEmpty();
 
-            assertThat(new Testimonio(1)).isEqualTo(new Testimonio(1));
-            assertThat(new Testimonio(1)).isNotEqualTo(new Testimonio(2));
-            assertThat(new Testimonio(1)).isNotEqualTo("x");
+            assertThat(new Testimony(1)).isEqualTo(new Testimony(1));
+            assertThat(new Testimony(1)).isNotEqualTo(new Testimony(2));
+            assertThat(new Testimony(1)).isNotEqualTo("x");
             // toString requires fkIdEscritura to be set
             assertThat(t1.toString()).contains("10");
 
-            DtoTestimonio dto = t1.getDto();
-            assertThat(dto.getIdTestimonio()).isEqualTo(10);
+            DtoTestimony dto = t1.getDto();
+            assertThat(dto.getIdTestimony()).isEqualTo(10);
 
-            DtoTestimonio dto2 = new DtoTestimonio();
-            dto2.setIdTestimonio(99);
-            dto2.setNumero(1);
-            dto2.setObservaciones("o");
-            dto2.setObservado(true);
+            DtoTestimony dto2 = new DtoTestimony();
+            dto2.setIdTestimony(99);
+            dto2.setNumber(1);
+            dto2.setNotes("o");
+            dto2.setFlagged(true);
             dto2.setVersion(1);
-            Testimonio t3 = new Testimonio();
+            Testimony t3 = new Testimony();
             t3.setAtributos(dto2);
-            assertThat(t3.getIdTestimonio()).isEqualTo(99);
+            assertThat(t3.getIdTestimony()).isEqualTo(99);
         }
     }
 
     @Nested
     @DisplayName("MovimientoTestimonio")
-    class MovimientoTestimonioTests {
+    class TestimonyMovementTests {
         @Test
         @DisplayName("All")
         void all() {
-            MovimientoTestimonio m1 = new MovimientoTestimonio();
-            MovimientoTestimonio m2 = new MovimientoTestimonio(1);
-            assertThat(m2.getIdMovimientoTestimonio()).isEqualTo(1);
+            TestimonyMovement m1 = new TestimonyMovement();
+            TestimonyMovement m2 = new TestimonyMovement(1);
+            assertThat(m2.getIdTestimonyMovement()).isEqualTo(1);
 
             Date d = new Date();
-            m1.setIdMovimientoTestimonio(10);
-            m1.setNumeroCarton(5);
-            m1.setObservaciones("obs");
-            m1.setFechaIngreso(d);
-            m1.setFechaInscripcion(d);
-            m1.setFechaSalida(d);
-            m1.setInscripta(true);
+            m1.setIdTestimonyMovement(10);
+            m1.setCardNumber(5);
+            m1.setNotes("obs");
+            m1.setDateEntry(d);
+            m1.setDateRegistration(d);
+            m1.setDateExit(d);
+            m1.setRegistered(true);
             m1.setVersion(1);
-            Testimonio t = new Testimonio(99);
-            m1.setTestimonio(t);
-            assertThat(m1.getIdMovimientoTestimonio()).isEqualTo(10);
-            assertThat(m1.getNumeroCarton()).isEqualTo(5);
-            assertThat(m1.getInscripta()).isTrue();
-            assertThat(m1.getFechaIngreso()).isEqualTo(d);
-            assertThat(m1.getFechaInscripcion()).isEqualTo(d);
-            assertThat(m1.getFechaSalida()).isEqualTo(d);
-            assertThat(m1.getObservaciones()).isEqualTo("obs");
+            Testimony t = new Testimony(99);
+            m1.setTestimony(t);
+            assertThat(m1.getIdTestimonyMovement()).isEqualTo(10);
+            assertThat(m1.getCardNumber()).isEqualTo(5);
+            assertThat(m1.getRegistered()).isTrue();
+            assertThat(m1.getDateEntry()).isEqualTo(d);
+            assertThat(m1.getDateRegistration()).isEqualTo(d);
+            assertThat(m1.getDateExit()).isEqualTo(d);
+            assertThat(m1.getNotes()).isEqualTo("obs");
             assertThat(m1.getVersion()).isEqualTo(1);
-            assertThat(m1.getTestimonio()).isSameAs(t);
+            assertThat(m1.getTestimony()).isSameAs(t);
 
-            assertThat(new MovimientoTestimonio(1)).isEqualTo(new MovimientoTestimonio(1));
-            assertThat(new MovimientoTestimonio(1)).isNotEqualTo(new MovimientoTestimonio(2));
-            assertThat(new MovimientoTestimonio(1)).isNotEqualTo("x");
+            assertThat(new TestimonyMovement(1)).isEqualTo(new TestimonyMovement(1));
+            assertThat(new TestimonyMovement(1)).isNotEqualTo(new TestimonyMovement(2));
+            assertThat(new TestimonyMovement(1)).isNotEqualTo("x");
             assertThat(m1.toString()).contains("10");
 
-            DtoMovimientoTestimonio dto = m1.getDto();
-            assertThat(dto.getIdMovimientoTestimonio()).isEqualTo(10);
+            DtoTestimonyMovement dto = m1.getDto();
+            assertThat(dto.getIdTestimonyMovement()).isEqualTo(10);
 
-            DtoMovimientoTestimonio dto2 = new DtoMovimientoTestimonio();
-            dto2.setIdMovimientoTestimonio(50);
-            dto2.setNumeroCarton(1);
-            dto2.setObservaciones("o");
+            DtoTestimonyMovement dto2 = new DtoTestimonyMovement();
+            dto2.setIdTestimonyMovement(50);
+            dto2.setCardNumber(1);
+            dto2.setNotes("o");
             dto2.setVersion(1);
-            DtoTestimonio dtoT = new DtoTestimonio();
-            dtoT.setIdTestimonio(99);
-            dto2.setTestimonio(dtoT);
+            DtoTestimony dtoT = new DtoTestimony();
+            dtoT.setIdTestimony(99);
+            dto2.setTestimony(dtoT);
 
-            MovimientoTestimonio m3 = new MovimientoTestimonio();
+            TestimonyMovement m3 = new TestimonyMovement();
             m3.setAtributos(dto2);
-            assertThat(m3.getIdMovimientoTestimonio()).isEqualTo(50);
-            assertThat(m3.getTestimonio()).isNotNull();
+            assertThat(m3.getIdTestimonyMovement()).isEqualTo(50);
+            assertThat(m3.getTestimony()).isNotNull();
         }
     }
 
     @Nested
     @DisplayName("PlantillaPresupuesto + PK")
-    class PlantillaPresupuestoTests {
+    class BudgetTemplateTests {
         @Test
         @DisplayName("All")
         void all() {
-            PlantillaPresupuestoPK pk1 = new PlantillaPresupuestoPK(1, 2);
-            PlantillaPresupuestoPK pk2 = new PlantillaPresupuestoPK(1, 2);
-            PlantillaPresupuestoPK pk3 = new PlantillaPresupuestoPK(1, 3);
-            PlantillaPresupuestoPK pk4 = new PlantillaPresupuestoPK(2, 2);
-            PlantillaPresupuestoPK empty = new PlantillaPresupuestoPK();
+            BudgetTemplatePK pk1 = new BudgetTemplatePK(1, 2);
+            BudgetTemplatePK pk2 = new BudgetTemplatePK(1, 2);
+            BudgetTemplatePK pk3 = new BudgetTemplatePK(1, 3);
+            BudgetTemplatePK pk4 = new BudgetTemplatePK(2, 2);
+            BudgetTemplatePK empty = new BudgetTemplatePK();
             assertThat(pk1).isEqualTo(pk2);
             assertThat(pk1).isNotEqualTo(pk3);
             assertThat(pk1).isNotEqualTo(pk4);
             assertThat(pk1).isNotEqualTo("x");
             assertThat(pk1.hashCode()).isEqualTo(pk2.hashCode());
             assertThat(pk1.toString()).isNotBlank();
-            empty.setFkIdTipoTramite(5);
-            empty.setFkIdConcepto(7);
-            assertThat(empty.getFkIdTipoTramite()).isEqualTo(5);
-            assertThat(empty.getFkIdConcepto()).isEqualTo(7);
+            empty.setFkIdProcedureType(5);
+            empty.setFkIdConcept(7);
+            assertThat(empty.getFkIdProcedureType()).isEqualTo(5);
+            assertThat(empty.getFkIdConcept()).isEqualTo(7);
 
-            PlantillaPresupuesto p1 = new PlantillaPresupuesto();
-            PlantillaPresupuesto p2 = new PlantillaPresupuesto(pk1);
-            assertThat(p2.getPlantillaPresupuestoPK()).isEqualTo(pk1);
-            p1.setPlantillaPresupuestoPK(pk1);
-            p1.setObservaciones("obs");
-            TipoDeTramite tt = new TipoDeTramite(1);
-            p1.setTipoDeTramite(tt);
-            Concepto c = new Concepto(1);
-            p1.setConcepto(c);
-            assertThat(p1.getPlantillaPresupuestoPK()).isEqualTo(pk1);
-            assertThat(p1.getObservaciones()).isEqualTo("obs");
-            assertThat(p1.getTipoDeTramite()).isSameAs(tt);
-            assertThat(p1.getConcepto()).isSameAs(c);
+            BudgetTemplate p1 = new BudgetTemplate();
+            BudgetTemplate p2 = new BudgetTemplate(pk1);
+            assertThat(p2.getBudgetTemplatePK()).isEqualTo(pk1);
+            p1.setBudgetTemplatePK(pk1);
+            p1.setNotes("obs");
+            ProcedureType tt = new ProcedureType(1);
+            p1.setProcedureType(tt);
+            Concept c = new Concept(1);
+            p1.setConcept(c);
+            assertThat(p1.getBudgetTemplatePK()).isEqualTo(pk1);
+            assertThat(p1.getNotes()).isEqualTo("obs");
+            assertThat(p1.getProcedureType()).isSameAs(tt);
+            assertThat(p1.getConcept()).isSameAs(c);
 
-            assertThat(new PlantillaPresupuesto(pk1)).isEqualTo(new PlantillaPresupuesto(pk1));
-            assertThat(new PlantillaPresupuesto(pk1)).isNotEqualTo(new PlantillaPresupuesto(pk3));
-            assertThat(new PlantillaPresupuesto(pk1)).isNotEqualTo("x");
+            assertThat(new BudgetTemplate(pk1)).isEqualTo(new BudgetTemplate(pk1));
+            assertThat(new BudgetTemplate(pk1)).isNotEqualTo(new BudgetTemplate(pk3));
+            assertThat(new BudgetTemplate(pk1)).isNotEqualTo("x");
             assertThat(p1.toString()).isNotBlank();
         }
     }
 
     @Nested
     @DisplayName("PlantillaTramite + PK")
-    class PlantillaTramiteTests {
+    class ProcedureTemplateTests {
         @Test
         @DisplayName("All")
         void all() {
-            PlantillaTramitePK pk1 = new PlantillaTramitePK(1, 2);
-            PlantillaTramitePK pk2 = new PlantillaTramitePK(1, 2);
-            PlantillaTramitePK pk3 = new PlantillaTramitePK(1, 3);
-            PlantillaTramitePK pk4 = new PlantillaTramitePK(2, 2);
-            PlantillaTramitePK empty = new PlantillaTramitePK();
+            ProcedureTemplatePK pk1 = new ProcedureTemplatePK(1, 2);
+            ProcedureTemplatePK pk2 = new ProcedureTemplatePK(1, 2);
+            ProcedureTemplatePK pk3 = new ProcedureTemplatePK(1, 3);
+            ProcedureTemplatePK pk4 = new ProcedureTemplatePK(2, 2);
+            ProcedureTemplatePK empty = new ProcedureTemplatePK();
             assertThat(pk1).isEqualTo(pk2);
             assertThat(pk1).isNotEqualTo(pk3);
             assertThat(pk1).isNotEqualTo(pk4);
             assertThat(pk1).isNotEqualTo("x");
             assertThat(pk1.hashCode()).isEqualTo(pk2.hashCode());
             assertThat(pk1.toString()).isNotBlank();
-            empty.setFkIdTipoTramite(5);
-            empty.setFkIdTipoDocumento(7);
-            assertThat(empty.getFkIdTipoTramite()).isEqualTo(5);
-            assertThat(empty.getFkIdTipoDocumento()).isEqualTo(7);
+            empty.setFkIdProcedureType(5);
+            empty.setFkIdDocumentType(7);
+            assertThat(empty.getFkIdProcedureType()).isEqualTo(5);
+            assertThat(empty.getFkIdDocumentType()).isEqualTo(7);
 
-            PlantillaTramite t1 = new PlantillaTramite();
-            PlantillaTramite t2 = new PlantillaTramite(pk1);
-            assertThat(t2.getPlantillaTramitePK()).isEqualTo(pk1);
-            t1.setPlantillaTramitePK(pk1);
-            t1.setObservaciones("obs");
-            TipoDeTramite tt = new TipoDeTramite(1);
-            t1.setTipoDeTramite(tt);
-            TipoDeDocumento td = new TipoDeDocumento();
-            t1.setTipoDeDocumento(td);
-            assertThat(t1.getPlantillaTramitePK()).isEqualTo(pk1);
-            assertThat(t1.getObservaciones()).isEqualTo("obs");
-            assertThat(t1.getTipoDeTramite()).isSameAs(tt);
-            assertThat(t1.getTipoDeDocumento()).isSameAs(td);
+            ProcedureTemplate t1 = new ProcedureTemplate();
+            ProcedureTemplate t2 = new ProcedureTemplate(pk1);
+            assertThat(t2.getProcedureTemplatePK()).isEqualTo(pk1);
+            t1.setProcedureTemplatePK(pk1);
+            t1.setNotes("obs");
+            ProcedureType tt = new ProcedureType(1);
+            t1.setProcedureType(tt);
+            DocumentType td = new DocumentType();
+            t1.setDocumentType(td);
+            assertThat(t1.getProcedureTemplatePK()).isEqualTo(pk1);
+            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getProcedureType()).isSameAs(tt);
+            assertThat(t1.getDocumentType()).isSameAs(td);
 
-            assertThat(new PlantillaTramite(pk1)).isEqualTo(new PlantillaTramite(pk1));
-            assertThat(new PlantillaTramite(pk1)).isNotEqualTo(new PlantillaTramite(pk3));
-            assertThat(new PlantillaTramite(pk1)).isNotEqualTo("x");
+            assertThat(new ProcedureTemplate(pk1)).isEqualTo(new ProcedureTemplate(pk1));
+            assertThat(new ProcedureTemplate(pk1)).isNotEqualTo(new ProcedureTemplate(pk3));
+            assertThat(new ProcedureTemplate(pk1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
         }
     }
 
     @Nested
     @DisplayName("RegistroAuditoria")
-    class RegistroAuditoriaTests {
+    class AuditRecordTests {
         @Test
         @DisplayName("All")
         void all() {
-            RegistroAuditoria r1 = new RegistroAuditoria();
+            AuditRecord r1 = new AuditRecord();
             Date d = new Date();
-            RegistroAuditoria r2 = new RegistroAuditoria(1);
-            assertThat(r2.getIdRegistroAuditoria()).isEqualTo(1);
-            RegistroAuditoria r3 = new RegistroAuditoria(2, "detail", d);
-            assertThat(r3.getDetalleOperacion()).isEqualTo("detail");
+            AuditRecord r2 = new AuditRecord(1);
+            assertThat(r2.getIdAuditRecord()).isEqualTo(1);
+            AuditRecord r3 = new AuditRecord(2, "detail", d);
+            assertThat(r3.getOperationDetail()).isEqualTo("detail");
 
-            r1.setIdRegistroAuditoria(10);
-            r1.setDetalleOperacion("op");
-            r1.setFecha(d);
-            r1.setModulo("Auditoria");
+            r1.setIdAuditRecord(10);
+            r1.setOperationDetail("op");
+            r1.setDate(d);
+            r1.setModule("Auditoria");
             r1.setVersion(1);
-            Usuario u = new Usuario(1);
-            r1.setFkIdUsuario(u);
-            assertThat(r1.getIdRegistroAuditoria()).isEqualTo(10);
-            assertThat(r1.getDetalleOperacion()).isEqualTo("op");
-            assertThat(r1.getFecha()).isEqualTo(d);
-            assertThat(r1.getModulo()).isEqualTo("Auditoria");
+            User u = new User(1);
+            r1.setFkIdUser(u);
+            assertThat(r1.getIdAuditRecord()).isEqualTo(10);
+            assertThat(r1.getOperationDetail()).isEqualTo("op");
+            assertThat(r1.getDate()).isEqualTo(d);
+            assertThat(r1.getModule()).isEqualTo("Auditoria");
             assertThat(r1.getVersion()).isEqualTo(1);
-            assertThat(r1.getFkIdUsuario()).isSameAs(u);
+            assertThat(r1.getFkIdUser()).isSameAs(u);
 
-            assertThat(new RegistroAuditoria(1)).isEqualTo(new RegistroAuditoria(1));
-            assertThat(new RegistroAuditoria(1)).isNotEqualTo(new RegistroAuditoria(2));
-            assertThat(new RegistroAuditoria(1)).isNotEqualTo("x");
+            assertThat(new AuditRecord(1)).isEqualTo(new AuditRecord(1));
+            assertThat(new AuditRecord(1)).isNotEqualTo(new AuditRecord(2));
+            assertThat(new AuditRecord(1)).isNotEqualTo("x");
             assertThat(r1.toString()).contains("10");
 
             // setAtributos doesn't do much
@@ -774,276 +774,276 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("TipoDeDocumento")
-    class TipoDeDocumentoTests {
+    class DocumentTypeTests {
         @Test
         @DisplayName("All")
         void all() {
-            TipoDeDocumento t1 = new TipoDeDocumento();
-            t1.setIdTipoDocumento(1);
-            t1.setNombre("DNI");
-            t1.setVence(true);
-            t1.setDiasVencimiento(30);
-            t1.setQuienEntrega("user");
+            DocumentType t1 = new DocumentType();
+            t1.setIdDocumentType(1);
+            t1.setName("DNI");
+            t1.setExpires(true);
+            t1.setDueDays(30);
+            t1.setDeliveredBy("user");
             t1.setVersion(1);
-            t1.setHabilitado(true);
-            t1.setPlantillaTramiteList(new ArrayList<>());
-            assertThat(t1.getNombre()).isEqualTo("DNI");
-            assertThat(t1.getVence()).isTrue();
-            assertThat(t1.getDiasVencimiento()).isEqualTo(30);
-            assertThat(t1.getQuienEntrega()).isEqualTo("user");
+            t1.setEnabled(true);
+            t1.setProcedureTemplateList(new ArrayList<>());
+            assertThat(t1.getName()).isEqualTo("DNI");
+            assertThat(t1.getExpires()).isTrue();
+            assertThat(t1.getDueDays()).isEqualTo(30);
+            assertThat(t1.getDeliveredBy()).isEqualTo("user");
             assertThat(t1.getVersion()).isEqualTo(1);
-            assertThat(t1.getHabilitado()).isTrue();
+            assertThat(t1.getEnabled()).isTrue();
 
-            TipoDeDocumento t2 = new TipoDeDocumento();
-            t2.setIdTipoDocumento(1);
+            DocumentType t2 = new DocumentType();
+            t2.setIdDocumentType(1);
             assertThat(t1).isEqualTo(t2);
-            t2.setIdTipoDocumento(2);
+            t2.setIdDocumentType(2);
             assertThat(t1).isNotEqualTo(t2);
             assertThat(t1).isNotEqualTo("x");
             assertThat(t1.hashCode()).isNotNegative();
             assertThat(t1.toString()).isNotBlank();
 
-            DtoTipoDeDocumento dto = t1.getDto();
-            assertThat(dto.getNombre()).isEqualTo("DNI");
+            DtoDocumentType dto = t1.getDto();
+            assertThat(dto.getName()).isEqualTo("DNI");
 
-            DtoTipoDeDocumento dto2 = new DtoTipoDeDocumento();
-            dto2.setIdTipoDocumento(99);
-            dto2.setNombre("RG");
-            dto2.setVence(false);
-            dto2.setQuienEntrega("u");
-            dto2.setHabilitado(true);
+            DtoDocumentType dto2 = new DtoDocumentType();
+            dto2.setIdDocumentType(99);
+            dto2.setName("RG");
+            dto2.setExpires(false);
+            dto2.setDeliveredBy("u");
+            dto2.setEnabled(true);
             dto2.setVersion(0);
-            TipoDeDocumento t3 = new TipoDeDocumento();
+            DocumentType t3 = new DocumentType();
             t3.setAtributos(dto2);
-            assertThat(t3.getNombre()).isEqualTo("RG");
+            assertThat(t3.getName()).isEqualTo("RG");
         }
     }
 
     @Nested
     @DisplayName("TipoDeFolio")
-    class TipoDeFolioTests {
+    class FolioTypeTests {
         @Test
         @DisplayName("All")
         void all() throws Exception {
-            TipoDeFolio t1 = new TipoDeFolio();
-            TipoDeFolio t2 = new TipoDeFolio(1);
-            TipoDeFolio t3 = new TipoDeFolio(2, "Protocolo");
-            TipoDeFolio t4 = new TipoDeFolio("Auxiliar");
-            assertThat(t2.getIdTipoFolio()).isEqualTo(1);
-            assertThat(t3.getNombre()).isEqualTo("Protocolo");
-            assertThat(t4.getNombre()).isEqualTo("Auxiliar");
+            FolioType t1 = new FolioType();
+            FolioType t2 = new FolioType(1);
+            FolioType t3 = new FolioType(2, "Protocolo");
+            FolioType t4 = new FolioType("Auxiliar");
+            assertThat(t2.getIdFolioType()).isEqualTo(1);
+            assertThat(t3.getName()).isEqualTo("Protocolo");
+            assertThat(t4.getName()).isEqualTo("Auxiliar");
 
-            t1.setIdTipoFolio(10);
-            t1.setNombre("X");
-            t1.setObservaciones("obs");
-            t1.setHabilitado(true);
+            t1.setIdFolioType(10);
+            t1.setName("X");
+            t1.setNotes("obs");
+            t1.setEnabled(true);
             t1.setVersion(1);
             t1.setFolioList(new ArrayList<>());
-            assertThat(t1.getNombre()).isEqualTo("X");
-            assertThat(t1.getObservaciones()).isEqualTo("obs");
-            assertThat(t1.getHabilitado()).isTrue();
+            assertThat(t1.getName()).isEqualTo("X");
+            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getEnabled()).isTrue();
             assertThat(t1.getVersion()).isEqualTo(1);
 
-            assertThat(new TipoDeFolio(1)).isEqualTo(new TipoDeFolio(1));
-            assertThat(new TipoDeFolio(1)).isNotEqualTo(new TipoDeFolio(2));
-            assertThat(new TipoDeFolio(1)).isNotEqualTo("x");
+            assertThat(new FolioType(1)).isEqualTo(new FolioType(1));
+            assertThat(new FolioType(1)).isNotEqualTo(new FolioType(2));
+            assertThat(new FolioType(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
 
-            DtoTipoDeFolio dto = t1.getDto();
-            assertThat(dto.getNombre()).isEqualTo("X");
+            DtoFolioType dto = t1.getDto();
+            assertThat(dto.getName()).isEqualTo("X");
 
-            DtoTipoDeFolio dto2 = new DtoTipoDeFolio();
-            dto2.setIdTipoFolio(99);
-            dto2.setNombre("NewName");
-            TipoDeFolio t5 = new TipoDeFolio();
+            DtoFolioType dto2 = new DtoFolioType();
+            dto2.setIdFolioType(99);
+            dto2.setName("NewName");
+            FolioType t5 = new FolioType();
             t5.setAtributos(dto2);
-            assertThat(t5.getNombre()).isEqualTo("NewName");
+            assertThat(t5.getName()).isEqualTo("NewName");
         }
     }
 
     @Nested
     @DisplayName("TipoDeTramite")
-    class TipoDeTramiteTests {
+    class ProcedureTypeTests {
         @Test
         @DisplayName("All")
         void all() {
-            TipoDeTramite t1 = new TipoDeTramite();
-            TipoDeTramite t2 = new TipoDeTramite(1);
-            assertThat(t2.getIdTipoTramite()).isEqualTo(1);
+            ProcedureType t1 = new ProcedureType();
+            ProcedureType t2 = new ProcedureType(1);
+            assertThat(t2.getIdProcedureType()).isEqualTo(1);
 
-            t1.setIdTipoTramite(10);
-            t1.setNombre("X");
-            t1.setObservaciones("obs");
-            t1.setSeArchiva(true);
-            t1.setSeInscribe(true);
-            t1.setAsociaInmuebles(true);
-            t1.setHabilitado(true);
+            t1.setIdProcedureType(10);
+            t1.setName("X");
+            t1.setNotes("obs");
+            t1.setIsArchived(true);
+            t1.setIsRegistered(true);
+            t1.setAssociatesProperties(true);
+            t1.setEnabled(true);
             t1.setVersion(1);
-            t1.setPlantillaPresupuestoList(new ArrayList<>());
-            t1.setPlantillaTramiteList(new ArrayList<>());
-            t1.setTramiteList(new ArrayList<>());
-            assertThat(t1.getSeArchiva()).isTrue();
-            assertThat(t1.getSeInscribe()).isTrue();
-            assertThat(t1.getAsociaInmuebles()).isTrue();
-            assertThat(t1.getHabilitado()).isTrue();
+            t1.setBudgetTemplateList(new ArrayList<>());
+            t1.setProcedureTemplateList(new ArrayList<>());
+            t1.setProcedureList(new ArrayList<>());
+            assertThat(t1.getIsArchived()).isTrue();
+            assertThat(t1.getIsRegistered()).isTrue();
+            assertThat(t1.getAssociatesProperties()).isTrue();
+            assertThat(t1.getEnabled()).isTrue();
             assertThat(t1.getVersion()).isEqualTo(1);
-            assertThat(t1.getNombre()).isEqualTo("X");
+            assertThat(t1.getName()).isEqualTo("X");
 
-            assertThat(new TipoDeTramite(1)).isEqualTo(new TipoDeTramite(1));
-            assertThat(new TipoDeTramite(1)).isNotEqualTo(new TipoDeTramite(2));
-            assertThat(new TipoDeTramite(1)).isNotEqualTo("x");
+            assertThat(new ProcedureType(1)).isEqualTo(new ProcedureType(1));
+            assertThat(new ProcedureType(1)).isNotEqualTo(new ProcedureType(2));
+            assertThat(new ProcedureType(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
 
-            DtoTipoDeTramite dto = t1.getDto();
-            assertThat(dto.getNombre()).isEqualTo("X");
+            DtoProcedureType dto = t1.getDto();
+            assertThat(dto.getName()).isEqualTo("X");
 
-            DtoTipoDeTramite dto2 = new DtoTipoDeTramite();
-            dto2.setIdTipoTramite(99);
-            dto2.setNombre("New");
-            dto2.setSeArchiva(false);
-            dto2.setSeInscribe(false);
-            dto2.setAsociaInmuebles(false);
-            dto2.setHabilitado(true);
+            DtoProcedureType dto2 = new DtoProcedureType();
+            dto2.setIdProcedureType(99);
+            dto2.setName("New");
+            dto2.setIsArchived(false);
+            dto2.setIsRegistered(false);
+            dto2.setAssociatesProperties(false);
+            dto2.setEnabled(true);
             dto2.setVersion(0);
-            TipoDeTramite t3 = new TipoDeTramite();
+            ProcedureType t3 = new ProcedureType();
             t3.setAtributos(dto2);
-            assertThat(t3.getNombre()).isEqualTo("New");
+            assertThat(t3.getName()).isEqualTo("New");
         }
     }
 
     @Nested
     @DisplayName("TipoIdentificacion")
-    class TipoIdentificacionTests {
+    class IdentificationTypeTests {
         @Test
         @DisplayName("All")
         void all() {
-            TipoIdentificacion t1 = new TipoIdentificacion();
-            TipoIdentificacion t2 = new TipoIdentificacion(1);
-            TipoIdentificacion t3 = new TipoIdentificacion(2, "DNI");
-            assertThat(t2.getIdTipoIdentificacion()).isEqualTo(1);
-            assertThat(t3.getNombre()).isEqualTo("DNI");
+            IdentificationType t1 = new IdentificationType();
+            IdentificationType t2 = new IdentificationType(1);
+            IdentificationType t3 = new IdentificationType(2, "DNI");
+            assertThat(t2.getIdIdentificationType()).isEqualTo(1);
+            assertThat(t3.getName()).isEqualTo("DNI");
 
-            t1.setIdTipoIdentificacion(10);
-            t1.setNombre("X");
+            t1.setIdIdentificationType(10);
+            t1.setName("X");
             t1.setVersion(1);
-            t1.setPersonaList(new ArrayList<>());
-            assertThat(t1.getIdTipoIdentificacion()).isEqualTo(10);
-            assertThat(t1.getNombre()).isEqualTo("X");
+            t1.setPersonList(new ArrayList<>());
+            assertThat(t1.getIdIdentificationType()).isEqualTo(10);
+            assertThat(t1.getName()).isEqualTo("X");
             assertThat(t1.getVersion()).isEqualTo(1);
-            assertThat(t1.getPersonaList()).isEmpty();
+            assertThat(t1.getPersonList()).isEmpty();
 
-            assertThat(new TipoIdentificacion(1)).isEqualTo(new TipoIdentificacion(1));
-            assertThat(new TipoIdentificacion(1)).isNotEqualTo(new TipoIdentificacion(2));
-            assertThat(new TipoIdentificacion(1)).isNotEqualTo("x");
+            assertThat(new IdentificationType(1)).isEqualTo(new IdentificationType(1));
+            assertThat(new IdentificationType(1)).isNotEqualTo(new IdentificationType(2));
+            assertThat(new IdentificationType(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
 
             // getDto wraps a try/catch around NPE
-            assertThat(t1.getDto().getNombre()).isEqualTo("X");
+            assertThat(t1.getDto().getName()).isEqualTo("X");
         }
     }
 
     @Nested
     @DisplayName("Tramite")
-    class TramiteTests {
+    class ProcedureTests {
         @Test
         @DisplayName("Basic accessors and equals")
         void basic() {
-            Tramite t1 = new Tramite();
-            Tramite t2 = new Tramite(1);
-            assertThat(t2.getIdTramite()).isEqualTo(1);
+            Procedure t1 = new Procedure();
+            Procedure t2 = new Procedure(1);
+            assertThat(t2.getIdProcedure()).isEqualTo(1);
 
-            t1.setIdTramite(10);
-            t1.setObservaciones("obs");
+            t1.setIdProcedure(10);
+            t1.setNotes("obs");
             t1.setVersion(1);
-            t1.setFkIdInmueble(new Inmueble(1));
-            t1.setFkIdTipoTramite(new TipoDeTramite(1));
+            t1.setFkIdProperty(new Property(1));
+            t1.setFkIdProcedureType(new ProcedureType(1));
 
-            assertThat(t1.getIdTramite()).isEqualTo(10);
-            assertThat(t1.getObservaciones()).isEqualTo("obs");
+            assertThat(t1.getIdProcedure()).isEqualTo(10);
+            assertThat(t1.getNotes()).isEqualTo("obs");
             assertThat(t1.getVersion()).isEqualTo(1);
 
-            assertThat(new Tramite(1)).isEqualTo(new Tramite(1));
-            assertThat(new Tramite(1)).isNotEqualTo(new Tramite(2));
-            assertThat(new Tramite(1)).isNotEqualTo("x");
+            assertThat(new Procedure(1)).isEqualTo(new Procedure(1));
+            assertThat(new Procedure(1)).isNotEqualTo(new Procedure(2));
+            assertThat(new Procedure(1)).isNotEqualTo("x");
             assertThat(t1.toString()).isNotBlank();
         }
     }
 
     @Nested
     @DisplayName("TramitesPersonas + PK")
-    class TramitesPersonasTests {
+    class PersonProcedureTests {
         @Test
         @DisplayName("All")
         void all() {
-            TramitesPersonasPK pk1 = new TramitesPersonasPK(1, 2);
-            TramitesPersonasPK pk2 = new TramitesPersonasPK(1, 2);
-            TramitesPersonasPK pk3 = new TramitesPersonasPK(1, 3);
-            TramitesPersonasPK pk4 = new TramitesPersonasPK(2, 2);
-            TramitesPersonasPK empty = new TramitesPersonasPK();
+            PersonProcedurePK pk1 = new PersonProcedurePK(1, 2);
+            PersonProcedurePK pk2 = new PersonProcedurePK(1, 2);
+            PersonProcedurePK pk3 = new PersonProcedurePK(1, 3);
+            PersonProcedurePK pk4 = new PersonProcedurePK(2, 2);
+            PersonProcedurePK empty = new PersonProcedurePK();
             assertThat(pk1).isEqualTo(pk2);
             assertThat(pk1).isNotEqualTo(pk3);
             assertThat(pk1).isNotEqualTo(pk4);
             assertThat(pk1).isNotEqualTo("x");
             assertThat(pk1.hashCode()).isEqualTo(pk2.hashCode());
             assertThat(pk1.toString()).isNotBlank();
-            empty.setFkIdTramite(5);
-            empty.setFkIdPersonaCliente(7);
-            assertThat(empty.getFkIdTramite()).isEqualTo(5);
-            assertThat(empty.getFkIdPersonaCliente()).isEqualTo(7);
+            empty.setFkIdProcedure(5);
+            empty.setFkIdClientPerson(7);
+            assertThat(empty.getFkIdProcedure()).isEqualTo(5);
+            assertThat(empty.getFkIdClientPerson()).isEqualTo(7);
 
-            TramitesPersonas tp1 = new TramitesPersonas();
-            TramitesPersonas tp2 = new TramitesPersonas(pk1);
-            TramitesPersonas tp3 = new TramitesPersonas(1, 2);
-            assertThat(tp2.getTramitesPersonasPK()).isEqualTo(pk1);
-            assertThat(tp3.getTramitesPersonasPK().getFkIdTramite()).isEqualTo(1);
+            PersonProcedure tp1 = new PersonProcedure();
+            PersonProcedure tp2 = new PersonProcedure(pk1);
+            PersonProcedure tp3 = new PersonProcedure(1, 2);
+            assertThat(tp2.getPersonProcedurePK()).isEqualTo(pk1);
+            assertThat(tp3.getPersonProcedurePK().getFkIdProcedure()).isEqualTo(1);
 
-            tp1.setTramitesPersonasPK(pk1);
-            tp1.setTramite(new Tramite());
-            tp1.setPersona(new Person());
-            assertThat(tp1.getTramite()).isNotNull();
-            assertThat(tp1.getPersona()).isNotNull();
+            tp1.setPersonProcedurePK(pk1);
+            tp1.setProcedure(new Procedure());
+            tp1.setPerson(new Person());
+            assertThat(tp1.getProcedure()).isNotNull();
+            assertThat(tp1.getPerson()).isNotNull();
 
-            assertThat(new TramitesPersonas(pk1)).isEqualTo(new TramitesPersonas(pk1));
-            assertThat(new TramitesPersonas(pk1)).isNotEqualTo(new TramitesPersonas(pk3));
-            assertThat(new TramitesPersonas(pk1)).isNotEqualTo("x");
+            assertThat(new PersonProcedure(pk1)).isEqualTo(new PersonProcedure(pk1));
+            assertThat(new PersonProcedure(pk1)).isNotEqualTo(new PersonProcedure(pk3));
+            assertThat(new PersonProcedure(pk1)).isNotEqualTo("x");
             assertThat(tp1.toString()).isNotBlank();
         }
     }
 
     @Nested
     @DisplayName("Usuario")
-    class UsuarioTests {
+    class UserTests {
         @Test
         @DisplayName("All")
         void all() {
-            Usuario u1 = new Usuario();
-            Usuario u2 = new Usuario(1);
-            Usuario u3 = new Usuario(2, "admin", "pwd", true, "Escribano");
-            assertThat(u2.getIdUsuario()).isEqualTo(1);
-            assertThat(u3.getNombre()).isEqualTo("admin");
+            User u1 = new User();
+            User u2 = new User(1);
+            User u3 = new User(2, "admin", "pwd", true, "Escribano");
+            assertThat(u2.getIdUser()).isEqualTo(1);
+            assertThat(u3.getName()).isEqualTo("admin");
 
-            u1.setIdUsuario(10);
-            u1.setNombre("X");
-            u1.setContrasenia("password");
-            u1.setEstado(true);
-            u1.setTipo("Escribano");
+            u1.setIdUser(10);
+            u1.setName("X");
+            u1.setPassword("password");
+            u1.setStatus(true);
+            u1.setType("Escribano");
             u1.setVersion(1);
-            u1.setRegistroAuditoriaList(new ArrayList<>());
+            u1.setAuditRecordList(new ArrayList<>());
             Person p = new Person();
             p.setPersonId(99);
-            u1.setFkIdPersona(p);
+            u1.setFkIdPerson(p);
 
-            assertThat(u1.getNombre()).isEqualTo("X");
-            assertThat(u1.getContrasenia()).isEqualTo("password");
-            assertThat(u1.getEstado()).isTrue();
-            assertThat(u1.getTipo()).isEqualTo("Escribano");
+            assertThat(u1.getName()).isEqualTo("X");
+            assertThat(u1.getPassword()).isEqualTo("password");
+            assertThat(u1.getStatus()).isTrue();
+            assertThat(u1.getType()).isEqualTo("Escribano");
             assertThat(u1.getVersion()).isEqualTo(1);
-            assertThat(u1.getFkIdPersona()).isSameAs(p);
-            assertThat(u1.getRegistroAuditoriaList()).isEmpty();
+            assertThat(u1.getFkIdPerson()).isSameAs(p);
+            assertThat(u1.getAuditRecordList()).isEmpty();
 
-            assertThat(new Usuario(1)).isEqualTo(new Usuario(1));
-            assertThat(new Usuario(1)).isNotEqualTo(new Usuario(2));
-            assertThat(new Usuario(1)).isNotEqualTo("x");
+            assertThat(new User(1)).isEqualTo(new User(1));
+            assertThat(new User(1)).isNotEqualTo(new User(2));
+            assertThat(new User(1)).isNotEqualTo("x");
             assertThat(u1.toString()).contains("10");
             // getDto wraps a try/catch but won't NPE because we set fkIdPersona with idPersona
             // and Persona.getDto handles nulls. Let's call it to cover.
@@ -1057,45 +1057,45 @@ class EntitiesBasicTest {
 
     @Nested
     @DisplayName("Suplencia")
-    class SuplenciaTests {
+    class SubstitutionTests {
         @Test
         @DisplayName("Basic accessors")
         void basic() {
-            Suplencia s1 = new Suplencia();
-            Suplencia s2 = new Suplencia(1);
+            Substitution s1 = new Substitution();
+            Substitution s2 = new Substitution(1);
             Date d = new Date();
-            Suplencia s3 = new Suplencia(2, d, d);
-            assertThat(s2.getIdSuplencia()).isEqualTo(1);
-            assertThat(s3.getFechaInicio()).isEqualTo(d);
+            Substitution s3 = new Substitution(2, d, d);
+            assertThat(s2.getIdSubstitution()).isEqualTo(1);
+            assertThat(s3.getDateStart()).isEqualTo(d);
 
-            s1.setIdSuplencia(10);
-            s1.setFechaInicio(d);
-            s1.setFechaFin(d);
-            s1.setObservaciones("obs");
+            s1.setIdSubstitution(10);
+            s1.setDateStart(d);
+            s1.setDateEnd(d);
+            s1.setNotes("obs");
             s1.setVersion(1);
-            s1.setFkIdSuplente(new Person());
-            s1.setFkIdSuplantado(new Person());
+            s1.setFkIdSubstitute(new Person());
+            s1.setFkIdSubstituted(new Person());
 
-            assertThat(s1.getObservaciones()).isEqualTo("obs");
+            assertThat(s1.getNotes()).isEqualTo("obs");
             assertThat(s1.getVersion()).isEqualTo(1);
-            assertThat(s1.getFkIdSuplente()).isNotNull();
-            assertThat(s1.getFkIdSuplantado()).isNotNull();
+            assertThat(s1.getFkIdSubstitute()).isNotNull();
+            assertThat(s1.getFkIdSubstituted()).isNotNull();
 
-            assertThat(new Suplencia(1)).isEqualTo(new Suplencia(1));
-            assertThat(new Suplencia(1)).isNotEqualTo(new Suplencia(2));
-            assertThat(new Suplencia(1)).isNotEqualTo("x");
+            assertThat(new Substitution(1)).isEqualTo(new Substitution(1));
+            assertThat(new Substitution(1)).isNotEqualTo(new Substitution(2));
+            assertThat(new Substitution(1)).isNotEqualTo("x");
             assertThat(s1.toString()).isNotBlank();
         }
     }
 
     @Nested
     @DisplayName("ConstantesNegocio")
-    class ConstantesNegocioTests {
+    class BusinessConstantsTests {
         @Test
         @DisplayName("Constants are accessible")
         void constants() {
             // Trigger class loading and reach trivial fields
-            assertThat(ConstantesNegocio.ID_OBJETO_NO_VALIDO).isNotNull();
+            assertThat(BusinessConstants.ID_OBJETO_NO_VALIDO).isNotNull();
         }
     }
 }

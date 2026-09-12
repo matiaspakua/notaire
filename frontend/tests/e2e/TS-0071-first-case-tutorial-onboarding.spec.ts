@@ -141,14 +141,14 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("5. Register the client — the person behind the case", async () => {
       await go(page, "/dashboard/personas");
       await page.getByTestId("btn-nueva-persona").click();
-      await page.getByTestId("input-nombre").fill("Ana");
-      await page.getByTestId("input-apellido").fill(`Tutorial ${runId}`);
+      await page.getByTestId("input-firstName").fill("Ana");
+      await page.getByTestId("input-lastName").fill(`Tutorial ${runId}`);
       await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${runId}`);
       await page.getByLabel(/email/i).fill(`ana.tutorial.${runId}@notaire.test`);
       await page.getByTestId("check-es-cliente").click();
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-nombre").fill("Ana");
+      await page.getByTestId("input-search-firstName").fill("Ana");
       await expect(page.getByRole("table")).toContainText(cliente);
       await pause(page);
     });

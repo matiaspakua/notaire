@@ -10,14 +10,14 @@ export const personasKeys = {
 export function usePersonas() {
   return useQuery({
     queryKey: personasKeys.all,
-    queryFn: () => apiGet<Persona[]>("/personas"),
+    queryFn: () => apiGet<Persona[]>("/people"),
   });
 }
 
 export function useCreatePersona() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Persona>) => apiPost<void>("/personas", data),
+    mutationFn: (data: Partial<Persona>) => apiPost<void>("/people", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
   });
 }
@@ -26,7 +26,7 @@ export function useUpdatePersona() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Persona> }) =>
-      apiPut<void>(`/personas/${id}`, data),
+      apiPut<void>(`/people/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
   });
 }
@@ -34,7 +34,7 @@ export function useUpdatePersona() {
 export function useDeletePersona() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => apiDelete(`/personas/${id}`),
+    mutationFn: (id: number) => apiDelete(`/people/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
   });
 }

@@ -163,8 +163,8 @@ describe("Presupuesto total calculation (CU01, CU39)", () => {
 
 describe("Pago saldo computation (CU47)", () => {
   function calcularSaldo(totalPresupuesto: number, pagos: { monto?: number }[]): number {
-    const totalPagado = pagos.reduce((sum, p) => sum + (p.monto ?? 0), 0);
-    return totalPresupuesto - totalPagado;
+    const totalPaid = pagos.reduce((sum, p) => sum + (p.monto ?? 0), 0);
+    return totalPresupuesto - totalPaid;
   }
 
   it("saldo is total minus sum of pagos", () => {

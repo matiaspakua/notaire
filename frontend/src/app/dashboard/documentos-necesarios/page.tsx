@@ -31,26 +31,26 @@ export default function DocumentosNecesariosPage() {
     {
       key: "nombre",
       header: t("fields.nombre"),
-      render: (p) => <span className="font-medium">{p.tipoDeDocumento?.nombre}</span>,
+      render: (p) => <span className="font-medium">{p.tipoDeDocumento?.name}</span>,
     },
     {
       key: "vence",
       header: t("fields.vence"),
-      render: (p) => (p.tipoDeDocumento?.vence ? tc("yes") : tc("no")),
+      render: (p) => (p.tipoDeDocumento?.expires ? tc("yes") : tc("no")),
     },
     {
       key: "diasVencimiento",
       header: t("fields.diasVencimiento"),
-      render: (p) => (p.tipoDeDocumento?.vence ? (p.tipoDeDocumento?.diasVencimiento ?? "—") : "—"),
+      render: (p) => (p.tipoDeDocumento?.expires ? (p.tipoDeDocumento?.dueDays ?? "—") : "—"),
     },
     {
       key: "quienEntrega",
       header: t("fields.quienEntrega"),
-      render: (p) => p.tipoDeDocumento?.quienEntrega ?? "—",
+      render: (p) => p.tipoDeDocumento?.deliveredBy ?? "—",
     },
   ];
 
-  const selectedTramiteName = tiposTramite.find((tt) => tt.idTipoDeTramite === idTipoTramite)?.nombre ?? "";
+  const selectedTramiteName = tiposTramite.find((tt) => tt.idProcedureType === idTipoTramite)?.name ?? "";
 
   return (
     <div>
@@ -77,8 +77,8 @@ export default function DocumentosNecesariosPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {tiposTramite.map((tt) => (
-                    <SelectItem key={tt.idTipoDeTramite} value={String(tt.idTipoDeTramite)}>
-                      {tt.nombre}
+                    <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
+                      {tt.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -102,7 +102,7 @@ export default function DocumentosNecesariosPage() {
                 columns={columns}
                 isLoading={isLoading}
                 emptyMessage={t("noDocuments")}
-                keyExtractor={(p) => `${p.tipoDeTramite?.idTipoTramite}-${p.tipoDeDocumento?.idTipoDocumento}`}
+                keyExtractor={(p) => `${p.tipoDeTramite?.idProcedureType}-${p.tipoDeDocumento?.idDocumentType}`}
               />
             )}
           </div>

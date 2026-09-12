@@ -56,7 +56,7 @@ export default function MinutasInscripcionPage() {
   const [numeroInscripcionDefinitivo, setNumeroInscripcionDefinitivo] = useState("");
 
   const { data: minuta, isLoading } = useMinutaInscripcion(minutaId);
-  const escriturasFirmadas = escrituras.filter((e) => e.estado === ESTADO_FIRMADA);
+  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
 
   function estadoLabel(estado?: string): string {
     switch (estado) {
@@ -76,7 +76,7 @@ export default function MinutasInscripcionPage() {
   async function handleGenerar() {
     try {
       const nueva = await generarMutation.mutateAsync(Number(idEscritura));
-      setMinutaId(nueva.idMinutaInscripcion ?? null);
+      setMinutaId(nueva.idRegistrationDraft ?? null);
       toast.success(t("generated"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorGenerate"));
@@ -146,8 +146,8 @@ export default function MinutasInscripcionPage() {
               </SelectTrigger>
               <SelectContent>
                 {escriturasFirmadas.map((e) => (
-                  <SelectItem key={e.idEscritura} value={String(e.idEscritura)}>
-                    {t("fields.numero")} {e.numero}
+                  <SelectItem key={e.idDeed} value={String(e.idDeed)}>
+                    {t("fields.numero")} {e.number}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -185,10 +185,10 @@ export default function MinutasInscripcionPage() {
         {minutaId && isLoading && <p style={{ color: theme.colors.neutral[600] }}>{tc("loading")}</p>}
 
         {minuta && (
-          <FormSection title={`${t("fields.numero")} ${minuta.numero}`}>
+          <FormSection title={`${t("fields.numero")} ${minuta.number}`}>
             <FormField label={t("fields.estado")}>
               <span data-testid="minuta-estado" className="font-medium">
-                {estadoLabel(minuta.estado)}
+                {estadoLabel(minuta.status)}
               </span>
             </FormField>
 
@@ -203,14 +203,14 @@ export default function MinutasInscripcionPage() {
                 {t("descargarReporte")}
               </Button>
 
-              {minuta.estado === ESTADO_GENERADA && (
+              {minuta.status === ESTADO_GENERADA && (
                 <Button onClick={() => setPresentarOpen(true)} data-testid="btn-presentar-minuta">
                   <Send className="h-4 w-4" />
                   {t("presentar")}
                 </Button>
               )}
 
-              {minuta.estado === ESTADO_PRESENTADA && (
+              {minuta.status === ESTADO_PRESENTADA && (
                 <>
                   <Button
                     variant="secondary"

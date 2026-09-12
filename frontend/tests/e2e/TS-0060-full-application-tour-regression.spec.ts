@@ -218,16 +218,16 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Search by nombre", async () => {
-      await page.getByTestId("input-search-nombre").fill("Juan");
+      await page.getByTestId("input-search-firstName").fill("Juan");
       await pause(page, PAUSE);
-      await page.getByTestId("input-search-nombre").clear();
+      await page.getByTestId("input-search-firstName").clear();
       await pause(page, 400);
     });
 
     await test.step("Search by apellido", async () => {
-      await page.getByTestId("input-search-apellido").fill("Pérez");
+      await page.getByTestId("input-search-lastName").fill("Pérez");
       await pause(page, PAUSE);
-      await page.getByTestId("input-search-apellido").clear();
+      await page.getByTestId("input-search-lastName").clear();
       await pause(page, 400);
     });
 
@@ -248,8 +248,8 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nueva-persona");
-      await expect(page.getByTestId("input-nombre")).toBeVisible();
-      await expect(page.getByTestId("input-apellido")).toBeVisible();
+      await expect(page.getByTestId("input-firstName")).toBeVisible();
+      await expect(page.getByTestId("input-lastName")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });

@@ -6,14 +6,14 @@ package com.licensis.notaire.exception;
  */
 public class DuplicatePersonException extends NotaireException {
 
-    private final Integer idPersonaExistente;
+    private final Integer idPersonExistente;
 
-    public DuplicatePersonException(String message, Integer idPersonaExistente) {
+    public DuplicatePersonException(String message, Integer idPersonExistente) {
         super(409, message);
-        this.idPersonaExistente = idPersonaExistente;
+        this.idPersonExistente = idPersonExistente;
     }
 
-    public Integer getIdPersonaExistente() {
-        return idPersonaExistente;
+    public Integer getIdPersonExistente() {
+        return idPersonExistente;
     }
 }

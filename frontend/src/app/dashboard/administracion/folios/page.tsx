@@ -23,9 +23,9 @@ const ESTADO_UTILIZADO = "Utilizado";
 const ESTADO_ESCRITURA_FIRMADA = "Firmada";
 
 interface TipoDeFolioRow {
-  idTipoFolio: number;
-  nombre: string;
-  esAuxiliar?: boolean;
+  idFolioType: number;
+  name: string;
+  isAuxiliary?: boolean;
 }
 
 interface FolioFormState {
@@ -95,8 +95,8 @@ export default function FoliosAdminPage() {
 
   function openEditTipo(tf: TipoDeFolioRow) {
     setTipoEditing(tf);
-    setTipoNombre(tf.nombre);
-    setTipoEsAuxiliar(tf.esAuxiliar ?? false);
+    setTipoNombre(tf.name);
+    setTipoEsAuxiliar(tf.isAuxiliary ?? false);
     setTipoModalOpen(true);
   }
 
@@ -108,10 +108,10 @@ export default function FoliosAdminPage() {
     setTipoSaving(true);
     try {
       if (tipoEditing) {
-        await apiPut(`/tipo-folio/${tipoEditing.idTipoFolio}`, { nombre: tipoNombre, esAuxiliar: tipoEsAuxiliar });
+        await apiPut(`/tipo-folio/${tipoEditing.idFolioType}`, { name: tipoNombre, isAuxiliary: tipoEsAuxiliar });
         toast.success(t("tiposDeFolio.updated"));
       } else {
-        await apiPost("/tipo-folio", { nombre: tipoNombre, esAuxiliar: tipoEsAuxiliar });
+        await apiPost("/tipo-folio", { name: tipoNombre, isAuxiliary: tipoEsAuxiliar });
         toast.success(t("tiposDeFolio.created"));
       }
       setTipoModalOpen(false);
@@ -125,12 +125,12 @@ export default function FoliosAdminPage() {
 
   async function handleDeleteTipoClick(tf: TipoDeFolioRow) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-folio/${tf.idTipoFolio}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-folio/${tf.idFolioType}/in-use`);
       if (inUse) {
         toast.error(t("tiposDeFolio.inUseCannotDelete"));
         return;
       }
-      setTipoDeleteId(tf.idTipoFolio);
+      setTipoDeleteId(tf.idFolioType);
     } catch {
       toast.error(t("tiposDeFolio.errorDelete"));
     }
@@ -165,9 +165,9 @@ export default function FoliosAdminPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FolioFormState>(EMPTY);
   const escriturasVinculables = escrituras.filter((e) => {
-    if (e.estado !== ESTADO_ESCRITURA_FIRMADA) return false;
+    if (e.status !== ESTADO_ESCRITURA_FIRMADA) return false;
     const yaVinculada = allFolios.some(
-      (f) => f.escritura?.idEscritura === e.idEscritura && f.idFolio !== form.idFolio
+      (f) => f.fkIdDeed?.idDeed === e.idDeed && f.idFolio !== form.idFolio
     );
     return !yaVinculada;
   });
@@ -185,13 +185,13 @@ export default function FoliosAdminPage() {
   function openEdit(folio: Folio) {
     setForm({
       idFolio: folio.idFolio,
-      numero: folio.numero,
-      anio: folio.anio,
-      estado: folio.estado ?? "Nuevo",
-      observaciones: folio.observaciones ?? "",
-      tipoFolioId: folio.tiposDeFolio?.idTipoFolio,
-      escribanoId: folio.personaEscribano?.idPersona,
-      escrituraId: folio.escritura?.idEscritura,
+      numero: folio.number,
+      anio: folio.year,
+      estado: folio.status ?? "Nuevo",
+      observaciones: folio.notes ?? "",
+      tipoFolioId: folio.fkIdFolioType?.idFolioType,
+      escribanoId: folio.fkIdNotaryPerson?.idPerson,
+      escrituraId: folio.fkIdDeed?.idDeed,
     });
     setIsEditMode(true);
     setModalOpen(true);
@@ -213,13 +213,13 @@ export default function FoliosAdminPage() {
     setSaving(true);
     try {
       const body = {
-        numero: form.numero,
-        anio: form.anio,
-        estado: form.estado,
-        observaciones: form.observaciones,
-        tipoFolioId: form.tipoFolioId,
-        escribanoId: form.escribanoId,
-        escrituraId: form.escrituraId,
+        number: form.numero,
+        year: form.anio,
+        status: form.estado,
+        notes: form.observaciones,
+        typeFolioId: form.tipoFolioId,
+        notaryId: form.escribanoId,
+        deedId: form.escrituraId,
       };
       if (isEditMode && form.idFolio) {
         await apiPut(`/folio/${form.idFolio}`, body);
@@ -255,25 +255,25 @@ export default function FoliosAdminPage() {
 
   const columns: Column<Folio>[] = [
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.numero}</span> },
-    { key: "anio", header: tc("year"), render: (f) => f.anio ?? "—" },
-    { key: "tipo", header: t("fields.tipo"), render: (f) => f.tiposDeFolio?.nombre ?? f.tipoDeFolio?.nombre ?? "—" },
+    { key: "numero", header: t("fields.numero"), render: (f) => <span className="font-medium">{f.number}</span> },
+    { key: "anio", header: tc("year"), render: (f) => f.year ?? "—" },
+    { key: "tipo", header: t("fields.tipo"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "estado",
       header: t("fields.estado"),
-      render: (f) => (f.estado ? <Badge variant="secondary">{f.estado}</Badge> : "—"),
+      render: (f) => (f.status ? <Badge variant="secondary">{f.status}</Badge> : "—"),
     },
     {
       key: "escritura",
       header: t("fields.escritura"),
-      render: (f) => (f.escritura?.numero != null ? `Nº ${f.escritura.numero}` : "—"),
+      render: (f) => (f.fkIdDeed?.number != null ? `Nº ${f.fkIdDeed.number}` : "—"),
     },
     {
       key: "actions",
       header: "",
       className: "w-24",
       render: (f) => {
-        const inUse = f.estado === ESTADO_UTILIZADO;
+        const inUse = f.status === ESTADO_UTILIZADO;
         return (
           <div className="flex gap-2 justify-end">
             <Button
@@ -376,7 +376,7 @@ export default function FoliosAdminPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {tiposFolio.map((tf) => (
-                      <SelectItem key={tf.idTipoFolio} value={String(tf.idTipoFolio)}>{tf.nombre}</SelectItem>
+                      <SelectItem key={tf.idFolioType} value={String(tf.idFolioType)}>{tf.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -391,8 +391,8 @@ export default function FoliosAdminPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {escribanos.map((e) => (
-                      <SelectItem key={e.idPersona} value={String(e.idPersona)}>
-                        {e.apellido} {e.nombre}
+                      <SelectItem key={e.personId} value={String(e.personId)}>
+                        {e.lastName} {e.firstName}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -409,8 +409,8 @@ export default function FoliosAdminPage() {
                   <SelectContent>
                     <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
                     {escriturasVinculables.map((e) => (
-                      <SelectItem key={e.idEscritura} value={String(e.idEscritura)}>
-                        Escritura Nº {e.numero}
+                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
+                        Escritura Nº {e.number}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -460,15 +460,15 @@ export default function FoliosAdminPage() {
         </div>
         <DataTable
           data={filteredTiposFolio}
-          keyExtractor={(tf) => tf.idTipoFolio}
+          keyExtractor={(tf) => tf.idFolioType}
           emptyMessage={t("tiposDeFolio.noData")}
           columns={[
-            { key: "id", header: tc("id"), render: (tf) => <span className="text-xs text-muted-foreground">{tf.idTipoFolio}</span>, className: "w-12" },
-            { key: "nombre", header: tc("name"), render: (tf) => <span className="font-medium">{tf.nombre}</span> },
+            { key: "id", header: tc("id"), render: (tf) => <span className="text-xs text-muted-foreground">{tf.idFolioType}</span>, className: "w-12" },
+            { key: "nombre", header: tc("name"), render: (tf) => <span className="font-medium">{tf.name}</span> },
             {
               key: "esAuxiliar",
               header: t("tiposDeFolio.esAuxiliar"),
-              render: (tf) => (tf.esAuxiliar ? <Badge variant="secondary">{t("tiposDeFolio.esAuxiliar")}</Badge> : "—"),
+              render: (tf) => (tf.isAuxiliary ? <Badge variant="secondary">{t("tiposDeFolio.esAuxiliar")}</Badge> : "—"),
             },
             {
               key: "actions",

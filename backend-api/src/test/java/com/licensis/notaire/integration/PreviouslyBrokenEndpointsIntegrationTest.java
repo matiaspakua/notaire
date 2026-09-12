@@ -48,14 +48,14 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return 404 for GET /api/v1/testimonio/{id} when absent")
-    void shouldReturnNotFoundWhenTestimonioMissing() throws Exception {
+    void shouldReturnNotFoundWhenTestimonyMissing() throws Exception {
         mockMvc.perform(get("/api/v1/testimonio/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Should return a JSON array for GET /api/v1/movimiento-testimonio")
-    void shouldListMovimientosTestimonioWhenRequested() throws Exception {
+    void shouldListMovimientosTestimonyWhenRequested() throws Exception {
         mockMvc.perform(get("/api/v1/movimiento-testimonio"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
@@ -63,7 +63,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return 404 for GET /api/v1/movimiento-testimonio/{id} when absent")
-    void shouldReturnNotFoundWhenMovimientoTestimonioMissing() throws Exception {
+    void shouldReturnNotFoundWhenTestimonyMovementMissing() throws Exception {
         mockMvc.perform(get("/api/v1/movimiento-testimonio/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
@@ -78,7 +78,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return 404 for GET /api/v1/tipo-folio/{id} when absent")
-    void shouldReturnNotFoundWhenTipoDeFolioMissing() throws Exception {
+    void shouldReturnNotFoundWhenFolioTypeMissing() throws Exception {
         mockMvc.perform(get("/api/v1/tipo-folio/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }

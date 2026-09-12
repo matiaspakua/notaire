@@ -1,8 +1,8 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.exception.DuplicatePersonException;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.PersonService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,13 +36,13 @@ class PersonServiceTest {
     private PersonService personService;
 
     private Person testPerson;
-    private TipoIdentificacion tipoIdentificacion;
+    private IdentificationType identificationType;
 
     @BeforeEach
     void setUp() {
-        tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setIdTipoIdentificacion(1);
-        tipoIdentificacion.setNombre("DNI");
+        identificationType = new IdentificationType();
+        identificationType.setIdIdentificationType(1);
+        identificationType.setName("DNI");
 
         testPerson = new Person();
         testPerson.setPersonId(1);
@@ -50,7 +50,7 @@ class PersonServiceTest {
         testPerson.setLastName("Lopez");
         testPerson.setIdentificationNumber("12345678");
         testPerson.setIsClient(true);
-        testPerson.setFkIdIdentificationType(tipoIdentificacion);
+        testPerson.setFkIdIdentificationType(identificationType);
     }
 
     @Nested
@@ -117,8 +117,8 @@ class PersonServiceTest {
         void shouldCreatePersonWhenDocumentNotRegistered() {
             Person newPerson = new Person();
             newPerson.setIdentificationNumber("87654321");
-            newPerson.setFkIdIdentificationType(tipoIdentificacion);
-            when(personRepository.findByNumeroIdentificacion("87654321")).thenReturn(Optional.empty());
+            newPerson.setFkIdIdentificationType(identificationType);
+            when(personRepository.findByIdentificationNumber("87654321")).thenReturn(Optional.empty());
             when(personRepository.save(newPerson)).thenReturn(newPerson);
 
             Person result = personService.save(newPerson);
@@ -132,12 +132,12 @@ class PersonServiceTest {
         void shouldRejectCreateWhenDocumentAlreadyRegistered() {
             Person newPerson = new Person();
             newPerson.setIdentificationNumber("12345678");
-            newPerson.setFkIdIdentificationType(tipoIdentificacion);
-            when(personRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPerson));
+            newPerson.setFkIdIdentificationType(identificationType);
+            when(personRepository.findByIdentificationNumber("12345678")).thenReturn(Optional.of(testPerson));
 
             assertThatThrownBy(() -> personService.save(newPerson))
                     .isInstanceOf(DuplicatePersonException.class)
-                    .extracting(ex -> ((DuplicatePersonException) ex).getIdPersonaExistente())
+                    .extracting(ex -> ((DuplicatePersonException) ex).getIdPersonExistente())
                     .isEqualTo(1);
 
             verify(personRepository, never()).save(any());
@@ -146,7 +146,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should update person without changing the document")
         void shouldUpdatePersonWithoutChangingDocument() {
-            when(personRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPerson));
+            when(personRepository.findByIdentificationNumber("12345678")).thenReturn(Optional.of(testPerson));
             when(personRepository.save(testPerson)).thenReturn(testPerson);
 
             Person result = personService.save(testPerson);
@@ -161,8 +161,8 @@ class PersonServiceTest {
             Person edited = new Person();
             edited.setPersonId(2);
             edited.setIdentificationNumber("12345678");
-            edited.setFkIdIdentificationType(tipoIdentificacion);
-            when(personRepository.findByNumeroIdentificacion("12345678")).thenReturn(Optional.of(testPerson));
+            edited.setFkIdIdentificationType(identificationType);
+            when(personRepository.findByIdentificationNumber("12345678")).thenReturn(Optional.of(testPerson));
 
             assertThatThrownBy(() -> personService.save(edited))
                     .isInstanceOf(DuplicatePersonException.class);
@@ -193,20 +193,20 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by identificationNumber when provided")
         void shouldSearchByIdentificationNumberWhenProvided() {
-            when(personRepository.findByNumeroIdentificacion("12345678"))
+            when(personRepository.findByIdentificationNumber("12345678"))
                     .thenReturn(Optional.of(testPerson));
 
             List<Person> result = personService.search(null, null, "12345678", null, null);
 
             assertThat(result).hasSize(1).containsExactly(testPerson);
-            verify(personRepository).findByNumeroIdentificacion("12345678");
+            verify(personRepository).findByIdentificationNumber("12345678");
             verify(personRepository, never()).findAll();
         }
 
         @Test
         @DisplayName("Should return empty list when identificationNumber not found")
         void shouldReturnEmptyWhenIdentificationNumberNotFound() {
-            when(personRepository.findByNumeroIdentificacion("99999999")).thenReturn(Optional.empty());
+            when(personRepository.findByIdentificationNumber("99999999")).thenReturn(Optional.empty());
 
             List<Person> result = personService.search(null, null, "99999999", null, null);
 
@@ -216,7 +216,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by firstName and lastName when both provided")
         void shouldSearchByFirstNameAndLastNameWhenBothProvided() {
-            when(personRepository.findByNombreAndApellidoContainingIgnoreCase("Ana", "Lopez"))
+            when(personRepository.findByNameAndLastNameContainingIgnoreCase("Ana", "Lopez"))
                     .thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search("Ana", "Lopez", null, null, null);
@@ -227,7 +227,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by firstName only when lastName not provided")
         void shouldSearchByFirstNameOnlyWhenLastNameNotProvided() {
-            when(personRepository.findByNombreContainingIgnoreCase("Ana"))
+            when(personRepository.findByNameContainingIgnoreCase("Ana"))
                     .thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search("Ana", null, null, null, null);
@@ -238,7 +238,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by lastName only when firstName not provided")
         void shouldSearchByLastNameOnlyWhenFirstNameNotProvided() {
-            when(personRepository.findByApellidoContainingIgnoreCase("Lopez"))
+            when(personRepository.findByLastNameContainingIgnoreCase("Lopez"))
                     .thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search(null, "Lopez", null, null, null);
@@ -249,7 +249,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by identification type when provided")
         void shouldSearchByIdentificationTypeWhenProvided() {
-            when(personRepository.findByFkIdTipoIdentificacionIdTipoIdentificacion(1))
+            when(personRepository.findByFkIdIdentificationTypeIdIdentificationType(1))
                     .thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search(null, null, null, 1, null);
@@ -260,7 +260,7 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should search by isClient when provided")
         void shouldSearchByIsClientWhenProvided() {
-            when(personRepository.findByEsCliente(true)).thenReturn(List.of(testPerson));
+            when(personRepository.findByIsClient(true)).thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search(null, null, null, null, true);
 
@@ -279,9 +279,9 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should deduplicate results from multiple filter matches")
         void shouldDeduplicateResultsFromMultipleFilters() {
-            when(personRepository.findByNombreContainingIgnoreCase("Ana"))
+            when(personRepository.findByNameContainingIgnoreCase("Ana"))
                     .thenReturn(List.of(testPerson));
-            when(personRepository.findByEsCliente(true)).thenReturn(List.of(testPerson));
+            when(personRepository.findByIsClient(true)).thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search("Ana", null, null, null, true);
 
@@ -291,13 +291,13 @@ class PersonServiceTest {
         @Test
         @DisplayName("Should ignore blank firstName")
         void shouldIgnoreBlankFirstName() {
-            when(personRepository.findByApellidoContainingIgnoreCase("Lopez"))
+            when(personRepository.findByLastNameContainingIgnoreCase("Lopez"))
                     .thenReturn(List.of(testPerson));
 
             List<Person> result = personService.search("  ", "Lopez", null, null, null);
 
             assertThat(result).containsExactly(testPerson);
-            verify(personRepository, never()).findByNombreContainingIgnoreCase(any());
+            verify(personRepository, never()).findByNameContainingIgnoreCase(any());
         }
     }
 }

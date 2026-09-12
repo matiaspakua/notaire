@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.ItemController;
-import com.licensis.notaire.dto.TipoItem;
+import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.Item;
+import com.licensis.notaire.business.Item;
 import com.licensis.notaire.service.ItemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,19 +45,19 @@ class ItemControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    private Item buildItem(Integer id, TipoItem tipo, String motivo) {
+    private Item buildItem(Integer id, TypeItem type, String reason) {
         Item item = new Item(id);
-        item.setNombre("Item de prueba");
-        item.setValor(1000f);
-        item.setTipo(tipo);
-        item.setMotivo(motivo);
+        item.setName("Item de prueba");
+        item.setValue(1000f);
+        item.setType(type);
+        item.setReason(reason);
         return item;
     }
 
     @Test
     @DisplayName("GET /api/v1/items should return 200 with all items")
     void shouldGetAllItems() throws Exception {
-        when(itemService.findAll()).thenReturn(List.of(buildItem(1, TipoItem.NORMAL, null)));
+        when(itemService.findAll()).thenReturn(List.of(buildItem(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idItem").value(1));
@@ -66,7 +66,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("GET /api/v1/items/{id} should return 200 when item found")
     void shouldGetItemById() throws Exception {
-        when(itemService.findById(1)).thenReturn(Optional.of(buildItem(1, TipoItem.NORMAL, null)));
+        when(itemService.findById(1)).thenReturn(Optional.of(buildItem(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idItem").value(1));
@@ -82,8 +82,8 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id} should return items for presupuesto")
-    void shouldGetItemsByPresupuesto() throws Exception {
-        when(itemService.findByPresupuesto(10)).thenReturn(List.of(buildItem(1, TipoItem.NORMAL, null)));
+    void shouldGetItemsByBudget() throws Exception {
+        when(itemService.findByBudget(10)).thenReturn(List.of(buildItem(1, TypeItem.NORMAL, null)));
         mockMvc.perform(get("/api/v1/items/presupuesto/10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idItem").value(1));
@@ -91,21 +91,21 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return discounts and surcharges")
-    void shouldReturnDiscountsAndSurchargesForPresupuesto() throws Exception {
-        when(itemService.findDescuentosYRecargosByPresupuesto(10)).thenReturn(List.of(
-                buildItem(1, TipoItem.DESCUENTO, "Descuento por pronto pago")
+    void shouldReturnDiscountsAndSurchargesForBudget() throws Exception {
+        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of(
+                buildItem(1, TypeItem.DESCUENTO, "Descuento por pronto pago")
         ));
 
         mockMvc.perform(get("/api/v1/items/presupuesto/10/descuentos-recargos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].tipo").value("DESCUENTO"))
-                .andExpect(jsonPath("$[0].motivo").value("Descuento por pronto pago"));
+                .andExpect(jsonPath("$[0].type").value("DESCUENTO"))
+                .andExpect(jsonPath("$[0].reason").value("Descuento por pronto pago"));
     }
 
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return empty list when none exist")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() throws Exception {
-        when(itemService.findDescuentosYRecargosByPresupuesto(10)).thenReturn(List.of());
+        when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/items/presupuesto/10/descuentos-recargos"))
                 .andExpect(status().isOk())
@@ -114,8 +114,8 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("GET /api/v1/items/presupuesto/{id}/descuentos-recargos should return 404 for unknown presupuesto")
-    void shouldReturn404ForUnknownPresupuestoOnReport() throws Exception {
-        when(itemService.findDescuentosYRecargosByPresupuesto(999))
+    void shouldReturn404ForUnknownBudgetOnReport() throws Exception {
+        when(itemService.findDiscountsAndSurchargesByBudget(999))
                 .thenThrow(new ResourceNotFoundException("Presupuesto no encontrado con ID: 999"));
 
         mockMvc.perform(get("/api/v1/items/presupuesto/999/descuentos-recargos"))
@@ -125,12 +125,12 @@ class ItemControllerTest {
     @Test
     @DisplayName("POST /api/v1/items should return 201 when item created")
     void shouldCreateItem() throws Exception {
-        when(itemService.create(any(Item.class))).thenReturn(buildItem(1, TipoItem.NORMAL, null));
+        when(itemService.create(any(Item.class))).thenReturn(buildItem(1, TypeItem.NORMAL, null));
 
         String json = """
                 {
-                    "nombre": "Item de prueba",
-                    "valor": 1000.0
+                    "name": "Item de prueba",
+                    "value": 1000.0
                 }
                 """;
 
@@ -145,13 +145,13 @@ class ItemControllerTest {
     @DisplayName("POST /api/v1/items should return 400 when a discount item has no reason")
     void shouldReturn400WhenDiscountItemHasNoReason() throws Exception {
         when(itemService.create(any(Item.class)))
-                .thenThrow(new BusinessValidationException("El motivo es obligatorio para ítems de tipo DESCUENTO"));
+                .thenThrow(new BusinessValidationException("El motivo es obligatorio para ítems de type DESCUENTO"));
 
         String json = """
                 {
-                    "nombre": "Descuento sin motivo",
-                    "valor": 500.0,
-                    "tipo": "DESCUENTO"
+                    "name": "Descuento sin reason",
+                    "value": 500.0,
+                    "type": "DESCUENTO"
                 }
                 """;
 
@@ -164,12 +164,12 @@ class ItemControllerTest {
     @Test
     @DisplayName("PUT /api/v1/items/{id} should return 200 when updated")
     void shouldUpdateItem() throws Exception {
-        when(itemService.update(anyInt(), any(Item.class))).thenReturn(buildItem(1, TipoItem.NORMAL, null));
+        when(itemService.update(anyInt(), any(Item.class))).thenReturn(buildItem(1, TypeItem.NORMAL, null));
 
         String json = """
                 {
-                    "nombre": "Item actualizado",
-                    "valor": 2000.0
+                    "name": "Item actualizado",
+                    "value": 2000.0
                 }
                 """;
 
@@ -187,8 +187,8 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "nombre": "Item actualizado",
-                    "valor": 2000.0
+                    "name": "Item actualizado",
+                    "value": 2000.0
                 }
                 """;
 

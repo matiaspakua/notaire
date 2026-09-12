@@ -1,9 +1,9 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,16 +21,16 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
     private PersonRepository personRepository;
 
     @Autowired
-    private TipoIdentificacionRepository tipoIdentificacionRepository;
+    private IdentificationTypeRepository identificationTypeRepository;
 
-    private TipoIdentificacion tipoId;
+    private IdentificationType typeId;
 
     @BeforeEach
     void setUp() {
-        tipoId = new TipoIdentificacion();
-        tipoId.setNombre("DNI");
-        tipoId.setCaracteres("8");
-        tipoId = tipoIdentificacionRepository.save(tipoId);
+        typeId = new IdentificationType();
+        typeId.setName("DNI");
+        typeId.setCharacters("8");
+        typeId = identificationTypeRepository.save(typeId);
     }
 
     @Test
@@ -41,7 +41,7 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
         person.setLastName("Pérez");
         person.setIdentificationNumber("12345678");
         person.setIsClient(true);
-        person.setFkIdIdentificationType(tipoId);
+        person.setFkIdIdentificationType(typeId);
 
         Person saved = personRepository.save(person);
 
@@ -59,7 +59,7 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
         person.setLastName("García");
         person.setIdentificationNumber("87654321");
         person.setIsClient(false);
-        person.setFkIdIdentificationType(tipoId);
+        person.setFkIdIdentificationType(typeId);
         Person saved = personRepository.save(person);
 
         Optional<Person> found = personRepository.findById(saved.getPersonId());
@@ -77,7 +77,7 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
         person.setLastName("López");
         person.setIdentificationNumber("11111111");
         person.setIsClient(true);
-        person.setFkIdIdentificationType(tipoId);
+        person.setFkIdIdentificationType(typeId);
         Person saved = personRepository.save(person);
 
         saved.setFirstName("Carlos Alberto");
@@ -96,7 +96,7 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
         person.setLastName("Martínez");
         person.setIdentificationNumber("22222222");
         person.setIsClient(true);
-        person.setFkIdIdentificationType(tipoId);
+        person.setFkIdIdentificationType(typeId);
         person.setAddress("Calle Falsa 123");
         person.setPhone("123-4567");
         person.setEmail("ana@example.com");
@@ -118,7 +118,7 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
             person.setLastName(uniqueLastName + i);
             person.setIdentificationNumber("ID" + (10000000 + i));
             person.setIsClient(i % 2 == 0);
-            person.setFkIdIdentificationType(tipoId);
+            person.setFkIdIdentificationType(typeId);
             personRepository.save(person);
         }
 

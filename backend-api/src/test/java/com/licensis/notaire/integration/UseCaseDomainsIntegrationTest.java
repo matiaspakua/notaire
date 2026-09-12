@@ -34,7 +34,7 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void presupuestosPagosDomain() throws Exception {
+    void presupuestosPaymentsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/presupuestos")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/items")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/pagos")).andExpect(status().isOk());
@@ -54,11 +54,11 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void clientesPersonasDomain() throws Exception {
+    void clientesPersonsDomain() throws Exception {
         mockMvc.perform(get("/api/v1/people")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search").param("firstName", "Admin")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/people/search").param("idTipoIdentificacion", "1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/people/search").param("idIdentificationType", "1")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/tipo-identificacion")).andExpect(status().isOk());
     }
 
@@ -91,10 +91,10 @@ class UseCaseDomainsIntegrationTest {
     }
 
     @Test
-    void usuariosAuditoriaDomain() throws Exception {
+    void usersAuditDomain() throws Exception {
         mockMvc.perform(get("/api/v1/usuarios")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/registro-auditoria")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/registro-auditoria/usuario/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/audit-log")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/audit-log/user/1")).andExpect(status().isOk());
     }
 
     @Test

@@ -1,134 +1,158 @@
 // ──────────────────────────────────────────────
-// Core domain types — mirrors backend JPA entities
+// Core domain types — mirrors backend JPA entities / DTOs (all English, per #977)
 // ──────────────────────────────────────────────
 
+/** POST /usuarios/login response — hand-built Map in UserController#login. */
 export interface DtoUsuario {
   idUsuario?: number;
   nombre: string;
-  contrasenia?: string;
   tipo?: string;
   valido?: boolean;
-  idPersona?: number;
+  estado?: boolean;
+  version?: number;
+  personas?: { idPersona?: number; nombre?: string; apellido?: string };
   /** JWT issued by POST /usuarios/login; absent outside the login response. */
   token?: string;
 }
 
+/** GET /api/v1/people — raw Person entity. */
 export interface Persona {
-  idPersona?: number;
-  nombre?: string;
-  apellido?: string;
-  numeroIdentificacion?: string;
-  cuit?: string;
+  personId?: number;
+  firstName?: string;
+  lastName?: string;
+  nationality?: string;
+  identificationNumber?: string;
+  taxId?: string;
+  sex?: string;
+  birthDate?: string;
+  maritalStatus?: string;
+  marriageCount?: number;
+  occupation?: string;
+  address?: string;
+  phone?: string;
   email?: string;
-  telefono?: string;
-  domicilio?: string;
-  esCliente?: boolean;
-  registroEscribano?: number;
+  notaryRegistrationNumber?: number;
+  isClient?: boolean;
+  fkIdIdentificationType?: { idIdentificationType?: number; name?: string; characters?: string };
+  version?: number;
+}
+
+/** Nested person shape used by other entities' DTOs (DtoBudget.person, DtoFolio.personNotary, etc). */
+export interface DtoPerson {
+  idPerson?: number;
+  name?: string;
+  lastName?: string;
 }
 
 export interface Rol {
-  idRol?: number;
-  nombre?: string;
-  descripcion?: string;
-  activo?: boolean;
+  idRole?: number;
+  name?: string;
+  description?: string;
+  active?: boolean;
   modulos?: string[];
 }
 
 export interface Usuario {
-  idUsuario?: number;
-  nombre?: string;
-  contrasenia?: string;
-  tipo?: string;
-  activo?: boolean;
-  persona?: Persona;
-  rol?: { idRol: number; nombre: string } | null;
+  idUser?: number;
+  name?: string;
+  password?: string;
+  type?: string;
+  active?: boolean;
+  person?: Persona;
+  role?: { idRole: number; name: string } | null;
 }
 
+/** GET /api/v1/tipo-tramite — raw ProcedureType entity. */
 export interface TipoDeTramite {
-  idTipoDeTramite?: number;
-  nombre?: string;
-  descripcion?: string;
-  seArchiva?: boolean;
-  seInscribe?: boolean;
+  idProcedureType?: number;
+  name?: string;
+  notes?: string;
+  isArchived?: boolean;
+  isRegistered?: boolean;
+  associatesProperties?: boolean;
+  enabled?: boolean;
   workflowDefinitionId?: number | null;
-  workflowDefinitionNombre?: string | null;
+  workflowDefinitionName?: string | null;
 }
 
+/** GET /api/v1/tipo-de-documento — raw DocumentType entity. */
 export interface TipoDeDocumento {
-  idTipoDocumento?: number;
-  nombre?: string;
-  vence?: boolean;
-  diasVencimiento?: number | null;
-  quienEntrega?: string;
+  idDocumentType?: number;
+  name?: string;
+  expires?: boolean;
+  dueDays?: number | null;
+  deliveredBy?: string;
+  enabled?: boolean;
 }
 
-/**
- * Backend returns the JPA entity directly (not a Dto), so the nested
- * `tipoDeTramite` uses the entity's own `idTipoTramite` key — unlike
- * `TipoDeTramite.idTipoDeTramite` returned by the DTO-based /tipo-tramite endpoint.
- */
 export interface PlantillaTramite {
-  observaciones?: string;
-  tipoDeTramite?: { idTipoTramite?: number; nombre?: string };
+  notes?: string;
+  tipoDeTramite?: { idProcedureType?: number; name?: string };
   tipoDeDocumento?: TipoDeDocumento;
 }
 
+/** GET /api/v1/tipo-folio — raw FolioType entity. */
 export interface TipoDeFolio {
-  idTipoDeFolio?: number;
-  nombre?: string;
+  idFolioType?: number;
+  name?: string;
+  notes?: string;
+  enabled?: boolean;
+  isAuxiliary?: boolean;
 }
 
+/** GET /api/v1/estado-gestion — raw ManagementStatus entity. */
 export interface EstadoDeGestion {
-  idEstadoGestion?: number;
-  nombre?: string;
-  observaciones?: string;
+  idManagementStatus?: number;
+  name?: string;
+  notes?: string;
   version?: number;
 }
 
+/** GET /api/v1/conceptos — raw Concept entity. */
 export interface Concepto {
-  idConcepto?: number;
-  nombre?: string;
-  descripcion?: string;
-  valor?: number;
+  idConcept?: number;
+  name?: string;
+  value?: number;
+  percentage?: number;
+  fixed?: boolean;
+  enabled?: boolean;
+  version?: number;
 }
 
+/** GET /api/v1/folio — raw Folio entity. */
 export interface Folio {
   idFolio?: number;
-  numero?: number;
-  anio?: number;
-  estado?: string;
-  observaciones?: string;
-  tipoDeFolio?: TipoDeFolio;
-  tiposDeFolio?: { idTipoFolio?: number; nombre?: string };
-  personaEscribano?: { idPersona?: number; registroEscribano?: number };
-  /** Raw JPA entity field name, as returned by ProtocoloAuxiliarController (no DTO layer). */
-  fkIdTipoFolio?: { idTipoFolio?: number; nombre?: string };
-  escritura?: { idEscritura?: number; numero?: number };
-  disponible?: boolean;
+  number?: number;
+  year?: number;
+  status?: string;
+  notes?: string;
+  fkIdFolioType?: TipoDeFolio;
+  fkIdNotaryPerson?: { idPerson?: number; notaryRegistrationNumber?: number };
+  fkIdDeed?: { idDeed?: number; number?: number };
   version?: number;
 }
 
 export interface Cuaderno {
-  idCuaderno?: number;
-  numero?: number;
-  anio?: number;
-  observaciones?: string;
-  fkIdPersonaEscribano?: { idPersona?: number; registroEscribano?: number };
+  idNotebook?: number;
+  number?: number;
+  year?: number;
+  notes?: string;
+  fkIdNotaryPerson?: { idPerson?: number; notaryRegistrationNumber?: number };
   version?: number;
 }
 
 export interface Tramite {
-  idTramite?: number;
-  tipo?: TipoDeTramite;
-  personaList?: Persona[];
+  idProcedure?: number;
+  procedureType?: TipoDeTramite;
+  listaPersons?: Persona[];
   documentosPresentados?: DocumentoPresentado[];
 }
 
 export interface DocumentoPresentado {
-  idDocumentoPresentado?: number;
-  tipo?: TipoDeDocumento;
-  entregado?: boolean;
-  fecha?: string;
+  idSubmittedDocument?: number;
+  fkDocumentType?: TipoDeDocumento;
+  delivered?: boolean;
+  dateEntry?: string;
 }
 
 export interface DocumentoPresentadoRequest {
@@ -137,48 +161,51 @@ export interface DocumentoPresentadoRequest {
   entregado: boolean;
 }
 
+/** GET /api/v1/carpetas — raw ProcedureFolder DTO. */
 export interface CarpetaTramite {
-  idCarpeta?: number;
-  numero?: number;
-  estado?: string;
-  motivoEspera?: string;
-  idGestion?: number;
-  idTramite?: number;
+  idFolder?: number;
+  number?: number;
+  status?: string;
+  waitReason?: string;
+  idManagement?: number;
+  idProcedure?: number;
 }
 
+/** GET /gestiones/{id}/historial — DtoHistorySummary. */
 export interface Historial {
-  idHistorial?: number;
-  fecha?: string;
-  observaciones?: string;
-  gestionId?: number;
-  estadoGestionId?: number;
-  estadoGestionNombre?: string;
+  idHistory?: number;
+  date?: string;
+  notes?: string;
+  managementId?: number;
+  statusManagementId?: number;
+  statusManagementName?: string;
 }
 
+/** GET /gestiones — DtoManagementSummary. */
 export interface GestionDeEscritura {
-  idGestion?: number;
-  numero?: number;
+  idManagement?: number;
+  number?: number;
   encabezado?: string;
-  observaciones?: string;
-  fechaInicio?: string;
-  estadoActual?: string;
-  tramiteCount?: number;
+  dateStart?: string;
+  statusActual?: string;
+  procedureCount?: number;
+  notes?: string;
 }
 
 export interface DtoSaldoPendiente {
-  saldoPendiente: number;
+  pendingBalance: number;
 }
 
 export interface DtoGestionArchivada {
-  idGestion: number;
-  saldoPendiente: number;
-  deudaPendienteAlArchivar: boolean;
+  idManagement: number;
+  pendingBalance: number;
+  pendingDebtAtArchiving: boolean;
 }
 
 export interface CreateCompleteGestionInput {
-  numero: number;
+  number: number;
   encabezado?: string;
-  observaciones?: string;
+  notes?: string;
   presupuestoId: number;
   escribanoId: number;
   estadoGestionId: number;
@@ -188,134 +215,137 @@ export interface CreateCompleteGestionInput {
 
 export type TipoItem = "NORMAL" | "DESCUENTO" | "RECARGO";
 
+/** GET /api/v1/items — raw Item entity. */
 export interface Item {
   idItem?: number;
-  nombre?: string;
-  valor?: number;
-  porcentaje?: number;
-  observaciones?: string;
-  tipo?: TipoItem;
-  motivo?: string;
-  // Legacy fields kept for backward compatibility with older unit tests;
-  // the backend Item entity has no concepto/cantidad/precio fields.
-  concepto?: Concepto;
-  cantidad?: number;
-  precio?: number;
-  presupuesto?: Presupuesto;
+  name?: string;
+  value?: number;
+  percentage?: number;
+  notes?: string;
+  type?: TipoItem;
+  reason?: string;
+  fixedConcept?: boolean;
+  fkIdBudget?: { idBudget?: number };
 }
 
 export interface PlantillaPresupuestoPK {
-  fkIdTipoTramite: number;
-  fkIdConcepto: number;
+  fkIdProcedureType: number;
+  fkIdConcept: number;
 }
 
+/** GET/POST /api/v1/plantilla-presupuestos — raw BudgetTemplate entity. */
 export interface PlantillaPresupuesto {
-  // Real backend model: a (tipo de trámite × concepto) pair with observaciones.
-  plantillaPresupuestoPK?: PlantillaPresupuestoPK;
-  tipoDeTramite?: TipoDeTramite;
-  concepto?: Concepto;
-  observaciones?: string;
+  budgetTemplatePK?: PlantillaPresupuestoPK;
+  procedureType?: TipoDeTramite;
+  concept?: Concepto;
+  notes?: string;
   version?: number;
-  // Legacy fields kept for backward compatibility with older unit tests.
-  idPlantillaPresupuesto?: number;
-  nombre?: string;
-  descripcion?: string;
-  itemList?: Item[];
 }
 
 export interface PlantillaCostoDocumentoPK {
-  fkIdTipoTramite: number;
-  fkIdTipoDocumento: number;
+  fkIdProcedureType: number;
+  fkIdDocumentType: number;
 }
 
+/** GET /api/v1/plantilla-costos-documento — raw DocumentCostTemplate entity;
+ * POST body is the flat CreateCostRequest shape. */
 export interface PlantillaCostoDocumento {
-  plantillaCostoDocumentoPK?: PlantillaCostoDocumentoPK;
-  tipoDeTramite?: TipoDeTramite;
-  tipoDeDocumento?: TipoDeDocumento;
-  montoFijo?: number;
-  porcentajeVariable?: number;
+  documentCostTemplatePK?: PlantillaCostoDocumentoPK;
+  procedureType?: TipoDeTramite;
+  documentType?: TipoDeDocumento;
+  fixedAmount?: number;
+  variablePercentage?: number;
   version?: number;
 }
 
+/** GET /api/v1/presupuestos — raw Budget entity. */
 export interface Presupuesto {
-  idPresupuesto?: number;
-  fecha?: string;
-  monto?: number;
-  estado?: string;
-  persona?: Persona;
-  plantilla?: PlantillaPresupuesto;
+  idBudget?: number;
+  number?: number;
+  date?: string;
+  encabezado?: string;
+  status?: string;
+  propertyAmount?: number;
+  notes?: string;
+  person?: DtoPerson;
   itemList?: Item[];
+  version?: number;
 }
 
+/** GET /api/v1/escrituras — raw Deed entity. */
 export interface Escritura {
-  idEscritura?: number;
-  numero?: number;
-  fechaEscrituracion?: string;
-  cuerpo?: string;
-  estado?: string;
-  gestion?: GestionDeEscritura;
+  idDeed?: number;
+  number?: number;
+  dateDeedrecording?: string;
+  body?: string;
+  status?: string;
+  registrationEntryNumber?: string;
+  notes?: string;
   idFolio?: number;
-  observaciones?: string;
 }
 
 export interface MovimientoTestimonio {
-  idMovimientoTestimonio?: number;
-  fechaIngreso?: string;
-  fechaSalida?: string;
-  fechaInscripcion?: string;
-  inscripta?: boolean;
-  numeroCarton?: number;
-  observaciones?: string;
-  testimonio?: { idTestimonio?: number };
+  idTestimonyMovement?: number;
+  dateEntry?: string;
+  dateExit?: string;
+  dateRegistration?: string;
+  registered?: boolean;
+  cardNumber?: number;
+  notes?: string;
+  testimony?: { idTestimony?: number };
 }
 
 /** CU07/CU08 - Testimonio generado a partir de una escritura firmada. */
 export interface Testimonio {
-  idTestimonio?: number;
-  numero?: number;
-  observado?: boolean;
-  verificado?: boolean;
-  observaciones?: string;
-  escritura?: Escritura;
+  idTestimony?: number;
+  number?: number;
+  flagged?: boolean;
+  verified?: boolean;
+  notes?: string;
+  deed?: Escritura;
   movimientosTestimonios?: MovimientoTestimonio[];
 }
 
+/** GET /api/v1/pagos — raw Payment entity; POST/PUT body is the flat PaymentRequest shape. */
 export interface Pago {
-  idPago?: number;
-  idPresupuesto?: number;
-  monto?: number;
-  fecha?: string;
-  metodoPago?: string;
-  observaciones?: string;
-  presupuesto?: Presupuesto;
+  idPayment?: number;
+  idBudget?: number;
+  amount?: number;
+  date?: string;
+  paymentMethod?: string;
+  notes?: string;
+  fkIdBudget?: { idBudget?: number };
 }
 
-/** CU47 - GET /presupuestos/{id}/resumen response. */
+/** CU47 - GET /presupuestos/{id}/resumen response — DtoBudgetResumen. */
 export interface PresupuestoResumen {
-  idPresupuesto: number;
-  numeroPresupuesto: number;
-  idGestion?: number;
-  numeroGestion?: number;
-  encabezadoGestion?: string;
+  idBudget: number;
+  numberBudget: number;
+  idManagement?: number;
+  numberManagement?: number;
+  encabezadoManagement?: string;
   total: number;
-  saldoPendiente: number;
-  pagos: Pago[];
+  pendingBalance: number;
+  payments: Pago[];
 }
 
+/** GET /api/v1/suplencia — raw Substitution entity. */
 export interface Suplencia {
-  idSuplencia?: number;
-  fkIdSuplantado?: Persona;
-  fkIdSuplente?: Persona;
-  fechaInicio?: string;
-  fechaFin?: string;
+  idSubstitution?: number;
+  fkIdSubstitute?: DtoPerson;
+  fkIdSubstituted?: DtoPerson;
+  dateStart?: string;
+  dateEnd?: string;
+  notes?: string;
 }
 
+/** GET /api/v1/audit-log — raw AuditRecord entity. */
 export interface RegistroAuditoria {
-  idRegistroAuditoria?: number;
-  usuarios?: { nombre?: string };
-  detalleOperacion?: string;
-  fecha?: string;
-  modulo?: string;
+  idAuditRecord?: number;
+  users?: { name?: string };
+  operationDetail?: string;
+  date?: string;
+  module?: string;
 }
 
 // ──────────────────────────────────────────────
@@ -325,30 +355,30 @@ export type WorkflowNodeType = "INITIAL" | "INTERMEDIATE" | "FINAL";
 
 export interface WorkflowDefinition {
   id?: number;
-  nombre?: string;
-  descripcion?: string;
-  activo?: boolean;
+  name?: string;
+  description?: string;
+  active?: boolean;
   version?: number;
 }
 
 export interface WorkflowNode {
   id?: number;
   workflowDefinitionId?: number;
-  estadoGestionId?: number;
-  estadoGestionNombre?: string;
-  tipo?: WorkflowNodeType;
-  posicionX?: number;
-  posicionY?: number;
+  statusManagementId?: number;
+  statusManagementName?: string;
+  type?: WorkflowNodeType;
+  positionX?: number;
+  positionY?: number;
   version?: number;
 }
 
 export interface WorkflowTransition {
   id?: number;
   workflowDefinitionId?: number;
-  nodoOrigenId?: number;
-  nodoDestinoId?: number;
-  condicion?: string;
-  descripcion?: string;
+  originNodeId?: number;
+  destinationNodeId?: number;
+  condition?: string;
+  description?: string;
   version?: number;
 }
 
@@ -356,39 +386,42 @@ export interface WorkflowTransition {
 // UI / Navigation types
 // ──────────────────────────────────────────────
 
+/** GET /api/v1/inmueble — raw Property entity. */
 export interface Inmueble {
-  idInmueble?: number;
-  nomenclaturaCatastral?: string;
-  valuacionFiscal?: number;
-  domicilio?: string;
-  observaciones?: string;
-  matricula?: string;
-  tomoFolioFinca?: string;
-  linderos?: string;
+  idProperty?: number;
+  cadastralDesignation?: string;
+  fiscalAppraisal?: number;
+  address?: string;
+  notes?: string;
+  registrationNumber?: string;
+  volumeFolioLandRecord?: string;
+  boundaries?: string;
 }
 
+/** GET /api/v1/minutas-inscripcion — raw RegistrationDraft entity. */
 export interface MinutaInscripcion {
-  idMinutaInscripcion?: number;
-  numero?: number;
-  estado?: string;
-  fechaGeneracion?: string;
-  fechaPresentacion?: string;
-  numeroEntradaRegistral?: string;
-  observacionesRegistro?: string;
-  fechaSubsanacion?: string;
-  fechaRecepcion?: string;
-  numeroInscripcionDefinitivo?: string;
-  escritura?: { idEscritura?: number; numero?: number };
+  idRegistrationDraft?: number;
+  number?: number;
+  status?: string;
+  dateGeneration?: string;
+  dateSubmission?: string;
+  registryEntryNumber?: string;
+  dateReception?: string;
+  finalRegistrationNumber?: string;
+  registryNotes?: string;
+  dateCorrection?: string;
+  idDeed?: number;
 }
 
+/** GET /api/v1/copia — raw Copy entity. */
 export interface Copia {
-  idCopia?: number;
-  numero?: number;
-  fechaImpresion?: string;
-  fechaRetiro?: string;
-  observaciones?: string;
-  testimonio?: { idTestimonio?: number; numero?: number };
-  persona?: Persona;
+  idCopy?: number;
+  number?: number;
+  datePrinting?: string;
+  dateWithdrawal?: string;
+  notes?: string;
+  fkIdTestimony?: { idTestimony?: number; number?: number };
+  fkIdPerson?: DtoPerson;
 }
 
 export interface NavItem {
@@ -404,91 +437,91 @@ export interface NavItem {
 
 /** A single historial entry for the workflow trace. */
 export interface HistorialEntry {
-  idHistorial?: number;
-  estadoGestionId?: number;
-  estadoGestionNombre?: string;
-  fecha?: string;
-  observaciones?: string;
+  idHistory?: number;
+  statusManagementId?: number;
+  statusManagementName?: string;
+  date?: string;
+  notes?: string;
 }
 
-/** Aggregated response from GET /gestiones/{id}/workflow-trace. */
+/** Aggregated response from GET /gestiones/{id}/workflow-trace — DtoManagementWorkflowTrace. */
 export interface GestionWorkflowTrace {
-  gestionId: number;
-  numero?: number;
+  managementId: number;
+  number?: number;
   encabezado?: string;
-  fechaInicio?: string;
-  estadoActual?: string;
+  dateStart?: string;
+  statusActual?: string;
   workflowDefinition?: WorkflowDefinition;
   nodes: WorkflowNode[];
   transitions: WorkflowTransition[];
-  historial: HistorialEntry[];
+  history: HistorialEntry[];
   /** nodeId → "completed" | "in_progress" | "pending" */
   nodeStatuses: Record<number, string>;
 }
 
-/** CU10 - a single "Entidad Externa" document tracked within a gestión. */
+/** CU10 - a single "Entidad Externa" document tracked within a gestión — DtoDocumentEntidadExterna. */
 export interface DocumentoEntidadExterna {
-  idDocumentoPresentado: number;
-  nombre?: string;
-  preparado?: boolean;
-  numeroCarton?: number;
-  fechaIngreso?: string;
-  fechaSalida?: string;
-  observado?: boolean;
-  importeAPagar?: number;
-  fechaPago?: string;
-  fechaLiberado?: string;
-  observaciones?: string;
-  entregado?: boolean;
+  idSubmittedDocument: number;
+  name?: string;
+  prepared?: boolean;
+  cardNumber?: number;
+  dateEntry?: string;
+  dateExit?: string;
+  flagged?: boolean;
+  amountToPay?: number;
+  datePayment?: string;
+  dateReleased?: string;
+  notes?: string;
+  delivered?: boolean;
 }
 
-/** CU10 - GET /gestiones/{id}/documentos-entidades-externas response. */
+/** CU10 - GET /gestiones/{id}/documentos-entidades-externas response — DtoManagementDocumentsEntidadesExternas. */
 export interface GestionDocumentosEntidadesExternas {
-  idGestion: number;
-  numero?: number;
+  idManagement: number;
+  number?: number;
   encabezado?: string;
-  fechaInicio?: string;
-  escribano?: string;
-  nomenclaturaCatastral?: string;
-  documentos: DocumentoEntidadExterna[];
+  dateStart?: string;
+  notary?: string;
+  cadastralDesignation?: string;
+  documents: DocumentoEntidadExterna[];
 }
 
-/** CU10 - PUT .../documentos-entidades-externas/{idDocumentoPresentado} request body. */
+/** CU10 - PUT .../documentos-entidades-externas/{idSubmittedDocument} request body. */
 export interface MovimientoDocumentoEntidadExternaInput {
-  preparado?: boolean;
-  numeroCarton?: number;
-  fechaIngreso?: string;
-  fechaSalida?: string;
-  observado?: boolean;
-  importeAPagar?: number;
-  fechaPago?: string;
-  fechaLiberado?: string;
-  observaciones?: string;
-  entregado?: boolean;
+  prepared?: boolean;
+  cardNumber?: number;
+  dateEntry?: string;
+  dateExit?: string;
+  flagged?: boolean;
+  amountToPay?: number;
+  datePayment?: string;
+  dateReleased?: string;
+  notes?: string;
+  delivered?: boolean;
 }
 
-/** CU43 - Tipo de documento requerido por la PlantillaTramite de un trámite. */
+/** CU43 - Tipo de documento requerido por la PlantillaTramite de un trámite — DtoDocumentNecesario. */
 export interface DocumentoNecesario {
-  idTipoDocumento: number;
-  nombre?: string;
-  vence: boolean;
-  diasVencimiento?: number;
-  quienEntrega?: string;
+  idDocumentType: number;
+  name?: string;
+  expires: boolean;
+  dueDays?: number;
+  deliveredBy?: string;
 }
 
-/** CU43 - Un trámite de la gestión junto con su documentación necesaria. */
+/** CU43 - Un trámite de la gestión junto con su documentación necesaria — DtoProcedureDocumentacionNecesaria. */
 export interface TramiteDocumentacionNecesaria {
-  idTramite: number;
-  tipoTramiteNombre?: string;
-  documentosNecesarios: DocumentoNecesario[];
+  idProcedure: number;
+  typeProcedureName?: string;
+  documentsNecesarios: DocumentoNecesario[];
 }
 
-/** CU43 - GET /gestiones/{id}/reingreso-documentacion response. */
+/** CU43 - GET /gestiones/{id}/reingreso-documentacion response — DtoManagementReingresoDocumentacion. */
 export interface GestionReingresoDocumentacion {
-  idGestion: number;
-  numero?: number;
+  idManagement: number;
+  number?: number;
   encabezado?: string;
-  tramites: TramiteDocumentacionNecesaria[];
+  procedures: TramiteDocumentacionNecesaria[];
 }
 
 /** CU43 - POST /gestiones/{id}/reingreso-documentacion request body. */
@@ -497,14 +530,14 @@ export interface ReingresoDocumentacionInput {
   idTipoDocumento: number;
 }
 
-/** CU43 - POST /gestiones/{id}/reingreso-documentacion response. */
+/** CU43 - POST /gestiones/{id}/reingreso-documentacion response — DtoDocumentReentered. */
 export interface DocumentoReingresado {
-  idDocumentoPresentado: number;
-  idTramite: number;
-  idTipoDocumento: number;
-  nombre?: string;
-  vence: boolean;
-  diasVencimiento?: number;
-  quienEntrega?: string;
-  reingresado: boolean;
+  idSubmittedDocument: number;
+  idProcedure: number;
+  idDocumentType: number;
+  name?: string;
+  expires: boolean;
+  dueDays?: number;
+  deliveredBy?: string;
+  reentered: boolean;
 }

@@ -40,9 +40,9 @@ assert_status 200 GET "$BASE_URL/api/v1/items/1"
 # Create new item
 echo "3. POST new item"
 assert_status 200 POST "$BASE_URL/api/v1/items" '{
-  "nombre": "Item test API",
-  "valor": 100.50,
-  "conceptoFijo": false
+  "name": "Item test API",
+  "value": 100.50,
+  "fixedConcept": false
 }'
 
 echo "Item tests completed."

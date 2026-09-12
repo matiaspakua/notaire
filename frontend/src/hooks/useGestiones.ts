@@ -62,8 +62,22 @@ export function useCreateGestion() {
 export function useCreateCompleteGestion() {
   const qc = useQueryClient();
   return useMutation({
+    // ManagementController's CompleteCaseRequest record field names are
+    // (number, encabezado, notes, budgetId, notaryId, statusManagementId,
+    // typeProcedureId, propertyId) — not the presupuestoId/escribanoId/
+    // estadoGestionId/tipoTramiteId names kept on CreateCompleteGestionInput
+    // for callers, so translate before posting.
     mutationFn: (data: CreateCompleteGestionInput) =>
-      apiPost<GestionDeEscritura>("/gestiones/complete-case", data),
+      apiPost<GestionDeEscritura>("/gestiones/complete-case", {
+        number: data.number,
+        encabezado: data.encabezado,
+        notes: data.notes,
+        budgetId: data.presupuestoId,
+        notaryId: data.escribanoId,
+        statusManagementId: data.estadoGestionId,
+        typeProcedureId: data.tipoTramiteId,
+        propertyId: data.inmuebleId,
+      }),
     onSuccess: () => qc.invalidateQueries({ queryKey: gestionesKeys.all }),
   });
 }
@@ -138,7 +152,7 @@ export function useHistorial(gestionId: number | undefined) {
 export function useCarpetasByGestion(gestionId: number | undefined) {
   return useQuery({
     queryKey: carpetasTramiteKeys.byGestion(gestionId ?? 0),
-    queryFn: () => apiGet<CarpetaTramite[]>(`/carpetas?gestionId=${gestionId}`),
+    queryFn: () => apiGet<CarpetaTramite[]>(`/carpetas?managementId=${gestionId}`),
     enabled: !!gestionId,
   });
 }
@@ -148,7 +162,7 @@ export function usePonerCarpetaEnEspera() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ idCarpeta, motivo }: { idCarpeta: number; motivo: string; gestionId: number }) =>
-      apiPut<CarpetaTramite>(`/carpetas/${idCarpeta}/espera`, { motivo }),
+      apiPut<CarpetaTramite>(`/carpetas/${idCarpeta}/espera`, { reason: motivo }),
     onSuccess: (_data, { gestionId }) => {
       qc.invalidateQueries({ queryKey: carpetasTramiteKeys.byGestion(gestionId) });
     },

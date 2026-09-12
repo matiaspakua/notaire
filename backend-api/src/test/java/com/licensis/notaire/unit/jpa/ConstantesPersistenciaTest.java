@@ -12,6 +12,6 @@ class ConstantesPersistenciaTest {
     @Test
     @DisplayName("VERSION_INICIAL should be 0")
     void versionInicialShouldBeZero() {
-        assertThat(ConstantesPersistencia.VERSION_INICIAL).isZero();
+        assertThat(ConstantesPersistencia.VersionINICIAL).isZero();
     }
 }

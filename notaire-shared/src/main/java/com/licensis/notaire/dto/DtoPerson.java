@@ -13,34 +13,34 @@ import java.util.Set;
  */
 public class DtoPerson implements DtoValido {
 
-    private Integer idPersona;
-    private String nombre;
-    private String apellido;
-    private String nacionalidad;
-    private String cuit;
-    private String sexo;
-    private Date fechaNacimiento;
-    private String estadoCivil;
-    private Integer numeroNupcias;
-    private String ocupacion;
-    private String domicilio;
-    private String telefono;
-    private Integer registroEscribano;
-    private boolean esCliente;
+    private Integer idPerson;
+    private String name;
+    private String lastName;
+    private String nationality;
+    private String taxId;
+    private String sex;
+    private Date birthDate;
+    private String maritalStatus;
+    private Integer marriageCount;
+    private String occupation;
+    private String address;
+    private String phone;
+    private Integer notaryRegistrationNumber;
+    private boolean isClient;
     private String numeroidentificacion;
-    private String eMail;
-    private DtoTipoIdentificacion dtoTipoIdentificacion = null;
+    private String email;
+    private DtoIdentificationType dtoIdentificationType = null;
     private Integer version;
-    private ArrayList<DtoGestionDeEscritura> listDtoGestionDeEscriturasEscribano = new ArrayList<DtoGestionDeEscritura>();
-    private ArrayList<DtoGestionDeEscritura> listaDtoGestionDeEscriturasPersona = new ArrayList<DtoGestionDeEscritura>();
-    private ArrayList<DtoTramite> listaTramitesPersona = new ArrayList<DtoTramite>();
+    private ArrayList<DtoDeedManagement> listDtoManagementDeEscriturasNotary = new ArrayList<DtoDeedManagement>();
+    private ArrayList<DtoDeedManagement> listaDtoManagementDeEscriturasPerson = new ArrayList<DtoDeedManagement>();
+    private ArrayList<DtoProcedure> listaProceduresPerson = new ArrayList<DtoProcedure>();
     /*
      * Quitar luego los que nos necesarios
      */
     private Set usuarioses = new HashSet(0);
     private Set copiases = new HashSet(0);
-    private Set suplenciasesForFkIdSuplente = new HashSet(0);
-    private Set suplenciasesForFkIdSuplantado = new HashSet(0);
+    private Set suplenciasesForFkIdSubstitute = new HashSet(0);
+    private Set suplenciasesForFkIdSubstituted = new HashSet(0);
     private Set presupuestoses = new HashSet(0);
     private Set identificacioneses = new HashSet(0);
     private Set folioses = new HashSet(0); /*
@@ -58,153 +58,153 @@ public class DtoPerson implements DtoValido {
     public DtoPerson() {
     }
 
-    public DtoPerson(String nombre, String apellido, boolean esCliente) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.esCliente = esCliente;
+    public DtoPerson(String name, String lastName, boolean isClient) {
+        this.name = name;
+        this.lastName = lastName;
+        this.isClient = isClient;
     }
 
-    public DtoPerson(String nombre, String apellido, String nacionalidad, String cuit, String sexo,
-            Date fechaNacimiento, String estadoCivil, Integer numeroNupcias, String ocupacion, String domicilio,
-            String telefono, Integer EMail, Integer registroEscribano, boolean esCliente, Set usuarioses,
-            Set tramiteses, Set copiases, Set suplenciasesForFkIdSuplente, Set suplenciasesForFkIdSuplantado,
+    public DtoPerson(String name, String lastName, String nationality, String taxId, String sex,
+            Date birthDate, String maritalStatus, Integer marriageCount, String occupation, String address,
+            String phone, Integer Email, Integer notaryRegistrationNumber, boolean isClient, Set usuarioses,
+            Set tramiteses, Set copiases, Set suplenciasesForFkIdSubstitute, Set suplenciasesForFkIdSubstituted,
             Set presupuestoses, Set identificacioneses, Set folioses, Set gestionesDeEscriturases) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.nacionalidad = nacionalidad;
-        this.cuit = cuit;
-        this.sexo = sexo;
-        this.fechaNacimiento = fechaNacimiento;
-        this.estadoCivil = estadoCivil;
-        this.numeroNupcias = numeroNupcias;
-        this.ocupacion = ocupacion;
-        this.domicilio = domicilio;
-        this.telefono = telefono;
-        this.registroEscribano = registroEscribano;
-        this.esCliente = esCliente;
+        this.name = name;
+        this.lastName = lastName;
+        this.nationality = nationality;
+        this.taxId = taxId;
+        this.sex = sex;
+        this.birthDate = birthDate;
+        this.maritalStatus = maritalStatus;
+        this.marriageCount = marriageCount;
+        this.occupation = occupation;
+        this.address = address;
+        this.phone = phone;
+        this.notaryRegistrationNumber = notaryRegistrationNumber;
+        this.isClient = isClient;
         this.usuarioses = usuarioses;
         this.copiases = copiases;
-        this.suplenciasesForFkIdSuplente = suplenciasesForFkIdSuplente;
-        this.suplenciasesForFkIdSuplantado = suplenciasesForFkIdSuplantado;
+        this.suplenciasesForFkIdSubstitute = suplenciasesForFkIdSubstitute;
+        this.suplenciasesForFkIdSubstituted = suplenciasesForFkIdSubstituted;
         this.presupuestoses = presupuestoses;
         this.identificacioneses = identificacioneses;
         this.folioses = folioses;
     }
 
     public Integer getId() {
-        return this.idPersona;
+        return this.idPerson;
     }
 
-    public void setId(Integer idPersona) {
-        this.idPersona = idPersona;
+    public void setId(Integer idPerson) {
+        this.idPerson = idPerson;
     }
 
     public String getFirstName() {
-        return this.nombre;
+        return this.name;
     }
 
-    public void setFirstName(String nombre) {
-        this.nombre = nombre;
+    public void setFirstName(String name) {
+        this.name = name;
     }
 
     public String getLastName() {
-        return this.apellido;
+        return this.lastName;
     }
 
-    public void setLastName(String apellido) {
-        this.apellido = apellido;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getNationality() {
-        return this.nacionalidad;
+        return this.nationality;
     }
 
-    public void setNationality(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public String getTaxId() {
-        return this.cuit;
+        return this.taxId;
     }
 
-    public void setTaxId(String cuit) {
-        this.cuit = cuit;
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
     }
 
     public String getSex() {
-        return this.sexo;
+        return this.sex;
     }
 
-    public void setSex(String sexo) {
-        this.sexo = sexo;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public Date getBirthDate() {
-        return this.fechaNacimiento;
+        return this.birthDate;
     }
 
-    public void setBirthDate(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getMaritalStatus() {
-        return this.estadoCivil;
+        return this.maritalStatus;
     }
 
-    public void setMaritalStatus(String estadoCivil) {
-        this.estadoCivil = estadoCivil;
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public Integer getMarriageCount() {
-        return this.numeroNupcias;
+        return this.marriageCount;
     }
 
-    public void setMarriageCount(Integer numeroNupcias) {
-        this.numeroNupcias = numeroNupcias;
+    public void setMarriageCount(Integer marriageCount) {
+        this.marriageCount = marriageCount;
     }
 
     public String getOccupation() {
-        return this.ocupacion;
+        return this.occupation;
     }
 
-    public void setOccupation(String ocupacion) {
-        this.ocupacion = ocupacion;
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
 
     public String getAddress() {
-        return this.domicilio;
+        return this.address;
     }
 
-    public void setAddress(String domicilio) {
-        this.domicilio = domicilio;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhone() {
-        return this.telefono;
+        return this.phone;
     }
 
-    public void setPhone(String telefono) {
-        this.telefono = telefono;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Integer getNotaryRegistrationNumber() {
-        return this.registroEscribano;
+        return this.notaryRegistrationNumber;
     }
 
-    public void setNotaryRegistrationNumber(Integer registroEscribano) {
-        this.registroEscribano = registroEscribano;
+    public void setNotaryRegistrationNumber(Integer notaryRegistrationNumber) {
+        this.notaryRegistrationNumber = notaryRegistrationNumber;
     }
 
     public boolean getIsClient() {
-        return this.esCliente;
+        return this.isClient;
     }
 
-    public void setIsClient(boolean esCliente) {
-        this.esCliente = esCliente;
+    public void setIsClient(boolean isClient) {
+        this.isClient = isClient;
     }
 
     public boolean isClient() {
-        return this.esCliente;
+        return this.isClient;
     }
 
     public Set getUsuarioses() {
@@ -223,20 +223,20 @@ public class DtoPerson implements DtoValido {
         this.copiases = copiases;
     }
 
-    public Set getSuplenciasesForFkIdSuplente() {
-        return this.suplenciasesForFkIdSuplente;
+    public Set getSuplenciasesForFkIdSubstitute() {
+        return this.suplenciasesForFkIdSubstitute;
     }
 
-    public void setSuplenciasesForFkIdSuplente(Set suplenciasesForFkIdSuplente) {
-        this.suplenciasesForFkIdSuplente = suplenciasesForFkIdSuplente;
+    public void setSuplenciasesForFkIdSubstitute(Set suplenciasesForFkIdSubstitute) {
+        this.suplenciasesForFkIdSubstitute = suplenciasesForFkIdSubstitute;
     }
 
-    public Set getSuplenciasesForFkIdSuplantado() {
-        return this.suplenciasesForFkIdSuplantado;
+    public Set getSuplenciasesForFkIdSubstituted() {
+        return this.suplenciasesForFkIdSubstituted;
     }
 
-    public void setSuplenciasesForFkIdSuplantado(Set suplenciasesForFkIdSuplantado) {
-        this.suplenciasesForFkIdSuplantado = suplenciasesForFkIdSuplantado;
+    public void setSuplenciasesForFkIdSubstituted(Set suplenciasesForFkIdSubstituted) {
+        this.suplenciasesForFkIdSubstituted = suplenciasesForFkIdSubstituted;
     }
 
     public Set getPresupuestoses() {
@@ -263,28 +263,28 @@ public class DtoPerson implements DtoValido {
         this.folioses = folioses;
     }
 
-    public void setIdentificationNumber(String numeroIdentificacion) {
-        this.numeroidentificacion = numeroIdentificacion;
+    public void setIdentificationNumber(String identificationNumber) {
+        this.numeroidentificacion = identificationNumber;
     }
 
     public String getIdentificationNumber() {
         return this.numeroidentificacion;
     }
 
-    public void setEmail(String eMail) {
-        this.eMail = eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getEmail() {
-        return this.eMail;
+        return this.email;
     }
 
-    public DtoTipoIdentificacion getDtoTipoIdentificacion() {
-        return dtoTipoIdentificacion;
+    public DtoIdentificationType getDtoIdentificationType() {
+        return dtoIdentificationType;
     }
 
-    public void setDtoTipoIdentificacion(DtoTipoIdentificacion dtoTipoIdentificacion) {
-        this.dtoTipoIdentificacion = dtoTipoIdentificacion;
+    public void setDtoIdentificationType(DtoIdentificationType dtoIdentificationType) {
+        this.dtoIdentificationType = dtoIdentificationType;
     }
 
     @JsonIgnore
@@ -300,28 +300,28 @@ public class DtoPerson implements DtoValido {
     /*
      * Retorna las escrituras de un escribano, no la de la persona
      */
-    public ArrayList<DtoGestionDeEscritura> getListDtoGestionDeEscriturasDeEscribano() {
-        return listDtoGestionDeEscriturasEscribano;
+    public ArrayList<DtoDeedManagement> getListDtoManagementDeEscriturasDeNotary() {
+        return listDtoManagementDeEscriturasNotary;
     }
 
-    public ArrayList<DtoTramite> getListaTramitesPersona() {
-        return listaTramitesPersona;
+    public ArrayList<DtoProcedure> getListaProceduresPerson() {
+        return listaProceduresPerson;
     }
 
-    public void setListaTramitesPersona(ArrayList<DtoTramite> listaTramitesPersona) {
-        this.listaTramitesPersona = listaTramitesPersona;
+    public void setListaProceduresPerson(ArrayList<DtoProcedure> listaProceduresPerson) {
+        this.listaProceduresPerson = listaProceduresPerson;
     }
 
-    public void setListDtoGestionDeEscriturasDeEscribano(ArrayList<DtoGestionDeEscritura> listDtoGestionDeEscrituras) {
-        this.listDtoGestionDeEscriturasEscribano = listDtoGestionDeEscrituras;
+    public void setListDtoManagementDeEscriturasDeNotary(ArrayList<DtoDeedManagement> listDtoManagementDeEscrituras) {
+        this.listDtoManagementDeEscriturasNotary = listDtoManagementDeEscrituras;
     }
 
-    public ArrayList<DtoGestionDeEscritura> getListaDtoGestionDeEscriturasPersona() {
-        return listaDtoGestionDeEscriturasPersona;
+    public ArrayList<DtoDeedManagement> getListaDtoManagementDeEscriturasPerson() {
+        return listaDtoManagementDeEscriturasPerson;
     }
 
-    public void setListaDtoGestionDeEscriturasPersona(
-            ArrayList<DtoGestionDeEscritura> listaDtoGestionDeEscriturasPersona) {
-        this.listaDtoGestionDeEscriturasPersona = listaDtoGestionDeEscriturasPersona;
+    public void setListaDtoManagementDeEscriturasPerson(
+            ArrayList<DtoDeedManagement> listaDtoManagementDeEscriturasPerson) {
+        this.listaDtoManagementDeEscriturasPerson = listaDtoManagementDeEscriturasPerson;
     }
 }

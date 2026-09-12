@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"idPersona":{{_suplente_id}}},"fkIdSuplantado":{"idPersona":{{_suplantado_id}}}}
+        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"personId":{{_suplente_id}}},"fkIdSuplantado":{"personId":{{_suplantado_id}}}}
   headers:
     - name: Content-Type
       value: application/json

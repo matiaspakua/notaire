@@ -20,7 +20,7 @@ type EstadoMovimiento = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
 function latestMovimiento(testimonio: Testimonio): MovimientoTestimonio | undefined {
   const movimientos = testimonio.movimientosTestimonios ?? [];
   return movimientos.reduce<MovimientoTestimonio | undefined>(
-    (latest, m) => (!latest || (m.idMovimientoTestimonio ?? 0) > (latest.idMovimientoTestimonio ?? 0) ? m : latest),
+    (latest, m) => (!latest || (m.idTestimonyMovement ?? 0) > (latest.idTestimonyMovement ?? 0) ? m : latest),
     undefined
   );
 }
@@ -28,8 +28,8 @@ function latestMovimiento(testimonio: Testimonio): MovimientoTestimonio | undefi
 function estadoMovimiento(testimonio: Testimonio): EstadoMovimiento {
   const movimiento = latestMovimiento(testimonio);
   if (!movimiento) return "sinIngresar";
-  if (movimiento.fechaSalida) return "retirado";
-  if (movimiento.inscripta) return "inscripto";
+  if (movimiento.dateExit) return "retirado";
+  if (movimiento.registered) return "inscripto";
   return "ingresado";
 }
 
@@ -38,7 +38,7 @@ export default function MovimientosTestimonioPage() {
   const tc = useTranslations("common");
 
   const { data: testimonios = [], isLoading } = useTestimonios();
-  const verificados = testimonios.filter((te) => te.verificado);
+  const verificados = testimonios.filter((te) => te.verified);
 
   const ingresarMutation = useIngresarInscripcion();
   const registrarMutation = useRegistrarInscripcion();
@@ -92,19 +92,19 @@ export default function MovimientosTestimonioPage() {
   }
 
   const columns: Column<Testimonio>[] = [
-    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.numero}</span> },
-    { key: "escritura", header: t("fields.escritura"), render: (te) => te.escritura?.numero ?? "—" },
+    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
+    { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
     { key: "estado", header: t("fields.estado"), render: (te) => t(`estados.${estadoMovimiento(te)}`) },
-    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovimiento(te)?.fechaIngreso) },
-    { key: "fechaInscripcion", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovimiento(te)?.fechaInscripcion) },
-    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovimiento(te)?.fechaSalida) },
+    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovimiento(te)?.dateEntry) },
+    { key: "fechaInscripcion", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovimiento(te)?.dateRegistration) },
+    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovimiento(te)?.dateExit) },
     {
       key: "actions",
       header: "",
       className: "w-40",
       render: (te) => {
         const estado = estadoMovimiento(te);
-        const id = te.idTestimonio!;
+        const id = te.idTestimony!;
         return (
           <div className="flex gap-2 justify-end">
             {estado === "sinIngresar" && (
@@ -136,7 +136,7 @@ export default function MovimientosTestimonioPage() {
   return (
     <div>
       <AppHeader title={t("title")} />
-      <DataTable data={verificados} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimonio!} emptyMessage={t("noData")} />
+      <DataTable data={verificados} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
 
       <Dialog open={!!retirarId} onOpenChange={(v) => !v && setRetirarId(null)}>
         <DialogContent>

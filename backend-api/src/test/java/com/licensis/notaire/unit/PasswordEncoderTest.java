@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit tests for BCrypt password matching (TC-LOGIN-09).
  *
- * Validates that the BCrypt password encoder used by UsuarioController#login
+ * Validates that the BCrypt password encoder used by UserController#login
  * correctly matches raw passwords against stored hashes, including the
  * transparent MD5-to-BCrypt migration path.
  */

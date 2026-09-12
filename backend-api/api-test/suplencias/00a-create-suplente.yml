@@ -3,24 +3,24 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Setup — POST /api/v1/personas
+      ## Setup — POST /api/v1/people
       Crea la persona suplente requerida por el alta de suplencia, para que la
       suite sea autosuficiente en una base de datos recién migrada.
 http:
   method: POST
-  url: "{{base_url}}/api/v1/personas"
+  url: "{{base_url}}/api/v1/people"
   body:
     type: json
     data: |-
         {
-          "nombre": "Suplente",
-          "apellido": "Suplencias E2E",
-          "numeroIdentificacion": "30555446",
-          "esCliente": false,
-          "tipoIdentificacion": { "idTipoIdentificacion": 1 },
-          "nacionalidad": "Argentina",
-          "estadoCivil": "Soltero",
-          "sexo": "Femenino"
+          "firstName": "Suplente",
+          "lastName": "Suplencias E2E",
+          "identificationNumber": "30555446",
+          "isClient": false,
+          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Femenino"
         }
   headers:
     - name: Content-Type
@@ -36,7 +36,7 @@ runtime:
           });
           test("Stores suplente id", function () {
             const b = res.getBody();
-            const id = b.idPersona || b.idPersonaExistente;
+            const id = b.personId || b.idPersonaExistente;
             expect(id).to.be.a('number');
             bru.setVar('_suplente_id', id);
           });

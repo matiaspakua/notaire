@@ -1,20 +1,20 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.GestionController;
-import com.licensis.notaire.api.PlantillaTramiteController;
-import com.licensis.notaire.api.ReporteController;
-import com.licensis.notaire.api.UsuarioController;
-import com.licensis.notaire.dto.DtoUsuario;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.PlantillaTramite;
-import com.licensis.notaire.negocio.Usuario;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.PlantillaTramiteRepository;
-import com.licensis.notaire.repository.UsuarioRepository;
-import com.licensis.notaire.service.ReporteService;
+import com.licensis.notaire.api.ManagementController;
+import com.licensis.notaire.api.ProcedureTemplateController;
+import com.licensis.notaire.api.ReportController;
+import com.licensis.notaire.api.UserController;
+import com.licensis.notaire.dto.DtoUser;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.ProcedureTemplate;
+import com.licensis.notaire.business.User;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
+import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.repository.UserRepository;
+import com.licensis.notaire.service.ReportService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,15 +44,15 @@ class AdditionalControllersTest {
 
     @Nested
     @DisplayName("PlantillaTramiteController")
-    class PlantillaTramiteControllerTests {
+    class ProcedureTemplateControllerTests {
 
         @Test
         @DisplayName("getAll and getByTipoTramite endpoints")
         void all() throws Exception {
-            PlantillaTramiteRepository repo = mock(PlantillaTramiteRepository.class);
-            var mvc = standaloneSetup(new PlantillaTramiteController(repo)).build();
-            when(repo.findAll()).thenReturn(List.of(new PlantillaTramite()));
-            when(repo.findByTipoDeTramiteIdTipoTramite(anyInt())).thenReturn(List.of(new PlantillaTramite()));
+            ProcedureTemplateRepository repo = mock(ProcedureTemplateRepository.class);
+            var mvc = standaloneSetup(new ProcedureTemplateController(repo)).build();
+            when(repo.findAll()).thenReturn(List.of(new ProcedureTemplate()));
+            when(repo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of(new ProcedureTemplate()));
 
             mvc.perform(get("/api/v1/plantilla-tramite")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/plantilla-tramite/tipo-tramite/1")).andExpect(status().isOk());
@@ -60,24 +60,24 @@ class AdditionalControllersTest {
     }
 
     @Nested
-    @DisplayName("ReporteController")
-    class ReporteControllerTests {
+    @DisplayName("ReportController")
+    class ReportControllerTests {
 
         @Test
         @DisplayName("All endpoints — success and failure paths")
         void all() throws Exception {
-            ReporteService service = mock(ReporteService.class);
-            var mvc = standaloneSetup(new ReporteController(service)).build();
+            ReportService service = mock(ReportService.class);
+            var mvc = standaloneSetup(new ReportController(service)).build();
             byte[] pdf = "PDF".getBytes();
-            when(service.generarReportePresupuesto(anyInt())).thenReturn(pdf);
-            when(service.generarReportePresupuestoInmuebles(anyInt())).thenReturn(pdf);
-            when(service.generarReporteListaDocumentosTramite(any())).thenReturn(pdf);
-            when(service.generarReporteHistorialGestion(anyInt())).thenReturn(pdf);
-            when(service.generarReporteDocumentosPorVencer(anyInt())).thenReturn(pdf);
-            when(service.generarReporteConsultarDeudaDocumentos(anyInt())).thenReturn(pdf);
-            when(service.generarReporteLibroIndice(anyInt())).thenReturn(pdf);
-            when(service.generarReporteDeclaracionJuradaMensual(anyInt(), anyInt())).thenReturn(pdf);
-            when(service.generarReporteDeclaracionJuradaRentas(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateBudgetReport(anyInt())).thenReturn(pdf);
+            when(service.generateBudgetPropertiesReport(anyInt())).thenReturn(pdf);
+            when(service.generateProcedureDocumentsListReport(any())).thenReturn(pdf);
+            when(service.generateManagementHistoryReport(anyInt())).thenReturn(pdf);
+            when(service.generateDocumentsDueSoonReport(anyInt())).thenReturn(pdf);
+            when(service.generateDebtDocumentsReport(anyInt())).thenReturn(pdf);
+            when(service.generateIndexBookReport(anyInt())).thenReturn(pdf);
+            when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
 
             mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isOk());
@@ -85,7 +85,7 @@ class AdditionalControllersTest {
                     .andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numeroGestion=10"))
+            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
                     .andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
@@ -98,15 +98,15 @@ class AdditionalControllersTest {
                     .andExpect(status().isBadRequest());
 
             // Now all error paths
-            when(service.generarReportePresupuesto(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReportePresupuestoInmuebles(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteListaDocumentosTramite(any())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteHistorialGestion(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDocumentosPorVencer(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteConsultarDeudaDocumentos(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteLibroIndice(anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDeclaracionJuradaMensual(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
-            when(service.generarReporteDeclaracionJuradaRentas(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateBudgetReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateBudgetPropertiesReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateProcedureDocumentsListReport(any())).thenThrow(new RuntimeException("e"));
+            when(service.generateManagementHistoryReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateDocumentsDueSoonReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateDebtDocumentsReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIndexBookReport(anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
+            when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
 
             mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isInternalServerError());
@@ -114,7 +114,7 @@ class AdditionalControllersTest {
                     .andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numeroGestion=10"))
+            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
                     .andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
@@ -126,53 +126,53 @@ class AdditionalControllersTest {
 
     @Nested
     @DisplayName("GestionController")
-    class GestionControllerTests {
+    class ManagementControllerTests {
 
         @Test
         @DisplayName("All paths")
         void all() throws Exception {
-            GestionDeEscrituraRepository repo = mock(GestionDeEscrituraRepository.class);
-            HistorialRepository histRepo = mock(HistorialRepository.class);
+            DeedManagementRepository repo = mock(DeedManagementRepository.class);
+            HistoryRepository histRepo = mock(HistoryRepository.class);
             var traceService = mock(com.licensis.notaire.service.WorkflowTraceService.class);
-            var queryService = mock(com.licensis.notaire.service.GestionQueryService.class);
-            var transitionService = mock(com.licensis.notaire.service.GestionTransitionService.class);
-            var bitacoraService = mock(com.licensis.notaire.service.GestionBitacoraService.class);
-            var documentoEntidadExternaService = mock(com.licensis.notaire.service.DocumentoEntidadExternaService.class);
+            var queryService = mock(com.licensis.notaire.service.ManagementQueryService.class);
+            var transitionService = mock(com.licensis.notaire.service.ManagementTransitionService.class);
+            var bitacoraService = mock(com.licensis.notaire.service.ManagementBitacoraService.class);
+            var documentEntidadExternaService = mock(com.licensis.notaire.service.ExternalEntityDocumentService.class);
             var reingresoDocumentacionService = mock(com.licensis.notaire.service.ReingresoDocumentacionService.class);
-            var mvc = standaloneSetup(new GestionController(repo, histRepo, traceService, queryService,
+            var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonRepository.class),
-                    mock(com.licensis.notaire.repository.EstadoDeGestionRepository.class),
-                    mock(com.licensis.notaire.repository.PresupuestoRepository.class),
-                    mock(com.licensis.notaire.repository.TipoDeTramiteRepository.class),
-                    mock(com.licensis.notaire.repository.TramiteRepository.class),
-                    mock(com.licensis.notaire.repository.InmuebleRepository.class),
-                    mock(com.licensis.notaire.service.GestionArchiveDebtService.class),
-                    mock(com.licensis.notaire.service.GestionSuplenciaService.class),
-                    mock(com.licensis.notaire.service.GestionResumenFinancieroService.class),
-                    bitacoraService, transitionService, documentoEntidadExternaService,
-                    reingresoDocumentacionService, mock(com.licensis.notaire.service.CarpetaTramiteService.class)))
+                    mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
+                    mock(com.licensis.notaire.repository.BudgetRepository.class),
+                    mock(com.licensis.notaire.repository.ProcedureTypeRepository.class),
+                    mock(com.licensis.notaire.repository.ProcedureRepository.class),
+                    mock(com.licensis.notaire.repository.PropertyRepository.class),
+                    mock(com.licensis.notaire.service.ManagementArchiveDebtService.class),
+                    mock(com.licensis.notaire.service.ManagementSubstitutionService.class),
+                    mock(com.licensis.notaire.service.ManagementResumenFinancieroService.class),
+                    bitacoraService, transitionService, documentEntidadExternaService,
+                    reingresoDocumentacionService, mock(com.licensis.notaire.service.ProcedureFolderService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
 
-            GestionDeEscritura g = new GestionDeEscritura(1);
-            com.licensis.notaire.negocio.Person escr = new com.licensis.notaire.negocio.Person();
+            DeedManagement g = new DeedManagement(1);
+            com.licensis.notaire.business.Person escr = new com.licensis.notaire.business.Person();
             escr.setPersonId(99);
-            g.setFkIdPersonaEscribano(escr);
-            var summary = new com.licensis.notaire.dto.DtoGestionSummary(1, 10, "Gestion", new Date(), null, 0, null);
+            g.setFkIdNotaryPerson(escr);
+            var summary = new com.licensis.notaire.dto.DtoManagementSummary(1, 10, "Gestion", new Date(), null, 0, null);
             when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
             when(queryService.findById(1)).thenReturn(Optional.of(summary));
             when(queryService.findById(2)).thenReturn(Optional.empty());
-            when(queryService.findByNumero(10)).thenReturn(Optional.of(summary));
-            when(queryService.findByNumero(99)).thenReturn(Optional.empty());
+            when(queryService.findByNumber(10)).thenReturn(Optional.of(summary));
+            when(queryService.findByNumber(99)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
-            Historial h = new Historial();
-            h.setIdHistorial(1);
-            h.setFecha(new Date());
-            when(histRepo.findByFkIdGestionIdGestion(1)).thenReturn(List.of(h));
-            when(histRepo.findByFkIdGestionIdGestion(2)).thenReturn(List.of());
+            History h = new History();
+            h.setIdHistory(1);
+            h.setDate(new Date());
+            when(histRepo.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h));
+            when(histRepo.findByFkIdManagementIdManagement(2)).thenReturn(List.of());
 
             mvc.perform(get("/api/v1/gestiones")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/gestiones/1")).andExpect(status().isOk());
@@ -192,25 +192,25 @@ class AdditionalControllersTest {
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
 
-            when(transitionService.transicionar(1, "En Progreso")).thenReturn(g);
-            when(transitionService.transicionar(1, "Estado Inexistente"))
+            when(transitionService.transition(1, "En Progreso")).thenReturn(g);
+            when(transitionService.transition(1, "Estado Inexistente"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
                             "Transición no permitida"));
-            when(transitionService.transicionar(2, "En Progreso"))
+            when(transitionService.transition(2, "En Progreso"))
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
                             "Gestión no encontrada con ID: 2"));
 
-            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isOk());
-            mvc.perform(post("/api/v1/gestiones/1/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
-            mvc.perform(post("/api/v1/gestiones/2/transicionar").contentType("application/json")
-                    .content("{\"estadoDestino\": \"En Progreso\"}")).andExpect(status().isNotFound());
+            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
+                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
+            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
+                    .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
+            mvc.perform(post("/api/v1/gestiones/2/transition").contentType("application/json")
+                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
 
             mvc.perform(get("/api/v1/gestiones/1/historial")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/gestiones/2/historial")).andExpect(status().isNotFound());
 
-            when(repo.save(any(GestionDeEscritura.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(DeedManagement.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/gestiones").contentType("application/json")
                     .content(mapper.writeValueAsString(g))).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/gestiones/1").contentType("application/json")
@@ -221,26 +221,26 @@ class AdditionalControllersTest {
     }
 
     @Nested
-    @DisplayName("UsuarioController")
-    class UsuarioControllerTests {
+    @DisplayName("UserController")
+    class UserControllerTests {
 
         @Test
         @DisplayName("All endpoints")
         void all() throws Exception {
-            UsuarioRepository repo = mock(UsuarioRepository.class);
+            UserRepository repo = mock(UserRepository.class);
             var jwtSvc = mock(com.licensis.notaire.config.JwtTokenService.class);
             when(jwtSvc.generateToken(any())).thenReturn("mock-jwt-token");
             var metrics = mock(com.licensis.notaire.observability.MetricsUtil.class);
             var passwordEncoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
-            var mvc = standaloneSetup(new UsuarioController(repo, jwtSvc, metrics, passwordEncoder,
+            var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
                     new com.licensis.notaire.security.LoginAttemptService(5, 900000))).build();
-            Usuario u = new Usuario(1, "admin", "abc", true, "Escribano");
+            User u = new User(1, "admin", "abc", true, "Escribano");
 
             when(repo.findAll()).thenReturn(List.of(u));
             when(repo.findById(1)).thenReturn(Optional.of(u));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findFirstByFkIdPersonaIdPersona(10)).thenReturn(Optional.of(u));
-            when(repo.findFirstByFkIdPersonaIdPersona(99)).thenReturn(Optional.empty());
+            when(repo.findFirstByFkIdPersonIdPerson(10)).thenReturn(Optional.of(u));
+            when(repo.findFirstByFkIdPersonIdPerson(99)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
@@ -250,22 +250,22 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/usuarios/persona/10")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/usuarios/persona/99")).andExpect(status().isNotFound());
 
-            // create with no password — uses UsuarioRequest format (activo, not estado)
+            // create with no password — uses UserRequest format (active, not estado)
             String noPwdJson = """
-                    {"nombre":"user","contrasenia":"","tipo":"Escribano","activo":true}
+                    {"name":"user","password":"","type":"Notary","active":true}
                     """;
-            when(repo.save(any(Usuario.class))).thenReturn(u);
+            when(repo.save(any(User.class))).thenReturn(u);
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isCreated());
             // create with password
             String withPwdJson = """
-                    {"nombre":"user","contrasenia":"pwd","tipo":"Escribano","activo":true}
+                    {"name":"user","password":"pwd","type":"Notary","active":true}
                     """;
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
                     .content(withPwdJson)).andExpect(status().isCreated());
 
             String updateJson = """
-                    {"nombre":"admin","contrasenia":"","tipo":"Escribano","activo":true}
+                    {"name":"admin","password":"","type":"Notary","active":true}
                     """;
             mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isOk());
@@ -278,33 +278,33 @@ class AdditionalControllersTest {
             // Login flow - all branches
             // Empty users list
             when(repo.findAll()).thenReturn(List.of());
-            DtoUsuario loginDto = new DtoUsuario();
-            loginDto.setNombre("admin");
-            loginDto.setContrasenia("admin");
+            DtoUser loginDto = new DtoUser();
+            loginDto.setName("admin");
+            loginDto.setPassword("admin");
             mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User found, wrong password
             when(repo.findAll()).thenReturn(List.of(u));
-            loginDto.setContrasenia("wrong");
+            loginDto.setPassword("wrong");
             mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User found, valid login - the password 'admin' has known MD5
             // 21232f297a57a5a743894a0e4a801fc3 is MD5("admin")
-            u.setContrasenia("21232f297a57a5a743894a0e4a801fc3");
-            u.setEstado(true);
-            loginDto.setContrasenia("admin");
+            u.setPassword("21232f297a57a5a743894a0e4a801fc3");
+            u.setStatus(true);
+            loginDto.setPassword("admin");
             mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User inactive
-            u.setEstado(false);
+            u.setStatus(false);
             mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // Failure paths
-            when(repo.save(any(Usuario.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(User.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/usuarios").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")

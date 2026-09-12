@@ -1,9 +1,9 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.TipoIdentificacion;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.service.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,23 +26,23 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
     private PersonRepository personRepository;
 
     @Autowired
-    private TipoIdentificacionRepository tipoIdentificacionRepository;
+    private IdentificationTypeRepository identificationTypeRepository;
 
     private Person testPerson;
-    private TipoIdentificacion tipoIdentificacion;
+    private IdentificationType identificationType;
 
     @BeforeEach
     void setUp() {
-        tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setNombre("DNI");
-        tipoIdentificacionRepository.save(tipoIdentificacion);
+        identificationType = new IdentificationType();
+        identificationType.setName("DNI");
+        identificationTypeRepository.save(identificationType);
 
         testPerson = new Person();
         testPerson.setFirstName("Juan");
         testPerson.setLastName("Pérez");
         testPerson.setIdentificationNumber("DNI-" + UUID.randomUUID().toString().substring(0, 8));
         testPerson.setIsClient(false);
-        testPerson.setFkIdIdentificationType(tipoIdentificacion);
+        testPerson.setFkIdIdentificationType(identificationType);
     }
 
     @Test
@@ -96,7 +96,7 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
                 "Juan",
                 "Pérez",
                 saved.getIdentificationNumber(),
-                tipoIdentificacion.getIdTipoIdentificacion(),
+                identificationType.getIdIdentificationType(),
                 false
         );
 
@@ -123,7 +123,7 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
         client.setLastName("Lopez");
         client.setIdentificationNumber("ID-" + UUID.randomUUID().toString().substring(0, 8));
         client.setIsClient(true);
-        client.setFkIdIdentificationType(tipoIdentificacion);
+        client.setFkIdIdentificationType(identificationType);
         Person saved = personService.save(client);
 
         List<Person> found = personService.search(null, null, null, null, true);
@@ -207,7 +207,7 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
                 null,
                 null,
                 null,
-                tipoIdentificacion.getIdTipoIdentificacion(),
+                identificationType.getIdIdentificationType(),
                 null
         );
 
@@ -238,7 +238,7 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
                 "Juan",
                 "Pérez",
                 saved.getIdentificationNumber(),
-                tipoIdentificacion.getIdTipoIdentificacion(),
+                identificationType.getIdIdentificationType(),
                 false
         );
 
@@ -254,14 +254,14 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
         p1.setLastName("Pérez");
         p1.setIdentificationNumber("ID-" + UUID.randomUUID().toString().substring(0, 8));
         p1.setIsClient(true);
-        p1.setFkIdIdentificationType(tipoIdentificacion);
+        p1.setFkIdIdentificationType(identificationType);
 
         Person p2 = new Person();
         p2.setFirstName("María");
         p2.setLastName("García");
         p2.setIdentificationNumber("ID-" + UUID.randomUUID().toString().substring(0, 8));
         p2.setIsClient(false);
-        p2.setFkIdIdentificationType(tipoIdentificacion);
+        p2.setFkIdIdentificationType(identificationType);
 
         Person saved1 = personService.save(p1);
         Person saved2 = personService.save(p2);
@@ -287,9 +287,9 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
         Person updated = personService.save(saved);
 
         assertThat(updated)
-                .hasFieldOrPropertyWithValue("nombre", "Carlos")
-                .hasFieldOrPropertyWithValue("apellido", "López")
-                .hasFieldOrPropertyWithValue("esCliente", true);
+                .hasFieldOrPropertyWithValue("name", "Carlos")
+                .hasFieldOrPropertyWithValue("lastName", "López")
+                .hasFieldOrPropertyWithValue("isClient", true);
     }
 
     @Test
@@ -315,7 +315,7 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
         notClient.setLastName("Penal");
         notClient.setIdentificationNumber("ID-" + UUID.randomUUID().toString().substring(0, 8));
         notClient.setIsClient(false);
-        notClient.setFkIdIdentificationType(tipoIdentificacion);
+        notClient.setFkIdIdentificationType(identificationType);
 
         Person saved = personService.save(notClient);
 

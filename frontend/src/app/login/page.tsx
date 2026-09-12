@@ -45,8 +45,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const result = await apiPost<DtoUsuario>("/usuarios/login", {
-        nombre: nombre.trim(),
-        contrasenia: contrasenia.trim(),
+        name: nombre.trim(),
+        password: contrasenia.trim(),
       });
 
       if (result.valido && result.token) {

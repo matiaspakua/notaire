@@ -24,12 +24,12 @@ import {
  * GestionTransitionService) — reuse the existing row instead of creating a
  * duplicate, which would make that lookup ambiguous.
  */
-async function findEstadoArchivada(page: Page): Promise<{ idEstadoGestion: number; nombre: string }> {
-  const result = await apiGet<{ idEstadoGestion: number; nombre: string }[]>(
+async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: number; name: string }> {
+  const result = await apiGet<{ idManagementStatus: number; name: string }[]>(
     page,
-    "/estado-gestion/search?nombre=Archivada",
+    "/estado-gestion/search?name=Archivada",
   );
-  const match = result.data!.find((e) => e.nombre === "Archivada");
+  const match = result.data!.find((e) => e.name === "Archivada");
   if (!match) {
     throw new Error("Estado 'Archivada' not found — expected to be seeded by default data");
   }
@@ -39,7 +39,7 @@ async function findEstadoArchivada(page: Page): Promise<{ idEstadoGestion: numbe
 /** Seeds a gestión whose workflow allows a direct transition to "Archivada". */
 async function seedArchivableGestion(page: Page) {
   const persona = await createPersona(page);
-  const presupuesto = await createPresupuesto(page, persona.data!.idPersona);
+  const presupuesto = await createPresupuesto(page, persona.data!.personId);
 
   const estadoInicial = await createEstadoGestion(page);
   const estadoArchivada = await findEstadoArchivada(page);
@@ -49,27 +49,27 @@ async function seedArchivableGestion(page: Page) {
   const nodoInicial = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idEstadoGestion,
+    estadoInicial.data!.idManagementStatus,
     "INITIAL",
   );
   const nodoArchivada = await createWorkflowNode(
     page,
     workflowId,
-    estadoArchivada.idEstadoGestion,
+    estadoArchivada.idManagementStatus,
     "FINAL",
   );
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);
 
   const tipoTramite = await createTipoTramite(page);
-  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idTipoDeTramite, workflowId);
+  await assignWorkflowToTipoTramite(page, tipoTramite.data!.idProcedureType, workflowId);
 
   const gestion = await createCompleteCaseGestion(page, {
-    presupuestoId: presupuesto.data!.idPresupuesto,
-    tipoTramiteId: tipoTramite.data!.idTipoDeTramite,
-    estadoGestionId: estadoInicial.data!.idEstadoGestion,
+    presupuestoId: presupuesto.data!.idBudget,
+    tipoTramiteId: tipoTramite.data!.idProcedureType,
+    estadoGestionId: estadoInicial.data!.idManagementStatus,
   });
 
-  return { idGestion: gestion.data!.idGestion, numero: gestion.data!.numero };
+  return { idGestion: gestion.data!.idManagement, numero: gestion.data!.number };
 }
 
 test.describe("CU85 - Administrar Carpetas de Trámite", () => {

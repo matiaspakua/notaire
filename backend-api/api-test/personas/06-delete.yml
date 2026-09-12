@@ -4,7 +4,7 @@ info:
   seq: 6
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/personas/{{persona_id}}"
+  url: "{{base_url}}/api/v1/people/{{persona_id}}"
   headers:
     - name: Content-Type
       value: application/json

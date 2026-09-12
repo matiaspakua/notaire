@@ -12,18 +12,18 @@ import type { Persona, GestionDeEscritura, Presupuesto, Pago } from "@/types";
 
 describe("CU02 — Gestiones list display helpers", () => {
   it("renders gestion number as string from number field", () => {
-    const g: GestionDeEscritura = { idGestion: 1, numero: 2024001 };
-    expect(g.numero?.toString()).toBe("2024001");
+    const g: GestionDeEscritura = { idManagement: 1, number: 2024001 };
+    expect(g.number?.toString()).toBe("2024001");
   });
 
-  it("shows tramite count from tramiteCount", () => {
-    const g: GestionDeEscritura = { idGestion: 1, tramiteCount: 3 };
-    expect(g.tramiteCount).toBe(3);
+  it("shows tramite count from procedureCount", () => {
+    const g: GestionDeEscritura = { idManagement: 1, procedureCount: 3 };
+    expect(g.procedureCount).toBe(3);
   });
 
-  it("handles missing tramiteCount gracefully", () => {
-    const g: GestionDeEscritura = { idGestion: 1 };
-    expect(g.tramiteCount ?? 0).toBe(0);
+  it("handles missing procedureCount gracefully", () => {
+    const g: GestionDeEscritura = { idManagement: 1 };
+    expect(g.procedureCount ?? 0).toBe(0);
   });
 });
 
@@ -32,30 +32,30 @@ describe("CU02 — Gestiones list display helpers", () => {
 // ──────────────────────────────────────────────
 
 describe("CU01 — Presupuesto display helpers", () => {
-  it("formats presupuesto monto as currency", () => {
-    const p: Presupuesto = { idPresupuesto: 1, monto: 125000.5, estado: "PENDIENTE" };
-    const formatted = formatCurrency(p.monto);
+  it("formats presupuesto propertyAmount as currency", () => {
+    const p: Presupuesto = { idBudget: 1, propertyAmount: 125000.5, status: "PENDIENTE" };
+    const formatted = formatCurrency(p.propertyAmount);
     expect(formatted).toContain("125");
     expect(typeof formatted).toBe("string");
   });
 
   it("formats presupuesto date", () => {
-    const p: Presupuesto = { idPresupuesto: 1, fecha: "2025-04-15" };
-    const formatted = formatDate(p.fecha);
+    const p: Presupuesto = { idBudget: 1, date: "2025-04-15" };
+    const formatted = formatDate(p.date);
     expect(typeof formatted).toBe("string");
     expect(formatted.length).toBeGreaterThan(0);
   });
 
-  it("shows '—' when presupuesto monto is undefined", () => {
+  it("shows '—' when presupuesto propertyAmount is undefined", () => {
     const formatted = formatCurrency(undefined);
     expect(formatted).toBe("—");
   });
 
-  it("estado field reflects PENDIENTE/PAGADO states", () => {
+  it("status field reflects PENDIENTE/PAGADO states", () => {
     const estados = ["PENDIENTE", "PAGADO", "CANCELADO"];
     estados.forEach((e) => {
-      const p: Presupuesto = { estado: e };
-      expect(p.estado).toBe(e);
+      const p: Presupuesto = { status: e };
+      expect(p.status).toBe(e);
     });
   });
 });
@@ -65,13 +65,13 @@ describe("CU01 — Presupuesto display helpers", () => {
 // ──────────────────────────────────────────────
 
 describe("CU17 — Personas list display helpers", () => {
-  it("fullName combines nombre + apellido", () => {
-    const p: Persona = { nombre: "Juan", apellido: "García" };
+  it("fullName combines firstName + lastName", () => {
+    const p: Persona = { firstName: "Juan", lastName: "García" };
     expect(fullName(p)).toBe("Juan García");
   });
 
-  it("fullName handles missing apellido", () => {
-    const p: Persona = { nombre: "Admin" };
+  it("fullName handles missing lastName", () => {
+    const p: Persona = { firstName: "Admin" };
     expect(fullName(p)).toBe("Admin");
   });
 
@@ -79,15 +79,15 @@ describe("CU17 — Personas list display helpers", () => {
     expect(fullName({})).toBe("—");
   });
 
-  it("filters clients using esCliente flag", () => {
+  it("filters clients using isClient flag", () => {
     const personas: Persona[] = [
-      { idPersona: 1, nombre: "Cliente A", esCliente: true },
-      { idPersona: 2, nombre: "Empleado B", esCliente: false },
-      { idPersona: 3, nombre: "Cliente C", esCliente: true },
+      { personId: 1, firstName: "Cliente A", isClient: true },
+      { personId: 2, firstName: "Empleado B", isClient: false },
+      { personId: 3, firstName: "Cliente C", isClient: true },
     ];
-    const clientes = personas.filter((p) => p.esCliente);
+    const clientes = personas.filter((p) => p.isClient);
     expect(clientes).toHaveLength(2);
-    expect(clientes[0].nombre).toBe("Cliente A");
+    expect(clientes[0].firstName).toBe("Cliente A");
   });
 });
 
@@ -96,30 +96,30 @@ describe("CU17 — Personas list display helpers", () => {
 // ──────────────────────────────────────────────
 
 describe("CU15 — Pagos display helpers", () => {
-  it("formats pago monto as currency", () => {
-    const p: Pago = { idPago: 1, monto: 5000, fecha: "2025-04-01" };
-    const formatted = formatCurrency(p.monto);
+  it("formats pago amount as currency", () => {
+    const p: Pago = { idPayment: 1, amount: 5000, date: "2025-04-01" };
+    const formatted = formatCurrency(p.amount);
     expect(formatted).toContain("5");
   });
 
-  it("pago fecha renders as formatted date", () => {
-    const p: Pago = { idPago: 1, fecha: "2025-04-01T10:30:00" };
-    const formatted = formatDate(p.fecha);
+  it("pago date renders as formatted date", () => {
+    const p: Pago = { idPayment: 1, date: "2025-04-01T10:30:00" };
+    const formatted = formatDate(p.date);
     expect(typeof formatted).toBe("string");
     expect(formatted).not.toBe("—");
   });
 
-  it("metodoPago defaults to '—' when undefined", () => {
-    const p: Pago = { idPago: 1 };
-    expect(p.metodoPago ?? "—").toBe("—");
+  it("paymentMethod defaults to '—' when undefined", () => {
+    const p: Pago = { idPayment: 1 };
+    expect(p.paymentMethod ?? "—").toBe("—");
   });
 
-  it("pago linked to presupuesto via presupuesto field", () => {
+  it("pago linked to presupuesto via fkIdBudget field", () => {
     const p: Pago = {
-      idPago: 1,
-      presupuesto: { idPresupuesto: 42, monto: 10000 },
+      idPayment: 1,
+      fkIdBudget: { idBudget: 42 },
     };
-    expect(p.presupuesto?.idPresupuesto).toBe(42);
+    expect(p.fkIdBudget?.idBudget).toBe(42);
   });
 });
 

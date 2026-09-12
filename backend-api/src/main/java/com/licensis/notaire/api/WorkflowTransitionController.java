@@ -1,9 +1,9 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoWorkflowTransition;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -77,21 +77,21 @@ public class WorkflowTransitionController {
         if (wf.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> origen = nodeRepository.findById(dto.getNodoOrigenId());
-        if (origen.isEmpty()) {
+        Optional<WorkflowNode> origin = nodeRepository.findById(dto.getOriginNodeId());
+        if (origin.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> destino = nodeRepository.findById(dto.getNodoDestinoId());
-        if (destino.isEmpty()) {
+        Optional<WorkflowNode> destination = nodeRepository.findById(dto.getDestinationNodeId());
+        if (destination.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
             WorkflowTransition transition = new WorkflowTransition();
             transition.setWorkflowDefinition(wf.get());
-            transition.setNodoOrigen(origen.get());
-            transition.setNodoDestino(destino.get());
-            transition.setCondicion(dto.getCondicion());
-            transition.setDescripcion(dto.getDescripcion());
+            transition.setOriginNode(origin.get());
+            transition.setDestinationNode(destination.get());
+            transition.setCondition(dto.getCondition());
+            transition.setDescription(dto.getDescription());
             transition = repository.save(transition);
             return ResponseEntity.status(HttpStatus.CREATED).body(transition.toDto());
         } catch (Exception e) {
@@ -109,20 +109,20 @@ public class WorkflowTransitionController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> origen = nodeRepository.findById(dto.getNodoOrigenId());
-        if (origen.isEmpty()) {
+        Optional<WorkflowNode> origin = nodeRepository.findById(dto.getOriginNodeId());
+        if (origin.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> destino = nodeRepository.findById(dto.getNodoDestinoId());
-        if (destino.isEmpty()) {
+        Optional<WorkflowNode> destination = nodeRepository.findById(dto.getDestinationNodeId());
+        if (destination.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
             WorkflowTransition transition = repository.findById(id).get();
-            transition.setNodoOrigen(origen.get());
-            transition.setNodoDestino(destino.get());
-            transition.setCondicion(dto.getCondicion());
-            transition.setDescripcion(dto.getDescripcion());
+            transition.setOriginNode(origin.get());
+            transition.setDestinationNode(destination.get());
+            transition.setCondition(dto.getCondition());
+            transition.setDescription(dto.getDescription());
             return ResponseEntity.ok(repository.save(transition).toDto());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));

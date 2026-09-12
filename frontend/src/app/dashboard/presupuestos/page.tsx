@@ -36,7 +36,7 @@ import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
 
-const EMPTY: Partial<Presupuesto> = { fecha: "", monto: undefined, estado: "BORRADOR" };
+const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: "BORRADOR" };
 
 export default function PresupuestosPage() {
   const t = useTranslations("presupuestos");
@@ -68,7 +68,7 @@ export default function PresupuestosPage() {
   const agregarCatalogoMutation = useAgregarItemsDesdeCatalogo();
 
   function openItems(p: Presupuesto) {
-    setItemsPresupuestoId(p.idPresupuesto!);
+    setItemsPresupuestoId(p.idBudget!);
     setSelectedTipoTramiteId("");
     setSelectedCatalogItemId("");
   }
@@ -104,7 +104,7 @@ export default function PresupuestosPage() {
     }
   }
 
-  const itemsSubtotal = presupuestoItems.reduce((sum, item) => sum + (item.valor ?? 0), 0);
+  const itemsSubtotal = presupuestoItems.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
@@ -120,8 +120,8 @@ export default function PresupuestosPage() {
   const filteredPresupuestos = byEstado.filter((p) => {
     if (searchPresupuesto) {
       const q = searchPresupuesto.toLowerCase();
-      const matchId = p.idPresupuesto?.toString().includes(q);
-      const matchPersona = p.persona ? (p.persona.nombre + " " + p.persona.apellido).toLowerCase().includes(q) : false;
+      const matchId = p.idBudget?.toString().includes(q);
+      const matchPersona = p.person ? fullName(p.person).toLowerCase().includes(q) : false;
       if (!matchId && !matchPersona) return false;
     }
     return true;
@@ -132,8 +132,8 @@ export default function PresupuestosPage() {
 
   async function handleSave() {
     try {
-      if (isEditMode && editing.idPresupuesto) {
-        await updateMutation.mutateAsync({ id: editing.idPresupuesto, data: editing });
+      if (isEditMode && editing.idBudget) {
+        await updateMutation.mutateAsync({ id: editing.idBudget, data: editing });
         toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
@@ -161,28 +161,28 @@ export default function PresupuestosPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (p) => <span className="text-xs text-muted-foreground">{p.idPresupuesto}</span>,
+      render: (p) => <span className="text-xs text-muted-foreground">{p.idBudget}</span>,
       className: "w-12",
     },
     {
       key: "fecha",
       header: tc("date"),
-      render: (p) => formatDate(p.fecha),
+      render: (p) => formatDate(p.date),
     },
     {
       key: "persona",
       header: t("fields.cliente"),
-      render: (p) => p.persona ? fullName(p.persona) : <span className="text-muted-foreground">—</span>,
+      render: (p) => p.person ? fullName(p.person) : <span className="text-muted-foreground">—</span>,
     },
     {
       key: "monto",
       header: tc("amount"),
-      render: (p) => <span className="font-medium">{formatCurrency(p.monto)}</span>,
+      render: (p) => <span className="font-medium">{formatCurrency(p.propertyAmount)}</span>,
     },
     {
       key: "estado",
       header: tc("status"),
-      render: (p) => p.estado ?? "—",
+      render: (p) => p.status ?? "—",
     },
     {
       key: "actions",
@@ -192,8 +192,8 @@ export default function PresupuestosPage() {
           <Button
             size="sm"
             variant="ghost"
-            data-testid={`btn-resumen-presupuesto-${p.idPresupuesto}`}
-            onClick={() => setResumenId(p.idPresupuesto!)}
+            data-testid={`btn-resumen-presupuesto-${p.idBudget}`}
+            onClick={() => setResumenId(p.idBudget!)}
           >
             <Receipt className="h-4 w-4" />
           </Button>
@@ -201,7 +201,7 @@ export default function PresupuestosPage() {
             size="sm"
             variant="ghost"
             aria-label={t("items.title")}
-            data-testid={`btn-items-presupuesto-${p.idPresupuesto}`}
+            data-testid={`btn-items-presupuesto-${p.idBudget}`}
             onClick={() => openItems(p)}
           >
             <ListChecks className="h-4 w-4" />
@@ -209,7 +209,7 @@ export default function PresupuestosPage() {
           <Button
             size="sm"
             variant="ghost"
-            data-testid={`btn-editar-presupuesto-${p.idPresupuesto}`}
+            data-testid={`btn-editar-presupuesto-${p.idBudget}`}
             aria-label={tc("edit")}
             onClick={() => openEdit(p)}
           >
@@ -219,9 +219,9 @@ export default function PresupuestosPage() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            data-testid={`btn-eliminar-presupuesto-${p.idPresupuesto}`}
+            data-testid={`btn-eliminar-presupuesto-${p.idBudget}`}
             aria-label={tc("delete")}
-            onClick={() => setDeleteId(p.idPresupuesto!)}
+            onClick={() => setDeleteId(p.idBudget!)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -270,7 +270,7 @@ export default function PresupuestosPage() {
         data={filteredPresupuestos}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(p) => p.idPresupuesto!}
+        keyExtractor={(p) => p.idBudget!}
         emptyMessage={t("noData")}
       />
 
@@ -284,10 +284,10 @@ export default function PresupuestosPage() {
                 helperText={personas.length === 0 ? "No hay personas registradas. Primero registre una persona." : undefined}
               >
                 <Select
-                  value={editing.persona?.idPersona?.toString() ?? ""}
+                  value={editing.person?.idPerson?.toString() ?? ""}
                   onValueChange={(v) => {
-                    const persona = personas.find((p) => p.idPersona?.toString() === v);
-                    setEditing({ ...editing, persona });
+                    const persona = personas.find((p) => p.personId?.toString() === v);
+                    setEditing({ ...editing, person: persona });
                   }}
                 >
                   <SelectTrigger data-testid="select-persona" disabled={personas.length === 0}>
@@ -295,7 +295,7 @@ export default function PresupuestosPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {personas.map((p) => (
-                      <SelectItem key={p.idPersona} value={p.idPersona!.toString()}>
+                      <SelectItem key={p.personId} value={p.personId!.toString()}>
                         {fullName(p)}
                       </SelectItem>
                     ))}
@@ -305,23 +305,23 @@ export default function PresupuestosPage() {
               <FormField label={tc("date")} required>
                 <Input
                   type="date"
-                  value={editing.fecha ?? ""}
-                  onChange={(e) => setEditing({ ...editing, fecha: e.target.value })}
+                  value={editing.date ?? ""}
+                  onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                 />
               </FormField>
               <FormField label={`${tc("amount")} ($)`} required>
                 <Input
                   type="number"
                   step="0.01"
-                  value={editing.monto ?? ""}
-                  onChange={(e) => setEditing({ ...editing, monto: parseFloat(e.target.value) })}
+                  value={editing.propertyAmount ?? ""}
+                  onChange={(e) => setEditing({ ...editing, propertyAmount: parseFloat(e.target.value) })}
                   data-testid="input-monto"
                 />
               </FormField>
               <FormField label={tc("status")}>
                 <Select
-                  value={editing.estado ?? "BORRADOR"}
-                  onValueChange={(v) => setEditing({ ...editing, estado: v })}
+                  value={editing.status ?? "BORRADOR"}
+                  onValueChange={(v) => setEditing({ ...editing, status: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -367,15 +367,15 @@ export default function PresupuestosPage() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">{t("resumen.numeroGestion")}</p>
-                      <p className="font-medium">{resumen.numeroGestion ?? "—"}</p>
+                      <p className="font-medium">{resumen.numberManagement ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.encabezado")}</p>
-                      <p className="font-medium">{resumen.encabezadoGestion ?? "—"}</p>
+                      <p className="font-medium">{resumen.encabezadoManagement ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.numeroPresupuesto")}</p>
-                      <p className="font-medium">{resumen.numeroPresupuesto}</p>
+                      <p className="font-medium">{resumen.numberBudget}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{tc("amount")} {t("resumen.total").toLowerCase()}</p>
@@ -383,12 +383,12 @@ export default function PresupuestosPage() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.saldo")}</p>
-                      <p className="font-medium">{formatCurrency(resumen.saldoPendiente)}</p>
+                      <p className="font-medium">{formatCurrency(resumen.pendingBalance)}</p>
                     </div>
                   </div>
                 </FormSection>
                 <FormSection title={t("resumen.pagosSection")}>
-                  {resumen.pagos.length === 0 ? (
+                  {resumen.payments.length === 0 ? (
                     <p className="text-sm text-muted-foreground" data-testid="resumen-sin-pagos">
                       {t("resumen.noPagos")}
                     </p>
@@ -403,12 +403,12 @@ export default function PresupuestosPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {resumen.pagos.map((pago) => (
-                          <TableRow key={pago.idPago}>
-                            <TableCell>{pago.idPago}</TableCell>
-                            <TableCell>{formatCurrency(pago.monto)}</TableCell>
-                            <TableCell>{formatDate(pago.fecha)}</TableCell>
-                            <TableCell>{pago.observaciones ?? "—"}</TableCell>
+                        {resumen.payments.map((pago) => (
+                          <TableRow key={pago.idPayment}>
+                            <TableCell>{pago.idPayment}</TableCell>
+                            <TableCell>{formatCurrency(pago.amount)}</TableCell>
+                            <TableCell>{formatDate(pago.date)}</TableCell>
+                            <TableCell>{pago.notes ?? "—"}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -443,8 +443,8 @@ export default function PresupuestosPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {tiposTramite.map((tt) => (
-                        <SelectItem key={tt.idTipoDeTramite} value={tt.idTipoDeTramite!.toString()}>
-                          {tt.nombre}
+                        <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
+                          {tt.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -473,7 +473,7 @@ export default function PresupuestosPage() {
                     <SelectContent>
                       {catalogoItems.map((item) => (
                         <SelectItem key={item.idItem} value={item.idItem!.toString()}>
-                          {item.nombre} — {formatCurrency(item.valor)}
+                          {item.name} — {formatCurrency(item.value)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -509,9 +509,9 @@ export default function PresupuestosPage() {
                     <TableBody>
                       {presupuestoItems.map((item) => (
                         <TableRow key={item.idItem}>
-                          <TableCell>{item.nombre}</TableCell>
-                          <TableCell>{formatCurrency(item.valor)}</TableCell>
-                          <TableCell>{item.porcentaje ?? 0}%</TableCell>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell>{formatCurrency(item.value)}</TableCell>
+                          <TableCell>{item.percentage ?? 0}%</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

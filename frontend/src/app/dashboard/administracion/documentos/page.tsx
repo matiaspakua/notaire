@@ -15,7 +15,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import type { TipoDeDocumento } from "@/types";
 
-const EMPTY: Partial<TipoDeDocumento> = { nombre: "", vence: false, diasVencimiento: null, quienEntrega: "" };
+const EMPTY: Partial<TipoDeDocumento> = { name: "", expires: false, dueDays: null, deliveredBy: "" };
 
 export default function DocumentosPage() {
   const t = useTranslations("administracion.documentos");
@@ -59,11 +59,11 @@ export default function DocumentosPage() {
   function openEdit(tipo: TipoDeDocumento) { setEditing(tipo); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
-    if (!editing.nombre?.trim()) { toast.error(t("nameRequired")); return; }
-    if (editing.vence && !editing.diasVencimiento) { toast.error(t("diasVencimientoRequired")); return; }
+    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
+    if (editing.expires && !editing.dueDays) { toast.error(t("diasVencimientoRequired")); return; }
     try {
-      if (isEditMode && editing.idTipoDocumento) {
-        await updateMutation.mutateAsync({ id: editing.idTipoDocumento, data: editing });
+      if (isEditMode && editing.idDocumentType) {
+        await updateMutation.mutateAsync({ id: editing.idDocumentType, data: editing });
         toast.success("Tipo de documento actualizado");
       } else {
         await createMutation.mutateAsync(editing);
@@ -78,12 +78,12 @@ export default function DocumentosPage() {
 
   async function handleDeleteClick(tipo: TipoDeDocumento) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-de-documento/${tipo.idTipoDocumento}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-de-documento/${tipo.idDocumentType}/in-use`);
       if (inUse) {
         toast.error(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(tipo.idTipoDocumento!);
+      setDeleteId(tipo.idDocumentType!);
     } catch {
       toast.error(t("errorDelete"));
     }
@@ -103,8 +103,8 @@ export default function DocumentosPage() {
   }
 
   const columns: Column<TipoDeDocumento>[] = [
-    { key: "id", header: tc("id"), render: (tipo) => <span className="text-xs text-muted-foreground">{tipo.idTipoDocumento}</span>, className: "w-12" },
-    { key: "nombre", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.nombre}</span> },
+    { key: "id", header: tc("id"), render: (tipo) => <span className="text-xs text-muted-foreground">{tipo.idDocumentType}</span>, className: "w-12" },
+    { key: "nombre", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.name}</span> },
     {
       key: "actions", header: "", className: "w-24",
       render: (tipo) => (
@@ -146,7 +146,7 @@ export default function DocumentosPage() {
         data={filtered}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(tipo) => tipo.idTipoDocumento!}
+        keyExtractor={(tipo) => tipo.idDocumentType!}
         emptyMessage={t("noData")}
       />
 
@@ -156,28 +156,28 @@ export default function DocumentosPage() {
             <FormSection title={isEditMode ? t("editDoc") : t("newDoc")}>
               <FormField label={tc("name")} required>
                 <Input
-                  value={editing.nombre ?? ""}
-                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  value={editing.name ?? ""}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("namePlaceholder")}
                   data-testid="input-nombre-documento"
                 />
               </FormField>
               <CheckboxField
                 label={t("fields.vence")}
-                checked={editing.vence ?? false}
+                checked={editing.expires ?? false}
                 onChange={(checked) =>
-                  setEditing({ ...editing, vence: checked, diasVencimiento: checked ? editing.diasVencimiento : null })
+                  setEditing({ ...editing, expires: checked, dueDays: checked ? editing.dueDays : null })
                 }
                 data-testid="checkbox-vence-documento"
               />
-              {editing.vence && (
+              {editing.expires && (
                 <FormField label={t("fields.diasVencimiento")} required>
                   <Input
                     type="number"
                     min={1}
-                    value={editing.diasVencimiento ?? ""}
+                    value={editing.dueDays ?? ""}
                     onChange={(e) =>
-                      setEditing({ ...editing, diasVencimiento: e.target.value ? parseInt(e.target.value) : null })
+                      setEditing({ ...editing, dueDays: e.target.value ? parseInt(e.target.value) : null })
                     }
                     data-testid="input-dias-vencimiento-documento"
                   />
@@ -185,8 +185,8 @@ export default function DocumentosPage() {
               )}
               <FormField label={t("fields.quienEntrega")}>
                 <Input
-                  value={editing.quienEntrega ?? ""}
-                  onChange={(e) => setEditing({ ...editing, quienEntrega: e.target.value })}
+                  value={editing.deliveredBy ?? ""}
+                  onChange={(e) => setEditing({ ...editing, deliveredBy: e.target.value })}
                   data-testid="input-quien-entrega-documento"
                 />
               </FormField>

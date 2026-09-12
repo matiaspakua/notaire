@@ -124,53 +124,53 @@ class ReportesUseCaseIntegrationTest {
     // must never propagate an unhandled exception (no 5xx without body or 404).
 
     @Test
-    @DisplayName("CU01/CU45: presupuesto endpoint handles missing data gracefully")
-    void shouldHandlePresupuestoEndpointGracefully() throws Exception {
+    @DisplayName("CU01/CU45: budget endpoint handles missing data gracefully")
+    void shouldHandleBudgetEndpointGracefully() throws Exception {
         int nonExistentId = 99999;
         mockMvc.perform(get("/api/v1/reportes/presupuesto/" + nonExistentId))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("CU01/CU45: presupuesto-inmuebles endpoint handles missing data gracefully")
-    void shouldHandlePresupuestoInmueblesEndpointGracefully() throws Exception {
+    @DisplayName("CU01/CU45: budget-inmuebles endpoint handles missing data gracefully")
+    void shouldHandleBudgetPropertiesEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/99999"))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("CU03: lista-documentos-tramite endpoint handles unknown tramite gracefully")
-    void shouldHandleListaDocumentosTramiteEndpointGracefully() throws Exception {
+    @DisplayName("CU03: lista-documents-tramite endpoint handles unknown tramite gracefully")
+    void shouldHandleListaDocumentsProcedureEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
                         .param("nombreTipoTramite", "TramiteQueNoExiste"))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("CU13: historial-gestion endpoint handles missing gestion gracefully")
-    void shouldHandleHistorialGestionEndpointGracefully() throws Exception {
+    @DisplayName("CU13: history-gestion endpoint handles missing gestion gracefully")
+    void shouldHandleHistoryManagementEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/historial-gestion/99999"))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("CU42: documentos-por-vencer endpoint handles missing document gracefully")
-    void shouldHandleDocumentosPorVencerEndpointGracefully() throws Exception {
+    @DisplayName("CU42: documents-por-vencer endpoint handles missing document gracefully")
+    void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/99999"))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
-    @DisplayName("CU09: consultar-deuda-documentos endpoint handles missing gestion gracefully")
-    void shouldHandleConsultarDeudaDocumentosEndpointGracefully() throws Exception {
+    @DisplayName("CU09: consultar-deuda-documents endpoint handles missing gestion gracefully")
+    void shouldHandleConsultarDebtDocumentsEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos")
-                        .param("numeroGestion", "99999"))
+                        .param("numberManagement", "99999"))
                 .andExpect(status().is5xxServerError());
     }
 
     @Test
     @DisplayName("Special characters in nombreTipoTramite are safely handled")
-    void shouldHandleSpecialCharsInTramiteParam() throws Exception {
+    void shouldHandleSpecialCharsInProcedureParam() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
                         .param("nombreTipoTramite", "Compra/Venta (especial) & más"))
                 .andExpect(result ->
@@ -190,7 +190,7 @@ class ReportesUseCaseIntegrationTest {
                     .andReturn().getResponse().getStatus(),
             mockMvc.perform(get("/api/v1/reportes/historial-gestion/1")).andReturn().getResponse().getStatus(),
             mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numeroGestion", "1"))
+            mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numberManagement", "1"))
                     .andReturn().getResponse().getStatus(),
             mockMvc.perform(get("/api/v1/reportes/libro-indice").param("anio", "2026"))
                     .andReturn().getResponse().getStatus(),

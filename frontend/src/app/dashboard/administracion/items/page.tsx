@@ -24,14 +24,13 @@ import {
   useDeleteItem,
   useDescuentosYRecargos,
 } from "@/hooks/useItems";
-import { useConceptos } from "@/hooks/useConceptos";
 import { formatCurrency } from "@/lib/utils";
 import type { Item, TipoItem } from "@/types";
 
 const EMPTY: Partial<Item> = {
-  cantidad: 1,
-  precio: undefined,
-  tipo: "NORMAL",
+  name: "",
+  value: undefined,
+  type: "NORMAL",
 };
 
 const TIPO_LABELS: Record<TipoItem, string> = {
@@ -42,7 +41,6 @@ const TIPO_LABELS: Record<TipoItem, string> = {
 
 export default function ItemsPage() {
   const { data: items = [], isLoading } = useItems();
-  const { data: conceptos = [] } = useConceptos();
   const createMutation = useCreateItem();
   const updateMutation = useUpdateItem();
   const deleteMutation = useDeleteItem();
@@ -51,7 +49,6 @@ export default function ItemsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [conceptoId, setConceptoId] = useState("");
   const [presupuestoId, setPresupuestoId] = useState("");
   const [reporteId, setReporteId] = useState("");
   const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
@@ -60,7 +57,6 @@ export default function ItemsPage() {
 
   function openCreate() {
     setEditing(EMPTY);
-    setConceptoId("");
     setPresupuestoId("");
     setIsEditMode(false);
     setModalOpen(true);
@@ -68,23 +64,21 @@ export default function ItemsPage() {
 
   function openEdit(item: Item) {
     setEditing(item);
-    setConceptoId(item.concepto?.idConcepto?.toString() ?? "");
-    setPresupuestoId(item.presupuesto?.idPresupuesto?.toString() ?? "");
+    setPresupuestoId(item.fkIdBudget?.idBudget?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
 
   async function handleSave() {
-    const tipo = editing.tipo ?? "NORMAL";
-    if (tipo !== "NORMAL" && !editing.motivo?.trim()) {
+    const type = editing.type ?? "NORMAL";
+    if (type !== "NORMAL" && !editing.reason?.trim()) {
       toast.error("El motivo es obligatorio para ítems de descuento o recargo");
       return;
     }
     const payload: Partial<Item> = {
       ...editing,
-      tipo,
-      concepto: conceptoId ? { idConcepto: Number(conceptoId) } : undefined,
-      presupuesto: presupuestoId ? { idPresupuesto: Number(presupuestoId) } : undefined,
+      type,
+      fkIdBudget: presupuestoId ? { idBudget: Number(presupuestoId) } : undefined,
     };
     try {
       if (isEditMode && editing.idItem) {
@@ -120,34 +114,24 @@ export default function ItemsPage() {
       className: "w-12",
     },
     {
-      key: "concepto",
-      header: "Concepto",
-      render: (i) => i.concepto?.nombre ?? `#${i.concepto?.idConcepto ?? "—"}`,
+      key: "nombre",
+      header: "Nombre",
+      render: (i) => i.name ?? "—",
     },
     {
-      key: "cantidad",
-      header: "Cantidad",
-      render: (i) => i.cantidad ?? 1,
-    },
-    {
-      key: "precio",
-      header: "Precio",
-      render: (i) => <span className="font-medium">{formatCurrency(i.precio)}</span>,
-    },
-    {
-      key: "subtotal",
-      header: "Subtotal",
-      render: (i) => <span className="font-semibold">{formatCurrency((i.precio ?? 0) * (i.cantidad ?? 1))}</span>,
+      key: "valor",
+      header: "Valor",
+      render: (i) => <span className="font-medium">{formatCurrency(i.value)}</span>,
     },
     {
       key: "presupuesto",
       header: "Presupuesto",
-      render: (i) => i.presupuesto?.idPresupuesto ? `#${i.presupuesto.idPresupuesto}` : "—",
+      render: (i) => i.fkIdBudget?.idBudget ? `#${i.fkIdBudget.idBudget}` : "—",
     },
     {
       key: "tipo",
       header: "Tipo",
-      render: (i) => TIPO_LABELS[i.tipo ?? "NORMAL"],
+      render: (i) => TIPO_LABELS[i.type ?? "NORMAL"],
     },
     {
       key: "actions",
@@ -220,10 +204,10 @@ export default function ItemsPage() {
               keyExtractor={(i) => i.idItem!}
               emptyMessage="Este presupuesto no tiene descuentos ni recargos"
               columns={[
-                { key: "nombre", header: "Nombre", render: (i) => i.nombre ?? "—" },
-                { key: "tipo", header: "Tipo", render: (i) => TIPO_LABELS[i.tipo ?? "NORMAL"] },
-                { key: "motivo", header: "Motivo", render: (i) => i.motivo ?? "—" },
-                { key: "valor", header: "Valor", render: (i) => formatCurrency(i.valor) },
+                { key: "nombre", header: "Nombre", render: (i) => i.name ?? "—" },
+                { key: "tipo", header: "Tipo", render: (i) => TIPO_LABELS[i.type ?? "NORMAL"] },
+                { key: "motivo", header: "Motivo", render: (i) => i.reason ?? "—" },
+                { key: "valor", header: "Valor", render: (i) => formatCurrency(i.value) },
               ]}
             />
           )}
@@ -234,20 +218,6 @@ export default function ItemsPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? "Editar ítem" : "Nuevo ítem"}>
-              <FormField label="Concepto">
-                <Select value={conceptoId} onValueChange={setConceptoId}>
-                  <SelectTrigger data-testid="select-concepto">
-                    <SelectValue placeholder="Seleccionar concepto..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {conceptos.map((c) => (
-                      <SelectItem key={c.idConcepto} value={c.idConcepto!.toString()}>
-                        {c.nombre} {c.valor ? `($${c.valor})` : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormField>
               <FormField label="ID Presupuesto">
                 <Input
                   type="number"
@@ -258,29 +228,27 @@ export default function ItemsPage() {
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Cantidad">
+                <FormField label="Nombre">
                   <Input
-                    type="number"
-                    min="1"
-                    value={editing.cantidad ?? 1}
-                    onChange={(e) => setEditing({ ...editing, cantidad: Number(e.target.value) })}
+                    value={editing.name ?? ""}
+                    onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                     data-testid="input-cantidad"
                   />
                 </FormField>
-                <FormField label="Precio ($)">
+                <FormField label="Valor ($)">
                   <Input
                     type="number"
                     step="0.01"
-                    value={editing.precio ?? ""}
-                    onChange={(e) => setEditing({ ...editing, precio: parseFloat(e.target.value) })}
+                    value={editing.value ?? ""}
+                    onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
                     data-testid="input-precio"
                   />
                 </FormField>
               </div>
               <FormField label="Tipo de ítem">
                 <Select
-                  value={editing.tipo ?? "NORMAL"}
-                  onValueChange={(v) => setEditing({ ...editing, tipo: v as TipoItem })}
+                  value={editing.type ?? "NORMAL"}
+                  onValueChange={(v) => setEditing({ ...editing, type: v as TipoItem })}
                 >
                   <SelectTrigger data-testid="select-tipo-item">
                     <SelectValue />
@@ -294,11 +262,11 @@ export default function ItemsPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              {editing.tipo && editing.tipo !== "NORMAL" && (
+              {editing.type && editing.type !== "NORMAL" && (
                 <FormField label="Motivo" required>
                   <Input
-                    value={editing.motivo ?? ""}
-                    onChange={(e) => setEditing({ ...editing, motivo: e.target.value })}
+                    value={editing.reason ?? ""}
+                    onChange={(e) => setEditing({ ...editing, reason: e.target.value })}
                     placeholder="Ej: Descuento por pronto pago"
                     data-testid="input-motivo"
                   />

@@ -4,11 +4,11 @@ public class DtoWorkflowNode {
 
     private Integer id;
     private Integer workflowDefinitionId;
-    private Integer estadoGestionId;
-    private String estadoGestionNombre;
-    private String tipo;
-    private Float posicionX;
-    private Float posicionY;
+    private Integer statusManagementId;
+    private String statusManagementName;
+    private String type;
+    private Float positionX;
+    private Float positionY;
     private Integer version = 0;
 
     public Integer getId() {
@@ -27,44 +27,44 @@ public class DtoWorkflowNode {
         this.workflowDefinitionId = workflowDefinitionId;
     }
 
-    public Integer getEstadoGestionId() {
-        return estadoGestionId;
+    public Integer getStatusManagementId() {
+        return statusManagementId;
     }
 
-    public void setEstadoGestionId(Integer estadoGestionId) {
-        this.estadoGestionId = estadoGestionId;
+    public void setStatusManagementId(Integer statusManagementId) {
+        this.statusManagementId = statusManagementId;
     }
 
-    public String getEstadoGestionNombre() {
-        return estadoGestionNombre;
+    public String getStatusManagementName() {
+        return statusManagementName;
     }
 
-    public void setEstadoGestionNombre(String estadoGestionNombre) {
-        this.estadoGestionNombre = estadoGestionNombre;
+    public void setStatusManagementName(String statusManagementName) {
+        this.statusManagementName = statusManagementName;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getType() {
+        return type;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public Float getPosicionX() {
-        return posicionX;
+    public Float getPositionX() {
+        return positionX;
     }
 
-    public void setPosicionX(Float posicionX) {
-        this.posicionX = posicionX;
+    public void setPositionX(Float positionX) {
+        this.positionX = positionX;
     }
 
-    public Float getPosicionY() {
-        return posicionY;
+    public Float getPositionY() {
+        return positionY;
     }
 
-    public void setPosicionY(Float posicionY) {
-        this.posicionY = posicionY;
+    public void setPositionY(Float positionY) {
+        this.positionY = positionY;
     }
 
     public Integer getVersion() {

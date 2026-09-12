@@ -14,22 +14,22 @@ import { apiPost, uniqueId } from "./setup/api-helpers";
 
 async function seedTestimonioVerificado(page: import("@playwright/test").Page): Promise<{ idTestimonio: number; numero: number }> {
   const escrituraNumero = uniqueId() % 1_000_000;
-  const escritura = await apiPost<{ idEscritura: number }>(page, "/escrituras", {
-    numero: escrituraNumero,
-    fechaEscrituracion: new Date().toISOString().split("T")[0],
-    cuerpo: `Contenido E2E ${escrituraNumero}`,
-    estado: "Firmada",
+  const escritura = await apiPost<{ idDeed: number }>(page, "/escrituras", {
+    number: escrituraNumero,
+    dateDeedrecording: new Date().toISOString().split("T")[0],
+    body: `Contenido E2E ${escrituraNumero}`,
+    status: "Firmada",
   });
   const numero = uniqueId() % 1_000_000;
-  // DtoEscritura.numero is primitive int — must be included in nested object to avoid 400
+  // DtoDeed.number is primitive int — must be included in nested object to avoid 400
   // (see TestimonioControllerIntegrationTest#testimonioBody).
-  const testimonio = await apiPost<{ idTestimonio: number }>(page, "/testimonio", {
-    escritura: { idEscritura: escritura.data!.idEscritura, numero: escrituraNumero },
-    numero,
-    observado: false,
-    verificado: true,
+  const testimonio = await apiPost<{ idTestimony: number }>(page, "/testimonio", {
+    deed: { idDeed: escritura.data!.idDeed, number: escrituraNumero },
+    number: numero,
+    flagged: false,
+    verified: true,
   });
-  return { idTestimonio: testimonio.data!.idTestimonio, numero };
+  return { idTestimonio: testimonio.data!.idTestimony, numero };
 }
 
 test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {

@@ -1,11 +1,11 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoWorkflowNode;
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -36,16 +36,16 @@ public class WorkflowNodeController {
 
     private final WorkflowNodeRepository repository;
     private final WorkflowDefinitionRepository workflowRepository;
-    private final EstadoDeGestionRepository estadoRepository;
+    private final ManagementStatusRepository statusRepository;
     private final WorkflowTransitionRepository transitionRepository;
 
     public WorkflowNodeController(WorkflowNodeRepository repository,
             WorkflowDefinitionRepository workflowRepository,
-            EstadoDeGestionRepository estadoRepository,
+            ManagementStatusRepository statusRepository,
             WorkflowTransitionRepository transitionRepository) {
         this.repository = repository;
         this.workflowRepository = workflowRepository;
-        this.estadoRepository = estadoRepository;
+        this.statusRepository = statusRepository;
         this.transitionRepository = transitionRepository;
     }
 
@@ -82,17 +82,17 @@ public class WorkflowNodeController {
         if (wf.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<EstadoDeGestion> estado = estadoRepository.findById(dto.getEstadoGestionId());
-        if (estado.isEmpty()) {
+        Optional<ManagementStatus> status = statusRepository.findById(dto.getStatusManagementId());
+        if (status.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
             WorkflowNode node = new WorkflowNode();
             node.setWorkflowDefinition(wf.get());
-            node.setEstadoDeGestion(estado.get());
-            node.setTipo(WorkflowNodeType.valueOf(dto.getTipo()));
-            node.setPosicionX(dto.getPosicionX());
-            node.setPosicionY(dto.getPosicionY());
+            node.setManagementStatus(status.get());
+            node.setType(WorkflowNodeType.valueOf(dto.getType()));
+            node.setPositionX(dto.getPositionX());
+            node.setPositionY(dto.getPositionY());
             node = repository.save(node);
             return ResponseEntity.status(HttpStatus.CREATED).body(node.toDto());
         } catch (Exception e) {
@@ -113,14 +113,14 @@ public class WorkflowNodeController {
         }
         try {
             WorkflowNode node = existing.get();
-            if (dto.getTipo() != null) {
-                node.setTipo(WorkflowNodeType.valueOf(dto.getTipo()));
+            if (dto.getType() != null) {
+                node.setType(WorkflowNodeType.valueOf(dto.getType()));
             }
-            if (dto.getPosicionX() != null) {
-                node.setPosicionX(dto.getPosicionX());
+            if (dto.getPositionX() != null) {
+                node.setPositionX(dto.getPositionX());
             }
-            if (dto.getPosicionY() != null) {
-                node.setPosicionY(dto.getPosicionY());
+            if (dto.getPositionY() != null) {
+                node.setPositionY(dto.getPositionY());
             }
             repository.save(node);
             return ResponseEntity.ok().build();
@@ -139,7 +139,7 @@ public class WorkflowNodeController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        if (transitionRepository.existsByNodoOrigenIdOrNodoDestinoId(id, id)) {
+        if (transitionRepository.existsByOriginNodeIdOrDestinationNodeId(id, id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "No se puede eliminar: el nodo tiene transiciones asociadas."));
         }

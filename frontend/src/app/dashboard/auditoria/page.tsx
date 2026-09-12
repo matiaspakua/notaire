@@ -18,14 +18,14 @@ export default function AuditoriaPage() {
   const [search, setSearch] = useState("");
   const [moduloFilter, setModuloFilter] = useState<string>("all");
 
-  const modulos = Array.from(new Set(registros.map((r) => r.modulo).filter(Boolean)));
+  const modulos = Array.from(new Set(registros.map((r) => r.module).filter(Boolean)));
 
   const filtered = registros.filter((r) => {
     const matchesSearch =
       !search ||
-      r.detalleOperacion?.toLowerCase().includes(search.toLowerCase()) ||
-      r.usuarios?.nombre?.toLowerCase().includes(search.toLowerCase());
-    const matchesModulo = moduloFilter === "all" || r.modulo === moduloFilter;
+      r.operationDetail?.toLowerCase().includes(search.toLowerCase()) ||
+      r.users?.name?.toLowerCase().includes(search.toLowerCase());
+    const matchesModulo = moduloFilter === "all" || r.module === moduloFilter;
     return matchesSearch && matchesModulo;
   });
 
@@ -33,7 +33,7 @@ export default function AuditoriaPage() {
     {
       key: "id",
       header: tc("id"),
-      render: (r) => <span className="text-muted-foreground text-xs">{r.idRegistroAuditoria}</span>,
+      render: (r) => <span className="text-muted-foreground text-xs">{r.idAuditRecord}</span>,
       className: "w-16",
     },
     {
@@ -41,7 +41,7 @@ export default function AuditoriaPage() {
       header: t("fields.fecha"),
       render: (r) => (
         <span className="text-sm">
-          {r.fecha ? new Date(r.fecha).toLocaleString("es-AR") : "—"}
+          {r.date ? new Date(r.date).toLocaleString("es-AR") : "—"}
         </span>
       ),
       className: "w-44",
@@ -49,15 +49,15 @@ export default function AuditoriaPage() {
     {
       key: "usuario",
       header: t("fields.usuario"),
-      render: (r) => <span className="font-medium">{r.usuarios?.nombre ?? "—"}</span>,
+      render: (r) => <span className="font-medium">{r.users?.name ?? "—"}</span>,
     },
     {
       key: "modulo",
       header: t("fields.modulo"),
       render: (r) =>
-        r.modulo ? (
+        r.module ? (
           <Badge variant="secondary" className="text-xs font-medium">
-            {r.modulo}
+            {r.module}
           </Badge>
         ) : (
           "—"
@@ -68,8 +68,8 @@ export default function AuditoriaPage() {
       key: "detalle",
       header: t("fields.operacion"),
       render: (r) => (
-        <span className="text-sm text-muted-foreground max-w-md truncate block" title={r.detalleOperacion}>
-          {r.detalleOperacion ?? "—"}
+        <span className="text-sm text-muted-foreground max-w-md truncate block" title={r.operationDetail}>
+          {r.operationDetail ?? "—"}
         </span>
       ),
     },
@@ -116,7 +116,7 @@ export default function AuditoriaPage() {
         data={filtered}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(r) => r.idRegistroAuditoria!}
+        keyExtractor={(r) => r.idAuditRecord!}
         emptyMessage={t("noData")}
       />
 

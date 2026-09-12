@@ -17,14 +17,14 @@ import { createPersona, createPresupuesto, createPago } from "./setup/api-helper
 /** Seed a persona + presupuesto with a given monto, returning both IDs and the apellido used to find it in the UI. */
 async function seedPresupuesto(page: Page, monto: number): Promise<{ idPresupuesto: number; apellido: string }> {
   const personaResult = await createPersona(page);
-  if (!personaResult.ok || !personaResult.data?.idPersona) {
+  if (!personaResult.ok || !personaResult.data?.personId) {
     throw new Error(`Failed to seed persona: ${personaResult.error ?? JSON.stringify(personaResult.data)}`);
   }
-  const presupuestoResult = await createPresupuesto(page, personaResult.data.idPersona, undefined, { monto });
-  if (!presupuestoResult.ok || !presupuestoResult.data?.idPresupuesto) {
+  const presupuestoResult = await createPresupuesto(page, personaResult.data.personId, undefined, { propertyAmount: monto });
+  if (!presupuestoResult.ok || !presupuestoResult.data?.idBudget) {
     throw new Error(`Failed to seed presupuesto: ${presupuestoResult.error ?? JSON.stringify(presupuestoResult.data)}`);
   }
-  return { idPresupuesto: presupuestoResult.data.idPresupuesto, apellido: personaResult.data.apellido! };
+  return { idPresupuesto: presupuestoResult.data.idBudget, apellido: personaResult.data.lastName! };
 }
 
 test.describe("CU15 - Procesar Pago", () => {
@@ -145,14 +145,14 @@ test.describe("CU15 - Procesar Pago", () => {
   test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
     const montoUnico = 345;
     const { idPresupuesto } = await seedPresupuesto(page, montoUnico + 1000);
-    const pagoResult = await createPago(page, idPresupuesto, { monto: montoUnico });
-    if (!pagoResult.ok || !pagoResult.data?.idPago) {
+    const pagoResult = await createPago(page, idPresupuesto, { amount: montoUnico });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/pagos");
 
-    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPago}\\b`) });
+    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
     await expect(row).toBeVisible({ timeout: 5000 });
 
     const downloadPromise = page.waitForEvent("download");
@@ -189,7 +189,7 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
   test("ESTADO-02: Presupuesto with a partial payment shows PARCIAL badge", async ({ page }) => {
     const { idPresupuesto, apellido } = await seedPresupuesto(page, 100000);
-    const pagoResult = await createPago(page, idPresupuesto, { monto: 40000 });
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 40000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -209,7 +209,7 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
   test("ESTADO-03: Presupuesto fully paid shows SALDADO badge", async ({ page }) => {
     const { idPresupuesto, apellido } = await seedPresupuesto(page, 80000);
-    const pagoResult = await createPago(page, idPresupuesto, { monto: 80000 });
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 80000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -229,5 +229,69 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
   test.skip("CU47-GW01: Given on pagos page, When filter by date, Then shows filtered", () => {
     // Skipped: pagos page has no "fecha desde" / "fecha hasta" filter inputs.
+  });
+});
+
+test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
+  let steps: GherkinSteps;
+
+  test.beforeEach(async ({ page }) => {
+    steps = new GherkinSteps(page);
+    await steps.givenUserIsLoggedIn();
+  });
+
+  test("TABLE-01: Given a pago exists, When visiting pagos page, Then it renders in the table with correct data", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 20000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 12345, paymentMethod: "Transferencia" });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await expect(row).toContainText("Transferencia");
+    await expect(row).toContainText(`#${idPresupuesto}`);
+  });
+
+  test("TABLE-02: Given a pago exists, When editing its monto, Then the table reflects the update", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 30000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 1000, paymentMethod: "Efectivo" });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await row.getByRole("button").nth(1).click();
+
+    await expect(page.getByRole("dialog")).toBeVisible();
+    const montoInput = page.getByRole("dialog").locator('input[type="number"]');
+    await montoInput.fill("1500");
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|actualizar/i }).click();
+
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(row).toContainText("1.500");
+  });
+
+  test("TABLE-03: Given a pago exists, When deleting it, Then it is removed from the table", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 15000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 500 });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await row.getByRole("button").nth(2).click();
+
+    await page.getByRole("button", { name: /confirmar|eliminar|s[ií]/i }).last().click();
+
+    await expect(row).toBeHidden({ timeout: 5000 });
   });
 });

@@ -33,7 +33,7 @@ export default function CuadernosPage() {
   });
 
   const foliosDisponibles = useMemo(
-    () => folios.filter((f) => f.estado === "Nuevo" || ESTADOS_DANADOS.includes(f.estado ?? "")),
+    () => folios.filter((f) => f.status === "Nuevo" || ESTADOS_DANADOS.includes(f.status ?? "")),
     [folios],
   );
 
@@ -56,7 +56,7 @@ export default function CuadernosPage() {
   }
 
   async function handleCrearCuaderno() {
-    const escribanoId = folios.find((f) => selectedIds.includes(f.idFolio!))?.personaEscribano?.idPersona;
+    const escribanoId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.idPerson;
     if (!escribanoId) {
       toast.error(t("selectFoliosFirst"));
       return;
@@ -65,9 +65,9 @@ export default function CuadernosPage() {
     try {
       await apiPost("/cuadernos", {
         idsFolio: selectedIds,
-        idEscribano: escribanoId,
-        anio: new Date().getFullYear(),
-        observaciones: observaciones || null,
+        idNotary: escribanoId,
+        year: new Date().getFullYear(),
+        notes: observaciones || null,
       });
       toast.success(t("created"));
       setModalOpen(false);
@@ -96,13 +96,13 @@ export default function CuadernosPage() {
   }
 
   const columns: Column<Cuaderno>[] = [
-    { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idCuaderno}</span>, className: "w-12" },
-    { key: "numero", header: tc("number"), render: (c) => <span className="font-medium">{c.numero}</span> },
-    { key: "anio", header: t("fields.year"), render: (c) => c.anio },
+    { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idNotebook}</span>, className: "w-12" },
+    { key: "numero", header: tc("number"), render: (c) => <span className="font-medium">{c.number}</span> },
+    { key: "anio", header: t("fields.year"), render: (c) => c.year },
     {
       key: "registro",
       header: t("fields.registro"),
-      render: (c) => c.fkIdPersonaEscribano?.registroEscribano ?? "—",
+      render: (c) => c.fkIdNotaryPerson?.notaryRegistrationNumber ?? "—",
     },
     {
       key: "caratula",
@@ -111,8 +111,8 @@ export default function CuadernosPage() {
         <Button
           variant="outline"
           size="sm"
-          disabled={downloadingId === c.idCuaderno}
-          onClick={() => handleDownloadCaratula(c.idCuaderno!)}
+          disabled={downloadingId === c.idNotebook}
+          onClick={() => handleDownloadCaratula(c.idNotebook!)}
         >
           <Download className="h-4 w-4" />
           {tc("downloadPdf")}
@@ -137,7 +137,7 @@ export default function CuadernosPage() {
         data={cuadernos}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(c) => c.idCuaderno!}
+        keyExtractor={(c) => c.idNotebook!}
         emptyMessage={t("noData")}
       />
 
@@ -153,12 +153,12 @@ export default function CuadernosPage() {
                   {foliosDisponibles.map((f) => (
                     <div key={f.idFolio} className="flex items-center gap-2">
                       <CheckboxField
-                        label={`N° ${f.numero} — ${f.estado}`}
+                        label={`N° ${f.number} — ${f.status}`}
                         checked={selectedIds.includes(f.idFolio!)}
                         onChange={() => toggleFolio(f.idFolio!)}
                         data-testid={`checkbox-folio-${f.idFolio}`}
                       />
-                      {ESTADOS_DANADOS.includes(f.estado ?? "") && (
+                      {ESTADOS_DANADOS.includes(f.status ?? "") && (
                         <Badge variant="secondary">{t("damaged")}</Badge>
                       )}
                     </div>

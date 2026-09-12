@@ -17,19 +17,19 @@ import { apiGet, apiPost, apiPut, apiDelete } from "./setup/api-helpers";
 // ──────────────────────────────────────────────
 
 interface ApiPersona {
-  idPersona?: number;
-  nombre?: string;
-  apellido?: string;
-  dni?: string;
+  personId?: number;
+  firstName?: string;
+  lastName?: string;
+  identificationNumber?: string;
   email?: string;
-  esCliente?: boolean;
+  isClient?: boolean;
 }
 
 interface ApiPresupuesto {
-  idPresupuesto?: number;
-  fecha?: string;
-  monto?: number;
-  estado?: string;
+  idBudget?: number;
+  date?: string;
+  propertyAmount?: number;
+  status?: string;
 }
 
 interface ApiUsuario {
@@ -40,31 +40,30 @@ interface ApiUsuario {
 }
 
 interface ApiConcepto {
-  idConcepto?: number;
-  nombre?: string;
-  descripcion?: string;
-  valor?: number;
+  idConcept?: number;
+  name?: string;
+  value?: number;
 }
 
 interface ApiFolio {
   idFolio?: number;
-  numero?: number;
-  disponible?: boolean;
+  number?: number;
+  status?: string;
 }
 
 interface ApiTipoTramite {
-  idTipoDeTramite?: number;
-  nombre?: string;
+  idProcedureType?: number;
+  name?: string;
 }
 
 interface ApiEstadoGestion {
-  idEstadoDeGestion?: number;
-  nombre?: string;
+  idManagementStatus?: number;
+  name?: string;
 }
 
 interface ApiTipoDocumento {
-  idTipoDeDocumento?: number;
-  nombre?: string;
+  idDocumentType?: number;
+  name?: string;
 }
 
 test.describe("API Connectivity — Backend proxy health", () => {
@@ -80,48 +79,48 @@ test.describe("API Connectivity — Backend proxy health", () => {
 test.describe("API — Personas endpoints", () => {
   let createdId = 0;
 
-  test("GET /api/v1/personas — list all personas", async ({ page }) => {
+  test("GET /api/v1/people — list all people", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiPersona[]>(page, "/personas");
+    const result = await apiGet<ApiPersona[]>(page, "/people");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
 
-  test("POST /api/v1/personas — create a persona", async ({ page }) => {
+  test("POST /api/v1/people — create a persona", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiPost<ApiPersona>(page, "/personas", {
-      nombre: "Test E2E",
-      apellido: "Playwright",
-      dni: "99" + Date.now(),
+    const result = await apiPost<ApiPersona>(page, "/people", {
+      firstName: "Test E2E",
+      lastName: "Playwright",
+      identificationNumber: "99" + Date.now(),
       email: `e2e-${Date.now()}@test.com`,
-      esCliente: true,
+      isClient: true,
     });
     expect(result.ok).toBe(true);
-    if (result.data?.idPersona) {
-      createdId = result.data.idPersona;
+    if (result.data?.personId) {
+      createdId = result.data.personId;
     }
   });
 
-  test("PUT /api/v1/personas/{id} — update a persona", async ({ page }) => {
+  test("PUT /api/v1/people/{id} — update a persona", async ({ page }) => {
     await page.goto("/login");
     // Create a fresh persona for this PUT test to avoid dependency on POST test state
     const unique = Date.now();
-    const create = await apiPost<ApiPersona>(page, "/personas", {
-      nombre: "Test PUT",
-      apellido: "Persona",
-      numeroIdentificacion: "PUT" + unique,
+    const create = await apiPost<ApiPersona>(page, "/people", {
+      firstName: "Test PUT",
+      lastName: "Persona",
+      identificationNumber: "PUT" + unique,
       email: `put-${unique}@test.com`,
-      esCliente: true,
+      isClient: true,
     });
     expect(create.ok).toBe(true);
-    const putId = create.data?.idPersona ?? 0;
+    const putId = create.data?.personId ?? 0;
     if (putId) {
-      const result = await apiPut(page, `/personas/${putId}`, {
-        nombre: "Test Updated",
-        apellido: "Persona Updated",
-        numeroIdentificacion: "PUT" + unique,
+      const result = await apiPut(page, `/people/${putId}`, {
+        firstName: "Test Updated",
+        lastName: "Persona Updated",
+        identificationNumber: "PUT" + unique,
         email: `put-${unique}@test.com`,
-        esCliente: true,
+        isClient: true,
       });
       expect(result.ok).toBe(true);
     }
@@ -132,8 +131,8 @@ test.describe("API — Usuarios endpoints", () => {
   test("POST /api/v1/usuarios/login — login works", async ({ page }) => {
     await page.goto("/login");
     const result = await apiPost<ApiUsuario>(page, "/usuarios/login", {
-      nombre: "admin",
-      contrasenia: "admin",
+      name: "admin",
+      password: "admin",
     });
     expect(result.ok).toBe(true);
   });
@@ -166,10 +165,10 @@ test.describe("API — Catálogos endpoints", () => {
   test("POST /api/v1/tipo-tramite — create tipo de trámite", async ({ page }) => {
     await page.goto("/login");
     const result = await apiPost(page, "/tipo-tramite", {
-      nombre: `Test Tramite ${Date.now()}`,
-      descripcion: "Created by E2E test",
-      seArchiva: false,
-      seInscribe: false,
+      name: `Test Tramite ${Date.now()}`,
+      notes: "Created by E2E test",
+      isArchived: false,
+      isRegistered: false,
     });
     expect(result.ok).toBe(true);
   });
@@ -184,8 +183,8 @@ test.describe("API — Catálogos endpoints", () => {
   test("POST /api/v1/estado-gestion — create estado de gestión", async ({ page }) => {
     await page.goto("/login");
     const result = await apiPost(page, "/estado-gestion", {
-      nombre: `Test Estado ${Date.now()}`,
-      descripcion: "Created by E2E test",
+      name: `Test Estado ${Date.now()}`,
+      notes: "Created by E2E test",
     });
     expect(result.ok).toBe(true);
   });
@@ -211,13 +210,12 @@ test.describe("API — Conceptos endpoints", () => {
   test("POST /api/v1/conceptos — create concepto", async ({ page }) => {
     await page.goto("/login");
     const result = await apiPost<ApiConcepto>(page, "/conceptos", {
-      nombre: `Test Concepto ${Date.now()}`,
-      descripcion: "E2E test",
-      valor: 100.50,
+      name: `Test Concepto ${Date.now()}`,
+      value: 100.50,
     });
     expect(result.ok).toBe(true);
-    if (result.data?.idConcepto) {
-      createdConceptoId = result.data.idConcepto;
+    if (result.data?.idConcept) {
+      createdConceptoId = result.data.idConcept;
     }
   });
 
@@ -225,15 +223,15 @@ test.describe("API — Conceptos endpoints", () => {
     await page.goto("/login");
     if (!createdConceptoId) {
       const create = await apiPost<ApiConcepto>(page, "/conceptos", {
-        nombre: `Test Concepto PUT ${Date.now()}`,
-        valor: 200,
+        name: `Test Concepto PUT ${Date.now()}`,
+        value: 200,
       });
-      createdConceptoId = create.data?.idConcepto ?? 0;
+      createdConceptoId = create.data?.idConcept ?? 0;
     }
     if (createdConceptoId) {
       const result = await apiPut(page, `/conceptos/${createdConceptoId}`, {
-        nombre: "Updated Concepto E2E",
-        valor: 250.75,
+        name: "Updated Concepto E2E",
+        value: 250.75,
       });
       expect(result.ok).toBe(true);
     }
@@ -314,9 +312,9 @@ test.describe("API — Suplencias endpoints", () => {
 });
 
 test.describe("API — Auditoría endpoints", () => {
-  test("GET /api/v1/registro-auditoria — list auditoría entries", async ({ page }) => {
+  test("GET /api/v1/audit-log — list auditoría entries", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet(page, "/registro-auditoria");
+    const result = await apiGet(page, "/audit-log");
     expect(result.ok).toBe(true);
   });
 });
@@ -329,42 +327,42 @@ test.describe("API — Full CRUD cycle: Personas", () => {
     await page.goto("/login");
 
     // 1. CREATE
-    const createRes = await apiPost<ApiPersona>(page, "/personas", {
-      nombre: "CRUD",
-      apellido: "Test",
-      numeroIdentificacion: `CRUD${unique}`,
+    const createRes = await apiPost<ApiPersona>(page, "/people", {
+      firstName: "CRUD",
+      lastName: "Test",
+      identificationNumber: `CRUD${unique}`,
       email: `crud-${unique}@test.com`,
-      esCliente: true,
+      isClient: true,
     });
     expect(createRes.ok).toBe(true);
-    personaId = createRes.data?.idPersona ?? 0;
+    personaId = createRes.data?.personId ?? 0;
     expect(personaId).toBeGreaterThan(0);
 
     // 2. READ (by ID)
-    const readRes = await apiGet<ApiPersona>(page, `/personas/${personaId}`);
+    const readRes = await apiGet<ApiPersona>(page, `/people/${personaId}`);
     expect(readRes.ok).toBe(true);
-    expect(readRes.data?.nombre).toBe("CRUD");
+    expect(readRes.data?.firstName).toBe("CRUD");
 
     // 3. UPDATE — must include all required fields to avoid NOT NULL constraint violations
-    const updateRes = await apiPut(page, `/personas/${personaId}`, {
-      nombre: "CRUD Updated",
-      apellido: "Test Updated",
-      numeroIdentificacion: `CRUD${unique}`,
+    const updateRes = await apiPut(page, `/people/${personaId}`, {
+      firstName: "CRUD Updated",
+      lastName: "Test Updated",
+      identificationNumber: `CRUD${unique}`,
       email: `crud-${unique}@test.com`,
-      esCliente: true,
+      isClient: true,
     });
     expect(updateRes.ok).toBe(true);
 
     // 4. Verify update
-    const verifyUpdate = await apiGet<ApiPersona>(page, `/personas/${personaId}`);
-    expect(verifyUpdate.data?.nombre).toBe("CRUD Updated");
+    const verifyUpdate = await apiGet<ApiPersona>(page, `/people/${personaId}`);
+    expect(verifyUpdate.data?.firstName).toBe("CRUD Updated");
 
     // 5. DELETE
-    const deleteRes = await apiDelete(page, `/personas/${personaId}`);
+    const deleteRes = await apiDelete(page, `/people/${personaId}`);
     expect(deleteRes.ok).toBe(true);
 
     // 6. Verify deletion
-    const verifyDelete = await apiGet(page, `/personas/${personaId}`);
+    const verifyDelete = await apiGet(page, `/people/${personaId}`);
     expect(verifyDelete.status).toBe(404);
   });
 });

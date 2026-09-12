@@ -1,20 +1,20 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.GestionDeEscritura;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.HistorialRepository;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
+import com.licensis.notaire.repository.ManagementStatusRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.repository.TipoDeTramiteRepository;
-import com.licensis.notaire.repository.TramiteRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -54,7 +54,7 @@ class WorkflowTraceApiH2IntegrationTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
-    private EstadoDeGestionRepository estadoRepository;
+    private ManagementStatusRepository statusRepository;
     @Autowired
     private WorkflowDefinitionRepository workflowDefinitionRepository;
     @Autowired
@@ -62,20 +62,20 @@ class WorkflowTraceApiH2IntegrationTest {
     @Autowired
     private WorkflowTransitionRepository workflowTransitionRepository;
     @Autowired
-    private TipoDeTramiteRepository tipoDeTramiteRepository;
+    private ProcedureTypeRepository procedureTypeRepository;
     @Autowired
-    private GestionDeEscrituraRepository gestionRepository;
+    private DeedManagementRepository managementRepository;
     @Autowired
-    private TramiteRepository tramiteRepository;
+    private ProcedureRepository procedureRepository;
     @Autowired
-    private HistorialRepository historialRepository;
+    private HistoryRepository historyRepository;
     @Autowired
-    private PersonRepository personaRepository;
+    private PersonRepository personRepository;
     @Autowired
     private EntityManager entityManager;
 
     private MockMvc mockMvc;
-    private Integer gestionId;
+    private Integer managementId;
     private Integer initialNodeId;
     private Integer middleNodeId;
     private Integer finalNodeId;
@@ -83,39 +83,39 @@ class WorkflowTraceApiH2IntegrationTest {
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        seedWorkflowAndGestion();
+        seedWorkflowAndManagement();
     }
 
-    private EstadoDeGestion estado(String nombre) {
-        EstadoDeGestion estado = new EstadoDeGestion();
-        estado.setNombre(nombre);
-        return estadoRepository.save(estado);
+    private ManagementStatus managementStatus(String name) {
+        ManagementStatus status = new ManagementStatus();
+        status.setName(name);
+        return statusRepository.save(status);
     }
 
-    private WorkflowNode node(WorkflowDefinition def, EstadoDeGestion estado, WorkflowNodeType tipo) {
+    private WorkflowNode node(WorkflowDefinition def, ManagementStatus status, WorkflowNodeType type) {
         WorkflowNode node = new WorkflowNode();
         node.setWorkflowDefinition(def);
-        node.setEstadoDeGestion(estado);
-        node.setTipo(tipo);
+        node.setManagementStatus(status);
+        node.setType(type);
         return workflowNodeRepository.save(node);
     }
 
-    private Historial historial(GestionDeEscritura gestion, EstadoDeGestion estado, long epochMillis) {
-        Historial entry = new Historial();
-        entry.setFkIdGestion(gestion);
-        entry.setFkIdEstadoGestion(estado);
-        entry.setFecha(new Date(epochMillis));
-        return historialRepository.save(entry);
+    private History history(DeedManagement management, ManagementStatus status, long epochMillis) {
+        History entry = new History();
+        entry.setFkIdManagement(management);
+        entry.setFkIdManagementStatus(status);
+        entry.setDate(new Date(epochMillis));
+        return historyRepository.save(entry);
     }
 
-    private void seedWorkflowAndGestion() {
-        EstadoDeGestion iniciada = estado("Trace Iniciada");
-        EstadoDeGestion enCurso = estado("Trace En Curso");
-        EstadoDeGestion cerrada = estado("Trace Cerrada");
+    private void seedWorkflowAndManagement() {
+        ManagementStatus iniciada = managementStatus("Trace Iniciada");
+        ManagementStatus enCurso = managementStatus("Trace En Curso");
+        ManagementStatus cerrada = managementStatus("Trace Cerrada");
 
         WorkflowDefinition def = new WorkflowDefinition();
-        def.setNombre("Workflow Trace Test");
-        def.setActivo(true);
+        def.setName("Workflow Trace Test");
+        def.setActive(true);
         def = workflowDefinitionRepository.save(def);
 
         WorkflowNode initial = node(def, iniciada, WorkflowNodeType.INITIAL);
@@ -127,63 +127,63 @@ class WorkflowTraceApiH2IntegrationTest {
 
         WorkflowTransition t1 = new WorkflowTransition();
         t1.setWorkflowDefinition(def);
-        t1.setNodoOrigen(initial);
-        t1.setNodoDestino(middle);
+        t1.setOriginNode(initial);
+        t1.setDestinationNode(middle);
         workflowTransitionRepository.save(t1);
         WorkflowTransition t2 = new WorkflowTransition();
         t2.setWorkflowDefinition(def);
-        t2.setNodoOrigen(middle);
-        t2.setNodoDestino(last);
+        t2.setOriginNode(middle);
+        t2.setDestinationNode(last);
         workflowTransitionRepository.save(t2);
 
-        TipoDeTramite tipo = new TipoDeTramite();
-        tipo.setNombre("Tipo Trace Test");
-        tipo.setWorkflowDefinition(def);
-        tipo = tipoDeTramiteRepository.save(tipo);
+        ProcedureType type = new ProcedureType();
+        type.setName("Tipo Trace Test");
+        type.setWorkflowDefinition(def);
+        type = procedureTypeRepository.save(type);
 
-        GestionDeEscritura gestion = new GestionDeEscritura();
-        gestion.setIdGestion(null);
-        gestion.setNumero(987654);
-        gestion.setEncabezado("Gestion Trace Test");
-        gestion.setFechaInicio(new Date());
-        gestion.setFkIdEstadoDeGestion(enCurso);
-        gestion.setFkIdPersonaEscribano(personaRepository.findAll().get(0));
-        gestion = gestionRepository.save(gestion);
-        gestionId = gestion.getIdGestion();
+        DeedManagement management = new DeedManagement();
+        management.setIdManagement(null);
+        management.setNumber(987654);
+        management.setEncabezado("Gestion Trace Test");
+        management.setDateStart(new Date());
+        management.setFkIdManagementStatus(enCurso);
+        management.setFkIdNotaryPerson(personRepository.findAll().get(0));
+        management = managementRepository.save(management);
+        managementId = management.getIdManagement();
 
-        Tramite tramite = new Tramite();
-        tramite.setIdTramite(null);
-        tramite.setFkIdGestion(gestion);
-        tramite.setFkIdTipoTramite(tipo);
-        tramiteRepository.save(tramite);
+        Procedure procedure = new Procedure();
+        procedure.setIdProcedure(null);
+        procedure.setFkIdManagement(management);
+        procedure.setFkIdProcedureType(type);
+        procedureRepository.save(procedure);
 
         long oneDayMillis = 86_400_000L;
-        historial(gestion, iniciada, oneDayMillis);
-        historial(gestion, enCurso, 2 * oneDayMillis);
+        history(management, iniciada, oneDayMillis);
+        history(management, enCurso, 2 * oneDayMillis);
 
         entityManager.flush();
         entityManager.clear();
     }
 
     @Test
-    @DisplayName("Should return aggregated trace with nodes, transitions and historial")
-    void shouldReturnAggregatedTraceWithNodesTransitionsAndHistorial() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", gestionId))
+    @DisplayName("Should return aggregated trace with nodes, transitions and history")
+    void shouldReturnAggregatedTraceWithNodesTransitionsAndHistory() throws Exception {
+        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.gestionId").value(gestionId))
-                .andExpect(jsonPath("$.numero").value(987654))
+                .andExpect(jsonPath("$.managementId").value(managementId))
+                .andExpect(jsonPath("$.number").value(987654))
                 .andExpect(jsonPath("$.encabezado").value("Gestion Trace Test"))
-                .andExpect(jsonPath("$.estadoActual").value("Trace En Curso"))
-                .andExpect(jsonPath("$.workflowDefinition.nombre").value("Workflow Trace Test"))
+                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))
                 .andExpect(jsonPath("$.transitions", hasSize(2)))
-                .andExpect(jsonPath("$.historial", hasSize(2)));
+                .andExpect(jsonPath("$.history", hasSize(2)));
     }
 
     @Test
     @DisplayName("Should compute completed, in_progress and pending node statuses")
-    void shouldComputeNodeStatusesFromHistorial() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", gestionId))
+    void shouldComputeNodeStatusesFromHistory() throws Exception {
+        mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nodeStatuses." + initialNodeId).value("completed"))
                 .andExpect(jsonPath("$.nodeStatuses." + middleNodeId).value("in_progress"))
@@ -192,51 +192,51 @@ class WorkflowTraceApiH2IntegrationTest {
 
     @Test
     @DisplayName("Should return 400 when gestion does not exist")
-    void shouldReturnBadRequestWhenGestionDoesNotExist() throws Exception {
+    void shouldReturnBadRequestWhenManagementDoesNotExist() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", 999999))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("Should serialize gestiones list when tramite tipo has a workflow definition")
-    void shouldSerializeGestionesListWhenTipoHasWorkflowDefinition() throws Exception {
+    @DisplayName("Should serialize gestiones list when tramite type has a workflow definition")
+    void shouldSerializeGestionesListWhenTypeHasWorkflowDefinition() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].idGestion").value(gestionId))
-                .andExpect(jsonPath("$.content[0].tramiteCount").value(1));
+                .andExpect(jsonPath("$.content[0].idManagement").value(managementId))
+                .andExpect(jsonPath("$.content[0].procedureCount").value(1));
     }
 
     @Test
-    @DisplayName("Should serialize gestion by numero when tramite tipo has a workflow definition")
-    void shouldSerializeGestionByNumeroWhenTipoHasWorkflowDefinition() throws Exception {
+    @DisplayName("Should serialize gestion by number when tramite type has a workflow definition")
+    void shouldSerializeManagementByNumberWhenTypeHasWorkflowDefinition() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones/numero/{numero}", 987654))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.numero").value(987654))
-                .andExpect(jsonPath("$.estadoActual").value("Trace En Curso"))
-                .andExpect(jsonPath("$.tramiteCount").value(1));
+                .andExpect(jsonPath("$.number").value(987654))
+                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.procedureCount").value(1));
     }
 
     @Test
-    @DisplayName("Should serialize tipo-tramite list when a workflow definition is assigned")
-    void shouldSerializeTipoTramiteListWhenWorkflowDefinitionAssigned() throws Exception {
+    @DisplayName("Should serialize type-tramite list when a workflow definition is assigned")
+    void shouldSerializeTypeProcedureListWhenWorkflowDefinitionAssigned() throws Exception {
         mockMvc.perform(get("/api/v1/tipo-tramite"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.nombre == 'Tipo Trace Test')].workflowDefinitionNombre")
+                .andExpect(jsonPath("$[?(@.name == 'Tipo Trace Test')].workflowDefinitionName")
                         .value("Workflow Trace Test"));
     }
 
     @Test
-    @DisplayName("Should serialize historial endpoints without entity cycles")
-    void shouldSerializeHistorialEndpointsWithoutEntityCycles() throws Exception {
+    @DisplayName("Should serialize history endpoints without entity cycles")
+    void shouldSerializeHistoryEndpointsWithoutEntityCycles() throws Exception {
         mockMvc.perform(get("/api/v1/historial"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/historial/gestion/{id}", gestionId))
+        mockMvc.perform(get("/api/v1/historial/gestion/{id}", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].gestionId").value(gestionId));
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", gestionId))
+                .andExpect(jsonPath("$[0].managementId").value(managementId));
+        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estadoGestionNombre").value("Trace En Curso"));
+                .andExpect(jsonPath("$.statusManagementName").value("Trace En Curso"));
     }
 }

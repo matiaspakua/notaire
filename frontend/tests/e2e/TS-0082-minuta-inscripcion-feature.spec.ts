@@ -11,22 +11,22 @@ import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
 
 interface EscrituraApiResult {
-  idEscritura: number;
+  idDeed: number;
 }
 
 interface InmuebleApiResult {
-  idInmueble: number;
+  idProperty: number;
 }
 
 async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
   const seeded = await apiPost<EscrituraApiResult>(page, "/escrituras", {
-    numero,
-    fechaEscrituracion: new Date().toISOString().split("T")[0],
-    cuerpo: `Contenido E2E ${numero}`,
-    estado: "Firmada",
+    number: numero,
+    dateDeedrecording: new Date().toISOString().split("T")[0],
+    body: `Contenido E2E ${numero}`,
+    status: "Firmada",
   });
-  return { idEscritura: seeded.data!.idEscritura, numero };
+  return { idEscritura: seeded.data!.idDeed, numero };
 }
 
 async function seedInmueble(
@@ -34,15 +34,15 @@ async function seedInmueble(
   overrides: Record<string, unknown> = {},
 ): Promise<number> {
   const seeded = await apiPost<InmuebleApiResult>(page, "/inmueble", {
-    nomenclaturaCatastral: `NC-${uniqueId()}`,
-    domicilio: "Av. Siempreviva 742",
-    valuacionFiscal: 100000,
-    matricula: `MAT-${uniqueId()}`,
-    tomoFolioFinca: "Tomo 1 Folio 2",
-    linderos: "Norte, Sur, Este, Oeste",
+    cadastralDesignation: `NC-${uniqueId()}`,
+    address: "Av. Siempreviva 742",
+    fiscalAppraisal: 100000,
+    registrationNumber: `MAT-${uniqueId()}`,
+    volumeFolioLandRecord: "Tomo 1 Folio 2",
+    boundaries: "Norte, Sur, Este, Oeste",
     ...overrides,
   });
-  return seeded.data!.idInmueble;
+  return seeded.data!.idProperty;
 }
 
 async function seedTramite(
@@ -51,9 +51,9 @@ async function seedTramite(
   idInmueble: number,
 ): Promise<void> {
   await apiPost(page, "/tramites", {
-    fkIdTipoTramite: { idTipoTramite: 1 },
-    fkIdEscritura: { idEscritura },
-    fkIdInmueble: { idInmueble },
+    fkIdProcedureType: { idProcedureType: 1 },
+    fkIdDeed: { idDeed: idEscritura },
+    fkIdProperty: { idProperty: idInmueble },
   });
 }
 

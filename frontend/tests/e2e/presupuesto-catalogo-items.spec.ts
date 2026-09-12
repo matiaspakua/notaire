@@ -19,11 +19,11 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     // GIVEN: presupuesto y un ítem reutilizable en el catálogo
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.idPersona);
+    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const itemResult = await createItem(page, { nombre: "Sellado E2E", valor: 750 });
+    const itemResult = await createItem(page, { name: "Sellado E2E", value: 750 });
     expect(itemResult.ok, `createItem failed: ${itemResult.error}`).toBe(true);
 
     // WHEN: operador abre los ítems del presupuesto y agrega el ítem del catálogo
@@ -49,12 +49,12 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
   test("permite combinar un ítem de plantilla y uno de catálogo en el mismo presupuesto", async ({ page }) => {
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createPresupuesto(page, personaResult.data!.idPersona);
+    const presupuestoResult = await createPresupuesto(page, personaResult.data!.personId);
     expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idPresupuesto;
+    const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const item1 = await createItem(page, { nombre: "Item Uno E2E", valor: 200 });
-    const item2 = await createItem(page, { nombre: "Item Dos E2E", valor: 300 });
+    const item1 = await createItem(page, { name: "Item Uno E2E", value: 200 });
+    const item2 = await createItem(page, { name: "Item Dos E2E", value: 300 });
     expect(item1.ok).toBe(true);
     expect(item2.ok).toBe(true);
 

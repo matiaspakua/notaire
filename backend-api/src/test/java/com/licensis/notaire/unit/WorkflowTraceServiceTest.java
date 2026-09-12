@@ -1,11 +1,11 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.HistorialRepository;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
 import com.licensis.notaire.service.WorkflowTraceService;
@@ -24,24 +24,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("CU83 - WorkflowTraceService unit tests")
 class WorkflowTraceServiceTest {
 
-    private WorkflowNode makeNode(int id, int estadoId, WorkflowNodeType tipo) {
+    private WorkflowNode makeNode(int id, int statusId, WorkflowNodeType type) {
         WorkflowNode node = new WorkflowNode(id);
-        node.setTipo(tipo);
-        EstadoDeGestion estado = new EstadoDeGestion(estadoId);
-        estado.setNombre("Estado " + estadoId);
-        node.setEstadoDeGestion(estado);
+        node.setType(type);
+        ManagementStatus status = new ManagementStatus(statusId);
+        status.setName("Estado " + statusId);
+        node.setManagementStatus(status);
         return node;
     }
 
-    private Historial makeHistorial(int id, int estadoId, long epochMillis) {
-        Historial historial = new Historial(id, new Date(epochMillis));
-        historial.setFkIdEstadoGestion(new EstadoDeGestion(estadoId));
-        return historial;
+    private History makeHistory(int id, int statusId, long epochMillis) {
+        History history = new History(id, new Date(epochMillis));
+        history.setFkIdManagementStatus(new ManagementStatus(statusId));
+        return history;
     }
 
     @Test
-    @DisplayName("Should mark all nodes pending when historial is empty")
-    void shouldMarkAllNodesPendingWhenHistorialIsEmpty() {
+    @DisplayName("Should mark all nodes pending when history is empty")
+    void shouldMarkAllNodesPendingWhenHistoryIsEmpty() {
         List<WorkflowNode> nodes = List.of(
                 makeNode(1, 10, WorkflowNodeType.INITIAL),
                 makeNode(2, 20, WorkflowNodeType.FINAL));
@@ -52,17 +52,17 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
-    @DisplayName("Should mark latest historial estado in_progress and earlier ones completed")
-    void shouldMarkLatestEstadoInProgressAndEarlierCompleted() {
+    @DisplayName("Should mark latest history status in_progress and earlier ones completed")
+    void shouldMarkLatestStatusInProgressAndEarlierCompleted() {
         List<WorkflowNode> nodes = List.of(
                 makeNode(1, 10, WorkflowNodeType.INITIAL),
                 makeNode(2, 20, WorkflowNodeType.INTERMEDIATE),
                 makeNode(3, 30, WorkflowNodeType.FINAL));
-        List<Historial> historial = List.of(
-                makeHistorial(1, 10, 1000L),
-                makeHistorial(2, 20, 2000L));
+        List<History> history = List.of(
+                makeHistory(1, 10, 1000L),
+                makeHistory(2, 20, 2000L));
 
-        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, historial);
+        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, history);
 
         assertThat(statuses)
                 .containsEntry(1, "completed")
@@ -71,41 +71,41 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
-    @DisplayName("Should order historial by fecha regardless of list order")
-    void shouldOrderHistorialByFechaRegardlessOfListOrder() {
+    @DisplayName("Should order history by date regardless of list order")
+    void shouldOrderHistoryByDateRegardlessOfListOrder() {
         List<WorkflowNode> nodes = List.of(
                 makeNode(1, 10, WorkflowNodeType.INITIAL),
                 makeNode(2, 20, WorkflowNodeType.FINAL));
-        List<Historial> historial = List.of(
-                makeHistorial(2, 20, 5000L),
-                makeHistorial(1, 10, 1000L));
+        List<History> history = List.of(
+                makeHistory(2, 20, 5000L),
+                makeHistory(1, 10, 1000L));
 
-        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, historial);
+        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, history);
 
         assertThat(statuses).containsEntry(1, "completed").containsEntry(2, "in_progress");
     }
 
     @Test
-    @DisplayName("Should keep node in_progress when the same estado repeats in historial")
-    void shouldKeepNodeInProgressWhenSameEstadoRepeats() {
+    @DisplayName("Should keep node in_progress when the same status repeats in history")
+    void shouldKeepNodeInProgressWhenSameStatusRepeats() {
         List<WorkflowNode> nodes = List.of(makeNode(1, 10, WorkflowNodeType.INITIAL));
-        List<Historial> historial = List.of(
-                makeHistorial(1, 10, 1000L),
-                makeHistorial(2, 10, 2000L));
+        List<History> history = List.of(
+                makeHistory(1, 10, 1000L),
+                makeHistory(2, 10, 2000L));
 
-        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, historial);
+        Map<Integer, String> statuses = WorkflowTraceService.computeNodeStatuses(nodes, history);
 
         assertThat(statuses).containsEntry(1, "in_progress");
     }
 
     @Test
     @DisplayName("Should throw when gestion does not exist")
-    void shouldThrowWhenGestionDoesNotExist() {
-        GestionDeEscrituraRepository gestionRepository = Mockito.mock(GestionDeEscrituraRepository.class);
-        Mockito.when(gestionRepository.findById(99)).thenReturn(Optional.empty());
+    void shouldThrowWhenManagementDoesNotExist() {
+        DeedManagementRepository managementRepository = Mockito.mock(DeedManagementRepository.class);
+        Mockito.when(managementRepository.findById(99)).thenReturn(Optional.empty());
         WorkflowTraceService service = new WorkflowTraceService(
-                gestionRepository,
-                Mockito.mock(HistorialRepository.class),
+                managementRepository,
+                Mockito.mock(HistoryRepository.class),
                 Mockito.mock(WorkflowNodeRepository.class),
                 Mockito.mock(WorkflowTransitionRepository.class));
 

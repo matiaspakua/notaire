@@ -10,48 +10,48 @@ public class DtoItem implements DtoValido
 {
 
     private Integer idItem;
-    private DtoPresupuesto presupuestos;
-    private String nombre;
-    private Float valor;
-    private Integer porcentaje;
-    private String observaciones;
+    private DtoBudget presupuestos;
+    private String name;
+    private Float value;
+    private Integer percentage;
+    private String notes;
     private Integer version = 0;
-    private Boolean conceptoFijo;
-    private TipoItem tipo;
-    private String motivo;
+    private Boolean fixedConcept;
+    private TypeItem type;
+    private String reason;
 
     /**
      * Constructor sin argumentos de @link DtoItem
      */
     public DtoItem()
     {
-        this.conceptoFijo = false;
+        this.fixedConcept = false;
     }
 
-    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor)
+    public DtoItem(DtoBudget presupuestos, String name, Float value)
     {
         this.presupuestos = presupuestos;
-        this.nombre = nombre;
-        this.valor = valor;
+        this.name = name;
+        this.value = value;
     }
 
-    public DtoItem(DtoPresupuesto presupuestos, String nombre, Float valor, Integer porcentaje, String observaciones)
+    public DtoItem(DtoBudget presupuestos, String name, Float value, Integer percentage, String notes)
     {
         this.presupuestos = presupuestos;
-        this.nombre = nombre;
-        this.valor = valor;
-        this.porcentaje = porcentaje;
-        this.observaciones = observaciones;
+        this.name = name;
+        this.value = value;
+        this.percentage = percentage;
+        this.notes = notes;
     }
 
-    public Boolean isFijo()
+    public Boolean isFixed()
     {
-        return this.conceptoFijo;
+        return this.fixedConcept;
     }
 
-    public void setConceptoFijo(Boolean conceptoFijo)
+    public void setFixedConcept(Boolean fixedConcept)
     {
-        this.conceptoFijo = conceptoFijo;
+        this.fixedConcept = fixedConcept;
     }
 
     public Integer getVersion()
@@ -74,74 +74,74 @@ public class DtoItem implements DtoValido
         this.idItem = idItem;
     }
 
-    public DtoPresupuesto getPresupuestos()
+    public DtoBudget getPresupuestos()
     {
         return this.presupuestos;
     }
 
-    public void setPresupuestos(DtoPresupuesto presupuestos)
+    public void setPresupuestos(DtoBudget presupuestos)
     {
         this.presupuestos = presupuestos;
     }
 
-    public String getNombre()
+    public String getName()
     {
-        return this.nombre;
+        return this.name;
     }
 
-    public void setNombre(String nombre)
+    public void setName(String name)
     {
-        this.nombre = nombre;
+        this.name = name;
     }
 
-    public Float getValor()
+    public Float getValue()
     {
-        return this.valor;
+        return this.value;
     }
 
-    public void setValor(Float valor)
+    public void setValue(Float value)
     {
-        this.valor = valor;
+        this.value = value;
     }
 
-    public Integer getPorcentaje()
+    public Integer getPercentage()
     {
-        return this.porcentaje;
+        return this.percentage;
     }
 
-    public void setPorcentaje(Integer porcentaje)
+    public void setPercentage(Integer percentage)
     {
-        this.porcentaje = porcentaje;
+        this.percentage = percentage;
     }
 
-    public String getObservaciones()
+    public String getNotes()
     {
-        return this.observaciones;
+        return this.notes;
     }
 
-    public void setObservaciones(String observaciones)
+    public void setNotes(String notes)
     {
-        this.observaciones = observaciones;
+        this.notes = notes;
     }
 
-    public TipoItem getTipo()
+    public TypeItem getType()
     {
-        return this.tipo;
+        return this.type;
     }
 
-    public void setTipo(TipoItem tipo)
+    public void setType(TypeItem type)
     {
-        this.tipo = tipo;
+        this.type = type;
     }
 
-    public String getMotivo()
+    public String getReason()
     {
-        return this.motivo;
+        return this.reason;
     }
 
-    public void setMotivo(String motivo)
+    public void setReason(String reason)
     {
-        this.motivo = motivo;
+        this.reason = reason;
     }
 
     @Override

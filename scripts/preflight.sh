@@ -226,7 +226,7 @@ if [ "$MODE_FULL" = "1" ]; then
         # Bruno collection, not the legacy testing/http suite above.
         BRUNO_TOKEN="$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
             -H 'Content-Type: application/json' \
-            -d '{"nombre":"admin","contrasenia":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
+            -d '{"name":"admin","password":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
         if [ -n "$BRUNO_TOKEN" ]; then
             run "bruno api tests" bash -c "cd backend-api/api-test && npx @usebruno/cli run --env Developmen --env-var token=$BRUNO_TOKEN"
         else

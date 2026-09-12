@@ -2,10 +2,10 @@ info:
   name: Search Personas (filter)
   type: http
   seq: 4
-  description: "## CU61 Buscar persona — GET /api/v1/personas/buscar?q="
+  description: "## CU61 Buscar persona — GET /api/v1/people/search?q="
 http:
   method: GET
-  url: "{{base_url}}/api/v1/personas/buscar?q=Lopez"
+  url: "{{base_url}}/api/v1/people/search?q=Lopez"
   headers:
     - name: Content-Type
       value: application/json

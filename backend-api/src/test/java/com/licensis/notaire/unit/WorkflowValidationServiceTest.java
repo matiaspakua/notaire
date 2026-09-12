@@ -1,9 +1,9 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.service.WorkflowValidationService;
 import com.licensis.notaire.service.WorkflowValidationService.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,19 +25,19 @@ class WorkflowValidationServiceTest {
         service = new WorkflowValidationService();
     }
 
-    private WorkflowNode makeNode(int id, WorkflowNodeType tipo) {
+    private WorkflowNode makeNode(int id, WorkflowNodeType type) {
         WorkflowNode n = new WorkflowNode(id);
-        n.setTipo(tipo);
-        EstadoDeGestion e = new EstadoDeGestion(id);
-        e.setNombre("Estado " + id);
-        n.setEstadoDeGestion(e);
+        n.setType(type);
+        ManagementStatus e = new ManagementStatus(id);
+        e.setName("Estado " + id);
+        n.setManagementStatus(e);
         return n;
     }
 
-    private WorkflowTransition makeTransition(int id, WorkflowNode origen, WorkflowNode destino) {
+    private WorkflowTransition makeTransition(int id, WorkflowNode origin, WorkflowNode destination) {
         WorkflowTransition t = new WorkflowTransition(id);
-        t.setNodoOrigen(origen);
-        t.setNodoDestino(destino);
+        t.setOriginNode(origin);
+        t.setDestinationNode(destination);
         return t;
     }
 

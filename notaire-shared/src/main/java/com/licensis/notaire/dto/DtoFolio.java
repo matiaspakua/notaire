@@ -11,38 +11,38 @@ import java.util.List;
 public class DtoFolio implements DtoValido {
 
     private Integer idFolio;
-    private DtoTipoDeFolio tiposDeFolio;
-    private DtoEscritura escritura;
-    private DtoPerson personaEscribano;
-    private int numero;
-    private int anio;
-    private String estado;
-    private String observaciones;
-    private List<DtoCopia> copias = new ArrayList<>();
+    private DtoFolioType tiposDeFolio;
+    private DtoDeed deed;
+    private DtoPerson personNotary;
+    private int number;
+    private int year;
+    private String status;
+    private String notes;
+    private List<DtoCopy> copies = new ArrayList<>();
     private Integer version;
 
     public DtoFolio() {
         this.version = 0;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoPerson personas, int numero, int anio, String estado) {
+    public DtoFolio(DtoFolioType tiposDeFolio, DtoPerson persons, int number, int year, String status) {
         this.tiposDeFolio = tiposDeFolio;
-        this.personaEscribano = personas;
-        this.numero = numero;
-        this.anio = anio;
-        this.estado = estado;
+        this.personNotary = persons;
+        this.number = number;
+        this.year = year;
+        this.status = status;
     }
 
-    public DtoFolio(DtoTipoDeFolio tiposDeFolio, DtoEscritura escrituras, DtoPerson personas, int numero, int anio,
-            String estado, String observaciones, List<DtoCopia> copias) {
+    public DtoFolio(DtoFolioType tiposDeFolio, DtoDeed escrituras, DtoPerson persons, int number, int year,
+            String status, String notes, List<DtoCopy> copies) {
         this.tiposDeFolio = tiposDeFolio;
-        this.escritura = escrituras;
-        this.personaEscribano = personas;
-        this.numero = numero;
-        this.anio = anio;
-        this.estado = estado;
-        this.observaciones = observaciones;
-        this.copias = copias;
+        this.deed = escrituras;
+        this.personNotary = persons;
+        this.number = number;
+        this.year = year;
+        this.status = status;
+        this.notes = notes;
+        this.copies = copies;
     }
 
     public Integer getIdFolio() {
@@ -53,68 +53,68 @@ public class DtoFolio implements DtoValido {
         this.idFolio = idFolio;
     }
 
-    public DtoTipoDeFolio getTiposDeFolio() {
+    public DtoFolioType getTiposDeFolio() {
         return this.tiposDeFolio;
     }
 
-    public void setTiposDeFolio(DtoTipoDeFolio tiposDeFolio) {
+    public void setTiposDeFolio(DtoFolioType tiposDeFolio) {
         this.tiposDeFolio = tiposDeFolio;
     }
 
-    public DtoEscritura getEscritura() {
-        return this.escritura;
+    public DtoDeed getDeed() {
+        return this.deed;
     }
 
-    public void setEscritura(DtoEscritura escrituras) {
-        this.escritura = escrituras;
+    public void setDeed(DtoDeed escrituras) {
+        this.deed = escrituras;
     }
 
-    public DtoPerson getPersonaEscribano() {
-        return this.personaEscribano;
+    public DtoPerson getPersonNotary() {
+        return this.personNotary;
     }
 
-    public void setPersonaEscribano(DtoPerson personaEscribano) {
-        this.personaEscribano = personaEscribano;
+    public void setPersonNotary(DtoPerson personNotary) {
+        this.personNotary = personNotary;
     }
 
-    public int getNumero() {
-        return this.numero;
+    public int getNumber() {
+        return this.number;
     }
 
-    public void setNumero(int numero) {
-        this.numero = numero;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public int getAnio() {
-        return this.anio;
+    public int getYear() {
+        return this.year;
     }
 
-    public void setAnio(int anio) {
-        this.anio = anio;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public String getEstado() {
-        return this.estado;
+    public String getStatus() {
+        return this.status;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getObservaciones() {
-        return this.observaciones;
+    public String getNotes() {
+        return this.notes;
     }
 
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
-    public List<DtoCopia> getCopias() {
-        return this.copias;
+    public List<DtoCopy> getCopies() {
+        return this.copies;
     }
 
-    public void setCopias(List<DtoCopia> copias) {
-        this.copias = copias;
+    public void setCopies(List<DtoCopy> copies) {
+        this.copies = copies;
     }
 
     public Integer getVersion() {

@@ -124,8 +124,8 @@ class FlywayMigrationScriptTest {
 
         // Should reference the escribano persona
         assertThat(dataContent)
-                .as("Admin user should reference escribano")
-                .contains("escribano");
+                .as("Admin user should reference notary")
+                .contains("Escribano");
     }
 
     @Test

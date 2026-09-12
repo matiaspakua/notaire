@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit.jpa;
 
-import com.licensis.notaire.jpa.ConceptoJpaController;
+import com.licensis.notaire.jpa.ConceptJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
 import com.licensis.notaire.service.AdministradorJpa;
@@ -118,15 +118,15 @@ class AdministradorJpaTest {
 
             // Verify a few specific controller types exist
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("ConceptoJpaController"));
+                    jpa.getNameJpa().contains("ConceptJpaController"));
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("PersonJpaController"));
+                    jpa.getNameJpa().contains("PersonJpaController"));
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("UsuarioJpaController"));
+                    jpa.getNameJpa().contains("UserJpaController"));
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("RegistroAuditoriaJpaController"));
+                    jpa.getNameJpa().contains("AuditRecordJpaController"));
             assertThat(list).anyMatch(jpa ->
-                    jpa.getNombreJpa().contains("TramitesPersonasJpaController"));
+                    jpa.getNameJpa().contains("PersonProcedureJpaController"));
         }
     }
 
@@ -144,9 +144,9 @@ class AdministradorJpaTest {
         @DisplayName("should return matching JPA by class name")
         void shouldFindMatchingJpa() throws Exception {
             IPersistenciaJpa jpa = AdministradorJpa.getInstancia()
-                    .obtenerJpa("ConceptoJpaController");
+                    .obtenerJpa("ConceptJpaController");
             assertThat(jpa).isNotNull();
-            assertThat(jpa).isInstanceOf(ConceptoJpaController.class);
+            assertThat(jpa).isInstanceOf(ConceptJpaController.class);
         }
 
         @Test

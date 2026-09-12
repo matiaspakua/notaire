@@ -1,11 +1,11 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.WorkflowDefinition;
-import com.licensis.notaire.negocio.WorkflowNode;
-import com.licensis.notaire.negocio.WorkflowNodeType;
-import com.licensis.notaire.negocio.WorkflowTransition;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.WorkflowDefinition;
+import com.licensis.notaire.business.WorkflowNode;
+import com.licensis.notaire.business.WorkflowNodeType;
+import com.licensis.notaire.business.WorkflowTransition;
+import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
@@ -32,57 +32,57 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     private WorkflowNodeRepository workflowNodeRepository;
 
     @Autowired
-    private EstadoDeGestionRepository estadoDeGestionRepository;
+    private ManagementStatusRepository managementStatusRepository;
 
     private WorkflowDefinition workflowDefinition;
-    private WorkflowNode nodoInicio;
-    private WorkflowNode nodoIntermedio;
-    private WorkflowNode nodoFinal;
+    private WorkflowNode nodeStart;
+    private WorkflowNode nodeIntermedio;
+    private WorkflowNode nodeFinal;
 
     @BeforeEach
     void setUp() {
         workflowTransitionRepository.deleteAll();
         workflowNodeRepository.deleteAll();
         workflowDefinitionRepository.deleteAll();
-        estadoDeGestionRepository.deleteAll();
+        managementStatusRepository.deleteAll();
 
         // Create workflow definition
         workflowDefinition = new WorkflowDefinition();
-        workflowDefinition.setNombre("Workflow Test");
-        workflowDefinition.setDescripcion("Workflow para pruebas");
+        workflowDefinition.setName("Workflow Test");
+        workflowDefinition.setDescription("Workflow para pruebas");
         workflowDefinition = workflowDefinitionRepository.save(workflowDefinition);
 
         // Create states
-        EstadoDeGestion estadoInicio = new EstadoDeGestion();
-        estadoInicio.setNombre("Inicio");
-        estadoInicio = estadoDeGestionRepository.save(estadoInicio);
+        ManagementStatus statusStart = new ManagementStatus();
+        statusStart.setName("Inicio");
+        statusStart = managementStatusRepository.save(statusStart);
 
-        EstadoDeGestion estadoProceso = new EstadoDeGestion();
-        estadoProceso.setNombre("En Proceso");
-        estadoProceso = estadoDeGestionRepository.save(estadoProceso);
+        ManagementStatus statusProceso = new ManagementStatus();
+        statusProceso.setName("En Proceso");
+        statusProceso = managementStatusRepository.save(statusProceso);
 
-        EstadoDeGestion estadoFinal = new EstadoDeGestion();
-        estadoFinal.setNombre("Finalizado");
-        estadoFinal = estadoDeGestionRepository.save(estadoFinal);
+        ManagementStatus statusFinal = new ManagementStatus();
+        statusFinal.setName("Finalizado");
+        statusFinal = managementStatusRepository.save(statusFinal);
 
         // Create nodes
-        nodoInicio = new WorkflowNode();
-        nodoInicio.setWorkflowDefinition(workflowDefinition);
-        nodoInicio.setEstadoDeGestion(estadoInicio);
-        nodoInicio.setTipo(WorkflowNodeType.INITIAL);
-        nodoInicio = workflowNodeRepository.save(nodoInicio);
+        nodeStart = new WorkflowNode();
+        nodeStart.setWorkflowDefinition(workflowDefinition);
+        nodeStart.setManagementStatus(statusStart);
+        nodeStart.setType(WorkflowNodeType.INITIAL);
+        nodeStart = workflowNodeRepository.save(nodeStart);
 
-        nodoIntermedio = new WorkflowNode();
-        nodoIntermedio.setWorkflowDefinition(workflowDefinition);
-        nodoIntermedio.setEstadoDeGestion(estadoProceso);
-        nodoIntermedio.setTipo(WorkflowNodeType.INTERMEDIATE);
-        nodoIntermedio = workflowNodeRepository.save(nodoIntermedio);
+        nodeIntermedio = new WorkflowNode();
+        nodeIntermedio.setWorkflowDefinition(workflowDefinition);
+        nodeIntermedio.setManagementStatus(statusProceso);
+        nodeIntermedio.setType(WorkflowNodeType.INTERMEDIATE);
+        nodeIntermedio = workflowNodeRepository.save(nodeIntermedio);
 
-        nodoFinal = new WorkflowNode();
-        nodoFinal.setWorkflowDefinition(workflowDefinition);
-        nodoFinal.setEstadoDeGestion(estadoFinal);
-        nodoFinal.setTipo(WorkflowNodeType.FINAL);
-        nodoFinal = workflowNodeRepository.save(nodoFinal);
+        nodeFinal = new WorkflowNode();
+        nodeFinal.setWorkflowDefinition(workflowDefinition);
+        nodeFinal.setManagementStatus(statusFinal);
+        nodeFinal.setType(WorkflowNodeType.FINAL);
+        nodeFinal = workflowNodeRepository.save(nodeFinal);
     }
 
     @Test
@@ -90,17 +90,17 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldCreateValidWorkflowTransition() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
-        transition.setDescripcion("Transición de inicio a proceso");
-        transition.setCondicion("approved");
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
+        transition.setDescription("Transición de inicio a proceso");
+        transition.setCondition("approved");
 
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getWorkflowDefinition().getId()).isEqualTo(workflowDefinition.getId());
-        assertThat(saved.getNodoOrigen().getId()).isEqualTo(nodoInicio.getId());
-        assertThat(saved.getNodoDestino().getId()).isEqualTo(nodoIntermedio.getId());
+        assertThat(saved.getOriginNode().getId()).isEqualTo(nodeStart.getId());
+        assertThat(saved.getDestinationNode().getId()).isEqualTo(nodeIntermedio.getId());
     }
 
     @Test
@@ -108,14 +108,14 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldRetrieveTransitionById() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
         Optional<WorkflowTransition> found = workflowTransitionRepository.findById(saved.getId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().getNodoOrigen().getId()).isEqualTo(nodoInicio.getId());
+        assertThat(found.get().getOriginNode().getId()).isEqualTo(nodeStart.getId());
     }
 
     @Test
@@ -123,15 +123,15 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldUpdateTransitionDescription() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
-        transition.setDescripcion("Original");
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
+        transition.setDescription("Original");
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
-        saved.setDescripcion("Actualizado");
+        saved.setDescription("Actualizado");
         WorkflowTransition updated = workflowTransitionRepository.save(saved);
 
-        assertThat(updated.getDescripcion()).isEqualTo("Actualizado");
+        assertThat(updated.getDescription()).isEqualTo("Actualizado");
     }
 
     @Test
@@ -139,8 +139,8 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldDeleteTransition() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
         Integer id = saved.getId();
 
@@ -156,8 +156,8 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         for (int i = 0; i < 3; i++) {
             WorkflowTransition transition = new WorkflowTransition();
             transition.setWorkflowDefinition(workflowDefinition);
-            transition.setNodoOrigen(nodoInicio);
-            transition.setNodoDestino(i == 0 ? nodoIntermedio : nodoFinal);
+            transition.setOriginNode(nodeStart);
+            transition.setDestinationNode(i == 0 ? nodeIntermedio : nodeFinal);
             workflowTransitionRepository.save(transition);
         }
 
@@ -173,9 +173,9 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         for (String condition : conditions) {
             WorkflowTransition transition = new WorkflowTransition();
             transition.setWorkflowDefinition(workflowDefinition);
-            transition.setNodoOrigen(nodoInicio);
-            transition.setNodoDestino(nodoIntermedio);
-            transition.setCondicion(condition);
+            transition.setOriginNode(nodeStart);
+            transition.setDestinationNode(nodeIntermedio);
+            transition.setCondition(condition);
             workflowTransitionRepository.save(transition);
         }
 
@@ -188,13 +188,13 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldSupportTransitionsWithNullCondition() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
-        transition.setCondicion(null);
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
+        transition.setCondition(null);
 
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
-        assertThat(saved.getCondicion()).isNull();
+        assertThat(saved.getCondition()).isNull();
     }
 
     @Test
@@ -202,14 +202,14 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldValidateRequiredRelationships() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoIntermedio);
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeIntermedio);
 
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
         assertThat(saved.getWorkflowDefinition()).isNotNull();
-        assertThat(saved.getNodoOrigen()).isNotNull();
-        assertThat(saved.getNodoDestino()).isNotNull();
+        assertThat(saved.getOriginNode()).isNotNull();
+        assertThat(saved.getDestinationNode()).isNotNull();
     }
 
     @Test
@@ -217,15 +217,15 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     void shouldMaintainNodeRelationshipIntegrity() {
         WorkflowTransition transition = new WorkflowTransition();
         transition.setWorkflowDefinition(workflowDefinition);
-        transition.setNodoOrigen(nodoInicio);
-        transition.setNodoDestino(nodoFinal);
+        transition.setOriginNode(nodeStart);
+        transition.setDestinationNode(nodeFinal);
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
         WorkflowTransition retrieved = workflowTransitionRepository.findById(saved.getId()).orElseThrow();
 
-        assertThat(retrieved.getNodoOrigen().getTipo()).isEqualTo(WorkflowNodeType.INITIAL);
-        assertThat(retrieved.getNodoDestino().getTipo()).isEqualTo(WorkflowNodeType.FINAL);
-        assertThat(retrieved.getNodoOrigen().getId()).isNotEqualTo(retrieved.getNodoDestino().getId());
+        assertThat(retrieved.getOriginNode().getType()).isEqualTo(WorkflowNodeType.INITIAL);
+        assertThat(retrieved.getDestinationNode().getType()).isEqualTo(WorkflowNodeType.FINAL);
+        assertThat(retrieved.getOriginNode().getId()).isNotEqualTo(retrieved.getDestinationNode().getId());
     }
 
     @Test
@@ -234,27 +234,27 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         // Create linear flow
         WorkflowTransition t1 = new WorkflowTransition();
         t1.setWorkflowDefinition(workflowDefinition);
-        t1.setNodoOrigen(nodoInicio);
-        t1.setNodoDestino(nodoIntermedio);
-        t1.setCondicion("auto_approved");
-        t1.setDescripcion("Automatic approval path");
+        t1.setOriginNode(nodeStart);
+        t1.setDestinationNode(nodeIntermedio);
+        t1.setCondition("auto_approved");
+        t1.setDescription("Automatic approval path");
         workflowTransitionRepository.save(t1);
 
         WorkflowTransition t2 = new WorkflowTransition();
         t2.setWorkflowDefinition(workflowDefinition);
-        t2.setNodoOrigen(nodoIntermedio);
-        t2.setNodoDestino(nodoFinal);
-        t2.setCondicion("manual_approved");
-        t2.setDescripcion("Manual approval path");
+        t2.setOriginNode(nodeIntermedio);
+        t2.setDestinationNode(nodeFinal);
+        t2.setCondition("manual_approved");
+        t2.setDescription("Manual approval path");
         workflowTransitionRepository.save(t2);
 
         // Create alternative path
         WorkflowTransition t3 = new WorkflowTransition();
         t3.setWorkflowDefinition(workflowDefinition);
-        t3.setNodoOrigen(nodoInicio);
-        t3.setNodoDestino(nodoFinal);
-        t3.setCondicion("admin_override");
-        t3.setDescripcion("Admin fast-track");
+        t3.setOriginNode(nodeStart);
+        t3.setDestinationNode(nodeFinal);
+        t3.setCondition("admin_override");
+        t3.setDescription("Admin fast-track");
         workflowTransitionRepository.save(t3);
 
         List<WorkflowTransition> all = workflowTransitionRepository.findAll();
@@ -265,16 +265,16 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle batch transition creation")
     void shouldHandleBatchTransitionCreation() {
         for (int i = 0; i < 10; i++) {
-            WorkflowNode origen = workflowNodeRepository.findById(nodoInicio.getId()).orElseThrow();
-            WorkflowNode destino = workflowNodeRepository.findById(
-                    i % 2 == 0 ? nodoIntermedio.getId() : nodoFinal.getId()
+            WorkflowNode origin = workflowNodeRepository.findById(nodeStart.getId()).orElseThrow();
+            WorkflowNode destination = workflowNodeRepository.findById(
+                    i % 2 == 0 ? nodeIntermedio.getId() : nodeFinal.getId()
             ).orElseThrow();
 
             WorkflowTransition transition = new WorkflowTransition();
             transition.setWorkflowDefinition(workflowDefinition);
-            transition.setNodoOrigen(origen);
-            transition.setNodoDestino(destino);
-            transition.setCondicion("batch_" + i);
+            transition.setOriginNode(origin);
+            transition.setDestinationNode(destination);
+            transition.setCondition("batch_" + i);
             workflowTransitionRepository.save(transition);
         }
 

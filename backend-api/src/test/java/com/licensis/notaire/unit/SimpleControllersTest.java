@@ -1,56 +1,56 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.CopiaController;
-import com.licensis.notaire.api.EscrituraController;
-import com.licensis.notaire.api.EstadoDeGestionController;
-import com.licensis.notaire.api.HistorialController;
-import com.licensis.notaire.api.MovimientoTestimonioController;
+import com.licensis.notaire.api.CopyController;
+import com.licensis.notaire.api.DeedController;
+import com.licensis.notaire.api.ManagementStatusController;
+import com.licensis.notaire.api.HistoryController;
+import com.licensis.notaire.api.TestimonyMovementController;
 import com.licensis.notaire.api.PersonController;
-import com.licensis.notaire.api.PresupuestoController;
-import com.licensis.notaire.api.TestimonioController;
-import com.licensis.notaire.api.TipoDeDocumentoController;
-import com.licensis.notaire.api.TipoDeFolioController;
-import com.licensis.notaire.api.TipoDeTramiteController;
-import com.licensis.notaire.api.TipoIdentificacionController;
-import com.licensis.notaire.api.TramiteController;
-import com.licensis.notaire.dto.DtoEstadoDeGestion;
-import com.licensis.notaire.dto.DtoMovimientoTestimonio;
-import com.licensis.notaire.dto.DtoTestimonio;
-import com.licensis.notaire.dto.DtoTipoDeDocumento;
-import com.licensis.notaire.dto.DtoTipoDeFolio;
-import com.licensis.notaire.dto.DtoTipoDeTramite;
+import com.licensis.notaire.api.BudgetController;
+import com.licensis.notaire.api.TestimonyController;
+import com.licensis.notaire.api.DocumentTypeController;
+import com.licensis.notaire.api.FolioTypeController;
+import com.licensis.notaire.api.ProcedureTypeController;
+import com.licensis.notaire.api.IdentificationTypeController;
+import com.licensis.notaire.api.ProcedureController;
+import com.licensis.notaire.dto.DtoManagementStatus;
+import com.licensis.notaire.dto.DtoTestimonyMovement;
+import com.licensis.notaire.dto.DtoTestimony;
+import com.licensis.notaire.dto.DtoDocumentType;
+import com.licensis.notaire.dto.DtoFolioType;
+import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.negocio.Copia;
-import com.licensis.notaire.negocio.Escritura;
-import com.licensis.notaire.negocio.EstadoDeGestion;
-import com.licensis.notaire.negocio.Historial;
-import com.licensis.notaire.negocio.MovimientoTestimonio;
-import com.licensis.notaire.negocio.Person;
-import com.licensis.notaire.negocio.Presupuesto;
-import com.licensis.notaire.negocio.Testimonio;
-import com.licensis.notaire.negocio.TipoDeDocumento;
-import com.licensis.notaire.negocio.TipoDeFolio;
-import com.licensis.notaire.negocio.TipoDeTramite;
-import com.licensis.notaire.negocio.TipoIdentificacion;
-import com.licensis.notaire.negocio.Tramite;
-import com.licensis.notaire.repository.CopiaRepository;
-import com.licensis.notaire.repository.EstadoDeGestionRepository;
-import com.licensis.notaire.repository.GestionDeEscrituraRepository;
-import com.licensis.notaire.repository.HistorialRepository;
-import com.licensis.notaire.repository.MovimientoTestimonioRepository;
-import com.licensis.notaire.repository.TestimonioRepository;
-import com.licensis.notaire.repository.TipoDeDocumentoRepository;
-import com.licensis.notaire.repository.TipoDeFolioRepository;
-import com.licensis.notaire.repository.TipoDeTramiteRepository;
-import com.licensis.notaire.repository.TipoIdentificacionRepository;
-import com.licensis.notaire.repository.TramiteRepository;
-import com.licensis.notaire.service.EscrituraFirmaService;
-import com.licensis.notaire.service.EscrituraService;
-import com.licensis.notaire.service.MovimientoTestimonioService;
+import com.licensis.notaire.business.Copy;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.TestimonyMovement;
+import com.licensis.notaire.business.Person;
+import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.FolioType;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.repository.CopyRepository;
+import com.licensis.notaire.repository.ManagementStatusRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
+import com.licensis.notaire.repository.TestimonyMovementRepository;
+import com.licensis.notaire.repository.TestimonyRepository;
+import com.licensis.notaire.repository.DocumentTypeRepository;
+import com.licensis.notaire.repository.FolioTypeRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
+import com.licensis.notaire.repository.IdentificationTypeRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.service.DeedSigningService;
+import com.licensis.notaire.service.DeedService;
+import com.licensis.notaire.service.TestimonyMovementService;
 import com.licensis.notaire.service.PersonService;
-import com.licensis.notaire.service.PresupuestoService;
-import com.licensis.notaire.service.TestimonioGeneracionVerificacionService;
+import com.licensis.notaire.service.BudgetService;
+import com.licensis.notaire.service.TestimonyGenerationVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -88,17 +88,17 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("CopiaController")
-    class CopiaControllerTests {
-        private final CopiaRepository repo = mock(CopiaRepository.class);
-        private final MovimientoTestimonioRepository movimientoTestimonioRepository = mock(MovimientoTestimonioRepository.class);
+    class CopyControllerTests {
+        private final CopyRepository repo = mock(CopyRepository.class);
+        private final TestimonyMovementRepository testimonyMovementRepository = mock(TestimonyMovementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new CopiaController(repo, movimientoTestimonioRepository)).build();
+                standaloneSetup(new CopyController(repo, testimonyMovementRepository)).build();
 
         @Test
         @DisplayName("GET all should return 200")
         void getAll() throws Exception {
-            Copia c = new Copia();
-            c.setIdCopia(1);
+            Copy c = new Copy();
+            c.setIdCopy(1);
             when(repo.findAll()).thenReturn(List.of(c));
             mvc.perform(get("/api/v1/copia")).andExpect(status().isOk());
         }
@@ -106,8 +106,8 @@ class SimpleControllersTest {
         @Test
         @DisplayName("GET by id should return 200 when found and 404 when not")
         void getById() throws Exception {
-            Copia c = new Copia();
-            c.setIdCopia(1);
+            Copy c = new Copy();
+            c.setIdCopy(1);
             when(repo.findById(1)).thenReturn(Optional.of(c));
             when(repo.findById(2)).thenReturn(Optional.empty());
             mvc.perform(get("/api/v1/copia/1")).andExpect(status().isOk());
@@ -117,11 +117,11 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST should return 201 on success and 500 on failure")
         void create() throws Exception {
-            Copia c = new Copia();
+            Copy c = new Copy();
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(mapper.writeValueAsString(c)))
                     .andExpect(status().isCreated());
-            when(repo.save(any(Copia.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(mapper.writeValueAsString(c)))
                     .andExpect(status().isInternalServerError());
@@ -130,21 +130,21 @@ class SimpleControllersTest {
         @Test
         @DisplayName("PUT should return 200 when present, 404 when missing, 500 on failure")
         void update() throws Exception {
-            Copia c = new Copia();
+            Copy c = new Copy();
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/copia/2").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isNotFound());
-            when(repo.save(any(Copia.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isInternalServerError());
         }
 
         @Test
         @DisplayName("DELETE should return 200 when present, 404 when not, 409 on failure")
-        void deleteCopia() throws Exception {
+        void deleteCopy() throws Exception {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isOk());
@@ -156,14 +156,14 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("EstadoDeGestionController")
-    class EstadoDeGestionControllerTests {
-        private final EstadoDeGestionRepository repo = mock(EstadoDeGestionRepository.class);
-        private final GestionDeEscrituraRepository gestionRepo = mock(GestionDeEscrituraRepository.class);
+    class ManagementStatusControllerTests {
+        private final ManagementStatusRepository repo = mock(ManagementStatusRepository.class);
+        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EstadoDeGestionController(repo, gestionRepo)).build();
+                standaloneSetup(new ManagementStatusController(repo, managementRepo)).build();
 
-        private EstadoDeGestion build() {
-            EstadoDeGestion e = new EstadoDeGestion(1, "Activo");
+        private ManagementStatus build() {
+            ManagementStatus e = new ManagementStatus(1, "Activo");
             return e;
         }
 
@@ -173,7 +173,7 @@ class SimpleControllersTest {
             when(repo.findAll()).thenReturn(List.of(build()));
             mvc.perform(get("/api/v1/estado-gestion"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].idEstadoGestion").value(1));
+                    .andExpect(jsonPath("$[0].idManagementStatus").value(1));
         }
 
         @Test
@@ -188,13 +188,13 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST should return 201 when valid and 409 when save fails")
         void create() throws Exception {
-            DtoEstadoDeGestion dto = new DtoEstadoDeGestion();
-            dto.setIdEstadoGestion(1);
-            dto.setNombre("Activo");
-            when(repo.save(any(EstadoDeGestion.class))).thenReturn(build());
+            DtoManagementStatus dto = new DtoManagementStatus();
+            dto.setIdManagementStatus(1);
+            dto.setName("Activo");
+            when(repo.save(any(ManagementStatus.class))).thenReturn(build());
             mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
-            when(repo.save(any(EstadoDeGestion.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(ManagementStatus.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
         }
@@ -202,17 +202,17 @@ class SimpleControllersTest {
         @Test
         @DisplayName("PUT should return 200 when present and not in-use, 404 when missing, 409 when in-use")
         void update() throws Exception {
-            DtoEstadoDeGestion dto = new DtoEstadoDeGestion();
-            dto.setNombre("Updated");
+            DtoManagementStatus dto = new DtoManagementStatus();
+            dto.setName("Updated");
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(anyInt())).thenReturn(List.of());
+            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
             mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/estado-gestion/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(1))
-                    .thenReturn(List.of(new com.licensis.notaire.negocio.GestionDeEscritura()));
+            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
+                    .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
             mvc.perform(put("/api/v1/estado-gestion/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
         }
@@ -222,31 +222,31 @@ class SimpleControllersTest {
         void deleteOne() throws Exception {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
-            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(anyInt())).thenReturn(List.of());
+            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
             mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/estado-gestion/2")).andExpect(status().isNotFound());
-            when(gestionRepo.findByFkIdEstadoDeGestionIdEstadoGestion(1))
-                    .thenReturn(List.of(new com.licensis.notaire.negocio.GestionDeEscritura()));
+            when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
+                    .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
             mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
     @DisplayName("HistorialController")
-    class HistorialControllerTests {
-        private final HistorialRepository repo = mock(HistorialRepository.class);
+    class HistoryControllerTests {
+        private final HistoryRepository repo = mock(HistoryRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new HistorialController(repo)).build();
+                standaloneSetup(new HistoryController(repo)).build();
 
         @Test
         @DisplayName("GET all and by id and by gestion should work")
         void getEndpoints() throws Exception {
-            Historial h = new Historial();
-            h.setIdHistorial(1);
+            History h = new History();
+            h.setIdHistory(1);
             when(repo.findAll()).thenReturn(List.of(h));
             when(repo.findById(1)).thenReturn(Optional.of(h));
             when(repo.findById(2)).thenReturn(Optional.empty());
-            when(repo.findByFkIdGestionIdGestion(10)).thenReturn(List.of(h));
+            when(repo.findByFkIdManagementIdManagement(10)).thenReturn(List.of(h));
             mvc.perform(get("/api/v1/historial")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/historial/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/historial/2")).andExpect(status().isNotFound());
@@ -256,7 +256,7 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST/PUT/DELETE should cover happy and error paths")
         void writeEndpoints() throws Exception {
-            Historial h = new Historial();
+            History h = new History();
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             mvc.perform(post("/api/v1/historial").contentType("application/json")
@@ -266,17 +266,17 @@ class SimpleControllersTest {
             mvc.perform(put("/api/v1/historial/2").contentType("application/json")
                     .content(mapper.writeValueAsString(h))).andExpect(status().isNotFound());
 
-            Historial toDelete = new Historial();
-            com.licensis.notaire.negocio.EstadoDeGestion estado =
-                    new com.licensis.notaire.negocio.EstadoDeGestion();
-            estado.setHistorialList(new java.util.HashSet<>(List.of(toDelete)));
-            toDelete.setFkIdEstadoGestion(estado);
+            History toDelete = new History();
+            com.licensis.notaire.business.ManagementStatus status =
+                    new com.licensis.notaire.business.ManagementStatus();
+            status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
+            toDelete.setFkIdManagementStatus(status);
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             when(repo.findById(2)).thenReturn(Optional.empty());
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(Historial.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(History.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/historial").contentType("application/json")
                     .content(mapper.writeValueAsString(h))).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/historial/1").contentType("application/json")
@@ -292,18 +292,18 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("MovimientoTestimonioController")
-    class MovimientoTestimonioControllerTests {
-        private final MovimientoTestimonioRepository repo = mock(MovimientoTestimonioRepository.class);
-        private final MovimientoTestimonioService movimientoTestimonioService = mock(MovimientoTestimonioService.class);
+    class TestimonyMovementControllerTests {
+        private final TestimonyMovementRepository repo = mock(TestimonyMovementRepository.class);
+        private final TestimonyMovementService testimonyMovementService = mock(TestimonyMovementService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new MovimientoTestimonioController(repo, movimientoTestimonioService)).build();
+                standaloneSetup(new TestimonyMovementController(repo, testimonyMovementService)).build();
 
-        private MovimientoTestimonio build() {
-            MovimientoTestimonio m = new MovimientoTestimonio();
-            m.setIdMovimientoTestimonio(1);
-            Testimonio t = new Testimonio();
-            t.setIdTestimonio(1);
-            m.setTestimonio(t);
+        private TestimonyMovement build() {
+            TestimonyMovement m = new TestimonyMovement();
+            m.setIdTestimonyMovement(1);
+            Testimony t = new Testimony();
+            t.setIdTestimony(1);
+            m.setTestimony(t);
             return m;
         }
 
@@ -321,14 +321,14 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST/PUT/DELETE happy and error paths")
         void writeEndpoints() throws Exception {
-            DtoMovimientoTestimonio dto = new DtoMovimientoTestimonio();
-            dto.setIdMovimientoTestimonio(1);
+            DtoTestimonyMovement dto = new DtoTestimonyMovement();
+            dto.setIdTestimonyMovement(1);
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
-            when(repo.save(any(MovimientoTestimonio.class))).thenReturn(build());
+            when(repo.save(any(TestimonyMovement.class))).thenReturn(build());
             mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/movimiento-testimonio/1").contentType("application/json")
@@ -338,7 +338,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/movimiento-testimonio/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(MovimientoTestimonio.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(TestimonyMovement.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/movimiento-testimonio/1").contentType("application/json")
@@ -351,13 +351,13 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("EscrituraController")
-    class EscrituraControllerTests {
-        private final EscrituraService service = mock(EscrituraService.class);
-        private final EscrituraFirmaService firmaService = mock(EscrituraFirmaService.class);
+    class DeedControllerTests {
+        private final DeedService service = mock(DeedService.class);
+        private final DeedSigningService firmaService = mock(DeedSigningService.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepository =
                 mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new EscrituraController(service, firmaService, folioRepository))
+                standaloneSetup(new DeedController(service, firmaService, folioRepository))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
@@ -365,14 +365,14 @@ class SimpleControllersTest {
         @Test
         @DisplayName("Should cover all paths")
         void allPaths() throws Exception {
-            Escritura e = new Escritura();
-            e.setIdEscritura(1);
+            Deed e = new Deed();
+            e.setIdDeed(1);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(e));
             when(service.findById(2)).thenReturn(Optional.empty());
             when(service.findEscribanosDisponibles()).thenReturn(List.of());
-            when(service.buscarPorNumero(any())).thenReturn(List.of(e));
-            when(service.save(any(Escritura.class))).thenReturn(e);
+            when(service.searchPorNumber(any())).thenReturn(List.of(e));
+            when(service.save(any(Deed.class))).thenReturn(e);
 
             mvc.perform(get("/api/v1/escrituras")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/escrituras/1")).andExpect(status().isOk());
@@ -389,7 +389,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/escrituras/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/escrituras/2")).andExpect(status().isNotFound());
 
-            when(service.save(any(Escritura.class))).thenThrow(new RuntimeException("x"));
+            when(service.save(any(Deed.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
                     .content(mapper.writeValueAsString(e))).andExpect(status().isInternalServerError());
         }
@@ -397,32 +397,32 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("PresupuestoController")
-    class PresupuestoControllerTests {
-        private final PresupuestoService service = mock(PresupuestoService.class);
-        private final com.licensis.notaire.service.PresupuestoResumenService presupuestoResumenService =
-                mock(com.licensis.notaire.service.PresupuestoResumenService.class);
-        private final com.licensis.notaire.service.PresupuestoPlantillaService presupuestoPlantillaService =
-                mock(com.licensis.notaire.service.PresupuestoPlantillaService.class);
-        private final com.licensis.notaire.service.PresupuestoCatalogoItemsService presupuestoCatalogoItemsService =
-                mock(com.licensis.notaire.service.PresupuestoCatalogoItemsService.class);
+    class BudgetControllerTests {
+        private final BudgetService service = mock(BudgetService.class);
+        private final com.licensis.notaire.service.BudgetResumenService budgetResumenService =
+                mock(com.licensis.notaire.service.BudgetResumenService.class);
+        private final com.licensis.notaire.service.BudgetTemplateService budgetTemplateService =
+                mock(com.licensis.notaire.service.BudgetTemplateService.class);
+        private final com.licensis.notaire.service.BudgetCatalogItemsService budgetCatalogoItemsService =
+                mock(com.licensis.notaire.service.BudgetCatalogItemsService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PresupuestoController(service, presupuestoResumenService,
-                        presupuestoPlantillaService, presupuestoCatalogoItemsService))
+                standaloneSetup(new BudgetController(service, budgetResumenService,
+                        budgetTemplateService, budgetCatalogoItemsService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
         @Test
         @DisplayName("Should cover all paths")
         void allPaths() throws Exception {
-            Presupuesto p = new Presupuesto();
-            p.setIdPresupuesto(1);
+            Budget p = new Budget();
+            p.setIdBudget(1);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
-            when(service.findByPersona(5)).thenReturn(List.of(p));
-            when(service.findByEstado(any())).thenReturn(List.of(p));
-            when(service.create(any(Presupuesto.class))).thenReturn(p);
-            when(service.update(any(Integer.class), any(Presupuesto.class))).thenReturn(p);
+            when(service.findByPerson(5)).thenReturn(List.of(p));
+            when(service.findByStatus(any())).thenReturn(List.of(p));
+            when(service.create(any(Budget.class))).thenReturn(p);
+            when(service.update(any(Integer.class), any(Budget.class))).thenReturn(p);
 
             mvc.perform(get("/api/v1/presupuestos")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/presupuestos/1")).andExpect(status().isOk());
@@ -435,7 +435,7 @@ class SimpleControllersTest {
             mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isOk());
 
-            when(service.update(any(Integer.class), any(Presupuesto.class)))
+            when(service.update(any(Integer.class), any(Budget.class)))
                     .thenThrow(new ResourceNotFoundException("not found"));
             mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isNotFound());
@@ -444,12 +444,12 @@ class SimpleControllersTest {
             doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
             mvc.perform(delete("/api/v1/presupuestos/99")).andExpect(status().isNotFound());
 
-            com.licensis.notaire.negocio.Item item = new com.licensis.notaire.negocio.Item(1, "Sellado", 500f);
-            when(presupuestoPlantillaService.cargarItemsDesdePlantilla(1, 5)).thenReturn(List.of(item));
+            com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(1, "Sellado", 500f);
+            when(budgetTemplateService.cargarItemsDesdeTemplate(1, 5)).thenReturn(List.of(item));
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-plantilla?tipoTramiteId=5"))
                     .andExpect(status().isOk());
 
-            when(presupuestoCatalogoItemsService.agregarItemsDesdeCatalogo(eq(1), anyList()))
+            when(budgetCatalogoItemsService.addItemsFromCatalog(eq(1), anyList()))
                     .thenReturn(List.of(item));
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-catalogo").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))
@@ -459,24 +459,24 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("TestimonioController")
-    class TestimonioControllerTests {
-        private final TestimonioRepository repo = mock(TestimonioRepository.class);
-        private final TestimonioGeneracionVerificacionService generacionVerificacionService =
-                mock(TestimonioGeneracionVerificacionService.class);
+    class TestimonyControllerTests {
+        private final TestimonyRepository repo = mock(TestimonyRepository.class);
+        private final TestimonyGenerationVerificationService generationVerificacionService =
+                mock(TestimonyGenerationVerificationService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonioController(repo, generacionVerificacionService)).build();
+                standaloneSetup(new TestimonyController(repo, generationVerificacionService)).build();
 
-        private Testimonio build() {
-            Testimonio t = new Testimonio();
-            t.setIdTestimonio(1);
+        private Testimony build() {
+            Testimony t = new Testimony();
+            t.setIdTestimony(1);
             return t;
         }
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            DtoTestimonio dto = new DtoTestimonio();
-            dto.setIdTestimonio(1);
+            DtoTestimony dto = new DtoTestimony();
+            dto.setIdTestimony(1);
             when(repo.findAll()).thenReturn(List.of(build()));
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
@@ -487,7 +487,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/testimonio/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/testimonio/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(Testimonio.class))).thenReturn(build());
+            when(repo.save(any(Testimony.class))).thenReturn(build());
             mvc.perform(post("/api/v1/testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/testimonio/1").contentType("application/json")
@@ -497,7 +497,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/testimonio/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(Testimonio.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(Testimony.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/testimonio/1").contentType("application/json")
@@ -509,40 +509,40 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("TipoDeDocumentoController")
-    class TipoDeDocumentoControllerTests {
-        private final TipoDeDocumentoRepository repo = mock(TipoDeDocumentoRepository.class);
-        private final com.licensis.notaire.repository.PlantillaTramiteRepository plantillaRepo =
-                mock(com.licensis.notaire.repository.PlantillaTramiteRepository.class);
-        private final com.licensis.notaire.repository.DocumentoPresentadoRepository docPresentadoRepo =
-                mock(com.licensis.notaire.repository.DocumentoPresentadoRepository.class);
+    class DocumentTypeControllerTests {
+        private final DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
+        private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
+                mock(com.licensis.notaire.repository.ProcedureTemplateRepository.class);
+        private final com.licensis.notaire.repository.SubmittedDocumentRepository docSubmittedRepo =
+                mock(com.licensis.notaire.repository.SubmittedDocumentRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeDocumentoController(repo, plantillaRepo, docPresentadoRepo)).build();
+                standaloneSetup(new DocumentTypeController(repo, templateRepo, docSubmittedRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            TipoDeDocumento t = new TipoDeDocumento();
-            t.setIdTipoDocumento(1);
-            t.setNombre("DNI");
-            DtoTipoDeDocumento dto = new DtoTipoDeDocumento();
-            dto.setIdTipoDocumento(1);
-            dto.setNombre("DNI");
-            dto.setVence(false);
-            dto.setHabilitado(true);
+            DocumentType t = new DocumentType();
+            t.setIdDocumentType(1);
+            t.setName("DNI");
+            DtoDocumentType dto = new DtoDocumentType();
+            dto.setIdDocumentType(1);
+            dto.setName("DNI");
+            dto.setExpires(false);
+            dto.setEnabled(true);
 
             when(repo.findAll()).thenReturn(List.of(t));
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
-            when(plantillaRepo.findByTipoDeDocumentoIdTipoDocumento(anyInt())).thenReturn(List.of());
-            when(docPresentadoRepo.existsByFkIdTipoDocumento(anyInt())).thenReturn(false);
+            when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
+            when(docSubmittedRepo.existsByFkIdDocumentType(anyInt())).thenReturn(false);
 
             mvc.perform(get("/api/v1/tipo-de-documento")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-de-documento/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeDocumento.class))).thenReturn(t);
+            when(repo.save(any(DocumentType.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
@@ -552,35 +552,35 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeDocumento.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(DocumentType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/tipo-de-documento/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
 
-            when(plantillaRepo.findByTipoDeDocumentoIdTipoDocumento(1)).thenReturn(List.of(new com.licensis.notaire.negocio.PlantillaTramite()));
+            when(templateRepo.findByDocumentTypeIdDocumentType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
             mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
     @DisplayName("TipoDeFolioController")
-    class TipoDeFolioControllerTests {
-        private final TipoDeFolioRepository repo = mock(TipoDeFolioRepository.class);
+    class FolioTypeControllerTests {
+        private final FolioTypeRepository repo = mock(FolioTypeRepository.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepo =
                 mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeFolioController(repo, folioRepo)).build();
+                standaloneSetup(new FolioTypeController(repo, folioRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            TipoDeFolio t = new TipoDeFolio();
-            t.setIdTipoFolio(1);
-            t.setNombre("Protocolo");
-            DtoTipoDeFolio dto = new DtoTipoDeFolio();
-            dto.setIdTipoFolio(1);
-            dto.setNombre("Protocolo");
+            FolioType t = new FolioType();
+            t.setIdFolioType(1);
+            t.setName("Protocolo");
+            DtoFolioType dto = new DtoFolioType();
+            dto.setIdFolioType(1);
+            dto.setName("Protocolo");
 
             when(repo.findAll()).thenReturn(List.of(t));
             when(repo.findById(1)).thenReturn(Optional.of(t));
@@ -592,7 +592,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/tipo-folio/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeFolio.class))).thenReturn(t);
+            when(repo.save(any(FolioType.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-folio/1").contentType("application/json")
@@ -602,7 +602,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeFolio.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(FolioType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/tipo-folio/1").contentType("application/json")
@@ -614,32 +614,32 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("TipoDeTramiteController")
-    class TipoDeTramiteControllerTests {
-        private final TipoDeTramiteRepository repo = mock(TipoDeTramiteRepository.class);
-        private final com.licensis.notaire.repository.PlantillaTramiteRepository plantillaRepo =
-                mock(com.licensis.notaire.repository.PlantillaTramiteRepository.class);
-        private final com.licensis.notaire.repository.PlantillaPresupuestoRepository presupuestoRepo =
-                mock(com.licensis.notaire.repository.PlantillaPresupuestoRepository.class);
-        private final com.licensis.notaire.repository.TramiteRepository tramiteRepo =
-                mock(com.licensis.notaire.repository.TramiteRepository.class);
+    class ProcedureTypeControllerTests {
+        private final ProcedureTypeRepository repo = mock(ProcedureTypeRepository.class);
+        private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
+                mock(com.licensis.notaire.repository.ProcedureTemplateRepository.class);
+        private final com.licensis.notaire.repository.BudgetTemplateRepository budgetRepo =
+                mock(com.licensis.notaire.repository.BudgetTemplateRepository.class);
+        private final com.licensis.notaire.repository.ProcedureRepository procedureRepo =
+                mock(com.licensis.notaire.repository.ProcedureRepository.class);
         private final com.licensis.notaire.repository.WorkflowDefinitionRepository workflowRepo =
                 mock(com.licensis.notaire.repository.WorkflowDefinitionRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoDeTramiteController(repo, presupuestoRepo, tramiteRepo, plantillaRepo, workflowRepo)).build();
+                standaloneSetup(new ProcedureTypeController(repo, budgetRepo, procedureRepo, templateRepo, workflowRepo)).build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            TipoDeTramite t = new TipoDeTramite();
-            t.setIdTipoTramite(1);
-            t.setNombre("Compraventa");
-            DtoTipoDeTramite dto = new DtoTipoDeTramite();
-            dto.setIdTipoTramite(1);
-            dto.setNombre("Compraventa");
-            dto.setSeArchiva(false);
-            dto.setSeInscribe(false);
-            dto.setAsociaInmuebles(false);
-            dto.setHabilitado(true);
+            ProcedureType t = new ProcedureType();
+            t.setIdProcedureType(1);
+            t.setName("Compraventa");
+            DtoProcedureType dto = new DtoProcedureType();
+            dto.setIdProcedureType(1);
+            dto.setName("Compraventa");
+            dto.setIsArchived(false);
+            dto.setIsRegistered(false);
+            dto.setAssociatesProperties(false);
+            dto.setEnabled(true);
             dto.setVersion(0);
 
             when(repo.findAll()).thenReturn(List.of(t));
@@ -647,15 +647,15 @@ class SimpleControllersTest {
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
-            when(plantillaRepo.findByTipoDeTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
-            when(presupuestoRepo.findByTipoDeTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
-            when(tramiteRepo.findByFkIdTipoTramiteIdTipoTramite(anyInt())).thenReturn(List.of());
+            when(templateRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
+            when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
+            when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
 
             mvc.perform(get("/api/v1/tipo-tramite")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-tramite/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeTramite.class))).thenReturn(t);
+            when(repo.save(any(ProcedureType.class))).thenReturn(t);
             mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")
@@ -665,29 +665,29 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoDeTramite.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(ProcedureType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
             mvc.perform(put("/api/v1/tipo-tramite/1").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isInternalServerError());
-            when(plantillaRepo.findByTipoDeTramiteIdTipoTramite(1)).thenReturn(List.of(new com.licensis.notaire.negocio.PlantillaTramite()));
+            when(templateRepo.findByProcedureTypeIdProcedureType(1)).thenReturn(List.of(new com.licensis.notaire.business.ProcedureTemplate()));
             mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isConflict());
         }
     }
 
     @Nested
     @DisplayName("TipoIdentificacionController")
-    class TipoIdentificacionControllerTests {
-        private final TipoIdentificacionRepository repo = mock(TipoIdentificacionRepository.class);
+    class IdentificationTypeControllerTests {
+        private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TipoIdentificacionController(repo)).build();
+                standaloneSetup(new IdentificationTypeController(repo)).build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            TipoIdentificacion t = new TipoIdentificacion();
-            t.setIdTipoIdentificacion(1);
-            t.setNombre("DNI");
+            IdentificationType t = new IdentificationType();
+            t.setIdIdentificationType(1);
+            t.setName("DNI");
 
             when(repo.findAll()).thenReturn(List.of(t));
             when(repo.findById(1)).thenReturn(Optional.of(t));
@@ -708,7 +708,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(TipoIdentificacion.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(IdentificationType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
                     .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/tipo-identificacion/1").contentType("application/json")
@@ -720,18 +720,18 @@ class SimpleControllersTest {
 
     @Nested
     @DisplayName("TramiteController")
-    class TramiteControllerTests {
-        private final TramiteRepository repo = mock(TramiteRepository.class);
+    class ProcedureControllerTests {
+        private final ProcedureRepository repo = mock(ProcedureRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TramiteController(repo))
+                standaloneSetup(new ProcedureController(repo))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
         @Test
         @DisplayName("Cover all paths")
         void all() throws Exception {
-            Tramite t = new Tramite();
-            t.setIdTramite(1);
+            Procedure t = new Procedure();
+            t.setIdProcedure(1);
             when(repo.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(t), PageRequest.of(0, 20), 1));
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.findById(2)).thenReturn(Optional.empty());
@@ -751,7 +751,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tramites/2")).andExpect(status().isNotFound());
 
-            when(repo.save(any(Tramite.class))).thenThrow(new RuntimeException("x"));
+            when(repo.save(any(Procedure.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tramites").contentType("application/json")
                     .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/tramites/1").contentType("application/json")
@@ -765,27 +765,27 @@ class SimpleControllersTest {
     @DisplayName("PersonController")
     class PersonControllerTests {
         private final PersonService service = mock(PersonService.class);
-        private final TipoIdentificacionRepository tipoRepo = mock(TipoIdentificacionRepository.class);
+        private final IdentificationTypeRepository typeRepo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PersonController(service, tipoRepo)).build();
+                standaloneSetup(new PersonController(service, typeRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths including search and default tipo identificacion")
+        @DisplayName("Cover all paths including search and default type identificacion")
         void all() throws Exception {
             Person p = new Person();
             p.setPersonId(1);
             p.setFirstName("Juan");
             p.setLastName("Perez");
             p.setIdentificationNumber("12345678");
-            TipoIdentificacion tipo = new TipoIdentificacion(1, "DNI");
-            p.setFkIdIdentificationType(tipo);
+            IdentificationType type = new IdentificationType(1, "DNI");
+            p.setFkIdIdentificationType(type);
 
             when(service.findAll()).thenReturn(List.of(p));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
             when(service.save(any(Person.class))).thenReturn(p);
             when(service.search(any(), any(), any(), any(), any())).thenReturn(List.of(p));
-            when(tipoRepo.findById(1)).thenReturn(Optional.of(tipo));
+            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
 
             mvc.perform(get("/api/v1/people")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/people/1")).andExpect(status().isOk());
@@ -817,22 +817,22 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST should create default tipo identificacion when missing in DB")
-        void postShouldCreateDefaultTipo() throws Exception {
+        @DisplayName("POST should create default type identificacion when missing in DB")
+        void postShouldCreateDefaultType() throws Exception {
             Person p = new Person();
             p.setFirstName("Juan");
             p.setLastName("Perez");
             p.setIdentificationNumber("12345678");
-            when(tipoRepo.findById(1)).thenReturn(Optional.empty());
-            TipoIdentificacion created = new TipoIdentificacion();
-            created.setIdTipoIdentificacion(1);
-            created.setNombre("DNI");
-            when(tipoRepo.save(any(TipoIdentificacion.class))).thenReturn(created);
+            when(typeRepo.findById(1)).thenReturn(Optional.empty());
+            IdentificationType created = new IdentificationType();
+            created.setIdIdentificationType(1);
+            created.setName("DNI");
+            when(typeRepo.save(any(IdentificationType.class))).thenReturn(created);
             when(service.save(any(Person.class))).thenReturn(p);
 
             mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
-            verify(tipoRepo).save(any(TipoIdentificacion.class));
+            verify(typeRepo).save(any(IdentificationType.class));
         }
     }
 }

@@ -92,8 +92,8 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(mockPost).toHaveBeenCalledWith("/usuarios/login", {
-        nombre: "admin",
-        contrasenia: "admin",
+        name: "admin",
+        password: "admin",
       });
     });
   });
