@@ -76,7 +76,7 @@ public class ManagementArchiveDebtService {
      * Resultado de archivar una gestión: la gestión ya archivada junto con el
      * saldo pendiente agregado calculado en el momento del archivado.
      */
-    public record ArchiveResult(DeedManagement management, Float saldoPending) { }
+    public record ArchiveResult(DeedManagement management, Float pendingBalance) { }
 
     /**
      * CU16 - Archiva la gestión sin exigir confirmación de carpetas en espera.
@@ -107,17 +107,17 @@ public class ManagementArchiveDebtService {
                     carpetasEnWait);
         }
 
-        Float saldoPending = calculatePendingBalance(idManagement);
+        Float pendingBalance = calculatePendingBalance(idManagement);
 
         DeedManagement management = managementTransitionService.transition(idManagement, StatusARCHIVADA);
-        management.setPendingDebtAtArchiving(saldoPending != null && saldoPending > 0);
+        management.setPendingDebtAtArchiving(pendingBalance != null && pendingBalance > 0);
         DeedManagement archivedManagement = managementRepository.save(management);
 
         archiveFolders(idManagement);
 
         log.info("Gestión {} archivada con deudaPendienteAlArchivar={}", idManagement,
                 archivedManagement.getPendingDebtAtArchiving());
-        return new ArchiveResult(archivedManagement, saldoPending);
+        return new ArchiveResult(archivedManagement, pendingBalance);
     }
 
     private void archiveFolders(Integer idManagement) {

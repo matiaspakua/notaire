@@ -184,7 +184,7 @@ class ManagementArchiveDebtServiceTest {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isTrue();
-            assertThat(result.saldoPending()).isEqualTo(20000.00f);
+            assertThat(result.pendingBalance()).isEqualTo(20000.00f);
         }
 
         @Test
@@ -202,7 +202,7 @@ class ManagementArchiveDebtServiceTest {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isFalse();
-            assertThat(result.saldoPending()).isEqualTo(0.00f);
+            assertThat(result.pendingBalance()).isEqualTo(0.00f);
         }
 
         @Test
@@ -223,7 +223,7 @@ class ManagementArchiveDebtServiceTest {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isTrue();
-            assertThat(result.saldoPending()).isEqualTo(40000.00f);
+            assertThat(result.pendingBalance()).isEqualTo(40000.00f);
         }
 
         @Test

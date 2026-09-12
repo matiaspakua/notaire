@@ -167,12 +167,12 @@ class ManagementArchiveIntegrationTest {
 
         mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/saldo-pendiente"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.saldoPending").value(5000.00));
+                .andExpect(jsonPath("$.pendingBalance").value(5000.00));
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(managementId))
-                .andExpect(jsonPath("$.saldoPending").value(5000.00))
+                .andExpect(jsonPath("$.pendingBalance").value(5000.00))
                 .andExpect(jsonPath("$.pendingDebtAtArchiving").value(true));
     }
 
@@ -198,7 +198,7 @@ class ManagementArchiveIntegrationTest {
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.saldoPending").value(0.00))
+                .andExpect(jsonPath("$.pendingBalance").value(0.00))
                 .andExpect(jsonPath("$.pendingDebtAtArchiving").value(false));
     }
 
