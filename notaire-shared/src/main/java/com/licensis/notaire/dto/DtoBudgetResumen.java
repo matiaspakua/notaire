@@ -13,6 +13,6 @@ public record DtoBudgetResumen(
         Integer numberManagement,
         String encabezadoManagement,
         Float total,
-        Float saldoPending,
+        Float pendingBalance,
         List<DtoPaymentResponse> payments) {
 }

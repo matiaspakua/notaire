@@ -128,7 +128,7 @@ class ManagementResumenFinancieroControllerTest {
                 .andExpect(jsonPath("$.idManagement").value(managementId))
                 .andExpect(jsonPath("$.totalPresupuestado").value(5000.00))
                 .andExpect(jsonPath("$.totalCobrado").value(2000.00))
-                .andExpect(jsonPath("$.saldoPending").value(3000.00));
+                .andExpect(jsonPath("$.pendingBalance").value(3000.00));
     }
 
     @Test

@@ -427,8 +427,8 @@ export default function GestionesPage() {
         description={
           archiveConflict
             ? archiveConflict
-            : saldoPendiente && saldoPendiente.saldoPending > 0
-              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.saldoPending) })
+            : saldoPendiente && saldoPendiente.pendingBalance > 0
+              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.pendingBalance) })
               : t("archiveConfirmDescriptionNoDebt")
         }
         confirmLabel={archiveConflict ? t("archiveConfirmAnyway") : t("archiveGestion")}

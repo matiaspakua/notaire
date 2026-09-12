@@ -35,10 +35,10 @@ public class BudgetResumenService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + idBudget));
 
-        Float saldoPending = paymentService.calculatePendingBalance(idBudget);
+        Float pendingBalance = paymentService.calculatePendingBalance(idBudget);
         var payments = paymentService.findPaymentsByBudget(idBudget);
-        float totalPagado = (float) payments.stream().mapToDouble(p -> p.getAmount()).sum();
-        Float total = saldoPending + totalPagado;
+        float totalPaid = (float) payments.stream().mapToDouble(p -> p.getAmount()).sum();
+        Float total = pendingBalance + totalPaid;
 
         List<Procedure> procedures = procedureRepository.findByFkIdBudgetIdBudget(idBudget);
         Procedure procedure = procedures.isEmpty() ? null : procedures.get(0);
@@ -51,7 +51,7 @@ public class BudgetResumenService {
                 management != null ? management.getNumber() : null,
                 management != null ? management.getEncabezado() : null,
                 total,
-                saldoPending,
+                pendingBalance,
                 payments.stream().map(PaymentMapper::toDto).toList());
     }
 }

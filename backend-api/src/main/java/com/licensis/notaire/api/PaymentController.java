@@ -1,7 +1,7 @@
 package com.licensis.notaire.api;
 
 import com.licensis.notaire.dto.DtoPaymentResponse;
-import com.licensis.notaire.exception.SaldoPendingExcedidoException;
+import com.licensis.notaire.exception.PendingBalanceExceededException;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.service.StatusPayment;
 import com.licensis.notaire.service.PaymentService;
@@ -155,7 +155,7 @@ public class PaymentController {
                     request.paymentMethod()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(PaymentMapper.toDto(payment));
-        } catch (SaldoPendingExcedidoException e) {
+        } catch (PendingBalanceExceededException e) {
             log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
@@ -184,7 +184,7 @@ public class PaymentController {
         try {
             Payment payment = paymentService.processPayment(idBudget, amount, date, notes, paymentMethod);
             return ResponseEntity.status(HttpStatus.CREATED).body(PaymentMapper.toDto(payment));
-        } catch (SaldoPendingExcedidoException e) {
+        } catch (PendingBalanceExceededException e) {
             log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
@@ -204,7 +204,7 @@ public class PaymentController {
     @Operation(summary = "Editar pago")
     public ResponseEntity<DtoPaymentResponse> update(@PathVariable Integer id, @RequestBody Payment entity) {
         try {
-            Payment updated = paymentService.editarPayment(id, entity.getAmount(), entity.getDate(),
+            Payment updated = paymentService.editPayment(id, entity.getAmount(), entity.getDate(),
                     entity.getNotes(), entity.getPaymentMethod());
             return ResponseEntity.ok(PaymentMapper.toDto(updated));
         } catch (IllegalArgumentException e) {

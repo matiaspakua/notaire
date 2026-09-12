@@ -193,12 +193,12 @@ export interface GestionDeEscritura {
 }
 
 export interface DtoSaldoPendiente {
-  saldoPending: number;
+  pendingBalance: number;
 }
 
 export interface DtoGestionArchivada {
   idManagement: number;
-  saldoPending: number;
+  pendingBalance: number;
   pendingDebtAtArchiving: boolean;
 }
 
@@ -325,7 +325,7 @@ export interface PresupuestoResumen {
   numberManagement?: number;
   encabezadoManagement?: string;
   total: number;
-  saldoPending: number;
+  pendingBalance: number;
   payments: Pago[];
 }
 

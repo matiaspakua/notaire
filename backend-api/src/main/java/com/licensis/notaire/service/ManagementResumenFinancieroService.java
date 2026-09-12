@@ -32,7 +32,7 @@ public class ManagementResumenFinancieroService {
 
     @Transactional(readOnly = true)
     public DtoManagementResumenFinanciero getSummary(Integer idManagement) {
-        Float saldoPending = managementArchiveDebtService.calculatePendingBalance(idManagement);
+        Float pendingBalance = managementArchiveDebtService.calculatePendingBalance(idManagement);
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
         Set<Integer> idsBudgetContados = new HashSet<>();
@@ -51,6 +51,6 @@ public class ManagementResumenFinancieroService {
             totalPresupuestado += saldoBudget + cobradoBudget;
         }
 
-        return new DtoManagementResumenFinanciero(idManagement, totalPresupuestado, totalCobrado, saldoPending);
+        return new DtoManagementResumenFinanciero(idManagement, totalPresupuestado, totalCobrado, pendingBalance);
     }
 }

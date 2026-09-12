@@ -73,7 +73,7 @@ class ManagementResumenFinancieroServiceTest {
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.totalPresupuestado()).isEqualTo(5000.00f);
             assertThat(resumen.totalCobrado()).isEqualTo(2000.00f);
-            assertThat(resumen.saldoPending()).isEqualTo(3000.00f);
+            assertThat(resumen.pendingBalance()).isEqualTo(3000.00f);
         }
 
         @Test
@@ -91,7 +91,7 @@ class ManagementResumenFinancieroServiceTest {
 
             assertThat(resumen.totalPresupuestado()).isEqualTo(7500.00f);
             assertThat(resumen.totalCobrado()).isEqualTo(3000.00f);
-            assertThat(resumen.saldoPending()).isEqualTo(4500.00f);
+            assertThat(resumen.pendingBalance()).isEqualTo(4500.00f);
         }
 
         @Test

@@ -383,7 +383,7 @@ export default function PresupuestosPage() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.saldo")}</p>
-                      <p className="font-medium">{formatCurrency(resumen.saldoPending)}</p>
+                      <p className="font-medium">{formatCurrency(resumen.pendingBalance)}</p>
                     </div>
                   </div>
                 </FormSection>

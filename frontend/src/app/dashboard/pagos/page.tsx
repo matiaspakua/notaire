@@ -167,10 +167,10 @@ export default function PagosPage() {
                         )}
                       </div>
                       <div className="text-lg font-semibold text-blue-900" data-testid="saldo-pendiente-amount">
-                        {formatCurrency(resumen.saldoPending || 0)}
+                        {formatCurrency(resumen.pendingBalance || 0)}
                       </div>
                       <div className="text-xs text-muted-foreground pt-1">
-                        Presupuestado: {formatCurrency(resumen.total || 0)} | Pagado: {formatCurrency((resumen.total || 0) - (resumen.saldoPending || 0))}
+                        Presupuestado: {formatCurrency(resumen.total || 0)} | Pagado: {formatCurrency((resumen.total || 0) - (resumen.pendingBalance || 0))}
                       </div>
                     </div>
                   ) : (

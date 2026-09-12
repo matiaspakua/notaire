@@ -8,5 +8,5 @@ public record DtoManagementResumenFinanciero(
         Integer idManagement,
         Float totalPresupuestado,
         Float totalCobrado,
-        Float saldoPending) {
+        Float pendingBalance) {
 }

@@ -305,12 +305,10 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.status = status;
     }
 
-    @JsonProperty("amount")
     public Float getPropertyAmount() {
         return propertyAmount;
     }
 
-    @JsonProperty("amount")
     public void setPropertyAmount(Float propertyAmount) {
         this.propertyAmount = propertyAmount;
     }

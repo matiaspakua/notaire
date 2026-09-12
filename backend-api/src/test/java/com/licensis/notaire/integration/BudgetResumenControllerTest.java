@@ -82,7 +82,7 @@ class BudgetResumenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idBudget").value(budgetId))
                 .andExpect(jsonPath("$.total").value(5000.00))
-                .andExpect(jsonPath("$.saldoPending").value(5000.00))
+                .andExpect(jsonPath("$.pendingBalance").value(5000.00))
                 .andExpect(jsonPath("$.payments").isEmpty());
     }
 
@@ -96,7 +96,7 @@ class BudgetResumenControllerTest {
         mockMvc.perform(get("/api/v1/presupuestos/" + budgetId + "/resumen"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(5000.00))
-                .andExpect(jsonPath("$.saldoPending").value(3000.00))
+                .andExpect(jsonPath("$.pendingBalance").value(3000.00))
                 .andExpect(jsonPath("$.payments.length()").value(1));
     }
 

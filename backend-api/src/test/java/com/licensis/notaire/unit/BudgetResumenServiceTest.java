@@ -87,7 +87,7 @@ class BudgetResumenServiceTest {
 
             DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
-            assertThat(resumen.saldoPending()).isEqualTo(5000.00f);
+            assertThat(resumen.pendingBalance()).isEqualTo(5000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
             assertThat(resumen.payments()).isEmpty();
             assertThat(resumen.idManagement()).isEqualTo(1);
@@ -110,7 +110,7 @@ class BudgetResumenServiceTest {
 
             DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
-            assertThat(resumen.saldoPending()).isEqualTo(3000.00f);
+            assertThat(resumen.pendingBalance()).isEqualTo(3000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
             assertThat(resumen.payments()).hasSize(1);
             assertThat(resumen.payments().get(0).idPayment()).isEqualTo(1);
@@ -134,7 +134,7 @@ class BudgetResumenServiceTest {
 
             DtoBudgetResumen resumen = budgetResumenService.getSummary(10);
 
-            assertThat(resumen.saldoPending()).isEqualTo(2000.00f);
+            assertThat(resumen.pendingBalance()).isEqualTo(2000.00f);
             assertThat(resumen.total()).isEqualTo(5000.00f);
             assertThat(resumen.payments()).hasSize(2);
         }
