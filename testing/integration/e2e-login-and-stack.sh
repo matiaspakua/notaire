@@ -31,7 +31,7 @@ done
 echo -e "${YELLOW}2. Testing POST /api/v1/usuarios/login (frontend login contract)...${NC}"
 RESP=$(curl -sS -w "\n%{http_code}" -X POST "$BASE_URL/api/v1/usuarios/login" \
   -H "Content-Type: application/json" \
-  -d '{"nombre":"admin","contrasenia":"admin"}')
+  -d '{"name":"admin","password":"admin"}')
 HTTP_BODY=$(echo "$RESP" | head -n -1)
 HTTP_CODE=$(echo "$RESP" | tail -n 1)
 

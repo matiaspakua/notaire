@@ -33,8 +33,8 @@ assert_status 200 GET "$BASE_URL/api/v1/conceptos/1"
 
 echo "=== CONCEPTOS - CREATE ==="
 assert_status 200 POST "$BASE_URL/api/v1/conceptos" '{
-  "nombre": "Concepto Test API",
-  "valor": 150.50
+  "name": "Concepto Test API",
+  "value": 150.50
 }'
 
 echo "Conceptos tests passed"

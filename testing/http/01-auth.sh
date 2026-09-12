@@ -11,8 +11,8 @@ echo "POST /api/v1/usuarios/login"
 status=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE_URL/api/v1/usuarios/login" \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "admin",
-    "contrasenia": "admin"
+    "name": "admin",
+    "password": "admin"
   }')
 
 echo "Status: $status"
