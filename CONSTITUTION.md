@@ -347,6 +347,41 @@ Project-specific skills remain authoritative for local commands and framework
 patterns. The generic skills remain reusable and provider-neutral; they must not
 be changed to encode Notaire-only paths or credentials.
 
+#### Sub-agent delegation is the default for multi-part work
+
+When a task decomposes into independent parts (a rename sweep across modules, a
+triage of many unrelated test failures, an audit crossing several layers), the
+default is to **delegate to specialized sub-agents in parallel**, not to work
+through the list serially in one context. A single agent burning its whole
+context on a mechanical or wide-surface task is the exception to justify, not
+the default.
+
+Each sub-agent dispatched this way must be:
+
+- **Specialized**: scoped to one lifecycle concern or module, briefed with the
+  narrowest relevant skill(s) from `.claude/skills/` (see the composition table
+  above and `.claude/skills/README.md`'s selection rule) rather than given the
+  whole Constitution to re-derive from scratch.
+- **Cost-matched to task complexity**: assign a model tier by what the task
+  actually demands, not by default:
+  - **Low-complexity / mechanical** (find-and-replace renames, applying a known
+    pattern across files, running a fixed script and reporting output) → the
+    cheapest capable model (e.g. `haiku`).
+  - **Test, validation, and standard implementation** (writing/fixing tests,
+    running and interpreting suites, routine bug fixes, consistency checks) →
+    the mid-tier model (e.g. `sonnet`).
+  - **Complex or critical analysis** (architecture decisions, ambiguous
+    judgment calls, cross-cutting design, anything with real business or
+    security consequence if wrong) → the top-tier model (e.g. `opus`).
+- **Bounded**: given an explicit scope (files/modules in, what's out, what
+  another concurrent sub-agent already owns) to avoid duplicate or conflicting
+  work when run in parallel.
+
+This applies to every agent or tool operating under this Constitution, not
+just one provider's implementation of "sub-agents" — the principle is
+delegation-by-default with cost-matched, specialized workers, however a given
+tool names the mechanism.
+
 ---
 
 ## 6. Quality Gates
