@@ -64,7 +64,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                   "date": "2026-09-05",
                   "encabezado": "Budget recibo E2E",
                   "status": "Pending",
-                  "amount": 10000.0
+                  "propertyAmount": 10000.0
                 }
                 """.formatted(idPerson);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
