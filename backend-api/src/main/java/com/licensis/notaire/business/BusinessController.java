@@ -206,7 +206,7 @@ public class BusinessController
             dtoPerson = null;
         } else
         {
-            this.registrarAudit(miPerson, ConstantesGui.DARALTAPerson);
+            this.recordAudit(miPerson, ConstantesGui.CreatePerson);
         }
 
         return dtoPerson;
@@ -270,7 +270,7 @@ public class BusinessController
         //Busco la persona
         miPerson = myJpaPerson.findPersonTypeIdentificationNumber(miDtoPerson);
         String lastName = miPerson.getLastName();
-        if (miPerson != null && !lastName.equals(ConstantesGui.ADMINISTRADOR))
+        if (miPerson != null && !lastName.equals(ConstantesGui.ADMINISTRATOR))
         {
             //Control Version del objeto
             miDtoPerson.setVersion(miPerson.getVersion());
@@ -321,7 +321,7 @@ public class BusinessController
         String lastName = miPerson.getLastName();
 
         if (miPerson != null && miPerson.getDeedManagementList().size() > 0
-                && !lastName.equals(ConstantesGui.ADMINISTRADOR))
+                && !lastName.equals(ConstantesGui.ADMINISTRATOR))
         {
             miDtoPerson = miPerson.getDto();
 
@@ -359,7 +359,7 @@ public class BusinessController
                 {
                     String lastName = listaPerson.get(i).getLastName();
 
-                    if (!lastName.equals(ConstantesGui.ADMINISTRADOR))
+                    if (!lastName.equals(ConstantesGui.ADMINISTRATOR))
                     {
                         listaDtoPersons.add(listaPerson.get(i).getDto());
                     }
@@ -408,7 +408,7 @@ public class BusinessController
                     String lastName = listaDtoPersons.get(i).getLastName();
 
                     if (!listaDtoPersons.get(i).getListaDtoManagementDeEscriturasPerson().isEmpty()
-                            && !lastName.equals(ConstantesGui.ADMINISTRADOR))
+                            && !lastName.equals(ConstantesGui.ADMINISTRATOR))
                     {
                         DtoPerson dtoPersonConManagement = listaDtoPersons.get(i);
                         listaDtoPersonsConManagement.add(dtoPersonConManagement);
@@ -447,7 +447,7 @@ public class BusinessController
             for (int i = 0; i < listaPerson.size(); i++)
             {
                 String lastName = listaPerson.get(i).getLastName();
-                if (!lastName.equals(ConstantesGui.ADMINISTRADOR))
+                if (!lastName.equals(ConstantesGui.ADMINISTRATOR))
                 {
                     listaDtoPersons.add(listaPerson.get(i).getDto());
                 }
@@ -478,7 +478,7 @@ public class BusinessController
             dtoPerson = null;
         } else
         {
-            this.registrarAudit(miPerson, ConstantesGui.MODIFICARPerson);
+            this.recordAudit(miPerson, ConstantesGui.UpdatePerson);
         }
 
         return dtoPerson;
@@ -504,7 +504,7 @@ public class BusinessController
             dtoClient = null;
         } else
         {
-            this.registrarAudit(miClientPerson, ConstantesGui.DARALTAClient);
+            this.recordAudit(miClientPerson, ConstantesGui.CreateClient);
         }
 
         return dtoClient;
@@ -530,7 +530,7 @@ public class BusinessController
             dtoClient = null;
         } else
         {
-            this.registrarAudit(miClientPerson, ConstantesGui.MODIFICARClient);
+            this.recordAudit(miClientPerson, ConstantesGui.UpdateClient);
         }
 
         return dtoClient;
@@ -776,7 +776,7 @@ public class BusinessController
                             }
                         }
                         //  registramos en auditoria en nuevo presupuesto
-                        this.registrarAudit(miBudget, ConstantesGui.CREARBudget);
+                        this.recordAudit(miBudget, ConstantesGui.CreateBudget);
                     }
                 }
 
@@ -854,7 +854,7 @@ public class BusinessController
                         }
                     }
                     //  registramos en auditoria en nuevo presupuesto
-                    this.registrarAudit(miBudget, ConstantesGui.CREARBudget);
+                    this.recordAudit(miBudget, ConstantesGui.CreateBudget);
                 }
             }
         }
@@ -878,7 +878,7 @@ public class BusinessController
 
         idProperty = myJpaProperty.create(miProperty);
 
-        this.registrarAudit(miProperty, ConstantesGui.CREARBudget);
+        this.recordAudit(miProperty, ConstantesGui.CreateBudget);
 
         return idProperty;
     }
@@ -1112,7 +1112,7 @@ public class BusinessController
 
                     if (modificado)
                     {
-                        this.registrarAudit(miBudget, ConstantesGui.MODIFICARBudget);
+                        this.recordAudit(miBudget, ConstantesGui.UpdateBudget);
 
                         Boolean eliminadoItem = false;
 
@@ -1129,7 +1129,7 @@ public class BusinessController
                                 {
                                     break;
                                 }
-                                this.registrarAudit(miItem, ConstantesGui.MODIFICARBudget);
+                                this.recordAudit(miItem, ConstantesGui.UpdateBudget);
                             }
                         }
 
@@ -1145,7 +1145,7 @@ public class BusinessController
 
                             itemsTodosJuntos.add(item);
 
-                            this.registrarAudit(item, ConstantesGui.MODIFICARBudget);
+                            this.recordAudit(item, ConstantesGui.UpdateBudget);
                         }
                     }
                 }
@@ -1318,7 +1318,7 @@ public class BusinessController
 
                 DtoHistory history = this.registerMovementHistory(dtoNuevaManagement);
 
-                this.registrarAudit(nuevaManagement, ConstantesGui.INICIARManagement);
+                this.recordAudit(nuevaManagement, ConstantesGui.StartManagement);
                 try
                 {
                     this.ingresarDocumentacion(dtoNuevaManagement);
@@ -1451,7 +1451,7 @@ public class BusinessController
 
                 this.registerMovementHistory(dtoManagementModificar);
 
-                this.registrarAudit(managementParaModificar, ConstantesGui.MODIFICARManagement);
+                this.recordAudit(managementParaModificar, ConstantesGui.UpdateManagement);
             } else
             {
                 dtoManagementModificar.setIdManagement(BusinessConstants.ID_OBJETO_NO_VALIDO);
@@ -1647,7 +1647,7 @@ public class BusinessController
             // lisGestionEscrituras.add(gestionDeEscritura);
             flag.setFlag(miJpaDeedManagement.archivingManagements(deedManagement));
 
-            this.registrarAudit(deedManagement, ConstantesGui.ArchivingManagement);
+            this.recordAudit(deedManagement, ConstantesGui.ArchivingManagement);
 
             this.registerMovementHistory(deedManagement.getDto());
 
@@ -2082,7 +2082,7 @@ public class BusinessController
 
                 this.registerMovementHistory(dtoDeedManagement);
 
-                this.registrarAudit(dtoManagement, ConstantesGui.DOCUMENTACIONEntry);
+                this.recordAudit(dtoManagement, ConstantesGui.DocumentationEntry);
             }
             catch (ClassModifiedException ex)
             {
@@ -2171,7 +2171,7 @@ public class BusinessController
 
             flag.setFlag(myJpaSubmittedDocument.create(submittedDocument));
 
-            this.registrarAudit(submittedDocument, ConstantesGui.DOCUMENTACIONEntry);
+            this.recordAudit(submittedDocument, ConstantesGui.DocumentationEntry);
         }
         return flag;
     }
@@ -2213,7 +2213,7 @@ public class BusinessController
             SubmittedDocument submittedDocument = listaDocumentPresentados.get(i);
             dtoResultado.setFlag(myJpaSubmittedDocument.edit(submittedDocument));
 
-            this.registrarAudit(submittedDocument, ConstantesGui.DOCUMENTACIONDebt);
+            this.recordAudit(submittedDocument, ConstantesGui.DocumentationDebt);
         }
 
         return dtoResultado;
@@ -2258,7 +2258,7 @@ public class BusinessController
 
             dtoResultado.setFlag(myJpaSubmittedDocument.edit(submittedDocument));
 
-            this.registrarAudit(submittedDocument, ConstantesGui.DOCUMENTACION_ENTIDAD_EXTERNA);
+            this.recordAudit(submittedDocument, ConstantesGui.DOCUMENTATION_EXTERNAL_ENTITY);
         }
 
         return dtoResultado;
@@ -2302,7 +2302,7 @@ public class BusinessController
             SubmittedDocument submittedDocument = listaDocumentPresentados.get(i);
             dtoResultado.setFlag(myJpaSubmittedDocument.edit(submittedDocument));
 
-            this.registrarAudit(submittedDocument, ConstantesGui.REGISTRAR_REINGRESO);
+            this.recordAudit(submittedDocument, ConstantesGui.REGISTER_REENTRY);
         }
 
         return dtoResultado;
@@ -2441,7 +2441,7 @@ public class BusinessController
 
             if (creada)
             {
-                this.registrarAudit(miDeed, ConstantesGui.PREPARARDeed);
+                this.recordAudit(miDeed, ConstantesGui.PrepareDeed);
             }
 
         } else
@@ -2920,7 +2920,7 @@ public class BusinessController
 
                 myJpaFolio.updateFolio(miFolio);
 
-                this.registrarAudit(miFolio, ConstantesGui.MODIFICARDeed);
+                this.recordAudit(miFolio, ConstantesGui.UpdateDeed);
 
             }
 
@@ -2928,7 +2928,7 @@ public class BusinessController
 
             if (modificada == true)
             {
-                this.registrarAudit(deedEncontrada, ConstantesGui.MODIFICARDeed);
+                this.recordAudit(deedEncontrada, ConstantesGui.UpdateDeed);
             }
             for (Iterator<Procedure> it = proceduresDeedVieja.iterator(); it.hasNext();)
             {
@@ -2942,7 +2942,7 @@ public class BusinessController
 
                     if (modificado == true)
                     {
-                        this.registrarAudit(procedure, ConstantesGui.MODIFICARDeed);
+                        this.recordAudit(procedure, ConstantesGui.UpdateDeed);
                     }
                 }
             }
@@ -3106,7 +3106,7 @@ public class BusinessController
 
             if (creado)
             {
-                this.registrarAudit(miTestimony, ConstantesGui.GENERARTestimony);
+                this.recordAudit(miTestimony, ConstantesGui.GenerateTestimony);
             }
 
         }
@@ -3293,7 +3293,7 @@ public class BusinessController
 
                 if (creado)
                 {
-                    this.registrarAudit(miTestimonyMovement, ConstantesGui.INGRESARPARARegistration);
+                    this.recordAudit(miTestimonyMovement, ConstantesGui.EnterForRegistration);
                 }
             }
         }
@@ -3344,7 +3344,7 @@ public class BusinessController
 
             if (modificado)
             {
-                this.registrarAudit(testimonyMovement, ConstantesGui.REGISTRAR_REINGRESO);
+                this.recordAudit(testimonyMovement, ConstantesGui.REGISTER_REENTRY);
             }
         }
 
@@ -3374,7 +3374,7 @@ public class BusinessController
 
             if (modificado)
             {
-                this.registrarAudit(testimonyMovement, ConstantesGui.REGISTRARRegistration);
+                this.recordAudit(testimonyMovement, ConstantesGui.RecordRegistration);
 
                 Testimony miTestimony = myJpaTestimony.findTestimonyById(miDtoTestimonyMovement.getTestimony().getIdTestimony());
 
@@ -3387,7 +3387,7 @@ public class BusinessController
 
                 if (modificado)
                 {
-                    this.registrarAudit(miDeed, ConstantesGui.REGISTRARRegistration);
+                    this.recordAudit(miDeed, ConstantesGui.RecordRegistration);
                 }
             }
         }
@@ -3528,7 +3528,7 @@ public class BusinessController
 
                 myJpaFolio.create(nuevoFolio);
 
-                this.registrarAudit(nuevoFolio, ConstantesGui.INGRESAR_NUEVOS_FOLIOS);
+                this.recordAudit(nuevoFolio, ConstantesGui.ENTER_NEW_FOLIOS);
             }
 
             resultado = Boolean.TRUE;
@@ -3608,7 +3608,7 @@ public class BusinessController
         {
             resultado = Boolean.TRUE;
 
-            this.registrarAudit(folioModificado, ConstantesGui.MODIFICARFolio);
+            this.recordAudit(folioModificado, ConstantesGui.UpdateFolio);
         }
         return resultado;
     }
@@ -3676,7 +3676,7 @@ public class BusinessController
         {
             creado = true;
 
-            this.registrarAudit(miPayment, ConstantesGui.MODIFICARBudget);
+            this.recordAudit(miPayment, ConstantesGui.UpdateBudget);
         }
 
         return creado;
@@ -3869,7 +3869,7 @@ public class BusinessController
     }
 
     /**
-     * Metodo que permite registrarAuditoria los movimientos del sistema, no
+     * Metodo que permite recordAuditoria los movimientos del sistema, no
      * recibe como parametro un objeto de tipo DTO, porque no recibe parametros
      * desde la GUI, es a nivel de controller.
      *
@@ -3878,7 +3878,7 @@ public class BusinessController
      * @return Un DtoFlag con verdadero, si se ejecuto correctamente y falso de
      * no ser asi
      */
-    public boolean registrarAudit(Object miObjeto, String module)
+    public boolean recordAudit(Object miObjeto, String module)
     {
         boolean flag = false;
 
@@ -3925,7 +3925,7 @@ public class BusinessController
                 {
                     resultado = Boolean.TRUE;
 
-                    this.registrarAudit(nuevoNotary, ConstantesGui.DARALTANotary);
+                    this.recordAudit(nuevoNotary, ConstantesGui.CreateNotary);
                 }
             } else
             {
@@ -3934,7 +3934,7 @@ public class BusinessController
                 {
                     resultado = Boolean.TRUE;
 
-                    this.registrarAudit(nuevoNotary, ConstantesGui.MODIFICARNotary);
+                    this.recordAudit(nuevoNotary, ConstantesGui.UpdateNotary);
                 }
             }
         }
@@ -4005,7 +4005,7 @@ public class BusinessController
 
                 resultado = Boolean.TRUE;
 
-                this.registrarAudit(nuevaSubstitution, ConstantesGui.REGISTRARSubstitution);
+                this.recordAudit(nuevaSubstitution, ConstantesGui.RegisterSubstitution);
             }
             catch (PersistenceException e)
             {
@@ -4087,7 +4087,7 @@ public class BusinessController
                 // Si se creo correctamente, creo una Plantilla de Tramite por cada Tipo de Documento de la lista.
                 if (idProcedureType != -1)
                 {
-                    this.registrarAudit(miProcedureType, ConstantesGui.INGRESARNUEVOProcedureType);
+                    this.recordAudit(miProcedureType, ConstantesGui.EnterNewProcedureType);
                     resultado = true;
 
                     if (listaDtoTypeDeDocumentsDocuments != null && !listaDtoTypeDeDocumentsDocuments.isEmpty())
@@ -4113,7 +4113,7 @@ public class BusinessController
 
                                 Boolean creada = myJpaProcedureTemplate.create(miTemplate);
 
-                                this.registrarAudit(miTemplate, ConstantesGui.INGRESARNUEVAProcedureTemplate);
+                                this.recordAudit(miTemplate, ConstantesGui.EnterNewProcedureTemplate);
 
                                 if (creada == false)
                                 {
@@ -4147,7 +4147,7 @@ public class BusinessController
 
                 resultado = myJpaProcedureType.edit(miProcedureType);
 
-                this.registrarAudit(miProcedureType, ConstantesGui.MODIFICARProcedureType);
+                this.recordAudit(miProcedureType, ConstantesGui.UpdateProcedureType);
             } else
             {
                 throw new PreexistingEntityException("Ya existe el tipo de tramite.");
@@ -4292,7 +4292,7 @@ public class BusinessController
 
                 if (modificado)
                 {
-                    this.registrarAudit(procedureTypeModificar, ConstantesGui.MODIFICARProcedureType);
+                    this.recordAudit(procedureTypeModificar, ConstantesGui.UpdateProcedureType);
 
                     List<ProcedureTemplate> plantillasActuales = myJpaProcedureTemplate.findProcedureTemplatesByType(procedureTypeModificar.getIdProcedureType());
 
@@ -4304,7 +4304,7 @@ public class BusinessController
 
                             eliminada = myJpaProcedureTemplate.eliminarProcedureTemplate(procedureTemplate);
 
-                            this.registrarAudit(procedureTemplate, ConstantesGui.ELIMINARProcedureTemplate);
+                            this.recordAudit(procedureTemplate, ConstantesGui.DeleteProcedureTemplate);
                         }
                     } else
                     {
@@ -4329,7 +4329,7 @@ public class BusinessController
 
                                 Boolean creada = myJpaProcedureTemplate.create(miProcedureTemplate);
 
-                                this.registrarAudit(miProcedureTemplate, ConstantesGui.MODIFICARProcedureTemplate);
+                                this.recordAudit(miProcedureTemplate, ConstantesGui.UpdateProcedureTemplate);
 
                             }
                             catch (PreexistingEntityException ex)
@@ -4388,7 +4388,7 @@ public class BusinessController
 
                 eliminado = myJpaProcedureType.edit(miProcedure);
 
-                this.registrarAudit(miProcedure, ConstantesGui.ELIMINARProcedureType);
+                this.recordAudit(miProcedure, ConstantesGui.DeleteProcedureType);
 
             }
             catch (IllegalOrphanException ex)
@@ -4430,7 +4430,7 @@ public class BusinessController
 
             if (id != -1)
             {
-                this.registrarAudit(miDocumentType, ConstantesGui.INGRESARNUEVOTypeDocument);
+                this.recordAudit(miDocumentType, ConstantesGui.EnterNewTypeDocument);
 
                 resultado = Boolean.TRUE;
             }
@@ -4442,7 +4442,7 @@ public class BusinessController
 
             Boolean modificado = myJpaDocumentType.edit(documentType);
 
-            this.registrarAudit(documentType, ConstantesGui.MODIFICARTypeDocument);
+            this.recordAudit(documentType, ConstantesGui.UpdateTypeDocument);
 
             resultado = modificado;
         }
@@ -4560,7 +4560,7 @@ public class BusinessController
 
             modificado.setFlag(myJpaDocumentType.edit(miDocumentType));
 
-            this.registrarAudit(miDocumentType, ConstantesGui.MODIFICARTypeDocument);
+            this.recordAudit(miDocumentType, ConstantesGui.UpdateTypeDocument);
 
         }
 
@@ -4590,7 +4590,7 @@ public class BusinessController
 
             modificado.setFlag(myJpaDocumentType.edit(miDocumentType));
 
-            this.registrarAudit(miDocumentType, ConstantesGui.ELIMINARTypeDocument);
+            this.recordAudit(miDocumentType, ConstantesGui.DeleteTypeDocument);
 
         }
 
@@ -4620,7 +4620,7 @@ public class BusinessController
 
                 resultado = Boolean.TRUE;
 
-                this.registrarAudit(nuevoConcept, ConstantesGui.INGRESARNUEVOConcept);
+                this.recordAudit(nuevoConcept, ConstantesGui.EnterNewConcept);
 
             }
             catch (PersistenceException e)
@@ -4709,7 +4709,7 @@ public class BusinessController
 
                 if (resultado == true)
                 {
-                    this.registrarAudit(nuevoConcept, ConstantesGui.MODIFICARConcept);
+                    this.recordAudit(nuevoConcept, ConstantesGui.UpdateConcept);
 
                 }
 //                }
@@ -4757,7 +4757,7 @@ public class BusinessController
 
                 if (resultado == true)
                 {
-                    this.registrarAudit(miConcept, ConstantesGui.ELIMINARConcept);
+                    this.recordAudit(miConcept, ConstantesGui.DeleteConcept);
                 }
             }
             catch (PersistenceException e)
@@ -4823,7 +4823,7 @@ public class BusinessController
                 miJpaManagementStatus.create(nuevoManagementStatus);
                 resultado = Boolean.TRUE;
 
-                this.registrarAudit(nuevoManagementStatus, ConstantesGui.INGRESARStatusManagement);
+                this.recordAudit(nuevoManagementStatus, ConstantesGui.EnterStatusManagement);
             }
             catch (NonexistentJpaException ex)
             {
@@ -4925,7 +4925,7 @@ public class BusinessController
 
                     resultado = Boolean.TRUE;
 
-                    this.registrarAudit(unManagementStatus, ConstantesGui.MODIFICARStatusManagement);
+                    this.recordAudit(unManagementStatus, ConstantesGui.UpdateStatusManagement);
 
                 }
                 catch (DtoInvalidoException ex)
@@ -4968,7 +4968,7 @@ public class BusinessController
 
                 resultado = Boolean.TRUE;
 
-                this.registrarAudit(nuevoFolioType, ConstantesGui.INGRESARNUEVOTypeFolio);
+                this.recordAudit(nuevoFolioType, ConstantesGui.EnterNewTypeFolio);
             }
             catch (PreexistingEntityException ex)
             {
@@ -4981,7 +4981,7 @@ public class BusinessController
 
                     myJpaFolioType.edit(nuevoFolioType);
 
-                    this.registrarAudit(nuevoFolioType, ConstantesGui.MODIFICARTypeFolio);
+                    this.recordAudit(nuevoFolioType, ConstantesGui.UpdateTypeFolio);
                     resultado = Boolean.TRUE;
 
                 }
@@ -5052,7 +5052,7 @@ public class BusinessController
 
             resultado = Boolean.TRUE;
 
-            this.registrarAudit(miFolioType, ConstantesGui.MODIFICARTypeFolio);
+            this.recordAudit(miFolioType, ConstantesGui.UpdateTypeFolio);
 
         }
         catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException | DtoInvalidoException ex)
@@ -5086,7 +5086,7 @@ public class BusinessController
 
                 resultado = Boolean.TRUE;
 
-                this.registrarAudit(miFolioType, ConstantesGui.ELIMINARTypeFolio);
+                this.recordAudit(miFolioType, ConstantesGui.DeleteTypeFolio);
 
             }
             catch (IllegalOrphanException | NonexistentEntityException | ClassEliminatedException ex)
@@ -5159,7 +5159,7 @@ public class BusinessController
         {
             creada = true;
 
-            this.registrarAudit(miBudgetTemplate, ConstantesGui.CREARTemplateDEBudget);
+            this.recordAudit(miBudgetTemplate, ConstantesGui.CreateBudgetTemplate);
         }
 
         return creada;
@@ -5225,7 +5225,7 @@ public class BusinessController
 
                 if (modificado)
                 {
-                    this.registrarAudit(procedureTypeModificar, ConstantesGui.MODIFICARProcedureType);
+                    this.recordAudit(procedureTypeModificar, ConstantesGui.UpdateProcedureType);
 
                     List<BudgetTemplate> plantillasActuales = myJpaBudgetTemplate.findBudgetTemplates(procedureTypeModificar.getIdProcedureType());
 
@@ -5237,7 +5237,7 @@ public class BusinessController
 
                             eliminada = myJpaBudgetTemplate.eliminarBudgetTemplate(budgetTemplate);
 
-                            this.registrarAudit(budgetTemplate, ConstantesGui.ELIMINARTemplateDEBudget);
+                            this.recordAudit(budgetTemplate, ConstantesGui.DeleteBudgetTemplate);
                         }
                     } else
                     {
@@ -5273,7 +5273,7 @@ public class BusinessController
                             {
                                 modificada = true;
 
-                                this.registrarAudit(miTemplate, ConstantesGui.MODIFICARTemplateDEBudget);
+                                this.recordAudit(miTemplate, ConstantesGui.UpdateBudgetTemplate);
                             }
                         }
                     }
@@ -5321,7 +5321,7 @@ public class BusinessController
 
                 if (eliminado)
                 {
-                    this.registrarAudit(budgetTemplate, ConstantesGui.ELIMINARTemplateDEBudget);
+                    this.recordAudit(budgetTemplate, ConstantesGui.DeleteBudgetTemplate);
                 }
             }
 
