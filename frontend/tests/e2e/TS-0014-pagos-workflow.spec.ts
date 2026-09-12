@@ -231,3 +231,67 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
     // Skipped: pagos page has no "fecha desde" / "fecha hasta" filter inputs.
   });
 });
+
+test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
+  let steps: GherkinSteps;
+
+  test.beforeEach(async ({ page }) => {
+    steps = new GherkinSteps(page);
+    await steps.givenUserIsLoggedIn();
+  });
+
+  test("TABLE-01: Given a pago exists, When visiting pagos page, Then it renders in the table with correct data", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 20000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 12345, paymentMethod: "Transferencia" });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await expect(row).toContainText("Transferencia");
+    await expect(row).toContainText(`#${idPresupuesto}`);
+  });
+
+  test("TABLE-02: Given a pago exists, When editing its monto, Then the table reflects the update", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 30000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 1000, paymentMethod: "Efectivo" });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await row.getByRole("button").nth(1).click();
+
+    await expect(page.getByRole("dialog")).toBeVisible();
+    const montoInput = page.getByRole("dialog").locator('input[type="number"]');
+    await montoInput.fill("1500");
+    await page.getByRole("dialog").getByRole("button", { name: /guardar|actualizar/i }).click();
+
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(row).toContainText("1.500");
+  });
+
+  test("TABLE-03: Given a pago exists, When deleting it, Then it is removed from the table", async ({ page }) => {
+    const { idPresupuesto } = await seedPresupuesto(page, 15000);
+    const pagoResult = await createPago(page, idPresupuesto, { amount: 500 });
+    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
+      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    }
+
+    await steps.givenUserIsOnPage("/dashboard/pagos");
+
+    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    await expect(row).toBeVisible({ timeout: 5000 });
+    await row.getByRole("button").nth(2).click();
+
+    await page.getByRole("button", { name: /confirmar|eliminar|s[ií]/i }).last().click();
+
+    await expect(row).toBeHidden({ timeout: 5000 });
+  });
+});
