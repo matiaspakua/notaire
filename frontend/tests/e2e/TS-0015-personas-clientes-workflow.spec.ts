@@ -48,8 +48,8 @@ async function fillPersonaForm(
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
 
-  await page.getByTestId('input-nombre').fill(opts.nombre)
-  await page.getByTestId('input-apellido').fill(opts.apellido)
+  await page.getByTestId('input-firstName').fill(opts.nombre)
+  await page.getByTestId('input-lastName').fill(opts.apellido)
   await dialog.getByLabel(/dni/i).fill(opts.dni)
 
   if (opts.esCliente) {
@@ -85,8 +85,8 @@ test.describe('CU17 - Dar Alta Persona', () => {
       // Then — modal visible with required fields
       const dialog = page.getByRole('dialog')
       await expect(dialog).toBeVisible()
-      await expect(page.getByTestId('input-nombre')).toBeVisible()
-      await expect(page.getByTestId('input-apellido')).toBeVisible()
+      await expect(page.getByTestId('input-firstName')).toBeVisible()
+      await expect(page.getByTestId('input-lastName')).toBeVisible()
       await expect(dialog.getByLabel(/dni/i)).toBeVisible()
 
       // CU18 mechanism: checkbox must be present in the creation form
@@ -114,7 +114,7 @@ test.describe('CU17 - Dar Alta Persona', () => {
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      await page.getByTestId('input-search-apellido').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
       await expect(
         page.getByRole('table').getByText(new RegExp(apellido, 'i')),
@@ -146,7 +146,7 @@ test.describe('CU17 - Dar Alta Persona', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — persona appears in the table
-      await page.getByTestId('input-search-apellido').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
       const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
       await expect(row).toBeVisible()
@@ -192,7 +192,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — searching for the persona shows her in the table as a client
-      await page.getByTestId('input-search-apellido').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
 
       const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
@@ -223,7 +223,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // When — open the persona for editing
-      await page.getByTestId('input-search-apellido').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
       const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
       await row.getByRole('button').first().click()
@@ -243,7 +243,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — persona now shows as client
-      await page.getByTestId('input-search-apellido').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(apellido)
       const updatedRow = page.getByRole('row', { name: new RegExp(apellido, 'i') })
       await expect(updatedRow.getByText(/cliente|sí/i)).toBeVisible()
     },
@@ -282,7 +282,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
 
       // And — form stays open (data not lost)
       await expect(page.getByRole('dialog')).toBeVisible()
-      await expect(page.getByTestId('input-nombre')).toHaveValue('Otra')
+      await expect(page.getByTestId('input-firstName')).toHaveValue('Otra')
     },
   )
 
@@ -314,8 +314,8 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       await page.getByTestId('btn-nueva-persona').click()
       await expect(page.getByRole('dialog')).toBeVisible()
 
-      await page.getByTestId('input-nombre').fill('SinDNI')
-      await page.getByTestId('input-apellido').fill('Prueba')
+      await page.getByTestId('input-firstName').fill('SinDNI')
+      await page.getByTestId('input-lastName').fill('Prueba')
       // DNI left empty intentionally
       await submitForm(page)
 
@@ -373,10 +373,10 @@ test.describe('CU61 - Buscar persona o cliente', () => {
       await page.waitForLoadState('networkidle')
 
       if (apellido) {
-        await page.getByTestId('input-search-apellido').fill(apellido)
+        await page.getByTestId('input-search-lastName').fill(apellido)
       } else {
         // fallback: search with a partial known value
-        await page.getByTestId('input-search-apellido').fill('BuscaApellido')
+        await page.getByTestId('input-search-lastName').fill('BuscaApellido')
       }
 
       // Then — table is visible and has at least one row
@@ -430,7 +430,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
       const steps = new GherkinSteps(page)
 
       // When — apellido search that will never match
-      await page.getByTestId('input-search-apellido').fill('ZZZZNoExiste999XY')
+      await page.getByTestId('input-search-lastName').fill('ZZZZNoExiste999XY')
 
       // Then — empty state message
       await steps.thenElementIsVisible('no hay')

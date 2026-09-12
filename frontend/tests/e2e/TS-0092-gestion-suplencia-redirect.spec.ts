@@ -41,8 +41,8 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    await page.getByTestId("input-nombre").fill("Juan");
-    await page.getByTestId("input-apellido").fill(apellido);
+    await page.getByTestId("input-firstName").fill("Juan");
+    await page.getByTestId("input-lastName").fill(apellido);
     await dialog.getByLabel(/dni/i).fill(dni);
     await page.getByTestId("input-registro-escribano").fill("123");
 
@@ -61,7 +61,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 
     await page.reload();
     await page.waitForLoadState("domcontentloaded");
-    await page.getByTestId("input-search-apellido").fill(apellido);
+    await page.getByTestId("input-search-lastName").fill(apellido);
     const row = page.getByRole("row", { name: new RegExp(apellido, "i") });
     await expect(row).toBeVisible({ timeout: 10000 });
     await row.getByRole("button").first().click();

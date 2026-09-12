@@ -132,13 +132,13 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Cliente`, async () => {
     await go(page, "/dashboard/personas");
     await page.getByTestId("btn-nueva-persona").click();
-    await page.getByTestId("input-nombre").fill(def.clienteNombre);
-    await page.getByTestId("input-apellido").fill(def.clienteApellido);
+    await page.getByTestId("input-firstName").fill(def.clienteNombre);
+    await page.getByTestId("input-lastName").fill(def.clienteApellido);
     await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${runId}${def.label}`);
     await page.getByLabel(/email/i).fill(`${def.label.toLowerCase()}.demo.${runId}@notaire.test`);
     await page.getByTestId("check-es-cliente").click();
     await saveDialog(page);
-    await page.getByTestId("input-search-apellido").fill(def.clienteApellido);
+    await page.getByTestId("input-search-lastName").fill(def.clienteApellido);
     await expect(page.getByRole("table")).toContainText(def.clienteApellido);
   });
 
