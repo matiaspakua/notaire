@@ -240,6 +240,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asserts no horizontal overflow on the login page at 320px and 768px and on the dashboard at
   320px after login.
 
+### Changed
+
+- **Hexagonal architecture pilot on the payment/budget slice** (issue #984,
+  CU15/CU47, [ADR-021](docs/200-architecture/202-ADR/ADR-021-hexagonal-architecture-pilot.md)):
+  the financial workflow was restructured into Ports & Adapters — `domain.payment`
+  (no Spring, no JPA), `application.port.in/out.payment`, `application.usecase.payment`,
+  `adapter.in.web.payment` and `adapter.out.persistence.payment`. `PaymentController`
+  is now a thin inbound adapter over use-case ports, `@Transactional` moved from the
+  controller to the use cases, and `PUT /api/v1/pagos/{id}` binds a `PaymentUpdateRequest`
+  record instead of the JPA entity. `PaymentService`, `StatusPayment`,
+  `BudgetResumenService` and `PaymentMapper` were deleted rather than deprecated;
+  `BudgetController`, `ManagementArchiveDebtService` and
+  `ManagementResumenFinancieroService` consume the inbound ports. The `AuditAspect`
+  pointcut was widened to `adapter.in.web..*Controller` so the business audit trail
+  follows the controller. **No behavior change**: URLs, request/response payloads,
+  status codes, persisted data and DB schema are identical, and the pattern is
+  deliberately scoped to this one slice pending review.
+
 ### Fixed
 
 - **Bruno API test suite audit uncovered four silent-delete/write defects**
@@ -569,6 +587,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Common patterns and templates
   - Testing and validation commands
 
+<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Changed" block within [Unreleased] -->
 ### Changed
 
 - **Flyway Integration**: Migrated from init-db scripts to Flyway versioned migrations
