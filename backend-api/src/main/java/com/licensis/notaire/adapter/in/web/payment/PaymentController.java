@@ -246,7 +246,16 @@ public class PaymentController {
             Date date,
             String notes,
             String paymentMethod
-    ) { }
+    ) {
+        public PaymentRequest {
+            date = date == null ? null : new Date(date.getTime());
+        }
+
+        @Override
+        public Date date() {
+            return date == null ? null : new Date(date.getTime());
+        }
+    }
 
     /**
      * Request body of {@code PUT /api/v1/pagos/{id}}. Replaces the previous use of the
@@ -258,5 +267,14 @@ public class PaymentController {
             Date date,
             String notes,
             String paymentMethod
-    ) { }
+    ) {
+        public PaymentUpdateRequest {
+            date = date == null ? null : new Date(date.getTime());
+        }
+
+        @Override
+        public Date date() {
+            return date == null ? null : new Date(date.getTime());
+        }
+    }
 }
