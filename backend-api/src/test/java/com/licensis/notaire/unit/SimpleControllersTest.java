@@ -399,14 +399,14 @@ class SimpleControllersTest {
     @DisplayName("PresupuestoController")
     class BudgetControllerTests {
         private final BudgetService service = mock(BudgetService.class);
-        private final com.licensis.notaire.service.BudgetResumenService budgetResumenService =
-                mock(com.licensis.notaire.service.BudgetResumenService.class);
+        private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
+                mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
         private final com.licensis.notaire.service.BudgetTemplateService budgetTemplateService =
                 mock(com.licensis.notaire.service.BudgetTemplateService.class);
         private final com.licensis.notaire.service.BudgetCatalogItemsService budgetCatalogoItemsService =
                 mock(com.licensis.notaire.service.BudgetCatalogItemsService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new BudgetController(service, budgetResumenService,
+                standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
                         budgetTemplateService, budgetCatalogoItemsService))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
