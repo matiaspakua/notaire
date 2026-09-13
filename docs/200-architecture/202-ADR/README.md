@@ -26,6 +26,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [018](ADR-018-rate-limiting-policy.md) | Rate-Limiting Policy | Accepted | 2026-08-19 | Security |
 | [019](ADR-019-secrets-management.md) | Secrets Management | Accepted | 2026-08-19 | Security |
 | [020](ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | 2026-08-19 | Security & API |
+| [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
 
 ## ADR Status Legend
 
@@ -60,8 +61,9 @@ Cada ADR sigue esta estructura:
 - **ADR-001**: Migración de monolito a microservicios con 3 capas
 - **ADR-005**: Migración a Next.js para el nuevo frontend web
 
-### Code Organization (1 ADR)
+### Code Organization (2 ADRs)
 - **ADR-002**: Estructura Maven multi-módulo
+- **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/presupuestos)
 
 ### API Design (1 ADR)
 - **ADR-003**: REST API versioning con URL path versioning

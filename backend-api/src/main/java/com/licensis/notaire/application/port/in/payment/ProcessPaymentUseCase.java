@@ -1,7 +1,6 @@
 package com.licensis.notaire.application.port.in.payment;
 
 import com.licensis.notaire.domain.payment.PaymentDetails;
-import com.licensis.notaire.exception.PendingBalanceExceededException;
 
 /**
  * Inbound port for CU15 "Procesar Pago": register a payment against a budget.
@@ -16,8 +15,9 @@ public interface ProcessPaymentUseCase {
      *
      * @param command the payment to register
      * @return the persisted payment
-     * @throws IllegalArgumentException          if the budget does not exist or the amount is not positive
-     * @throws PendingBalanceExceededException   if the amount exceeds the budget's pending balance
+     * @throws IllegalArgumentException if the budget does not exist or the amount is not positive
+     * @throws com.licensis.notaire.exception.PendingBalanceExceededException if the amount exceeds
+     *         the budget's pending balance
      */
     PaymentDetails process(ProcessPaymentCommand command);
 }
