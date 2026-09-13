@@ -30,7 +30,7 @@ public class EditPaymentService implements EditPaymentUseCase {
         Integer paymentId = command.paymentId();
         log.info("Editando pago con ID: {}", paymentId);
 
-        if (payments.findById(paymentId).isEmpty()) {
+        if (!payments.existsById(paymentId)) {
             throw new IllegalArgumentException("Pago no encontrado con ID: " + paymentId);
         }
 
