@@ -1,5 +1,6 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.exception.CarpetasEnWaitException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
@@ -33,17 +34,17 @@ public class ManagementArchiveDebtService {
 
     private final DeedManagementRepository managementRepository;
     private final ProcedureRepository procedureRepository;
-    private final PaymentService paymentService;
+    private final GetPaymentStatusUseCase paymentStatus;
     private final ManagementTransitionService managementTransitionService;
     private final ProcedureFolderRepository procedureFolderRepository;
 
     public ManagementArchiveDebtService(DeedManagementRepository managementRepository,
-            ProcedureRepository procedureRepository, PaymentService paymentService,
+            ProcedureRepository procedureRepository, GetPaymentStatusUseCase paymentStatus,
             ManagementTransitionService managementTransitionService,
             ProcedureFolderRepository procedureFolderRepository) {
         this.managementRepository = managementRepository;
         this.procedureRepository = procedureRepository;
-        this.paymentService = paymentService;
+        this.paymentStatus = paymentStatus;
         this.managementTransitionService = managementTransitionService;
         this.procedureFolderRepository = procedureFolderRepository;
     }
@@ -64,8 +65,7 @@ public class ManagementArchiveDebtService {
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            Float saldoBudget = paymentService.calculatePendingBalance(budget.getIdBudget());
-            saldo += saldoBudget != null ? saldoBudget : 0f;
+            saldo += paymentStatus.pendingBalance(budget.getIdBudget());
         }
 
         log.debug("Saldo pendiente agregado para gestión {}: {}", idManagement, saldo);

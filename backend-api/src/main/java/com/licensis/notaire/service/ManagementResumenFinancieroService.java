@@ -1,5 +1,8 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
+import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
+import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
@@ -20,13 +23,16 @@ import java.util.Set;
 public class ManagementResumenFinancieroService {
 
     private final ProcedureRepository procedureRepository;
-    private final PaymentService paymentService;
+    private final GetPaymentStatusUseCase paymentStatus;
+    private final QueryPaymentsUseCase paymentQueries;
     private final ManagementArchiveDebtService managementArchiveDebtService;
 
-    public ManagementResumenFinancieroService(ProcedureRepository procedureRepository, PaymentService paymentService,
+    public ManagementResumenFinancieroService(ProcedureRepository procedureRepository,
+            GetPaymentStatusUseCase paymentStatus, QueryPaymentsUseCase paymentQueries,
             ManagementArchiveDebtService managementArchiveDebtService) {
         this.procedureRepository = procedureRepository;
-        this.paymentService = paymentService;
+        this.paymentStatus = paymentStatus;
+        this.paymentQueries = paymentQueries;
         this.managementArchiveDebtService = managementArchiveDebtService;
     }
 
@@ -44,9 +50,9 @@ public class ManagementResumenFinancieroService {
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            Float saldoBudget = paymentService.calculatePendingBalance(budget.getIdBudget());
-            float cobradoBudget = (float) paymentService.findPaymentsByBudget(budget.getIdBudget())
-                    .stream().mapToDouble(p -> p.getAmount()).sum();
+            float saldoBudget = paymentStatus.pendingBalance(budget.getIdBudget());
+            float cobradoBudget = (float) paymentQueries.findByBudget(budget.getIdBudget())
+                    .stream().mapToDouble(PaymentDetails::amount).sum();
             totalCobrado += cobradoBudget;
             totalPresupuestado += saldoBudget + cobradoBudget;
         }
