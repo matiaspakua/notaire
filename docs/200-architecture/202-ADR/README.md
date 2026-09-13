@@ -40,6 +40,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 Cada ADR sigue esta estructura:
 
 ### Header
+
 - **Status**: Proposed | Accepted | Deprecated | Superseded
 - **Date**: Cuándo fue propuesto
 - **Deciders**: Quién tomó la decisión
@@ -58,43 +59,53 @@ Cada ADR sigue esta estructura:
 ## Decision Categories
 
 ### System Architecture (2 ADRs)
+
 - **ADR-001**: Migración de monolito a microservicios con 3 capas
 - **ADR-005**: Migración a Next.js para el nuevo frontend web
 
 ### Code Organization (2 ADRs)
+
 - **ADR-002**: Estructura Maven multi-módulo
 - **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/presupuestos)
 
 ### API Design (1 ADR)
+
 - **ADR-003**: REST API versioning con URL path versioning
 
 ### Data Persistence (2 ADRs)
+
 - **ADR-004**: Migración MySQL → PostgreSQL 16
 - **ADR-007**: Gestión de versiones de esquema con Flyway
 
 ### Quality & Reliability (3 ADRs)
+
 - **ADR-006**: Estrategia de testing (unitario, integración, E2E)
 - **ADR-008**: Seguridad y autenticación (JWT, RBAC)
 - **ADR-010**: Manejo de errores global
 
 ### Observability (2 ADRs)
+
 - **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
 - **ADR-016**: Topología del stack de observabilidad (Prometheus/Grafana/Loki/SonarQube)
 
 ### DevOps (2 ADRs)
+
 - **ADR-012**: Pipeline CI/CD con GitHub Actions
 - **ADR-017**: Estrategia de imágenes base de contenedores (Alpine, multi-stage, non-root)
 
 ### Security & Compliance (4 ADRs)
+
 - **ADR-013**: Auditoría transversal con Spring AOP
 - **ADR-018**: Política de rate-limiting (solo login lockout, sin límite general de API)
 - **ADR-019**: Gestión de secretos (.env único, ProductionCredentialsGuard)
 - **ADR-020**: Política de exposición de OpenAPI/Swagger (público salvo producción)
 
 ### Domain Model (1 ADR)
+
 - **ADR-014**: Motor de workflow configurable para gestiones
 
 ### Frontend (1 ADR adicional)
+
 - **ADR-015**: Internacionalización con next-intl
 
 ## Key Architectural Principles
@@ -102,21 +113,25 @@ Cada ADR sigue esta estructura:
 Basados en los ADRs implementados:
 
 ### 1. Separation of Concerns
+
 - Frontend y Backend completamente desacoplados
 - Comunicación única vía REST API
 - Database solo accesible desde Backend
 
 ### 2. Scalability
+
 - Backend stateless para horizontal scaling
 - Database connection pooling
 - API versionado para evolución sin romper clientes
 
 ### 3. Maintainability
+
 - Código organizado en módulos Maven independientes
 - Layered architecture (controllers → services → repositories → database)
 - Clear responsibility boundaries
 
 ### 4. Modern Technology Stack
+
 - Java 21 LTS (long-term support)
 - Spring Boot 4.1.0 (framework moderno)
 - PostgreSQL 16 (robust RDBMS)
@@ -124,7 +139,7 @@ Basados en los ADRs implementados:
 
 ## ADR Lifecycle
 
-```
+```text
 Proposed
     │ (Analysis)
     ↓
@@ -154,18 +169,24 @@ Accepted
 Algunas decisiones afectan múltiples ADRs:
 
 ### Layered Architecture
+
 Implementado en:
+
 - ADR-001 (3-layer architecture)
 - ADR-002 (package structure)
 - ADR-005 (testing at each layer)
 
 ### Data Integrity
+
 Implementado en:
+
 - ADR-004 (PostgreSQL migration)
 - ADR-008 (error handling & recovery)
 
 ### API Evolution
+
 Implementado en:
+
 - ADR-003 (versioning)
 - ADR-006 (authentication)
 
