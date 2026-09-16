@@ -16,7 +16,7 @@ http:
           "value": 100.0,
           "tipo": "RECARGO",
           "fixedConcept": false,
-          "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
+          "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }
   headers:
     - name: Content-Type

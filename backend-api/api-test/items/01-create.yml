@@ -19,7 +19,7 @@ http:
           "tipo": "RECARGO",
           "motivo": "Tramite urgente solicitado por el cliente",
           "fixedConcept": false,
-          "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
+          "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }
   headers:
     - name: Content-Type

@@ -18,7 +18,7 @@ http:
           "date": "2026-09-05",
           "encabezado": "Presupuesto Pagos E2E",
           "status": "Pendiente",
-          "monto": 10000.0,
+          "propertyAmount": 10000.0,
           "notes": "creado por la suite de pagos"
         }
   headers:
