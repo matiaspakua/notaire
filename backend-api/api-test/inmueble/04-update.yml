@@ -12,11 +12,11 @@ http:
     type: json
     data: |-
       {
-        "nomenclaturaCatastral": "CIRC-01-SEC-A-PARC-99-MOD",
-        "domicilio": "Av. Libertador 5000 Piso 2",
-        "valuacionFiscal": 300000.0,
-        "matricula": "M-9988-B",
-        "observaciones": "Actualizado E2E"
+        "cadastralDesignation": "CIRC-01-SEC-A-PARC-99-MOD",
+        "address": "Av. Libertador 5000 Piso 2",
+        "fiscalAppraisal": 300000.0,
+        "registrationNumber": "M-9988-B",
+        "notes": "Actualizado E2E"
       }
   headers:
     - name: Content-Type

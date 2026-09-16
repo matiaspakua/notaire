@@ -13,8 +13,8 @@ http:
     type: json
     data: |-
         {
-          "observaciones": "Tramite E2E",
-          "fkIdTipoTramite": { "idTipoTramite": 1 }
+          "notes": "Tramite E2E",
+          "fkIdProcedureType": { "idProcedureType": 1 }
         }
   headers:
     - name: Content-Type
@@ -28,11 +28,11 @@ runtime:
           test("Status 201 Created", function () {
             expect(res.getStatus()).to.equal(201);
           });
-          test("Stores tramite id", function () {
+          test("Stores procedure id", function () {
             const b = res.getBody();
-            expect(b.idTramite).to.be.a('number');
-            bru.setVar('tramite_id', b.idTramite);
+            expect(b.idProcedure).to.be.a('number');
+            bru.setVar('tramite_id', b.idProcedure);
           });
-          test("Persists observaciones", function () {
-            expect(res.getBody().observaciones).to.equal('Tramite E2E');
+          test("Persists notes", function () {
+            expect(res.getBody().notes).to.equal('Tramite E2E');
           });

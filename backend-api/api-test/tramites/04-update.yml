@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
         {
-          "observaciones": "Tramite E2E actualizado",
-          "fkIdTipoTramite": { "idTipoTramite": 1 }
+          "notes": "Tramite E2E actualizado",
+          "fkIdProcedureType": { "idProcedureType": 1 }
         }
   headers:
     - name: Content-Type

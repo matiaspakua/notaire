@@ -12,13 +12,13 @@ http:
     type: json
     data: |-
       {
-        "nomenclaturaCatastral": "CIRC-01-SEC-A-PARC-99",
-        "domicilio": "Av. Libertador 5000",
-        "valuacionFiscal": 250000.0,
-        "matricula": "M-9988",
-        "tomoFolioFinca": "T5-F12-FN3",
-        "linderos": "N: Calle, S: Lote 2",
-        "observaciones": "Inmueble Bruno E2E"
+        "cadastralDesignation": "CIRC-01-SEC-A-PARC-99",
+        "address": "Av. Libertador 5000",
+        "fiscalAppraisal": 250000.0,
+        "registrationNumber": "M-9988",
+        "volumeFolioLandRecord": "T5-F12-FN3",
+        "boundaries": "N: Calle, S: Lote 2",
+        "notes": "Inmueble Bruno E2E"
       }
   headers:
     - name: Content-Type
@@ -32,10 +32,10 @@ runtime:
         test("Status 201 Created", function () {
           expect(res.getStatus()).to.equal(201);
         });
-        test("Returns idInmueble and persists attributes", function () {
+        test("Returns idProperty and persists attributes", function () {
           const b = res.getBody();
-          expect(b).to.have.property('idInmueble');
-          expect(b.domicilio).to.equal('Av. Libertador 5000');
-          expect(b.nomenclaturaCatastral).to.equal('CIRC-01-SEC-A-PARC-99');
-          bru.setVar('inmueble_id', b.idInmueble);
+          expect(b).to.have.property('idProperty');
+          expect(b.address).to.equal('Av. Libertador 5000');
+          expect(b.cadastralDesignation).to.equal('CIRC-01-SEC-A-PARC-99');
+          bru.setVar('inmueble_id', b.idProperty);
         });

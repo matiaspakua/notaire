@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"fechaInicio":"2026-01-01","fechaFin":"2026-01-31","fkIdSuplente":{"personId":{{_suplente_id}}},"fkIdSuplantado":{"personId":{{_suplantado_id}}}}
+        {"dateStart":"2026-01-01","dateEnd":"2026-01-31","fkIdSubstitute":{"personId":{{_suplente_id}}},"fkIdSubstituted":{"personId":{{_suplantado_id}}}}
   headers:
     - name: Content-Type
       value: application/json
@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idSuplencia", function () {
+          test("Returns idSubstitution", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idSuplencia');
-            bru.setVar('_suplencia_id', b.idSuplencia);
+            expect(b).to.have.property('idSubstitution');
+            bru.setVar('_suplencia_id', b.idSubstitution);
           });

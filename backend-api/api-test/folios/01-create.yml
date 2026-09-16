@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
         {
-          "numero": 55777,
-          "anio": 2026,
-          "estado": "Nuevo",
-          "observaciones": "creado por la suite E2E",
+          "number": 55777,
+          "year": 2026,
+          "status": "Nuevo",
+          "notes": "creado por la suite E2E",
           "tipoFolioId": 1,
           "escribanoId": {{_folio_escribano_id}}
         }
