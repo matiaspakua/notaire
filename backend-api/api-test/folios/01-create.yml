@@ -14,8 +14,8 @@ http:
           "year": 2026,
           "status": "Nuevo",
           "notes": "creado por la suite E2E",
-          "tipoFolioId": 1,
-          "escribanoId": {{_folio_escribano_id}}
+          "typeFolioId": 1,
+          "notaryId": {{_folio_escribano_id}}
         }
   headers:
     - name: Content-Type

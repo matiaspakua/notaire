@@ -17,5 +17,5 @@ runtime:
             expect(res.getStatus()).to.equal(200);
           });
           test("Returns the correct pago", function () {
-            expect(res.getBody().idPago).to.equal(bru.getVar('pago_id'));
+            expect(res.getBody().idPayment).to.equal(Number(bru.getVar('pago_id')));
           });

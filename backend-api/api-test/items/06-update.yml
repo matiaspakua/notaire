@@ -14,7 +14,7 @@ http:
           "value": 750.0,
           "percentage": 15,
           "type": "RECARGO",
-          "motivo": "Tramite urgente solicitado por el cliente",
+          "reason": "Tramite urgente solicitado por el cliente",
           "fixedConcept": false,
           "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }

@@ -17,7 +17,7 @@ http:
           "value": 500.0,
           "percentage": 10,
           "type": "RECARGO",
-          "motivo": "Tramite urgente solicitado por el cliente",
+          "reason": "Tramite urgente solicitado por el cliente",
           "fixedConcept": false,
           "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }
@@ -38,8 +38,8 @@ runtime:
             expect(b.idItem).to.be.a('number');
             bru.setVar('item_id', b.idItem);
           });
-          test("Persists name and tipo", function () {
+          test("Persists name and type", function () {
             const b = res.getBody();
             expect(b.name).to.equal('Recargo urgencia');
-            expect(b.tipo).to.equal('RECARGO');
+            expect(b.type).to.equal('RECARGO');
           });

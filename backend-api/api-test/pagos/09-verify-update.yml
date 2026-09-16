@@ -18,6 +18,6 @@ runtime:
           });
           test("Persists updated monto and metodoPago", function () {
             const b = res.getBody();
-            expect(b.monto).to.equal(4500.0);
-            expect(b.metodoPago).to.equal('Efectivo');
+            expect(b.amount).to.equal(4500.0);
+            expect(b.paymentMethod).to.equal('Efectivo');
           });

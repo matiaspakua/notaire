@@ -20,6 +20,6 @@ runtime:
           });
           test("Reflects the updated observaciones and estado", function () {
             const b = res.getBody();
-            expect(b.observaciones).to.equal('Gestion en tramite');
-            expect(b.estadoGestionId).to.equal(2);
+            expect(b.notes).to.equal('Gestion en tramite');
+            expect(b.statusManagementId).to.equal(2);
           });

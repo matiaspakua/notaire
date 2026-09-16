@@ -19,7 +19,7 @@ runtime:
           });
           test("Returns matching historial", function () {
             const b = res.getBody();
-            expect(b.idHistorial).to.equal(parseInt(bru.getVar('_historial_id'), 10));
-            expect(b.gestionId).to.equal(parseInt(bru.getVar('_historial_gestion_id'), 10));
-            expect(b.observaciones).to.equal('Gestion iniciada');
+            expect(b.idHistory).to.equal(parseInt(bru.getVar('_historial_id'), 10));
+            expect(b.managementId).to.equal(parseInt(bru.getVar('_historial_gestion_id'), 10));
+            expect(b.notes).to.equal('Gestion iniciada');
           });

@@ -21,6 +21,6 @@ runtime:
           test("Response is an array", function () { expect(res.getBody()).to.be.an('array'); });
           test("Created concepto is present in the list", function () {
             const id = Number(bru.getVar('concepto_id'));
-            const found = res.getBody().some(c => c.idConcepto === id);
+            const found = res.getBody().some(c => c.idConcept === id);
             expect(found, 'created concepto should be listed').to.equal(true);
           });
