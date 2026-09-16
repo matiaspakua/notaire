@@ -9,20 +9,13 @@ import com.licensis.notaire.application.port.out.management.WorkflowTransitionVa
 import com.licensis.notaire.application.usecase.management.TransitionManagementUseCaseImpl;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.ManagementStatus;
-import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.WorkflowDefinition;
-import com.licensis.notaire.business.WorkflowNode;
-import com.licensis.notaire.business.WorkflowNodeType;
-import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
