@@ -17,5 +17,5 @@ runtime:
             expect(res.getStatus()).to.equal(200);
           });
           test("Returns the correct tramite", function () {
-            expect(res.getBody().idTramite).to.equal(bru.getVar('tramite_id'));
+            expect(res.getBody().idProcedure).to.equal(bru.getVar('tramite_id'));
           });

@@ -14,7 +14,7 @@ http:
         {
           "name": "Recargo sin motivo",
           "value": 100.0,
-          "tipo": "RECARGO",
+          "type": "RECARGO",
           "fixedConcept": false,
           "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }

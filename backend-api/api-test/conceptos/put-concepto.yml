@@ -14,8 +14,7 @@ http:
     data: |-
         {
           "name": "Concepto E2E Actualizado",
-          "descripcion": "Actualizado por la suite",
-          "value": 2750.00
+                    "value": 2750.00
         }
   headers:
     - name: Content-Type

@@ -16,7 +16,7 @@ http:
           "name": "Recargo urgencia",
           "value": 500.0,
           "percentage": 10,
-          "tipo": "RECARGO",
+          "type": "RECARGO",
           "motivo": "Tramite urgente solicitado por el cliente",
           "fixedConcept": false,
           "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }

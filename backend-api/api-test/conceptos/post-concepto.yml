@@ -14,8 +14,7 @@ http:
     data: |-
         {
           "name": "Concepto E2E",
-          "descripcion": "Concepto creado por la suite de API",
-          "value": 1500.50
+                    "value": 1500.50
         }
   headers:
     - name: Content-Type
@@ -30,11 +29,11 @@ runtime:
           test("Status is 201 Created", function () {
             expect(res.getStatus()).to.equal(201);
           });
-          test("Body returns the created concepto with idConcepto", function () {
+          test("Body returns the created concepto with idConcept", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idConcepto');
+            expect(b).to.have.property('idConcept');
             expect(b.name).to.equal('Concepto E2E');
-            bru.setVar('concepto_id', b.idConcepto);
+            bru.setVar('concepto_id', b.idConcept);
           });
           test("Default enabled is true on create", function () {
             expect(res.getBody().enabled).to.equal(true);

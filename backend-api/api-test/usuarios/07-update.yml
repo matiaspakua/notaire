@@ -10,8 +10,8 @@ http:
     data: |-
         {
           "name": "apitest-usuario",
-          "tipo": "ADMIN",
-          "status": true
+          "type": "ADMIN",
+          "active": true
         }
   headers:
     - name: Content-Type

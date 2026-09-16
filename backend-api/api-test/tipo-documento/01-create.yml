@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"name":"TD E2E","vence":false,"quienEntrega":"Cliente"}
+        {"name":"TD E2E","expires":false,"deliveredBy":"Cliente"}
   headers:
     - name: Content-Type
       value: application/json
@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idTipoDocumento", function () {
+          test("Returns idDocumentType", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idTipoDocumento');
-            bru.setVar('_id', b.idTipoDocumento);
+            expect(b).to.have.property('idDocumentType');
+            bru.setVar('_id', b.idDocumentType);
           });

@@ -34,6 +34,6 @@ runtime:
           });
           test("Stores gestion id", function () {
             const b = res.getBody();
-            expect(b.idGestion).to.be.a('number');
-            bru.setVar('_historial_gestion_id', b.idGestion);
+            expect(b.idManagement).to.be.a('number');
+            bru.setVar('_historial_gestion_id', b.idManagement);
           });

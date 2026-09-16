@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idTipoFolio", function () {
+          test("Returns idFolioType", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idTipoFolio');
-            bru.setVar('_id', b.idTipoFolio);
+            expect(b).to.have.property('idFolioType');
+            bru.setVar('_id', b.idFolioType);
           });

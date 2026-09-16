@@ -12,8 +12,8 @@ http:
         {
           "name": "CaseTest-Usuario",
           "password": "Test1234!",
-          "tipo": "EMPLEADO",
-          "status": true
+          "type": "EMPLEADO",
+          "active": true
         }
   headers:
     - name: Content-Type
