@@ -12,7 +12,7 @@ http:
   body:
     type: json
     data: |-
-        { "nombre": "admin", "contrasenia": "admin" }
+        { "name": "admin", "password": "admin" }
   headers:
     - name: Content-Type
       value: application/json
@@ -29,9 +29,9 @@ runtime:
           });
           test("Stores user_id on success", function () {
             const b = res.getBody();
-            if (b && b.valido === true && b.idUsuario) {
-              bru.setVar('user_id', b.idUsuario);
-              expect(b.idUsuario).to.be.a('number');
+            if (b && b.valido === true && b.idUser) {
+              bru.setVar('user_id', b.idUser);
+              expect(b.idUser).to.be.a('number');
             }
           });
           test("Stores JWT token on success", function () {

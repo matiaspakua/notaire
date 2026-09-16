@@ -9,9 +9,9 @@ http:
     type: json
     data: |-
         {
-          "nombre": "apitest-usuario",
+          "name": "apitest-usuario",
           "tipo": "ADMIN",
-          "activo": true
+          "status": true
         }
   headers:
     - name: Content-Type

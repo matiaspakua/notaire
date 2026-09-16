@@ -21,5 +21,5 @@ runtime:
           test("Returns the requested concepto", function () {
             const b = res.getBody();
             expect(b.idConcepto).to.equal(Number(bru.getVar('concepto_id')));
-            expect(b).to.have.property('nombre');
+            expect(b).to.have.property('name');
           });

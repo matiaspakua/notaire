@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TI E2E","caracteres":"8"}
+        {"name":"TI E2E","characters":"8"}
   headers:
     - name: Content-Type
       value: application/json

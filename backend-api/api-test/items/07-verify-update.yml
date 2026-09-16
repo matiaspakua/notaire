@@ -16,8 +16,8 @@ runtime:
           test("Status 200 OK", function () {
             expect(res.getStatus()).to.equal(200);
           });
-          test("Persists updated valor and nombre", function () {
+          test("Persists updated value and name", function () {
             const b = res.getBody();
-            expect(b.nombre).to.equal('Recargo urgencia actualizado');
-            expect(b.valor).to.equal(750.0);
+            expect(b.name).to.equal('Recargo urgencia actualizado');
+            expect(b.value).to.equal(750.0);
           });

@@ -13,12 +13,12 @@ http:
     type: json
     data: |-
         {
-          "nombre": "Recargo urgencia",
-          "valor": 500.0,
-          "porcentaje": 10,
+          "name": "Recargo urgencia",
+          "value": 500.0,
+          "percentage": 10,
           "tipo": "RECARGO",
           "motivo": "Tramite urgente solicitado por el cliente",
-          "conceptoFijo": false,
+          "fixedConcept": false,
           "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
         }
   headers:
@@ -38,8 +38,8 @@ runtime:
             expect(b.idItem).to.be.a('number');
             bru.setVar('item_id', b.idItem);
           });
-          test("Persists nombre and tipo", function () {
+          test("Persists name and tipo", function () {
             const b = res.getBody();
-            expect(b.nombre).to.equal('Recargo urgencia');
+            expect(b.name).to.equal('Recargo urgencia');
             expect(b.tipo).to.equal('RECARGO');
           });

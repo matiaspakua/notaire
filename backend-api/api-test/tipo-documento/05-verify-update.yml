@@ -15,6 +15,6 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Update persisted (nombre)", function () {
-            expect(String(res.getBody().nombre)).to.equal('TD E2E Actualizado');
+          test("Update persisted (name)", function () {
+            expect(String(res.getBody().name)).to.equal('TD E2E Actualizado');
           });

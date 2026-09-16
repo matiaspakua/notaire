@@ -10,12 +10,12 @@ http:
     type: json
     data: |-
         {
-          "nombre": "Recargo urgencia actualizado",
-          "valor": 750.0,
-          "porcentaje": 15,
+          "name": "Recargo urgencia actualizado",
+          "value": 750.0,
+          "percentage": 15,
           "tipo": "RECARGO",
           "motivo": "Tramite urgente solicitado por el cliente",
-          "conceptoFijo": false,
+          "fixedConcept": false,
           "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
         }
   headers:

@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TT E2E","descripcion":"tramite e2e","seArchiva":false,"seInscribe":false}
+        {"name":"TT E2E","descripcion":"tramite e2e","seArchiva":false,"seInscribe":false}
   headers:
     - name: Content-Type
       value: application/json

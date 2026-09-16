@@ -15,7 +15,7 @@ http:
   body:
     type: json
     data: |-
-        { "nombre": "admin", "contrasenia": "definitely-wrong" }
+        { "name": "admin", "password": "definitely-wrong" }
   headers:
     - name: Content-Type
       value: application/json

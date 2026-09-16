@@ -15,4 +15,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Returns the usuario", function () { expect(res.getBody().idUsuario).to.equal(Number(bru.getVar('usuario_id'))); });
+          test("Returns the usuario", function () { expect(res.getBody().idUser).to.equal(Number(bru.getVar('usuario_id'))); });

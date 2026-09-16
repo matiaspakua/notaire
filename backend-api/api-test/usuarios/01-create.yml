@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
         {
-          "nombre": "apitest-usuario",
-          "contrasenia": "Test1234!",
+          "name": "apitest-usuario",
+          "password": "Test1234!",
           "tipo": "EMPLEADO",
-          "activo": true
+          "status": true
         }
   headers:
     - name: Content-Type
@@ -25,9 +25,9 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idUsuario and hashes the password", function () {
+          test("Returns idUser and hashes the password", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idUsuario');
-            expect(b.contrasenia, 'password must not be stored in plaintext').to.not.equal('Test1234!');
-            bru.setVar('usuario_id', b.idUsuario);
+            expect(b).to.have.property('idUser');
+            expect(b.password, 'password must not be stored in plaintext').to.not.equal('Test1234!');
+            bru.setVar('usuario_id', b.idUser);
           });
