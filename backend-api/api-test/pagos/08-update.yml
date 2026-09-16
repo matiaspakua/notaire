@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
         {
-          "monto": 4500.0,
-          "fecha": "2026-09-05",
-          "observaciones": "Pago parcial E2E actualizado",
-          "metodoPago": "Efectivo"
+          "amount": 4500.0,
+          "date": "2026-09-05",
+          "notes": "Pago parcial E2E actualizado",
+          "paymentMethod": "Efectivo"
         }
   headers:
     - name: Content-Type
@@ -28,5 +28,5 @@ runtime:
             expect(res.getStatus()).to.equal(200);
           });
           test("Persists updated monto", function () {
-            expect(res.getBody().monto).to.equal(4500.0);
+            expect(res.getBody().amount).to.equal(4500.0);
           });

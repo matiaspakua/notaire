@@ -19,5 +19,5 @@ runtime:
             const id = Number(bru.getVar('presupuesto_id'));
             const page = res.getBody();
             expect(page).to.have.property('content');
-            expect(page.content.some(p => p.idPresupuesto === id)).to.equal(true);
+            expect(page.content.some(p => p.idBudget === id)).to.equal(true);
           });

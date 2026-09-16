@@ -11,8 +11,8 @@ http:
     type: json
     data: |-
         {
-          "fecha": "2026-09-05",
-          "observaciones": "Gestion en tramite",
+          "date": "2026-09-05",
+          "notes": "Gestion en tramite",
           "fkIdGestion": { "idGestion": {{_historial_gestion_id}} },
           "fkIdEstadoGestion": { "idEstadoGestion": 2 }
         }

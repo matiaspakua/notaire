@@ -18,5 +18,5 @@ runtime:
           });
           test("Includes the created pago", function () {
             const b = res.getBody();
-            expect(b.some(p => p.idPago === bru.getVar('pago_id'))).to.be.true;
+            expect(b.some(p => p.idPayment === bru.getVar('pago_id'))).to.be.true;
           });
