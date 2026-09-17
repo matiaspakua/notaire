@@ -1,7 +1,6 @@
 package com.licensis.notaire.application.port.out.notebook;
 
 import com.licensis.notaire.business.Folio;
-import com.licensis.notaire.business.Notebook;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.licensis.notaire.application.port.out.document;
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.business.DocumentCostTemplatePK;
 import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.ProcedureType;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ public interface DocumentRepositoryPort {
     List<DocumentCostTemplate> findCostTemplatesByProcedureType(Integer procedureTypeId);
 
     Optional<DocumentType> findDocumentTypeById(Integer id);
+
+    Optional<ProcedureType> findProcedureTypeById(Integer id);
 
     boolean existsCostTemplateById(DocumentCostTemplatePK id);
 
