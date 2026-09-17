@@ -1,5 +1,7 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
+import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
 import com.licensis.notaire.exception.DuplicateDeedNumberException;
 import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
 import com.licensis.notaire.business.Deed;
@@ -10,8 +12,6 @@ import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.DeedService;
-import com.licensis.notaire.service.DeedNumberingService;
-import com.licensis.notaire.service.NumberingValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class DeedServiceTest {
     private FolioRepository folioRepository;
 
     @Mock
-    private DeedNumberingService deedNumberingService;
+    private ValidateDeedNumberingUseCase validateDeedNumberingUseCase;
 
     @InjectMocks
     private DeedService deedService;
@@ -163,8 +163,8 @@ class DeedServiceTest {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
-                .thenReturn(NumberingValidationResult.DUPLICATE);
+        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(DeedNumberingValidationResult.DUPLICATE);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
                 .isInstanceOf(DuplicateDeedNumberException.class);
@@ -178,8 +178,8 @@ class DeedServiceTest {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
-                .thenReturn(NumberingValidationResult.SKIP_UNJUSTIFIED);
+        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
 
         assertThatThrownBy(() -> deedService.save(testDeed))
                 .isInstanceOf(UnjustifiedNumberingGapException.class);
@@ -193,8 +193,8 @@ class DeedServiceTest {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
-        when(deedNumberingService.validate(100, testNotary, 2026, false, null, 1))
-                .thenReturn(NumberingValidationResult.OK);
+        when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
+                .thenReturn(DeedNumberingValidationResult.OK);
         when(deedRepository.save(testDeed)).thenReturn(testDeed);
 
         Deed result = deedService.save(testDeed);

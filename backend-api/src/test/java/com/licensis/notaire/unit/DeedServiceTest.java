@@ -1,12 +1,12 @@
 package com.licensis.notaire.unit;
 
+import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.service.DeedService;
-import com.licensis.notaire.service.DeedNumberingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +38,7 @@ class DeedServiceTest {
     private FolioRepository folioRepository;
 
     @Mock
-    private DeedNumberingService deedNumberingService;
+    private ValidateDeedNumberingUseCase validateDeedNumberingUseCase;
 
     @InjectMocks
     private DeedService deedService;

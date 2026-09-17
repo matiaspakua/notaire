@@ -1,5 +1,7 @@
 package com.licensis.notaire.service;
 
+import com.licensis.notaire.application.port.in.deed.ValidateDeedNumberingUseCase;
+import com.licensis.notaire.domain.deed.DeedNumberingValidationResult;
 import com.licensis.notaire.exception.DuplicateDeedNumberException;
 import com.licensis.notaire.exception.UnjustifiedNumberingGapException;
 import com.licensis.notaire.business.Deed;
@@ -27,14 +29,14 @@ public class DeedService {
     private final DeedRepository deedRepository;
     private final PersonRepository personRepository;
     private final FolioRepository folioRepository;
-    private final DeedNumberingService deedNumberingService;
+    private final ValidateDeedNumberingUseCase validateDeedNumberingUseCase;
 
     public DeedService(DeedRepository deedRepository, PersonRepository personRepository,
-            FolioRepository folioRepository, DeedNumberingService deedNumberingService) {
+            FolioRepository folioRepository, ValidateDeedNumberingUseCase validateDeedNumberingUseCase) {
         this.deedRepository = deedRepository;
         this.personRepository = personRepository;
         this.folioRepository = folioRepository;
-        this.deedNumberingService = deedNumberingService;
+        this.validateDeedNumberingUseCase = validateDeedNumberingUseCase;
     }
 
     @Transactional(readOnly = true)
@@ -66,16 +68,16 @@ public class DeedService {
                 return;
             }
             boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
-            NumberingValidationResult resultado = deedNumberingService.validate(
+            DeedNumberingValidationResult resultado = validateDeedNumberingUseCase.validate(
                     entity.getNumber(), notary, folio.getYear(), isAuxiliary,
                     entity.getNotes(), entity.getIdDeed());
 
-            if (resultado == NumberingValidationResult.DUPLICATE) {
+            if (resultado == DeedNumberingValidationResult.DUPLICATE) {
                 throw new DuplicateDeedNumberException(
                         "El número " + entity.getNumber() + " ya fue utilizado en el protocolo "
                                 + (isAuxiliary ? "auxiliar" : "principal") + " del año " + folio.getYear());
             }
-            if (resultado == NumberingValidationResult.SKIP_UNJUSTIFIED) {
+            if (resultado == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
                 throw new UnjustifiedNumberingGapException(
                         "El número " + entity.getNumber() + " deja un salto en la numeración correlativa; "
                                 + "debe indicar una justificación en observaciones");
