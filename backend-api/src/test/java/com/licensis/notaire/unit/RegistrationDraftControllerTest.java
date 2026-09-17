@@ -1,13 +1,13 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.RegistrationDraftController;
+import com.licensis.notaire.adapter.in.web.registrationdraft.RegistrationDraftController;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.RegistrationDraft;
-import com.licensis.notaire.service.RegistrationDraftService;
+import com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -5,7 +5,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.AuditRecordRepository;
-import com.licensis.notaire.service.AuditRecordService;
+import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

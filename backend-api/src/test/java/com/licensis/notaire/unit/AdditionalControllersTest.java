@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.ManagementController;
-import com.licensis.notaire.api.ProcedureTemplateController;
-import com.licensis.notaire.api.ReportController;
-import com.licensis.notaire.api.UserController;
+import com.licensis.notaire.adapter.in.web.management.ManagementController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
+import com.licensis.notaire.adapter.in.web.report.ReportController;
+import com.licensis.notaire.adapter.in.web.user.UserController;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
@@ -14,7 +14,7 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.service.ReportService;
+import com.licensis.notaire.application.usecase.report.ReportService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -133,14 +133,14 @@ class AdditionalControllersTest {
         void all() throws Exception {
             DeedManagementRepository repo = mock(DeedManagementRepository.class);
             HistoryRepository histRepo = mock(HistoryRepository.class);
-            var traceService = mock(com.licensis.notaire.service.WorkflowTraceService.class);
-            var queryService = mock(com.licensis.notaire.service.ManagementQueryService.class);
-            var transitionService = mock(com.licensis.notaire.service.ManagementTransitionService.class);
-            var bitacoraService = mock(com.licensis.notaire.service.ManagementBitacoraService.class);
-            var documentEntidadExternaService = mock(com.licensis.notaire.service.ExternalEntityDocumentService.class);
-            var reingresoDocumentacionService = mock(com.licensis.notaire.service.ReingresoDocumentacionService.class);
+            var traceService = mock(com.licensis.notaire.application.usecase.workflow.WorkflowTraceService.class);
+            var queryService = mock(com.licensis.notaire.application.usecase.management.ManagementQueryService.class);
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
-            var transitionWebMapper = mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
+            var transitionWebMapper =
+                    mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
+            var bitacoraService = mock(com.licensis.notaire.application.usecase.management.ManagementBitacoraService.class);
+            var documentEntidadExternaService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
+            var reingresoDocumentacionService = mock(com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService.class);
             var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonRepository.class),
                     mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
@@ -148,14 +148,11 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.repository.ProcedureTypeRepository.class),
                     mock(com.licensis.notaire.repository.ProcedureRepository.class),
                     mock(com.licensis.notaire.repository.PropertyRepository.class),
-                    mock(com.licensis.notaire.service.ManagementArchiveDebtService.class),
-                    mock(com.licensis.notaire.service.ManagementSubstitutionService.class),
-                    mock(com.licensis.notaire.service.ManagementResumenFinancieroService.class),
-                    bitacoraService, transitionService,
-                    transitionUseCase,
-                    transitionWebMapper,
-                    documentEntidadExternaService,
-                    reingresoDocumentacionService, mock(com.licensis.notaire.service.ProcedureFolderService.class)))
+                    mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
+                    mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
+                    mock(com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService.class),
+                    bitacoraService, transitionUseCase, transitionWebMapper, documentEntidadExternaService,
+                    reingresoDocumentacionService, mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();
@@ -197,24 +194,14 @@ class AdditionalControllersTest {
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
 
-            when(transitionService.transition(1, "En Progreso")).thenReturn(g);
-            when(transitionService.transition(1, "Estado Inexistente"))
-                    .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
-                            "Transición no permitida"));
-            when(transitionService.transition(2, "En Progreso"))
-                    .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
-                            "Gestión no encontrada con ID: 2"));
-
-            // Setup transitionUseCase and transitionWebMapper mocks
-            var okOutput = new com.licensis.notaire.application.port.in.management.TransitionManagementOutput(1);
-            var okResponse = new com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.ManagementSummaryDto(1, "En Progreso");
-            when(transitionUseCase.execute(1, "En Progreso")).thenReturn(okOutput);
-            when(transitionWebMapper.mapToHttpResponse(okOutput)).thenReturn(okResponse);
-
+            var transitionOutput = new com.licensis.notaire.application.port.in.management.TransitionManagementOutput(1);
+            when(transitionUseCase.execute(1, "En Progreso")).thenReturn(transitionOutput);
+            when(transitionWebMapper.mapToHttpResponse(transitionOutput))
+                    .thenReturn(new com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper
+                            .ManagementSummaryDto(1, "En Progreso"));
             when(transitionUseCase.execute(1, "Estado Inexistente"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
                             "Transición no permitida"));
-
             when(transitionUseCase.execute(2, "En Progreso"))
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
                             "Gestión no encontrada con ID: 2"));

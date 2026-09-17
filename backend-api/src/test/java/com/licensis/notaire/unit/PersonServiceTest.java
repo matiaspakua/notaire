@@ -4,7 +4,7 @@ import com.licensis.notaire.exception.DuplicatePersonException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.service.PersonService;
+import com.licensis.notaire.application.usecase.person.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

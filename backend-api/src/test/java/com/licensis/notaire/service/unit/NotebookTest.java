@@ -8,7 +8,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.NotebookRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.service.NotebookService;
+import com.licensis.notaire.application.usecase.notebook.NotebookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

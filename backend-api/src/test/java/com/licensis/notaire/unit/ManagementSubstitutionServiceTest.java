@@ -3,7 +3,7 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.repository.SubstitutionRepository;
-import com.licensis.notaire.service.ManagementSubstitutionService;
+import com.licensis.notaire.application.usecase.management.ManagementSubstitutionService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

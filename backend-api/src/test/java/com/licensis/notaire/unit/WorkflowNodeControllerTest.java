@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.WorkflowNodeController;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowNodeController;
 import com.licensis.notaire.dto.DtoWorkflowNode;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;

@@ -5,7 +5,7 @@ import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.BudgetCatalogItemsService;
+import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

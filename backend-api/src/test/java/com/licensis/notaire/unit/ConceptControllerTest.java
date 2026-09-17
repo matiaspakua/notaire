@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.ConceptController;
+import com.licensis.notaire.adapter.in.web.concept.ConceptController;
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.repository.ConceptRepository;

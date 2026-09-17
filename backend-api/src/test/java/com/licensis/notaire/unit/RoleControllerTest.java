@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.RoleController;
+import com.licensis.notaire.adapter.in.web.user.RoleController;
 import com.licensis.notaire.business.Role;
 import com.licensis.notaire.repository.RoleRepository;
 import com.licensis.notaire.repository.UserRepository;

@@ -6,7 +6,7 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.ItemService;
+import com.licensis.notaire.application.usecase.item.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

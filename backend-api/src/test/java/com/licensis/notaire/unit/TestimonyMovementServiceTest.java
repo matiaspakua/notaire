@@ -6,7 +6,7 @@ import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.service.TestimonyMovementService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

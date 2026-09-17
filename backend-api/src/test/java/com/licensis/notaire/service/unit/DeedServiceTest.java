@@ -11,7 +11,7 @@ import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.repository.PersonRepository;
-import com.licensis.notaire.service.DeedService;
+import com.licensis.notaire.application.usecase.deed.DeedService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

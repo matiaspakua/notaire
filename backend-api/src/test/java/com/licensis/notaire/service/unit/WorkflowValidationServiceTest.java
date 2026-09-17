@@ -4,7 +4,7 @@ import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowNode;
 import com.licensis.notaire.business.WorkflowNodeType;
 import com.licensis.notaire.business.WorkflowTransition;
-import com.licensis.notaire.service.WorkflowValidationService;
+import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

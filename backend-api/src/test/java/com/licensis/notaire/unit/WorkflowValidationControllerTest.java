@@ -1,11 +1,11 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.api.WorkflowValidationController;
+import com.licensis.notaire.adapter.in.web.workflow.WorkflowValidationController;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.service.WorkflowValidationService;
-import com.licensis.notaire.service.WorkflowValidationService.ValidationResult;
+import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService;
+import com.licensis.notaire.application.usecase.workflow.WorkflowValidationService.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

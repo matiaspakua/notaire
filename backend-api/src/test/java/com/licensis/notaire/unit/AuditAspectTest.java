@@ -1,13 +1,13 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.audit.AuditAspect;
-import com.licensis.notaire.api.DeedController;
-import com.licensis.notaire.api.UserController;
+import com.licensis.notaire.adapter.in.web.deed.DeedController;
+import com.licensis.notaire.adapter.in.web.user.UserController;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.service.AuditRecordService;
+import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.AfterEach;
@@ -210,7 +210,7 @@ class AuditAspectTest {
         authenticateAs("admin");
         when(userRepository.findAll()).thenReturn(List.of(adminUser));
 
-        Class<?> requestClass = Class.forName("com.licensis.notaire.api.UserController$UserRequest");
+        Class<?> requestClass = Class.forName("com.licensis.notaire.adapter.in.web.user.UserController$UserRequest");
         Method method = UserController.class.getDeclaredMethod("createUser", requestClass);
         stubJoinPoint(UserController.class, method, new Object[]{null});
 

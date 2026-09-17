@@ -3,7 +3,7 @@ package com.licensis.notaire.audit;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.UserRepository;
-import com.licensis.notaire.service.AuditRecordService;
+import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -59,13 +59,13 @@ public class AuditAspect {
      * Pointcut that targets any public method declared in a controller of the
      * {@code com.licensis.notaire.api} package or of the hexagonal inbound web adapters
      * under {@code com.licensis.notaire.adapter.in.web} (ADR-021). The
-     * {@link com.licensis.notaire.api.AuditRecordController} itself is excluded to avoid
+     * {@link com.licensis.notaire.adapter.in.web.audit.AuditRecordController} itself is excluded to avoid
      * recursive auditing of audit reads.
      */
     @Pointcut(
         "(execution(public * com.licensis.notaire.api..*Controller.*(..)) "
         + "|| execution(public * com.licensis.notaire.adapter.in.web..*Controller.*(..))) "
-        + "&& !within(com.licensis.notaire.api.AuditRecordController)"
+        + "&& !within(com.licensis.notaire.adapter.in.web.audit.AuditRecordController)"
     )
     public void controllerMethods() {
         // Pointcut signature only.

@@ -2,7 +2,7 @@ package com.licensis.notaire.adapter.out.persistence.management;
 
 import com.licensis.notaire.application.port.out.management.ManagementBitacoraPort;
 import com.licensis.notaire.business.DeedManagement;
-import com.licensis.notaire.service.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
 
 /**
  * Outbound adapter for ManagementBitacoraPort.

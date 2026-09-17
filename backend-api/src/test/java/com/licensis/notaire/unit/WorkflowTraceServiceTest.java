@@ -8,7 +8,7 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
 import com.licensis.notaire.repository.WorkflowNodeRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.service.WorkflowTraceService;
+import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

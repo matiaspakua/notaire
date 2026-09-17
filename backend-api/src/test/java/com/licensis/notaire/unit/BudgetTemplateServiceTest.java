@@ -9,7 +9,7 @@ import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.BudgetTemplateService;
+import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,10 +1,10 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.api.BudgetController;
+import com.licensis.notaire.adapter.in.web.budget.BudgetController;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
-import com.licensis.notaire.service.BudgetCatalogItemsService;
-import com.licensis.notaire.service.BudgetTemplateService;
-import com.licensis.notaire.service.BudgetService;
+import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
+import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
+import com.licensis.notaire.application.usecase.budget.BudgetService;
 import com.licensis.notaire.business.Budget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
