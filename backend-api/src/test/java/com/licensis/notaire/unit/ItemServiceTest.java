@@ -4,8 +4,8 @@ import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
-import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.application.usecase.item.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,10 +27,10 @@ import static org.mockito.Mockito.when;
 class ItemServiceTest {
 
     @Mock
-    private ItemRepository itemRepository;
+    private ItemRepositoryPort itemRepository;
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private BudgetRepositoryPort budgetRepository;
 
     @InjectMocks
     private ItemService itemService;
@@ -50,7 +51,7 @@ class ItemServiceTest {
         item.setName("Item sin type");
         item.setValue(500f);
 
-        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -61,7 +62,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a discount item with a reason")
     void shouldAcceptDiscountItemWithReason() {
         Item item = buildItem(TypeItem.DESCUENTO, "Descuento por pronto pago");
-        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -73,7 +74,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a surcharge item with a reason")
     void shouldAcceptSurchargeItemWithReason() {
         Item item = buildItem(TypeItem.RECARGO, "Recargo por mora");
-        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -105,7 +106,7 @@ class ItemServiceTest {
     @DisplayName("Should accept a normal item without a reason")
     void shouldAcceptNormalItemWithoutReason() {
         Item item = buildItem(TypeItem.NORMAL, null);
-        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
@@ -115,7 +116,7 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should reject update when item does not exist")
     void shouldRejectUpdateWhenItemDoesNotExist() {
-        when(itemRepository.existsById(999)).thenReturn(false);
+        when(itemRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> itemService.update(999, buildItem(TypeItem.NORMAL, null)))
                 .isInstanceOf(ResourceNotFoundException.class);
@@ -124,7 +125,7 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should reject deletion when item does not exist")
     void shouldRejectDeletionWhenItemDoesNotExist() {
-        when(itemRepository.existsById(999)).thenReturn(false);
+        when(itemRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> itemService.delete(999))
                 .isInstanceOf(ResourceNotFoundException.class);
@@ -134,7 +135,7 @@ class ItemServiceTest {
     @DisplayName("Should return only discount and surcharge items for a budget")
     void shouldReturnDiscountsAndSurchargesForBudget() {
         when(budgetRepository.existsById(1)).thenReturn(true);
-        when(itemRepository.findByFkIdBudgetIdBudget(1)).thenReturn(List.of(
+        when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null),
                 buildItem(TypeItem.DESCUENTO, "Descuento"),
                 buildItem(TypeItem.RECARGO, "Recargo")
@@ -151,7 +152,7 @@ class ItemServiceTest {
     @DisplayName("Should return an empty list when budget has no discounts or surcharges")
     void shouldReturnEmptyListWhenNoDiscountsOrSurcharges() {
         when(budgetRepository.existsById(1)).thenReturn(true);
-        when(itemRepository.findByFkIdBudgetIdBudget(1)).thenReturn(List.of(
+        when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null)
         ));
 

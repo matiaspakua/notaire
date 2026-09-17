@@ -6,9 +6,9 @@ import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.ItemRepository;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,13 +30,13 @@ import static org.mockito.Mockito.when;
 class BudgetTemplateServiceTest {
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private BudgetRepositoryPort budgetRepository;
 
     @Mock
     private BudgetTemplateRepository budgetTemplateRepository;
 
     @Mock
-    private ItemRepository itemRepository;
+    private ItemRepositoryPort itemRepository;
 
     @InjectMocks
     private BudgetTemplateService budgetTemplateService;
@@ -62,7 +62,7 @@ class BudgetTemplateServiceTest {
                 buildTemplate("Honorarios", 1000f, 10),
                 buildTemplate("Sellado", 500f, 0)
         ));
-        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
 
@@ -81,7 +81,7 @@ class BudgetTemplateServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(5))
                 .thenReturn(List.of(template));
-        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
 

@@ -3,8 +3,8 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,10 +26,10 @@ import static org.mockito.Mockito.when;
 class BudgetCatalogItemsServiceTest {
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private BudgetRepositoryPort budgetRepository;
 
     @Mock
-    private ItemRepository itemRepository;
+    private ItemRepositoryPort itemRepository;
 
     @InjectMocks
     private BudgetCatalogItemsService budgetCatalogoItemsService;
@@ -48,7 +48,7 @@ class BudgetCatalogItemsServiceTest {
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", 500f)));
-        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10));
 
@@ -68,7 +68,7 @@ class BudgetCatalogItemsServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", 500f)));
         when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", 1000f)));
-        when(itemRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10, 11));
 
