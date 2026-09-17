@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.usecase.document;
 
+import com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort;
 import com.licensis.notaire.dto.DtoDocumentEntidadExterna;
 import com.licensis.notaire.dto.DtoManagementDocumentsEntidadesExternas;
 import com.licensis.notaire.dto.DtoMovementDocumentEntidadExterna;
@@ -11,9 +12,6 @@ import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
-import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.ProcedureRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,25 +32,20 @@ public class ExternalEntityDocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(ExternalEntityDocumentService.class);
 
-    private final DeedManagementRepository managementRepository;
-    private final ProcedureRepository procedureRepository;
-    private final SubmittedDocumentRepository submittedDocumentRepository;
+    private final ExternalDocumentRepositoryPort documentRepository;
     private final ManagementTransitionService managementTransitionService;
 
-    public ExternalEntityDocumentService(DeedManagementRepository managementRepository,
-            ProcedureRepository procedureRepository, SubmittedDocumentRepository submittedDocumentRepository,
+    public ExternalEntityDocumentService(ExternalDocumentRepositoryPort documentRepository,
             ManagementTransitionService managementTransitionService) {
-        this.managementRepository = managementRepository;
-        this.procedureRepository = procedureRepository;
-        this.submittedDocumentRepository = submittedDocumentRepository;
+        this.documentRepository = documentRepository;
         this.managementTransitionService = managementTransitionService;
     }
 
     @Transactional(readOnly = true)
     public DtoManagementDocumentsEntidadesExternas getDocuments(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
-        List<SubmittedDocument> documents = submittedDocumentRepository
-                .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(idManagement,
+        List<SubmittedDocument> documents = documentRepository
+                .findByManagementAndDeliveredBy(idManagement,
                         BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
         return toDto(management, documents);
     }
@@ -61,14 +54,14 @@ public class ExternalEntityDocumentService {
     public DtoDocumentEntidadExterna registerMovement(Integer idManagement, Integer idSubmittedDocument,
             DtoMovementDocumentEntidadExterna movement) {
         findManagementOrThrow(idManagement);
-        SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
+        SubmittedDocument document = documentRepository.findSubmittedDocumentById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Documento presentado no encontrado con ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
         validateIsExternalEntity(document);
 
         applyMovement(document, movement);
-        SubmittedDocument guardado = submittedDocumentRepository.save(document);
+        SubmittedDocument guardado = documentRepository.saveSubmittedDocument(document);
 
         return toDto(guardado);
     }
@@ -84,8 +77,8 @@ public class ExternalEntityDocumentService {
      * rollback-only cuando {@link GestionTransitionService#transition} falla.
      */
     public void tryCompleteDocumentation(Integer idManagement) {
-        List<SubmittedDocument> documents = submittedDocumentRepository
-                .findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(idManagement,
+        List<SubmittedDocument> documents = documentRepository
+                .findByManagementAndDeliveredBy(idManagement,
                         BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
         boolean todosEntregados = !documents.isEmpty()
                 && documents.stream().allMatch(doc -> Boolean.TRUE.equals(doc.getDelivered()));
@@ -101,7 +94,7 @@ public class ExternalEntityDocumentService {
     }
 
     private DeedManagement findManagementOrThrow(Integer idManagement) {
-        return managementRepository.findById(idManagement)
+        return documentRepository.findManagementById(idManagement)
                 .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
     }
 
@@ -158,7 +151,7 @@ public class ExternalEntityDocumentService {
     }
 
     private String resolveCadastralDesignation(Integer idManagement) {
-        return procedureRepository.findByFkIdManagementIdManagement(idManagement).stream()
+        return documentRepository.findProceduresByManagementId(idManagement).stream()
                 .map(Procedure::getFkIdProperty)
                 .filter(java.util.Objects::nonNull)
                 .map(Property::getCadastralDesignation)

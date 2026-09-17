@@ -4,8 +4,10 @@ import com.licensis.notaire.application.port.out.document.DocumentRepositoryPort
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.business.DocumentCostTemplatePK;
 import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.DocumentCostTemplateRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,11 +21,14 @@ public class DocumentPersistenceAdapter implements DocumentRepositoryPort {
 
     private final DocumentCostTemplateRepository costTemplateRepository;
     private final DocumentTypeRepository documentTypeRepository;
+    private final ProcedureTypeRepository procedureTypeRepository;
 
     public DocumentPersistenceAdapter(DocumentCostTemplateRepository costTemplateRepository,
-                                       DocumentTypeRepository documentTypeRepository) {
+                                       DocumentTypeRepository documentTypeRepository,
+                                       ProcedureTypeRepository procedureTypeRepository) {
         this.costTemplateRepository = costTemplateRepository;
         this.documentTypeRepository = documentTypeRepository;
+        this.procedureTypeRepository = procedureTypeRepository;
     }
 
     @Override
@@ -44,6 +49,11 @@ public class DocumentPersistenceAdapter implements DocumentRepositoryPort {
     @Override
     public Optional<DocumentType> findDocumentTypeById(Integer id) {
         return documentTypeRepository.findById(id);
+    }
+
+    @Override
+    public Optional<ProcedureType> findProcedureTypeById(Integer id) {
+        return procedureTypeRepository.findById(id);
     }
 
     @Override

@@ -1,13 +1,11 @@
 package com.licensis.notaire.application.usecase.document;
 
+import com.licensis.notaire.application.port.out.document.DocumentRepositoryPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.ProcedureType;
-import com.licensis.notaire.repository.DocumentCostTemplateRepository;
-import com.licensis.notaire.repository.DocumentTypeRepository;
-import com.licensis.notaire.repository.ProcedureTypeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,26 +19,20 @@ import java.util.List;
 @Transactional
 public class DocumentCostTemplateService {
 
-    private final DocumentCostTemplateRepository documentCostTemplateRepository;
-    private final ProcedureTypeRepository procedureTypeRepository;
-    private final DocumentTypeRepository documentTypeRepository;
+    private final DocumentRepositoryPort documentRepository;
 
-    public DocumentCostTemplateService(DocumentCostTemplateRepository documentCostTemplateRepository,
-                                           ProcedureTypeRepository procedureTypeRepository,
-                                           DocumentTypeRepository documentTypeRepository) {
-        this.documentCostTemplateRepository = documentCostTemplateRepository;
-        this.procedureTypeRepository = procedureTypeRepository;
-        this.documentTypeRepository = documentTypeRepository;
+    public DocumentCostTemplateService(DocumentRepositoryPort documentRepository) {
+        this.documentRepository = documentRepository;
     }
 
     public DocumentCostTemplate create(Integer idProcedureType, Integer idDocumentType,
                                           Float fixedAmount, Float variablePercentage) {
         validateExactlyOneCost(fixedAmount, variablePercentage);
 
-        ProcedureType procedureType = procedureTypeRepository.findById(idProcedureType)
+        ProcedureType procedureType = documentRepository.findProcedureTypeById(idProcedureType)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe el tipo de trámite con ID: " + idProcedureType));
-        DocumentType documentType = documentTypeRepository.findById(idDocumentType)
+        DocumentType documentType = documentRepository.findDocumentTypeById(idDocumentType)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe el tipo de documento con ID: " + idDocumentType));
 
@@ -50,12 +42,12 @@ public class DocumentCostTemplateService {
         cost.setDocumentType(documentType);
         cost.setFixedAmount(fixedAmount);
         cost.setVariablePercentage(variablePercentage);
-        return documentCostTemplateRepository.save(cost);
+        return documentRepository.saveCostTemplate(cost);
     }
 
     @Transactional(readOnly = true)
     public List<DocumentCostTemplate> findByTypeProcedure(Integer idProcedureType) {
-        return documentCostTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType);
+        return documentRepository.findCostTemplatesByProcedureType(idProcedureType);
     }
 
     private void validateExactlyOneCost(Float fixedAmount, Float variablePercentage) {
