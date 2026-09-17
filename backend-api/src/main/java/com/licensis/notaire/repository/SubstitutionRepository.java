@@ -9,9 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubstitutionRepository extends JpaRepository<Substitution, Integer> {
+
+    @Query("SELECT s FROM Substitution s "
+            + "JOIN FETCH s.fkIdSubstitute JOIN FETCH s.fkIdSubstituted WHERE s.idSubstitution = :id")
+    Optional<Substitution> findByIdWithPersons(@Param("id") Integer id);
 
     List<Substitution> findByFkIdSubstitute(Person suplente);
 

@@ -30,7 +30,7 @@ public class SubstitutionPersistenceAdapter implements SubstitutionRepositoryPor
 
     @Override
     public Optional<Substitution> findById(Integer id) {
-        return substitutionRepository.findById(id);
+        return substitutionRepository.findByIdWithPersons(id);
     }
 
     @Override
