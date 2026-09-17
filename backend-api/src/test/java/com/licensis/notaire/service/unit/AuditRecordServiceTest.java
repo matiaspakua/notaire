@@ -1,9 +1,9 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort;
 import com.licensis.notaire.dto.DtoAuditRecord;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.repository.AuditRecordRepository;
 import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 class AuditRecordServiceTest {
 
     @Mock
-    private AuditRecordRepository repository;
+    private AuditRecordRepositoryPort repository;
 
     @InjectMocks
     private AuditRecordService service;

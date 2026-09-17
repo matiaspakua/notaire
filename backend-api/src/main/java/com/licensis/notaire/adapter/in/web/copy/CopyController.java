@@ -1,8 +1,7 @@
 package com.licensis.notaire.adapter.in.web.copy;
 
+import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.business.Copy;
-import com.licensis.notaire.repository.CopyRepository;
-import com.licensis.notaire.repository.TestimonyMovementRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,20 +30,17 @@ public class CopyController {
 
     private static final Logger log = LoggerFactory.getLogger(CopyController.class);
 
-    private final CopyRepository repository;
-    private final TestimonyMovementRepository testimonyMovementRepository;
+    private final CopyService service;
 
-    public CopyController(CopyRepository repository,
-                            TestimonyMovementRepository testimonyMovementRepository) {
-        this.repository = repository;
-        this.testimonyMovementRepository = testimonyMovementRepository;
+    public CopyController(CopyService service) {
+        this.service = service;
     }
 
     @GetMapping
     @Operation(summary = "Obtener todas las copias")
     @Transactional(readOnly = true)
     public ResponseEntity<List<Copy>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(service.findAll());
     }
 
     @ApiResponses({
@@ -55,7 +51,7 @@ public class CopyController {
     @Operation(summary = "Obtener copia por ID")
     @Transactional(readOnly = true)
     public ResponseEntity<Copy> getById(@PathVariable Integer id) {
-        return repository.findById(id)
+        return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -69,13 +65,12 @@ public class CopyController {
     @Operation(summary = "Crear nueva copia")
     public ResponseEntity<Object> create(@RequestBody Copy entity) {
         if (entity.getFkIdTestimony() != null
-                && testimonyMovementRepository.existsByFkIdTestimonyIdTestimonyAndRegisteredTrue(
-                        entity.getFkIdTestimony().getIdTestimony())) {
+                && !service.canCreateCopyForTestimony(entity.getFkIdTestimony().getIdTestimony())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "El testimonio ya tiene un movimiento inscripto y no admite nuevas copias."));
         }
         try {
-            entity = repository.save(entity);
+            entity = service.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity);
         } catch (Exception e) {
             log.error("Failed to create copia", e);
@@ -90,12 +85,12 @@ public class CopyController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar copia")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Copy entity) {
-        if (!repository.existsById(id)) {
+        if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         try {
             entity.setIdCopy(id);
-            repository.save(entity);
+            service.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to update copia id {}", id, e);
@@ -110,11 +105,11 @@ public class CopyController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar copia")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!repository.existsById(id)) {
+        if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         try {
-            repository.deleteById(id);
+            service.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to delete copia id {}", id, e);

@@ -1,12 +1,12 @@
 package com.licensis.notaire.application.usecase.audit;
 
+import com.licensis.notaire.application.port.out.audit.AuditRecordRepositoryPort;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoAuditRecord;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.repository.AuditRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -22,9 +22,9 @@ public class AuditRecordService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditRecordService.class);
 
-    private final AuditRecordRepository repository;
+    private final AuditRecordRepositoryPort repository;
 
-    public AuditRecordService(AuditRecordRepository repository) {
+    public AuditRecordService(AuditRecordRepositoryPort repository) {
         this.repository = repository;
     }
 
