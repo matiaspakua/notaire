@@ -12,7 +12,7 @@ import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import com.licensis.notaire.repository.UserRepository;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class AdditionalControllersTest {
         @Test
         @DisplayName("getAll and getByTipoTramite endpoints")
         void all() throws Exception {
-            ProcedureTemplateRepository repo = mock(ProcedureTemplateRepository.class);
+            ProcedureTemplateRepositoryPort repo = mock(ProcedureTemplateRepositoryPort.class);
             var mvc = standaloneSetup(new ProcedureTemplateController(repo)).build();
             when(repo.findAll()).thenReturn(List.of(new ProcedureTemplate()));
             when(repo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of(new ProcedureTemplate()));

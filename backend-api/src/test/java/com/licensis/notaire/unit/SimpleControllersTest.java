@@ -42,9 +42,9 @@ import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.repository.FolioTypeRepository;
-import com.licensis.notaire.repository.ProcedureTypeRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
-import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
@@ -615,13 +615,13 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("TipoDeTramiteController")
     class ProcedureTypeControllerTests {
-        private final ProcedureTypeRepository repo = mock(ProcedureTypeRepository.class);
-        private final com.licensis.notaire.repository.ProcedureTemplateRepository templateRepo =
-                mock(com.licensis.notaire.repository.ProcedureTemplateRepository.class);
+        private final ProcedureTypeRepositoryPort repo = mock(ProcedureTypeRepositoryPort.class);
+        private final com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort templateRepo =
+                mock(com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort.class);
         private final com.licensis.notaire.repository.BudgetTemplateRepository budgetRepo =
                 mock(com.licensis.notaire.repository.BudgetTemplateRepository.class);
-        private final com.licensis.notaire.repository.ProcedureRepository procedureRepo =
-                mock(com.licensis.notaire.repository.ProcedureRepository.class);
+        private final com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort procedureRepo =
+                mock(com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort.class);
         private final com.licensis.notaire.repository.WorkflowDefinitionRepository workflowRepo =
                 mock(com.licensis.notaire.repository.WorkflowDefinitionRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
@@ -721,7 +721,7 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("TramiteController")
     class ProcedureControllerTests {
-        private final ProcedureRepository repo = mock(ProcedureRepository.class);
+        private final ProcedureRepositoryPort repo = mock(ProcedureRepositoryPort.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new ProcedureController(repo))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
