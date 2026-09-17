@@ -3,9 +3,9 @@ package com.licensis.notaire.adapter.in.web.procedure;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
-import com.licensis.notaire.repository.ProcedureTypeRepository;
-import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
+import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.business.WorkflowDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,16 +34,16 @@ import java.util.Optional;
 @Tag(name = "Tipo de Tramite", description = "API para tipos de tramite")
 public class ProcedureTypeController {
 
-    private final ProcedureTypeRepository repository;
+    private final ProcedureTypeRepositoryPort repository;
     private final BudgetTemplateRepository budgetTemplateRepository;
-    private final ProcedureRepository procedureRepository;
-    private final ProcedureTemplateRepository procedureTemplateRepository;
+    private final ProcedureRepositoryPort procedureRepository;
+    private final ProcedureTemplateRepositoryPort procedureTemplateRepository;
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
 
-    public ProcedureTypeController(ProcedureTypeRepository repository,
+    public ProcedureTypeController(ProcedureTypeRepositoryPort repository,
                                    BudgetTemplateRepository budgetTemplateRepository,
-                                   ProcedureRepository procedureRepository,
-                                   ProcedureTemplateRepository procedureTemplateRepository,
+                                   ProcedureRepositoryPort procedureRepository,
+                                   ProcedureTemplateRepositoryPort procedureTemplateRepository,
                                    WorkflowDefinitionRepository workflowDefinitionRepository) {
         this.repository = repository;
         this.budgetTemplateRepository = budgetTemplateRepository;

@@ -2,7 +2,7 @@ package com.licensis.notaire.adapter.in.web.procedure;
 
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,9 +26,9 @@ import java.util.List;
 @Tag(name = "PlantillaTramite", description = "API para plantillas de tramite (documentos por tipo de tramite)")
 public class ProcedureTemplateController {
 
-    private final ProcedureTemplateRepository repository;
+    private final ProcedureTemplateRepositoryPort repository;
 
-    public ProcedureTemplateController(ProcedureTemplateRepository repository) {
+    public ProcedureTemplateController(ProcedureTemplateRepositoryPort repository) {
         this.repository = repository;
     }
 
