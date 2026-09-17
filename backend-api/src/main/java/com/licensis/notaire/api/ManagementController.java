@@ -38,6 +38,8 @@ import com.licensis.notaire.service.ManagementSubstitutionService;
 import com.licensis.notaire.service.ManagementTransitionService;
 import com.licensis.notaire.service.ReingresoDocumentacionService;
 import com.licensis.notaire.service.WorkflowTraceService;
+import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
+import com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -88,6 +90,8 @@ public class ManagementController {
     private final ManagementResumenFinancieroService managementResumenFinancieroService;
     private final ManagementBitacoraService managementBitacoraService;
     private final ManagementTransitionService managementTransitionService;
+    private final TransitionManagementUseCase transitionManagementUseCase;
+    private final TransitionManagementWebMapper transitionManagementWebMapper;
     private final ExternalEntityDocumentService documentEntidadExternaService;
     private final ReingresoDocumentacionService reingresoDocumentacionService;
     private final ProcedureFolderService procedureFolderService;
@@ -104,6 +108,8 @@ public class ManagementController {
                              ManagementResumenFinancieroService managementResumenFinancieroService,
                              ManagementBitacoraService managementBitacoraService,
                              ManagementTransitionService managementTransitionService,
+                             TransitionManagementUseCase transitionManagementUseCase,
+                             TransitionManagementWebMapper transitionManagementWebMapper,
                              ExternalEntityDocumentService documentEntidadExternaService,
                              ReingresoDocumentacionService reingresoDocumentacionService,
                              ProcedureFolderService procedureFolderService) {
@@ -122,6 +128,8 @@ public class ManagementController {
         this.managementResumenFinancieroService = managementResumenFinancieroService;
         this.managementBitacoraService = managementBitacoraService;
         this.managementTransitionService = managementTransitionService;
+        this.transitionManagementUseCase = transitionManagementUseCase;
+        this.transitionManagementWebMapper = transitionManagementWebMapper;
         this.documentEntidadExternaService = documentEntidadExternaService;
         this.reingresoDocumentacionService = reingresoDocumentacionService;
         this.procedureFolderService = procedureFolderService;
@@ -449,10 +457,10 @@ public class ManagementController {
     })
     @PostMapping("/{id}/transition")
     @Operation(summary = "CU83 - Transicionar el estado de una gestión validando el workflow definido")
-    public ResponseEntity<DtoManagementSummary> transition(@PathVariable Integer id,
+    public ResponseEntity<?> transition(@PathVariable Integer id,
             @RequestBody DtoTransicionRequest request) {
-        managementTransitionService.transition(id, request.statusDestination());
-        return ResponseEntity.ok(managementQueryService.findById(id).orElseThrow());
+        var output = transitionManagementUseCase.execute(id, request.statusDestination());
+        return ResponseEntity.ok(transitionManagementWebMapper.mapToHttpResponse(output));
     }
 
     @ApiResponses({
