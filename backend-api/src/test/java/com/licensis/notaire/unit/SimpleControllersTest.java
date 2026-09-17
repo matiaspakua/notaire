@@ -14,6 +14,7 @@ import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
 import com.licensis.notaire.adapter.in.web.person.IdentificationTypeController;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
+import com.licensis.notaire.application.usecase.copy.CopyService;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
@@ -34,7 +35,6 @@ import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.CopyRepository;
 import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.HistoryRepository;
@@ -89,17 +89,16 @@ class SimpleControllersTest {
     @Nested
     @DisplayName("CopiaController")
     class CopyControllerTests {
-        private final CopyRepository repo = mock(CopyRepository.class);
-        private final TestimonyMovementRepository testimonyMovementRepository = mock(TestimonyMovementRepository.class);
+        private final CopyService service = mock(CopyService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new CopyController(repo, testimonyMovementRepository)).build();
+                standaloneSetup(new CopyController(service)).build();
 
         @Test
         @DisplayName("GET all should return 200")
         void getAll() throws Exception {
             Copy c = new Copy();
             c.setIdCopy(1);
-            when(repo.findAll()).thenReturn(List.of(c));
+            when(service.findAll()).thenReturn(List.of(c));
             mvc.perform(get("/api/v1/copia")).andExpect(status().isOk());
         }
 
@@ -108,8 +107,8 @@ class SimpleControllersTest {
         void getById() throws Exception {
             Copy c = new Copy();
             c.setIdCopy(1);
-            when(repo.findById(1)).thenReturn(Optional.of(c));
-            when(repo.findById(2)).thenReturn(Optional.empty());
+            when(service.findById(1)).thenReturn(Optional.of(c));
+            when(service.findById(2)).thenReturn(Optional.empty());
             mvc.perform(get("/api/v1/copia/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/copia/2")).andExpect(status().isNotFound());
         }
@@ -118,10 +117,12 @@ class SimpleControllersTest {
         @DisplayName("POST should return 201 on success and 500 on failure")
         void create() throws Exception {
             Copy c = new Copy();
+            when(service.save(any(Copy.class))).thenReturn(c);
+            when(service.canCreateCopyForTestimony(any())).thenReturn(true);
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(mapper.writeValueAsString(c)))
                     .andExpect(status().isCreated());
-            when(repo.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(mapper.writeValueAsString(c)))
                     .andExpect(status().isInternalServerError());
@@ -131,13 +132,13 @@ class SimpleControllersTest {
         @DisplayName("PUT should return 200 when present, 404 when missing, 500 on failure")
         void update() throws Exception {
             Copy c = new Copy();
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            when(service.existsById(1)).thenReturn(true);
+            when(service.existsById(2)).thenReturn(false);
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/copia/2").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isNotFound());
-            when(repo.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(mapper.writeValueAsString(c))).andExpect(status().isInternalServerError());
         }
@@ -145,11 +146,11 @@ class SimpleControllersTest {
         @Test
         @DisplayName("DELETE should return 200 when present, 404 when not, 409 on failure")
         void deleteCopy() throws Exception {
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            when(service.existsById(1)).thenReturn(true);
+            when(service.existsById(2)).thenReturn(false);
             mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/copia/2")).andExpect(status().isNotFound());
-            doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
+            doThrow(new RuntimeException("fk")).when(service).deleteById(1);
             mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isConflict());
         }
     }
