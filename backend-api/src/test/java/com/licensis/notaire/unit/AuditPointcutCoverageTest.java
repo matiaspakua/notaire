@@ -126,14 +126,14 @@ class AuditPointcutCoverageTest {
     @Test
     @DisplayName("Audit pointcut should still match legacy api-package controllers")
     void shouldMatchLegacyApiPackageControllers() throws Exception {
-        assertControllerIsAudited(Class.forName("com.licensis.notaire.api.BudgetController"));
+        assertControllerIsAudited(Class.forName("com.licensis.notaire.adapter.in.web.budget.BudgetController"));
     }
 
     @Test
     @DisplayName("Audit pointcut should exclude AuditRecordController to avoid recursive auditing")
     void shouldExcludeAuditRecordController() throws Exception {
         AspectJExpressionPointcut pointcut = auditPointcut();
-        Class<?> auditRecordController = Class.forName("com.licensis.notaire.api.AuditRecordController");
+        Class<?> auditRecordController = Class.forName("com.licensis.notaire.adapter.in.web.audit.AuditRecordController");
 
         for (Method method : auditRecordController.getDeclaredMethods()) {
             if (!isCandidateMethod(method)) {

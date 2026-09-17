@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.ProcedureTemplateController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;

@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.FolioTypeController;
+import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
 import com.licensis.notaire.dto.DtoFolioType;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;

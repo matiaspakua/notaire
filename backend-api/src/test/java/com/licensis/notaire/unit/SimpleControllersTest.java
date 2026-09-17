@@ -1,19 +1,19 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.CopyController;
-import com.licensis.notaire.api.DeedController;
-import com.licensis.notaire.api.ManagementStatusController;
-import com.licensis.notaire.api.HistoryController;
-import com.licensis.notaire.api.TestimonyMovementController;
-import com.licensis.notaire.api.PersonController;
-import com.licensis.notaire.api.BudgetController;
-import com.licensis.notaire.api.TestimonyController;
-import com.licensis.notaire.api.DocumentTypeController;
-import com.licensis.notaire.api.FolioTypeController;
-import com.licensis.notaire.api.ProcedureTypeController;
-import com.licensis.notaire.api.IdentificationTypeController;
-import com.licensis.notaire.api.ProcedureController;
+import com.licensis.notaire.adapter.in.web.copy.CopyController;
+import com.licensis.notaire.adapter.in.web.deed.DeedController;
+import com.licensis.notaire.adapter.in.web.management.ManagementStatusController;
+import com.licensis.notaire.adapter.in.web.history.HistoryController;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyMovementController;
+import com.licensis.notaire.adapter.in.web.person.PersonController;
+import com.licensis.notaire.adapter.in.web.budget.BudgetController;
+import com.licensis.notaire.adapter.in.web.testimony.TestimonyController;
+import com.licensis.notaire.adapter.in.web.document.DocumentTypeController;
+import com.licensis.notaire.adapter.in.web.folio.FolioTypeController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
+import com.licensis.notaire.adapter.in.web.person.IdentificationTypeController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureController;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
@@ -45,12 +45,12 @@ import com.licensis.notaire.repository.FolioTypeRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.service.DeedSigningService;
-import com.licensis.notaire.service.DeedService;
-import com.licensis.notaire.service.TestimonyMovementService;
-import com.licensis.notaire.service.PersonService;
-import com.licensis.notaire.service.BudgetService;
-import com.licensis.notaire.service.TestimonyGenerationVerificationService;
+import com.licensis.notaire.application.usecase.deed.DeedSigningService;
+import com.licensis.notaire.application.usecase.deed.DeedService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
+import com.licensis.notaire.application.usecase.person.PersonService;
+import com.licensis.notaire.application.usecase.budget.BudgetService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -401,10 +401,10 @@ class SimpleControllersTest {
         private final BudgetService service = mock(BudgetService.class);
         private final com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase budgetSummaryUseCase =
                 mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
-        private final com.licensis.notaire.service.BudgetTemplateService budgetTemplateService =
-                mock(com.licensis.notaire.service.BudgetTemplateService.class);
-        private final com.licensis.notaire.service.BudgetCatalogItemsService budgetCatalogoItemsService =
-                mock(com.licensis.notaire.service.BudgetCatalogItemsService.class);
+        private final com.licensis.notaire.application.usecase.budget.BudgetTemplateService budgetTemplateService =
+                mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
+        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogoItemsService =
+                mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
                         budgetTemplateService, budgetCatalogoItemsService))

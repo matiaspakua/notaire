@@ -7,7 +7,7 @@ import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.service.AuxiliaryProtocolService;
+import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

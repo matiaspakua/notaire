@@ -1,12 +1,12 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.AuditRecordController;
+import com.licensis.notaire.adapter.in.web.audit.AuditRecordController;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoAuditRecord;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.AuditRecord;
-import com.licensis.notaire.service.AuditRecordService;
+import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

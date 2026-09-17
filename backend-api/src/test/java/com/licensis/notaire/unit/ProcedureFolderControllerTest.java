@@ -1,13 +1,13 @@
 package com.licensis.notaire.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.licensis.notaire.api.ProcedureFolderController;
+import com.licensis.notaire.adapter.in.web.procedure.ProcedureFolderController;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.service.ProcedureFolderService;
+import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.api.UserController;
+import com.licensis.notaire.adapter.in.web.user.UserController;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.User;

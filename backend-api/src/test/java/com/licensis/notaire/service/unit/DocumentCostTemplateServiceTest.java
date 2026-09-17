@@ -7,7 +7,7 @@ import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.DocumentCostTemplateRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
-import com.licensis.notaire.service.DocumentCostTemplateService;
+import com.licensis.notaire.application.usecase.document.DocumentCostTemplateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

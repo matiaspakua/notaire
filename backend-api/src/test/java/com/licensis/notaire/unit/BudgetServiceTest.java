@@ -3,7 +3,7 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.BudgetService;
+import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

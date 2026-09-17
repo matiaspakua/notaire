@@ -1,6 +1,6 @@
 package com.licensis.notaire.integration;
 
-import com.licensis.notaire.api.HistoryController;
+import com.licensis.notaire.adapter.in.web.history.HistoryController;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;

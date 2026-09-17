@@ -6,7 +6,7 @@ import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.ProcedureFolderRepository;
-import com.licensis.notaire.service.ProcedureFolderService;
+import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

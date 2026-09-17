@@ -1,11 +1,11 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.api.ItemController;
+import com.licensis.notaire.adapter.in.web.item.ItemController;
 import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
-import com.licensis.notaire.service.ItemService;
+import com.licensis.notaire.application.usecase.item.ItemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

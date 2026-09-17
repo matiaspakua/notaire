@@ -5,7 +5,7 @@ import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.service.ManagementQueryService;
+import com.licensis.notaire.application.usecase.management.ManagementQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

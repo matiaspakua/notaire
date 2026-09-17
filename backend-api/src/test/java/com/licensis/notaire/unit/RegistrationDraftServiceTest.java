@@ -10,7 +10,7 @@ import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.service.RegistrationDraftService;
+import com.licensis.notaire.application.usecase.registrationdraft.RegistrationDraftService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -7,7 +7,7 @@ import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.service.TestimonyGenerationVerificationService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

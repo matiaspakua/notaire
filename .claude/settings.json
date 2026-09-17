@@ -12,8 +12,8 @@
   "enabledPlugins": {
     "remember@claude-plugins-official": true,
     "code-modernization@claude-plugins-official": true,
-    "github@claude-plugins-official": true
+    "github@claude-plugins-official": false
   },
-  "skipDangerousModePermissionPrompt": true,
-  "tui": "fullscreen"
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true
 }

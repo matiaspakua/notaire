@@ -11,7 +11,7 @@ import com.licensis.notaire.application.usecase.management.TransitionManagementU
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.service.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
