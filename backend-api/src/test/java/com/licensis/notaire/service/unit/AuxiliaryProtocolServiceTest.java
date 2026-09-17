@@ -1,17 +1,17 @@
 package com.licensis.notaire.service.unit;
 
+import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
+import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
-import com.licensis.notaire.repository.DeedRepository;
-import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -28,13 +28,17 @@ import static org.mockito.Mockito.when;
 class AuxiliaryProtocolServiceTest {
 
     @Mock
-    private FolioRepository folioRepository;
+    private FolioRepositoryPort folioRepository;
 
     @Mock
-    private DeedRepository deedRepository;
+    private DeedOperationPort deedRepository;
 
-    @InjectMocks
     private AuxiliaryProtocolService protocoloAuxiliaryService;
+
+    @BeforeEach
+    void setUp() {
+        protocoloAuxiliaryService = new AuxiliaryProtocolService(folioRepository, deedRepository);
+    }
 
     private Folio folioAuxiliaryDisponible() {
         FolioType typeAuxiliary = new FolioType("Protocolo Auxiliar");
