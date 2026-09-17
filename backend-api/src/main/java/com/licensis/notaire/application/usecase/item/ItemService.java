@@ -3,9 +3,9 @@ package com.licensis.notaire.application.usecase.item;
 import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.business.Item;
-import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.BudgetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,10 +23,10 @@ public class ItemService {
 
     private static final Logger log = LoggerFactory.getLogger(ItemService.class);
 
-    private final ItemRepository itemRepository;
-    private final BudgetRepository budgetRepository;
+    private final ItemRepositoryPort itemRepository;
+    private final BudgetRepositoryPort budgetRepository;
 
-    public ItemService(ItemRepository itemRepository, BudgetRepository budgetRepository) {
+    public ItemService(ItemRepositoryPort itemRepository, BudgetRepositoryPort budgetRepository) {
         this.itemRepository = itemRepository;
         this.budgetRepository = budgetRepository;
     }
@@ -43,7 +43,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public List<Item> findByBudget(Integer idBudget) {
-        return itemRepository.findByFkIdBudgetIdBudget(idBudget);
+        return itemRepository.findByBudgetId(idBudget);
     }
 
     /**
@@ -55,7 +55,7 @@ public class ItemService {
         if (!budgetRepository.existsById(idBudget)) {
             throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
         }
-        return itemRepository.findByFkIdBudgetIdBudget(idBudget).stream()
+        return itemRepository.findByBudgetId(idBudget).stream()
                 .filter(item -> item.getType() == TypeItem.DESCUENTO || item.getType() == TypeItem.RECARGO)
                 .toList();
     }
@@ -63,22 +63,22 @@ public class ItemService {
     @Transactional
     public Item create(Item item) {
         validateReason(item);
-        return itemRepository.save(item);
+        return itemRepository.create(item);
     }
 
     @Transactional
     public Item update(Integer id, Item item) {
-        if (!itemRepository.existsById(id)) {
+        if (!itemRepository.findById(id).isPresent()) {
             throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
         }
         validateReason(item);
         item.setIdItem(id);
-        return itemRepository.save(item);
+        return itemRepository.update(id, item);
     }
 
     @Transactional
     public void delete(Integer id) {
-        if (!itemRepository.existsById(id)) {
+        if (itemRepository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
         }
         itemRepository.deleteById(id);
