@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TT E2E","descripcion":"tramite e2e","seArchiva":false,"seInscribe":false}
+        {"name":"TT E2E","notes":"tramite e2e","isArchived":false,"isRegistered":false}
   headers:
     - name: Content-Type
       value: application/json
@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idTipoDeTramite", function () {
+          test("Returns idProcedureType", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idTipoDeTramite');
-            bru.setVar('_id', b.idTipoDeTramite);
+            expect(b).to.have.property('idProcedureType');
+            bru.setVar('_id', b.idProcedureType);
           });

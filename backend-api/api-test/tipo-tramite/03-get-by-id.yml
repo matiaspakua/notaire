@@ -16,5 +16,5 @@ runtime:
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
           test("Returns the requested item", function () {
-            expect(res.getBody().idTipoDeTramite).to.equal(Number(bru.getVar('_id')));
+            expect(res.getBody().idProcedureType).to.equal(Number(bru.getVar('_id')));
           });

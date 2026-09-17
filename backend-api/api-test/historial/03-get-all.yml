@@ -20,5 +20,5 @@ runtime:
           test("Contains the created historial entry", function () {
             const body = res.getBody();
             const id = parseInt(bru.getVar('_historial_id'), 10);
-            expect(body.some((h) => h.idHistorial === id)).to.be.true;
+            expect(body.some((h) => h.idHistory === id)).to.be.true;
           });

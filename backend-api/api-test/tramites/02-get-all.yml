@@ -18,5 +18,5 @@ runtime:
           });
           test("Includes created tramite in the page content", function () {
             const b = res.getBody();
-            expect(b.content.some(t => t.idTramite === bru.getVar('tramite_id'))).to.be.true;
+            expect(b.content.some(t => t.idProcedure === bru.getVar('tramite_id'))).to.be.true;
           });

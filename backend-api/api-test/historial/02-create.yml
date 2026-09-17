@@ -12,10 +12,10 @@ http:
     type: json
     data: |-
         {
-          "fecha": "2026-09-05",
-          "observaciones": "Gestion iniciada",
-          "fkIdGestion": { "idGestion": {{_historial_gestion_id}} },
-          "fkIdEstadoGestion": { "idEstadoGestion": 1 }
+          "date": "2026-09-05",
+          "notes": "Gestion iniciada",
+          "fkIdManagement": { "idManagement": {{_historial_gestion_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 1 }
         }
   headers:
     - name: Content-Type
@@ -31,9 +31,9 @@ runtime:
           });
           test("Stores historial id", function () {
             const b = res.getBody();
-            expect(b.idHistorial).to.be.a('number');
-            bru.setVar('_historial_id', b.idHistorial);
+            expect(b.idHistory).to.be.a('number');
+            bru.setVar('_historial_id', b.idHistory);
           });
           test("Persists observaciones", function () {
-            expect(res.getBody().observaciones).to.equal('Gestion iniciada');
+            expect(res.getBody().notes).to.equal('Gestion iniciada');
           });

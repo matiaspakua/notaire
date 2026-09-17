@@ -14,12 +14,12 @@ http:
     type: json
     data: |-
         {
-          "fkIdPersona": { "personId": 1 },
-          "fecha": "2026-09-05",
+          "person": { "personId": 1 },
+          "date": "2026-09-05",
           "encabezado": "Presupuesto Pagos E2E",
-          "estado": "Pendiente",
-          "monto": 10000.0,
-          "observaciones": "creado por la suite de pagos"
+          "status": "Pendiente",
+          "propertyAmount": 10000.0,
+          "notes": "creado por la suite de pagos"
         }
   headers:
     - name: Content-Type
@@ -35,6 +35,6 @@ runtime:
           });
           test("Stores presupuesto id", function () {
             const b = res.getBody();
-            expect(b.idPresupuesto).to.be.a('number');
-            bru.setVar('_pagos_presupuesto_id', b.idPresupuesto);
+            expect(b.idBudget).to.be.a('number');
+            bru.setVar('_pagos_presupuesto_id', b.idBudget);
           });

@@ -13,10 +13,10 @@ http:
     type: json
     data: |-
         {
-          "idPresupuesto": {{_pagos_presupuesto_id}},
-          "monto": 7000.0,
-          "fecha": "2026-09-05",
-          "observaciones": "Pago que excede el saldo"
+          "idBudget": {{_pagos_presupuesto_id}},
+          "amount": 7000.0,
+          "date": "2026-09-05",
+          "notes": "Pago que excede el saldo"
         }
   headers:
     - name: Content-Type

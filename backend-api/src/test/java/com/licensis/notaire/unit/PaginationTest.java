@@ -1,9 +1,9 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.api.BudgetController;
+import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.service.BudgetCatalogItemsService;
 import com.licensis.notaire.service.BudgetTemplateService;
-import com.licensis.notaire.service.BudgetResumenService;
 import com.licensis.notaire.service.BudgetService;
 import com.licensis.notaire.business.Budget;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class PaginationTest {
     private BudgetService budgetService;
 
     @Mock
-    private BudgetResumenService budgetResumenService;
+    private GetBudgetSummaryUseCase budgetSummaryUseCase;
 
     @Mock
     private BudgetTemplateService budgetTemplateService;
@@ -48,7 +48,7 @@ class PaginationTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
-                new BudgetController(budgetService, budgetResumenService,
+                new BudgetController(budgetService, budgetSummaryUseCase,
                         budgetTemplateService, budgetCatalogoItemsService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();

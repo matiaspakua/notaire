@@ -13,11 +13,11 @@ http:
     type: json
     data: |-
         {
-          "idPresupuesto": {{_pagos_presupuesto_id}},
-          "monto": 4000.0,
-          "fecha": "2026-09-05",
-          "observaciones": "Pago parcial E2E",
-          "metodoPago": "Transferencia"
+          "idBudget": {{_pagos_presupuesto_id}},
+          "amount": 4000.0,
+          "date": "2026-09-05",
+          "notes": "Pago parcial E2E",
+          "paymentMethod": "Transferencia"
         }
   headers:
     - name: Content-Type
@@ -33,9 +33,9 @@ runtime:
           });
           test("Stores pago id", function () {
             const b = res.getBody();
-            expect(b.idPago).to.be.a('number');
-            bru.setVar('pago_id', b.idPago);
+            expect(b.idPayment).to.be.a('number');
+            bru.setVar('pago_id', b.idPayment);
           });
           test("Persists monto", function () {
-            expect(res.getBody().monto).to.equal(4000.0);
+            expect(res.getBody().amount).to.equal(4000.0);
           });

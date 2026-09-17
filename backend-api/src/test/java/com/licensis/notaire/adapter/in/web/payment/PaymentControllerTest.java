@@ -1,15 +1,20 @@
-package com.licensis.notaire.unit;
+package com.licensis.notaire.adapter.in.web.payment;
 
-import com.licensis.notaire.api.PaymentController;
+import com.licensis.notaire.application.port.in.payment.DeletePaymentUseCase;
+import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
+import com.licensis.notaire.application.port.in.payment.EditPaymentUseCase;
+import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
+import com.licensis.notaire.application.port.in.payment.ProcessPaymentCommand;
+import com.licensis.notaire.application.port.in.payment.ProcessPaymentUseCase;
+import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
+import com.licensis.notaire.domain.payment.PaymentDetails;
+import com.licensis.notaire.domain.payment.PaymentStatus;
 import com.licensis.notaire.exception.PendingBalanceExceededException;
-import com.licensis.notaire.business.Payment;
-import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.service.StatusPayment;
-import com.licensis.notaire.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,37 +26,57 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Characterization tests for the payment inbound web adapter: same URLs, same status
+ * codes and same JSON as before the hexagonal refactor (ADR-021), now driven through the
+ * inbound ports instead of the legacy {@code PaymentService}.
+ */
 @DisplayName("PagoController unit tests")
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
 
     @Mock
-    private PaymentService paymentService;
+    private ProcessPaymentUseCase processPaymentUseCase;
+
+    @Mock
+    private EditPaymentUseCase editPaymentUseCase;
+
+    @Mock
+    private DeletePaymentUseCase deletePaymentUseCase;
+
+    @Mock
+    private QueryPaymentsUseCase queryPaymentsUseCase;
+
+    @Mock
+    private GetPaymentStatusUseCase paymentStatusUseCase;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        PaymentController controller = new PaymentController(paymentService);
+        PaymentController controller = new PaymentController(processPaymentUseCase, editPaymentUseCase,
+                deletePaymentUseCase, queryPaymentsUseCase, paymentStatusUseCase);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    private Payment buildPayment() {
-        Payment payment = new Payment();
-        payment.setIdPayment(1);
-        payment.setAmount(500.0f);
-        payment.setDate(new Date());
-        payment.setNotes("Pago de prueba");
-        Budget budget = new Budget();
-        budget.setIdBudget(10);
-        payment.setBudget(budget);
-        return payment;
+    private PaymentDetails buildPayment() {
+        return new PaymentDetails(1, 10, 500.0f, new Date(), null, "Pago de prueba");
     }
 
     private Date toDate(LocalDate localDate) {
@@ -61,7 +86,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos should return 200 with all pagos")
     void shouldGetAllPayments() throws Exception {
-        when(paymentService.findAll()).thenReturn(List.of(buildPayment()));
+        when(queryPaymentsUseCase.findAll()).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idPayment").value(1))
@@ -71,7 +96,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos should return 500 on service error")
     void shouldReturnServerErrorWhenGetAllFails() throws Exception {
-        when(paymentService.findAll()).thenThrow(new RuntimeException("Database error"));
+        when(queryPaymentsUseCase.findAll()).thenThrow(new RuntimeException("Database error"));
         mockMvc.perform(get("/api/v1/pagos"))
                 .andExpect(status().isInternalServerError());
     }
@@ -79,7 +104,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 200 when pago found")
     void shouldGetPaymentById() throws Exception {
-        when(paymentService.getPayment(1)).thenReturn(Optional.of(buildPayment()));
+        when(queryPaymentsUseCase.findById(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPayment").value(1));
@@ -88,7 +113,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404WhenPaymentNotFound() throws Exception {
-        when(paymentService.getPayment(999)).thenReturn(Optional.empty());
+        when(queryPaymentsUseCase.findById(999)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/v1/pagos/999"))
                 .andExpect(status().isNotFound());
     }
@@ -96,7 +121,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should include the associated presupuesto")
     void shouldIncludeBudgetWhenRetrievingPaymentById() throws Exception {
-        when(paymentService.getPayment(1)).thenReturn(Optional.of(buildPayment()));
+        when(queryPaymentsUseCase.findById(1)).thenReturn(Optional.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idBudget").value(10));
@@ -105,7 +130,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturnServerErrorOnGetById() throws Exception {
-        when(paymentService.getPayment(anyInt())).thenThrow(new RuntimeException("Service error"));
+        when(queryPaymentsUseCase.findById(anyInt())).thenThrow(new RuntimeException("Service error"));
         mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isInternalServerError());
     }
@@ -113,7 +138,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id} should return pagos for presupuesto")
     void shouldGetPaymentsByBudget() throws Exception {
-        when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(buildPayment()));
+        when(queryPaymentsUseCase.findByBudget(10)).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].amount").value(500.0));
@@ -122,7 +147,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id} should include the presupuesto on each entry")
     void shouldIncludeBudgetOnEachListedPayment() throws Exception {
-        when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(buildPayment()));
+        when(queryPaymentsUseCase.findByBudget(10)).thenReturn(List.of(buildPayment()));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idBudget").value(10));
@@ -131,7 +156,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id} should return 500 on error")
     void shouldReturnServerErrorOnBudgetQuery() throws Exception {
-        when(paymentService.findPaymentsByBudget(anyInt())).thenThrow(new RuntimeException("DB error"));
+        when(queryPaymentsUseCase.findByBudget(anyInt())).thenThrow(new RuntimeException("DB error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10"))
                 .andExpect(status().isInternalServerError());
     }
@@ -139,7 +164,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return saldo pendiente")
     void shouldGetSaldoPending() throws Exception {
-        when(paymentService.calculatePendingBalance(10)).thenReturn(1000.0f);
+        when(paymentStatusUseCase.pendingBalance(10)).thenReturn(1000.0f);
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1000.0"));
@@ -148,7 +173,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return 404 for invalid presupuesto")
     void shouldReturn404ForInvalidBudget() throws Exception {
-        when(paymentService.calculatePendingBalance(999)).thenThrow(new IllegalArgumentException("Not found"));
+        when(paymentStatusUseCase.pendingBalance(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/999/saldo"))
                 .andExpect(status().isNotFound());
     }
@@ -156,7 +181,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return 500 on error")
     void shouldReturnServerErrorOnSaldoCalculation() throws Exception {
-        when(paymentService.calculatePendingBalance(anyInt())).thenThrow(new RuntimeException("Calculation error"));
+        when(paymentStatusUseCase.pendingBalance(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
                 .andExpect(status().isInternalServerError());
     }
@@ -164,7 +189,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return estado de pago")
     void shouldGetStatusPayment() throws Exception {
-        when(paymentService.calculatePaymentStatus(10)).thenReturn(StatusPayment.PARTIAL);
+        when(paymentStatusUseCase.status(10)).thenReturn(PaymentStatus.PARTIAL);
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("\"PARTIAL\""));
@@ -173,7 +198,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 404 for invalid presupuesto")
     void shouldReturn404ForStatusOfInvalidBudget() throws Exception {
-        when(paymentService.calculatePaymentStatus(999)).thenThrow(new IllegalArgumentException("Not found"));
+        when(paymentStatusUseCase.status(999)).thenThrow(new IllegalArgumentException("Not found"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/999/estado"))
                 .andExpect(status().isNotFound());
     }
@@ -181,7 +206,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/estado should return 500 on error")
     void shouldReturnServerErrorOnStatusCalculation() throws Exception {
-        when(paymentService.calculatePaymentStatus(anyInt())).thenThrow(new RuntimeException("Calculation error"));
+        when(paymentStatusUseCase.status(anyInt())).thenThrow(new RuntimeException("Calculation error"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/estado"))
                 .andExpect(status().isInternalServerError());
     }
@@ -189,9 +214,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/fecha should return pagos in fecha range")
     void shouldGetPaymentsByDateRange() throws Exception {
-        LocalDate startDate = LocalDate.of(2026, 1, 1);
-        LocalDate endDate = LocalDate.of(2026, 12, 31);
-        when(paymentService.findPaymentsByDateRange(any(Date.class), any(Date.class)))
+        when(queryPaymentsUseCase.findByDateRange(any(Date.class), any(Date.class)))
                 .thenReturn(List.of(buildPayment()));
 
         mockMvc.perform(get("/api/v1/pagos/fecha")
@@ -199,12 +222,15 @@ class PaymentControllerTest {
                 .param("endDate", "2026-12-31"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].amount").value(500.0));
+
+        verify(queryPaymentsUseCase).findByDateRange(
+                toDate(LocalDate.of(2026, 1, 1)), toDate(LocalDate.of(2026, 12, 31)));
     }
 
     @Test
     @DisplayName("GET /api/v1/pagos/fecha should return 500 on service error")
     void shouldReturnServerErrorOnDateRangeQuery() throws Exception {
-        when(paymentService.findPaymentsByDateRange(any(Date.class), any(Date.class)))
+        when(queryPaymentsUseCase.findByDateRange(any(Date.class), any(Date.class)))
                 .thenThrow(new RuntimeException("Query error"));
 
         mockMvc.perform(get("/api/v1/pagos/fecha")
@@ -216,9 +242,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 201 when pago created")
     void shouldCreatePaymentViaJson() throws Exception {
-        Payment newPayment = buildPayment();
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
-                .thenReturn(newPayment);
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
         String json = """
                 {
@@ -235,15 +259,18 @@ class PaymentControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idPayment").value(1));
 
-        verify(paymentService, times(1)).processPayment(eq(10), eq(500.0f), any(Date.class), eq("Payment de prueba"), any());
+        ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
+        verify(processPaymentUseCase, times(1)).process(command.capture());
+        assertThat(command.getValue().budgetId()).isEqualTo(10);
+        assertThat(command.getValue().amount()).isEqualTo(500.0f);
+        assertThat(command.getValue().date()).isNotNull();
+        assertThat(command.getValue().notes()).isEqualTo("Payment de prueba");
     }
 
     @Test
     @DisplayName("POST /api/v1/pagos should return the associated presupuesto when creating a payment")
     void shouldReturnBudgetWhenCreatingPayment() throws Exception {
-        Payment newPayment = buildPayment();
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(Date.class), anyString(), any()))
-                .thenReturn(newPayment);
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
         String json = """
                 {
@@ -264,7 +291,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 400 on validation error")
     void shouldReturn400OnCreateValidationError() throws Exception {
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
                 .thenThrow(new IllegalArgumentException("Invalid amount"));
 
         String json = """
@@ -285,7 +312,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409WhenCreateExceedsSaldo() throws Exception {
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
                 .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
 
         String json = """
@@ -306,7 +333,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos should return 500 on service error")
     void shouldReturn500OnCreateServiceError() throws Exception {
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """
@@ -327,9 +354,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 201 when pago created via params")
     void shouldCreatePaymentViaParams() throws Exception {
-        Payment newPayment = buildPayment();
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), anyString(), any()))
-                .thenReturn(newPayment);
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
         mockMvc.perform(post("/api/v1/pagos/params")
                 .param("idBudget", "10")
@@ -343,21 +368,27 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should handle missing optional params")
     void shouldHandleMissingOptionalParams() throws Exception {
-        Payment newPayment = buildPayment();
-        when(paymentService.processPayment(eq(10), eq(500.0f), isNull(), isNull(), isNull()))
-                .thenReturn(newPayment);
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
 
         mockMvc.perform(post("/api/v1/pagos/params")
                 .param("idBudget", "10")
                 .param("amount", "500.0"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idPayment").value(1));
+
+        ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
+        verify(processPaymentUseCase).process(command.capture());
+        assertThat(command.getValue().budgetId()).isEqualTo(10);
+        assertThat(command.getValue().amount()).isEqualTo(500.0f);
+        assertThat(command.getValue().date()).isNull();
+        assertThat(command.getValue().notes()).isNull();
+        assertThat(command.getValue().paymentMethod()).isNull();
     }
 
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 409 when monto exceeds saldo pendiente")
     void shouldReturn409OnParamsExceedsSaldo() throws Exception {
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), any(), any()))
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
                 .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -369,7 +400,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("POST /api/v1/pagos/params should return 500 on service error")
     void shouldReturn500OnParamsServiceError() throws Exception {
-        when(paymentService.processPayment(anyInt(), anyFloat(), any(), any(), any()))
+        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
                 .thenThrow(new RuntimeException("Service error"));
 
         mockMvc.perform(post("/api/v1/pagos/params")
@@ -381,9 +412,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 200 when updated")
     void shouldUpdatePayment() throws Exception {
-        Payment updated = buildPayment();
-        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
-                .thenReturn(updated);
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class))).thenReturn(buildPayment());
 
         String json = """
                 {
@@ -398,12 +427,19 @@ class PaymentControllerTest {
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPayment").value(1));
+
+        ArgumentCaptor<EditPaymentCommand> command = ArgumentCaptor.forClass(EditPaymentCommand.class);
+        verify(editPaymentUseCase).edit(command.capture());
+        assertThat(command.getValue().paymentId()).isEqualTo(1);
+        assertThat(command.getValue().amount()).isEqualTo(600.0f);
+        assertThat(command.getValue().date()).isNotNull();
+        assertThat(command.getValue().notes()).isEqualTo("Updated");
     }
 
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
-        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
                 .thenThrow(new IllegalArgumentException("Pago no encontrado"));
 
         String json = """
@@ -423,7 +459,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("PUT /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturn500OnUpdateError() throws Exception {
-        when(paymentService.editPayment(anyInt(), anyFloat(), any(), anyString(), any()))
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class)))
                 .thenThrow(new RuntimeException("DB error"));
 
         String json = """
@@ -443,16 +479,16 @@ class PaymentControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/pagos/{id} should return 200 when deleted")
     void shouldDeletePayment() throws Exception {
-        doNothing().when(paymentService).deletePayment(1);
+        doNothing().when(deletePaymentUseCase).delete(1);
         mockMvc.perform(delete("/api/v1/pagos/1"))
                 .andExpect(status().isOk());
-        verify(paymentService, times(1)).deletePayment(1);
+        verify(deletePaymentUseCase, times(1)).delete(1);
     }
 
     @Test
     @DisplayName("DELETE /api/v1/pagos/{id} should return 404 when pago not found")
     void shouldReturn404OnDeleteNotFound() throws Exception {
-        doThrow(new IllegalArgumentException("Pago no encontrado")).when(paymentService).deletePayment(999);
+        doThrow(new IllegalArgumentException("Pago no encontrado")).when(deletePaymentUseCase).delete(999);
         mockMvc.perform(delete("/api/v1/pagos/999"))
                 .andExpect(status().isNotFound());
     }
@@ -460,7 +496,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/pagos/{id} should return 500 on service error")
     void shouldReturn500OnDeleteError() throws Exception {
-        doThrow(new RuntimeException("DB error")).when(paymentService).deletePayment(anyInt());
+        doThrow(new RuntimeException("DB error")).when(deletePaymentUseCase).delete(anyInt());
         mockMvc.perform(delete("/api/v1/pagos/1"))
                 .andExpect(status().isInternalServerError());
     }

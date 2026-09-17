@@ -15,4 +15,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Returns the presupuesto", function () { expect(res.getBody().idPresupuesto).to.equal(Number(bru.getVar('presupuesto_id'))); });
+          test("Returns the presupuesto", function () { expect(res.getBody().idBudget).to.equal(Number(bru.getVar('presupuesto_id'))); });

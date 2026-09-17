@@ -9,7 +9,7 @@ http:
   body:
     type: json
     data: |-
-        { "nombre": "CaseTest-Usuario", "contrasenia": "Test1234!" }
+        { "name": "CaseTest-Usuario", "password": "Test1234!" }
   headers:
     - name: Content-Type
       value: application/json

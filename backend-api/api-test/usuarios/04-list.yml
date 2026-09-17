@@ -17,5 +17,5 @@ runtime:
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
           test("Created usuario is listed", function () {
             const id = Number(bru.getVar('usuario_id'));
-            expect(res.getBody().some(u => u.idUsuario === id)).to.equal(true);
+            expect(res.getBody().some(u => u.idUser === id)).to.equal(true);
           });

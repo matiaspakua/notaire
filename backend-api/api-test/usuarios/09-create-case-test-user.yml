@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
         {
-          "nombre": "CaseTest-Usuario",
-          "contrasenia": "Test1234!",
-          "tipo": "EMPLEADO",
-          "activo": true
+          "name": "CaseTest-Usuario",
+          "password": "Test1234!",
+          "type": "EMPLEADO",
+          "active": true
         }
   headers:
     - name: Content-Type
@@ -25,8 +25,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idUsuario", function () {
+          test("Returns idUser", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idUsuario');
-            bru.setVar('case_test_usuario_id', b.idUsuario);
+            expect(b).to.have.property('idUser');
+            bru.setVar('case_test_usuario_id', b.idUser);
           });

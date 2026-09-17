@@ -11,10 +11,10 @@ http:
     type: json
     data: |-
         {
-          "fecha": "2026-09-05",
-          "observaciones": "Gestion en tramite",
-          "fkIdGestion": { "idGestion": {{_historial_gestion_id}} },
-          "fkIdEstadoGestion": { "idEstadoGestion": 2 }
+          "date": "2026-09-05",
+          "notes": "Gestion en tramite",
+          "fkIdManagement": { "idManagement": {{_historial_gestion_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 2 }
         }
   headers:
     - name: Content-Type

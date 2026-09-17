@@ -13,7 +13,7 @@ http:
           "lastName": "Lopez Actualizada",
           "identificationNumber": "30999888",
           "isClient": true,
-          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
           "nationality": "Argentina",
           "maritalStatus": "Casado",
           "sex": "Femenino"

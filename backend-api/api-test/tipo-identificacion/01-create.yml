@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TI E2E","caracteres":"8"}
+        {"name":"TI E2E","characters":"8"}
   headers:
     - name: Content-Type
       value: application/json
@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idTipoIdentificacion", function () {
+          test("Returns idIdentificationType", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idTipoIdentificacion');
-            bru.setVar('_id', b.idTipoIdentificacion);
+            expect(b).to.have.property('idIdentificationType');
+            bru.setVar('_id', b.idIdentificationType);
           });

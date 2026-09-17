@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"EG E2E","observaciones":"estado e2e"}
+        {"name":"EG E2E","notes":"estado e2e"}
   headers:
     - name: Content-Type
       value: application/json
@@ -19,8 +19,8 @@ runtime:
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
-          test("Returns idEstadoGestion", function () {
+          test("Returns idManagementStatus", function () {
             const b = res.getBody();
-            expect(b).to.have.property('idEstadoGestion');
-            bru.setVar('_id', b.idEstadoGestion);
+            expect(b).to.have.property('idManagementStatus');
+            bru.setVar('_id', b.idManagementStatus);
           });

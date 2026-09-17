@@ -13,11 +13,11 @@ http:
     type: json
     data: |-
         {
-          "fkIdPersona": { "personId": 1 },
-          "fecha": "2026-09-05",
+          "person": { "personId": 1 },
+          "date": "2026-09-05",
           "encabezado": "Presupuesto Items E2E",
-          "estado": "Pendiente",
-          "observaciones": "creado por la suite de items"
+          "status": "Pendiente",
+          "notes": "creado por la suite de items"
         }
   headers:
     - name: Content-Type
@@ -33,6 +33,6 @@ runtime:
           });
           test("Stores presupuesto id", function () {
             const b = res.getBody();
-            expect(b.idPresupuesto).to.be.a('number');
-            bru.setVar('_items_presupuesto_id', b.idPresupuesto);
+            expect(b.idBudget).to.be.a('number');
+            bru.setVar('_items_presupuesto_id', b.idBudget);
           });

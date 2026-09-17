@@ -1,13 +1,14 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
-import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.service.ManagementArchiveDebtService;
 import com.licensis.notaire.service.ManagementResumenFinancieroService;
-import com.licensis.notaire.service.PaymentService;
+import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
+import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
+import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +34,10 @@ class ManagementResumenFinancieroServiceTest {
     private ProcedureRepository procedureRepository;
 
     @Mock
-    private PaymentService paymentService;
+    private GetPaymentStatusUseCase paymentStatus;
+
+    @Mock
+    private QueryPaymentsUseCase paymentQueries;
 
     @Mock
     private ManagementArchiveDebtService managementArchiveDebtService;
@@ -49,11 +53,8 @@ class ManagementResumenFinancieroServiceTest {
         return procedure;
     }
 
-    private static Payment paymentOf(float amount) {
-        Payment payment = new Payment();
-        payment.setAmount(amount);
-        payment.setDate(new Date());
-        return payment;
+    private static PaymentDetails paymentOf(float amount) {
+        return new PaymentDetails(null, null, amount, new Date(), null, null);
     }
 
     @Nested
@@ -65,8 +66,8 @@ class ManagementResumenFinancieroServiceTest {
         void shouldSummarizeSingleProcedureManagement() {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(3000.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
-            when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
+            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
+            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
@@ -82,10 +83,10 @@ class ManagementResumenFinancieroServiceTest {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(4500.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
-            when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
-            when(paymentService.calculatePendingBalance(20)).thenReturn(1500.00f);
-            when(paymentService.findPaymentsByBudget(20)).thenReturn(List.of(paymentOf(1000.00f)));
+            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
+            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
+            when(paymentStatus.pendingBalance(20)).thenReturn(1500.00f);
+            when(paymentQueries.findByBudget(20)).thenReturn(List.of(paymentOf(1000.00f)));
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
@@ -99,8 +100,8 @@ class ManagementResumenFinancieroServiceTest {
         void shouldReturnZeroCollectedWhenNoPayments() {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(5000.00f);
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(5000.00f);
-            when(paymentService.findPaymentsByBudget(10)).thenReturn(List.of());
+            when(paymentStatus.pendingBalance(10)).thenReturn(5000.00f);
+            when(paymentQueries.findByBudget(10)).thenReturn(List.of());
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 

@@ -56,13 +56,15 @@ public class AuditAspect {
     }
 
     /**
-     * Pointcut that targets any public method declared in any class of the
-     * {@code com.licensis.notaire.api} package. The
+     * Pointcut that targets any public method declared in a controller of the
+     * {@code com.licensis.notaire.api} package or of the hexagonal inbound web adapters
+     * under {@code com.licensis.notaire.adapter.in.web} (ADR-021). The
      * {@link com.licensis.notaire.api.AuditRecordController} itself is excluded to avoid
      * recursive auditing of audit reads.
      */
     @Pointcut(
-        "execution(public * com.licensis.notaire.api..*Controller.*(..)) "
+        "(execution(public * com.licensis.notaire.api..*Controller.*(..)) "
+        + "|| execution(public * com.licensis.notaire.adapter.in.web..*Controller.*(..))) "
         + "&& !within(com.licensis.notaire.api.AuditRecordController)"
     )
     public void controllerMethods() {

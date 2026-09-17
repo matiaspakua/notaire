@@ -1,18 +1,25 @@
-package com.licensis.notaire.service.unit;
+package com.licensis.notaire.adapter.out.persistence.payment;
 
-import com.licensis.notaire.business.SubmittedDocument;
-import com.licensis.notaire.business.Payment;
+import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
+import com.licensis.notaire.application.port.in.payment.ProcessPaymentCommand;
+import com.licensis.notaire.application.usecase.payment.DeletePaymentService;
+import com.licensis.notaire.application.usecase.payment.EditPaymentService;
+import com.licensis.notaire.application.usecase.payment.PaymentQueryService;
+import com.licensis.notaire.application.usecase.payment.PaymentStatusService;
+import com.licensis.notaire.application.usecase.payment.ProcessPaymentService;
 import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.business.SubmittedDocument;
+import com.licensis.notaire.domain.payment.PaymentDetails;
+import com.licensis.notaire.domain.payment.PaymentStatus;
 import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.service.StatusPayment;
-import com.licensis.notaire.service.PaymentService;
+import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,13 +28,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+/**
+ * Characterization tests for the payment slice driven through the outbound JPA adapters
+ * over mocked Spring Data repositories (ADR-021).
+ *
+ * <p>Formerly {@code service.unit.PaymentServiceTest}: the expectations are unchanged,
+ * but the system under test is now the use case plus its persistence adapter, so the
+ * very same repository interactions are still asserted.
+ */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PagoService Unit Tests")
-class PaymentServiceTest {
+class PaymentPersistenceAdapterTest {
 
     @Mock
     private PaymentRepository paymentRepository;
@@ -35,8 +55,14 @@ class PaymentServiceTest {
     @Mock
     private BudgetRepository budgetRepository;
 
-    @InjectMocks
-    private PaymentService paymentService;
+    @Mock
+    private ProcedureRepository procedureRepository;
+
+    private ProcessPaymentService processPayment;
+    private EditPaymentService editPayment;
+    private DeletePaymentService deletePayment;
+    private PaymentQueryService paymentQueries;
+    private PaymentStatusService paymentStatus;
 
     private Budget testBudget;
     private Payment testPayment;
@@ -44,6 +70,15 @@ class PaymentServiceTest {
 
     @BeforeEach
     void setUp() {
+        PaymentPersistenceAdapter payments = new PaymentPersistenceAdapter(paymentRepository, budgetRepository);
+        BudgetLookupAdapter budgets = new BudgetLookupAdapter(budgetRepository, procedureRepository);
+
+        processPayment = new ProcessPaymentService(payments, budgets);
+        editPayment = new EditPaymentService(payments);
+        deletePayment = new DeletePaymentService(payments);
+        paymentQueries = new PaymentQueryService(payments);
+        paymentStatus = new PaymentStatusService(payments, budgets);
+
         testDate = new Date();
 
         testBudget = new Budget();
@@ -65,10 +100,11 @@ class PaymentServiceTest {
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
         when(paymentRepository.save(any(Payment.class))).thenReturn(testPayment);
 
-        Payment result = paymentService.processPayment(1, 1000f, testDate, "Test");
+        PaymentDetails result = processPayment.process(
+                new ProcessPaymentCommand(1, 1000f, testDate, "Test", null));
 
         assertThat(result).isNotNull()
-                .extracting(Payment::getAmount, Payment::getIdPayment)
+                .extracting(PaymentDetails::amount, PaymentDetails::id)
                 .containsExactly(1000f, 1);
 
         verify(budgetRepository, times(2)).findById(1);
@@ -80,7 +116,8 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenBudgetNotFound() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> paymentService.processPayment(999, 1000f, testDate, "Test"))
+        assertThatThrownBy(() -> processPayment.process(
+                new ProcessPaymentCommand(999, 1000f, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Presupuesto no encontrado");
 
@@ -93,7 +130,8 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsNull() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.processPayment(1, null, testDate, "Test"))
+        assertThatThrownBy(() -> processPayment.process(
+                new ProcessPaymentCommand(1, null, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -105,7 +143,8 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsZero() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.processPayment(1, 0f, testDate, "Test"))
+        assertThatThrownBy(() -> processPayment.process(
+                new ProcessPaymentCommand(1, 0f, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -117,7 +156,8 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenAmountIsNegative() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
-        assertThatThrownBy(() -> paymentService.processPayment(1, -100f, testDate, "Test"))
+        assertThatThrownBy(() -> processPayment.process(
+                new ProcessPaymentCommand(1, -100f, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -129,10 +169,11 @@ class PaymentServiceTest {
     void shouldConsultPaymentById() {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
 
-        Optional<Payment> result = paymentService.getPayment(1);
+        Optional<PaymentDetails> result = paymentQueries.findById(1);
 
-        assertThat(result).isPresent()
-                .contains(testPayment);
+        assertThat(result).isPresent().get()
+                .extracting(PaymentDetails::id, PaymentDetails::budgetId, PaymentDetails::amount)
+                .containsExactly(1, 1, 1000f);
 
         verify(paymentRepository, times(1)).findById(1);
     }
@@ -142,7 +183,7 @@ class PaymentServiceTest {
     void shouldReturnEmptyWhenPaymentNotFound() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-        Optional<Payment> result = paymentService.getPayment(999);
+        Optional<PaymentDetails> result = paymentQueries.findById(999);
 
         assertThat(result).isEmpty();
 
@@ -155,14 +196,14 @@ class PaymentServiceTest {
         List<Payment> payments = new ArrayList<>();
         payments.add(testPayment);
 
-        when(paymentRepository.findByFkIdBudgetIdBudget(1))
-                .thenReturn(payments);
+        when(paymentRepository.findByFkIdBudgetIdBudget(1)).thenReturn(payments);
 
-        List<Payment> result = paymentService.findPaymentsByBudget(1);
+        List<PaymentDetails> result = paymentQueries.findByBudget(1);
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .contains(testPayment);
+                .extracting(PaymentDetails::id)
+                .containsExactly(1);
 
         verify(paymentRepository, times(1)).findByFkIdBudgetIdBudget(1);
     }
@@ -173,7 +214,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(1000f);
 
-        Float result = paymentService.calculatePendingBalance(1);
+        float result = paymentStatus.pendingBalance(1);
 
         assertThat(result).isEqualTo(4000f);
 
@@ -187,7 +228,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calculatePendingBalance(1);
+        float result = paymentStatus.pendingBalance(1);
 
         assertThat(result).isEqualTo(5000f);
 
@@ -200,9 +241,9 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        StatusPayment result = paymentService.calculatePaymentStatus(1);
+        PaymentStatus result = paymentStatus.status(1);
 
-        assertThat(result).isEqualTo(StatusPayment.NoPayments);
+        assertThat(result).isEqualTo(PaymentStatus.NoPayments);
     }
 
     @Test
@@ -211,9 +252,9 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(1000f);
 
-        StatusPayment result = paymentService.calculatePaymentStatus(1);
+        PaymentStatus result = paymentStatus.status(1);
 
-        assertThat(result).isEqualTo(StatusPayment.PARTIAL);
+        assertThat(result).isEqualTo(PaymentStatus.PARTIAL);
     }
 
     @Test
@@ -222,9 +263,9 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(5000f);
 
-        StatusPayment result = paymentService.calculatePaymentStatus(1);
+        PaymentStatus result = paymentStatus.status(1);
 
-        assertThat(result).isEqualTo(StatusPayment.PAID);
+        assertThat(result).isEqualTo(PaymentStatus.PAID);
     }
 
     @Test
@@ -235,11 +276,12 @@ class PaymentServiceTest {
 
         when(paymentRepository.findAll()).thenReturn(payments);
 
-        List<Payment> result = paymentService.findAll();
+        List<PaymentDetails> result = paymentQueries.findAll();
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .contains(testPayment);
+                .extracting(PaymentDetails::id)
+                .containsExactly(1);
 
         verify(paymentRepository, times(1)).findAll();
     }
@@ -252,14 +294,14 @@ class PaymentServiceTest {
         List<Payment> payments = new ArrayList<>();
         payments.add(testPayment);
 
-        when(paymentRepository.findByDateBetween(startDate, endDate))
-                .thenReturn(payments);
+        when(paymentRepository.findByDateBetween(startDate, endDate)).thenReturn(payments);
 
-        List<Payment> result = paymentService.findPaymentsByDateRange(startDate, endDate);
+        List<PaymentDetails> result = paymentQueries.findByDateRange(startDate, endDate);
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .contains(testPayment);
+                .extracting(PaymentDetails::id)
+                .containsExactly(1);
 
         verify(paymentRepository, times(1)).findByDateBetween(startDate, endDate);
     }
@@ -269,7 +311,7 @@ class PaymentServiceTest {
     void shouldDeletePayment() {
         when(paymentRepository.existsById(1)).thenReturn(true);
 
-        paymentService.deletePayment(1);
+        deletePayment.delete(1);
 
         verify(paymentRepository, times(1)).existsById(1);
         verify(paymentRepository, times(1)).deleteById(1);
@@ -280,7 +322,7 @@ class PaymentServiceTest {
     void shouldThrowExceptionWhenDeletingNonExistentPayment() {
         when(paymentRepository.existsById(999)).thenReturn(false);
 
-        assertThatThrownBy(() -> paymentService.deletePayment(999))
+        assertThatThrownBy(() -> deletePayment.delete(999))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Pago no encontrado");
 
@@ -295,13 +337,14 @@ class PaymentServiceTest {
         editedPayment.setAmount(2000f);
         editedPayment.setDate(testDate);
 
+        when(paymentRepository.existsById(1)).thenReturn(true);
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
         when(paymentRepository.save(any(Payment.class))).thenReturn(editedPayment);
 
-        Payment result = paymentService.editPayment(1, 2000f, testDate, "Edited");
+        PaymentDetails result = editPayment.edit(new EditPaymentCommand(1, 2000f, testDate, "Edited", null));
 
         assertThat(result).isNotNull()
-                .extracting(Payment::getAmount)
+                .extracting(PaymentDetails::amount)
                 .isEqualTo(2000f);
 
         verify(paymentRepository, times(1)).findById(1);
@@ -311,9 +354,9 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Should throw exception when editing non-existent pago")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
-        when(paymentRepository.findById(999)).thenReturn(Optional.empty());
+        when(paymentRepository.existsById(999)).thenReturn(false);
 
-        assertThatThrownBy(() -> paymentService.editPayment(999, 1000f, testDate, "Test"))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, 1000f, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Pago no encontrado");
 
@@ -323,9 +366,9 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Should throw exception when editing pago with invalid amount")
     void shouldThrowExceptionWhenEditingWithInvalidAmount() {
-        when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
+        when(paymentRepository.existsById(1)).thenReturn(true);
 
-        assertThatThrownBy(() -> paymentService.editPayment(1, -100f, testDate, "Test"))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(1, -100f, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El monto del pago debe ser mayor a cero");
 
@@ -340,7 +383,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calculatePendingBalance(1);
+        float result = paymentStatus.pendingBalance(1);
 
         assertThat(result).isEqualTo(6500f);
     }
@@ -353,7 +396,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calculatePendingBalance(1);
+        float result = paymentStatus.pendingBalance(1);
 
         assertThat(result).isEqualTo(6500f);
     }
@@ -366,7 +409,7 @@ class PaymentServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
-        Float result = paymentService.calculatePendingBalance(1);
+        float result = paymentStatus.pendingBalance(1);
 
         assertThat(result).isEqualTo(5000f);
     }

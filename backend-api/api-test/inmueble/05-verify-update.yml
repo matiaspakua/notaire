@@ -20,6 +20,6 @@ runtime:
         });
         test("Attributes were properly updated", function () {
           const b = res.getBody();
-          expect(b.domicilio).to.equal('Av. Libertador 5000 Piso 2');
-          expect(b.nomenclaturaCatastral).to.equal('CIRC-01-SEC-A-PARC-99-MOD');
+          expect(b.address).to.equal('Av. Libertador 5000 Piso 2');
+          expect(b.cadastralDesignation).to.equal('CIRC-01-SEC-A-PARC-99-MOD');
         });

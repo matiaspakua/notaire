@@ -17,7 +17,7 @@ http:
           "lastName": "Historial E2E",
           "identificationNumber": "30555447",
           "isClient": false,
-          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
           "nationality": "Argentina",
           "maritalStatus": "Soltero",
           "sex": "Masculino"

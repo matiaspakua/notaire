@@ -33,9 +33,9 @@ runtime:
             const body = res.getBody();
             if (body.length > 0) {
               const entry = body[0];
-              expect(entry).to.have.property('idRegistroAuditoria');
-              expect(entry).to.have.property('detalleOperacion');
-              expect(entry).to.have.property('modulo');
+              expect(entry).to.have.property('idAuditRecord');
+              expect(entry).to.have.property('operationDetail');
+              expect(entry).to.have.property('module');
             }
           });
 

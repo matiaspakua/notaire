@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"plantillaPresupuestoPK":{"fkIdTipoTramite":1,"fkIdConcepto":1},"tipoDeTramite":{"idTipoTramite":1},"concepto":{"idConcepto":1},"observaciones":"Test plantilla E2E"}
+        {"budgetTemplatePK":{"fkIdProcedureType":1,"fkIdConcept":1},"procedureType":{"idProcedureType":1},"concept":{"idConcept":1},"notes":"Test plantilla E2E"}
   headers:
     - name: Content-Type
       value: application/json

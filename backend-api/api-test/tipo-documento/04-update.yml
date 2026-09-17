@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TD E2E Actualizado","vence":true,"diasVencimiento":30,"quienEntrega":"Escribano"}
+        {"name":"TD E2E Actualizado","expires":true,"diasVencimiento":30,"deliveredBy":"Escribano"}
   headers:
     - name: Content-Type
       value: application/json

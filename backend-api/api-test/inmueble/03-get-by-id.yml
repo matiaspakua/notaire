@@ -20,7 +20,7 @@ runtime:
         });
         test("Returns correct inmueble details", function () {
           const b = res.getBody();
-          expect(b.idInmueble).to.equal(bru.getVar('inmueble_id'));
-          expect(b.domicilio).to.equal('Av. Libertador 5000');
-          expect(b.matricula).to.equal('M-9988');
+          expect(b.idProperty).to.equal(Number(bru.getVar('inmueble_id')));
+          expect(b.address).to.equal('Av. Libertador 5000');
+          expect(b.registrationNumber).to.equal('M-9988');
         });

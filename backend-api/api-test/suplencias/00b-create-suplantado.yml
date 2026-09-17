@@ -15,9 +15,9 @@ http:
         {
           "firstName": "Suplantado",
           "lastName": "Suplencias E2E",
-          "identificationNumber": "30555447",
+          "identificationNumber": "30555448",
           "isClient": false,
-          "fkIdIdentificationType": { "idTipoIdentificacion": 1 },
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
           "nationality": "Argentina",
           "maritalStatus": "Casado",
           "sex": "Masculino"

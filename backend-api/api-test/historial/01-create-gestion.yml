@@ -14,11 +14,11 @@ http:
     type: json
     data: |-
         {
-          "fechaInicio": "2026-09-05",
-          "numero": 900001,
+          "dateStart": "2026-09-05",
+          "number": 900001,
           "encabezado": "Gestion Historial E2E",
-          "fkIdPersonaEscribano": { "personId": {{_historial_escribano_id}} },
-          "fkIdEstadoDeGestion": { "idEstadoGestion": 1 }
+          "fkIdNotaryPerson": { "personId": {{_historial_escribano_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 1 }
         }
   headers:
     - name: Content-Type
@@ -34,6 +34,6 @@ runtime:
           });
           test("Stores gestion id", function () {
             const b = res.getBody();
-            expect(b.idGestion).to.be.a('number');
-            bru.setVar('_historial_gestion_id', b.idGestion);
+            expect(b.idManagement).to.be.a('number');
+            bru.setVar('_historial_gestion_id', b.idManagement);
           });

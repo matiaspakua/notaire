@@ -16,6 +16,6 @@ runtime:
           test("Status 200 OK", function () {
             expect(res.getStatus()).to.equal(200);
           });
-          test("Persists updated observaciones", function () {
-            expect(res.getBody().observaciones).to.equal('Tramite E2E actualizado');
+          test("Persists updated notes", function () {
+            expect(res.getBody().notes).to.equal('Tramite E2E actualizado');
           });

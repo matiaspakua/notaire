@@ -13,4 +13,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
-          test("Returns idSuplencia", function () { expect(res.getBody()).to.have.property('idSuplencia'); });
+          test("Returns idSubstitution", function () { expect(res.getBody()).to.have.property('idSubstitution'); });

@@ -13,7 +13,7 @@ import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.service.ManagementArchiveDebtService;
 import com.licensis.notaire.service.ManagementTransitionService;
-import com.licensis.notaire.service.PaymentService;
+import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class ManagementArchiveDebtServiceTest {
     private ManagementStatusRepository statusRepository;
 
     @Mock
-    private PaymentService paymentService;
+    private GetPaymentStatusUseCase paymentStatus;
 
     @Mock
     private ManagementTransitionService managementTransitionService;
@@ -89,7 +89,7 @@ class ManagementArchiveDebtServiceTest {
         void shouldReturnSingleBudgetBalanceForSingleProcedure() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(5000.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(5000.00f);
 
             Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
@@ -102,8 +102,8 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(3000.00f);
-            when(paymentService.calculatePendingBalance(20)).thenReturn(1500.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
+            when(paymentStatus.pendingBalance(20)).thenReturn(1500.00f);
 
             Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
@@ -115,7 +115,7 @@ class ManagementArchiveDebtServiceTest {
         void shouldReturnZeroWhenAllPresupuestosAreFullyPaid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
 
             Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
@@ -145,7 +145,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);  // No deuda - required for archive
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);  // No deuda - required for archive
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -160,7 +160,7 @@ class ManagementArchiveDebtServiceTest {
         void shouldRejectArchiveWhenTransitionInvalid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
             when(managementTransitionService.transition(1, "Archivada"))
                     .thenThrow(new BusinessValidationException("Transición no permitida"));
 
@@ -177,7 +177,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(20000.00f);  // Deuda exists
+            when(paymentStatus.pendingBalance(10)).thenReturn(20000.00f);  // Deuda exists
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -195,7 +195,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);  // No deuda
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);  // No deuda
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -214,8 +214,8 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(15000.00f);
-            when(paymentService.calculatePendingBalance(20)).thenReturn(25000.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(15000.00f);
+            when(paymentStatus.pendingBalance(20)).thenReturn(25000.00f);
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             // Total deuda = 40000
@@ -236,7 +236,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             when(procedureFolderRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(folder));
@@ -276,7 +276,7 @@ class ManagementArchiveDebtServiceTest {
                     .thenReturn(List.of(folderEnWait));
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentService.calculatePendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 

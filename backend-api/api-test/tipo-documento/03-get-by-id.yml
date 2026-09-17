@@ -16,5 +16,5 @@ runtime:
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
           test("Returns the requested item", function () {
-            expect(res.getBody().idTipoDocumento).to.equal(Number(bru.getVar('_id')));
+            expect(res.getBody().idDocumentType).to.equal(Number(bru.getVar('_id')));
           });

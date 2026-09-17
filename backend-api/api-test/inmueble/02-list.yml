@@ -21,6 +21,6 @@ runtime:
         test("Returns array with created inmueble", function () {
           const b = res.getBody();
           expect(b).to.be.an('array');
-          const found = b.some(item => item.idInmueble === bru.getVar('inmueble_id'));
+          const found = b.some(item => item.idProperty === Number(bru.getVar('inmueble_id')));
           expect(found).to.be.true;
         });

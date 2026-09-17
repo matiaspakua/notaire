@@ -8,7 +8,7 @@ http:
   body:
     type: json
     data: |-
-        {"nombre":"TF E2E Actualizado","observaciones":"upd"}
+        {"name":"TF E2E Actualizado","notes":"upd"}
   headers:
     - name: Content-Type
       value: application/json

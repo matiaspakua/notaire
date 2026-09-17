@@ -12,7 +12,7 @@ http:
   body:
     type: json
     data: |-
-        { "nombre": "{{rate_limit_user}}", "contrasenia": "wrong" }
+        { "name": "{{rate_limit_user}}", "password": "wrong" }
   headers:
     - name: Content-Type
       value: application/json

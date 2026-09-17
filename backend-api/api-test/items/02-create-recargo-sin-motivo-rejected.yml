@@ -12,11 +12,11 @@ http:
     type: json
     data: |-
         {
-          "nombre": "Recargo sin motivo",
-          "valor": 100.0,
-          "tipo": "RECARGO",
-          "conceptoFijo": false,
-          "fkIdPresupuesto": { "idPresupuesto": {{_items_presupuesto_id}} }
+          "name": "Recargo sin motivo",
+          "value": 100.0,
+          "type": "RECARGO",
+          "fixedConcept": false,
+          "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
         }
   headers:
     - name: Content-Type

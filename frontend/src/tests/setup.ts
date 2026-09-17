@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 
 // jsdom does not implement scrollIntoView/hasPointerCapture/PointerEvent methods
 // that Radix UI primitives (e.g. Select) rely on for focus/scroll management.

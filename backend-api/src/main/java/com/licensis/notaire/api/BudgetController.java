@@ -1,12 +1,13 @@
 package com.licensis.notaire.api;
 
+import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
+import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.dto.DtoBudgetResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.service.BudgetCatalogItemsService;
 import com.licensis.notaire.service.BudgetTemplateService;
-import com.licensis.notaire.service.BudgetResumenService;
 import com.licensis.notaire.service.BudgetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,16 +43,16 @@ public class BudgetController {
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
 
     private final BudgetService budgetService;
-    private final BudgetResumenService budgetResumenService;
+    private final GetBudgetSummaryUseCase budgetSummaryUseCase;
     private final BudgetTemplateService budgetTemplateService;
     private final BudgetCatalogItemsService budgetCatalogoItemsService;
 
     public BudgetController(BudgetService budgetService,
-            BudgetResumenService budgetResumenService,
+            GetBudgetSummaryUseCase budgetSummaryUseCase,
             BudgetTemplateService budgetTemplateService,
             BudgetCatalogItemsService budgetCatalogoItemsService) {
         this.budgetService = budgetService;
-        this.budgetResumenService = budgetResumenService;
+        this.budgetSummaryUseCase = budgetSummaryUseCase;
         this.budgetTemplateService = budgetTemplateService;
         this.budgetCatalogoItemsService = budgetCatalogoItemsService;
     }
@@ -85,7 +86,7 @@ public class BudgetController {
     @Operation(summary = "CU47 - Obtener resumen financiero de un presupuesto (total, saldo y pagos)")
     public ResponseEntity<DtoBudgetResumen> getResumen(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(budgetResumenService.getSummary(id));
+            return ResponseEntity.ok(PaymentWebMapper.toDto(budgetSummaryUseCase.summary(id)));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
