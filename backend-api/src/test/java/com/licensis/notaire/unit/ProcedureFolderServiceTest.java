@@ -5,7 +5,7 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.ProcedureFolderRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureFolderRepositoryPort;
 import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 class ProcedureFolderServiceTest {
 
     @Mock
-    private ProcedureFolderRepository procedureFolderRepository;
+    private ProcedureFolderRepositoryPort procedureFolderRepository;
 
     @InjectMocks
     private ProcedureFolderService procedureFolderService;
