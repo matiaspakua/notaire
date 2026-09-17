@@ -2,13 +2,13 @@ package com.licensis.notaire.application.usecase.budget;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.BudgetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +22,13 @@ import java.util.List;
 @Transactional
 public class BudgetTemplateService {
 
-    private final BudgetRepository budgetRepository;
+    private final BudgetRepositoryPort budgetRepository;
     private final BudgetTemplateRepository budgetTemplateRepository;
-    private final ItemRepository itemRepository;
+    private final ItemRepositoryPort itemRepository;
 
-    public BudgetTemplateService(BudgetRepository budgetRepository,
+    public BudgetTemplateService(BudgetRepositoryPort budgetRepository,
             BudgetTemplateRepository budgetTemplateRepository,
-            ItemRepository itemRepository) {
+            ItemRepositoryPort itemRepository) {
         this.budgetRepository = budgetRepository;
         this.budgetTemplateRepository = budgetTemplateRepository;
         this.itemRepository = itemRepository;
@@ -51,7 +51,7 @@ public class BudgetTemplateService {
                 .map(template -> crearItemDesdeConcept(budget, template.getConcept()))
                 .toList();
 
-        return itemRepository.saveAll(items);
+        return itemRepository.createAll(items);
     }
 
     private Item crearItemDesdeConcept(Budget budget, Concept concept) {

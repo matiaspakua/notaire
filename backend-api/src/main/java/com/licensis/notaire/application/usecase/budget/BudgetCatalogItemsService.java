@@ -1,10 +1,10 @@
 package com.licensis.notaire.application.usecase.budget;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.application.port.out.item.ItemRepositoryPort;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.ItemRepository;
-import com.licensis.notaire.repository.BudgetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,11 @@ import java.util.List;
 @Transactional
 public class BudgetCatalogItemsService {
 
-    private final BudgetRepository budgetRepository;
-    private final ItemRepository itemRepository;
+    private final BudgetRepositoryPort budgetRepository;
+    private final ItemRepositoryPort itemRepository;
 
-    public BudgetCatalogItemsService(BudgetRepository budgetRepository,
-            ItemRepository itemRepository) {
+    public BudgetCatalogItemsService(BudgetRepositoryPort budgetRepository,
+            ItemRepositoryPort itemRepository) {
         this.budgetRepository = budgetRepository;
         this.itemRepository = itemRepository;
     }
@@ -35,7 +35,7 @@ public class BudgetCatalogItemsService {
                 .map(idItem -> copyItemFromCatalog(budget, idItem))
                 .toList();
 
-        return itemRepository.saveAll(copies);
+        return itemRepository.createAll(copies);
     }
 
     private Item copyItemFromCatalog(Budget budget, Integer idItem) {

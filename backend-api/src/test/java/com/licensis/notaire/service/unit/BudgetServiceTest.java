@@ -1,14 +1,13 @@
 package com.licensis.notaire.service.unit;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -29,15 +28,15 @@ import static org.mockito.Mockito.*;
 class BudgetServiceTest {
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private BudgetRepositoryPort budgetRepository;
 
-    @InjectMocks
     private BudgetService budgetService;
 
     private Budget testBudget;
 
     @BeforeEach
     void setUp() {
+        budgetService = new BudgetService(budgetRepository);
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1000);
@@ -81,7 +80,7 @@ class BudgetServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Budget> page = new PageImpl<>(List.of(testBudget), pageable, 1);
 
-        when(budgetRepository.findAll(pageable)).thenReturn(page);
+        when(budgetRepository.findAllPaged(pageable)).thenReturn(page);
 
         Page<Budget> result = budgetService.findAllPaged(pageable);
 
@@ -91,7 +90,7 @@ class BudgetServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getPageable().getPageNumber()).isEqualTo(0);
 
-        verify(budgetRepository, times(1)).findAll(pageable);
+        verify(budgetRepository, times(1)).findAllPaged(pageable);
     }
 
     @Test
@@ -125,7 +124,7 @@ class BudgetServiceTest {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
 
-        when(budgetRepository.findByFkIdPersonIdPerson(1))
+        when(budgetRepository.findByPersonId(1))
                 .thenReturn(presupuestos);
 
         List<Budget> result = budgetService.findByPerson(1);
@@ -134,13 +133,13 @@ class BudgetServiceTest {
                 .hasSize(1)
                 .contains(testBudget);
 
-        verify(budgetRepository, times(1)).findByFkIdPersonIdPerson(1);
+        verify(budgetRepository, times(1)).findByPersonId(1);
     }
 
     @Test
     @DisplayName("Should return empty list when person has no presupuestos")
     void shouldReturnEmptyListWhenPersonHasNoPresupuestos() {
-        when(budgetRepository.findByFkIdPersonIdPerson(999))
+        when(budgetRepository.findByPersonId(999))
                 .thenReturn(new ArrayList<>());
 
         List<Budget> result = budgetService.findByPerson(999);
@@ -148,7 +147,7 @@ class BudgetServiceTest {
         assertThat(result).isNotNull()
                 .isEmpty();
 
-        verify(budgetRepository, times(1)).findByFkIdPersonIdPerson(999);
+        verify(budgetRepository, times(1)).findByPersonId(999);
     }
 
     @Test
@@ -213,7 +212,7 @@ class BudgetServiceTest {
         newBudget.setEncabezado(null);
         newBudget.setNumber(0);
 
-        when(budgetRepository.save(any(Budget.class)))
+        when(budgetRepository.create(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -227,7 +226,7 @@ class BudgetServiceTest {
                 .isEqualTo("Presupuesto");
         assertThat(result.getNumber()).isNotEqualTo(0);
 
-        verify(budgetRepository, times(1)).save(any(Budget.class));
+        verify(budgetRepository, times(1)).create(any(Budget.class));
     }
 
     @Test
@@ -237,7 +236,7 @@ class BudgetServiceTest {
         newBudget.setEncabezado("Custom");
         newBudget.setNumber(0);
 
-        when(budgetRepository.save(any(Budget.class)))
+        when(budgetRepository.create(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -250,7 +249,7 @@ class BudgetServiceTest {
                 .extracting(Budget::getEncabezado)
                 .isEqualTo("Custom");
 
-        verify(budgetRepository, times(1)).save(any(Budget.class));
+        verify(budgetRepository, times(1)).create(any(Budget.class));
     }
 
     @Test
@@ -260,7 +259,7 @@ class BudgetServiceTest {
         newBudget.setEncabezado("Test");
         newBudget.setNumber(0);
 
-        when(budgetRepository.save(any(Budget.class)))
+        when(budgetRepository.create(any(Budget.class)))
                 .thenAnswer(inv -> {
                     Budget p = inv.getArgument(0);
                     p.setIdBudget(1);
@@ -272,7 +271,7 @@ class BudgetServiceTest {
         assertThat(result.getNumber()).isGreaterThan(0)
                 .isLessThan(Integer.MAX_VALUE);
 
-        verify(budgetRepository, times(1)).save(any(Budget.class));
+        verify(budgetRepository, times(1)).create(any(Budget.class));
     }
 
     @Test
@@ -283,7 +282,7 @@ class BudgetServiceTest {
         updatedBudget.setStatus("RECHAZADO");
 
         when(budgetRepository.existsById(1)).thenReturn(true);
-        when(budgetRepository.save(any(Budget.class)))
+        when(budgetRepository.update(eq(1), any(Budget.class)))
                 .thenReturn(updatedBudget);
 
         Budget result = budgetService.update(1, updatedBudget);
@@ -294,7 +293,7 @@ class BudgetServiceTest {
         assertThat(result.getStatus()).isEqualTo("RECHAZADO");
 
         verify(budgetRepository, times(1)).existsById(1);
-        verify(budgetRepository, times(1)).save(any(Budget.class));
+        verify(budgetRepository, times(1)).update(eq(1), any(Budget.class));
     }
 
     @Test
@@ -307,7 +306,7 @@ class BudgetServiceTest {
                 .hasMessageContaining("Presupuesto no encontrado");
 
         verify(budgetRepository, times(1)).existsById(999);
-        verify(budgetRepository, never()).save(any(Budget.class));
+        verify(budgetRepository, never()).update(anyInt(), any(Budget.class));
     }
 
     @Test
