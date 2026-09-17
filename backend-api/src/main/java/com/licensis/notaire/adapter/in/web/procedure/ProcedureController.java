@@ -1,7 +1,7 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +31,9 @@ public class ProcedureController {
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureController.class);
 
-    private final ProcedureRepository repository;
+    private final ProcedureRepositoryPort repository;
 
-    public ProcedureController(ProcedureRepository repository) {
+    public ProcedureController(ProcedureRepositoryPort repository) {
         this.repository = repository;
     }
 

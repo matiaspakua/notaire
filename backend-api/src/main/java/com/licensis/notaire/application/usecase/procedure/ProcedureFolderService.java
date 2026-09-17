@@ -4,7 +4,7 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.Procedure;
-import com.licensis.notaire.repository.ProcedureFolderRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureFolderRepositoryPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,9 +27,9 @@ public class ProcedureFolderService {
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureFolderService.class);
 
-    private final ProcedureFolderRepository procedureFolderRepository;
+    private final ProcedureFolderRepositoryPort procedureFolderRepository;
 
-    public ProcedureFolderService(ProcedureFolderRepository procedureFolderRepository) {
+    public ProcedureFolderService(ProcedureFolderRepositoryPort procedureFolderRepository) {
         this.procedureFolderRepository = procedureFolderRepository;
     }
 

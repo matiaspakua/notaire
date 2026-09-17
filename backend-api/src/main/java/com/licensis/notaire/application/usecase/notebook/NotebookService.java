@@ -1,13 +1,12 @@
 package com.licensis.notaire.application.usecase.notebook;
 
+import com.licensis.notaire.application.port.out.notebook.NotebookRepositoryPort;
+import com.licensis.notaire.application.port.out.notebook.NotebookFolioOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
-import com.licensis.notaire.repository.NotebookRepository;
-import com.licensis.notaire.repository.FolioRepository;
-import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,15 +26,13 @@ public class NotebookService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookService.class);
 
-    private final NotebookRepository notebookRepository;
-    private final FolioRepository folioRepository;
-    private final PersonRepository personRepository;
+    private final NotebookRepositoryPort notebookRepository;
+    private final NotebookFolioOperationPort folioRepository;
 
-    public NotebookService(NotebookRepository notebookRepository, FolioRepository folioRepository,
-                            PersonRepository personRepository) {
+    public NotebookService(NotebookRepositoryPort notebookRepository,
+                            NotebookFolioOperationPort folioRepository) {
         this.notebookRepository = notebookRepository;
         this.folioRepository = folioRepository;
-        this.personRepository = personRepository;
     }
 
     @Transactional(readOnly = true)
@@ -49,10 +46,10 @@ public class NotebookService {
     }
 
     public Notebook createNotebook(List<Integer> idsFolio, Integer idNotary, int year, String notes) {
-        Person notary = personRepository.findById(idNotary)
+        Person notary = notebookRepository.findPersonById(idNotary)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la persona escribano con ID: " + idNotary));
 
-        List<Folio> folios = folioRepository.findAllByIdFolioIn(idsFolio);
+        List<Folio> folios = folioRepository.findAllById(idsFolio);
         if (folios.size() != idsFolio.size()) {
             throw new ResourceNotFoundException("Uno o más folios indicados no existen");
         }
@@ -80,8 +77,8 @@ public class NotebookService {
     }
 
     public int calculateNextNumber(int year, Person notary) {
-        int candidate = notebookRepository.findByYearAndFkIdNotaryPerson(year, notary).size() + 1;
-        while (notebookRepository.existsByNumberAndYearAndFkIdNotaryPerson(candidate, year, notary)) {
+        int candidate = notebookRepository.findByYearAndNotary(year, notary).size() + 1;
+        while (notebookRepository.existsByNumberYearAndNotary(candidate, year, notary)) {
             candidate++;
         }
         return candidate;
@@ -92,7 +89,7 @@ public class NotebookService {
             folio.setFkIdNotebook(notebook);
             folio.setStatus(StatusAssignedToNotebook);
         }
-        folioRepository.saveAll(folios);
+        folioRepository.saveAllFolios(folios);
     }
 
     private void validateFolioCount(List<Folio> folios) {

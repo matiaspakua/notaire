@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTypeController;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.business.WorkflowDefinition;
-import com.licensis.notaire.repository.ProcedureTypeRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
-import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,15 +31,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProcedureTypeWorkflowAssignmentTest {
 
     @Mock
-    private ProcedureTypeRepository repository;
+    private ProcedureTypeRepositoryPort repository;
     @Mock
     private WorkflowDefinitionRepository workflowRepository;
     @Mock
     private BudgetTemplateRepository budgetTemplateRepository;
     @Mock
-    private ProcedureRepository procedureRepository;
+    private ProcedureRepositoryPort procedureRepository;
     @Mock
-    private ProcedureTemplateRepository procedureTemplateRepository;
+    private ProcedureTemplateRepositoryPort procedureTemplateRepository;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;

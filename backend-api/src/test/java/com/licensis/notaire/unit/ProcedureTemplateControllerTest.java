@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.procedure.ProcedureTemplateController;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
-import com.licensis.notaire.repository.ProcedureTemplateRepository;
+import com.licensis.notaire.application.port.out.procedure.ProcedureTemplateRepositoryPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProcedureTemplateControllerTest {
 
     @Mock
-    private ProcedureTemplateRepository repository;
+    private ProcedureTemplateRepositoryPort repository;
 
     private MockMvc mockMvc;
     private ObjectMapper mapper;

@@ -1,11 +1,11 @@
 package com.licensis.notaire.application.usecase.notebook;
 
+import com.licensis.notaire.application.port.out.folio.FolioRepositoryPort;
+import com.licensis.notaire.application.port.out.notebook.DeedOperationPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
-import com.licensis.notaire.repository.DeedRepository;
-import com.licensis.notaire.repository.FolioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +19,10 @@ import java.util.List;
 @Transactional
 public class AuxiliaryProtocolService {
 
-    private final FolioRepository folioRepository;
-    private final DeedRepository deedRepository;
+    private final FolioRepositoryPort folioRepository;
+    private final DeedOperationPort deedRepository;
 
-    public AuxiliaryProtocolService(FolioRepository folioRepository, DeedRepository deedRepository) {
+    public AuxiliaryProtocolService(FolioRepositoryPort folioRepository, DeedOperationPort deedRepository) {
         this.folioRepository = folioRepository;
         this.deedRepository = deedRepository;
     }
