@@ -25,7 +25,7 @@ public class SubstitutionPersistenceAdapter implements SubstitutionRepositoryPor
 
     @Override
     public List<Substitution> findAll() {
-        return substitutionRepository.findAll();
+        return substitutionRepository.findAllWithPersons();
     }
 
     @Override
