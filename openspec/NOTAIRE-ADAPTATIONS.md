@@ -44,6 +44,7 @@
 10. [Verificación del gate mecánico](#10-verificación-del-gate-mecánico)
 11. [Cómo adaptar OpenSpec en un proyecto nuevo](#11-cómo-adaptar-openspec-en-un-proyecto-nuevo)
 12. [Referencias](#12-referencias)
+13. [Orquestación del SDLC con OpenCode — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-opencode--paralelización-y-optimización-de-costo)
 
 ---
 
@@ -1058,6 +1059,181 @@ bash scripts/validate-sdlc-plan.sh
 
 ---
 
-*Última revisión: 2026-09-02. Este documento es la única fuente canónica de
-cómo OpenSpec fue instalado y adaptado en Notaire. Cambios a este documento
-requieren PR, como cualquier otro cambio al proceso (Constitución §12).*
+## 13. Orquestación del SDLC con OpenCode — paralelización y optimización de costo
+
+> Este bloque documenta cómo **OpenCode** se usa como motor de ejecución
+> headless del flujo del §5 de `CONSTITUTION.md`, complementando (no
+> reemplazando) a OpenSpec: OpenSpec sigue siendo el registro de la
+> especificación; OpenCode es quien *ejecuta* los pasos mecánicos y de
+> implementación del workflow, en paralelo y con el modelo más barato capaz de
+> cada tarea. Referencia: issue de origen y sesión que estableció este modelo.
+
+### 13.1 Por qué OpenCode como núcleo de ejecución
+
+`opencode run` es invocable de forma no interactiva y scriptable:
+
+```bash
+opencode run -m <provider/model> --agent <agent> "<mensaje>"
+```
+
+Esto permite:
+
+- Lanzar **N issues en paralelo** como procesos de shell en background,
+  cada uno con su propio worktree/branch, sin competir por el mismo contexto
+  de conversación.
+- Elegir el **modelo por tarea**, no por sesión — el mismo comando puede
+  correr con `opencode/gpt-5-nano` para un rename mecánico y con
+  `opencode/claude-opus-5` para una decisión de arquitectura, sin cambiar de
+  herramienta.
+- Delegar en el propio toolchain del proyecto (Maven, Vitest, Playwright,
+  Checkstyle, Spotless, Bruno) para todo lo que **no** requiere juicio —
+  ver 13.3 — de modo que la IA solo se invoca donde agrega valor real.
+
+`opencode.json` en la raíz ya carga `CLAUDE.md` + `.claude/rules/*` +
+`.claude/skills/*/SKILL.md` como `instructions`, así que cualquier invocación
+de `opencode run` recibe automáticamente la Constitución y las reglas del
+proyecto — no hay que repetirlas en cada prompt (igual que la garantía de
+§10 de la Constitución: "An agent that never reads `CLAUDE.md` still gets
+this Constitution").
+
+### 13.2 Modelo de paralelización — carriles (lanes) independientes
+
+Cada Issue se asigna a un **carril** según el módulo que toca, y los
+carriles corren en paralelo mientras no compartan archivos:
+
+| Carril | Módulos | Ejecutor típico |
+|---|---|---|
+| `backend` | `backend-api/src/main`, `notaire-shared` | `mvn`, Checkstyle, Spotless, JaCoCo |
+| `backend-test` | `backend-api/src/test` (unit/integration) | `mvn test`, `mvn verify -Ppg-integration` |
+| `frontend` | `frontend/src` | `npx tsc`, ESLint, Vitest |
+| `api-contract` | `backend-api/api-test/` (Bruno) | `npx @usebruno/cli run` |
+| `e2e` | `frontend/tests/e2e` | Playwright |
+| `docs` | `docs/`, `openspec/` | markdown-lint, `validate-sdlc-plan.sh` |
+
+Reglas de paralelización (derivadas de la Constitución §5 "Sub-agent
+delegation is the default for multi-part work"):
+
+1. **Un Issue, un worktree.** Cada Issue procesado en paralelo obtiene su
+   propio `git worktree` (`git worktree add ../notaire-issue-<n> -b
+   <type>/<n>_<slug> main`), nunca el checkout compartido — evita que dos
+   ejecuciones concurrentes pisen los cambios no comiteados de la otra (lección
+   aprendida en la sesión #984-#995: dos agentes escribiendo en el mismo
+   working tree sin worktree produjeron un merge manual de ~135 archivos).
+2. **Issues independientes = paralelo; Issues con overlap de archivos =
+   secuencial.** Antes de lanzar el batch, se hace un impact-analysis rápido
+   (grep de los archivos/paquetes que cada Issue previsiblemente toca) y solo
+   se paraleliza el subconjunto sin solapamiento.
+3. **Tests corren en paralelo a la implementación de *otros* Issues**, nunca
+   al de su propio Issue (TDD sigue siendo secuencial dentro de un Issue:
+   test failing → implementar → test passing).
+4. **Merge secuencial, uno a la vez**, con `mvn verify` / `npm run build` +
+   gates re-corridos contra `main` actualizado antes de cada merge — nunca se
+   asume que dos PRs verdes en paralelo siguen siendo compatibles entre sí sin
+   re-verificar tras el primer merge (Constitución Gate 4).
+
+### 13.3 Reducir llamadas a IA — priorizar el toolchain determinístico
+
+Principio: **si un script determinístico puede responder la pregunta, no se
+gasta una llamada a modelo en ella.** Aplicado en este flujo:
+
+| Antes (dependía de la IA) | Ahora (toolchain, 0 tokens de IA) |
+|---|---|
+| "¿Compila el backend?" | `mvn -q compile -pl backend-api -am` (exit code) |
+| "¿Pasan los tests?" | `mvn test -pl backend-api` / `npx vitest run` — parsear `Tests run:` / summary JSON |
+| "¿Cumple el estilo?" | `mvn checkstyle:check` + `mvn spotless:check` — no se le pide a un modelo que "revise el formato" |
+| "¿Está completo el plan SDLC?" | `bash scripts/validate-sdlc-plan.sh` (gate mecánico, resuelve el Issue vía `gh` en vivo) |
+| "¿Está todo listo para el PR?" | `bash scripts/run_pipeline.sh` (dashboard HTML, un solo exit code) |
+| "¿Qué endpoints Bruno fallan?" | `npx @usebruno/cli run` + grep del resumen — solo se lee con IA el *diff* de fallos, no el log completo |
+| "¿Hay un merge conflict?" | `gh pr view <n> --json mergeable,mergeStateStatus` |
+
+La IA se reserva para lo que el toolchain no puede decidir: diseñar el caso
+de prueba, interpretar *por qué* falló un test, elegir la estrategia de
+implementación, redactar el ADR, revisar si el fix es correcto.
+
+**RTK (Rust Token Killer)** — ya configurado en el entorno (ver
+`~/.claude/RTK.md`) — se usa de forma transparente para todo comando de shell
+que un agente ejecuta (`git status`, `mvn test`, greps grandes): el hook
+reescribe el comando para recortar hasta ~90% del output antes de que llegue
+al contexto del modelo. No requiere cambios en los prompts; es una capa de
+infraestructura, no una decisión por tarea.
+
+### 13.4 Enrutamiento de modelo por tipo de tarea (mapeo a OpenCode)
+
+Extiende la tabla de la Constitución §5 "Sub-agent delegation... cost-matched
+to task complexity" con IDs concretos disponibles en `opencode models`:
+
+| Complejidad | Ejemplos de tarea en este flujo | Modelo OpenCode sugerido |
+|---|---|---|
+| Mecánica / find-replace | Rename masivo, aplicar un patrón ya probado en un módulo nuevo, correr y resumir un script fijo | `opencode/gpt-5-nano`, `opencode/gemini-3.5-flash-lite`, `opencode/claude-haiku-4-5` |
+| Test y validación | Escribir/arreglar tests unitarios, interpretar una suite, triage de fallos, consistency checks | `opencode/claude-sonnet-5`, `opencode/gpt-5.1` |
+| Implementación estándar | Un endpoint CRUD siguiendo convención existente, un bugfix acotado con causa raíz clara | `opencode/claude-sonnet-5` |
+| Análisis complejo / crítico | Decisión de arquitectura, ADR, diseño cross-cutting, cualquier cosa con consecuencia real de negocio o seguridad si sale mal | `opencode/claude-opus-5` |
+
+Regla operativa: **arrancar siempre en el nivel más barato que pueda
+resolver la tarea** y escalar solo si el resultado no pasa los gates
+mecánicos (test sigue fallando, checkstyle sigue rojo) — no elegir el modelo
+más caro "por si acaso".
+
+### 13.5 Bucle operativo — Issue → PR con OpenCode
+
+Para cada Issue del backlog, en el carril que le corresponda:
+
+```bash
+# 1. Branch dedicado en worktree propio (nunca el checkout compartido)
+git worktree add ../notaire-issue-<n> -b <type>/<n>_<slug> main
+
+# 2. Spec (Gate 1) — mecánico + IA solo para el contenido del proposal
+cd ../notaire-issue-<n>
+openspec new change "<slug>"
+bash scripts/validate-sdlc-plan.sh   # gate mecánico, 0 tokens
+
+# 3. TDD + implementación — modelo cost-matched (13.4), headless
+opencode run -m opencode/claude-sonnet-5 --agent build \
+  "Implementa el Issue #<n> siguiendo openspec/changes/<slug>/. \
+   Escribe primero los tests (deben fallar), luego el código mínimo para \
+   pasarlos. No toques archivos fuera del carril <lane>."
+
+# 4. Gates — todo mecánico, 0 tokens salvo para interpretar un fallo real
+mvn test -pl backend-api && mvn verify -pl backend-api
+cd frontend && npx vitest run && npx tsc --noEmit
+bash scripts/run_pipeline.sh   # Gate 3 obligatorio antes del PR
+
+# 5. PR + verificación de mergeabilidad (Gate 4) — `gh`, sin IA
+gh pr create --title "[#<n>] ..." --body "Closes #<n>"
+gh pr view <pr> --json mergeable,mergeStateStatus
+
+# 6. Merge secuencial + re-verificación contra main actualizado
+gh pr merge <pr> --merge --delete-branch
+```
+
+Un orquestador (humano o agente coordinador) lanza el paso 3 de varios
+Issues en paralelo (`&` + `wait`, o el tool de sub-agentes del asistente que
+esté coordinando), pero los pasos 5–6 son **siempre secuenciales** — un PR a
+la vez, re-verificando contra `main` tras cada merge.
+
+### 13.6 Lecciones aplicadas de la sesión de referencia
+
+- **Nunca confiar en el resumen de un sub-agente sin re-correr `mvn
+  test`/`mvn verify` de forma independiente** — en la migración hexagonal
+  (#984-#995) varios sub-agentes reportaron "tests passing" habiendo corrido
+  solo un subconjunto; la verificación completa encontró regresiones reales
+  (`NullPointerException` en mocks desactualizados, `LazyInitializationException`
+  en un endpoint de listado). El orquestador siempre re-verifica antes de
+  abrir el PR, nunca confía ciegamente en el reporte del ejecutor.
+- **`git worktree`, no el checkout compartido**, para cualquier ejecución en
+  paralelo — evita reconciliaciones manuales de cientos de archivos.
+- **Un test contra base de datos real (H2 no alcanza) para todo lo que
+  dependa de fetch lazy/eager de JPA** — varios bugs de serialización solo
+  aparecieron corriendo Bruno contra Postgres con datos reales, nunca en los
+  tests unitarios con mocks.
+- **Docker con volumen limpio (`docker compose down -v`) entre corridas de
+  Bruno** — de lo contrario, colisiones de DNI/ID de corridas previas generan
+  falsos negativos (409) indistinguibles de un bug real.
+
+---
+
+*Última revisión: 2026-09-18. Este documento es la única fuente canónica de
+cómo OpenSpec fue instalado y adaptado en Notaire, y de cómo OpenCode se usa
+como motor de ejecución paralelo y cost-optimizado del flujo que OpenSpec
+especifica. Cambios a este documento requieren PR, como cualquier otro cambio
+al proceso (Constitución §12).*
