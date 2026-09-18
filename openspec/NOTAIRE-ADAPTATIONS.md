@@ -44,7 +44,7 @@
 10. [Verificación del gate mecánico](#10-verificación-del-gate-mecánico)
 11. [Cómo adaptar OpenSpec en un proyecto nuevo](#11-cómo-adaptar-openspec-en-un-proyecto-nuevo)
 12. [Referencias](#12-referencias)
-13. [Orquestación del SDLC con OpenCode — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-opencode--paralelización-y-optimización-de-costo)
+13. [Orquestación del SDLC con OpenSpec — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-openspec--paralelización-y-optimización-de-costo)
 
 ---
 
@@ -1059,42 +1059,38 @@ bash scripts/validate-sdlc-plan.sh
 
 ---
 
-## 13. Orquestación del SDLC con OpenCode — paralelización y optimización de costo
+## 13. Orquestación del SDLC con OpenSpec — paralelización y optimización de costo
 
-> Este bloque documenta cómo **OpenCode** se usa como motor de ejecución
-> headless del flujo del §5 de `CONSTITUTION.md`, complementando (no
-> reemplazando) a OpenSpec: OpenSpec sigue siendo el registro de la
-> especificación; OpenCode es quien *ejecuta* los pasos mecánicos y de
-> implementación del workflow, en paralelo y con el modelo más barato capaz de
-> cada tarea. Referencia: issue de origen y sesión que estableció este modelo.
+> Este bloque documenta cómo **OpenSpec** actúa como columna vertebral
+> spec-driven del flujo del §5 de `CONSTITUTION.md` cuando el trabajo se
+> reparte entre varios agentes/sub-agentes en paralelo: cada `openspec
+> change` es la unidad atómica que un carril (lane) toma, ejecuta de punta a
+> punta y cierra, de modo que el estado del backlog es siempre reconstruible
+> leyendo `openspec/changes/` + GitHub Issues, sin depender de memoria de
+> conversación. La ejecución en sí la hace el asistente de turno (Claude
+> Code, Copilot, u otro agente conforme a `CONSTITUTION.md` §10) — OpenSpec
+> no ejecuta código, es el contrato y el registro que todos comparten.
 
-### 13.1 Por qué OpenCode como núcleo de ejecución
+### 13.1 Por qué OpenSpec como columna vertebral de la orquestación
 
-`opencode run` es invocable de forma no interactiva y scriptable:
+`openspec new change "<slug>"` scaffoldea los artefactos mandatorios
+(`proposal.md`, `traceability.md`, `specs/<capability>/spec.md`, `design.md`,
+`tasks.md`) según el schema `notaire-sdlc`. Esto importa para la
+paralelización porque:
 
-```bash
-opencode run -m <provider/model> --agent <agent> "<mensaje>"
-```
-
-Esto permite:
-
-- Lanzar **N issues en paralelo** como procesos de shell en background,
-  cada uno con su propio worktree/branch, sin competir por el mismo contexto
-  de conversación.
-- Elegir el **modelo por tarea**, no por sesión — el mismo comando puede
-  correr con `opencode/gpt-5-nano` para un rename mecánico y con
-  `opencode/claude-opus-5` para una decisión de arquitectura, sin cambiar de
-  herramienta.
-- Delegar en el propio toolchain del proyecto (Maven, Vitest, Playwright,
-  Checkstyle, Spotless, Bruno) para todo lo que **no** requiere juicio —
-  ver 13.3 — de modo que la IA solo se invoca donde agrega valor real.
-
-`opencode.json` en la raíz ya carga `CLAUDE.md` + `.claude/rules/*` +
-`.claude/skills/*/SKILL.md` como `instructions`, así que cualquier invocación
-de `opencode run` recibe automáticamente la Constitución y las reglas del
-proyecto — no hay que repetirlas en cada prompt (igual que la garantía de
-§10 de la Constitución: "An agent that never reads `CLAUDE.md` still gets
-this Constitution").
+- **Cada change es una unidad de trabajo autocontenida y verificable**:
+  `bash scripts/validate-sdlc-plan.sh <slug>` confirma mecánicamente (sin
+  IA) que el Issue, la especificación y las tareas están completas antes de
+  que cualquier agente empiece a escribir código — el Gate 1 no depende de
+  que el agente "se acuerde" de verificarlo.
+- **`tasks.md` es la fuente de verdad del progreso**, no el historial de
+  chat: un agente que retoma un change interrumpido (por rate limit, por
+  reinicio de sesión) lee `tasks.md` para saber qué falta, en vez de
+  reconstruir el estado a partir de la conversación.
+- **El mismo contrato sirve para cualquier agente** (Claude Code, Copilot,
+  Codex, u otro conforme a la Constitución §10) — no hay lock-in a una
+  herramienta de ejecución concreta; lo único fijo es el schema OpenSpec y
+  los gates mecánicos.
 
 ### 13.2 Modelo de paralelización — carriles (lanes) independientes
 
@@ -1157,41 +1153,44 @@ reescribe el comando para recortar hasta ~90% del output antes de que llegue
 al contexto del modelo. No requiere cambios en los prompts; es una capa de
 infraestructura, no una decisión por tarea.
 
-### 13.4 Enrutamiento de modelo por tipo de tarea (mapeo a OpenCode)
+### 13.4 Enrutamiento de modelo por tipo de tarea
 
-Extiende la tabla de la Constitución §5 "Sub-agent delegation... cost-matched
-to task complexity" con IDs concretos disponibles en `opencode models`:
+Aplica la tabla de la Constitución §5 "Sub-agent delegation... cost-matched
+to task complexity" independientemente de qué asistente concreto ejecute
+cada `openspec change` — el criterio es el mismo sin importar el proveedor:
 
-| Complejidad | Ejemplos de tarea en este flujo | Modelo OpenCode sugerido |
+| Complejidad | Ejemplos de tarea en este flujo | Nivel de modelo |
 |---|---|---|
-| Mecánica / find-replace | Rename masivo, aplicar un patrón ya probado en un módulo nuevo, correr y resumir un script fijo | `opencode/gpt-5-nano`, `opencode/gemini-3.5-flash-lite`, `opencode/claude-haiku-4-5` |
-| Test y validación | Escribir/arreglar tests unitarios, interpretar una suite, triage de fallos, consistency checks | `opencode/claude-sonnet-5`, `opencode/gpt-5.1` |
-| Implementación estándar | Un endpoint CRUD siguiendo convención existente, un bugfix acotado con causa raíz clara | `opencode/claude-sonnet-5` |
-| Análisis complejo / crítico | Decisión de arquitectura, ADR, diseño cross-cutting, cualquier cosa con consecuencia real de negocio o seguridad si sale mal | `opencode/claude-opus-5` |
+| Mecánica / find-replace | Rename masivo, aplicar un patrón ya probado en un módulo nuevo, correr y resumir un script fijo | el más barato disponible (p.ej. Haiku) |
+| Test y validación | Escribir/arreglar tests unitarios, interpretar una suite, triage de fallos, consistency checks | nivel medio (p.ej. Sonnet) |
+| Implementación estándar | Un endpoint CRUD siguiendo convención existente, un bugfix acotado con causa raíz clara | nivel medio (p.ej. Sonnet) |
+| Análisis complejo / crítico | Decisión de arquitectura, ADR, diseño cross-cutting, cualquier cosa con consecuencia real de negocio o seguridad si sale mal | el más capaz disponible (p.ej. Opus) |
 
 Regla operativa: **arrancar siempre en el nivel más barato que pueda
 resolver la tarea** y escalar solo si el resultado no pasa los gates
 mecánicos (test sigue fallando, checkstyle sigue rojo) — no elegir el modelo
 más caro "por si acaso".
 
-### 13.5 Bucle operativo — Issue → PR con OpenCode
+### 13.5 Bucle operativo — Issue → PR guiado por OpenSpec
 
 Para cada Issue del backlog, en el carril que le corresponda:
 
 ```bash
 # 1. Branch dedicado en worktree propio (nunca el checkout compartido)
 git worktree add ../notaire-issue-<n> -b <type>/<n>_<slug> main
-
-# 2. Spec (Gate 1) — mecánico + IA solo para el contenido del proposal
 cd ../notaire-issue-<n>
-openspec new change "<slug>"
-bash scripts/validate-sdlc-plan.sh   # gate mecánico, 0 tokens
 
-# 3. TDD + implementación — modelo cost-matched (13.4), headless
-opencode run -m opencode/claude-sonnet-5 --agent build \
-  "Implementa el Issue #<n> siguiendo openspec/changes/<slug>/. \
-   Escribe primero los tests (deben fallar), luego el código mínimo para \
-   pasarlos. No toques archivos fuera del carril <lane>."
+# 2. Spec (Gate 1) — el artefacto OpenSpec es el contrato que el
+#    ejecutor (agente o humano) sigue de punta a punta
+openspec new change "<slug>"
+bash scripts/validate-sdlc-plan.sh   # gate mecánico, 0 tokens de IA
+
+# 3. TDD + implementación — el agente de turno (Claude Code u otro
+#    conforme a Constitución §10), modelo cost-matched (13.4), trabaja
+#    tasks.md como lista de progreso: escribe primero los tests
+#    (deben fallar), luego el código mínimo para pasarlos, marcando cada
+#    tarea de tasks.md al completarla — así un agente que retoma el change
+#    tras una interrupción no necesita reconstruir el estado por chat.
 
 # 4. Gates — todo mecánico, 0 tokens salvo para interpretar un fallo real
 mvn test -pl backend-api && mvn verify -pl backend-api
@@ -1204,12 +1203,16 @@ gh pr view <pr> --json mergeable,mergeStateStatus
 
 # 6. Merge secuencial + re-verificación contra main actualizado
 gh pr merge <pr> --merge --delete-branch
+
+# 7. Archivar el change — pliega el delta spec en openspec/specs/
+openspec archive <slug>
 ```
 
 Un orquestador (humano o agente coordinador) lanza el paso 3 de varios
-Issues en paralelo (`&` + `wait`, o el tool de sub-agentes del asistente que
-esté coordinando), pero los pasos 5–6 son **siempre secuenciales** — un PR a
-la vez, re-verificando contra `main` tras cada merge.
+Issues en paralelo (worktrees independientes + el tool de sub-agentes del
+asistente que esté coordinando — p.ej. `Agent`/`Task` en Claude Code), pero
+los pasos 5–7 son **siempre secuenciales** — un PR a la vez, re-verificando
+contra `main` tras cada merge.
 
 ### 13.6 Lecciones aplicadas de la sesión de referencia
 
@@ -1233,7 +1236,8 @@ la vez, re-verificando contra `main` tras cada merge.
 ---
 
 *Última revisión: 2026-09-18. Este documento es la única fuente canónica de
-cómo OpenSpec fue instalado y adaptado en Notaire, y de cómo OpenCode se usa
-como motor de ejecución paralelo y cost-optimizado del flujo que OpenSpec
-especifica. Cambios a este documento requieren PR, como cualquier otro cambio
-al proceso (Constitución §12).*
+cómo OpenSpec fue instalado y adaptado en Notaire, incluyendo cómo sus
+artefactos (`proposal.md`/`traceability.md`/`tasks.md`) se usan como
+columna vertebral de una ejecución paralela y cost-optimizada entre varios
+agentes/sub-agentes. Cambios a este documento requieren PR, como cualquier
+otro cambio al proceso (Constitución §12).*
