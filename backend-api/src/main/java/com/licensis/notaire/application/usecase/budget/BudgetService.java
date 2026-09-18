@@ -1,8 +1,8 @@
 package com.licensis.notaire.application.usecase.budget;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
 import com.licensis.notaire.business.Budget;
-import com.licensis.notaire.repository.BudgetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,9 @@ public class BudgetService {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetService.class);
 
-    private final BudgetRepository budgetRepository;
+    private final BudgetRepositoryPort budgetRepository;
 
-    public BudgetService(BudgetRepository budgetRepository) {
+    public BudgetService(BudgetRepositoryPort budgetRepository) {
         this.budgetRepository = budgetRepository;
     }
 
@@ -42,7 +42,7 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public Page<Budget> findAllPaged(Pageable pageable) {
-        return budgetRepository.findAll(pageable);
+        return budgetRepository.findAllPaged(pageable);
     }
 
     /**
@@ -66,7 +66,7 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<Budget> findByPerson(Integer idPerson) {
         log.debug("Finding presupuestos for persona id: {}", idPerson);
-        return budgetRepository.findByFkIdPersonIdPerson(idPerson);
+        return budgetRepository.findByPersonId(idPerson);
     }
 
     /**
@@ -100,7 +100,7 @@ public class BudgetService {
             budget.setNumber((int) (System.currentTimeMillis() % Integer.MAX_VALUE));
         }
         log.info("Creating presupuesto: numero={}", budget.getNumber());
-        return budgetRepository.save(budget);
+        return budgetRepository.create(budget);
     }
 
     /**
@@ -117,7 +117,7 @@ public class BudgetService {
         }
         budget.setIdBudget(id);
         log.info("Updating presupuesto id: {}", id);
-        return budgetRepository.save(budget);
+        return budgetRepository.update(id, budget);
     }
 
     /**
