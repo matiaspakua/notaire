@@ -51,9 +51,9 @@ export default function PagosPage() {
   const { data: estadoPago } = usePagoEstado(editing.idBudget || null);
 
   const estadoPagoLabel: Record<string, string> = {
-    SIN_PAGOS: t("estadoSinPagos"),
-    PARCIAL: t("estadoParcial"),
-    SALDADO: t("estadoSaldado"),
+    NoPayments: t("estadoSinPagos"),
+    PARTIAL: t("estadoParcial"),
+    PAID: t("estadoSaldado"),
   };
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }

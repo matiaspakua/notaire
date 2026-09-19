@@ -1,6 +1,5 @@
 package com.licensis.notaire.adapter.in.web.folio;
 
-import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -68,14 +67,14 @@ public class FolioController {
         this.deedRepository = deedRepository;
     }
 
+    // GET endpoints return the raw entity, not Folio.getDto(): the legacy DTO renames fields
+    // (personNotary/deed/id instead of fkIdNotaryPerson/fkIdDeed/personId) and does not match
+    // the frontend's Folio type or the rest of the refactored API (see #1006).
     @GetMapping
     @Operation(summary = "Obtener todos los folios")
-    public ResponseEntity<List<DtoFolio>> getAll() {
+    public ResponseEntity<List<Folio>> getAll() {
         try {
-            List<DtoFolio> result = folioRepository.findAll().stream()
-                    .map(Folio::getDto)
-                    .toList();
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(folioRepository.findAll());
         } catch (Exception e) {
             log.error("Failed to list folios", e);
             return ResponseEntity.internalServerError().build();
@@ -84,11 +83,8 @@ public class FolioController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar folios por estado")
-    public ResponseEntity<List<DtoFolio>> search(@RequestParam String status) {
-        List<DtoFolio> result = folioRepository.findByStatus(status).stream()
-                .map(Folio::getDto)
-                .toList();
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<Folio>> search(@RequestParam String status) {
+        return ResponseEntity.ok(folioRepository.findByStatus(status));
     }
 
     @GetMapping("/{id}/in-use")
@@ -105,9 +101,9 @@ public class FolioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener folio por ID")
-    public ResponseEntity<DtoFolio> getById(@PathVariable Integer id) {
+    public ResponseEntity<Folio> getById(@PathVariable Integer id) {
         return folioRepository.findById(id)
-                .map(f -> ResponseEntity.ok(f.getDto()))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -118,7 +114,7 @@ public class FolioController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo folio")
-    public ResponseEntity<DtoFolio> create(@Valid @RequestBody FolioRequest request) {
+    public ResponseEntity<Folio> create(@Valid @RequestBody FolioRequest request) {
         if (request.typeFolioId() == null || request.notaryId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -148,7 +144,7 @@ public class FolioController {
                 folio.setStatus(StatusUTILIZADO);
             }
             Folio saved = folioRepository.save(folio);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved.getDto());
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             log.error("Failed to create folio", e);
             return ResponseEntity.internalServerError().build();
@@ -207,7 +203,7 @@ public class FolioController {
         }
         try {
             Folio saved = folioRepository.save(folio);
-            return ResponseEntity.ok(saved.getDto());
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
             log.error("Failed to update folio {}", id, e);
             return ResponseEntity.internalServerError().build();

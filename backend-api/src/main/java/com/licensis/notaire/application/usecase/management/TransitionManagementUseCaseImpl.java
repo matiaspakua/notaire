@@ -14,6 +14,7 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Use case orchestration for CU83 - Transición de estado de gestión.
@@ -39,7 +40,11 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
         this.bitacora = bitacora;
     }
 
+    // Without a transaction, managementRepository.findById(...) returns a DeedManagement whose
+    // session closes before workflowLookup.resolveWorkflowDefinition(...) touches the lazy
+    // procedureList collection, throwing LazyInitializationException (see #1006).
     @Override
+    @Transactional
     public TransitionManagementOutput execute(Integer managementId, String statusDestination) {
         DeedManagement management = managementRepository.findById(managementId);
         if (management == null) {

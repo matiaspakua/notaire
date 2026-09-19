@@ -284,7 +284,7 @@ export default function PresupuestosPage() {
                 helperText={personas.length === 0 ? "No hay personas registradas. Primero registre una persona." : undefined}
               >
                 <Select
-                  value={editing.person?.idPerson?.toString() ?? ""}
+                  value={editing.person?.personId?.toString() ?? ""}
                   onValueChange={(v) => {
                     const persona = personas.find((p) => p.personId?.toString() === v);
                     setEditing({ ...editing, person: persona });

@@ -79,9 +79,14 @@ describe("useReingresarDocumentacion (CU43)", () => {
 
     await result.current.mutateAsync({
       gestionId: 9,
-      reingreso: { idTramite: 1, idTipoDocumento: 5 },
+      reingreso: { idProcedure: 1, idDocumentType: 5 },
     });
 
-    expect(apiPost).toHaveBeenCalledWith("/gestiones/9/reingreso-documentacion", { idTramite: 1, idTipoDocumento: 5 });
+    // Backend body is DtoReingresoDocumentacionRequest(idProcedure, idDocumentType) —
+    // not idTramite/idTipoDocumento.
+    expect(apiPost).toHaveBeenCalledWith("/gestiones/9/reingreso-documentacion", {
+      idProcedure: 1,
+      idDocumentType: 5,
+    });
   });
 });

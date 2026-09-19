@@ -41,7 +41,7 @@ export default function TramitesPage() {
     queryKey: ["tiposTramite", "search", search, data],
     queryFn: () =>
       search.trim()
-        ? apiGet<TipoDeTramite[]>(`/tipo-tramite/search?nombre=${encodeURIComponent(search.trim())}`)
+        ? apiGet<TipoDeTramite[]>(`/tipo-tramite/search?name=${encodeURIComponent(search.trim())}`)
         : Promise.resolve(data),
   });
 

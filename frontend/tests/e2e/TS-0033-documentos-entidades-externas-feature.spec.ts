@@ -63,8 +63,8 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
     await expect(movimientoDialog).toBeVisible();
 
     await movimientoDialog.getByTestId("input-numero-carton").fill("42");
-    await movimientoDialog.getByTestId("input-observaciones").fill("Retirado del registro");
-    await movimientoDialog.getByTestId("checkbox-entregado").click();
+    await movimientoDialog.getByTestId("input-notes").fill("Retirado del registro");
+    await movimientoDialog.getByTestId("checkbox-delivered").click();
     await movimientoDialog.getByTestId("btn-guardar-movimiento").click();
 
     await expect(page.getByText(/movimiento registrado/i)).toBeVisible({ timeout: 10000 });

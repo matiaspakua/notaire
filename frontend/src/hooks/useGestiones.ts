@@ -129,8 +129,10 @@ export function useArchivarGestion() {
 export function useTransicionarGestion() {
   const qc = useQueryClient();
   return useMutation({
+    // Backend route is /transition (English, see ManagementController#transition) and its
+    // request body is DtoTransicionRequest(statusDestination) — not /transicionar+estadoDestino.
     mutationFn: ({ id, estadoDestino }: { id: number; estadoDestino: string }) =>
-      apiPost<GestionDeEscritura>(`/gestiones/${id}/transicionar`, { estadoDestino }),
+      apiPost<GestionDeEscritura>(`/gestiones/${id}/transition`, { statusDestination: estadoDestino }),
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: gestionesKeys.all });
       qc.invalidateQueries({ queryKey: gestionWorkflowKeys.trace(id) });

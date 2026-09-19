@@ -56,7 +56,7 @@ export default function CuadernosPage() {
   }
 
   async function handleCrearCuaderno() {
-    const escribanoId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.idPerson;
+    const escribanoId = folios.find((f) => selectedIds.includes(f.idFolio!))?.fkIdNotaryPerson?.personId;
     if (!escribanoId) {
       toast.error(t("selectFoliosFirst"));
       return;

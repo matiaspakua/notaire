@@ -38,7 +38,7 @@ export default function ConceptosPage() {
     queryKey: ["conceptos", "search", search, conceptos],
     queryFn: () =>
       search
-        ? apiGet<Concepto[]>(`/conceptos/search?nombre=${encodeURIComponent(search)}`)
+        ? apiGet<Concepto[]>(`/conceptos/search?name=${encodeURIComponent(search)}`)
         : Promise.resolve(conceptos),
   });
 

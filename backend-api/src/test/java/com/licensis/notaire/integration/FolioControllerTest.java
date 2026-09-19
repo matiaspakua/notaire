@@ -283,7 +283,7 @@ class FolioControllerTest {
 
         var json = mapper.readTree(result.getResponse().getContentAsString());
         assertThat(json.get("status").asText()).isEqualTo("Utilizado");
-        assertThat(json.get("deed").get("idDeed").asInt()).isEqualTo(idDeed);
+        assertThat(json.get("fkIdDeed").get("idDeed").asInt()).isEqualTo(idDeed);
     }
 
     @Test
@@ -305,7 +305,7 @@ class FolioControllerTest {
 
         var json = mapper.readTree(update.getResponse().getContentAsString());
         assertThat(json.get("status").asText()).isEqualTo("Utilizado");
-        assertThat(json.get("deed").get("idDeed").asInt()).isEqualTo(idDeed);
+        assertThat(json.get("fkIdDeed").get("idDeed").asInt()).isEqualTo(idDeed);
     }
 
     @Test

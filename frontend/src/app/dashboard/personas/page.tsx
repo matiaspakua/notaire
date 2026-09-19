@@ -60,12 +60,13 @@ export default function PersonasPage() {
       if (!hasSearchCriteria) {
         return Promise.resolve(personas);
       }
+      // Backend route is /people/search (PersonController#searchPeople) — not /personas/buscar.
       const params = new URLSearchParams();
       if (searchNombre) params.set("firstName", searchNombre);
       if (searchApellido) params.set("lastName", searchApellido);
       if (searchDni) params.set("identificationNumber", searchDni);
       if (filterClientes) params.set("isClient", "true");
-      return apiGet<Persona[]>(`/personas/buscar?${params.toString()}`);
+      return apiGet<Persona[]>(`/people/search?${params.toString()}`);
     },
   });
 
@@ -101,9 +102,12 @@ export default function PersonasPage() {
       toast.error(extractApiError(err) ?? t("errorSave"));
       return;
     }
+    // Prefer the localized message over the backend's raw (English-only) text: the API
+    // doesn't localize error strings, so falling back to extractApiError(err) here would
+    // leak English into a Spanish UI.
     const existingId = extractDuplicatePersonaId(err);
     const existing = personas.find((p) => p.personId === existingId);
-    toast.error(extractApiError(err) ?? t("duplicateDocument"), {
+    toast.error(t("duplicateDocument"), {
       action: existing
         ? { label: t("viewExisting"), onClick: () => openEdit(existing) }
         : undefined,
@@ -112,7 +116,7 @@ export default function PersonasPage() {
 
   function extractDuplicatePersonaId(err: ApiError): number | undefined {
     try {
-      return (JSON.parse(err.body) as { idPersonaExistente?: number }).idPersonaExistente;
+      return (JSON.parse(err.body) as { existingPersonId?: number }).existingPersonId;
     } catch {
       return undefined;
     }

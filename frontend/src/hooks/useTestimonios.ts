@@ -26,8 +26,9 @@ export function useGenerarTestimonio() {
 export function useVerificarTestimonio() {
   const qc = useQueryClient();
   return useMutation({
+    // Backend body is DtoTestimony(flagged, notes) — not observado/observaciones.
     mutationFn: ({ id, observado, observaciones }: { id: number; observado: boolean; observaciones?: string }) =>
-      apiPost<Testimonio>(`/testimonio/${id}/verificar`, { observado, observaciones }),
+      apiPost<Testimonio>(`/testimonio/${id}/verificar`, { flagged: observado, notes: observaciones }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
   });
 }

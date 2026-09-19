@@ -100,12 +100,16 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private FolioType fkIdFolioType;
+    // EAGER, not LAZY: GET /api/v1/folio now serializes the raw entity (see #1006), and with
+    // spring.jpa.open-in-view=false the Hibernate session closes as soon as the @Transactional
+    // controller method returns — before Jackson gets a chance to initialize a lazy proxy,
+    // failing with "Could not initialize proxy ... - no session".
     @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
     @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id_cuaderno")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Notebook fkIdNotebook;
 

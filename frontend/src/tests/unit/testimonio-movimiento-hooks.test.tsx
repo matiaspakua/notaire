@@ -77,7 +77,7 @@ describe("useGenerarTestimonio (CU07)", () => {
 describe("useVerificarTestimonio (CU08)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("posts observado and observaciones to /testimonio/{id}/verificar", async () => {
+  it("posts flagged and notes (DtoTestimony's actual fields) to /testimonio/{id}/verificar", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idTestimonio: 3, verificado: true });
 
     const { result } = renderHook(() => useVerificarTestimonio(), { wrapper: createWrapper() });
@@ -85,8 +85,8 @@ describe("useVerificarTestimonio (CU08)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimonio/3/verificar", {
-      observado: true,
-      observaciones: "Falta firma",
+      flagged: true,
+      notes: "Falta firma",
     });
   });
 });
@@ -140,23 +140,23 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
     expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/registrar-inscripcion", {});
   });
 
-  it("useRetirar posts numeroCarton to /movimiento-testimonio/{id}/retirar", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 1, numeroCarton: 123 });
+  it("useRetirar posts cardNumber to /movimiento-testimonio/{id}/withdraw", async () => {
+    vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 1, cardNumber: 123 });
 
     const { result } = renderHook(() => useRetirar(), { wrapper: createWrapper() });
     result.current.mutate({ idTestimonio: 5, numeroCarton: 123 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/retirar", { numeroCarton: 123 });
+    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/withdraw", { cardNumber: 123 });
   });
 
-  it("useReingresar posts to /movimiento-testimonio/{id}/reingresar", async () => {
+  it("useReingresar posts to /movimiento-testimonio/{id}/reenter", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 2 });
 
     const { result } = renderHook(() => useReingresar(), { wrapper: createWrapper() });
     result.current.mutate(5);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/reingresar", {});
+    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/reenter", {});
   });
 });

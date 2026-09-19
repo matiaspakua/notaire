@@ -44,7 +44,7 @@ export default function EstadosGestionPage() {
     queryKey: ["estados-gestion", "search", search, data],
     queryFn: () =>
       search.trim()
-        ? apiGet<EstadoDeGestion[]>(`/estado-gestion/search?nombre=${encodeURIComponent(search.trim())}`)
+        ? apiGet<EstadoDeGestion[]>(`/estado-gestion/search?name=${encodeURIComponent(search.trim())}`)
         : Promise.resolve(data),
   });
 
