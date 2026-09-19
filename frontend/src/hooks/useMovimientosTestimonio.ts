@@ -26,13 +26,17 @@ export function useRegistrarInscripcion() {
 export function useRetirar() {
   const qc = useQueryClient();
   return useMutation({
+    // Backend route is /withdraw (English) and its body is DtoTestimonyMovement(cardNumber) —
+    // not /retirar+numeroCarton.
     mutationFn: ({ idTestimonio, numeroCarton }: { idTestimonio: number; numeroCarton: number }) =>
-      apiPost<MovimientoTestimonio>(`/movimiento-testimonio/${idTestimonio}/retirar`, { numeroCarton }),
+      apiPost<MovimientoTestimonio>(`/movimiento-testimonio/${idTestimonio}/withdraw`, {
+        cardNumber: numeroCarton,
+      }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
   });
 }
 
 /** CU44 - Reingresa un testimonio previamente retirado, sin alterar el movimiento anterior. */
 export function useReingresar() {
-  return useMovimientoAction("reingresar");
+  return useMovimientoAction("reenter");
 }
