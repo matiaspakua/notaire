@@ -20,11 +20,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `ci/1008_fix-bruno-login-field-names` | created |
 | Tasks | `tasks.md` | in progress (groups 1-9 complete) |
 | Commits | b683e6a | complete |
-| Pull Request | #1009 | open |
-| CI run | https://github.com/matiaspakua/notaire/actions (PR #1009) | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Pull Request | #1009 | merged |
+| CI run | https://github.com/matiaspakua/notaire/actions/runs/35449312102 — all 26 checks passed, including `API Tests (Bruno): success` | passed |
+| Merge commit | 9a3c9007c963cc33c722ed534543ab4a699aaf2c | complete |
+| Release / tag | n/a — no version tag; ships with the next regular release | n/a |
+| Smoke test | https://github.com/matiaspakua/notaire/actions/runs/35462616716 (manually-dispatched `ci.yml` on `main` HEAD 9a3c900) — **success**; triggered CD run https://github.com/matiaspakua/notaire/actions/runs/35462955480 — **success** (Docker image built & published to GHCR) | passed |
 
 ## Requirement coverage
 
@@ -34,7 +34,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Acceptance Criterion (Issue #1008) | Verification | Status |
 |-------------------------------------|------|--------|
 | Bruno login step sends `{"name": "admin", "password": "admin"}` | Diff of `.github/workflows/playwright-e2e.yml` in commit 1a7c138 | passing |
-| `API Tests (Bruno)` job passes on next `main` push / PR run | GitHub Actions run on this PR | pending |
+| `API Tests (Bruno)` job passes on next `main` push / PR run | GitHub Actions run on PR #1009 (run 35449312102) — `API Tests (Bruno): success` | passing |
 | No other workflow step makes the same mistake | `grep -rn "contrasenia" .github/workflows/` — clean | passing |
 
 ## Permanent documentation updated
@@ -50,8 +50,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #1008; this `openspec/changes/fix-bruno-login-field-names/` |
 | 2 | Failing tests written, test cases designed | yes (substituted) | See `tasks.md` §3 — live reproduction: broken payload → `token=null`, fixed payload → real JWT |
 | 3 | Suite green, coverage held, docs updated | yes | Backend 1890/1890 unaffected; `mvn verify` BUILD SUCCESS; Bruno suite obtains a token and runs (local DB pollution unrelated, see `tasks.md` §6.4); `preflight.sh --fix` passed 16/16 |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 4 | CI green, review approved, no conflicts | yes | PR #1009, all 26 checks green (run 35449312102); merged by code owner @matiasmiguez (counts as review approval — Constitution §5 step 20) |
+| 5 | Deployed, smoke test passed, Issue closed | yes | Merge commit 9a3c9007c on `main`; smoke test = `ci.yml` run 35462616716 (success) → CD run 35462955480 (success, image published to GHCR); Issue #1008 closed referencing PR #1009 |
 
 ## Exceptions
 
