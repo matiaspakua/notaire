@@ -74,35 +74,35 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin ci/1008_fix-bruno-login-field-names`
-- [ ] 10.2 Open PR titled `[#1008] ci(playwright-e2e): fix Bruno login payload field names`
-- [ ] 10.3 Wait for every required workflow to pass, **specifically confirming the "API Tests (Bruno)" job in `playwright-e2e.yml` goes green** — that is this change's actual proof of fix
-- [ ] 10.4 Gate 4 — CI green, no merge conflicts, docs complete (see §12.20 of the Constitution: code owner merging the PR is the review approval in this solo-maintainer repo)
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin ci/1008_fix-bruno-login-field-names`
+- [x] 10.2 Opened PR #1009 titled `[#1008] ci: fix Bruno login payload field names`
+- [x] 10.3 All 26 checks passed on run 35449312102, **`API Tests (Bruno): success`** confirmed — this change's actual proof of fix
+- [x] 10.4 Gate 4 — CI green, no merge conflicts, docs complete; merged by code owner @matiasmiguez (counts as review approval — Constitution §5 step 20)
+- [x] 10.5 Recorded PR #1009 in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only
-- [ ] 11.2 Confirm `cd.yml` still publishes normally (this change does not touch anything `cd.yml` builds or scans)
-- [ ] 11.3 Record the merge commit in `traceability.md`
+- [x] 11.1 Merged via PR #1009 (merge commit 9a3c9007c), never pushed to `main` directly
+- [x] 11.2 Confirmed `cd.yml` published normally — run 35462955480: `Build & Publish Docker Image: success`, image published to GHCR
+- [x] 11.3 Recorded the merge commit in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke test = the next `main`-branch CI run showing "API Tests (Bruno)" green
-- [ ] 12.2 Rollback path confirmed available (plain `git revert`, see design.md)
-- [ ] 12.3 Close Issue #1008, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive fix-bruno-login-field-names`
+- [x] 12.1 Smoke test: manually-dispatched `ci.yml` run on `main` HEAD (35462616716) — success, chaining into CD run (35462955480) — success. "API Tests (Bruno)" was already directly confirmed green on PR #1009's run (35449312102) against this exact code.
+- [x] 12.2 Rollback path confirmed available (plain `git revert`, see design.md) — untested since unneeded, but no state depends on this line beyond CI's own auth call
+- [x] 12.3 Issue #1008 closed (auto-closed by GitHub via the `Closes #1008` commit trailer on merge); closure comment added with full verification evidence
+- [x] 12.4 Archive the change: `openspec archive fix-bruno-login-field-names`
 
 ## Definition of Done
 
-- [ ] Issue linked (no Use Case applies; documented why)
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Verification designed and run first via live reproduction, observed failing (Gate 2 — substituted per traceability.md Exceptions)
-- [ ] Full suite green: unit, integration, regression, and the Bruno API suite specifically now running
-- [ ] Coverage at or above the JaCoCo ratchet floor (unaffected — no backend code changed)
-- [ ] Playwright E2E: n/a, no UI surface
-- [ ] Permanent documentation: n/a, confirmed and recorded
-- [ ] Commit atomic and conventional, referencing the Issue
-- [ ] PR created, CI green (Bruno job specifically verified) (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Issue linked (no Use Case applies; documented why)
+- [x] Specification written and reviewed (Gate 1)
+- [x] Verification designed and run first via live reproduction, observed failing (Gate 2 — substituted per traceability.md Exceptions)
+- [x] Full suite green: unit, integration, regression, and the Bruno API suite specifically now running
+- [x] Coverage at or above the JaCoCo ratchet floor (unaffected — no backend code changed)
+- [x] Playwright E2E: n/a, no UI surface
+- [x] Permanent documentation: n/a, confirmed and recorded
+- [x] Commit atomic and conventional, referencing the Issue
+- [x] PR created, CI green (Bruno job specifically verified) (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
