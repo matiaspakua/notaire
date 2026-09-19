@@ -37,9 +37,13 @@ export interface Persona {
   version?: number;
 }
 
-/** Nested person shape used by other entities' DTOs (DtoBudget.person, DtoFolio.personNotary, etc). */
+/**
+ * Nested person shape used by other entities' DTOs (DtoBudget.person, DtoFolio.personNotary, etc).
+ * Field is `personId`, not `idPerson` — Person.java's getter/setter break the `id<Entity>` naming
+ * convention used everywhere else (see #1006); this mirrors the actual wire format, not the convention.
+ */
 export interface DtoPerson {
-  idPerson?: number;
+  personId?: number;
   name?: string;
   lastName?: string;
 }
@@ -127,7 +131,7 @@ export interface Folio {
   status?: string;
   notes?: string;
   fkIdFolioType?: TipoDeFolio;
-  fkIdNotaryPerson?: { idPerson?: number; notaryRegistrationNumber?: number };
+  fkIdNotaryPerson?: { personId?: number; notaryRegistrationNumber?: number };
   fkIdDeed?: { idDeed?: number; number?: number };
   version?: number;
 }
@@ -137,7 +141,7 @@ export interface Cuaderno {
   number?: number;
   year?: number;
   notes?: string;
-  fkIdNotaryPerson?: { idPerson?: number; notaryRegistrationNumber?: number };
+  fkIdNotaryPerson?: { personId?: number; notaryRegistrationNumber?: number };
   version?: number;
 }
 
@@ -524,10 +528,10 @@ export interface GestionReingresoDocumentacion {
   procedures: TramiteDocumentacionNecesaria[];
 }
 
-/** CU43 - POST /gestiones/{id}/reingreso-documentacion request body. */
+/** CU43 - POST /gestiones/{id}/reingreso-documentacion request body — DtoReingresoDocumentacionRequest. */
 export interface ReingresoDocumentacionInput {
-  idTramite: number;
-  idTipoDocumento: number;
+  idProcedure: number;
+  idDocumentType: number;
 }
 
 /** CU43 - POST /gestiones/{id}/reingreso-documentacion response — DtoDocumentReentered. */

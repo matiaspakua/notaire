@@ -26,7 +26,7 @@ const EMPTY: Partial<Suplencia> = {
 
 function personaName(p: Suplencia["fkIdSubstituted"]): string {
   if (!p) return "—";
-  return [p.name, p.lastName].filter(Boolean).join(" ") || `#${p.idPerson}`;
+  return [p.name, p.lastName].filter(Boolean).join(" ") || `#${p.personId}`;
 }
 
 export default function SuplenciasPage() {
@@ -53,8 +53,8 @@ export default function SuplenciasPage() {
 
   function openEdit(s: Suplencia) {
     setEditing(s);
-    setEscribanoId(s.fkIdSubstituted?.idPerson?.toString() ?? "");
-    setSuplenteId(s.fkIdSubstitute?.idPerson?.toString() ?? "");
+    setEscribanoId(s.fkIdSubstituted?.personId?.toString() ?? "");
+    setSuplenteId(s.fkIdSubstitute?.personId?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
@@ -63,8 +63,8 @@ export default function SuplenciasPage() {
     const payload: Partial<Suplencia> = {
       dateStart: editing.dateStart,
       dateEnd: editing.dateEnd,
-      fkIdSubstituted: escribanoId ? { idPerson: Number(escribanoId) } : undefined,
-      fkIdSubstitute: suplenteId ? { idPerson: Number(suplenteId) } : undefined,
+      fkIdSubstituted: escribanoId ? { personId: Number(escribanoId) } : undefined,
+      fkIdSubstitute: suplenteId ? { personId: Number(suplenteId) } : undefined,
     };
     try {
       if (isEditMode && editing.idSubstitution) {
