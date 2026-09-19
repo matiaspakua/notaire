@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-bruno-login-field-names/` | written |
 | Branch | `ci/1008_fix-bruno-login-field-names` | created |
 | Tasks | `tasks.md` | in progress (groups 1-9 complete) |
-| Commits | 1a7c138 | complete |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Commits | b683e6a | complete |
+| Pull Request | #1009 | open |
+| CI run | https://github.com/matiaspakua/notaire/actions (PR #1009) | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
