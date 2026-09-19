@@ -7,7 +7,9 @@ export const pagosKeys = { all: ["pagos"] as const };
 export function usePagos() {
   return useQuery({ queryKey: pagosKeys.all, queryFn: () => apiGet<Pago[]>("/pagos") });
 }
-export type EstadoPago = "SIN_PAGOS" | "PARCIAL" | "SALDADO";
+// Values match PaymentStatus.java verbatim — its constant names are the published REST
+// contract (see domain/payment/PaymentStatus.java javadoc), not SIN_PAGOS/PARCIAL/SALDADO.
+export type EstadoPago = "NoPayments" | "PARTIAL" | "PAID";
 export function usePagoEstado(idPresupuesto: number | null) {
   return useQuery({
     queryKey: [...pagosKeys.all, "estado", idPresupuesto],
