@@ -40,9 +40,10 @@ export default function ProtocoloAuxiliarPage() {
     if (!selectedFolio) return;
     setSaving(true);
     try {
+      // Backend body is IniciarDeedRequest(idFolio, body) — not cuerpo.
       await apiPost<Escritura>("/protocolo-auxiliar/escrituras", {
         idFolio: selectedFolio.idFolio,
-        cuerpo,
+        body: cuerpo,
       });
       toast.success(t("created"));
       setSelectedFolio(null);
