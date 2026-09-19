@@ -30,7 +30,7 @@ export default function ReingresoDocumentacionPage() {
     try {
       await reingresarMutation.mutateAsync({
         gestionId: selectedGestionId,
-        reingreso: { idTramite, idTipoDocumento: documento.idDocumentType },
+        reingreso: { idProcedure: idTramite, idDocumentType: documento.idDocumentType },
       });
       toast.success(t("documentoReingresado"));
     } catch (err) {
