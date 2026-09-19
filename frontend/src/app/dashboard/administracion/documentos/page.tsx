@@ -51,7 +51,7 @@ export default function DocumentosPage() {
     queryKey: ["tiposDocumento", "search", search, tipos],
     queryFn: () =>
       search.trim()
-        ? apiGet<TipoDeDocumento[]>(`/tipo-de-documento/search?nombre=${encodeURIComponent(search.trim())}`)
+        ? apiGet<TipoDeDocumento[]>(`/tipo-de-documento/search?name=${encodeURIComponent(search.trim())}`)
         : Promise.resolve(tipos),
   });
 

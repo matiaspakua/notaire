@@ -60,7 +60,7 @@ export default function FoliosAdminPage() {
     queryKey: ["folios", estadoFilter],
     queryFn: () =>
       estadoFilter
-        ? apiGet<Folio[]>(`/folio/search?estado=${encodeURIComponent(estadoFilter)}`)
+        ? apiGet<Folio[]>(`/folio/search?status=${encodeURIComponent(estadoFilter)}`)
         : apiGet<Folio[]>("/folio"),
   });
 
@@ -82,7 +82,7 @@ export default function FoliosAdminPage() {
     queryKey: ["tipos-folio", "search", tipoSearch, tiposFolio],
     queryFn: () =>
       tipoSearch
-        ? apiGet<TipoDeFolioRow[]>(`/tipo-folio/search?nombre=${encodeURIComponent(tipoSearch)}`)
+        ? apiGet<TipoDeFolioRow[]>(`/tipo-folio/search?name=${encodeURIComponent(tipoSearch)}`)
         : Promise.resolve(tiposFolio),
   });
 
@@ -190,7 +190,7 @@ export default function FoliosAdminPage() {
       estado: folio.status ?? "Nuevo",
       observaciones: folio.notes ?? "",
       tipoFolioId: folio.fkIdFolioType?.idFolioType,
-      escribanoId: folio.fkIdNotaryPerson?.idPerson,
+      escribanoId: folio.fkIdNotaryPerson?.personId,
       escrituraId: folio.fkIdDeed?.idDeed,
     });
     setIsEditMode(true);
