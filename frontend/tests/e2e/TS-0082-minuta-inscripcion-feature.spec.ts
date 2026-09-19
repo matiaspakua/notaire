@@ -131,7 +131,11 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     page,
   }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const idInmueble = await seedInmueble(page, { matricula: null, tomoFolioFinca: null, linderos: null });
+    const idInmueble = await seedInmueble(page, {
+      registrationNumber: null,
+      volumeFolioLandRecord: null,
+      boundaries: null,
+    });
     await seedTramite(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");

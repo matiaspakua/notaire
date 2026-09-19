@@ -152,7 +152,8 @@ test.describe("CU15 - Procesar Pago", () => {
 
     await steps.givenUserIsOnPage("/dashboard/pagos");
 
-    const row = page.getByRole("row", { name: new RegExp(`#${pagoResult.data.idPayment}\\b`) });
+    // Row's accessible name starts with the bare id (no "#" prefix) — see TABLE-01/02/03.
+    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
 
     const downloadPromise = page.waitForEvent("download");
