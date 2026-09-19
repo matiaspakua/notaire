@@ -61,7 +61,12 @@ public class FolioType implements Serializable, Persistable<Integer>
     private String name;
     @Column(name = "observaciones")
     private String notes;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdFolioType", fetch = FetchType.EAGER)
+    // LAZY, not EAGER: this collection is @JsonIgnore'd (never serialized) and every reader
+    // (FolioController, legacy JpaControllers) runs inside a transaction. EAGER here made
+    // loading a single Folio cascade into loading every other Folio of the same type just to
+    // populate an ignored field, and once enough rows accumulated it starved the request
+    // (see #1006 — GET /api/v1/folio failing with "Failed to write request").
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdFolioType", fetch = FetchType.LAZY)
     private List<Folio> folioList;
     @Basic(optional = false)
     @Column(name = "habilitado")

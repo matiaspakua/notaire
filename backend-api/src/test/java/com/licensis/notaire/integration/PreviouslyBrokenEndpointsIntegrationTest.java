@@ -102,7 +102,9 @@ class PreviouslyBrokenEndpointsIntegrationTest {
     @DisplayName("Should return a JSON array for GET /api/v1/folio")
     void shouldListFoliosWhenRequested() throws Exception {
         // Folio list previously returned 500: raw entities were serialized with
-        // uninitialized lazy Hibernate proxies. The controller now maps to DtoFolio.
+        // uninitialized lazy Hibernate proxies (fkIdDeed/fkIdNotebook). Fixed by making
+        // those associations EAGER instead of masking it with the legacy DtoFolio shape,
+        // which didn't match the frontend's contract (see #1006).
         mockMvc.perform(get("/api/v1/folio"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
