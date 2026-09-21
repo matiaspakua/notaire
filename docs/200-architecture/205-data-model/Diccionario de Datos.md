@@ -55,8 +55,8 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 18 | [audit_records](#18-audit_records) | Seguridad | Débil | Bitácora de auditoría de transacciones de usuarios |
 | 19 | [roles](#19-roles) | Seguridad | Fuerte | Perfiles y roles de seguridad en el sistema |
 | 20 | [role_modules](#20-role_modules) | Seguridad | Asociativa | Permisos funcionales asignados a cada rol |
-| 21 | [suplencias](#21-suplencias) | Sujetos | Asociativa | Períodos de suplencia y licencias notariales |
-| 22 | [testimonios](#22-testimonios) | Protocolos | Débil | Testimonios notariales expedidos de escrituras matrices |
+| 21 | [substitutions](#21-substitutions) | Sujetos | Asociativa | Períodos de suplencia y licencias notariales |
+| 22 | [testimonies](#22-testimonies) | Protocolos | Débil | Testimonios notariales expedidos de escrituras matrices |
 | 23 | [document_types](#23-document_types) | Documentación | Fuerte | Catálogo maestro de tipos de documento y certificados |
 | 24 | [folio_types](#24-folio_types) | Protocolos | Fuerte | Clasificación de hojas de protocolo |
 | 25 | [procedure_types](#25-procedure_types) | Gestión Notarial | Fuerte | Catálogo maestro de actos jurídicos notariales |
@@ -77,7 +77,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 La base de datos actual refleja la evolución real del sistema a través de Flyway V1–V14. Los cambios relevantes para la integridad del modelo son:
 
 - V1: esquema base relacional con entidades de sujetos, protocolo, trámites, presupuestos y documentación.
-- V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonios`.
+- V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonies`.
 - V5: se normaliza `testimony_movements` para que coincida con el nombre de la entidad JPA (`id`, `entry_date`, `inscripta`, `folder_number`).
 - V6: `submitted_documents.fk_id_tramite` pasa a ser opcional para soportar documentos autónomos.
 - V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
@@ -109,8 +109,8 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `audit_records` | `id` | `fk_id_usuario` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
 | `roles` | `id` | — | Sin compensación | Catálogo de perfiles |
 | `role_modules` | `fk_id_role + modulo` | `fk_id_role` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
-| `suplencias` | `id_suplencia` | `fk_id_suplantado`, `fk_id_suplente` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cobertura de escribanos |
-| `testimonios` | `id_testimonio` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimonio generado desde escritura |
+| `substitutions` | `id` | `fk_id_substituted_person`, `fk_id_substitute_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cobertura de escribanos |
+| `testimonies` | `id` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimonio generado desde escritura |
 | `document_types` | `id` | — | Sin compensación | Catálogo maestra de documentos |
 | `folio_types` | `id` | — | Sin compensación | Catálogo maestra de folios |
 | `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
@@ -152,7 +152,7 @@ Ejemplares impresos en hojas especiales expedidos a partir de un testimonio nota
 | `print_date` | DATE | No | No | Sí | — | — | Fecha de expedición e impresión de la copia |
 | `pickup_date` | DATE | No | No | No | NULL | — | Fecha en que fue retirada por el interesado |
 | `observaciones` | TEXT | No | No | No | NULL | — | Registro de entrega o atestaciones |
-| `fk_id_testimonio` | INTEGER | No | Sí | Sí | — | `testimonios(id_testimonio)` | Testimonio matriz originario |
+| `fk_id_testimonio` | INTEGER | No | Sí | Sí | — | `testimonies(id)` | Testimonio matriz originario |
 | `fk_id_person` | INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Persona a quien se le expide o entrega la copia |
 
 ---
@@ -329,7 +329,7 @@ Registro del tracto y asientos de presentación registral del testimonio (V5).
 | `inscripta` | BOOLEAN | No | No | Sí | false | — | `true` si la inscripción resultó favorable (V5) |
 | `folder_number` | INTEGER | No | No | Sí | 0 | — | Número de cartón de presentación (V5) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas y despachos registrales |
-| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonios(id_testimonio)` | Testimonio objeto del trámite |
+| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonies(id)` | Testimonio objeto del trámite |
 
 ---
 
@@ -457,7 +457,7 @@ Permisos por módulo asignados a cada rol (introducido en Flyway V9).
 
 ---
 
-### 21. `suplencias`
+### 21. `substitutions`
 Designación de suplencias y coberturas de licencias entre escribanos.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
@@ -472,7 +472,7 @@ Designación de suplencias y coberturas de licencias entre escribanos.
 
 ---
 
-### 22. `testimonios`
+### 22. `testimonies`
 Testimonios solemnes expedidos de escrituras públicas matrices (V3/V4).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
@@ -650,8 +650,8 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `usuarios` | `fk_id_role` | `roles` | `id` | SET NULL |
 | `role_modules` | `fk_id_role` | `roles` | `id` | CASCADE |
 | `audit_records` | `fk_id_usuario` | `usuarios` | `id_usuario` | RESTRICT |
-| `suplencias` | `fk_id_suplantado` | `personas` | `id_persona` | RESTRICT |
-| `suplencias` | `fk_id_suplente` | `personas` | `id_persona` | RESTRICT |
+| `substitutions` | `fk_id_substituted_person` | `people` | `id` | RESTRICT |
+| `substitutions` | `fk_id_substitute_person` | `people` | `id` | RESTRICT |
 | `workflow_node` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | CASCADE |
 | `workflow_node` | `fk_estado_gestion_id` | `management_statuses` | `id` | RESTRICT |
 | `workflow_transition` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | CASCADE |
@@ -681,9 +681,9 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `folios` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
 | `folios` | `fk_id_folio_type` | `folio_types` | `id` | RESTRICT |
 | `folios` | `fk_id_deed` | `deeds` | `id` | SET NULL |
-| `testimonios` | `fk_id_deed` | `deeds` | `id` | CASCADE |
-| `testimony_movements` | `fk_id_testimonio` | `testimonios` | `id_testimonio` | CASCADE |
-| `copies` | `fk_id_testimonio` | `testimonios` | `id_testimonio` | CASCADE |
+| `testimonies` | `fk_id_deed` | `deeds` | `id` | CASCADE |
+| `testimony_movements` | `fk_id_testimonio` | `testimonies` | `id` | CASCADE |
+| `copies` | `fk_id_testimonio` | `testimonies` | `id` | CASCADE |
 | `copies` | `fk_id_person` | `personas` | `id_persona` | RESTRICT |
 | `folio_copies` | `fk_id_folio` | `folios` | `id` | RESTRICT |
 | `folio_copies` | `fk_id_copy` | `copies` | `id` | CASCADE |
@@ -713,7 +713,7 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 | **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
 | **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
-| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `suplencias`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
+| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
 - 13 entidades **fuertes** (41%) poseen CUs explícitas.

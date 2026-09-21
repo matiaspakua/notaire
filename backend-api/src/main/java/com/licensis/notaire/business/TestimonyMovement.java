@@ -75,7 +75,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     private int cardNumber;
     @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id_testimonio")
+    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Testimony fkIdTestimony;
 
