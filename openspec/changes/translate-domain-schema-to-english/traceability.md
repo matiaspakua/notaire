@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/translate-domain-schema-to-english/` | in progress |
 | Branch | `refactor/973_rename_leaf_reference_tables` (Slice 1); subsequent slices get their own branch (see `tasks.md`) | created |
 | Tasks | `tasks.md` | Slice 1 groups 2-9 complete; 10-12 pending PR/deploy |
-| Commits | — | pending |
+| Commits | `3e9172f` (openspec planning), `cd53632` (Slice 1 implementation) | Slice 1 committed, not yet pushed/PR'd |
 | Pull Request | — | pending (one PR per slice, per epic's vertical-slice convention) |
 | CI run | — | pending |
 | Merge commit | — | pending |
