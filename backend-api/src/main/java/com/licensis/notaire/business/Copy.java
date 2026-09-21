@@ -38,7 +38,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "copias")
+@Table(name = "copies")
 @XmlRootElement
 @NamedQueries(
         {
@@ -53,10 +53,10 @@ public class Copy implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
-    @Column(name = "fecha_impresion")
+    @Column(name = "print_date")
     @Temporal(TemporalType.DATE)
     private Date datePrinting;
-    @Column(name = "fecha_retiro")
+    @Column(name = "pickup_date")
     @Temporal(TemporalType.DATE)
     private Date dateWithdrawal;
     @Basic(optional = false)
@@ -70,17 +70,17 @@ public class Copy implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_copia")
+    @Column(name = "id")
     private Integer idCopy;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @ManyToMany(mappedBy = "copyList", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList"})
     private List<Folio> folioList;
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
     @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id_testimonio")

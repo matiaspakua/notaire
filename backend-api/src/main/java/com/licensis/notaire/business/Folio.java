@@ -82,12 +82,12 @@ public class Folio implements Serializable, Persistable<Integer>
     private String status;
     @Column(name = "observaciones")
     private String notes;
-    @JoinTable(name = "folios_copias", joinColumns =
+    @JoinTable(name = "folio_copies", joinColumns =
     {
         @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio")
     }, inverseJoinColumns =
     {
-        @JoinColumn(name = "fk_id_copia", referencedColumnName = "id_copia")
+        @JoinColumn(name = "fk_id_copy", referencedColumnName = "id")
     })
     @ManyToMany(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})

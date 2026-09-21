@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author juanca
  */
 @Entity
-@Table(name = "folios_copias")
+@Table(name = "folio_copies")
 @XmlRootElement
 @NamedQueries(
         {
@@ -46,7 +46,7 @@ public class FolioCopies implements Serializable, Persistable<FolioCopiesPK>
     @Column(name = "version")
     @Version
     private int version;
-    @JoinColumn(name = "fk_id_copia", referencedColumnName = "id_copia", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_copy", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Copy copy;
     @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio", insertable = false, updatable = false)

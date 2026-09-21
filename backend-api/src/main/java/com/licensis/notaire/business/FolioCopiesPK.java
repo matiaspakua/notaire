@@ -21,7 +21,7 @@ public class FolioCopiesPK implements Serializable
     @Column(name = "fk_id_folio")
     private int fkIdFolio;
     @Basic(optional = false)
-    @Column(name = "fk_id_copia")
+    @Column(name = "fk_id_copy")
     private int fkIdCopy;
 
     public FolioCopiesPK()
