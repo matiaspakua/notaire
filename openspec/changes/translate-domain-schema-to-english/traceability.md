@@ -34,8 +34,8 @@ verification instead uses:
 
 | Verification | Test | Status |
 |---------------------------------|------|--------|
-| Schema matches JPA `@Table`/`@Column` mapping after each slice | `FlywaySchemaValidationIntegrationTest` (`mvn test -Ppg-integration`) | pending — Docker/PostgreSQL unavailable in this environment; not yet run for Slice 1, must run before merge |
-| No regression in existing backend/integration/E2E suite per slice | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; Playwright suite | Slice 1: `mvn test -pl backend-api` passing (1051/1051, 0 failures/errors), Checkstyle clean; Bruno/Playwright not run (no UI surface, no live env in this session) |
+| Schema matches JPA `@Table`/`@Column` mapping after each slice | `FlywaySchemaValidationIntegrationTest` (`mvn test -Ppg-integration`) | Slice 1: passing — ran via the `pre-push` hook's preflight (Docker available there) |
+| No regression in existing backend/integration/E2E suite per slice | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; Playwright suite | Slice 1: `mvn test -pl backend-api` passing (1051/1051), Checkstyle clean, coverage ratchet held; Bruno suite not run locally (preflight non-`--full` skips it) — CI's `playwright-e2e.yml` must confirm before merge; Playwright n/a (no UI surface) |
 
 ## Permanent documentation updated
 

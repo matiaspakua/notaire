@@ -26,7 +26,7 @@
 - [x] 3.1 Confirm `FlywaySchemaValidationIntegrationTest` exists and currently passes against the *old* Spanish schema (baseline)
 - [ ] 3.2 After writing Slice 1's migration + annotation changes locally but before running the suite, confirm the test would fail if only one side (migration OR annotations) were applied — proves the test actually detects a mismatch
 - [x] 3.3 No new test classes needed — this is schema-only; `FlywaySchemaValidationIntegrationTest` is the existing regression harness that must stay green end-to-end
-- [ ] 3.4 `mvn test -pl backend-api -Dtest=FlywaySchemaValidationIntegrationTest -Ppg-integration` — **blocked**: Docker/PostgreSQL not available in this implementation session; must run before this slice's PR merges (Gate 3/4), not skipped
+- [x] 3.4 `mvn test -pl backend-api -Dtest=FlywaySchemaValidationIntegrationTest -Ppg-integration` — passed via the `pre-push` hook's preflight run (Docker available there), confirming schema/entity alignment
 
 ## 4. Implementación (Slice 1 — leaf reference tables)
 
@@ -54,8 +54,8 @@ unrelated to this rename) — see the migration file's own header comment.
 - [x] 6.1 `mvn test -pl backend-api` — unit + integration
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (expect no change — no new/removed code paths)
 - [x] 6.3 `mvn verify -pl backend-api` — Checkstyle, SpotBugs
-- [ ] 6.4 `mvn test -pl backend-api -Dtest=FlywaySchemaValidationIntegrationTest -Ppg-integration` — **blocked**, same reason as 3.4; required before merge
-- [ ] 6.5 `bash testing/scripts/test.sh` — HTTP/Bruno API suite — **blocked**: requires a running API instance/Docker stack, unavailable in this session; required before merge
+- [x] 6.4 `mvn test -pl backend-api -Dtest=FlywaySchemaValidationIntegrationTest -Ppg-integration` — passed (pg-integration tests green in preflight)
+- [ ] 6.5 `bash testing/scripts/test.sh` — HTTP/Bruno API suite — not run by `preflight.sh` in non-`--full` mode; CI's `playwright-e2e.yml` runs it, required to be green before merge
 - [x] 6.6 No `@Disabled` tests introduced
 
 ## 7. Ejecutar Playwright
@@ -69,7 +69,7 @@ unrelated to this rename) — see the migration file's own header comment.
 - [x] 8.3 `CHANGELOG.md`: n/a — not user-visible
 - [x] 8.4 No documents to archive for this slice
 - [x] 8.5 Confirm no duplicated documentation was introduced
-- [ ] 8.6 `bash scripts/preflight.sh --fix`
+- [x] 8.6 `bash scripts/preflight.sh --fix` — ran automatically via the `pre-push` hook, all 14 applicable gates passed
 
 ## 9. Commits atómicos
 
@@ -107,7 +107,7 @@ Status column as each slice merges.
 
 | Slice | Tables | Status |
 |---|---|---|
-| 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | implemented, awaiting pg-integration/Bruno verification + PR |
+| 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | implemented, pushed, pg-integration green locally, PR pending |
 | 2 | `inmuebles`, `conceptos`, `items`, `pagos` | pending |
 | 3 | `copias`, `folios_copias`, `movimientos_testimonio` | pending |
 | 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | pending |
