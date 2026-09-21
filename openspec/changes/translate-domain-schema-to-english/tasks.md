@@ -112,7 +112,7 @@ Status column as each slice merges.
 | 3 | `copias`, `folios_copias`, `movimientos_testimonio` | **MERGED** (#1013, into Slice 2 branch) |
 | 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | implemented, pushed; PR #1014 open against Slice 2 branch |
 | 5 | `carpetas_tramite`, `minutas_inscripcion` | implemented, pushed, PR pending; branch stacked on Slice 4 |
-| 6 | `tramites`, `tramites_personas` | pending |
+| 6 | `tramites`, `tramites_personas` | implemented, pushed, PR pending; branch stacked on Slice 5 |
 | 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (verify not already aligned) | pending |
 | 8 | `presupuestos` | pending |
 | 9 | `testimonios`, `suplencias` | pending |
