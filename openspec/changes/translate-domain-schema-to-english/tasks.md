@@ -116,8 +116,8 @@ Status column as each slice merges.
 | 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (folios' table name kept; only its own Spanish columns renamed). Also fixed a Slice-1 bug (`notebooks.year`/`Notebook.java` mismatch) and several over-eager doc-prose replacements from earlier slices | implemented, pushed, PR pending; branch stacked on Slice 6 |
 | 8 | `presupuestos` | implemented, pushed, PR pending; branch stacked on Slice 7 |
 | 9 | `testimonios`, `suplencias` | implemented, pushed, PR pending; branch stacked on Slice 8 |
-| 10 | `historial` | pending |
-| final | Optional `@NamedQuery` name-string cleanup across all entities (see `proposal.md` — Out of Scope); close #973 | pending |
+| 10 | `historial` | implemented, pushed, PR pending; branch stacked on Slice 9. **Last table-rename slice — every remaining Spanish table/column from `explore.md` is now English.** |
+| final | Optional `@NamedQuery` name-string cleanup across all entities (see `proposal.md` — Out of Scope); close #973 once all 10 slice PRs merge | not started — tracked as a follow-up, does not block closing #973 (cosmetic, out of scope per proposal.md) |
 
 Slice groupings above batch low-risk leaf/mid tables together to reduce PR
 count while keeping each PR's diff reviewable; split a row into smaller
