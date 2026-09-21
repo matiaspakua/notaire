@@ -31,7 +31,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author User
  */
 @Entity
-@Table(name = "conceptos")
+@Table(name = "concepts")
 @XmlRootElement
 @NamedQueries(
         {
@@ -45,29 +45,29 @@ public class Concept implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
-    @Column(name = "concepto_fijo")
+    @Column(name = "fixed_concept")
     private boolean fixedConcept;
     @Basic(optional = false)
-    @Column(name = "habilitado")
+    @Column(name = "enabled")
     private boolean enabled;
     @Basic(optional = false)
     @Version
     @Column(name = "version")
     private int version = 0;
     @Basic(optional = false)
-    @Column(name = "valor")
+    @Column(name = "amount")
     private float value;
     @Basic(optional = false)
-    @Column(name = "porcentaje")
+    @Column(name = "percentage")
     private int percentage;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_concepto")
+    @Column(name = "id")
     private Integer idConcept;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "concept", fetch = FetchType.EAGER)
     private List<BudgetTemplate> budgetTemplateList = new ArrayList<>();

@@ -54,7 +54,7 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
     @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ProcedureType procedureType;
-    @JoinColumn(name = "fk_id_concepto", referencedColumnName = "id_concepto", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_concepto", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Concept concept;
     @Transient

@@ -103,7 +103,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
     private List<Person> personList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdProcedure", fetch = FetchType.LAZY)
     private List<SubmittedDocument> submittedDocumentList;
-    @JoinColumn(name = "fk_id_inmueble", referencedColumnName = "id_inmueble")
+    @JoinColumn(name = "fk_id_inmueble", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Property fkIdProperty;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")

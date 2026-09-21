@@ -17,7 +17,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 ### Principios de Normalización y Evolución del Esquema:
 1. **Tercera Forma Normal (3FN):**  
    - Desacoplamiento de identificaciones civiles/tributarias (`identificaciones`, `identification_types`).
-   - Eliminación de dependencias transitivas en líneas presupuestarias y documentales: los atributos maestros residen en `conceptos` y `document_types`, manteniendo en `items` y `documentos_presentados` únicamente los valores efectivos y atestados de la transacción.
+   - Eliminación de dependencias transitivas en líneas presupuestarias y documentales: los atributos maestros residen en `concepts` y `document_types`, manteniendo en `items` y `documentos_presentados` únicamente los valores efectivos y atestados de la transacción.
 2. **Subflujo de Workflows Notariales (V7, V8):**  
    - Tablas `workflow_definition`, `workflow_node` y `workflow_transition` para modelar y ejecutar máquinas de estados dinámicas sobre `management_statuses` y asociarlas a `procedure_types`.
 3. **Control de Acceso Basado en Roles (V9):**  
@@ -35,7 +35,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 
 | Nº | Tabla | Paquete / Módulo | Tipo Entidad | Descripción |
 |---|---|---|---|---|
-| 1 | [conceptos](#1-conceptos) | Presupuestos | Fuerte | Catálogo maestro de honorarios, aranceles y sellados |
+| 1 | [concepts](#1-concepts) | Presupuestos | Fuerte | Catálogo maestro de honorarios, aranceles y sellados |
 | 2 | [copias](#2-copias) | Protocolos | Débil | Ejemplares impresos y certificados de testimonios |
 | 3 | [documentos_presentados](#3-documentos_presentados) | Documentación | Débil | Documentos y certificados tramitados por gestión o autónomos |
 | 4 | [escrituras](#4-escrituras) | Protocolos | Fuerte | Escrituras públicas matrices otorgadas en protocolos |
@@ -44,10 +44,10 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 7 | [folios_copias](#7-folios_copias) | Protocolos | Asociativa | Relación M:N entre folios especiales y copias emitidas |
 | 8 | [gestiones_de_escrituras](#8-gestiones_de_escrituras) | Gestión Notarial | Fuerte | Carpetas de gestión y expedientes de trámites |
 | 9 | [historial](#9-historial) | Gestión Notarial | Débil | Trazabilidad y auditoría de cambios de estado de gestiones |
-| 10 | [inmuebles](#10-inmuebles) | Gestión Notarial | Fuerte | Bienes inmuebles y especificaciones catastrales |
+| 10 | [properties](#10-properties) | Gestión Notarial | Fuerte | Bienes properties y especificaciones catastrales |
 | 11 | [items](#11-items) | Presupuestos | Débil | Desglose arancelario de líneas de cada presupuesto |
 | 12 | [movimientos_testimonio](#12-movimientos_testimonio) | Protocolos | Débil | Asientos de presentación y tracto registral ante el Registro |
-| 13 | [pagos](#13-pagos) | Presupuestos | Débil | Recibos de cobro y entregas dinerarias a cuenta |
+| 13 | [payments](#13-payments) | Presupuestos | Débil | Recibos de cobro y entregas dinerarias a cuenta |
 | 14 | [personas](#14-personas) | Sujetos | Fuerte | Sujetos de derecho (clientes, escribanos, otorgantes) |
 | 15 | [plantilla_presupuestos](#15-plantilla_presupuestos) | Presupuestos | Asociativa | Conceptos arancelarios sugeridos por tipo de trámite |
 | 16 | [plantilla_tramites](#16-plantilla_tramites) | Documentación | Asociativa | Requisitos documentales obligatorios por tipo de trámite |
@@ -89,7 +89,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 
 | Entidad | PK principal | FK relevantes | Mecanismo de compensación | Observación de sincronía |
 |---|---|---|---|---|
-| `conceptos` | `id_concepto` | — | Sin compensación | Tabla maestra, no depende de otras entidades |
+| `concepts` | `id` | — | Sin compensación | Tabla maestra, no depende de otras entidades |
 | `copias` | `id_copia` | `fk_id_testimonio`, `fk_id_persona` | `I: Impedir`, `M: Impedir`, `B: Impedir` (RESTRICT por defecto) | Efectúa copias de testimonios |
 | `documentos_presentados` | `id_documento_presentado` | `fk_id_tramite`, `fk_id_tipo_documento` | `I: Null` si no hay trámite, `M: Impedir`, `B: Impedir` | Compatible con V6: trámite opcional |
 | `escrituras` | `id_escritura` | — | Sin compensación | Matriz protocolares |
@@ -98,12 +98,12 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `folios_copias` | `fk_id_folio + fk_id_copia` | `fk_id_folio`, `fk_id_copia` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Tabla asociativa |
 | `gestiones_de_escrituras` | `id_gestion` | `fk_id_notary_person`, `fk_id_estado_de_gestion` | `I: Impedir`, `M: Impedir`, `B: Impedir` / `SET NULL` en estado si se deja nulo | Agrupa trámites |
 | `historial` | `id_historial` | `fk_id_gestion`, `fk_id_estado_gestion` | `I: Impedir`, `M: Impedir`, `B: Cascada` en gestión | Histórico de estados |
-| `inmuebles` | `id_inmueble` | — | Sin compensación | Bien inmueble |
-| `items` | `id_item` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
+| `properties` | `id` | — | Sin compensación | Bien inmueble |
+| `items` | `id` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
 | `movimientos_testimonio` | `id_movimiento_testimonio` | `fk_id_testimonio` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Corresponde a V5 |
-| `pagos` | `id_pago` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Liquidación de cobros |
+| `payments` | `id` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Liquidación de cobros |
 | `personas` | `id_persona` | `fk_id_tipo_identificacion` | `I: Null` si corresponde, `M: Impedir`, `B: Impedir` | Entidad central del sistema |
-| `plantilla_presupuestos` | `fk_id_tipo_tramite + fk_id_concepto` | `fk_id_tipo_tramite`, `fk_id_concepto` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `conceptos` | Plantilla arancelaria |
+| `plantilla_presupuestos` | `fk_id_tipo_tramite + fk_id_concepto` | `fk_id_tipo_tramite`, `fk_id_concepto` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `concepts` | Plantilla arancelaria |
 | `plantilla_tramites` | `fk_id_tipo_tramite + fk_id_tipo_documento` | `fk_id_tipo_tramite`, `fk_id_tipo_documento` | `I: Impedir`, `M: Impedir`, `B: Cascada` en documento | Requisitos documentales |
 | `presupuestos` | `id_presupuesto` | `fk_id_persona` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
 | `audit_records` | `id` | `fk_id_usuario` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
@@ -126,18 +126,18 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 
 ## 4. Especificación Detallada de Tablas
 
-### 1. `conceptos`
-Catálogo maestro de conceptos arancelarios, honorarios profesionales, aportes y tasas notariales.
+### 1. `concepts`
+Catálogo maestro de concepts arancelarios, honorarios profesionales, aportes y tasas notariales.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_concepto` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del concepto arancelario |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del concepto arancelario |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista (Hibernate) |
 | `nombre` | TEXT | No | No | Sí | — | — | Denominación del concepto (e.g., Honorarios, Aporte Caja Notarial) |
 | `valor` | REAL | No | No | Sí | 0.0 | — | Importe fijo de referencia en moneda de curso legal |
 | `porcentaje` | INTEGER | No | No | Sí | 0 | — | Porcentaje estándar aplicable sobre el monto del acto |
 | `habilitado` | BOOLEAN | No | No | Sí | true | — | Indica si el concepto está disponible para presupuestos |
-| `concepto_fijo` | BOOLEAN | No | No | Sí | true | — | `true` si es importe fijo, `false` si es liquidación porcentual |
+| `fixed_concept` | BOOLEAN | No | No | Sí | true | — | `true` si es importe fijo, `false` si es liquidación porcentual |
 
 ---
 
@@ -275,25 +275,25 @@ Registro histórico cronológico de las transiciones de estado de una gestión.
 
 ---
 
-### 10. `inmuebles`
-Bienes inmuebles y sus determinaciones catastrales y registrales.
+### 10. `properties`
+Bienes properties y sus determinaciones catastrales y registrales.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_inmueble` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del inmueble |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del inmueble |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
-| `nomenclatura` | TEXT | No | No | No | NULL | — | Nomenclatura catastral oficial |
-| `matricula` | TEXT | No | No | No | NULL | — | Matrícula del Registro de la Propiedad |
-| `valuacion_anio` | INTEGER | No | No | No | NULL | — | Año de la valuación fiscal |
-| `valuacion_fiscal` | REAL | No | No | No | NULL | — | Monto fiscal oficial de tasación |
+| `nomenclature` | TEXT | No | No | No | NULL | — | Nomenclatura catastral oficial |
+| `registration_number` | TEXT | No | No | No | NULL | — | Matrícula del Registro de la Propiedad |
+| `valuation_year` | INTEGER | No | No | No | NULL | — | Año de la valuación fiscal |
+| `fiscal_valuation` | REAL | No | No | No | NULL | — | Monto fiscal oficial de tasación |
 | `partida` | INTEGER | No | No | No | NULL | — | Número de partida inmobiliaria |
-| `circunscripcion` | TEXT | No | No | No | NULL | — | Circunscripción |
+| `district` | TEXT | No | No | No | NULL | — | Circunscripción |
 | `seccion` | TEXT | No | No | No | NULL | — | Sección |
 | `zona` | TEXT | No | No | No | NULL | — | Zona |
 | `manzana` | TEXT | No | No | No | NULL | — | Manzana |
 | `parcela` | TEXT | No | No | No | NULL | — | Parcela |
 | `poligono` | TEXT | No | No | No | NULL | — | Polígono |
-| `unidad_funcional` | TEXT | No | No | No | NULL | — | Unidad funcional (PH) |
+| `functional_unit` | TEXT | No | No | No | NULL | — | Unidad funcional (PH) |
 | `domicilio` | TEXT | No | No | No | NULL | — | Dirección física del inmueble |
 | `localidad` | TEXT | No | No | No | NULL | — | Localidad de ubicación |
 | `observaciones` | TEXT | No | No | No | NULL | — | Linderos y especificaciones |
@@ -301,16 +301,16 @@ Bienes inmuebles y sus determinaciones catastrales y registrales.
 ---
 
 ### 11. `items`
-Desglose arancelario de conceptos liquidados en un presupuesto (V3/V4).
+Desglose arancelario de concepts liquidados en un presupuesto (V3/V4).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_item` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del ítem |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del ítem |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Concepto o partida liquidada |
 | `valor` | REAL | No | No | Sí | 0.0 | — | Monto resultante de la línea |
 | `porcentaje` | INTEGER | No | No | Sí | 0 | — | Porcentaje aplicado en la liquidación |
-| `concepto_fijo` | BOOLEAN | No | No | Sí | true | — | `true` si es importe fijo, `false` si es porcentual |
+| `fixed_concept` | BOOLEAN | No | No | Sí | true | — | `true` si es importe fijo, `false` si es porcentual |
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas justificativas de la partida (V3/V4) |
 | `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto al que pertenece |
 
@@ -333,12 +333,12 @@ Registro del tracto y asientos de presentación registral del testimonio (V5).
 
 ---
 
-### 13. `pagos`
+### 13. `payments`
 Recibos de cobro imputados a un presupuesto notarial.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_pago` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del recibo |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del recibo |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `fecha` | DATE | No | No | Sí | — | — | Fecha de realización del pago |
 | `monto` | REAL | No | No | Sí | 0.0 | — | Importe percibido |
@@ -380,12 +380,12 @@ Entidad unificada para personas humanas y jurídicas que intervienen en la escri
 ---
 
 ### 15. `plantilla_presupuestos`
-Tabla asociativa M:N que parametriza conceptos arancelarios estándar por tipo de trámite.
+Tabla asociativa M:N que parametriza concepts arancelarios estándar por tipo de trámite.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
 | `fk_id_tipo_tramite` | INTEGER | Sí | Sí | Sí | — | `procedure_types(id)` | Tipo de trámite |
-| `fk_id_concepto` | INTEGER | Sí | Sí | Sí | — | `conceptos(id_concepto)` | Concepto presupuestado |
+| `fk_id_concepto` | INTEGER | Sí | Sí | Sí | — | `concepts(id)` | Concepto presupuestado |
 | `observaciones` | TEXT | No | No | No | NULL | — | Reglas particulares de cómputo |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 
@@ -534,7 +534,7 @@ Catálogo maestro de actos jurídicos notariales (V8).
 | `habilitado` | BOOLEAN | No | No | Sí | true | — | `true` si permite nuevas gestiones |
 | `se_archiva` | BOOLEAN | No | No | Sí | true | — | `true` si requiere archivo físico con bibliorato |
 | `se_inscribe` | BOOLEAN | No | No | Sí | false | — | `true` si requiere inscripción registral |
-| `asocia_inmuebles` | BOOLEAN | No | No | Sí | false | — | `true` si involucra inmuebles |
+| `asocia_inmuebles` | BOOLEAN | No | No | Sí | false | — | `true` si involucra properties |
 | `fk_workflow_definition_id`| INTEGER | No | Sí | No | NULL | `workflow_definition(id_workflow_definition)` | Workflow asignado al tipo de trámite (V8) |
 
 ---
@@ -565,7 +565,7 @@ Instancia particular de trámite o negocio jurídico (V13/V14).
 | `fk_id_gestion` | INTEGER | No | Sí | No | NULL | `gestiones_de_escrituras(id_gestion)` | Gestión que lo agrupa (nulo en aux.) |
 | `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `escrituras(id_escritura)` | Escritura notarial resultante |
 | `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto económico base (V14) |
-| `fk_id_inmueble` | INTEGER | No | Sí | No | NULL | `inmuebles(id_inmueble)` | Inmueble objeto del acto (si aplica) |
+| `fk_id_inmueble` | INTEGER | No | Sí | No | NULL | `properties(id)` | Inmueble objeto del acto (si aplica) |
 
 ---
 
@@ -665,19 +665,19 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `plantilla_tramites` | `fk_id_tipo_tramite` | `procedure_types` | `id` | CASCADE |
 | `plantilla_tramites` | `fk_id_tipo_documento` | `document_types` | `id` | CASCADE |
 | `plantilla_presupuestos` | `fk_id_tipo_tramite` | `procedure_types` | `id` | CASCADE |
-| `plantilla_presupuestos` | `fk_id_concepto` | `conceptos` | `id_concepto` | CASCADE |
+| `plantilla_presupuestos` | `fk_id_concepto` | `concepts` | `id` | CASCADE |
 | `tramites` | `fk_id_tipo_tramite` | `procedure_types` | `id` | RESTRICT |
 | `tramites` | `fk_id_gestion` | `gestiones_de_escrituras` | `id_gestion` | SET NULL |
 | `tramites` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
 | `tramites` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | RESTRICT |
-| `tramites` | `fk_id_inmueble` | `inmuebles` | `id_inmueble` | SET NULL |
+| `tramites` | `fk_id_inmueble` | `properties` | `id` | SET NULL |
 | `tramites_personas` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
 | `tramites_personas` | `fk_id_persona_cliente` | `personas` | `id_persona` | RESTRICT |
 | `documentos_presentados` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
 | `documentos_presentados` | `fk_id_tipo_documento` | `document_types` | `id` | RESTRICT |
 | `presupuestos` | `fk_id_persona` | `personas` | `id_persona` | RESTRICT |
 | `items` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
-| `pagos` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
+| `payments` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
 | `folios` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
 | `folios` | `fk_id_tipo_folio` | `folio_types` | `id` | RESTRICT |
 | `folios` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
@@ -710,10 +710,10 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 
 | Categoría | Entidades | Observación |
 |-----------|-----------|-------------|
-| **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `conceptos`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
+| **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `plantilla_presupuestos`, `plantilla_tramites` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
 | **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
-| **Asociativas Operacionales** | `documentos_presentados`, `tramites_personas`, `folios_copias`, `movimientos_testimonio`, `suplencias`, `historial`, `inmuebles`, `items`, `pagos` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
+| **Asociativas Operacionales** | `documentos_presentados`, `tramites_personas`, `folios_copias`, `movimientos_testimonio`, `suplencias`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
 - 13 entidades **fuertes** (41%) poseen CUs explícitas.
