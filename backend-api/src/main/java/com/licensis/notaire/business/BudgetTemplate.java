@@ -31,7 +31,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author User
  */
 @Entity
-@Table(name = "plantilla_presupuestos")
+@Table(name = "budget_templates")
 @XmlRootElement
 @NamedQueries(
         {
@@ -49,12 +49,12 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected BudgetTemplatePK budgetTemplatePK;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ProcedureType procedureType;
-    @JoinColumn(name = "fk_id_concepto", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_concept", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Concept concept;
     @Transient

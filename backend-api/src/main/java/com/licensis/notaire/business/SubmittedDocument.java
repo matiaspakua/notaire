@@ -32,7 +32,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author juanca
  */
 @Entity
-@Table(name = "documentos_presentados")
+@Table(name = "submitted_documents")
 @XmlRootElement
 @NamedQueries(
         {
@@ -54,33 +54,33 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 public class SubmittedDocument implements Serializable, Persistable<Integer>
 {
 
-    @Column(name = "fecha_ingreso")
+    @Column(name = "entry_date")
     @Temporal(TemporalType.DATE)
     private Date dateEntry;
-    @Column(name = "liberado")
+    @Column(name = "released")
     private Boolean released;
-    @Column(name = "observado")
+    @Column(name = "observed")
     private Boolean flagged;
-    @Column(name = "fk_id_tipo_documento")
+    @Column(name = "fk_id_document_type")
     private Integer fkIdDocumentType;
     @Basic(optional = false)
-    @Column(name = "quien_entrega")
+    @Column(name = "delivered_by")
     private String deliveredBy;
-    @Column(name = "reingresado")
+    @Column(name = "reentered")
     private Boolean reentered;
-    @Column(name = "fecha_salida")
+    @Column(name = "exit_date")
     @Temporal(TemporalType.DATE)
     private Date dateExit;
-    @Column(name = "fecha_vencimiento")
+    @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
     private Date dateDue;
-    @Column(name = "fecha_pago")
+    @Column(name = "payment_date")
     @Temporal(TemporalType.DATE)
     private Date datePayment;
-    @Column(name = "fecha_liberado")
+    @Column(name = "released_date")
     @Temporal(TemporalType.DATE)
     private Date dateReleased;
-    @Column(name = "entregado")
+    @Column(name = "delivered")
     private Boolean delivered;
     @Basic(optional = false)
     @Column(name = "version")
@@ -90,25 +90,25 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_documento_presentado")
+    @Column(name = "id")
     private Integer idSubmittedDocument;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
-    @Column(name = "numero_carton")
+    @Column(name = "folder_number")
     private Integer cardNumber;
     @Basic(optional = false)
-    @Column(name = "preparado")
+    @Column(name = "prepared")
     private boolean prepared;
     @Basic(optional = false)
-    @Column(name = "vence")
+    @Column(name = "expires")
     private boolean expires;
-    @Column(name = "dias_vencimiento")
+    @Column(name = "due_days")
     private Integer dueDays;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "importe_a_pagar")
+    @Column(name = "amount_to_pay")
     private Float amountToPay;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)

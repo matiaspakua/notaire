@@ -23,7 +23,7 @@ import java.util.Objects;
  * de la plantilla de presupuesto de un tipo de trámite.
  */
 @Entity
-@Table(name = "plantilla_costos_documento")
+@Table(name = "document_cost_templates")
 public class DocumentCostTemplate implements Serializable, Persistable<DocumentCostTemplatePK> {
 
     private static final long serialVersionUID = 1L;
@@ -31,18 +31,18 @@ public class DocumentCostTemplate implements Serializable, Persistable<DocumentC
     @EmbeddedId
     private DocumentCostTemplatePK documentCostTemplatePK;
 
-    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ProcedureType procedureType;
 
-    @JoinColumn(name = "fk_id_tipo_documento", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_document_type", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DocumentType documentType;
 
-    @Column(name = "monto_fijo")
+    @Column(name = "fixed_amount")
     private Float fixedAmount;
 
-    @Column(name = "porcentaje_variable")
+    @Column(name = "variable_percentage")
     private Float variablePercentage;
 
     @Basic(optional = false)
