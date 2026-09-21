@@ -110,7 +110,7 @@ Status column as each slice merges.
 | 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | implemented, pushed, pg-integration green locally, PR pending |
 | 2 | `inmuebles`, `conceptos`, `items`, `pagos` | implemented, pushed, PR pending; branch stacked on Slice 1 (shares `data.sql`/`cleanup-test-data.sql`/data-dictionary edits) — retarget to `main` once Slice 1 merges |
 | 3 | `copias`, `folios_copias`, `movimientos_testimonio` | implemented, pushed, PR pending; branch stacked on Slice 2 |
-| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | pending |
+| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | implemented, pushed, PR pending; branch stacked on Slice 3 |
 | 5 | `carpetas_tramite`, `minutas_inscripcion` | pending |
 | 6 | `tramites`, `tramites_personas` | pending |
 | 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (verify not already aligned) | pending |
