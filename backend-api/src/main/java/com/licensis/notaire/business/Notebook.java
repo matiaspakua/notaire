@@ -23,7 +23,7 @@ import org.springframework.data.domain.Persistable;
  * carátula (CU80) can be emitted.
  */
 @Entity
-@Table(name = "cuadernos")
+@Table(name = "notebooks")
 @NamedQueries({
     @NamedQuery(name = "Cuaderno.findAll", query = "SELECT c FROM Notebook c"),
     @NamedQuery(name = "Cuaderno.findByAnioAndEscribano",
@@ -36,7 +36,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_cuaderno")
+    @Column(name = "id")
     private Integer idNotebook;
 
     @Basic(optional = false)
@@ -50,7 +50,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Column(name = "observaciones")
     private String notes;
 
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_notary_person", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Person fkIdNotaryPerson;

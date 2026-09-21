@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author juanca
  */
 @Entity
-@Table(name = "registro_auditoria")
+@Table(name = "audit_records")
 @XmlRootElement
 @NamedQueries(
         {
@@ -42,11 +42,11 @@ public class AuditRecord implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
-    @Column(name = "fecha")
+    @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     @Basic(optional = false)
-    @Column(name = "modulo")
+    @Column(name = "module")
     private String module;
     @Basic(optional = false)
     @Column(name = "version")
@@ -56,10 +56,10 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_registro_auditoria")
+    @Column(name = "id")
     private Integer idAuditRecord;
     @Basic(optional = false)
-    @Column(name = "detalle_operacion")
+    @Column(name = "operation_detail")
     private String operationDetail;
     @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id_usuario")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -48,10 +48,10 @@ public class ProcedureTemplate implements Serializable, Persistable<ProcedureTem
     protected ProcedureTemplatePK procedureTemplatePK;
     @Column(name = "observaciones")
     private String notes;
-    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id_tipo_tramite", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ProcedureType procedureType;
-    @JoinColumn(name = "fk_id_tipo_documento", referencedColumnName = "id_tipo_documento", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_tipo_documento", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DocumentType documentType;
     @Transient

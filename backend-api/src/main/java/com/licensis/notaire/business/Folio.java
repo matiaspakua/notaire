@@ -96,7 +96,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Person fkIdNotaryPerson;
-    @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id_tipo_folio")
+    @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private FolioType fkIdFolioType;
@@ -108,7 +108,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
-    @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id_cuaderno")
+    @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Notebook fkIdNotebook;

@@ -150,7 +150,7 @@ public class Person implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @ManyToMany(mappedBy = "personList", fetch = FetchType.LAZY)
     private List<Procedure> procedureList;
-    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id_tipo_identificacion")
+    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private IdentificationType fkIdIdentificationType;
     @XmlTransient

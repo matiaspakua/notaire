@@ -3,8 +3,8 @@
 -- (tables NOT seeded by data.sql).
 --
 -- Tables WITH seed data (from data.sql) are intentionally left alone:
---   tipos_identificacion, tipos_de_folio, estados_de_gestion,
---   tipos_de_tramite, conceptos, personas, usuarios, presupuestos
+--   identification_types, folio_types, management_statuses,
+--   procedure_types, conceptos, personas, usuarios, presupuestos
 -- These contain the reference IDs (1, 1, etc.) that downstream tests
 -- like BusinessWorkflowIntegrationTest depend on.
 --
@@ -36,9 +36,9 @@ TRUNCATE TABLE inmuebles;
 TRUNCATE TABLE testimonios;
 TRUNCATE TABLE movimientos_testimonio;
 TRUNCATE TABLE copias;
-TRUNCATE TABLE registro_auditoria;
+TRUNCATE TABLE audit_records;
 TRUNCATE TABLE suplencias;
-TRUNCATE TABLE tipos_de_documento;
+TRUNCATE TABLE document_types;
 TRUNCATE TABLE plantilla_presupuestos;
 TRUNCATE TABLE plantilla_tramites;
 TRUNCATE TABLE identificaciones;

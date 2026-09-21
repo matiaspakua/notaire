@@ -76,7 +76,7 @@ public class User implements Serializable, Persistable<Integer> {
     private Person fkIdPerson;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "fk_id_rol", referencedColumnName = "id_rol")
+    @JoinColumn(name = "fk_id_rol", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Role role;
 

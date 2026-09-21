@@ -32,7 +32,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author User
  */
 @Entity
-@Table(name = "estados_de_gestion")
+@Table(name = "management_statuses")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "EstadoDeGestion.findAll", query = "SELECT e FROM ManagementStatus e"),
@@ -50,12 +50,12 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_estado_gestion")
+    @Column(name = "id")
     private Integer idManagementStatus;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdManagementStatus", fetch = FetchType.EAGER)
     private java.util.Set<History> historyList;

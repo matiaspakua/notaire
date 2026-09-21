@@ -68,7 +68,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.DATE)
     private Date dateStart;
-    @JoinColumn(name = "fk_id_estado_de_gestion", referencedColumnName = "id_estado_gestion")
+    @JoinColumn(name = "fk_id_estado_de_gestion", referencedColumnName = "id")
     @ManyToOne
     private ManagementStatus fkIdManagementStatus;
     @Basic(optional = false)
