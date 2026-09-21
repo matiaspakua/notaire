@@ -28,7 +28,7 @@ TRUNCATE TABLE folios;
 TRUNCATE TABLE folio_copies;
 TRUNCATE TABLE items;
 TRUNCATE TABLE payments;
-TRUNCATE TABLE historial;
+TRUNCATE TABLE history;
 TRUNCATE TABLE procedures;
 TRUNCATE TABLE person_procedures;
 TRUNCATE TABLE submitted_documents;

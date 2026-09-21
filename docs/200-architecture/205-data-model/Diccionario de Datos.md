@@ -43,7 +43,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 6 | [folios](#6-folios) | Protocolos | Fuerte | Hojas de protocolo numeradas provistas por el Colegio |
 | 7 | [folio_copies](#7-folio_copies) | Protocolos | Asociativa | Relación M:N entre folios especiales y copies emitidas |
 | 8 | [deed_managements](#8-deed_managements) | Gestión Notarial | Fuerte | Carpetas de gestión y expedientes de trámites |
-| 9 | [historial](#9-historial) | Gestión Notarial | Débil | Trazabilidad y auditoría de cambios de estado de gestiones |
+| 9 | [history](#9-history) | Gestión Notarial | Débil | Trazabilidad y auditoría de cambios de estado de gestiones |
 | 10 | [properties](#10-properties) | Gestión Notarial | Fuerte | Bienes inmuebles y especificaciones catastrales |
 | 11 | [items](#11-items) | Presupuestos | Débil | Desglose arancelario de líneas de cada presupuesto |
 | 12 | [testimony_movements](#12-testimony_movements) | Protocolos | Débil | Asientos de presentación y tracto registral ante el Registro |
@@ -97,7 +97,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `folios` | `id` | `fk_id_deed`, `fk_id_folio_type`, `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Folio del protocolo |
 | `folio_copies` | `fk_id_folio + fk_id_copy` | `fk_id_folio`, `fk_id_copy` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Tabla asociativa |
 | `deed_managements` | `id` | `fk_id_notary_person`, `fk_id_management_status` | `I: Impedir`, `M: Impedir`, `B: Impedir` / `SET NULL` en estado si se deja nulo | Agrupa trámites |
-| `historial` | `id_historial` | `fk_id_gestion`, `fk_id_estado_gestion` | `I: Impedir`, `M: Impedir`, `B: Cascada` en gestión | Histórico de estados |
+| `history` | `id` | `fk_id_deed_management`, `fk_id_management_status` | `I: Impedir`, `M: Impedir`, `B: Cascada` en gestión | Histórico de estados |
 | `properties` | `id` | — | Sin compensación | Bien inmueble |
 | `items` | `id` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
 | `testimony_movements` | `id` | `fk_id_testimonio` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Corresponde a V5 |
@@ -261,7 +261,7 @@ Expediente o carpeta física que agrupa uno o varios trámites notariales afines
 
 ---
 
-### 9. `historial`
+### 9. `history`
 Registro histórico cronológico de las transiciones de estado de una gestión.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
@@ -660,8 +660,8 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `procedure_types` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | SET NULL |
 | `deed_managements` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
 | `deed_managements` | `fk_id_management_status` | `management_statuses` | `id` | SET NULL |
-| `historial` | `fk_id_gestion` | `deed_managements` | `id` | CASCADE |
-| `historial` | `fk_id_estado_gestion` | `management_statuses` | `id` | RESTRICT |
+| `history` | `fk_id_deed_management` | `deed_managements` | `id` | CASCADE |
+| `history` | `fk_id_management_status` | `management_statuses` | `id` | RESTRICT |
 | `procedure_templates` | `fk_id_procedure_type` | `procedure_types` | `id` | CASCADE |
 | `procedure_templates` | `fk_id_document_type` | `document_types` | `id` | CASCADE |
 | `budget_templates` | `fk_id_procedure_type` | `procedure_types` | `id` | CASCADE |
@@ -713,7 +713,7 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 | **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
 | **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
-| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
+| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
 - 13 entidades **fuertes** (41%) poseen CUs explícitas.
