@@ -109,10 +109,10 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Budget fkIdBudget;
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
+    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Deed fkIdDeed;
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id_gestion")
+    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
     @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id")

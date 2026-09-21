@@ -74,7 +74,7 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     @Column(name = "correction_date")
     private Date dateCorrection;
 
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura", unique = true)
+    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     private Deed fkIdDeed;
 

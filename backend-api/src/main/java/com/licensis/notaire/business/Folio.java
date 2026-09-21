@@ -69,22 +69,22 @@ public class Folio implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_folio")
+    @Column(name = "id")
     private Integer idFolio;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
     @Basic(optional = false)
-    @Column(name = "anio")
+    @Column(name = "year_number")
     private int year;
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private String status;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @JoinTable(name = "folio_copies", joinColumns =
     {
-        @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio")
+        @JoinColumn(name = "fk_id_folio", referencedColumnName = "id")
     }, inverseJoinColumns =
     {
         @JoinColumn(name = "fk_id_copy", referencedColumnName = "id")
@@ -92,11 +92,11 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToMany(fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "foliosCopiasCollection"})
     private List<Copy> copyList;
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_notary_person", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Person fkIdNotaryPerson;
-    @JoinColumn(name = "fk_id_tipo_folio", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_folio_type", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private FolioType fkIdFolioType;
@@ -104,11 +104,11 @@ public class Folio implements Serializable, Persistable<Integer>
     // spring.jpa.open-in-view=false the Hibernate session closes as soon as the @Transactional
     // controller method returns — before Jackson gets a chance to initialize a lazy proxy,
     // failing with "Could not initialize proxy ... - no session".
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
+    @JoinColumn(name = "fk_id_deed", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
-    @JoinColumn(name = "fk_id_cuaderno", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_notebook", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private Notebook fkIdNotebook;

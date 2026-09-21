@@ -22,8 +22,8 @@
 SET REFERENTIAL_INTEGRITY FALSE;
 
 -- Tables WITHOUT seed data (populated only by BusinessWorkflowIntegrationTest)
-TRUNCATE TABLE gestiones_de_escrituras;
-TRUNCATE TABLE escrituras;
+TRUNCATE TABLE deed_managements;
+TRUNCATE TABLE deeds;
 TRUNCATE TABLE folios;
 TRUNCATE TABLE folio_copies;
 TRUNCATE TABLE items;

@@ -37,7 +37,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "escrituras")
+@Table(name = "deeds")
 @XmlRootElement
 @NamedQueries(
         {
@@ -51,10 +51,10 @@ public class Deed implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
-    @Column(name = "fecha_escrituracion")
+    @Column(name = "deed_date")
     @Temporal(TemporalType.DATE)
     private Date dateDeedrecording;
-    @Column(name = "fecha_inscripcion")
+    @Column(name = "registration_date")
     @Temporal(TemporalType.DATE)
     private Date dateRegistration;
     @Basic(optional = false)
@@ -65,19 +65,19 @@ public class Deed implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_escritura")
+    @Column(name = "id")
     private Integer idDeed;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
-    @Column(name = "cuerpo")
+    @Column(name = "body")
     private String body;
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private String status = BusinessConstants.DeedSINFIRMAR;
-    @Column(name = "matricula_inscripcion")
+    @Column(name = "registration_number")
     private String registrationEntryNumber;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "fkIdDeed", fetch = FetchType.LAZY)

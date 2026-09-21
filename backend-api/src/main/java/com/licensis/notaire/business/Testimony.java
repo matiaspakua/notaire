@@ -72,7 +72,7 @@ public class Testimony implements Serializable, Persistable<Integer>
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<TestimonyMovement> testimonyMovementList = new ArrayList<>();
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura")
+    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;

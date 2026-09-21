@@ -49,7 +49,7 @@ public class FolioCopies implements Serializable, Persistable<FolioCopiesPK>
     @JoinColumn(name = "fk_id_copy", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Copy copy;
-    @JoinColumn(name = "fk_id_folio", referencedColumnName = "id_folio", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_folio", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Folio folio;
     @Transient
