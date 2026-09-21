@@ -71,7 +71,7 @@ import org.springframework.data.domain.Persistable;
  * @author juanca
  */
 @Entity
-@Table(name = "tramites")
+@Table(name = "procedures")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Tramite.findAll", query = "SELECT t FROM Procedure t"),
@@ -90,20 +90,20 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tramite")
+    @Column(name = "id")
     private Integer idProcedure;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @JoinTable(name = "tramites_personas", joinColumns = {
-            @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
+            @JoinColumn(name = "fk_id_procedure", referencedColumnName = "id")
     }, inverseJoinColumns = {
-            @JoinColumn(name = "fk_id_persona_cliente", referencedColumnName = "id")
+            @JoinColumn(name = "fk_id_client_person", referencedColumnName = "id")
     })
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Person> personList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdProcedure", fetch = FetchType.LAZY)
     private List<SubmittedDocument> submittedDocumentList;
-    @JoinColumn(name = "fk_id_inmueble", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_property", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Property fkIdProperty;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
@@ -115,7 +115,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id_gestion")
     @ManyToOne(fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
-    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ProcedureType fkIdProcedureType;
 

@@ -43,7 +43,7 @@ public class ProcedureFolder implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DeedManagement fkIdManagement;
 
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
+    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Procedure fkIdProcedure;
 

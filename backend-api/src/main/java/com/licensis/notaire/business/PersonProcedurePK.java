@@ -18,10 +18,10 @@ public class PersonProcedurePK implements Serializable
 {
 
     @Basic(optional = false)
-    @Column(name = "fk_id_tramite")
+    @Column(name = "fk_id_procedure")
     private int fkIdProcedure;
     @Basic(optional = false)
-    @Column(name = "fk_id_persona_cliente")
+    @Column(name = "fk_id_client_person")
     private int fkIdClientPerson;
 
     public PersonProcedurePK()
