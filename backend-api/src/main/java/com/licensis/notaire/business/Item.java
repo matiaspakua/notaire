@@ -73,7 +73,7 @@ public class Item implements Serializable, Persistable<Integer>
     private TypeItem type = TypeItem.NORMAL;
     @Column(name = "reason")
     private String reason;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
+    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Budget fkIdBudget;

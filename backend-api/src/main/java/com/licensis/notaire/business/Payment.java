@@ -65,7 +65,7 @@ public class Payment implements Serializable, Persistable<Integer>
     private String notes;
     @Column(name = "payment_method")
     private String paymentMethod;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
+    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
     @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Budget fkIdBudget;

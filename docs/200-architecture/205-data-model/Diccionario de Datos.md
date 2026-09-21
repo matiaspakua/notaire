@@ -23,7 +23,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 3. **Control de Acceso Basado en Roles (V9):**  
    - Modelo de seguridad ampliado con tablas `roles` y `role_modules`, vinculando cada usuario con un rol granular (`fk_id_role`).
 4. **Resolución de Cardinalidad Presupuesto–Trámite (V14):**  
-   - Eliminación de la clave foránea circular en `presupuestos` (`fk_id_tramite` deprecada y eliminada en V14); la relación canónica es `procedures.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
+   - Eliminación de la clave foránea circular en `budgets` (`fk_id_tramite` deprecada y eliminada en V14); la relación canónica es `procedures.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
 5. **Alineación de Movimientos de Testimonio y Folios (V3, V4, V5, V6, V13):**  
    - Identificador `id`, fechas de tracto registral, y soporte para documentos autónomos (`submitted_documents.fk_id_tramite` nullable).
 
@@ -51,7 +51,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 14 | [personas](#14-personas) | Sujetos | Fuerte | Sujetos de derecho (clientes, escribanos, otorgantes) |
 | 15 | [budget_templates](#15-budget_templates) | Presupuestos | Asociativa | Conceptos arancelarios sugeridos por tipo de trámite |
 | 16 | [procedure_templates](#16-procedure_templates) | Documentación | Asociativa | Requisitos documentales obligatorios por tipo de trámite |
-| 17 | [presupuestos](#17-presupuestos) | Presupuestos | Fuerte | Cotización económica que fundamenta el trámite |
+| 17 | [budgets](#17-budgets) | Presupuestos | Fuerte | Cotización económica que fundamenta el trámite |
 | 18 | [audit_records](#18-audit_records) | Seguridad | Débil | Bitácora de auditoría de transacciones de usuarios |
 | 19 | [roles](#19-roles) | Seguridad | Fuerte | Perfiles y roles de seguridad en el sistema |
 | 20 | [role_modules](#20-role_modules) | Seguridad | Asociativa | Permisos funcionales asignados a cada rol |
@@ -83,7 +83,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 - V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
 - V9: se incorporan `roles` y `role_modules`, y se enlaza `usuarios` con `fk_id_role`.
 - V13: `procedures.nombre` y `procedures.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
-- V14: se elimina la FK redundante `presupuestos.fk_id_tramite`; la relación canónica quedó en `procedures.fk_id_presupuesto` (1:N).
+- V14: se elimina la FK redundante `budgets.fk_id_tramite`; la relación canónica quedó en `procedures.fk_id_presupuesto` (1:N).
 
 ### Matriz de entidades, PK/FK y mecanismo de compensación
 
@@ -105,7 +105,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `personas` | `id_persona` | `fk_id_tipo_identificacion` | `I: Null` si corresponde, `M: Impedir`, `B: Impedir` | Entidad central del sistema |
 | `budget_templates` | `fk_id_procedure_type + fk_id_concept` | `fk_id_procedure_type`, `fk_id_concept` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `concepts` | Plantilla arancelaria |
 | `procedure_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Impedir`, `M: Impedir`, `B: Cascada` en documento | Requisitos documentales |
-| `presupuestos` | `id_presupuesto` | `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
+| `budgets` | `id` | `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
 | `audit_records` | `id` | `fk_id_usuario` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
 | `roles` | `id` | — | Sin compensación | Catálogo de perfiles |
 | `role_modules` | `fk_id_role + modulo` | `fk_id_role` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
@@ -312,7 +312,7 @@ Desglose arancelario de conceptos liquidados en un presupuesto (V3/V4).
 | `porcentaje` | INTEGER | No | No | Sí | 0 | — | Porcentaje aplicado en la liquidación |
 | `fixed_concept` | BOOLEAN | No | No | Sí | true | — | `true` si es importe fijo, `false` si es porcentual |
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas justificativas de la partida (V3/V4) |
-| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto al que pertenece |
+| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `budgets(id)` | Presupuesto al que pertenece |
 
 ---
 
@@ -343,7 +343,7 @@ Recibos de cobro imputados a un presupuesto notarial.
 | `fecha` | DATE | No | No | Sí | — | — | Fecha de realización del pago |
 | `monto` | REAL | No | No | Sí | 0.0 | — | Importe percibido |
 | `observaciones` | TEXT | No | No | No | NULL | — | Medio de pago y constancias |
-| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto cancelado |
+| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `budgets(id)` | Presupuesto cancelado |
 
 ---
 
@@ -403,7 +403,7 @@ Tabla asociativa M:N que estipula los requisitos documentales y certificados por
 
 ---
 
-### 17. `presupuestos`
+### 17. `budgets`
 Cotización arancelaria emitida a un cliente. En V14 se eliminó la FK redundante hacia trámite (`fk_id_tramite`), estableciendo que la relación canónica es `procedures.fk_id_presupuesto`.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
@@ -564,7 +564,7 @@ Instancia particular de trámite o negocio jurídico (V13/V14).
 | `fk_id_procedure_type` | INTEGER | No | Sí | No | NULL | `procedure_types(id)` | Tipo de trámite |
 | `fk_id_gestion` | INTEGER | No | Sí | No | NULL | `deed_managements(id)` | Gestión que lo agrupa (nulo en aux.) |
 | `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Escritura notarial resultante |
-| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto económico base (V14) |
+| `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `budgets(id)` | Presupuesto económico base (V14) |
 | `fk_id_property` | INTEGER | No | Sí | No | NULL | `properties(id)` | Inmueble objeto del acto (si aplica) |
 
 ---
@@ -669,15 +669,15 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `procedures` | `fk_id_procedure_type` | `procedure_types` | `id` | RESTRICT |
 | `procedures` | `fk_id_gestion` | `deed_managements` | `id` | SET NULL |
 | `procedures` | `fk_id_deed` | `deeds` | `id` | SET NULL |
-| `procedures` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | RESTRICT |
+| `procedures` | `fk_id_presupuesto` | `budgets` | `id` | RESTRICT |
 | `procedures` | `fk_id_property` | `properties` | `id` | SET NULL |
 | `person_procedures` | `fk_id_procedure` | `procedures` | `id` | CASCADE |
 | `person_procedures` | `fk_id_client_person` | `personas` | `id_persona` | RESTRICT |
 | `submitted_documents` | `fk_id_tramite` | `procedures` | `id` | CASCADE |
 | `submitted_documents` | `fk_id_document_type` | `document_types` | `id` | RESTRICT |
-| `presupuestos` | `fk_id_person` | `personas` | `id_persona` | RESTRICT |
-| `items` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
-| `payments` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
+| `budgets` | `fk_id_person` | `people` | `id` | RESTRICT |
+| `items` | `fk_id_presupuesto` | `budgets` | `id` | CASCADE |
+| `payments` | `fk_id_presupuesto` | `budgets` | `id` | CASCADE |
 | `folios` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
 | `folios` | `fk_id_folio_type` | `folio_types` | `id` | RESTRICT |
 | `folios` | `fk_id_deed` | `deeds` | `id` | SET NULL |
