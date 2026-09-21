@@ -16,12 +16,12 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 
 ### Principios de Normalización y Evolución del Esquema:
 1. **Tercera Forma Normal (3FN):**  
-   - Desacoplamiento de identificaciones civiles/tributarias (`identificaciones`, `tipos_identificacion`).
-   - Eliminación de dependencias transitivas en líneas presupuestarias y documentales: los atributos maestros residen en `conceptos` y `tipos_de_documento`, manteniendo en `items` y `documentos_presentados` únicamente los valores efectivos y atestados de la transacción.
+   - Desacoplamiento de identificaciones civiles/tributarias (`identificaciones`, `identification_types`).
+   - Eliminación de dependencias transitivas en líneas presupuestarias y documentales: los atributos maestros residen en `conceptos` y `document_types`, manteniendo en `items` y `documentos_presentados` únicamente los valores efectivos y atestados de la transacción.
 2. **Subflujo de Workflows Notariales (V7, V8):**  
-   - Tablas `workflow_definition`, `workflow_node` y `workflow_transition` para modelar y ejecutar máquinas de estados dinámicas sobre `estados_de_gestion` y asociarlas a `tipos_de_tramite`.
+   - Tablas `workflow_definition`, `workflow_node` y `workflow_transition` para modelar y ejecutar máquinas de estados dinámicas sobre `management_statuses` y asociarlas a `procedure_types`.
 3. **Control de Acceso Basado en Roles (V9):**  
-   - Modelo de seguridad ampliado con tablas `roles` y `roles_permisos`, vinculando cada usuario con un rol granular (`fk_id_rol`).
+   - Modelo de seguridad ampliado con tablas `roles` y `role_modules`, vinculando cada usuario con un rol granular (`fk_id_role`).
 4. **Resolución de Cardinalidad Presupuesto–Trámite (V14):**  
    - Eliminación de la clave foránea circular en `presupuestos` (`fk_id_tramite` deprecada y eliminada en V14); la relación canónica es `tramites.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
 5. **Alineación de Movimientos de Testimonio y Folios (V3, V4, V5, V6, V13):**  
@@ -39,7 +39,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 2 | [copias](#2-copias) | Protocolos | Débil | Ejemplares impresos y certificados de testimonios |
 | 3 | [documentos_presentados](#3-documentos_presentados) | Documentación | Débil | Documentos y certificados tramitados por gestión o autónomos |
 | 4 | [escrituras](#4-escrituras) | Protocolos | Fuerte | Escrituras públicas matrices otorgadas en protocolos |
-| 5 | [estados_de_gestion](#5-estados_de_gestion) | Gestión Notarial | Fuerte | Catálogo maestro de estados del ciclo notarial |
+| 5 | [management_statuses](#5-management_statuses) | Gestión Notarial | Fuerte | Catálogo maestro de estados del ciclo notarial |
 | 6 | [folios](#6-folios) | Protocolos | Fuerte | Hojas de protocolo numeradas provistas por el Colegio |
 | 7 | [folios_copias](#7-folios_copias) | Protocolos | Asociativa | Relación M:N entre folios especiales y copias emitidas |
 | 8 | [gestiones_de_escrituras](#8-gestiones_de_escrituras) | Gestión Notarial | Fuerte | Carpetas de gestión y expedientes de trámites |
@@ -52,15 +52,15 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 15 | [plantilla_presupuestos](#15-plantilla_presupuestos) | Presupuestos | Asociativa | Conceptos arancelarios sugeridos por tipo de trámite |
 | 16 | [plantilla_tramites](#16-plantilla_tramites) | Documentación | Asociativa | Requisitos documentales obligatorios por tipo de trámite |
 | 17 | [presupuestos](#17-presupuestos) | Presupuestos | Fuerte | Cotización económica que fundamenta el trámite |
-| 18 | [registro_auditoria](#18-registro_auditoria) | Seguridad | Débil | Bitácora de auditoría de transacciones de usuarios |
+| 18 | [audit_records](#18-audit_records) | Seguridad | Débil | Bitácora de auditoría de transacciones de usuarios |
 | 19 | [roles](#19-roles) | Seguridad | Fuerte | Perfiles y roles de seguridad en el sistema |
-| 20 | [roles_permisos](#20-roles_permisos) | Seguridad | Asociativa | Permisos funcionales asignados a cada rol |
+| 20 | [role_modules](#20-role_modules) | Seguridad | Asociativa | Permisos funcionales asignados a cada rol |
 | 21 | [suplencias](#21-suplencias) | Sujetos | Asociativa | Períodos de suplencia y licencias notariales |
 | 22 | [testimonios](#22-testimonios) | Protocolos | Débil | Testimonios notariales expedidos de escrituras matrices |
-| 23 | [tipos_de_documento](#23-tipos_de_documento) | Documentación | Fuerte | Catálogo maestro de tipos de documento y certificados |
-| 24 | [tipos_de_folio](#24-tipos_de_folio) | Protocolos | Fuerte | Clasificación de hojas de protocolo |
-| 25 | [tipos_de_tramite](#25-tipos_de_tramite) | Gestión Notarial | Fuerte | Catálogo maestro de actos jurídicos notariales |
-| 26 | [tipos_identificacion](#26-tipos_identificacion) | Sujetos | Fuerte | Catálogo de tipos de documento de identidad |
+| 23 | [document_types](#23-document_types) | Documentación | Fuerte | Catálogo maestro de tipos de documento y certificados |
+| 24 | [folio_types](#24-folio_types) | Protocolos | Fuerte | Clasificación de hojas de protocolo |
+| 25 | [procedure_types](#25-procedure_types) | Gestión Notarial | Fuerte | Catálogo maestro de actos jurídicos notariales |
+| 26 | [identification_types](#26-identification_types) | Sujetos | Fuerte | Catálogo de tipos de documento de identidad |
 | 27 | [tramites](#27-tramites) | Gestión Notarial | Fuerte | Instancia particular de acto notarial en ejecución |
 | 28 | [tramites_personas](#28-tramites_personas) | Gestión Notarial | Asociativa | Personas intervinientes y sus roles jurídicos |
 | 29 | [usuarios](#29-usuarios) | Seguridad | Débil / Fuerte | Cuentas de acceso y credenciales de operadores |
@@ -77,11 +77,11 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 La base de datos actual refleja la evolución real del sistema a través de Flyway V1–V14. Los cambios relevantes para la integridad del modelo son:
 
 - V1: esquema base relacional con entidades de sujetos, protocolo, trámites, presupuestos y documentación.
-- V3/V4: se corrigen columnas faltantes en `items`, `tipos_de_folio` y `testimonios`.
+- V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonios`.
 - V5: se normaliza `movimientos_testimonio` para que coincida con el nombre de la entidad JPA (`id_movimiento_testimonio`, `fecha_ingreso`, `inscripta`, `numero_carton`).
 - V6: `documentos_presentados.fk_id_tramite` pasa a ser opcional para soportar documentos autónomos.
-- V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `tipos_de_tramite` al workflow.
-- V9: se incorporan `roles` y `roles_permisos`, y se enlaza `usuarios` con `fk_id_rol`.
+- V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
+- V9: se incorporan `roles` y `role_modules`, y se enlaza `usuarios` con `fk_id_role`.
 - V13: `tramites.nombre` y `tramites.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
 - V14: se elimina la FK redundante `presupuestos.fk_id_tramite`; la relación canónica quedó en `tramites.fk_id_presupuesto` (1:N).
 
@@ -93,10 +93,10 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `copias` | `id_copia` | `fk_id_testimonio`, `fk_id_persona` | `I: Impedir`, `M: Impedir`, `B: Impedir` (RESTRICT por defecto) | Efectúa copias de testimonios |
 | `documentos_presentados` | `id_documento_presentado` | `fk_id_tramite`, `fk_id_tipo_documento` | `I: Null` si no hay trámite, `M: Impedir`, `B: Impedir` | Compatible con V6: trámite opcional |
 | `escrituras` | `id_escritura` | — | Sin compensación | Matriz protocolares |
-| `estados_de_gestion` | `id_estado_gestion` | — | Sin compensación | Catálogo de estados |
-| `folios` | `id_folio` | `fk_id_escritura`, `fk_id_tipo_folio`, `fk_id_persona_escribano` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Folio del protocolo |
+| `management_statuses` | `id` | — | Sin compensación | Catálogo de estados |
+| `folios` | `id_folio` | `fk_id_escritura`, `fk_id_tipo_folio`, `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Folio del protocolo |
 | `folios_copias` | `fk_id_folio + fk_id_copia` | `fk_id_folio`, `fk_id_copia` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Tabla asociativa |
-| `gestiones_de_escrituras` | `id_gestion` | `fk_id_persona_escribano`, `fk_id_estado_de_gestion` | `I: Impedir`, `M: Impedir`, `B: Impedir` / `SET NULL` en estado si se deja nulo | Agrupa trámites |
+| `gestiones_de_escrituras` | `id_gestion` | `fk_id_notary_person`, `fk_id_estado_de_gestion` | `I: Impedir`, `M: Impedir`, `B: Impedir` / `SET NULL` en estado si se deja nulo | Agrupa trámites |
 | `historial` | `id_historial` | `fk_id_gestion`, `fk_id_estado_gestion` | `I: Impedir`, `M: Impedir`, `B: Cascada` en gestión | Histórico de estados |
 | `inmuebles` | `id_inmueble` | — | Sin compensación | Bien inmueble |
 | `items` | `id_item` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
@@ -106,18 +106,18 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `plantilla_presupuestos` | `fk_id_tipo_tramite + fk_id_concepto` | `fk_id_tipo_tramite`, `fk_id_concepto` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `conceptos` | Plantilla arancelaria |
 | `plantilla_tramites` | `fk_id_tipo_tramite + fk_id_tipo_documento` | `fk_id_tipo_tramite`, `fk_id_tipo_documento` | `I: Impedir`, `M: Impedir`, `B: Cascada` en documento | Requisitos documentales |
 | `presupuestos` | `id_presupuesto` | `fk_id_persona` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
-| `registro_auditoria` | `id_registro_auditoria` | `fk_id_usuario` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
-| `roles` | `id_rol` | — | Sin compensación | Catálogo de perfiles |
-| `roles_permisos` | `fk_id_rol + modulo` | `fk_id_rol` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
+| `audit_records` | `id` | `fk_id_usuario` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Auditoría de transacciones |
+| `roles` | `id` | — | Sin compensación | Catálogo de perfiles |
+| `role_modules` | `fk_id_role + modulo` | `fk_id_role` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
 | `suplencias` | `id_suplencia` | `fk_id_suplantado`, `fk_id_suplente` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cobertura de escribanos |
 | `testimonios` | `id_testimonio` | `fk_id_escritura` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimonio generado desde escritura |
-| `tipos_de_documento` | `id_tipo_documento` | — | Sin compensación | Catálogo maestra de documentos |
-| `tipos_de_folio` | `id_tipo_folio` | — | Sin compensación | Catálogo maestra de folios |
-| `tipos_de_tramite` | `id_tipo_tramite` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
-| `tipos_identificacion` | `id_tipo_identificacion` | — | Sin compensación | Catálogo de documentos de identidad |
+| `document_types` | `id` | — | Sin compensación | Catálogo maestra de documentos |
+| `folio_types` | `id` | — | Sin compensación | Catálogo maestra de folios |
+| `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
+| `identification_types` | `id` | — | Sin compensación | Catálogo de documentos de identidad |
 | `tramites` | `id_tramite` | `fk_id_tipo_tramite`, `fk_id_gestion`, `fk_id_escritura`, `fk_id_presupuesto`, `fk_id_inmueble` | `I: Impedir` / `Null` según columna, `M: Impedir`, `B: Impedir` o `SET NULL` según caso | Relación canónica con presupuesto en V14 |
 | `tramites_personas` | `fk_id_tramite + fk_id_persona_cliente` | `fk_id_tramite`, `fk_id_persona_cliente` | `I: Impedir`, `M: Impedir`, `B: Cascada` en trámite | Tabla asociativa de participación |
-| `usuarios` | `id_usuario` | `fk_id_persona`, `fk_id_rol` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
+| `usuarios` | `id_usuario` | `fk_id_persona`, `fk_id_role` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
 | `workflow_definition` | `id_workflow_definition` | — | Sin compensación | Definición del grafo de estados |
 | `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_estado_gestion_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` en workflow | Nodos del flujo |
 | `workflow_transition` | `id_workflow_transition` | `fk_workflow_definition_id`, `fk_nodo_origen_id`, `fk_nodo_destino_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Transiciones del flujo |
@@ -182,7 +182,7 @@ Documentos, constancias y certificados gestionados para un trámite o generados 
 | `reingresado` | BOOLEAN | No | No | No | false | — | `true` si fue reingresado tras subsanar (V6 nullable) |
 | `quien_entrega` | TEXT | No | No | Sí | — | — | Origen de provisión (`Cliente` o `Entidad Externa`) |
 | `fk_id_tramite` | INTEGER | No | Sí | No | NULL | `tramites(id_tramite)` | Trámite al que pertenece (V6: opcional) |
-| `fk_id_tipo_documento` | INTEGER | No | Sí | No | NULL | `tipos_de_documento(id_tipo_documento)` | Tipo de documento maestro |
+| `fk_id_tipo_documento` | INTEGER | No | Sí | No | NULL | `document_types(id)` | Tipo de documento maestro |
 
 ---
 
@@ -203,12 +203,12 @@ Documento formal matriz otorgado en el protocolo notarial debidamente protocoliz
 
 ---
 
-### 5. `estados_de_gestion`
+### 5. `management_statuses`
 Catálogo de estados operacionales por los que puede transitar una gestión notarial.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_estado_gestion` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador del estado de gestión |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador del estado de gestión |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Nombre del estado (e.g., `Generado`, `En proceso`, `Listo para firmar`) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Definición funcional y condiciones |
@@ -226,8 +226,8 @@ Hojas protocolares provistas por el Colegio Notarial para asentar escrituras pú
 | `anio` | INTEGER | No | No | Sí | — | — | Año calendario del protocolo correspondiente |
 | `estado` | TEXT | No | No | Sí | — | — | Estado (`Disponible`, `Usado`, `Errose`, `No Pasó`) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Justificación de contingencias o atestados |
-| `fk_id_persona_escribano`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano responsable titular del registro |
-| `fk_id_tipo_folio` | INTEGER | No | Sí | Sí | — | `tipos_de_folio(id_tipo_folio)` | Clasificación de uso del folio |
+| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano responsable titular del registro |
+| `fk_id_tipo_folio` | INTEGER | No | Sí | Sí | — | `folio_types(id)` | Clasificación de uso del folio |
 | `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `escrituras(id_escritura)` | Escritura en la que fue utilizado |
 
 ---
@@ -256,8 +256,8 @@ Expediente o carpeta física que agrupa uno o varios trámites notariales afines
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas operativas de tramitación |
 | `numero_bibliorato` | INTEGER | No | No | No | NULL | — | Número de bibliorato físico de guarda |
 | `numero_archivo` | INTEGER | No | No | No | NULL | — | Número correlativo de archivo final otorgado al archivar |
-| `fk_id_persona_escribano`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano a cargo de la gestión |
-| `fk_id_estado_de_gestion`| INTEGER | No | Sí | No | NULL | `estados_de_gestion(id_estado_gestion)` | Estado operativo consolidado |
+| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano a cargo de la gestión |
+| `fk_id_estado_de_gestion`| INTEGER | No | Sí | No | NULL | `management_statuses(id)` | Estado operativo consolidado |
 
 ---
 
@@ -271,7 +271,7 @@ Registro histórico cronológico de las transiciones de estado de una gestión.
 | `fecha` | DATE | No | No | Sí | CURRENT_DATE | — | Fecha del cambio de estado |
 | `observaciones` | TEXT | No | No | No | NULL | — | Motivo o atestación del cambio de estado |
 | `fk_id_gestion` | INTEGER | No | Sí | Sí | — | `gestiones_de_escrituras(id_gestion)` | Gestión que transitó de estado |
-| `fk_id_estado_gestion`| INTEGER | No | Sí | Sí | — | `estados_de_gestion(id_estado_gestion)` | Estado alcanzado |
+| `fk_id_estado_gestion`| INTEGER | No | Sí | Sí | — | `management_statuses(id)` | Estado alcanzado |
 
 ---
 
@@ -375,7 +375,7 @@ Entidad unificada para personas humanas y jurídicas que intervienen en la escri
 | `es_escribano` | BOOLEAN | No | No | Sí | false | — | `true` si es escribano habilitado |
 | `es_cliente` | BOOLEAN | No | No | Sí | false | — | `true` si es cliente de la escribanía |
 | `observaciones` | TEXT | No | No | No | NULL | — | Legajo y antecedentes de la persona |
-| `fk_id_tipo_identificacion`| INTEGER | No | Sí | No | NULL | `tipos_identificacion(id_tipo_identificacion)` | Tipo de identificación principal |
+| `fk_id_tipo_identificacion`| INTEGER | No | Sí | No | NULL | `identification_types(id)` | Tipo de identificación principal |
 
 ---
 
@@ -384,7 +384,7 @@ Tabla asociativa M:N que parametriza conceptos arancelarios estándar por tipo d
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `fk_id_tipo_tramite` | INTEGER | Sí | Sí | Sí | — | `tipos_de_tramite(id_tipo_tramite)` | Tipo de trámite |
+| `fk_id_tipo_tramite` | INTEGER | Sí | Sí | Sí | — | `procedure_types(id)` | Tipo de trámite |
 | `fk_id_concepto` | INTEGER | Sí | Sí | Sí | — | `conceptos(id_concepto)` | Concepto presupuestado |
 | `observaciones` | TEXT | No | No | No | NULL | — | Reglas particulares de cómputo |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
@@ -396,8 +396,8 @@ Tabla asociativa M:N que estipula los requisitos documentales y certificados por
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `fk_id_tipo_tramite` | INTEGER | Sí | Sí | Sí | — | `tipos_de_tramite(id_tipo_tramite)` | Tipo de trámite |
-| `fk_id_tipo_documento`| INTEGER | Sí | Sí | Sí | — | `tipos_de_documento(id_tipo_documento)` | Documento/Certificado requerido |
+| `fk_id_tipo_tramite` | INTEGER | Sí | Sí | Sí | — | `procedure_types(id)` | Tipo de trámite |
+| `fk_id_tipo_documento`| INTEGER | Sí | Sí | Sí | — | `document_types(id)` | Documento/Certificado requerido |
 | `observaciones` | TEXT | No | No | No | NULL | — | Instrucciones específicas de presentación |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 
@@ -420,12 +420,12 @@ Cotización arancelaria emitida a un cliente. En V14 se eliminó la FK redundant
 
 ---
 
-### 18. `registro_auditoria`
+### 18. `audit_records`
 Log no repudiable de eventos de seguridad y transacciones de negocio.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_registro_auditoria` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del evento auditado |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del evento auditado |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `fecha` | TIMESTAMP | No | No | Sí | CURRENT_TIMESTAMP | — | Marca temporal exacta de la transacción |
 | `modulo` | TEXT | No | No | Sí | — | — | Módulo funcional afectado |
@@ -439,7 +439,7 @@ Catálogo de roles de seguridad del sistema (introducido en Flyway V9).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_rol` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del rol |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del rol |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Nombre único del rol (`ADMIN`, `ESCRIBANO`, `SECRETARIA`, etc.) |
 | `descripcion` | TEXT | No | No | No | NULL | — | Alcances y responsabilidades del rol |
@@ -447,12 +447,12 @@ Catálogo de roles de seguridad del sistema (introducido en Flyway V9).
 
 ---
 
-### 20. `roles_permisos`
+### 20. `role_modules`
 Permisos por módulo asignados a cada rol (introducido en Flyway V9).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `fk_id_rol` | INTEGER | Sí | Sí | Sí | — | `roles(id_rol)` | Rol al cual se le concede el permiso |
+| `fk_id_role` | INTEGER | Sí | Sí | Sí | — | `roles(id)` | Rol al cual se le concede el permiso |
 | `modulo` | TEXT | Sí | No | Sí | — | — | Identificador del módulo o acción autorizada |
 
 ---
@@ -492,12 +492,12 @@ Testimonios solemnes expedidos de escrituras públicas matrices (V3/V4).
 
 ---
 
-### 23. `tipos_de_documento`
+### 23. `document_types`
 Catálogo maestro de documentos, títulos antecedentes y certificados registrales.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_tipo_documento` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de documento |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de documento |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Denominación del documento/certificado |
 | `devuelto` | BOOLEAN | No | No | Sí | false | — | `true` si el original debe restituirse al cliente |
@@ -509,12 +509,12 @@ Catálogo maestro de documentos, títulos antecedentes y certificados registrale
 
 ---
 
-### 24. `tipos_de_folio`
+### 24. `folio_types`
 Catálogo maestro de tipos de folios notariales (V3/V4).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_tipo_folio` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de folio |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de folio |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Nombre (`Protocolo Principal`, `Protocolo Auxiliar`, `Testimonio`) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas del tipo de folio (V3/V4) |
@@ -522,12 +522,12 @@ Catálogo maestro de tipos de folios notariales (V3/V4).
 
 ---
 
-### 25. `tipos_de_tramite`
+### 25. `procedure_types`
 Catálogo maestro de actos jurídicos notariales (V8).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_tipo_tramite` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador del tipo de trámite |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador del tipo de trámite |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Denominación del trámite (e.g., `Compraventa`, `Poder`) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Normativa y descripción notarial |
@@ -539,12 +539,12 @@ Catálogo maestro de actos jurídicos notariales (V8).
 
 ---
 
-### 26. `tipos_identificacion`
+### 26. `identification_types`
 Catálogo maestro de documentos de identidad reconocidos.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_tipo_identificacion`| SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de documento |
+| `id`| SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de documento |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Nombre (`DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, `LE`) |
 | `caracteres` | TEXT | No | No | Sí | — | — | Formato o máscara alfanumérica |
@@ -561,7 +561,7 @@ Instancia particular de trámite o negocio jurídico (V13/V14).
 | `numero` | INTEGER | No | No | No | NULL | — | Número correlativo de trámite (V13 opcional) |
 | `nombre` | TEXT | No | No | No | NULL | — | Carátula descriptiva (V13 opcional) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Instrucciones u observaciones |
-| `fk_id_tipo_tramite` | INTEGER | No | Sí | No | NULL | `tipos_de_tramite(id_tipo_tramite)` | Tipo de trámite |
+| `fk_id_tipo_tramite` | INTEGER | No | Sí | No | NULL | `procedure_types(id)` | Tipo de trámite |
 | `fk_id_gestion` | INTEGER | No | Sí | No | NULL | `gestiones_de_escrituras(id_gestion)` | Gestión que lo agrupa (nulo en aux.) |
 | `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `escrituras(id_escritura)` | Escritura notarial resultante |
 | `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto económico base (V14) |
@@ -593,7 +593,7 @@ Cuentas de operadores del sistema (V9).
 | `tipo` | TEXT | No | No | Sí | — | — | Rol descriptivo legacy |
 | `estado` | BOOLEAN | No | No | Sí | true | — | `true` si la cuenta está activa |
 | `fk_id_persona` | INTEGER | No | Sí | No | NULL | `personas(id_persona)` | Persona física asociada |
-| `fk_id_rol` | INTEGER | No | Sí | No | NULL | `roles(id_rol)` | Rol de seguridad asignado (V9) |
+| `fk_id_role` | INTEGER | No | Sí | No | NULL | `roles(id)` | Rol de seguridad asignado (V9) |
 
 ---
 
@@ -618,7 +618,7 @@ Nodos del grafo de workflow vinculados a estados de gestión (introducido en Fly
 | `id_workflow_node` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del nodo |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `fk_workflow_definition_id`| INTEGER | No | Sí | Sí | — | `workflow_definition(id_workflow_definition)` | Workflow contenedor (ON DELETE CASCADE) |
-| `fk_estado_gestion_id` | INTEGER | No | Sí | Sí | — | `estados_de_gestion(id_estado_gestion)` | Estado de gestión representado por el nodo |
+| `fk_estado_gestion_id` | INTEGER | No | Sí | Sí | — | `management_statuses(id)` | Estado de gestión representado por el nodo |
 | `tipo` | TEXT | No | No | Sí | — | — | Tipo de nodo: `INITIAL`, `INTERMEDIATE`, `FINAL` |
 | `posicion_x` | REAL | No | No | No | NULL | — | Coordenada visual X en el diagramador |
 | `posicion_y` | REAL | No | No | No | NULL | — | Coordenada visual Y en el diagramador |
@@ -644,29 +644,29 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 
 | Tabla Origen | Columna FK | Tabla Destino | Columna PK | Acción ON DELETE |
 |---|---|---|---|---|
-| `identificaciones` | `fk_id_tipo_identificacion` | `tipos_identificacion` | `id_tipo_identificacion` | RESTRICT |
+| `identificaciones` | `fk_id_tipo_identificacion` | `identification_types` | `id` | RESTRICT |
 | `identificaciones` | `fk_id_persona` | `personas` | `id_persona` | CASCADE |
 | `usuarios` | `fk_id_persona` | `personas` | `id_persona` | RESTRICT |
-| `usuarios` | `fk_id_rol` | `roles` | `id_rol` | SET NULL |
-| `roles_permisos` | `fk_id_rol` | `roles` | `id_rol` | CASCADE |
-| `registro_auditoria` | `fk_id_usuario` | `usuarios` | `id_usuario` | RESTRICT |
+| `usuarios` | `fk_id_role` | `roles` | `id` | SET NULL |
+| `role_modules` | `fk_id_role` | `roles` | `id` | CASCADE |
+| `audit_records` | `fk_id_usuario` | `usuarios` | `id_usuario` | RESTRICT |
 | `suplencias` | `fk_id_suplantado` | `personas` | `id_persona` | RESTRICT |
 | `suplencias` | `fk_id_suplente` | `personas` | `id_persona` | RESTRICT |
 | `workflow_node` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | CASCADE |
-| `workflow_node` | `fk_estado_gestion_id` | `estados_de_gestion` | `id_estado_gestion` | RESTRICT |
+| `workflow_node` | `fk_estado_gestion_id` | `management_statuses` | `id` | RESTRICT |
 | `workflow_transition` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | CASCADE |
 | `workflow_transition` | `fk_nodo_origen_id` | `workflow_node` | `id_workflow_node` | CASCADE |
 | `workflow_transition` | `fk_nodo_destino_id` | `workflow_node` | `id_workflow_node` | CASCADE |
-| `tipos_de_tramite` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | SET NULL |
-| `gestiones_de_escrituras` | `fk_id_persona_escribano` | `personas` | `id_persona` | RESTRICT |
-| `gestiones_de_escrituras` | `fk_id_estado_de_gestion` | `estados_de_gestion` | `id_estado_gestion` | SET NULL |
+| `procedure_types` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | SET NULL |
+| `gestiones_de_escrituras` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
+| `gestiones_de_escrituras` | `fk_id_estado_de_gestion` | `management_statuses` | `id` | SET NULL |
 | `historial` | `fk_id_gestion` | `gestiones_de_escrituras` | `id_gestion` | CASCADE |
-| `historial` | `fk_id_estado_gestion` | `estados_de_gestion` | `id_estado_gestion` | RESTRICT |
-| `plantilla_tramites` | `fk_id_tipo_tramite` | `tipos_de_tramite` | `id_tipo_tramite` | CASCADE |
-| `plantilla_tramites` | `fk_id_tipo_documento` | `tipos_de_documento` | `id_tipo_documento` | CASCADE |
-| `plantilla_presupuestos` | `fk_id_tipo_tramite` | `tipos_de_tramite` | `id_tipo_tramite` | CASCADE |
+| `historial` | `fk_id_estado_gestion` | `management_statuses` | `id` | RESTRICT |
+| `plantilla_tramites` | `fk_id_tipo_tramite` | `procedure_types` | `id` | CASCADE |
+| `plantilla_tramites` | `fk_id_tipo_documento` | `document_types` | `id` | CASCADE |
+| `plantilla_presupuestos` | `fk_id_tipo_tramite` | `procedure_types` | `id` | CASCADE |
 | `plantilla_presupuestos` | `fk_id_concepto` | `conceptos` | `id_concepto` | CASCADE |
-| `tramites` | `fk_id_tipo_tramite` | `tipos_de_tramite` | `id_tipo_tramite` | RESTRICT |
+| `tramites` | `fk_id_tipo_tramite` | `procedure_types` | `id` | RESTRICT |
 | `tramites` | `fk_id_gestion` | `gestiones_de_escrituras` | `id_gestion` | SET NULL |
 | `tramites` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
 | `tramites` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | RESTRICT |
@@ -674,12 +674,12 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `tramites_personas` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
 | `tramites_personas` | `fk_id_persona_cliente` | `personas` | `id_persona` | RESTRICT |
 | `documentos_presentados` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
-| `documentos_presentados` | `fk_id_tipo_documento` | `tipos_de_documento` | `id_tipo_documento` | RESTRICT |
+| `documentos_presentados` | `fk_id_tipo_documento` | `document_types` | `id` | RESTRICT |
 | `presupuestos` | `fk_id_persona` | `personas` | `id_persona` | RESTRICT |
 | `items` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
 | `pagos` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
-| `folios` | `fk_id_persona_escribano` | `personas` | `id_persona` | RESTRICT |
-| `folios` | `fk_id_tipo_folio` | `tipos_de_folio` | `id_tipo_folio` | RESTRICT |
+| `folios` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
+| `folios` | `fk_id_tipo_folio` | `folio_types` | `id` | RESTRICT |
 | `folios` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
 | `testimonios` | `fk_id_escritura` | `escrituras` | `id_escritura` | CASCADE |
 | `movimientos_testimonio` | `fk_id_testimonio` | `testimonios` | `id_testimonio` | CASCADE |
@@ -710,9 +710,9 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 
 | Categoría | Entidades | Observación |
 |-----------|-----------|-------------|
-| **Maestros/Catálogos** | `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `tipos_identificacion`, `conceptos`, `estados_de_gestion` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
+| **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `conceptos`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `plantilla_presupuestos`, `plantilla_tramites` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
-| **Compensación/Seguridad** | `roles`, `roles_permisos`, `registro_auditoria`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
+| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
 | **Asociativas Operacionales** | `documentos_presentados`, `tramites_personas`, `folios_copias`, `movimientos_testimonio`, `suplencias`, `historial`, `inmuebles`, `items`, `pagos` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**

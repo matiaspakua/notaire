@@ -33,7 +33,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author User
  */
 @Entity
-@Table(name = "tipos_de_tramite")
+@Table(name = "procedure_types")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "TipoDeTramite.findAll", query = "SELECT t FROM ProcedureType t"),
@@ -46,7 +46,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
-    @Column(name = "habilitado")
+    @Column(name = "enabled")
     private boolean enabled;
     @Basic(optional = false)
     @Column(name = "version")
@@ -56,21 +56,21 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tipo_tramite")
+    @Column(name = "id")
     private Integer idProcedureType;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
     @Basic(optional = false)
-    @Column(name = "se_archiva")
+    @Column(name = "is_archived")
     private boolean isArchived;
     @Basic(optional = false)
-    @Column(name = "se_inscribe")
+    @Column(name = "is_registered")
     private boolean isRegistered;
     @Basic(optional = false)
-    @Column(name = "asocia_inmuebles")
+    @Column(name = "associates_properties")
     private boolean associatesProperties;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "procedureType", fetch = FetchType.LAZY)
     private List<BudgetTemplate> budgetTemplateList = new ArrayList<>();

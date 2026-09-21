@@ -32,7 +32,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "tipos_identificacion")
+@Table(name = "identification_types")
 @XmlRootElement
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQueries({
@@ -49,15 +49,15 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tipo_identificacion")
+    @Column(name = "id")
     private Integer idIdentificationType;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     @NotBlank
     private String name;
     // Column is NOT NULL in the schema; map it so inserts populate it
     // (previously missing → "null value in column caracteres" 500 on create).
-    @Column(name = "caracteres")
+    @Column(name = "characters")
     private String characters;
     @XmlTransient
     @JsonIgnore

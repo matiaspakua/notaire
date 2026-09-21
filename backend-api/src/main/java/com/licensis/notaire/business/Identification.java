@@ -42,7 +42,7 @@ public class Identification implements Serializable
     @JoinColumn(name = "fk_id_persona", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Person person;
-    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id_tipo_identificacion", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private IdentificationType identificationType;
 

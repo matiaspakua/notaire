@@ -32,7 +32,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author User
  */
 @Entity
-@Table(name = "tipos_de_documento")
+@Table(name = "document_types")
 @XmlRootElement
 @NamedQueries(
         {
@@ -48,7 +48,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdDocumentType")
     private Collection<SubmittedDocument> submittedDocumentCollection;
     @Basic(optional = false)
-    @Column(name = "habilitado")
+    @Column(name = "enabled")
     private boolean enabled;
     @Basic(optional = false)
     @Column(name = "version")
@@ -58,21 +58,21 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tipo_documento")
+    @Column(name = "id")
     private Integer idDocumentType;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
     @Basic(optional = false)
-    @Column(name = "vence")
+    @Column(name = "expires")
     private boolean expires;
-    @Column(name = "dias_vencimiento")
+    @Column(name = "due_days")
     private Integer dueDays;
     @Basic(optional = false)
-    @Column(name = "quien_entrega")
+    @Column(name = "delivered_by")
     private String deliveredBy;
     @Basic(optional = false)
-    @Column(name = "devuelto")
+    @Column(name = "returned")
     private boolean returned;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "documentType", fetch = FetchType.EAGER)
     private List<ProcedureTemplate> procedureTemplateList = new ArrayList<>();

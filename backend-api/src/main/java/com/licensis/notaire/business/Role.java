@@ -26,21 +26,21 @@ public class Role implements Serializable, Persistable<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_rol")
+    @Column(name = "id")
     private Integer idRole;
 
-    @Column(name = "nombre", unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "descripcion")
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "activo", nullable = false)
+    @Column(name = "active", nullable = false)
     private boolean active;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "roles_permisos", joinColumns = @JoinColumn(name = "fk_id_rol"))
-    @Column(name = "modulo")
+    @CollectionTable(name = "role_modules", joinColumns = @JoinColumn(name = "fk_id_role"))
+    @Column(name = "module")
     private List<String> modulos = new ArrayList<>();
 
     public Role() {

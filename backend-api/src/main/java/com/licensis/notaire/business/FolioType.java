@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * estado a "INHABILITADO". </li>
  */
 @Entity
-@Table(name = "tipos_de_folio")
+@Table(name = "folio_types")
 @XmlRootElement
 @NamedQueries(
         {
@@ -54,12 +54,12 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tipo_folio")
+    @Column(name = "id")
     private Integer idFolioType;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     // LAZY, not EAGER: this collection is @JsonIgnore'd (never serialized) and every reader
     // (FolioController, legacy JpaControllers) runs inside a transaction. EAGER here made
@@ -69,10 +69,10 @@ public class FolioType implements Serializable, Persistable<Integer>
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdFolioType", fetch = FetchType.LAZY)
     private List<Folio> folioList;
     @Basic(optional = false)
-    @Column(name = "habilitado")
+    @Column(name = "enabled")
     private boolean enabled;
     @Basic(optional = false)
-    @Column(name = "es_auxiliar")
+    @Column(name = "is_auxiliary")
     private boolean isAuxiliary;
 
     public FolioType()

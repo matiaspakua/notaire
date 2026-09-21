@@ -51,7 +51,7 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
     protected BudgetTemplatePK budgetTemplatePK;
     @Column(name = "observaciones")
     private String notes;
-    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id_tipo_tramite", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_tipo_tramite", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private ProcedureType procedureType;
     @JoinColumn(name = "fk_id_concepto", referencedColumnName = "id_concepto", insertable = false, updatable = false)
