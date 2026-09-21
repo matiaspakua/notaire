@@ -26,7 +26,7 @@ import java.util.Date;
  * Presentada, Observada, Inscripta.
  */
 @Entity
-@Table(name = "minutas_inscripcion")
+@Table(name = "registration_drafts")
 public class RegistrationDraft implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
@@ -34,44 +34,44 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_minuta_inscripcion")
+    @Column(name = "id")
     private Integer idRegistrationDraft;
 
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
 
-    @Column(name = "precio_operacion")
+    @Column(name = "operation_price")
     private Float operationPrice;
 
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private String status;
 
     @Basic(optional = false)
     @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_generacion")
+    @Column(name = "generation_date")
     private Date dateGeneration;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_presentacion")
+    @Column(name = "submission_date")
     private Date dateSubmission;
 
-    @Column(name = "numero_entrada_registral")
+    @Column(name = "registry_entry_number")
     private String registryEntryNumber;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_recepcion")
+    @Column(name = "reception_date")
     private Date dateReception;
 
-    @Column(name = "numero_inscripcion_definitivo")
+    @Column(name = "final_registration_number")
     private String finalRegistrationNumber;
 
-    @Column(name = "observaciones_registro")
+    @Column(name = "registry_notes")
     private String registryNotes;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_subsanacion")
+    @Column(name = "correction_date")
     private Date dateCorrection;
 
     @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id_escritura", unique = true)

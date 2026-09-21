@@ -18,25 +18,25 @@ import java.io.Serializable;
  * gestión, con ciclo de vida activa/espera/archivada (CU85).
  */
 @Entity
-@Table(name = "carpetas_tramite")
+@Table(name = "procedure_folders")
 public class ProcedureFolder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_carpeta")
+    @Column(name = "id")
     private Integer idFolder;
 
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
 
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private String status;
 
-    @Column(name = "motivo_espera")
+    @Column(name = "wait_reason")
     private String waitReason;
 
     @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id_gestion")
