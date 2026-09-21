@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `refactor/973_rename_leaf_reference_tables` (Slice 1, base `main`); `refactor/973_rename_property_concept_item_payment_tables` (Slice 2, stacked on Slice 1); `refactor/973_rename_copy_and_testimony_movement_tables` (Slice 3, stacked on Slice 2) — each shares `cleanup-test-data.sql`/data-dictionary edits with the previous slice, retarget to `main` as earlier slices merge | all created |
 | Tasks | `tasks.md` | Slices 1-3 groups 2-9 complete, 10-12 pending deploy/close |
 | Commits | Slice 1: `3e9172f`, `cd53632`, `51bcb82`, `1b0be93`, `d32df9f`; Slice 2: `facf643`, `f864118`; Slice 3: `80567d9` | all committed and pushed |
-| Pull Request | #1011 (Slice 1, base `main`); #1012 (Slice 2, base Slice 1 branch); #1013 (Slice 3, base Slice 2 branch) | all open, CLEAN/MERGEABLE |
+| Pull Request | #1011 (Slice 1, MERGED); #1012 (Slice 2, open, base `main`); #1013 (Slice 3, MERGED into Slice 2 branch) | Slice 2 branch now contains Slices 1-3 |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
