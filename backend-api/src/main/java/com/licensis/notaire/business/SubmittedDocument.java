@@ -110,7 +110,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     private Float amountToPay;
     @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite")
+    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Procedure fkIdProcedure;
 

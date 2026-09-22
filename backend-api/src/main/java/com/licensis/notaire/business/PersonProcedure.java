@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author matias
  */
 @Entity
-@Table(name = "tramites_personas")
+@Table(name = "person_procedures")
 @XmlRootElement
 @NamedQueries(
         {
@@ -49,12 +49,12 @@ public class PersonProcedure implements Serializable, Persistable<PersonProcedur
     @EmbeddedId
     protected PersonProcedurePK personProcedurePK;
     @Basic(optional = false)
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_persona_cliente", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_client_person", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Person person;
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id_tramite", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_procedure", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Procedure procedure;
     @Transient

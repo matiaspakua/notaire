@@ -23,9 +23,9 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 3. **Control de Acceso Basado en Roles (V9):**  
    - Modelo de seguridad ampliado con tablas `roles` y `role_modules`, vinculando cada usuario con un rol granular (`fk_id_role`).
 4. **Resolución de Cardinalidad Presupuesto–Trámite (V14):**  
-   - Eliminación de la clave foránea circular en `presupuestos` (`fk_id_tramite` deprecada y eliminada en V14); la relación canónica es `tramites.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
+   - Eliminación de la clave foránea circular en `presupuestos` (`fk_id_procedure` deprecada y eliminada en V14); la relación canónica es `procedures.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
 5. **Alineación de Movimientos de Testimonio y Folios (V3, V4, V5, V6, V13):**  
-   - Identificador `id`, fechas de tracto registral, y soporte para documentos autónomos (`submitted_documents.fk_id_tramite` nullable).
+   - Identificador `id`, fechas de tracto registral, y soporte para documentos autónomos (`submitted_documents.fk_id_procedure` nullable).
 
 ---
 
@@ -61,8 +61,8 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 24 | [folio_types](#24-folio_types) | Protocolos | Fuerte | Clasificación de hojas de protocolo |
 | 25 | [procedure_types](#25-procedure_types) | Gestión Notarial | Fuerte | Catálogo maestro de actos jurídicos notariales |
 | 26 | [identification_types](#26-identification_types) | Sujetos | Fuerte | Catálogo de tipos de documento de identidad |
-| 27 | [tramites](#27-tramites) | Gestión Notarial | Fuerte | Instancia particular de acto notarial en ejecución |
-| 28 | [tramites_personas](#28-tramites_personas) | Gestión Notarial | Asociativa | Personas intervinientes y sus roles jurídicos |
+| 27 | [procedures](#27-procedures) | Gestión Notarial | Fuerte | Instancia particular de acto notarial en ejecución |
+| 28 | [person_procedures](#28-person_procedures) | Gestión Notarial | Asociativa | Personas intervinientes y sus roles jurídicos |
 | 29 | [usuarios](#29-usuarios) | Seguridad | Débil / Fuerte | Cuentas de acceso y credenciales de operadores |
 | 30 | [workflow_definition](#30-workflow_definition) | Workflow | Fuerte | Definición maestra de grafos de flujos de trabajo |
 | 31 | [workflow_node](#31-workflow_node) | Workflow | Débil | Nodos de estado dentro de un flujo de trabajo |
@@ -79,11 +79,11 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 - V1: esquema base relacional con entidades de sujetos, protocolo, trámites, presupuestos y documentación.
 - V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonios`.
 - V5: se normaliza `testimony_movements` para que coincida con el nombre de la entidad JPA (`id`, `entry_date`, `inscripta`, `folder_number`).
-- V6: `submitted_documents.fk_id_tramite` pasa a ser opcional para soportar documentos autónomos.
+- V6: `submitted_documents.fk_id_procedure` pasa a ser opcional para soportar documentos autónomos.
 - V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
 - V9: se incorporan `roles` y `role_modules`, y se enlaza `usuarios` con `fk_id_role`.
-- V13: `tramites.nombre` y `tramites.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
-- V14: se elimina la FK redundante `presupuestos.fk_id_tramite`; la relación canónica quedó en `tramites.fk_id_presupuesto` (1:N).
+- V13: `procedures.nombre` y `procedures.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
+- V14: se elimina la FK redundante `presupuestos.fk_id_procedure`; la relación canónica quedó en `procedures.fk_id_presupuesto` (1:N).
 
 ### Matriz de entidades, PK/FK y mecanismo de compensación
 
@@ -91,7 +91,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 |---|---|---|---|---|
 | `concepts` | `id` | — | Sin compensación | Tabla maestra, no depende de otras entidades |
 | `copies` | `id` | `fk_id_testimonio`, `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` (RESTRICT por defecto) | Efectúa copies de testimonios |
-| `submitted_documents` | `id` | `fk_id_tramite`, `fk_id_document_type` | `I: Null` si no hay trámite, `M: Impedir`, `B: Impedir` | Compatible con V6: trámite opcional |
+| `submitted_documents` | `id` | `fk_id_procedure`, `fk_id_document_type` | `I: Null` si no hay trámite, `M: Impedir`, `B: Impedir` | Compatible con V6: trámite opcional |
 | `escrituras` | `id_escritura` | — | Sin compensación | Matriz protocolares |
 | `management_statuses` | `id` | — | Sin compensación | Catálogo de estados |
 | `folios` | `id_folio` | `fk_id_escritura`, `fk_id_tipo_folio`, `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Folio del protocolo |
@@ -115,8 +115,8 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `folio_types` | `id` | — | Sin compensación | Catálogo maestra de folios |
 | `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
 | `identification_types` | `id` | — | Sin compensación | Catálogo de documentos de identidad |
-| `tramites` | `id_tramite` | `fk_id_procedure_type`, `fk_id_gestion`, `fk_id_escritura`, `fk_id_presupuesto`, `fk_id_inmueble` | `I: Impedir` / `Null` según columna, `M: Impedir`, `B: Impedir` o `SET NULL` según caso | Relación canónica con presupuesto en V14 |
-| `tramites_personas` | `fk_id_tramite + fk_id_persona_cliente` | `fk_id_tramite`, `fk_id_persona_cliente` | `I: Impedir`, `M: Impedir`, `B: Cascada` en trámite | Tabla asociativa de participación |
+| `procedures` | `id` | `fk_id_procedure_type`, `fk_id_gestion`, `fk_id_escritura`, `fk_id_presupuesto`, `fk_id_property` | `I: Impedir` / `Null` según columna, `M: Impedir`, `B: Impedir` o `SET NULL` según caso | Relación canónica con presupuesto en V14 |
+| `person_procedures` | `fk_id_procedure + fk_id_client_person` | `fk_id_procedure`, `fk_id_client_person` | `I: Impedir`, `M: Impedir`, `B: Cascada` en trámite | Tabla asociativa de participación |
 | `usuarios` | `id_usuario` | `fk_id_person`, `fk_id_role` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
 | `workflow_definition` | `id_workflow_definition` | — | Sin compensación | Definición del grafo de estados |
 | `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_estado_gestion_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` en workflow | Nodos del flujo |
@@ -181,7 +181,7 @@ Documentos, constancias y certificados gestionados para un trámite o generados 
 | `entregado` | BOOLEAN | No | No | No | false | — | `true` si ya fue entregado a la entidad requirente |
 | `reingresado` | BOOLEAN | No | No | No | false | — | `true` si fue reingresado tras subsanar (V6 nullable) |
 | `quien_entrega` | TEXT | No | No | Sí | — | — | Origen de provisión (`Cliente` o `Entidad Externa`) |
-| `fk_id_tramite` | INTEGER | No | Sí | No | NULL | `tramites(id_tramite)` | Trámite al que pertenece (V6: opcional) |
+| `fk_id_procedure` | INTEGER | No | Sí | No | NULL | `procedures(id)` | Trámite al que pertenece (V6: opcional) |
 | `fk_id_document_type` | INTEGER | No | Sí | No | NULL | `document_types(id)` | Tipo de documento maestro |
 
 ---
@@ -404,7 +404,7 @@ Tabla asociativa M:N que estipula los requisitos documentales y certificados por
 ---
 
 ### 17. `presupuestos`
-Cotización arancelaria emitida a un cliente. En V14 se eliminó la FK redundante hacia trámite (`fk_id_tramite`), estableciendo que la relación canónica es `tramites.fk_id_presupuesto`.
+Cotización arancelaria emitida a un cliente. En V14 se eliminó la FK redundante hacia trámite (`fk_id_procedure`), estableciendo que la relación canónica es `procedures.fk_id_presupuesto`.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
@@ -551,12 +551,12 @@ Catálogo maestro de documentos de identidad reconocidos.
 
 ---
 
-### 27. `tramites`
+### 27. `procedures`
 Instancia particular de trámite o negocio jurídico (V13/V14).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_tramite` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del trámite |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del trámite |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `numero` | INTEGER | No | No | No | NULL | — | Número correlativo de trámite (V13 opcional) |
 | `nombre` | TEXT | No | No | No | NULL | — | Carátula descriptiva (V13 opcional) |
@@ -565,17 +565,17 @@ Instancia particular de trámite o negocio jurídico (V13/V14).
 | `fk_id_gestion` | INTEGER | No | Sí | No | NULL | `gestiones_de_escrituras(id_gestion)` | Gestión que lo agrupa (nulo en aux.) |
 | `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `escrituras(id_escritura)` | Escritura notarial resultante |
 | `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `presupuestos(id_presupuesto)` | Presupuesto económico base (V14) |
-| `fk_id_inmueble` | INTEGER | No | Sí | No | NULL | `properties(id)` | Inmueble objeto del acto (si aplica) |
+| `fk_id_property` | INTEGER | No | Sí | No | NULL | `properties(id)` | Inmueble objeto del acto (si aplica) |
 
 ---
 
-### 28. `tramites_personas`
+### 28. `person_procedures`
 Tabla asociativa que vincula personas con el trámite e indica su rol jurídico.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `fk_id_tramite` | INTEGER | Sí | Sí | Sí | — | `tramites(id_tramite)` | Trámite en el que participa |
-| `fk_id_persona_cliente`| INTEGER | Sí | Sí | Sí | — | `personas(id_persona)` | Persona que interviene |
+| `fk_id_procedure` | INTEGER | Sí | Sí | Sí | — | `procedures(id)` | Trámite en el que participa |
+| `fk_id_client_person`| INTEGER | Sí | Sí | Sí | — | `personas(id_persona)` | Persona que interviene |
 | `observaciones` | TEXT | No | No | Sí | '' | — | Rol notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`) |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 
@@ -666,14 +666,14 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `procedure_templates` | `fk_id_document_type` | `document_types` | `id` | CASCADE |
 | `budget_templates` | `fk_id_procedure_type` | `procedure_types` | `id` | CASCADE |
 | `budget_templates` | `fk_id_concept` | `concepts` | `id` | CASCADE |
-| `tramites` | `fk_id_procedure_type` | `procedure_types` | `id` | RESTRICT |
-| `tramites` | `fk_id_gestion` | `gestiones_de_escrituras` | `id_gestion` | SET NULL |
-| `tramites` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
-| `tramites` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | RESTRICT |
-| `tramites` | `fk_id_inmueble` | `properties` | `id` | SET NULL |
-| `tramites_personas` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
-| `tramites_personas` | `fk_id_persona_cliente` | `personas` | `id_persona` | RESTRICT |
-| `submitted_documents` | `fk_id_tramite` | `tramites` | `id_tramite` | CASCADE |
+| `procedures` | `fk_id_procedure_type` | `procedure_types` | `id` | RESTRICT |
+| `procedures` | `fk_id_gestion` | `gestiones_de_escrituras` | `id_gestion` | SET NULL |
+| `procedures` | `fk_id_escritura` | `escrituras` | `id_escritura` | SET NULL |
+| `procedures` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | RESTRICT |
+| `procedures` | `fk_id_property` | `properties` | `id` | SET NULL |
+| `person_procedures` | `fk_id_procedure` | `procedures` | `id` | CASCADE |
+| `person_procedures` | `fk_id_client_person` | `personas` | `id_persona` | RESTRICT |
+| `submitted_documents` | `fk_id_procedure` | `procedures` | `id` | CASCADE |
 | `submitted_documents` | `fk_id_document_type` | `document_types` | `id` | RESTRICT |
 | `presupuestos` | `fk_id_person` | `personas` | `id_persona` | RESTRICT |
 | `items` | `fk_id_presupuesto` | `presupuestos` | `id_presupuesto` | CASCADE |
@@ -713,7 +713,7 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 | **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
 | **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
-| **Asociativas Operacionales** | `submitted_documents`, `tramites_personas`, `folio_copies`, `testimony_movements`, `suplencias`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
+| **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `suplencias`, `historial`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
 - 13 entidades **fuertes** (41%) poseen CUs explícitas.
