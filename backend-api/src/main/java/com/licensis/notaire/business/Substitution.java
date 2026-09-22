@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author juanca
  */
 @Entity
-@Table(name = "suplencias")
+@Table(name = "substitutions")
 @XmlRootElement
 @NamedQueries(
         {
@@ -54,25 +54,25 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Version
     private int version;
     @Basic(optional = false)
-    @Column(name = "fecha_inicio")
+    @Column(name = "start_date")
     @Temporal(TemporalType.DATE)
     private Date dateStart;
     @Basic(optional = false)
-    @Column(name = "fecha_fin")
+    @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     private Date dateEnd;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_suplencia")
+    @Column(name = "id")
     private Integer idSubstitution;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_suplente", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_substitute_person", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Person fkIdSubstitute;
-    @JoinColumn(name = "fk_id_suplantado", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_substituted_person", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Person fkIdSubstituted;
 

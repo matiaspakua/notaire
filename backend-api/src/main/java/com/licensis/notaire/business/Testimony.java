@@ -35,7 +35,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "testimonios")
+@Table(name = "testimonies")
 @XmlRootElement
 @NamedQueries(
         {
@@ -56,23 +56,23 @@ public class Testimony implements Serializable, Persistable<Integer>
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_testimonio")
+    @Column(name = "id")
     private Integer idTestimony;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
     @Basic(optional = false)
-    @Column(name = "observado")
+    @Column(name = "observed")
     private boolean flagged;
     @Basic(optional = false)
-    @Column(name = "verificado")
+    @Column(name = "verified")
     private boolean verified;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<TestimonyMovement> testimonyMovementList = new ArrayList<>();
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
