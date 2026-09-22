@@ -40,14 +40,14 @@ public class Notebook implements Serializable, Persistable<Integer> {
     private Integer idNotebook;
 
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
 
     @Basic(optional = false)
     @Column(name = "year_number")
     private int year;
 
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
 
     @JoinColumn(name = "fk_id_notary_person", referencedColumnName = "id")
