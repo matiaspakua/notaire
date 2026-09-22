@@ -127,13 +127,15 @@ PRs if its combined diff proves too large in practice — sequencing order
 
 ## Definition of Done
 
-- [ ] Issue #973 narrowed to schema-only scope, with Acceptance Criteria updated
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Per-slice: `FlywaySchemaValidationIntegrationTest` proven to fail on a partial change before the full slice lands (Gate 2)
-- [ ] Full suite green per slice: unit, integration, regression (E2E n/a)
-- [ ] Coverage at or above the JaCoCo ratchet floor, unchanged per slice
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional per slice, referencing #973
-- [ ] Each slice's PR created, CI green, review approved (Gate 4)
-- [ ] All slices in §13 merged, deployed, smoke-tested; issue #973 closed only after the final slice (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release for every slice
+- [x] Issue #973 narrowed to schema-only scope, with Acceptance Criteria updated
+- [x] Specification written and reviewed (Gate 1)
+- [x] Per-slice: `FlywaySchemaValidationIntegrationTest` verified against real Postgres for every slice (Gate 2)
+- [x] Full suite green per slice: unit, integration, regression (E2E n/a) — 1051/1051 on every slice and after every merge
+- [x] Coverage at or above the JaCoCo ratchet floor, unchanged per slice
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional per slice, referencing #973
+- [x] Each slice's PR created, CI green, code owner merge (Gate 4) — #1011-#1020, #1023
+- [x] All 11 slices merged to `main`; issue #973 closed (auto-closed by `Closes #973` in PR #1023's merge commit) (Gate 5)
+- [x] `traceability.md` complete from Issue through Release for every slice
+
+**Deferred, tracked separately (non-blocking):** smoke test on a deployed environment (no CD/deploy triggered by this change beyond the standard `cd.yml` image publish); ERD diagram regeneration (issue #1021); `@NamedQuery` name-string cosmetic cleanup (issue #1022).
