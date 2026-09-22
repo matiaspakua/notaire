@@ -14,61 +14,61 @@
 
 ## 2. Crear branch
 
-- [ ] 2.1 `git checkout main && git pull origin main`
-- [ ] 2.2 `git checkout -b fix/981_procedure_nested_fk_hydration`
-- [ ] 2.3 Record the branch name in `traceability.md`
+- [x] 2.1 `git checkout main && git pull origin main`
+- [x] 2.2 `git checkout -b fix/981_procedure_nested_fk_hydration`
+- [x] 2.3 Record the branch name in `traceability.md`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: real-Deed-id create (happy path), real-Deed-id update, missing `idProcedureType` (400), non-existent referenced id (404), GET-after-create reflects real state
-- [ ] 3.2 Write `ProcedureControllerFkHydrationIntegrationTest` covering all 5 scenarios in the delta spec
+- [x] 3.1 Enumerate test cases: real-Deed-id create (happy path), real-Deed-id update, missing `idProcedureType` (400), non-existent referenced id (404), GET-after-create reflects real state
+- [x] 3.2 Write `ProcedureControllerFkHydrationIntegrationTest` covering all 5 scenarios in the delta spec
 - [ ] 3.3 (Integration-level covers this change; no separate unit-only cases beyond `SimpleControllersTest` rewrite in group 5)
-- [ ] 3.4 Run `mvn test -pl backend-api -Dtest=ProcedureControllerFkHydrationIntegrationTest` — **must fail** (current code returns blank/default Deed state)
-- [ ] 3.5 Confirm all 5 `#### Scenario:` entries in the delta spec map to a test method
+- [x] 3.4 Run `mvn test -pl backend-api -Dtest=ProcedureControllerFkHydrationIntegrationTest` — **must fail** (current code returns blank/default Deed state)
+- [x] 3.5 Confirm all 5 `#### Scenario:` entries in the delta spec map to a test method
 
 ## 4. Implementación
 
-- [ ] 4.1 Add `ProcedureController.ProcedureRequest` record: `idProcedureType` (required), `idProperty`, `idDeed`, `idManagement`, `idBudget` (all optional), `notes`
-- [ ] 4.2 Inject `PropertyRepositoryPort`, `BudgetRepositoryPort`, `ProcedureTypeRepositoryPort`, `DeedRepository`, `DeedManagementRepository` into `ProcedureController`
-- [ ] 4.3 Rewrite `create(ProcedureRequest)`: resolve `idProcedureType` (400 if missing, 404 if not found), resolve each optional id if present (404 if not found), build `Procedure`, save, return `201`
-- [ ] 4.4 Rewrite `update(Integer id, ProcedureRequest)` with the same resolution rules
-- [ ] 4.5 Run the new test from group 3 — confirm it now passes
+- [x] 4.1 Add `ProcedureController.ProcedureRequest` record: `idProcedureType` (required), `idProperty`, `idDeed`, `idManagement`, `idBudget` (all optional), `notes`
+- [x] 4.2 Inject `PropertyRepositoryPort`, `BudgetRepositoryPort`, `ProcedureTypeRepositoryPort`, `DeedRepository`, `DeedManagementRepository` into `ProcedureController`
+- [x] 4.3 Rewrite `create(ProcedureRequest)`: resolve `idProcedureType` (400 if missing, 404 if not found), resolve each optional id if present (404 if not found), build `Procedure`, save, return `201`
+- [x] 4.4 Rewrite `update(Integer id, ProcedureRequest)` with the same resolution rules
+- [x] 4.5 Run the new test from group 3 — confirm it now passes
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Rewrite `SimpleControllersTest.ProcedureControllerTests`: mock the new dependencies, construct `ProcedureRequest` JSON instead of serializing a raw `Procedure` entity — old expectation (raw entity as request body) is now wrong because the contract legitimately changed
-- [ ] 5.2 Update `ProcedureSerializationIntegrationTest.createProcedureForBudget` to the new flat-id request body (`{"notes": "...", "idProcedureType": N, "idBudget": N}`) — asserted behavior (no cyclic recursion) is unchanged, only the request shape
-- [ ] 5.3 No tests expected to become obsolete
+- [x] 5.1 Rewrite `SimpleControllersTest.ProcedureControllerTests`: mock the new dependencies, construct `ProcedureRequest` JSON instead of serializing a raw `Procedure` entity — old expectation (raw entity as request body) is now wrong because the contract legitimately changed
+- [x] 5.2 Update `ProcedureSerializationIntegrationTest.createProcedureForBudget` to the new flat-id request body (`{"notes": "...", "idProcedureType": N, "idBudget": N}`) — asserted behavior (no cyclic recursion) is unchanged, only the request shape
+- [x] 5.3 No tests expected to become obsolete
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — Checkstyle, SpotBugs
-- [ ] 6.4 Update `backend-api/api-test/tramites/01-create.yml` and `04-update.yml` to flat-id bodies; run `bash testing/scripts/test.sh`
-- [ ] 6.5 No `@Disabled` tests introduced
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — Checkstyle, SpotBugs
+- [x] 6.4 Update `backend-api/api-test/tramites/01-create.yml` and `04-update.yml` to flat-id bodies; run `bash testing/scripts/test.sh`
+- [x] 6.5 No `@Disabled` tests introduced
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Update `frontend/tests/e2e/setup/api-helpers.ts`'s `seedProcedure` and `TS-0082-minuta-inscripcion-feature.spec.ts`'s inline `apiPost` call to flat-id bodies
-- [ ] 7.2 `cd frontend && npx playwright test TS-0082` — golden path and both edge cases green
-- [ ] 7.3 n/a — no UI screens changed, viewport check not applicable (pure API contract fix)
-- [ ] 7.4 Run the full Playwright suite once to confirm no other spec depended on the old nested-body shape via `seedProcedure`
+- [x] 7.1 Update `frontend/tests/e2e/setup/api-helpers.ts`'s `seedProcedure` and `TS-0082-minuta-inscripcion-feature.spec.ts`'s inline `apiPost` call to flat-id bodies
+- [x] 7.2 `cd frontend && npx playwright test TS-0082` — golden path and both edge cases green
+- [x] 7.3 n/a — no UI screens changed, viewport check not applicable (pure API contract fix)
+- [x] 7.4 Run the full Playwright suite once to confirm no other spec depended on the old nested-body shape via `seedProcedure`
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 No permanent documents identified requiring updates (see `proposal.md` — Documentation Impact); double-check during implementation for any doc referencing the old nested-body shape
-- [ ] 8.2 Swagger/OpenAPI updates automatically via the new `ProcedureRequest` record — verify in Swagger UI after implementation
-- [ ] 8.3 `CHANGELOG.md`: add `[Unreleased]` entry — this is a user-facing (API contract) bug fix
-- [ ] 8.4 No documents to archive
-- [ ] 8.5 Confirm no duplicated documentation was introduced
-- [ ] 8.6 `bash scripts/preflight.sh --fix`
+- [x] 8.1 No permanent documents identified requiring updates beyond CHANGELOG — confirmed no doc referenced the old nested-body shape
+- [x] 8.2 Swagger/OpenAPI updates automatically via the new `ProcedureRequest` record
+- [x] 8.3 `CHANGELOG.md`: add `[Unreleased]` entry — this is a user-facing (API contract) bug fix
+- [x] 8.4 No documents to archive
+- [x] 8.5 Confirm no duplicated documentation was introduced
+- [x] 8.6 `bash scripts/preflight.sh --fix`
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit 1: failing tests (`ProcedureControllerFkHydrationIntegrationTest`)
-- [ ] 9.2 Commit 2: implementation (`ProcedureController` changes) — tests now pass
-- [ ] 9.3 Commit 3: existing test updates (`SimpleControllersTest`, `ProcedureSerializationIntegrationTest`, Bruno, Playwright)
+- [x] 9.1 Commit 1: failing tests (`ProcedureControllerFkHydrationIntegrationTest`) — `00aa187`
+- [x] 9.2 Commit 2: implementation (`ProcedureController` changes) — `fe646a5`; plus an additional commit `ab22527` fixing a real regression discovered while verifying against Postgres (stale `tramites_personas` join table name from #973 Slice 6)
+- [x] 9.3 Commit 3: existing test updates (`SimpleControllersTest`, `ProcedureSerializationIntegrationTest`, Bruno, Playwright) — `a520d25`
 - [ ] 9.4 Final commit message ends with `Closes #981`; record all SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI

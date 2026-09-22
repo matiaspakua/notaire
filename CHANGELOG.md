@@ -260,6 +260,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`POST`/`PUT /api/v1/tramites` lost persisted Deed/Property/DeedManagement/
+  Budget state on nested FK references** (issue #981, CU82): the endpoint
+  accepted the raw `Procedure` entity, so a request like `{"fkIdDeed":
+  {"idDeed": 96}}` deserialized into a transient placeholder instead of
+  re-fetching the real, persisted row — silently corrupting every FK
+  association passed this way and blocking CU82's minuta-de-inscripción
+  golden path, which reads the linked Deed's real status. Both endpoints
+  now accept a plain-id `ProcedureRequest` (`idProcedureType`, `idProperty`,
+  `idDeed`, `idManagement`, `idBudget`, `notes`), matching the pattern
+  already used by `RegistrationDraftController`, and resolve each id
+  against its own repository before persisting (`idProcedureType` required,
+  `400` if missing; `404` if a provided id does not resolve). **Breaking**
+  for any client still sending the old nested-object shape — no production
+  UI caller existed yet, only test fixtures, updated in the same change.
+  Also fixes a `Procedure.java` regression from the domain-schema-to-English
+  rename (#973, Slice 6): its `@JoinTable` for `personList` still declared
+  the old table name `tramites_personas` (renamed to `person_procedures` in
+  `V31`), which silently broke every `DELETE /api/v1/tramites/{id}` with a
+  `409` (`relation "tramites_personas" does not exist`).
 - **Bruno API test suite audit uncovered four silent-delete/write defects**
   (issue #952, CU76): `Item.fkIdPresupuesto` was annotated `@JsonIgnore`,
   which blocks the field on both read and write — `POST/PUT /api/v1/items`
