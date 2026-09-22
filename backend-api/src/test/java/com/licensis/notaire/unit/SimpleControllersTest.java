@@ -45,6 +45,9 @@ import com.licensis.notaire.repository.FolioTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureTypeRepositoryPort;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPort;
+import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort;
+import com.licensis.notaire.application.port.out.budget.BudgetRepositoryPort;
+import com.licensis.notaire.repository.DeedRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
@@ -723,8 +726,14 @@ class SimpleControllersTest {
     @DisplayName("TramiteController")
     class ProcedureControllerTests {
         private final ProcedureRepositoryPort repo = mock(ProcedureRepositoryPort.class);
+        private final ProcedureTypeRepositoryPort typeRepo = mock(ProcedureTypeRepositoryPort.class);
+        private final PropertyRepositoryPort propertyRepo = mock(PropertyRepositoryPort.class);
+        private final BudgetRepositoryPort budgetRepo = mock(BudgetRepositoryPort.class);
+        private final DeedRepository deedRepo = mock(DeedRepository.class);
+        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new ProcedureController(repo))
+                standaloneSetup(new ProcedureController(repo, typeRepo, propertyRepo, budgetRepo, deedRepo,
+                        managementRepo))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -733,30 +742,41 @@ class SimpleControllersTest {
         void all() throws Exception {
             Procedure t = new Procedure();
             t.setIdProcedure(1);
+            ProcedureType type = new ProcedureType();
+            type.setIdProcedureType(1);
             when(repo.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(t), PageRequest.of(0, 20), 1));
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
+            when(repo.save(any(Procedure.class))).thenReturn(t);
+
+            String requestBody = """
+                    {"idProcedureType": 1}
+                    """;
 
             mvc.perform(get("/api/v1/tramites")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tramites/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tramites/2")).andExpect(status().isNotFound());
 
             mvc.perform(post("/api/v1/tramites").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isCreated());
+                    .content(requestBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tramites/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isOk());
+                    .content(requestBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/tramites/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isNotFound());
+                    .content(requestBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tramites/2")).andExpect(status().isNotFound());
 
+            mvc.perform(post("/api/v1/tramites").contentType("application/json")
+                    .content("{}")).andExpect(status().isBadRequest());
+
             when(repo.save(any(Procedure.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tramites").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
+                    .content(requestBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/tramites/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
+                    .content(requestBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isConflict());
         }

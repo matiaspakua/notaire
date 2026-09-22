@@ -14,7 +14,7 @@ http:
     data: |-
         {
           "notes": "Tramite E2E",
-          "fkIdProcedureType": { "idProcedureType": 1 }
+          "idProcedureType": 1
         }
   headers:
     - name: Content-Type

@@ -260,6 +260,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`POST`/`PUT /api/v1/tramites` lost persisted Deed/Property/DeedManagement/
+  Budget state on nested FK references** (issue #981, CU82): the endpoint
+  accepted the raw `Procedure` entity, so a request like `{"fkIdDeed":
+  {"idDeed": 96}}` deserialized into a transient placeholder instead of
+  re-fetching the real, persisted row — silently corrupting every FK
+  association passed this way and blocking CU82's minuta-de-inscripción
+  golden path, which reads the linked Deed's real status. Both endpoints
+  now accept a plain-id `ProcedureRequest` (`idProcedureType`, `idProperty`,
+  `idDeed`, `idManagement`, `idBudget`, `notes`), matching the pattern
+  already used by `RegistrationDraftController`, and resolve each id
+  against its own repository before persisting (`idProcedureType` required,
+  `400` if missing; `404` if a provided id does not resolve). **Breaking**
+  for any client still sending the old nested-object shape — no production
+  UI caller existed yet, only test fixtures, updated in the same change.
+  Also fixes two more regressions from the domain-schema-to-English rename
+  (#973) found while verifying this fix end-to-end: `Procedure.java`'s
+  `@JoinTable` for `personList` still declared the old table name
+  `tramites_personas` (renamed to `person_procedures` in Slice 6's `V31`),
+  silently breaking every `DELETE /api/v1/tramites/{id}` with a `409`
+  (`relation "tramites_personas" does not exist`); and `Notebook.java`'s
+  `number`/`notes` fields still mapped to the old column names
+  `numero`/`observaciones` (renamed in Slice 1's `V26`), breaking `POST
+  /api/v1/cuadernos` with a `500` and CU80's cuaderno-creation flow
+  entirely. A systematic sweep cross-checking every entity's mapping
+  against the live schema confirms no further mismatches remain.
 - **Bruno API test suite audit uncovered four silent-delete/write defects**
   (issue #952, CU76): `Item.fkIdPresupuesto` was annotated `@JsonIgnore`,
   which blocks the field on both read and write — `POST/PUT /api/v1/items`

@@ -94,7 +94,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
     private Integer idProcedure;
     @Column(name = "notes")
     private String notes;
-    @JoinTable(name = "tramites_personas", joinColumns = {
+    @JoinTable(name = "person_procedures", joinColumns = {
             @JoinColumn(name = "fk_id_procedure", referencedColumnName = "id")
     }, inverseJoinColumns = {
             @JoinColumn(name = "fk_id_client_person", referencedColumnName = "id")

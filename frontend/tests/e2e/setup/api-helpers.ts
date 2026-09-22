@@ -427,8 +427,8 @@ export async function createTipoTramite(
 }
 
 /**
- * Trámite / documento presentado helpers (CU10) — ProcedureController accepts
- * the raw Procedure entity.
+ * Trámite / documento presentado helpers (CU10) — ProcedureController takes
+ * a plain-id ProcedureRequest (issue #981), not the raw Procedure entity.
  */
 export async function createTramite(
   page: Page,
@@ -436,8 +436,8 @@ export async function createTramite(
   tipoTramiteId: number,
 ): Promise<ApiResult<{ idProcedure: number }>> {
   return apiPost(page, "/tramites", {
-    fkIdProcedureType: { idProcedureType: tipoTramiteId },
-    fkIdManagement: { idManagement: gestionId },
+    idProcedureType: tipoTramiteId,
+    idManagement: gestionId,
   });
 }
 
