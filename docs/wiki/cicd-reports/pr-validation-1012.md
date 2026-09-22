@@ -1,12 +1,12 @@
 ---
-title: PR #1011 Validation Report
+title: PR #1012 Validation Report
 ---
 
 # PR Validation Report
 
-**Generated:** 2026-09-21 18:13:32  
-**PR:** #1011  
-**Branch:** refactor/973_rename_leaf_reference_tables
+**Generated:** 2026-09-22 12:12:28  
+**PR:** #1012  
+**Branch:** refactor/973_rename_property_concept_item_payment_tables
 
 ---
 
