@@ -1,12 +1,12 @@
 ---
-title: PR #1011 Validation Report
+title: PR #1015 Validation Report
 ---
 
 # PR Validation Report
 
-**Generated:** 2026-09-21 18:13:32  
-**PR:** #1011  
-**Branch:** refactor/973_rename_leaf_reference_tables
+**Generated:** 2026-09-22 12:26:27  
+**PR:** #1015  
+**Branch:** refactor/973_rename_procedure_folder_and_registration_draft_tables
 
 ---
 
