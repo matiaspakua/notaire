@@ -92,8 +92,7 @@ class ProcedureSerializationIntegrationTest {
 
     private Integer createProcedureForBudget(Integer typeProcedureId, Integer budgetId) throws Exception {
         String body = """
-                {"notes": "procedure ciclo IT", "fkIdProcedureType": {"idProcedureType": %d},
-                 "fkIdBudget": {"idBudget": %d}}
+                {"notes": "procedure ciclo IT", "idProcedureType": %d, "idBudget": %d}
                 """.formatted(typeProcedureId, budgetId);
         MvcResult result = mockMvc.perform(post("/api/v1/tramites")
                         .contentType(MediaType.APPLICATION_JSON)
