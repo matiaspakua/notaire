@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-procedure-nested-fk-hydration/` | complete |
 | Branch | `fix/981_procedure_nested_fk_hydration` | created |
 | Tasks | `tasks.md` | groups 1-9 complete; 10-12 pending PR/deploy |
-| Commits | `a6e6cdc` (planning), `00aa187` (failing tests), `fe646a5` (implementation), `ab22527` (tramites_personas fix), `a520d25` (test updates) | committed, not yet pushed |
+| Commits | `a6e6cdc` (planning), `00aa187` (failing tests), `fe646a5` (implementation), `ab22527` (tramites_personas fix), `a520d25` (test updates), `4fadfe3` (CHANGELOG/traceability), `fea4261` (Notebook fix) | committed, pushed |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -54,17 +54,26 @@ Additional verification beyond the delta spec's own scenarios:
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | passed | proposal.md + spec.md written, validated by `scripts/validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | passed | `00aa187` — 5/5 failed against old `ProcedureController` before implementation |
-| 3 | Suite green, coverage held, docs updated | passed | 1041/1041 local, Checkstyle clean, CHANGELOG updated |
+| 3 | Suite green, coverage held, docs updated | passed | 1056/1056 local, Checkstyle clean, CHANGELOG updated, full Bruno suite 268/268 |
 | 4 | CI green, review approved, no conflicts | pending | PR not yet opened |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
 ## Exceptions
 
-None taken. One unplanned but in-scope discovery: while verifying this
-fix end-to-end against a real Postgres instance (`DELETE /api/v1/tramites/{id}`
-via Bruno), found that `Procedure.java`'s own `@JoinTable` for `personList`
-still declared the stale table name `tramites_personas` — a regression
-missed during the domain-schema-to-English epic (#973, Slice 6, `V31`,
-already merged to `main`). Fixed in the same change (`ab22527`) since it
-directly blocked verifying this fix's own delete path, rather than opening
-a separate issue for something already found and fixed.
+None taken. Two unplanned but in-scope discoveries while verifying this fix
+end-to-end against a real Postgres instance and full CI, both regressions
+from the domain-schema-to-English epic (#973, already merged to `main`),
+both fixed in this same change since they were found while directly
+verifying this fix's own test paths rather than opened as separate issues:
+
+1. `Procedure.java`'s `@JoinTable` for `personList` still declared the
+   stale table name `tramites_personas` (Slice 6, `V31`) — broke every
+   `DELETE /api/v1/tramites/{id}` with a `409`. Fixed in `ab22527`.
+2. `Notebook.java`'s `number`/`notes` fields still mapped to the old
+   column names `numero`/`observaciones` (Slice 1, `V26`) — broke `POST
+   /api/v1/cuadernos` with a `500`, failing
+   `TS-0072-cuadernos-protocolo-workflow.spec.ts` in CI on `main` itself
+   (confirmed pre-existing, unrelated to #981). Fixed in `fea4261`, found
+   via a systematic sweep of every `business/*.java` entity's mapping
+   against `information_schema.columns` — confirmed no further
+   mismatches remain across the whole schema.
