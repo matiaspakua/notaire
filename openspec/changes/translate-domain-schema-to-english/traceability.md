@@ -14,17 +14,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #973 | open (epic; description/acceptance criteria to be narrowed to schema-only scope as part of this change — see `explore.md`) |
+| Issue | #973 | open; closes once Slice 11 (PR pending) merges — see `tasks.md` §13 |
 | Use Case | none | not applicable — purely technical/naming change, no user-facing behavior; epic #973 itself documents this exception |
-| Specification | `openspec/changes/translate-domain-schema-to-english/` | in progress |
-| Branch | Slices 1-4, each stacked on the previous (`refactor/973_rename_leaf_reference_tables` → `..._property_concept_item_payment_tables` → `..._copy_and_testimony_movement_tables` → `..._document_and_template_tables`) — share `cleanup-test-data.sql`/data-dictionary edits with the previous slice, retarget to `main` as earlier slices merge | all created |
-| Tasks | `tasks.md` | Slices 1-4 groups 2-9 complete, 10-12 pending deploy/close |
-| Commits | Slice 1: `3e9172f`, `cd53632`, `51bcb82`, `1b0be93`, `d32df9f`; Slice 2: `facf643`, `f864118`; Slice 3: `80567d9`; Slice 4: `2b5d1c1` | all committed and pushed |
-| Pull Request | #1011 (Slice 1, MERGED — **note: contained a latent bug, fixed in #1017/V33, see Exceptions**); #1012 (Slice 2, open, base `main`); #1013 (Slice 3, MERGED into Slice 2 branch); #1014 (Slice 4); #1015 (Slice 5); #1016 (Slice 6); #1017 (Slice 7); #1018 (Slice 8); #1019 (Slice 9); #1020 (Slice 10, final, each stacked on the previous) | #1012/#1014-#1020 open, CLEAN/MERGEABLE. **All 10 slices now implemented.** |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Specification | `openspec/changes/translate-domain-schema-to-english/` | complete |
+| Branch | Slices 1-10 all merged to `main`. Slice 11 (`refactor/973_rename_users_table`, scope-gap fix for `usuarios`, discovered after all 10 planned slices merged) branched fresh from post-merge `main` | Slice 11 PR pending |
+| Tasks | `tasks.md` | Slices 1-10 all groups complete and merged; Slice 11 groups 2-9 complete, PR pending |
+| Commits | Slices 1-10: see individual PRs #1011-#1020; Slice 11: `b4a1edc` | all committed and pushed |
+| Pull Request | #1011 (Slice 1, MERGED); #1012 (Slice 2, MERGED); #1013 (Slice 3, MERGED into Slice 2 branch); #1014 (Slice 4, MERGED); #1015 (Slice 5, MERGED); #1016 (Slice 6, MERGED); #1017 (Slice 7, MERGED); #1018 (Slice 8, MERGED); #1019 (Slice 9, MERGED); #1020 (Slice 10, MERGED); Slice 11 PR pending creation | **10/11 slices merged to `main`.** |
+| CI run | all green on every merged PR | see individual PR check runs |
+| Merge commit | 10 merge commits, one per PR #1011-#1020 | see `git log --merges main` |
+| Release / tag | none yet — no release cut since these merges | pending |
+| Smoke test | not yet run against a deployed environment | pending |
 
 ## Requirement coverage
 
@@ -34,26 +34,27 @@ verification instead uses:
 
 | Verification | Test | Status |
 |---------------------------------|------|--------|
-| Schema matches JPA `@Table`/`@Column` mapping after each slice | `FlywaySchemaValidationIntegrationTest` (`mvn test -Ppg-integration`) | Slice 1: passing — ran via the `pre-push` hook's preflight (Docker available there) |
-| No regression in existing backend/integration/E2E suite per slice | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; Playwright suite | Slice 1: `mvn test -pl backend-api` passing (1051/1051), Checkstyle clean, coverage ratchet held; Bruno suite not run locally (preflight non-`--full` skips it) — CI's `playwright-e2e.yml` must confirm before merge; Playwright n/a (no UI surface) |
+| Schema matches JPA `@Table`/`@Column` mapping after each slice | `FlywaySchemaValidationIntegrationTest` (`mvn test -Ppg-integration`) | passing on every slice, re-verified after each sequential merge against the growing real-Postgres schema (V1 through V37) |
+| No regression in existing backend/integration/E2E suite per slice | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; Playwright suite | 1051/1051 unit+integration tests green and Checkstyle clean on every slice and after every merge; CI (`ci.yml`/`pr-validation.yml`) green on all 10 merged PRs including Bruno API tests; Playwright n/a (no UI surface) |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/205-data-model/Diccionario de Datos.md` | yes — table/column names and TOC anchors updated for the 9 Slice 1 tables | pending (not yet committed) |
-| `docs/200-architecture/205-data-model/ERD/*` (puml/svg/csv) | no — diagram regeneration deferred; declared gap, not silently skipped | — |
+| `docs/200-architecture/205-data-model/Diccionario de Datos.md` | yes — table/column names and TOC anchors updated for all 35 renamed tables across all 11 slices; also corrected a pre-existing staleness (`personas`/`id_persona` → `people`/`id`) predating this epic, found while fixing Slice 11 | see per-slice commits, each PR's own commit list |
+| `docs/200-architecture/205-data-model/ERD/*` (puml/svg/csv) | no — diagram regeneration deferred; tracked as non-blocking follow-up issue [#1021](https://github.com/matiaspakua/notaire/issues/1021) | — |
 | `CHANGELOG.md` | n/a — not user-visible | — |
+| `@NamedQuery` name strings (cosmetic) | no — deferred; tracked as non-blocking follow-up issue [#1022](https://github.com/matiaspakua/notaire/issues/1022) | — |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | passed | proposal.md written; issue #973 narrowed to schema-only scope |
-| 2 | Failing tests written, test cases designed | passed (per-slice) | `FlywaySchemaValidationIntegrationTest` verified against real Postgres via preflight for every slice |
-| 3 | Suite green, coverage held, docs updated | passed (per-slice, locally) | 1051/1051 tests green, Checkstyle clean, Diccionario de Datos updated for all 10 slices; CI confirmation still pending per PR |
-| 4 | CI green, review approved, no conflicts | pending | all 10 PRs (#1011-#1013 merged; #1012, #1014-#1020 open, CLEAN/MERGEABLE) awaiting CI + code owner merge |
-| 5 | Deployed, smoke test passed, Issue closed | pending | issue #973 closes only once all 10 slice PRs are merged to `main` |
+| 2 | Failing tests written, test cases designed | passed (per-slice) | `FlywaySchemaValidationIntegrationTest` verified against real Postgres for every slice |
+| 3 | Suite green, coverage held, docs updated | passed (per-slice) | 1051/1051 tests green, Checkstyle clean, Diccionario de Datos updated for all 11 slices |
+| 4 | CI green, review approved, no conflicts | passed for Slices 1-10 (all merged); pending for Slice 11 | code owner merged each PR directly (counts as review per Constitution §5 step 20) |
+| 5 | Deployed, smoke test passed, Issue closed | pending | Slice 11 must merge first; smoke test and issue close are the last remaining steps |
 
 ## Exceptions
 
