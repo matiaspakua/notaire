@@ -18,10 +18,10 @@ public class BudgetTemplatePK implements Serializable
 {
 
     @Basic(optional = false)
-    @Column(name = "fk_id_tipo_tramite")
+    @Column(name = "fk_id_procedure_type")
     private int fkIdProcedureType;
     @Basic(optional = false)
-    @Column(name = "fk_id_concepto")
+    @Column(name = "fk_id_concept")
     private int fkIdConcept;
 
     public BudgetTemplatePK()

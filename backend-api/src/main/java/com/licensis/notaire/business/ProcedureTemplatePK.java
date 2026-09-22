@@ -18,10 +18,10 @@ public class ProcedureTemplatePK implements Serializable
 {
 
     @Basic(optional = false)
-    @Column(name = "fk_id_tipo_tramite")
+    @Column(name = "fk_id_procedure_type")
     private int fkIdProcedureType;
     @Basic(optional = false)
-    @Column(name = "fk_id_tipo_documento")
+    @Column(name = "fk_id_document_type")
     private int fkIdDocumentType;
 
     public ProcedureTemplatePK()
