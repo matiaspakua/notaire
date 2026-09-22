@@ -31,7 +31,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "inmuebles")
+@Table(name = "properties")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Inmueble.findAll", query = "SELECT i FROM Property i"),
@@ -48,23 +48,23 @@ public class Property implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_inmueble")
+    @Column(name = "id")
     private Integer idProperty;
     @Basic(optional = false)
-    @Column(name = "nomenclatura")
+    @Column(name = "nomenclature")
     private String cadastralDesignation;
-    @Column(name = "valuacion_fiscal")
+    @Column(name = "fiscal_valuation")
     private Float fiscalAppraisal;
     @Basic(optional = false)
-    @Column(name = "domicilio")
+    @Column(name = "address")
     private String address;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @Column(name = "matricula")
+    @Column(name = "registration_number")
     private String registrationNumber;
-    @Column(name = "tomo_folio_finca")
+    @Column(name = "registry_volume_folio")
     private String volumeFolioLandRecord;
-    @Column(name = "linderos")
+    @Column(name = "boundaries")
     private String boundaries;
     @OneToMany(mappedBy = "fkIdProperty", fetch = FetchType.LAZY)
     private List<Procedure> procedureList;

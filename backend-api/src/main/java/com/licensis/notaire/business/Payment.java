@@ -31,7 +31,7 @@ import org.springframework.data.domain.Persistable;
  * @author juanca
  */
 @Entity
-@Table(name = "pagos")
+@Table(name = "payments")
 @XmlRootElement
 @NamedQueries(
         {
@@ -49,21 +49,21 @@ public class Payment implements Serializable, Persistable<Integer>
     @Version
     private int version = 0;
     @Basic(optional = false)
-    @Column(name = "monto")
+    @Column(name = "amount")
     private float amount;
     @Basic(optional = false)
-    @Column(name = "fecha")
+    @Column(name = "payment_date")
     @Temporal(TemporalType.DATE)
     private Date date;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_pago")
+    @Column(name = "id")
     private Integer idPayment;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @Column(name = "metodo_pago")
+    @Column(name = "payment_method")
     private String paymentMethod;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @JsonIgnore

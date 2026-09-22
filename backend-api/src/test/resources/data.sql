@@ -24,9 +24,9 @@ INSERT INTO management_statuses (version, name, notes) VALUES (0, 'Iniciada', 'I
 INSERT INTO procedure_types (version, name, notes, enabled, is_archived, is_registered, associates_properties) VALUES
 (0, 'Compraventa', 'Tramite de compraventa', true, true, true, true);
 
--- Reference Data: Conceptos
--- Entity columns: version, id_concepto (auto), nombre, valor, porcentaje, habilitado, concepto_fijo
-INSERT INTO conceptos (version, nombre, valor, porcentaje, habilitado, concepto_fijo) VALUES
+-- Reference Data: Concepts
+-- Entity columns: version, id (auto), name, amount, percentage, enabled, fixed_concept
+INSERT INTO concepts (version, name, amount, percentage, enabled, fixed_concept) VALUES
 (0, 'Honorario base', 10000, 0, true, true);
 
 -- Seed Data: Person (Escribano) — required by Gestion, Folio, Usuario FKs

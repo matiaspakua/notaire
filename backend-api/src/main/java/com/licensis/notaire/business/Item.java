@@ -46,32 +46,32 @@ public class Item implements Serializable, Persistable<Integer>
 {
 
     @Basic(optional = false)
-    @Column(name = "concepto_fijo")
+    @Column(name = "fixed_concept")
     private boolean fixedConcept;
     @Basic(optional = false)
     @Column(name = "version")
     @Version
     private int version = 0;
     @Basic(optional = false)
-    @Column(name = "valor")
+    @Column(name = "amount")
     private float value;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_item")
+    @Column(name = "id")
     private Integer idItem;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "name")
     private String name;
-    @Column(name = "porcentaje")
+    @Column(name = "percentage")
     private Integer percentage;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @Column(name = "tipo")
+    @Column(name = "item_type")
     @Enumerated(EnumType.STRING)
     private TypeItem type = TypeItem.NORMAL;
-    @Column(name = "motivo")
+    @Column(name = "reason")
     private String reason;
     @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id_presupuesto")
     @ManyToOne(fetch = FetchType.EAGER)

@@ -4,7 +4,7 @@
 --
 -- Tables WITH seed data (from data.sql) are intentionally left alone:
 --   identification_types, folio_types, management_statuses,
---   procedure_types, conceptos, personas, usuarios, presupuestos
+--   procedure_types, concepts, personas, usuarios, presupuestos
 -- These contain the reference IDs (1, 1, etc.) that downstream tests
 -- like BusinessWorkflowIntegrationTest depend on.
 --
@@ -25,17 +25,17 @@ SET REFERENTIAL_INTEGRITY FALSE;
 TRUNCATE TABLE gestiones_de_escrituras;
 TRUNCATE TABLE escrituras;
 TRUNCATE TABLE folios;
-TRUNCATE TABLE folios_copias;
+TRUNCATE TABLE folio_copies;
 TRUNCATE TABLE items;
-TRUNCATE TABLE pagos;
+TRUNCATE TABLE payments;
 TRUNCATE TABLE historial;
 TRUNCATE TABLE tramites;
 TRUNCATE TABLE tramites_personas;
 TRUNCATE TABLE documentos_presentados;
-TRUNCATE TABLE inmuebles;
+TRUNCATE TABLE properties;
 TRUNCATE TABLE testimonios;
-TRUNCATE TABLE movimientos_testimonio;
-TRUNCATE TABLE copias;
+TRUNCATE TABLE testimony_movements;
+TRUNCATE TABLE copies;
 TRUNCATE TABLE audit_records;
 TRUNCATE TABLE suplencias;
 TRUNCATE TABLE document_types;

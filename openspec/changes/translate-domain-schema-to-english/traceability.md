@@ -17,10 +17,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Issue | #973 | open (epic; description/acceptance criteria to be narrowed to schema-only scope as part of this change — see `explore.md`) |
 | Use Case | none | not applicable — purely technical/naming change, no user-facing behavior; epic #973 itself documents this exception |
 | Specification | `openspec/changes/translate-domain-schema-to-english/` | in progress |
-| Branch | `refactor/973_rename_leaf_reference_tables` (Slice 1); subsequent slices get their own branch (see `tasks.md`) | created |
-| Tasks | `tasks.md` | Slice 1 groups 2-9 complete; 10-12 pending PR/deploy |
-| Commits | `3e9172f` (openspec planning), `cd53632` (Slice 1 implementation) | Slice 1 committed, not yet pushed/PR'd |
-| Pull Request | #1011 (Slice 1) | open, CLEAN/MERGEABLE; one PR per slice, per epic's vertical-slice convention |
+| Branch | `refactor/973_rename_leaf_reference_tables` (Slice 1, base `main`); `refactor/973_rename_property_concept_item_payment_tables` (Slice 2, stacked on Slice 1); `refactor/973_rename_copy_and_testimony_movement_tables` (Slice 3, stacked on Slice 2) — each shares `cleanup-test-data.sql`/data-dictionary edits with the previous slice, retarget to `main` as earlier slices merge | all created |
+| Tasks | `tasks.md` | Slices 1-3 groups 2-9 complete, 10-12 pending deploy/close |
+| Commits | Slice 1: `3e9172f`, `cd53632`, `51bcb82`, `1b0be93`, `d32df9f`; Slice 2: `facf643`, `f864118`; Slice 3: `80567d9` | all committed and pushed |
+| Pull Request | #1011 (Slice 1, base `main`); #1012 (Slice 2, base Slice 1 branch); #1013 (Slice 3, base Slice 2 branch) | all open, CLEAN/MERGEABLE |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
