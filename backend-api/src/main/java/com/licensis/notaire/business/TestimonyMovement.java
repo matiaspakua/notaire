@@ -31,7 +31,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author juanca
  */
 @Entity
-@Table(name = "movimientos_testimonio")
+@Table(name = "testimony_movements")
 @XmlRootElement
 @NamedQueries(
         {
@@ -52,28 +52,28 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Version
     private int version = 0;
     @Basic(optional = false)
-    @Column(name = "fecha_ingreso")
+    @Column(name = "entry_date")
     @Temporal(TemporalType.DATE)
     private Date dateEntry;
-    @Column(name = "fecha_salida")
+    @Column(name = "exit_date")
     @Temporal(TemporalType.DATE)
     private Date dateExit;
-    @Column(name = "fecha_inscripcion")
+    @Column(name = "registration_date")
     @Temporal(TemporalType.DATE)
     private Date dateRegistration;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_movimiento_testimonio")
+    @Column(name = "id")
     private Integer idTestimonyMovement;
     @Basic(optional = false)
-    @Column(name = "inscripta")
+    @Column(name = "registered")
     private boolean registered;
     @Basic(optional = false)
-    @Column(name = "numero_carton")
+    @Column(name = "folder_number")
     private int cardNumber;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id_testimonio")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
