@@ -33,7 +33,7 @@ import org.springframework.data.domain.Persistable;
  * @author juanca
  */
 @Entity
-@Table(name = "historial")
+@Table(name = "history")
 @XmlRootElement
 @NamedQueries(
         {
@@ -50,21 +50,21 @@ public class History implements Serializable, Persistable<Integer>
     @Version
     private int version;
     @Basic(optional = false)
-    @Column(name = "fecha")
+    @Column(name = "event_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_historial")
+    @Column(name = "id")
     private Integer idHistory;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_estado_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_management_status", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ManagementStatus fkIdManagementStatus;
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed_management", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
 
