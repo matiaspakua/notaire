@@ -49,8 +49,8 @@ INSERT INTO people (
 INSERT INTO usuarios (version, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
 (0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
 
--- Seed Data: Presupuesto — required by Pago FK
--- Entity columns: version, id_presupuesto (auto), numero, fecha, encabezado, observaciones, estado, monto_inmueble
--- monto_inmueble must be large enough to cover the pago amounts asserted against it in integration tests.
-INSERT INTO presupuestos (version, numero, fecha, encabezado, estado, monto_inmueble) VALUES
+-- Seed Data: Budget — required by Payment FK
+-- Entity columns: version, id (auto), number, budget_date, heading, notes, status, property_amount
+-- property_amount must be large enough to cover the payment amounts asserted against it in integration tests.
+INSERT INTO budgets (version, number, budget_date, heading, status, property_amount) VALUES
 (0, 20250001, '2025-01-15', 'Presupuesto de prueba', 'PENDIENTE', 50000.00);

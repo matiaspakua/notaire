@@ -114,7 +114,7 @@ Status column as each slice merges.
 | 5 | `carpetas_tramite`, `minutas_inscripcion` | implemented, pushed, PR pending; branch stacked on Slice 4 |
 | 6 | `tramites`, `tramites_personas` | implemented, pushed, PR pending; branch stacked on Slice 5 |
 | 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (folios' table name kept; only its own Spanish columns renamed). Also fixed a Slice-1 bug (`notebooks.year`/`Notebook.java` mismatch) and several over-eager doc-prose replacements from earlier slices | implemented, pushed, PR pending; branch stacked on Slice 6 |
-| 8 | `presupuestos` | pending |
+| 8 | `presupuestos` | implemented, pushed, PR pending; branch stacked on Slice 7 |
 | 9 | `testimonios`, `suplencias` | pending |
 | 10 | `historial` | pending |
 | final | Optional `@NamedQuery` name-string cleanup across all entities (see `proposal.md` — Out of Scope); close #973 | pending |

@@ -4,7 +4,7 @@
 --
 -- Tables WITH seed data (from data.sql) are intentionally left alone:
 --   identification_types, folio_types, management_statuses,
---   procedure_types, concepts, personas, usuarios, presupuestos
+--   procedure_types, concepts, personas, usuarios, budgets
 -- These contain the reference IDs (1, 1, etc.) that downstream tests
 -- like BusinessWorkflowIntegrationTest depend on.
 --

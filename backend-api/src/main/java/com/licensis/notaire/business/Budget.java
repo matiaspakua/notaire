@@ -41,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "presupuestos")
+@Table(name = "budgets")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Presupuesto.findAll", query = "SELECT p FROM Budget p"),
@@ -56,30 +56,30 @@ public class Budget implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_presupuesto")
+    @Column(name = "id")
     private Integer idBudget;
 
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
 
     @Basic(optional = false)
-    @Column(name = "fecha")
+    @Column(name = "budget_date")
     @Temporal(TemporalType.DATE)
     private Date date;
 
     @Basic(optional = false)
-    @Column(name = "encabezado")
+    @Column(name = "heading")
     private String encabezado;
 
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
 
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private String status;
 
-    @Column(name = "monto_inmueble")
+    @Column(name = "property_amount")
     private Float propertyAmount;
 
     @Basic(optional = false)
@@ -89,7 +89,7 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     private static final long serialVersionUID = 1L;
 
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Person fkIdPerson;
 
