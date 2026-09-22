@@ -107,11 +107,11 @@ Status column as each slice merges.
 
 | Slice | Tables | Status |
 |---|---|---|
-| 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | implemented, pushed, pg-integration green locally, PR pending |
-| 2 | `inmuebles`, `conceptos`, `items`, `pagos` | implemented, pushed, PR pending; branch stacked on Slice 1 (shares `data.sql`/`cleanup-test-data.sql`/data-dictionary edits) — retarget to `main` once Slice 1 merges |
-| 3 | `copias`, `folios_copias`, `movimientos_testimonio` | implemented, pushed, PR pending; branch stacked on Slice 2 |
-| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | implemented, pushed, PR pending; branch stacked on Slice 3 |
-| 5 | `carpetas_tramite`, `minutas_inscripcion` | pending |
+| 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | **MERGED** (#1011) |
+| 2 | `inmuebles`, `conceptos`, `items`, `pagos` | implemented, pushed; PR #1012 open against `main` (now contains Slices 1-3) |
+| 3 | `copias`, `folios_copias`, `movimientos_testimonio` | **MERGED** (#1013, into Slice 2 branch) |
+| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | implemented, pushed; PR #1014 open against Slice 2 branch |
+| 5 | `carpetas_tramite`, `minutas_inscripcion` | implemented, pushed, PR pending; branch stacked on Slice 4 |
 | 6 | `tramites`, `tramites_personas` | pending |
 | 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (verify not already aligned) | pending |
 | 8 | `presupuestos` | pending |
