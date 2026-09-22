@@ -54,7 +54,7 @@ backend unit+integration+cov    Unit Tests, Integration Tests,   ci.yml
                                 Coverage Gate (mvn verify)
 backend pg-integration          Integration Tests (Testcontainers) ci.yml
 frontend typecheck              TypeScript Check                 frontend-ci.yml
-frontend eslint                 ESLint                           frontend-ci.yml
+frontend eslint                 ESLint                           frontend-ci.yml   (advisory in CI — #701; blocking here)
 frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
 http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
