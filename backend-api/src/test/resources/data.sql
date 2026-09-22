@@ -43,10 +43,10 @@ INSERT INTO people (
     1001, false, 1
 );
 
--- Seed Data: Usuario (Administrador) — required by login test
--- Entity columns: version, id_usuario (auto), nombre, contrasenia, estado, tipo, fk_id_persona
+-- Seed Data: User (Administrador) — required by login test
+-- Entity columns: version, id (auto), username, password, status, user_type, fk_id_person
 -- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
-INSERT INTO usuarios (version, nombre, contrasenia, tipo, estado, fk_id_persona) VALUES
+INSERT INTO users (version, username, password, user_type, status, fk_id_person) VALUES
 (0, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Escribano', true, 1);
 
 -- Seed Data: Budget — required by Payment FK

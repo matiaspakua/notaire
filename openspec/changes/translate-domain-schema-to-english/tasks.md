@@ -108,16 +108,17 @@ Status column as each slice merges.
 | Slice | Tables | Status |
 |---|---|---|
 | 1 | `tipos_identificacion`, `tipos_de_documento`, `tipos_de_folio`, `tipos_de_tramite`, `roles`, `estados_de_gestion`, `registro_auditoria`, `cuadernos` (`identificaciones` dropped — no live table) | **MERGED** (#1011) |
-| 2 | `inmuebles`, `conceptos`, `items`, `pagos` | implemented, pushed; PR #1012 open against `main` (now contains Slices 1-3) |
+| 2 | `inmuebles`, `conceptos`, `items`, `pagos` | **MERGED** (#1012) |
 | 3 | `copias`, `folios_copias`, `movimientos_testimonio` | **MERGED** (#1013, into Slice 2 branch) |
-| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | implemented, pushed; PR #1014 open against Slice 2 branch |
-| 5 | `carpetas_tramite`, `minutas_inscripcion` | implemented, pushed, PR pending; branch stacked on Slice 4 |
-| 6 | `tramites`, `tramites_personas` | implemented, pushed, PR pending; branch stacked on Slice 5 |
-| 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (folios' table name kept; only its own Spanish columns renamed). Also fixed a Slice-1 bug (`notebooks.year`/`Notebook.java` mismatch) and several over-eager doc-prose replacements from earlier slices | implemented, pushed, PR pending; branch stacked on Slice 6 |
-| 8 | `presupuestos` | implemented, pushed, PR pending; branch stacked on Slice 7 |
-| 9 | `testimonios`, `suplencias` | implemented, pushed, PR pending; branch stacked on Slice 8 |
-| 10 | `historial` | implemented, pushed, PR pending; branch stacked on Slice 9. **Last table-rename slice — every remaining Spanish table/column from `explore.md` is now English.** |
-| final | Optional `@NamedQuery` name-string cleanup across all entities (see `proposal.md` — Out of Scope); close #973 once all 10 slice PRs merge | not started — tracked as a follow-up, does not block closing #973 (cosmetic, out of scope per proposal.md) |
+| 4 | `documentos_presentados`, `plantilla_tramites`, `plantilla_presupuestos`, `plantilla_costos_documento` | **MERGED** (#1014) |
+| 5 | `carpetas_tramite`, `minutas_inscripcion` | **MERGED** (#1015) |
+| 6 | `tramites`, `tramites_personas` | **MERGED** (#1016) |
+| 7 | `escrituras`, `gestiones_de_escrituras`, `folios` (folios' table name kept; only its own Spanish columns renamed). Also fixed a Slice-1 bug (`notebooks.year`/`Notebook.java` mismatch) and several over-eager doc-prose replacements from earlier slices | **MERGED** (#1017) |
+| 8 | `presupuestos` | **MERGED** (#1018) |
+| 9 | `testimonios`, `suplencias` | **MERGED** (#1019) |
+| 10 | `historial` | **MERGED** (#1020) |
+| 11 (scope-gap fix) | `usuarios` — missed by this document's original table inventory; discovered only after all 10 planned slices merged. Not a new requirement, a correction to an incomplete audit. | implemented, PR pending |
+| final | Optional `@NamedQuery` name-string cleanup across all entities (tracked separately: issue #1022, non-blocking); ERD diagram regeneration (tracked separately: issue #1021, non-blocking); close #973 once Slice 11 merges | Slice 11 PR pending merge |
 
 Slice groupings above batch low-risk leaf/mid tables together to reduce PR
 count while keeping each PR's diff reviewable; split a row into smaller
