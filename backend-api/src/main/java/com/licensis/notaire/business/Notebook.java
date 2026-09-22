@@ -44,7 +44,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     private int number;
 
     @Basic(optional = false)
-    @Column(name = "anio")
+    @Column(name = "year_number")
     private int year;
 
     @Column(name = "observaciones")

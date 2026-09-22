@@ -39,7 +39,7 @@ public class ProcedureFolder implements Serializable {
     @Column(name = "wait_reason")
     private String waitReason;
 
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id_gestion")
+    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DeedManagement fkIdManagement;
 

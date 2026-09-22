@@ -64,7 +64,7 @@ public class History implements Serializable, Persistable<Integer>
     @JoinColumn(name = "fk_id_estado_gestion", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ManagementStatus fkIdManagementStatus;
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id_gestion")
+    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
 

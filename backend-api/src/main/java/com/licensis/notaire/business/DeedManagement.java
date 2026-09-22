@@ -54,7 +54,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author User
  */
 @Entity
-@Table(name = "gestiones_de_escrituras")
+@Table(name = "deed_managements")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "GestionDeEscritura.findAll", query = "SELECT g FROM DeedManagement g"),
@@ -65,10 +65,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 public class DeedManagement implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
-    @Column(name = "fecha_inicio")
+    @Column(name = "start_date")
     @Temporal(TemporalType.DATE)
     private Date dateStart;
-    @JoinColumn(name = "fk_id_estado_de_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_management_status", referencedColumnName = "id")
     @ManyToOne
     private ManagementStatus fkIdManagementStatus;
     @Basic(optional = false)
@@ -79,24 +79,24 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_gestion")
+    @Column(name = "id")
     private Integer idManagement;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
     @Basic(optional = false)
-    @Column(name = "encabezado")
+    @Column(name = "heading")
     private String encabezado;
-    @Column(name = "observaciones")
+    @Column(name = "notes")
     private String notes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdManagement")
     private List<History> historyList;
-    @JoinColumn(name = "fk_id_persona_escribano", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_notary_person", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Person fkIdNotaryPerson;
     @OneToMany(mappedBy = "fkIdManagement")
     private List<Procedure> procedureList;
-    @Column(name = "deuda_pendiente_al_archivar")
+    @Column(name = "pending_debt_on_archive")
     private Boolean pendingDebtAtArchiving;
 
     /**
