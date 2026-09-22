@@ -35,7 +35,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * @author juanca
  */
 @Entity
-@Table(name = "usuarios")
+@Table(name = "users")
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM User u"),
@@ -53,30 +53,30 @@ public class User implements Serializable, Persistable<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_usuario")
+    @Column(name = "id")
     private Integer idUser;
     @Basic(optional = false)
-    @Column(name = "nombre")
+    @Column(name = "username")
     private String name;
     @Basic(optional = false)
-    @Column(name = "contrasenia")
+    @Column(name = "password")
     private String password;
     @Basic(optional = false)
-    @Column(name = "estado")
+    @Column(name = "status")
     private boolean status;
     @Basic(optional = false)
-    @Column(name = "tipo")
+    @Column(name = "user_type")
     private String type;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUser", fetch = FetchType.LAZY)
     private List<AuditRecord> auditRecordList;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "fk_id_rol", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_role", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Role role;
 

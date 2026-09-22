@@ -61,7 +61,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "operation_detail")
     private String operationDetail;
-    @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id_usuario")
+    @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User fkIdUser;
 

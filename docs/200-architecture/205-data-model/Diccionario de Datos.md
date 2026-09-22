@@ -48,7 +48,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 11 | [items](#11-items) | Presupuestos | Débil | Desglose arancelario de líneas de cada presupuesto |
 | 12 | [testimony_movements](#12-testimony_movements) | Protocolos | Débil | Asientos de presentación y tracto registral ante el Registro |
 | 13 | [payments](#13-payments) | Presupuestos | Débil | Recibos de cobro y entregas dinerarias a cuenta |
-| 14 | [personas](#14-personas) | Sujetos | Fuerte | Sujetos de derecho (clientes, escribanos, otorgantes) |
+| 14 | [people](#14-people) | Sujetos | Fuerte | Sujetos de derecho (clientes, escribanos, otorgantes) |
 | 15 | [budget_templates](#15-budget_templates) | Presupuestos | Asociativa | Conceptos arancelarios sugeridos por tipo de trámite |
 | 16 | [procedure_templates](#16-procedure_templates) | Documentación | Asociativa | Requisitos documentales obligatorios por tipo de trámite |
 | 17 | [budgets](#17-budgets) | Presupuestos | Fuerte | Cotización económica que fundamenta el trámite |
@@ -63,7 +63,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 26 | [identification_types](#26-identification_types) | Sujetos | Fuerte | Catálogo de tipos de documento de identidad |
 | 27 | [procedures](#27-procedures) | Gestión Notarial | Fuerte | Instancia particular de acto notarial en ejecución |
 | 28 | [person_procedures](#28-person_procedures) | Gestión Notarial | Asociativa | Personas intervinientes y sus roles jurídicos |
-| 29 | [usuarios](#29-usuarios) | Seguridad | Débil / Fuerte | Cuentas de acceso y credenciales de operadores |
+| 29 | [users](#29-users) | Seguridad | Débil / Fuerte | Cuentas de acceso y credenciales de operadores |
 | 30 | [workflow_definition](#30-workflow_definition) | Workflow | Fuerte | Definición maestra de grafos de flujos de trabajo |
 | 31 | [workflow_node](#31-workflow_node) | Workflow | Débil | Nodos de estado dentro de un flujo de trabajo |
 | 32 | [workflow_transition](#32-workflow_transition) | Workflow | Débil | Transiciones dirigidas y reglas de guarda entre estados |
@@ -81,7 +81,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 - V5: se normaliza `testimony_movements` para que coincida con el nombre de la entidad JPA (`id`, `entry_date`, `inscripta`, `folder_number`).
 - V6: `submitted_documents.fk_id_tramite` pasa a ser opcional para soportar documentos autónomos.
 - V7/V8: se incorporan `workflow_definition`, `workflow_node`, `workflow_transition` y la referencia desde `procedure_types` al workflow.
-- V9: se incorporan `roles` y `role_modules`, y se enlaza `usuarios` con `fk_id_role`.
+- V9: se incorporan `roles` y `role_modules`, y se enlaza `users` con `fk_id_role`.
 - V13: `procedures.nombre` y `procedures.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
 - V14: se elimina la FK redundante `budgets.fk_id_tramite`; la relación canónica quedó en `procedures.fk_id_presupuesto` (1:N).
 
@@ -102,7 +102,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `items` | `id` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Límite de presupuesto |
 | `testimony_movements` | `id` | `fk_id_testimonio` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Corresponde a V5 |
 | `payments` | `id` | `fk_id_presupuesto` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Liquidación de cobros |
-| `personas` | `id_persona` | `fk_id_tipo_identificacion` | `I: Null` si corresponde, `M: Impedir`, `B: Impedir` | Entidad central del sistema |
+| `people` | `id` | `fk_id_tipo_identificacion` | `I: Null` si corresponde, `M: Impedir`, `B: Impedir` | Entidad central del sistema |
 | `budget_templates` | `fk_id_procedure_type + fk_id_concept` | `fk_id_procedure_type`, `fk_id_concept` | `I: Impedir`, `M: Impedir`, `B: Cascada` en `concepts` | Plantilla arancelaria |
 | `procedure_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Impedir`, `M: Impedir`, `B: Cascada` en documento | Requisitos documentales |
 | `budgets` | `id` | `fk_id_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | La FK a trámite fue removida en V14 |
@@ -117,7 +117,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `identification_types` | `id` | — | Sin compensación | Catálogo de documentos de identidad |
 | `procedures` | `id` | `fk_id_procedure_type`, `fk_id_gestion`, `fk_id_deed`, `fk_id_presupuesto`, `fk_id_property` | `I: Impedir` / `Null` según columna, `M: Impedir`, `B: Impedir` o `SET NULL` según caso | Relación canónica con presupuesto en V14 |
 | `person_procedures` | `fk_id_procedure + fk_id_client_person` | `fk_id_procedure`, `fk_id_client_person` | `I: Impedir`, `M: Impedir`, `B: Cascada` en trámite | Tabla asociativa de participación |
-| `usuarios` | `id_usuario` | `fk_id_person`, `fk_id_role` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
+| `users` | `id` | `fk_id_person`, `fk_id_role` | `I: Impedir` / `Null`, `M: Impedir`, `B: Impedir` | Acceso y autenticación |
 | `workflow_definition` | `id_workflow_definition` | — | Sin compensación | Definición del grafo de estados |
 | `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_estado_gestion_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` en workflow | Nodos del flujo |
 | `workflow_transition` | `id_workflow_transition` | `fk_workflow_definition_id`, `fk_nodo_origen_id`, `fk_nodo_destino_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Transiciones del flujo |
@@ -153,7 +153,7 @@ Ejemplares impresos en hojas especiales expedidos a partir de un testimonio nota
 | `pickup_date` | DATE | No | No | No | NULL | — | Fecha en que fue retirada por el interesado |
 | `observaciones` | TEXT | No | No | No | NULL | — | Registro de entrega o atestaciones |
 | `fk_id_testimonio` | INTEGER | No | Sí | Sí | — | `testimonies(id)` | Testimonio matriz originario |
-| `fk_id_person` | INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Persona a quien se le expide o entrega la copia |
+| `fk_id_person` | INTEGER | No | Sí | Sí | — | `people(id)` | Persona a quien se le expide o entrega la copia |
 
 ---
 
@@ -226,7 +226,7 @@ Hojas protocolares provistas por el Colegio Notarial para asentar escrituras pú
 | `year_number` | INTEGER | No | No | Sí | — | — | Año calendario del protocolo correspondiente |
 | `estado` | TEXT | No | No | Sí | — | — | Estado (`Disponible`, `Usado`, `Errose`, `No Pasó`) |
 | `observaciones` | TEXT | No | No | No | NULL | — | Justificación de contingencias o atestados |
-| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano responsable titular del registro |
+| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `people(id)` | Escribano responsable titular del registro |
 | `fk_id_folio_type` | INTEGER | No | Sí | Sí | — | `folio_types(id)` | Clasificación de uso del folio |
 | `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Escritura en la que fue utilizado |
 
@@ -256,7 +256,7 @@ Expediente o carpeta física que agrupa uno o varios trámites notariales afines
 | `observaciones` | TEXT | No | No | No | NULL | — | Notas operativas de tramitación |
 | `numero_bibliorato` | INTEGER | No | No | No | NULL | — | Número de bibliorato físico de guarda |
 | `numero_archivo` | INTEGER | No | No | No | NULL | — | Número correlativo de archivo final otorgado al archivar |
-| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `personas(id_persona)` | Escribano a cargo de la gestión |
+| `fk_id_notary_person`| INTEGER | No | Sí | Sí | — | `people(id)` | Escribano a cargo de la gestión |
 | `fk_id_management_status`| INTEGER | No | Sí | No | NULL | `management_statuses(id)` | Estado operativo consolidado |
 
 ---
@@ -347,12 +347,12 @@ Recibos de cobro imputados a un presupuesto notarial.
 
 ---
 
-### 14. `personas`
+### 14. `people`
 Entidad unificada para personas humanas y jurídicas que intervienen en la escribanía.
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `id_persona` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco de la persona |
+| `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco de la persona |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 | `nombre` | TEXT | No | No | Sí | — | — | Nombres de pila o razón social |
 | `apellido` | TEXT | No | No | Sí | — | — | Apellido o denominación societaria |
@@ -416,7 +416,7 @@ Cotización arancelaria emitida a un cliente. En V14 se eliminó la FK redundant
 | `observaciones` | TEXT | No | No | No | NULL | — | Condiciones y plazos de validez |
 | `estado` | TEXT | No | No | Sí | 'Emitido' | — | Estado (`Borrador`, `Emitido`, `Aceptado`, `Abonado`, `Cancelado`) |
 | `monto_inmueble` | REAL | No | No | No | NULL | — | Base imponible inmobiliaria informada |
-| `fk_id_person` | INTEGER | No | Sí | No | NULL | `personas(id_persona)` | Cliente solicitante |
+| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Cliente solicitante |
 
 ---
 
@@ -430,7 +430,7 @@ Log no repudiable de eventos de seguridad y transacciones de negocio.
 | `fecha` | TIMESTAMP | No | No | Sí | CURRENT_TIMESTAMP | — | Marca temporal exacta de la transacción |
 | `modulo` | TEXT | No | No | Sí | — | — | Módulo funcional afectado |
 | `detalle_operacion` | TEXT | No | No | Sí | — | — | Detalle de datos modificados o acción ejecutada |
-| `fk_id_usuario` | INTEGER | No | Sí | No | NULL | `usuarios(id_usuario)` | Operador responsable de la acción |
+| `fk_id_usuario` | INTEGER | No | Sí | No | NULL | `users(id)` | Operador responsable de la acción |
 
 ---
 
@@ -467,8 +467,8 @@ Designación de suplencias y coberturas de licencias entre escribanos.
 | `start_date` | DATE | No | No | Sí | — | — | Fecha inicial de la suplencia |
 | `fecha_fin` | DATE | No | No | No | NULL | — | Fecha de finalización |
 | `observaciones` | TEXT | No | No | No | NULL | — | Motivo o atestación legal |
-| `fk_id_suplantado` | INTEGER | No | Sí | No | NULL | `personas(id_persona)` | Escribano titular bajo licencia |
-| `fk_id_suplente` | INTEGER | No | Sí | No | NULL | `personas(id_persona)` | Escribano suplente interviniente |
+| `fk_id_suplantado` | INTEGER | No | Sí | No | NULL | `people(id)` | Escribano titular bajo licencia |
+| `fk_id_suplente` | INTEGER | No | Sí | No | NULL | `people(id)` | Escribano suplente interviniente |
 
 ---
 
@@ -575,13 +575,13 @@ Tabla asociativa que vincula personas con el trámite e indica su rol jurídico.
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
 | `fk_id_procedure` | INTEGER | Sí | Sí | Sí | — | `procedures(id)` | Trámite en el que participa |
-| `fk_id_client_person`| INTEGER | Sí | Sí | Sí | — | `personas(id_persona)` | Persona que interviene |
+| `fk_id_client_person`| INTEGER | Sí | Sí | Sí | — | `people(id)` | Persona que interviene |
 | `observaciones` | TEXT | No | No | Sí | '' | — | Rol notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`) |
 | `version` | INTEGER | No | No | Sí | 0 | — | Control de concurrencia optimista |
 
 ---
 
-### 29. `usuarios`
+### 29. `users`
 Cuentas de operadores del sistema (V9).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
@@ -592,7 +592,7 @@ Cuentas de operadores del sistema (V9).
 | `contrasenia` | TEXT | No | No | Sí | — | — | Hash seguro de la contraseña |
 | `tipo` | TEXT | No | No | Sí | — | — | Rol descriptivo legacy |
 | `estado` | BOOLEAN | No | No | Sí | true | — | `true` si la cuenta está activa |
-| `fk_id_person` | INTEGER | No | Sí | No | NULL | `personas(id_persona)` | Persona física asociada |
+| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Persona física asociada |
 | `fk_id_role` | INTEGER | No | Sí | No | NULL | `roles(id)` | Rol de seguridad asignado (V9) |
 
 ---
@@ -645,11 +645,11 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | Tabla Origen | Columna FK | Tabla Destino | Columna PK | Acción ON DELETE |
 |---|---|---|---|---|
 | `identificaciones` | `fk_id_tipo_identificacion` | `identification_types` | `id` | RESTRICT |
-| `identificaciones` | `fk_id_person` | `personas` | `id_persona` | CASCADE |
-| `usuarios` | `fk_id_person` | `personas` | `id_persona` | RESTRICT |
-| `usuarios` | `fk_id_role` | `roles` | `id` | SET NULL |
+| `identificaciones` | `fk_id_person` | `people` | `id` | CASCADE |
+| `users` | `fk_id_person` | `people` | `id` | RESTRICT |
+| `users` | `fk_id_role` | `roles` | `id` | SET NULL |
 | `role_modules` | `fk_id_role` | `roles` | `id` | CASCADE |
-| `audit_records` | `fk_id_usuario` | `usuarios` | `id_usuario` | RESTRICT |
+| `audit_records` | `fk_id_usuario` | `users` | `id` | RESTRICT |
 | `substitutions` | `fk_id_substituted_person` | `people` | `id` | RESTRICT |
 | `substitutions` | `fk_id_substitute_person` | `people` | `id` | RESTRICT |
 | `workflow_node` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | CASCADE |
@@ -658,7 +658,7 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `workflow_transition` | `fk_nodo_origen_id` | `workflow_node` | `id_workflow_node` | CASCADE |
 | `workflow_transition` | `fk_nodo_destino_id` | `workflow_node` | `id_workflow_node` | CASCADE |
 | `procedure_types` | `fk_workflow_definition_id` | `workflow_definition` | `id_workflow_definition` | SET NULL |
-| `deed_managements` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
+| `deed_managements` | `fk_id_notary_person` | `people` | `id` | RESTRICT |
 | `deed_managements` | `fk_id_management_status` | `management_statuses` | `id` | SET NULL |
 | `history` | `fk_id_deed_management` | `deed_managements` | `id` | CASCADE |
 | `history` | `fk_id_management_status` | `management_statuses` | `id` | RESTRICT |
@@ -672,19 +672,19 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 | `procedures` | `fk_id_presupuesto` | `budgets` | `id` | RESTRICT |
 | `procedures` | `fk_id_property` | `properties` | `id` | SET NULL |
 | `person_procedures` | `fk_id_procedure` | `procedures` | `id` | CASCADE |
-| `person_procedures` | `fk_id_client_person` | `personas` | `id_persona` | RESTRICT |
+| `person_procedures` | `fk_id_client_person` | `people` | `id` | RESTRICT |
 | `submitted_documents` | `fk_id_tramite` | `procedures` | `id` | CASCADE |
 | `submitted_documents` | `fk_id_document_type` | `document_types` | `id` | RESTRICT |
 | `budgets` | `fk_id_person` | `people` | `id` | RESTRICT |
 | `items` | `fk_id_presupuesto` | `budgets` | `id` | CASCADE |
 | `payments` | `fk_id_presupuesto` | `budgets` | `id` | CASCADE |
-| `folios` | `fk_id_notary_person` | `personas` | `id_persona` | RESTRICT |
+| `folios` | `fk_id_notary_person` | `people` | `id` | RESTRICT |
 | `folios` | `fk_id_folio_type` | `folio_types` | `id` | RESTRICT |
 | `folios` | `fk_id_deed` | `deeds` | `id` | SET NULL |
 | `testimonies` | `fk_id_deed` | `deeds` | `id` | CASCADE |
 | `testimony_movements` | `fk_id_testimonio` | `testimonies` | `id` | CASCADE |
 | `copies` | `fk_id_testimonio` | `testimonies` | `id` | CASCADE |
-| `copies` | `fk_id_person` | `personas` | `id_persona` | RESTRICT |
+| `copies` | `fk_id_person` | `people` | `id` | RESTRICT |
 | `folio_copies` | `fk_id_folio` | `folios` | `id` | RESTRICT |
 | `folio_copies` | `fk_id_copy` | `copies` | `id` | CASCADE |
 
@@ -698,11 +698,11 @@ Transiciones dirigidas entre nodos de workflow con condiciones de guarda (introd
 
 La entidad `identificaciones` fue documentada y existe en los scripts de inicialización heredados (`docs/archive/init-db/orig/01_initial_schema.sql`), pero nunca fue creada mediante las migraciones Flyway. Esta tabla era una propuesta de normalización 3FN para permitir múltiples documentos de identidad por persona (DNI, CUIT, Pasaporte, etc.).
 
-**Decisión:** En la fase de migración a Flyway (V1–V14), se abandonó esta normalización en favor de la simplificación operacional: cada persona mantiene un único `numero_identificacion` y `cuit` denormalizado en la tabla `personas`, y se utiliza `fk_id_tipo_identificacion` para clasificar el tipo de identificación principal. Esta decisión priorizó la coherencia con el código JPA moderno y la experiencia usuario sobre la normalización teórica.
+**Decisión:** En la fase de migración a Flyway (V1–V14), se abandonó esta normalización en favor de la simplificación operacional: cada persona mantiene un único `identification_number` y `tax_id` denormalizado en la tabla `people`, y se utiliza `fk_id_tipo_identificacion` para clasificar el tipo de identificación principal. Esta decisión priorizó la coherencia con el código JPA moderno y la experiencia usuario sobre la normalización teórica.
 
 **Alternativas Futuras:**
 - **(A) Crear V15:** Materializar `identificaciones` como tabla asociativa M:N si se requiere 3FN puro y soporte para múltiples identificaciones.
-- **(B) Mantener como está:** Conservar la denormalización en `personas` como decisión de diseño aceptada.
+- **(B) Mantener como está:** Conservar la denormalización en `people` como decisión de diseño aceptada.
 
 ### 6.2 Entidades de Apoyo (Supporting Entities) sin Caso de Uso Independiente
 
@@ -712,7 +712,7 @@ Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso i
 |-----------|-----------|-------------|
 | **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
-| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `usuarios`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
+| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `users`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
 | **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
