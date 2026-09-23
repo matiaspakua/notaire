@@ -1,12 +1,12 @@
 ---
-title: CD Report - 2026-09-23 15:54:44
+title: CD Report - 2026-09-23 20:43:45
 ---
 
 # CD Pipeline Report
 
-**Generated:** 2026-09-23 15:54:44  
+**Generated:** 2026-09-23 20:43:45  
 **Branch:** main  
-**Commit:** 2bb7fd654f3b1fef0344e8cab5fed6fcd35d05cd
+**Commit:** d9f68e3b9fa4262935b23a600d9f0f1344dd5fb4
 
 ---
 
@@ -14,9 +14,9 @@ title: CD Report - 2026-09-23 15:54:44
 
 | Job | Status |
 |-----|--------|
-| Build & Publish | success |
+| Build & Publish | failure |
 | Create Release | skipped |
-| Update Description | success |
+| Update Description | skipped |
 
 ---
 
@@ -32,7 +32,7 @@ title: CD Report - 2026-09-23 15:54:44
 
 ## Conclusion
 
-**Pipeline:** SUCCESS - Image built and published successfully
+**Pipeline:** FAILED - Check the logs for details
 
 ---
 
