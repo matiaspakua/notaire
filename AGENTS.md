@@ -85,7 +85,7 @@ bash scripts/start-all.sh               # app + observability infra
 ```bash
 mvn test -pl backend-api                          # unit + integration
 mvn test -pl backend-api -Dtest=ClassName         # single class
-mvn jacoco:check -pl backend-api                  # coverage ≥ 80%
+mvn jacoco:check -pl backend-api                  # enforced ratchet floor (70% line / 25% branch); 80% is the target — see .claude/rules/code-quality.md
 mvn verify -pl backend-api                        # all quality checks
 bash testing/scripts/test.sh                                       # HTTP integration (API running)
 cd frontend && npx playwright test                # E2E
