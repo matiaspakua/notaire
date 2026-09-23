@@ -311,7 +311,7 @@ quality, security, delivery or operations boundary.
 | Strategy and discovery | Baseline, value and backlog | `delivery-maturity-roadmap`, `analyst`, `product-owner` | roadmap hypothesis, Issue, Use Case, acceptance criteria |
 | Traceability | Evidence chain and impact | `devsecops-traceability`, `openspec-triage` | IDs, traceability ledger, impact map |
 | Specification | Behavior contract | `openspec-propose`, `openspec` schema `notaire-sdlc` | proposal, delta specs, scenarios |
-| Architecture | Decisions and quality attributes | `architecture-decision-design`, `plantuml`, `java-architect` | design, ADR, C4/UML views |
+| Architecture | Decisions and quality attributes | `architecture-decision-design`, `plantuml`, `java-architect`, `hexagonal-arch` (Ports & Adapters implementation, e.g. ADR-021) | design, ADR, C4/UML views |
 | Security design | Threats, privacy and controls | `secure-threat-modeling`, `backend`, `devops` | threat model, risk register, `SR-*` requirements |
 | Test design | Risk-based verification | `qa-automation-strategy`, `testing`, `api-rest` | MTP/test plan, test cases, fixtures, vectors |
 | Implementation | TDD and project conventions | `openspec-apply-change`, `programming`, `java`, `frontend-design` | failing tests, implementation, updated traceability |

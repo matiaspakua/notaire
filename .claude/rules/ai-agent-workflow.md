@@ -333,7 +333,7 @@ cd frontend && npx playwright test
 **Quality Gates** (all must pass):
 
 - All unit and integration tests pass.
-- Coverage ≥ 80% (JaCoCo).
+- Coverage at or above the JaCoCo ratchet floor (70% line / 25% branch; 80% is the long-term target — see `.claude/rules/code-quality.md`).
 - No Checkstyle violations.
 - No SpotBugs warnings.
 - All E2E Playwright tests pass.
@@ -466,7 +466,7 @@ Do not proceed to Step 9 until it exits 0.
 - [ ] Unit tests added/updated
 - [ ] Integration tests pass
 - [ ] E2E Playwright tests pass
-- [ ] Coverage ≥ 80%
+- [ ] Coverage at or above the JaCoCo ratchet floor (70% line / 25% branch; 80% is the target)
 
 ## Documentation
 - [ ] Docs updated / archived

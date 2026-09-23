@@ -21,7 +21,6 @@ mvn clean package -DskipTests
 
 # Run tests for specific module
 mvn test -pl backend-api
-mvn test -pl frontend-swing
 
 # Run specific test class
 mvn test -Dtest=ClassNameTest
@@ -40,8 +39,11 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| frontend-swing | Swing GUI client |
-| notary-shared | Shared DTOs and code |
+| notaire-shared | Shared DTOs and code |
+
+`frontend-swing` was removed from the repository (see `CLAUDE.md`); do not
+recreate it or reference it in build commands. All new client work belongs
+in `frontend/` (Next.js), which is built with `npm`/`next`, not Maven.
 
 ## Common Issues
 
@@ -54,5 +56,5 @@ mvn checkstyle:check
 - Use `-Dmaven.test.failure.ignore=true` to continue on test failures
 
 ### Coverage
-- JaCoCo requires 80% minimum coverage
+- JaCoCo enforces a ratchet floor of 70% line / 25% branch coverage at `mvn verify`; 80% line/branch is the long-term target (see `.claude/rules/code-quality.md`)
 - Check report at: `target/site/jacoco/index.html`
