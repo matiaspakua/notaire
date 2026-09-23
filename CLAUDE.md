@@ -46,6 +46,12 @@ See `.claude/rules/ai-agent-workflow.md` for complete workflow with:
 - PR creation
 - Quality gates
 
+### Claude Code Hooks
+
+Part of this workflow is enforced automatically by Claude Code hooks
+configured in `.claude/settings.json` (session-start OpenSpec status,
+push-to-main guard) — see `.claude/rules/hooks.md` for what they do and why.
+
 ---
 
 ## Rules & Standards (always enforced)
