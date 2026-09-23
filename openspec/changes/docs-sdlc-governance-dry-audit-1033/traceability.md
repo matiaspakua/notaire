@@ -14,8 +14,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 – Quality Assurance and Testing Infrastructure | exists |
 | Specification | `openspec/changes/docs-sdlc-governance-dry-audit-1033/` | created |
 | Branch | `docs/1033_sdlc_governance_dry_audit` | created |
-| Tasks | `tasks.md` | 0/N complete |
-| Commits | — | pending |
+| Tasks | `tasks.md` | 44/64 complete (remaining: PR/merge/close steps, left for human review) |
+| Commits | `956c287`, `b7bbd67`, `1aeaa4a` | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -37,11 +37,11 @@ see the Gate log below.
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `AGENTS.md` | pending | — |
-| `.claude/rules/ai-agent-workflow.md` | pending | — |
-| `.claude/skills/maven-build/SKILL.md` | pending | — |
-| `CONSTITUTION.md` | pending | — |
-| `.claude/skills/README.md` | pending | — |
+| `AGENTS.md` | yes | `956c287` |
+| `.claude/rules/ai-agent-workflow.md` | yes | `956c287` |
+| `.claude/skills/maven-build/SKILL.md` | yes | `b7bbd67` |
+| `CONSTITUTION.md` | yes | `1aeaa4a` |
+| `.claude/skills/README.md` | yes | `1aeaa4a` |
 
 ## Gate log
 
@@ -49,7 +49,7 @@ see the Gate log below.
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #1033, this proposal, `.openspec.yaml` (`skip_specs: true`) |
 | 2 | Failing tests written, test cases designed | n/a | Docs-only change; no test-observable behavior to TDD against (`scripts/validate-sdlc-plan.sh` documents this exemption for docs-only changes) |
-| 3 | Suite green, coverage held, docs updated | pending | `bash scripts/preflight.sh` run before push |
+| 3 | Suite green, coverage held, docs updated | yes (with a noted, pre-existing, unrelated exception) | `bash scripts/preflight.sh` run before push: branch naming, spotless, checkstyle, backend compile, dependency analysis, spotbugs all passed. The `sdlc plan validation` step fails, but only because two already-merged OpenSpec change directories (`enforce-workflow-gates-via-hooks` for closed #1027, `preflight-ci-drift-audit` for closed #1029) were never archived — unrelated to this change; this change's own plan validates cleanly in isolation (`bash scripts/validate-sdlc-plan.sh docs-sdlc-governance-dry-audit-1033` → pass). No code/tests/coverage affected since no code was touched. |
 | 4 | CI green, review approved, no conflicts | pending | PR to be opened against `main` |
 | 5 | Deployed, smoke test passed, Issue closed | pending | n/a — no deploy surface; Issue closed on merge |
 
