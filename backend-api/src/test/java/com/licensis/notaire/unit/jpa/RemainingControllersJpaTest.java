@@ -802,10 +802,24 @@ class RemainingControllersJpaTest {
             void destroy() throws Exception {
                 BudgetTemplatePK id = new BudgetTemplatePK(1, 1);
                 BudgetTemplate entity = new BudgetTemplate();
-                when(mockEm.getReference(BudgetTemplate.class, id)).thenReturn(entity);
+                ProcedureType procedureType = new ProcedureType(1);
+                Concept concept = new Concept(1);
+                procedureType.getBudgetTemplateList().add(entity);
+                concept.getBudgetTemplateList().add(entity);
+                entity.setProcedureType(procedureType);
+                entity.setConcept(concept);
+                when(mockEm.find(BudgetTemplate.class, id)).thenReturn(entity);
                 controller.destroy(id);
                 verify(mockEm).remove(entity);
                 verify(mockTx).commit();
+                assertThat(procedureType.getBudgetTemplateList()).isEmpty();
+                assertThat(concept.getBudgetTemplateList()).isEmpty();
+            }
+
+            @Test @DisplayName("destroy throws when missing")
+            void destroyMissing() {
+                BudgetTemplatePK id = new BudgetTemplatePK(9, 9);
+                assertThatThrownBy(() -> controller.destroy(id)).isInstanceOf(com.licensis.notaire.jpa.exceptions.NonexistentEntityException.class);
             }
         }
 

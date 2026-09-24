@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@RequirementCoverage({"CU39"})
+@RequirementCoverage({"CU39", "CU49"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DisplayName("Presupuesto — cargar ítems desde la plantilla del type de trámite (CU39)")
@@ -136,5 +138,20 @@ class BudgetTemplateControllerIntegrationTest {
         mockMvc.perform(post("/api/v1/presupuestos/999999/items-desde-plantilla")
                         .param("tipoTramiteId", procedureType.getIdProcedureType().toString()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE should remove the budget template row, not just return 200 (CU49)")
+    void shouldPersistBudgetTemplateDeletion() throws Exception {
+        ProcedureType procedureType = createProcedureTypeConTemplate("Delete IT", 100f, 0);
+        Integer idProcedureType = procedureType.getIdProcedureType();
+        Integer idConcept = budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)
+                .get(0).getBudgetTemplatePK().getFkIdConcept();
+
+        mockMvc.perform(delete("/api/v1/plantilla-presupuestos/tipo-tramite/" + idProcedureType
+                        + "/concepto/" + idConcept))
+                .andExpect(status().isOk());
+
+        assertThat(budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)).isEmpty();
     }
 }
