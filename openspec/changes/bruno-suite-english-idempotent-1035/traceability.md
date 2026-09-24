@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/bruno-suite-english-idempotent-1035/` | created |
 | Branch | `test/1035_bruno_suite_english_idempotent` | created |
 | Tasks | `tasks.md` | implementation done; PR/merge pending |
-| Commits | `b7ace0a` (fix #1036), `5e0f246` (suite), `4e7a07a` (env rename), docs commit (`Closes #1035`) | done |
+| Commits | `b7ace0a` (fix #1036), `5e0f246` (suite), `4e7a07a` (env rename), `a45689a` docs (`Closes #1035`), `1054df0` md-lint, `cddba90` (fix #1038, V38 folder-number sequence), `f34d567` (E2E fix #1037) | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -65,3 +65,14 @@ Bruno request's `Traceability:` description line and in
   `b7ace0a` with its own integration + unit tests
   (`BudgetTemplateControllerIntegrationTest#shouldPersistBudgetTemplateDeletion`,
   `RemainingControllersJpaTest`), because the suite cannot clean up without it.
+- Running the full E2E suite for the pipeline gate exposed two more defects,
+  fixed on this branch because the gate cannot pass without them:
+  - #1038 — concurrent case creation computed folder numbers as `max+1` and hit
+    `uq_carpeta_tramite_numero`. Fixed in `cddba90` with Flyway V38
+    (`procedure_folder_number_seq`), covered by `ProcedureFolderServiceTest` and
+    `ProcedureFolderNumberSequencePgIntegrationTest` (20 concurrent draws).
+  - #1037 — Playwright workers collided on generated ids and TS-0071 picked the
+    seed budget. Fixed in `f34d567` (per-worker id stride, client-name match).
+- Full pipeline (`scripts/run_pipeline.sh`) run on 2026-09-24: backend verify,
+  pg-integration, frontend typecheck/eslint/vitest/build, HTTP, Bruno and
+  Playwright suites.
