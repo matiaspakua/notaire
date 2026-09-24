@@ -14,8 +14,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 – Quality Assurance and Testing Infrastructure | exists |
 | Specification | `openspec/changes/bruno-suite-english-idempotent-1035/` | created |
 | Branch | `test/1035_bruno_suite_english_idempotent` | created |
-| Tasks | `tasks.md` | in progress |
-| Commits | — | pending |
+| Tasks | `tasks.md` | implementation done; PR/merge pending |
+| Commits | `b7ace0a` (fix #1036), `5e0f246` (suite), `4e7a07a` (env rename), docs commit (`Closes #1035`) | done |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -32,21 +32,21 @@ Bruno request's `Traceability:` description line and in
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Suite English (folders, files, names, variables, env) | review + `grep` for Spanish identifiers | pending |
-| Full suite passes on current DB | `bru run . -r --env Development` (run 1) | pending |
-| Full suite passes again (idempotent) | `bru run . -r --env Development` (run 2) | pending |
-| Every request cites CU + RF | `grep -L Traceability:` returns nothing | pending |
+| Suite English (folders, files, names, variables, env) | review + `grep` for Spanish identifiers | pass |
+| Full suite passes on current DB | `bru run . -r --env Development` (run 1) | pass — 164/164 requests, 291/291 tests |
+| Full suite passes again (idempotent) | `bru run . -r --env Development` (run 2) | pass — 164/164 requests, 291/291 tests; row counts unchanged except the append-only `audit_records` |
+| Every request cites CU + RF | `grep -L Traceability:` returns nothing | pass |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `backend-api/api-test/README.md` | pending | — |
-| `backend-api/api-test/COVERAGE.md` | pending | — |
-| `docs/300-development/303-testing/CU-API-MATRIX.csv` | pending | — |
-| `docs/300-development/303-testing/README.md` | pending | — |
-| `.github/workflows/playwright-e2e.yml`, `scripts/preflight.sh` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `backend-api/api-test/README.md` | yes | docs commit |
+| `backend-api/api-test/COVERAGE.md` | yes | docs commit |
+| `docs/300-development/303-testing/CU-API-MATRIX.csv` | yes | docs commit |
+| `docs/300-development/303-testing/README.md` | yes | docs commit |
+| `.github/workflows/playwright-e2e.yml`, `scripts/preflight.sh` | yes | `4e7a07a` |
+| `CHANGELOG.md` | yes | docs commit |
 
 ## Gate log
 
@@ -54,10 +54,14 @@ Bruno request's `Traceability:` description line and in
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | Issue #1035, this plan, `.openspec.yaml` (`skip_specs: true`) |
 | 2 | Failing tests written, test cases designed | yes | Baseline run 2026-09-24: 21/152 requests failing on a reused DB — the failing test is the second run |
-| 3 | Suite green, coverage held, docs updated | pending | — |
+| 3 | Suite green, coverage held, docs updated | yes | Bruno 164/164 twice; `scripts/preflight.sh` 13 passed, 0 failed (after `b11ae29`) |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
 
-None.
+- Scope grew by one `backend-api/src` fix: making the suite idempotent exposed
+  #1036 (budget-template DELETE returned 200 without deleting). Fixed in
+  `b7ace0a` with its own integration + unit tests
+  (`BudgetTemplateControllerIntegrationTest#shouldPersistBudgetTemplateDeletion`,
+  `RemainingControllersJpaTest`), because the suite cannot clean up without it.

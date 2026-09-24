@@ -23,24 +23,24 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Rename folders and request files to English; renumber `concepts`
-- [ ] 4.2 Translate request/test names, descriptions, free-text data; rename variables
-- [ ] 4.3 Rename environment `Developmen` → `Development`
-- [ ] 4.4 Fix `existingPersonId`, `dueDays`, budget `?status=` query
-- [ ] 4.5 Unique per-run data + teardown in every folder; no seed mutation
-- [ ] 4.6 `Traceability:` line (CU + RF) in every request description
-- [ ] 4.7 Remove / ignore stray report artifacts in `api-test/`
+- [x] 4.1 Rename folders and request files to English; renumber `concepts`
+- [x] 4.2 Translate request/test names, descriptions, free-text data; rename variables
+- [x] 4.3 Rename environment `Developmen` → `Development`
+- [x] 4.4 Fix `existingPersonId`, `dueDays`, budget `?status=` query
+- [x] 4.5 Unique per-run data + teardown in every folder; no seed mutation
+- [x] 4.6 `Traceability:` line (CU + RF) in every request description
+- [x] 4.7 Remove / ignore stray report artifacts in `api-test/`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Assertions kept or strengthened; none removed
+- [x] 5.1 Assertions kept or strengthened; none removed
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Full Bruno suite run 1 green
-- [ ] 6.2 Full Bruno suite run 2 green (idempotent)
-- [ ] 6.3 No fixture rows leaked (row counts before/after)
-- [ ] 6.4 No skipped tests introduced
+- [x] 6.1 Full Bruno suite run 1 green
+- [x] 6.2 Full Bruno suite run 2 green (idempotent)
+- [x] 6.3 No fixture rows leaked (row counts before/after)
+- [x] 6.4 No skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
@@ -48,15 +48,15 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Every document in proposal.md's Documentation Impact table updated
-- [ ] 8.2 `CHANGELOG.md` entry
-- [ ] 8.3 `bash scripts/preflight.sh` run before push
+- [x] 8.1 Every document in proposal.md's Documentation Impact table updated
+- [x] 8.2 `CHANGELOG.md` entry
+- [x] 8.3 `bash scripts/preflight.sh` run before push
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per logical step, Conventional Commits
-- [ ] 9.2 Closing commit ends with `Closes #1035`
-- [ ] 9.3 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per logical step, Conventional Commits
+- [x] 9.2 Closing commit ends with `Closes #1035`
+- [x] 9.3 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -78,8 +78,8 @@
 
 - [x] Issue linked to a Use Case, with Acceptance Criteria
 - [x] Specification written (Gate 1)
-- [ ] Suite green twice in a row
-- [ ] Permanent documentation updated
-- [ ] Commits atomic and conventional
+- [x] Suite green twice in a row
+- [x] Permanent documentation updated
+- [x] Commits atomic and conventional
 - [ ] PR created, CI green
 - [ ] `traceability.md` complete from Issue through PR

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Bruno API suite in English and idempotent** (issue #1035, CU76):
+  `backend-api/api-test/` folders, files, requests, tests, variables and
+  test data are now English (following the backend domain names); the
+  environment is renamed `Developmen` → `Development` (CI and
+  `scripts/preflight.sh` updated). Every fixture uses per-run unique values
+  and is deleted by the suite, so consecutive runs against the same
+  database pass (164 requests / 291 tests, twice) without leaking rows.
+  Each request cites its Use Case(s) and RF(s) in a `Traceability:` line.
+
+### Fixed
+
+- **Budget-template DELETE is persisted** (issue #1036, CU39/CU49):
+  `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{id}/concepto/{id}`
+  returned 200 but the row survived, because the cascade-ALL parent lists
+  re-persisted it on flush.
+
 ### Added
 
 - **Vincular escritura a folio y validar copia de testimonio ya inscripto**
