@@ -47,7 +47,7 @@ Folder and file names are English and follow the backend's domain class names
 
 Each resource folder is a **self-contained lifecycle** ordered by `info.seq`:
 
-```
+```text
 00-create-<fixture>  POST   → setup: parent rows the resource needs (optional)
 01-create            POST   → captures the new id with bru.setVar(...)
 02-list              GET    → asserts the created row is present

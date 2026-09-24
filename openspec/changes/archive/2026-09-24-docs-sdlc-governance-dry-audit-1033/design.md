@@ -13,6 +13,7 @@ pure text-editing change to five Markdown files.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Make the coverage floor-vs-target distinction consistent across every file
   that states it.
 - Remove a stale reference to a module that no longer exists in the repo.
@@ -20,6 +21,7 @@ pure text-editing change to five Markdown files.
   change.
 
 **Non-Goals:**
+
 - Re-litigating whether 70%/25% or 80%/80% is the *right* number — only
   making the existing, already-decided distinction (documented authoritatively
   in `.claude/rules/code-quality.md`) consistent everywhere it is restated.

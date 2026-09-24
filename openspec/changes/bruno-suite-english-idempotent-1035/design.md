@@ -14,12 +14,14 @@ cascaded 400s through `folios`, `historial` and `suplencias`.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - English names everywhere the suite owns them (folders, files, requests, tests,
   variables, descriptions, free-text data, environment).
 - Repeatable: N consecutive runs against the same database all pass.
 - Every request traced to Use Case(s) and Requirement(s).
 
 **Non-Goals:**
+
 - Changing the API contract (URLs, JSON keys, domain codes such as `RECARGO`,
   `EMPLEADO`, `Nuevo`, `Cliente`, which the backend/frontend compare against).
 - New endpoint coverage (#953).

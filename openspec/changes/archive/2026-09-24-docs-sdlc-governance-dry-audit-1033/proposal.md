@@ -51,9 +51,11 @@ No code, tests, or runtime behavior changes.
 ## Capabilities
 
 ### New Capabilities
+
 None.
 
 ### Modified Capabilities
+
 None — this is a documentation/governance-layer correction with no
 spec-level (application) behavior change. `skip_specs: true` is set in
 `.openspec.yaml`.

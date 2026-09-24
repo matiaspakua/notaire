@@ -7,7 +7,7 @@ Para el plan maestro de testing (niveles de test, catálogo por caso de uso,
 proceso de reporting), ver [`TEST-PLAN.md`](TEST-PLAN.md). Este README es el
 inventario de suites y comandos.
 
-```
+```text
 Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwright, por Caso de Uso)
 ```
 
