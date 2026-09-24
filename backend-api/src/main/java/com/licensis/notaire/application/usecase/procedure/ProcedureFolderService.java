@@ -35,7 +35,7 @@ public class ProcedureFolderService {
 
     public ProcedureFolder generateFolderForProcedure(Procedure procedure) {
         ProcedureFolder folder = new ProcedureFolder();
-        folder.setNumber(calculateNextNumber());
+        folder.setNumber(procedureFolderRepository.nextFolderNumber());
         folder.setStatus(StatusACTIVA);
         folder.setFkIdManagement(procedure.getFkIdManagement());
         folder.setFkIdProcedure(procedure);
@@ -43,12 +43,6 @@ public class ProcedureFolderService {
         log.info("Carpeta {} generada para trámite {} de gestión {}", guardada.getNumber(),
                 procedure.getIdProcedure(), procedure.getFkIdManagement().getIdManagement());
         return guardada;
-    }
-
-    private int calculateNextNumber() {
-        return procedureFolderRepository.findTopByOrderByNumberDesc()
-                .map(c -> c.getNumber() + 1)
-                .orElse(1);
     }
 
     @Transactional(readOnly = true)

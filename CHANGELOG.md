@@ -268,6 +268,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Concurrent case creation no longer fails on duplicate folder numbers**
+  (issue #1038, CU85): procedure folder numbers came from `max(number) + 1`,
+  so two cases opened at the same time got the same number and the second
+  `POST /api/v1/gestiones/complete-case` failed with `400` on
+  `uq_carpeta_tramite_numero`. They now come from the
+  `procedure_folder_number_seq` sequence (Flyway `V38`), started after the
+  highest existing number.
 - **Budget-template DELETE is persisted** (issue #1036, CU39/CU49):
   `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{id}/concepto/{id}`
   returned 200 but the row survived, because the cascade-ALL parent lists

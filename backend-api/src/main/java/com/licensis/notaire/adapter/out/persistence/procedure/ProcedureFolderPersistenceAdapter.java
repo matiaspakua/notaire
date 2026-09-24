@@ -46,7 +46,7 @@ public class ProcedureFolderPersistenceAdapter implements ProcedureFolderReposit
     }
 
     @Override
-    public Optional<ProcedureFolder> findTopByOrderByNumberDesc() {
-        return procedureFolderRepository.findTopByOrderByNumberDesc();
+    public int nextFolderNumber() {
+        return procedureFolderRepository.nextFolderNumber();
     }
 }
