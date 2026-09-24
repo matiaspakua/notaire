@@ -74,7 +74,7 @@ npm run test:e2e:headed   # watch mode
 ### Running Tests
 ```bash
 cd backend-api/api-test
-bru run . -r --env Developmen
+bru run . -r --env Development
 ```
 
 ### Coverage

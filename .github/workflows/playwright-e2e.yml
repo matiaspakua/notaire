@@ -172,7 +172,7 @@ jobs:
             exit 1
           fi
           cd backend-api/api-test
-          npx @usebruno/cli run --env Developmen \
+          npx @usebruno/cli run --env Development \
             --env-var token="$TOKEN" \
             --reporter-junit bruno-results.xml \
             --reporter-json bruno-results.json \

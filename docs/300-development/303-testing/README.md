@@ -55,7 +55,7 @@ cd frontend && npm run test:e2e
 npm run test:e2e:headed   # modo interactivo
 
 # API (Bruno, requiere backend en :8080)
-cd backend-api/api-test && bru run . -r --env Developmen
+cd backend-api/api-test && bru run . -r --env Development
 
 # Réplica local de todos los gates de CI
 bash scripts/preflight.sh --full

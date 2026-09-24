@@ -228,7 +228,7 @@ if [ "$MODE_FULL" = "1" ]; then
             -H 'Content-Type: application/json' \
             -d '{"name":"admin","password":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
         if [ -n "$BRUNO_TOKEN" ]; then
-            run "bruno api tests" bash -c "cd backend-api/api-test && npx @usebruno/cli run --env Developmen --env-var token=$BRUNO_TOKEN"
+            run "bruno api tests" bash -c "cd backend-api/api-test && npx @usebruno/cli run --env Development --env-var token=$BRUNO_TOKEN"
         else
             fail "bruno api tests: could not obtain JWT token from login endpoint"
         fi
