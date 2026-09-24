@@ -268,6 +268,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **E2E suite no longer collides across workers or leaks seed rows**
+  (issue #1037, CU76): `uniqueId()` gives each Playwright worker its own
+  residue class, so parallel workers never send the same `E2E<n>` document
+  number (`409` on seed). The first-case tutorial now links its case to its
+  own quote by client name; picking the "last" option linked it to the
+  seeded budget (the list is sorted newest first), so global teardown could
+  not delete the seed budget and persona. Teardown failures now log the
+  response body.
 - **Concurrent case creation no longer fails on duplicate folder numbers**
   (issue #1038, CU85): procedure folder numbers came from `max(number) + 1`,
   so two cases opened at the same time got the same number and the second
