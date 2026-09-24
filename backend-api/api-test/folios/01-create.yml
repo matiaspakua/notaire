@@ -1,8 +1,10 @@
 info:
-  name: Create Folio
+  name: Create folio
   type: http
   seq: 2
-  description: "## CU28/40 — POST /api/v1/folio"
+  description: |-
+      ## Create folio — POST /api/v1/folio
+      Traceability: CU28 (RF #55, #58, #94, #95, #96)
 http:
   method: POST
   url: "{{base_url}}/api/v1/folio"
@@ -10,12 +12,12 @@ http:
     type: json
     data: |-
         {
-          "number": 55777,
+          "number": {{folio_number}},
           "year": 2026,
           "status": "Nuevo",
-          "notes": "creado por la suite E2E",
+          "notes": "created by the E2E suite",
           "typeFolioId": 1,
-          "notaryId": {{_folio_escribano_id}}
+          "notaryId": {{folio_notary_id}}
         }
   headers:
     - name: Content-Type

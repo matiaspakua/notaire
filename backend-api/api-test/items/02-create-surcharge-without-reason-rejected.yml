@@ -1,0 +1,31 @@
+info:
+  name: Create surcharge without reason - rejected
+  type: http
+  seq: 3
+  description: |-
+      ## Create surcharge without reason — POST /api/v1/items
+      A RECARGO item without a reason must be rejected with 400.
+      Traceability: CU71, CU45 (RF #4, #7, #8, #9)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/items"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "Surcharge without reason",
+          "value": 100.0,
+          "type": "RECARGO",
+          "fixedConcept": false,
+          "fkIdBudget": { "idBudget": {{items_budget_id}} }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });

@@ -1,0 +1,38 @@
+info:
+  name: Create history entry
+  type: http
+  seq: 3
+  description: |-
+      ## Create history entry — POST /api/v1/historial
+      Records a history event for the management created in setup.
+      Traceability: CU11 (RF #3, #32, #34, #118)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/historial"
+  body:
+    type: json
+    data: |-
+        {
+          "date": "2026-09-05",
+          "notes": "Management started",
+          "fkIdManagement": { "idManagement": {{history_management_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the history id", function () {
+            const b = res.getBody();
+            expect(b.idHistory).to.be.a('number');
+            bru.setVar('history_id', b.idHistory);
+          });
+          test("Persists the notes", function () {
+            expect(res.getBody().notes).to.equal('Management started');
+          });

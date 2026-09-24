@@ -1,0 +1,20 @@
+info:
+  name: Verify payment deleted
+  type: http
+  seq: 13
+  description: |-
+      ## Verify payment deleted — GET /api/v1/pagos/{payment_id}
+      Traceability: CU47 (RF #20, #22)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 after delete", function () { expect(res.getStatus()).to.equal(404); });

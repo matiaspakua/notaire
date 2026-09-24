@@ -1,22 +1,24 @@
 info:
-  name: List Items
+  name: List items
   type: http
   seq: 4
-  description: "## GET /api/v1/items"
+  description: |-
+      ## List items — GET /api/v1/items
+      Traceability: CU71, CU45 (RF #4, #7, #8, #9)
 http:
   method: GET
   url: "{{base_url}}/api/v1/items"
   headers:
+    - name: Content-Type
+      value: application/json
     - name: Authorization
       value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 OK", function () {
-            expect(res.getStatus()).to.equal(200);
-          });
-          test("Includes created item", function () {
-            const b = res.getBody();
-            expect(b.some(i => i.idItem === bru.getVar('item_id'))).to.be.true;
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Includes the created item", function () {
+            const id = Number(bru.getVar('item_id'));
+            expect(res.getBody().some(i => i.idItem === id)).to.be.true;
           });

@@ -1,0 +1,24 @@
+info:
+  name: Update substitution
+  type: http
+  seq: 6
+  description: |-
+      ## Update substitution — PUT /api/v1/suplencia/{{substitution_id}}
+      Traceability: CU22 (RF #43, #113, #114, #115)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/suplencia/{{substitution_id}}"
+  body:
+    type: json
+    data: |-
+        {"dateStart":"2026-02-01","dateEnd":"2026-02-28","fkIdSubstitute":{"personId":{{substitute_person_id}}},"fkIdSubstituted":{"personId":{{replaced_person_id}}}}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

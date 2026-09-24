@@ -1,0 +1,23 @@
+info:
+  name: Get substitution by ID
+  type: http
+  seq: 5
+  description: |-
+      ## Get substitution by ID — GET /api/v1/suplencia/{{substitution_id}}
+      Traceability: CU59 (RF #43, #113, #116)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/suplencia/{{substitution_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the created substitution", function () {
+            expect(res.getBody().idSubstitution).to.equal(Number(bru.getVar('substitution_id')));
+          });

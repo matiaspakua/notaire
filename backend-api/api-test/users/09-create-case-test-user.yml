@@ -1,0 +1,33 @@
+info:
+  name: Create user (case-insensitive login fixture)
+  type: http
+  seq: 9
+  description: |-
+      ## Fixture — POST /api/v1/usuarios
+      Mixed-case username, unique per run; deleted by `13-delete-case-test-user.yml`.
+      Traceability: CU20 (RF #43, #44, #45, #82, #83)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios"
+  body:
+    type: json
+    data: |-
+        {"name": "{{case_user_name}}", "password": "Test1234!", "type": "EMPLEADO", "active": true}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('case_user_name', 'CaseTest-User-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idUser", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idUser');
+            bru.setVar('case_user_id', b.idUser);
+          });

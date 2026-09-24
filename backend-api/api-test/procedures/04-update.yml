@@ -1,0 +1,24 @@
+info:
+  name: Update procedure
+  type: http
+  seq: 4
+  description: |-
+      ## Update procedure — PUT /api/v1/tramites/{procedure_id}
+      Traceability: CU53 (RF #3, #13)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tramites/{{procedure_id}}"
+  body:
+    type: json
+    data: |-
+        {"notes":"E2E procedure updated","idProcedureType":1}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

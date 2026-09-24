@@ -1,21 +1,23 @@
 info:
-  name: Get Item By Id
+  name: Get item by ID
   type: http
   seq: 5
-  description: "## GET /api/v1/items/{id}"
+  description: |-
+      ## Get item by ID — GET /api/v1/items/{item_id}
+      Traceability: CU71, CU45 (RF #4, #7, #8, #9)
 http:
   method: GET
   url: "{{base_url}}/api/v1/items/{{item_id}}"
   headers:
+    - name: Content-Type
+      value: application/json
     - name: Authorization
       value: "Bearer {{token}}"
 runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 OK", function () {
-            expect(res.getStatus()).to.equal(200);
-          });
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
           test("Returns the correct item", function () {
-            expect(res.getBody().idItem).to.equal(bru.getVar('item_id'));
+            expect(res.getBody().idItem).to.equal(Number(bru.getVar('item_id')));
           });

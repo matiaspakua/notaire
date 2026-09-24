@@ -1,0 +1,20 @@
+info:
+  name: Teardown - Delete procedure type
+  type: http
+  seq: 10
+  description: |-
+      ## Teardown - Delete procedure type — DELETE /api/v1/tipo-tramite/{template_procedure_type_id}
+      Traceability: CU57 (RF #55, #56)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/tipo-tramite/{{template_procedure_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200, 204]).to.include(res.getStatus()); });

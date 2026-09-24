@@ -1,0 +1,28 @@
+info:
+  name: Setup - Create concept
+  type: http
+  seq: 2
+  description: |-
+      ## Setup — POST /api/v1/conceptos
+      Deleted by `07-teardown-delete-concept.yml`.
+      Traceability: CU29 (RF #55, #60)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/conceptos"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Budget Template Concept","value":100.00}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the concept id", function () {
+            bru.setVar('template_concept_id', res.getBody().idConcept);
+          });

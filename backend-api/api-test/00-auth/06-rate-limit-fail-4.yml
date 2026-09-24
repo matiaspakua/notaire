@@ -2,7 +2,9 @@ info:
   name: Rate limit - failed attempt 4/5
   type: http
   seq: 6
-  description: "## Login rate limiting (issue #685) — failed attempt 4 of 5"
+  description: |-
+      ## Login rate limiting (issue #685) — failed attempt 4 of 5
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
   url: "{{base_url}}/api/v1/usuarios/login"

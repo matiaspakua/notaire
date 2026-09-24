@@ -1,0 +1,22 @@
+info:
+  name: Get payment receipt PDF
+  type: http
+  seq: 11
+  description: |-
+      ## Get payment receipt PDF — GET /api/v1/reportes/recibo-pago/{payment_id}
+      Issues the PDF receipt for the payment created in this folder.
+      Traceability: CU15 (RF #21, #23)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/reportes/recibo-pago/{{payment_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns a PDF", function () { expect(res.getHeader('content-type')).to.include('application/pdf'); });

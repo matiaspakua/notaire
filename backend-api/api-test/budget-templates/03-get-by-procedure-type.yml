@@ -1,0 +1,26 @@
+info:
+  name: List budget templates by procedure type
+  type: http
+  seq: 5
+  description: |-
+      ## List budget templates by procedure type — GET /api/v1/plantilla-presupuestos/tipo-tramite/{template_procedure_type_id}
+      Traceability: CU39 (RF #6, #61, #66, #67)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/plantilla-presupuestos/tipo-tramite/{{template_procedure_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Contains the created template", function () {
+            const pt = Number(bru.getVar('template_procedure_type_id'));
+            const c = Number(bru.getVar('template_concept_id'));
+            expect(res.getBody().some(t => t.budgetTemplatePK.fkIdProcedureType === pt
+              && t.budgetTemplatePK.fkIdConcept === c)).to.equal(true);
+          });

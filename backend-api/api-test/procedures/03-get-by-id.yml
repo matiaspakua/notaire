@@ -1,0 +1,23 @@
+info:
+  name: Get procedure by ID
+  type: http
+  seq: 3
+  description: |-
+      ## Get procedure by ID — GET /api/v1/tramites/{procedure_id}
+      Traceability: CU02 (RF #3, #10)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tramites/{{procedure_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the created procedure", function () {
+            expect(res.getBody().idProcedure).to.equal(bru.getVar('procedure_id'));
+          });

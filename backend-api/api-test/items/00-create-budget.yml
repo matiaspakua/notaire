@@ -1,0 +1,36 @@
+info:
+  name: Setup - Create budget
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/presupuestos
+      Creates the parent budget for the items; deleted by `10-teardown-delete-budget.yml`.
+      Traceability: CU01 (RF #4, #5, #7, #9)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "person": { "personId": 1 },
+          "date": "2026-09-05",
+          "encabezado": "Items E2E budget",
+          "status": "Pendiente",
+          "notes": "created by the items suite"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the budget id", function () {
+            const b = res.getBody();
+            expect(b.idBudget).to.be.a('number');
+            bru.setVar('items_budget_id', b.idBudget);
+          });

@@ -1,0 +1,29 @@
+info:
+  name: Update history entry
+  type: http
+  seq: 7
+  description: |-
+      ## Update history entry — PUT /api/v1/historial/{id}
+      Traceability: CU13 (RF #3, #24, #26, #110)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/historial/{{history_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "date": "2026-09-05",
+          "notes": "Management in progress",
+          "fkIdManagement": { "idManagement": {{history_management_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 2 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

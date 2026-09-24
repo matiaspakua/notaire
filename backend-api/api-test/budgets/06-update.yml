@@ -1,0 +1,30 @@
+info:
+  name: Update budget
+  type: http
+  seq: 6
+  description: |-
+      ## Update budget — PUT /api/v1/presupuestos/{budget_id}
+      Traceability: CU45 (RF #4, #7, #8, #9)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/presupuestos/{{budget_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "person": { "personId": 1 },
+          "date": "2026-06-02",
+          "encabezado": "E2E Budget Updated",
+          "status": "Aprobado",
+          "notes": "updated"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

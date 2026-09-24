@@ -1,0 +1,28 @@
+info:
+  name: Create management status
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU30 (RF #55, #59, #107, #108, #109)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/estado-gestion"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Management Status","notes":"e2e status"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idManagementStatus", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idManagementStatus');
+            bru.setVar('management_status_id', b.idManagementStatus);
+          });

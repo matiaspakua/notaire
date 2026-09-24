@@ -1,0 +1,41 @@
+info:
+  name: Setup - Create replaced person
+  type: http
+  seq: 2
+  description: |-
+      ## Setup — POST /api/v1/people
+      Creates the replaced person required by the substitution. The identification
+      number is unique per run and the person is deleted by the teardown
+      requests at the end of the folder, so repeated runs never collide.
+      Traceability: CU48 (RF #43, #113, #114)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Replaced",
+          "lastName": "Substitutions E2E",
+          "identificationNumber": "{{replaced_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Casado",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the replaced person id", function () {
+            const id = res.getBody().personId;
+            expect(id).to.be.a('number');
+            bru.setVar('replaced_person_id', id);
+          });

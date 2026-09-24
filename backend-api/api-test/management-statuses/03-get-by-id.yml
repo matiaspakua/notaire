@@ -1,0 +1,22 @@
+info:
+  name: Get management status by ID
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU67 (RF #55, #59, #107, #108)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/estado-gestion/{{management_status_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested item", function () {
+            expect(res.getBody().idManagementStatus).to.equal(Number(bru.getVar('management_status_id')));
+          });

@@ -1,7 +1,10 @@
 info:
-  name: Get Folio By ID
+  name: Get folio by ID
   type: http
   seq: 4
+  description: |-
+      ## Get folio by ID — GET /api/v1/folio/{id}
+      Traceability: CU63 (RF #55, #58, #94, #95, #96, #99)
 http:
   method: GET
   url: "{{base_url}}/api/v1/folio/{{folio_id}}"
@@ -15,3 +18,6 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the created folio", function () {
+            expect(res.getBody().idFolio).to.equal(Number(bru.getVar('folio_id')));
+          });

@@ -1,0 +1,20 @@
+info:
+  name: Delete property
+  type: http
+  seq: 6
+  description: |-
+      ## Delete property — DELETE /api/v1/inmueble/{property_id}
+      Traceability: CU69 (RF #117)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/inmueble/{{property_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

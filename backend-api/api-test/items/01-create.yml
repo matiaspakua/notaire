@@ -1,11 +1,11 @@
 info:
-  name: Create Item
+  name: Create item
   type: http
   seq: 2
   description: |-
-      ## POST /api/v1/items
-      CU45/CU71 - Crea un item de tipo RECARGO (requiere motivo) asociado al
-      presupuesto creado en el setup.
+      ## Create item — POST /api/v1/items
+      Creates a RECARGO (surcharge) item, which requires a reason, on the setup budget.
+      Traceability: CU71, CU45 (RF #4, #7, #8, #9)
 http:
   method: POST
   url: "{{base_url}}/api/v1/items"
@@ -13,13 +13,13 @@ http:
     type: json
     data: |-
         {
-          "name": "Recargo urgencia",
+          "name": "Urgency surcharge",
           "value": 500.0,
           "percentage": 10,
           "type": "RECARGO",
-          "reason": "Tramite urgente solicitado por el cliente",
+          "reason": "Urgent procedure requested by the client",
           "fixedConcept": false,
-          "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
+          "fkIdBudget": { "idBudget": {{items_budget_id}} }
         }
   headers:
     - name: Content-Type
@@ -30,16 +30,14 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 201 Created", function () {
-            expect(res.getStatus()).to.equal(201);
-          });
-          test("Stores item id", function () {
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the item id", function () {
             const b = res.getBody();
             expect(b.idItem).to.be.a('number');
             bru.setVar('item_id', b.idItem);
           });
           test("Persists name and type", function () {
             const b = res.getBody();
-            expect(b.name).to.equal('Recargo urgencia');
+            expect(b.name).to.equal('Urgency surcharge');
             expect(b.type).to.equal('RECARGO');
           });

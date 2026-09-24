@@ -1,8 +1,10 @@
 info:
-  name: Update Item
+  name: Update item
   type: http
   seq: 7
-  description: "## PUT /api/v1/items/{id}"
+  description: |-
+      ## Update item — PUT /api/v1/items/{item_id}
+      Traceability: CU71, CU45 (RF #4, #7, #8, #9)
 http:
   method: PUT
   url: "{{base_url}}/api/v1/items/{{item_id}}"
@@ -10,13 +12,13 @@ http:
     type: json
     data: |-
         {
-          "name": "Recargo urgencia actualizado",
+          "name": "Urgency surcharge updated",
           "value": 750.0,
           "percentage": 15,
           "type": "RECARGO",
-          "reason": "Tramite urgente solicitado por el cliente",
+          "reason": "Urgent procedure requested by the client",
           "fixedConcept": false,
-          "fkIdBudget": { "idBudget": {{_items_presupuesto_id}} }
+          "fkIdBudget": { "idBudget": {{items_budget_id}} }
         }
   headers:
     - name: Content-Type
@@ -27,6 +29,4 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 OK", function () {
-            expect(res.getStatus()).to.equal(200);
-          });
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

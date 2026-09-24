@@ -1,0 +1,37 @@
+info:
+  name: Setup - Create management
+  type: http
+  seq: 2
+  description: |-
+      ## Setup — POST /api/v1/gestiones
+      Creates the deed management that the history entries belong to. Status
+      "Iniciada" (id 1) is seeded by V2__initial_data.sql.
+      Traceability: CU02 (RF #10, #13)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/gestiones"
+  body:
+    type: json
+    data: |-
+        {
+          "dateStart": "2026-09-05",
+          "number": {{history_management_number}},
+          "encabezado": "History E2E management",
+          "fkIdNotaryPerson": { "personId": {{history_notary_id}} },
+          "fkIdManagementStatus": { "idManagementStatus": 1 }
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the management id", function () {
+            const b = res.getBody();
+            expect(b.idManagement).to.be.a('number');
+            bru.setVar('history_management_id', b.idManagement);
+          });

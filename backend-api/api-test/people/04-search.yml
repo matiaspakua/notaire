@@ -1,0 +1,24 @@
+info:
+  name: Search people by last name
+  type: http
+  seq: 4
+  description: |-
+      ## Search people by last name — GET /api/v1/people/search?lastName={{person_last_name}}
+      Traceability: CU61 (RF #38, #41)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/people/search?lastName={{person_last_name}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Search finds the created person", function () {
+            const id = Number(bru.getVar('person_id'));
+            expect(res.getBody().some(p => p.personId === id)).to.equal(true);
+          });

@@ -1,0 +1,22 @@
+info:
+  name: Get identification type by ID
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-identificacion/{{identification_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested item", function () {
+            expect(res.getBody().idIdentificationType).to.equal(Number(bru.getVar('identification_type_id')));
+          });

@@ -1,8 +1,11 @@
 info:
-  name: List Folios
+  name: List folios
   type: http
   seq: 3
-  description: "## Regression for #416 — raw entity serialization must not 500"
+  description: |-
+      ## List folios — GET /api/v1/folio
+      Regression for #416 — raw entity serialization must not 500.
+      Traceability: CU63 (RF #55, #58, #94, #95, #96, #99)
 http:
   method: GET
   url: "{{base_url}}/api/v1/folio"
@@ -17,3 +20,7 @@ runtime:
       code: |-
           test("Status 200 (no lazy-proxy serialization 500)", function () { expect(res.getStatus()).to.equal(200); });
           test("Response is an array", function () { expect(res.getBody()).to.be.an('array'); });
+          test("Created folio is in the list", function () {
+            const id = Number(bru.getVar('folio_id'));
+            expect(res.getBody().some(f => f.idFolio === id)).to.equal(true);
+          });

@@ -1,0 +1,34 @@
+info:
+  name: Update person
+  type: http
+  seq: 5
+  description: |-
+      ## Update person — PUT /api/v1/people/{{person_id}}
+      Traceability: CU54, CU41 (RF #38, #40)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/people/{{person_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Ana Maria",
+          "lastName": "{{person_last_name}} Updated",
+          "identificationNumber": "{{person_updated_document}}",
+          "isClient": true,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Casado",
+          "sex": "Femenino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Update persisted", function () { expect(res.getBody().firstName).to.equal('Ana Maria'); });

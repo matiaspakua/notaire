@@ -1,0 +1,28 @@
+info:
+  name: List concepts
+  type: http
+  seq: 2
+  description: |-
+      ## List concepts — GET /api/v1/conceptos
+      Traceability: CU66 (RF #55, #60)
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/conceptos"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response is an array", function () { expect(res.getBody()).to.be.an('array'); });
+          test("Created concept is present in the list", function () {
+            const id = Number(bru.getVar('concept_id'));
+            const found = res.getBody().some(c => c.idConcept === id);
+            expect(found, 'created concept should be listed').to.equal(true);
+          });

@@ -1,0 +1,28 @@
+info:
+  name: Create folio type
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU36 (RF #55, #94, #119)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-folio"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Folio Type","notes":"e2e folio"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idFolioType", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idFolioType');
+            bru.setVar('folio_type_id', b.idFolioType);
+          });

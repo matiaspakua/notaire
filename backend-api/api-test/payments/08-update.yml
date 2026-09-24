@@ -1,0 +1,30 @@
+info:
+  name: Update payment
+  type: http
+  seq: 9
+  description: |-
+      ## Update payment — PUT /api/v1/pagos/{payment_id}
+      Traceability: CU15 (RF #3, #20, #21, #22, #23)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "amount": 4500.0,
+          "date": "2026-09-05",
+          "notes": "E2E partial payment updated",
+          "paymentMethod": "Efectivo"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Persists the updated amount", function () { expect(res.getBody().amount).to.equal(4500.0); });

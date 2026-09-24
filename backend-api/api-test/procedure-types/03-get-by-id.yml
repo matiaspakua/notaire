@@ -1,0 +1,22 @@
+info:
+  name: Get procedure type by ID
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU64 (RF #55, #56)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-tramite/{{procedure_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested item", function () {
+            expect(res.getBody().idProcedureType).to.equal(Number(bru.getVar('procedure_type_id')));
+          });

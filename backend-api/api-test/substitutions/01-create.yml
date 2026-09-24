@@ -1,0 +1,29 @@
+info:
+  name: Create substitution
+  type: http
+  seq: 3
+  description: |-
+      ## Create substitution — POST /api/v1/suplencia
+      Traceability: CU22 (RF #43, #113, #114, #115)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/suplencia"
+  body:
+    type: json
+    data: |-
+        {"dateStart":"2026-01-01","dateEnd":"2026-01-31","fkIdSubstitute":{"personId":{{substitute_person_id}}},"fkIdSubstituted":{"personId":{{replaced_person_id}}}}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idSubstitution", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idSubstitution');
+            bru.setVar('substitution_id', b.idSubstitution);
+          });

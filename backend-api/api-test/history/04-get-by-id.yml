@@ -1,0 +1,26 @@
+info:
+  name: Get history entry by ID
+  type: http
+  seq: 5
+  description: |-
+      ## Get history entry by ID — GET /api/v1/historial/{id}
+      Traceability: CU13 (RF #3, #24, #26, #110)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{history_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the matching history entry", function () {
+            const b = res.getBody();
+            expect(b.idHistory).to.equal(parseInt(bru.getVar('history_id'), 10));
+            expect(b.managementId).to.equal(parseInt(bru.getVar('history_management_id'), 10));
+            expect(b.notes).to.equal('Management started');
+          });

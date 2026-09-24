@@ -1,0 +1,24 @@
+info:
+  name: Create budget template
+  type: http
+  seq: 3
+  description: |-
+      ## Create budget template — POST /api/v1/plantilla-presupuestos
+      Traceability: CU39 (RF #6, #61, #66, #67)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/plantilla-presupuestos"
+  body:
+    type: json
+    data: |-
+        {"budgetTemplatePK":{"fkIdProcedureType":{{template_procedure_type_id}},"fkIdConcept":{{template_concept_id}}},"procedureType":{"idProcedureType":{{template_procedure_type_id}}},"concept":{"idConcept":{{template_concept_id}}},"notes":"E2E budget template"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });

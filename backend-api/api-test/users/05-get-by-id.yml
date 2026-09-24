@@ -1,0 +1,23 @@
+info:
+  name: Get user by ID
+  type: http
+  seq: 5
+  description: |-
+      ## Get user by ID — GET /api/v1/usuarios/{api_user_id}
+      Traceability: CU20 (RF #43, #44, #45, #82, #83)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios/{{api_user_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the created user", function () {
+            expect(res.getBody().idUser).to.equal(Number(bru.getVar('api_user_id')));
+          });
