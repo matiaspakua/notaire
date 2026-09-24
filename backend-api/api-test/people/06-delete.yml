@@ -1,0 +1,20 @@
+info:
+  name: Delete person
+  type: http
+  seq: 6
+  description: |-
+      ## Delete person — DELETE /api/v1/people/{{person_id}}
+      Traceability: CU54 (RF #38, #40)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/people/{{person_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

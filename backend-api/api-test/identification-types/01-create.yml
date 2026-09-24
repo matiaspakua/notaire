@@ -1,0 +1,28 @@
+info:
+  name: Create identification type
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-identificacion"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Identification Type","characters":"8"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idIdentificationType", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idIdentificationType');
+            bru.setVar('identification_type_id', b.idIdentificationType);
+          });

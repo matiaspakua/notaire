@@ -1,0 +1,23 @@
+info:
+  name: Update folio type
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU40 (RF #55, #94, #119)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-folio/{{folio_type_id}}"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Folio Type Updated","notes":"upd"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

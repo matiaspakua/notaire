@@ -1,0 +1,25 @@
+info:
+  name: Verify history entry update
+  type: http
+  seq: 8
+  description: |-
+      ## Verify the update persisted — GET /api/v1/historial/{id}
+      Traceability: CU13 (RF #3, #24, #26, #110)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{history_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Reflects the updated notes and status", function () {
+            const b = res.getBody();
+            expect(b.notes).to.equal('Management in progress');
+            expect(b.statusManagementId).to.equal(2);
+          });

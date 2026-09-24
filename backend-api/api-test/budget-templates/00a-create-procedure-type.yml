@@ -1,0 +1,29 @@
+info:
+  name: Setup - Create procedure type
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/tipo-tramite
+      Own procedure type so the template lifecycle never touches seeded rows;
+      deleted by `08-teardown-delete-procedure-type.yml`.
+      Traceability: CU26 (RF #55, #56)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Budget Template Procedure Type","notes":"budget template fixture","isArchived":false,"isRegistered":false}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the procedure type id", function () {
+            bru.setVar('template_procedure_type_id', res.getBody().idProcedureType);
+          });

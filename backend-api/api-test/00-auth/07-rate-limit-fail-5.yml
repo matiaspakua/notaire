@@ -9,6 +9,7 @@ info:
       request itself still observes the normal 200/valido:false outcome — the
       lockout only becomes externally visible on the NEXT request (see
       `08-rate-limit-locked.yml`).
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
   url: "{{base_url}}/api/v1/usuarios/login"

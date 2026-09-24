@@ -1,0 +1,19 @@
+info:
+  name: Delete management status
+  type: http
+  seq: 6
+  description: |-
+      Traceability: CU30 (RF #55, #59, #107, #108, #109)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/estado-gestion/{{management_status_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

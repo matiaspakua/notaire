@@ -1,0 +1,20 @@
+info:
+  name: Verify history entry deleted
+  type: http
+  seq: 10
+  description: |-
+      ## Confirm deletion — GET deleted id returns 404
+      Traceability: CU13 (RF #3, #24, #26, #110)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial/{{history_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () { expect(res.getStatus()).to.equal(404); });

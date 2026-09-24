@@ -52,7 +52,7 @@ class ProcedureFolderServiceTest {
     @Test
     @DisplayName("Should generate carpeta activa numerada al alta de un trámite")
     void shouldGenerateActiveFolderForNewProcedure() {
-        when(procedureFolderRepository.findTopByOrderByNumberDesc()).thenReturn(Optional.empty());
+        when(procedureFolderRepository.nextFolderNumber()).thenReturn(1);
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
 
         ProcedureFolder folder = procedureFolderService.generateFolderForProcedure(procedure);
@@ -64,11 +64,9 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should increment number based on the last generated carpeta")
-    void shouldIncrementNumberFromLastFolder() {
-        ProcedureFolder ultima = new ProcedureFolder();
-        ultima.setNumber(7);
-        when(procedureFolderRepository.findTopByOrderByNumberDesc()).thenReturn(Optional.of(ultima));
+    @DisplayName("Should number the carpeta from the database sequence, not from the last carpeta")
+    void shouldNumberFolderFromSequence() {
+        when(procedureFolderRepository.nextFolderNumber()).thenReturn(8);
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
 
         ProcedureFolder folder = procedureFolderService.generateFolderForProcedure(procedure);

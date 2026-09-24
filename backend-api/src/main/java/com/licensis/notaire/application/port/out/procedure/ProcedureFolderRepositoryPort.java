@@ -20,5 +20,5 @@ public interface ProcedureFolderRepositoryPort {
 
     List<ProcedureFolder> findByFkIdManagementIdManagement(Integer idManagement);
 
-    Optional<ProcedureFolder> findTopByOrderByNumberDesc();
+    int nextFolderNumber();
 }

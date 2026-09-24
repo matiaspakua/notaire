@@ -1,0 +1,47 @@
+info:
+  name: Setup - Create notary person
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/people
+      Creates the notary person that the folio requires, so the folder is
+      self-contained on a freshly migrated database. The identification number
+      is unique per run (timestamp-derived) and the person is deleted by
+      `06-teardown-delete-notary.yml`, so repeated runs never collide.
+      Traceability: CU48 (RF #43, #113, #114)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Notary",
+          "lastName": "Folios E2E",
+          "identificationNumber": "{{folio_notary_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const now = Date.now();
+          bru.setVar('folio_notary_document', String(now).slice(-8));
+          bru.setVar('folio_number', 100000 + (now % 900000));
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the notary person id", function () {
+            const id = res.getBody().personId;
+            expect(id).to.be.a('number');
+            bru.setVar('folio_notary_id', id);
+          });

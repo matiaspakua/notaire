@@ -1,0 +1,24 @@
+info:
+  name: List history entries
+  type: http
+  seq: 4
+  description: |-
+      ## List history entries — GET /api/v1/historial
+      Traceability: CU13 (RF #3, #24, #26, #110)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/historial"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Contains the created history entry", function () {
+            const id = parseInt(bru.getVar('history_id'), 10);
+            expect(res.getBody().some((h) => h.idHistory === id)).to.be.true;
+          });

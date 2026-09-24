@@ -1,0 +1,23 @@
+info:
+  name: Get payment by ID
+  type: http
+  seq: 4
+  description: |-
+      ## Get payment by ID — GET /api/v1/pagos/{payment_id}
+      Traceability: CU47 (RF #20, #22)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the correct payment", function () {
+            expect(res.getBody().idPayment).to.equal(Number(bru.getVar('payment_id')));
+          });

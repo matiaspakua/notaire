@@ -7,7 +7,7 @@ Para el plan maestro de testing (niveles de test, catálogo por caso de uso,
 proceso de reporting), ver [`TEST-PLAN.md`](TEST-PLAN.md). Este README es el
 inventario de suites y comandos.
 
-```
+```text
 Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwright, por Caso de Uso)
 ```
 
@@ -17,7 +17,7 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwr
 |-------|-----------|---------|---------|
 | Unit (JUnit 5) | `backend-api/src/test/java/.../unit/` | 73 clases | `mvn test -pl backend-api -Dtest="**/unit/*"` |
 | Integration (Spring Boot / H2 + PostgreSQL) | `backend-api/src/test/java/.../integration/` | 59 clases | `mvn test -pl backend-api -Dtest="**/integration/*"` |
-| API (Bruno YAML) | `backend-api/api-test/` | 104 requests, 16 recursos | `cd backend-api/api-test && bru run . -r --env Developmen` |
+| API (Bruno YAML) | `backend-api/api-test/` | 164 requests, 21 resource folders (idempotent) | `cd backend-api/api-test && bru run . -r --env Development` |
 | Frontend unit/component (Vitest) | `frontend/src/**/*.test.ts(x)` | 19+ archivos | `cd frontend && npm test` |
 | E2E UI/UX (Playwright) | `frontend/tests/e2e/` | 33 specs, por Caso de Uso (`cuNN-*.spec.ts`) | `cd frontend && npm run test:e2e` |
 | HTTP (cURL, legacy smoke) | `testing/http/` | 10 scripts | `bash testing/http/test-all-endpoints-v2.sh` |
@@ -55,7 +55,7 @@ cd frontend && npm run test:e2e
 npm run test:e2e:headed   # modo interactivo
 
 # API (Bruno, requiere backend en :8080)
-cd backend-api/api-test && bru run . -r --env Developmen
+cd backend-api/api-test && bru run . -r --env Development
 
 # Réplica local de todos los gates de CI
 bash scripts/preflight.sh --full

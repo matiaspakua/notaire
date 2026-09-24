@@ -1,0 +1,23 @@
+info:
+  name: Update procedure type
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU31 (RF #55, #56)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-tramite/{{procedure_type_id}}"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Procedure Type Updated","notes":"upd","isArchived":true,"isRegistered":false}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

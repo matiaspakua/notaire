@@ -1,0 +1,25 @@
+info:
+  name: Verify budget update
+  type: http
+  seq: 7
+  description: |-
+      ## Verify budget update — GET /api/v1/presupuestos/{budget_id}
+      Traceability: CU45 (RF #4, #7, #8, #9)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos/{{budget_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Update persisted", function () {
+            const b = res.getBody();
+            expect(b.encabezado).to.equal('E2E Budget Updated');
+            expect(b.status).to.equal('Aprobado');
+          });

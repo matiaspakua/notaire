@@ -5,13 +5,14 @@ info:
   description: |-
       ## Login rate limiting (issue #685) — 6th attempt, account now locked
       The backend returns HTTP 429 (Too Many Requests) for a locked account —
-      see `UsuarioController.login()` — not 423 (Locked) as originally assumed
+      see `UserController.login()` — not 423 (Locked) as originally assumed
       when this issue was filed. This test asserts the actual, already
       integration-tested behavior (`LoginRateLimitIntegrationTest`).
       Unlocking after the lockout duration elapses is covered at the unit level
       (`LoginAttemptServiceTest`, injectable clock) rather than here: the
       default lockout duration is 15 minutes, which is impractical to wait out
       in an HTTP-level/CI test.
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
   url: "{{base_url}}/api/v1/usuarios/login"

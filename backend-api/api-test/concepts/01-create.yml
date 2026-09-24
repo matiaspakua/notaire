@@ -1,0 +1,40 @@
+info:
+  name: Create concept
+  type: http
+  seq: 1
+  description: |-
+      ## Create Concept
+      Creates a new price concept. Captures `concept_id` for the rest of the lifecycle.
+      Traceability: CU29 (RF #55, #60)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/conceptos"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "E2E Concept",
+                    "value": 1500.50
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status is 201 Created", function () {
+            expect(res.getStatus()).to.equal(201);
+          });
+          test("Body returns the created concept with idConcept", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idConcept');
+            expect(b.name).to.equal('E2E Concept');
+            bru.setVar('concept_id', b.idConcept);
+          });
+          test("Default enabled is true on create", function () {
+            expect(res.getBody().enabled).to.equal(true);
+          });

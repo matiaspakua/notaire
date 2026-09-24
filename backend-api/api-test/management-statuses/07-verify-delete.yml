@@ -1,0 +1,19 @@
+info:
+  name: Verify management status deleted
+  type: http
+  seq: 7
+  description: |-
+      Traceability: CU30 (RF #55, #59, #107, #108, #109)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/estado-gestion/{{management_status_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 after delete", function () { expect(res.getStatus()).to.equal(404); });

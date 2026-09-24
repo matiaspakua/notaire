@@ -5,10 +5,11 @@ info:
   description: |-
       ## Negative login — wrong password (issue #686)
       The backend never returns 401 for a bad password on this endpoint — see
-      `UsuarioController.login()`, which always responds 200 with
+      `UserController.login()`, which always responds 200 with
       `valido:false` (or 429 once locked out) so the client can distinguish
       "wrong credentials" from a network/server failure. `JwtAuthIntegrationTest
       .shouldRejectLoginWithWrongPassword` asserts the same contract.
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
   url: "{{base_url}}/api/v1/usuarios/login"

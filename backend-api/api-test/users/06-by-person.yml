@@ -1,0 +1,22 @@
+info:
+  name: Get user by person
+  type: http
+  seq: 6
+  description: |-
+      ## Get user by person — GET /api/v1/usuarios/persona/{idPerson}
+      Uses seeded person 1, linked to the seeded admin user (read only).
+      Traceability: CU20 (RF #43, #44, #45, #82, #83)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/usuarios/persona/1"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the user linked to the person", function () { expect(res.getBody()).to.have.property('idUser'); });

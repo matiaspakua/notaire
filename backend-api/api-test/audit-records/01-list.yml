@@ -1,0 +1,42 @@
+info:
+  name: List audit records
+  type: http
+  seq: 1
+  description: |-
+      ## List audit records — GET /api/v1/audit-log
+      Returns every audit record without pagination (legacy compatibility): the
+      endpoint returns a flat list of DTOs when no paging parameters are sent.
+      Requires a valid JWT (runs after the `00-auth` folder).
+      Traceability: CU73, CU23 (RF #43, #46)
+
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/audit-log"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
+
+          test("Response is an array (legacy flat list)", function () {
+            expect(res.getBody()).to.be.an('array');
+          });
+
+          test("Each entry has expected audit fields", function () {
+            const body = res.getBody();
+            if (body.length > 0) {
+              const entry = body[0];
+              expect(entry).to.have.property('idAuditRecord');
+              expect(entry).to.have.property('operationDetail');
+              expect(entry).to.have.property('module');
+            }
+          });
+

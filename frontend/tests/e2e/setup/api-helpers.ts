@@ -199,13 +199,19 @@ export interface SuplenciaPayload {
  * Seed test helpers — create entities with unique test IDs
  */
 
-// Kept below Java's 32-bit `int` max (2,147,483,647) so IDs fed into `int`-typed
-// entity fields (e.g. Deed.number) don't overflow and fail JSON deserialization.
-let _testCounter = Date.now() % 1_000_000_000;
+// Each Playwright worker draws from its own residue class modulo ID_STRIDE
+// (global setup, outside any worker, takes slot 0), so workers started a few
+// milliseconds apart can never hand out the same id. Kept below Java's 32-bit
+// `int` max (2,147,483,647) so IDs fed into `int`-typed entity fields
+// (e.g. Deed.number) don't overflow and fail JSON deserialization.
+const ID_STRIDE = 16;
+const workerSlot = (Number(process.env.TEST_PARALLEL_INDEX ?? -1) + 1) % ID_STRIDE;
+let _testCounter = (Date.now() % 100_000_000) * ID_STRIDE + workerSlot;
 
 /** Generate a unique test identifier */
 export function uniqueId(): number {
-  return ++_testCounter;
+  _testCounter += ID_STRIDE;
+  return _testCounter;
 }
 
 /** Generate a unique string suitable for test names/IDs */

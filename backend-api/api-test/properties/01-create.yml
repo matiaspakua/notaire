@@ -1,0 +1,43 @@
+info:
+  name: Create property
+  type: http
+  seq: 1
+  description: |-
+      ## Create property — POST /api/v1/inmueble
+      Cadastral designation is unique per run; deleted by `06-delete.yml`.
+      Traceability: CU69 (RF #117)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/inmueble"
+  body:
+    type: json
+    data: |-
+        {
+          "cadastralDesignation": "{{property_cadastral}}",
+          "address": "5000 Libertador Ave",
+          "fiscalAppraisal": 250000.0,
+          "registrationNumber": "M-9988",
+          "volumeFolioLandRecord": "T5-F12-FN3",
+          "boundaries": "N: Street, S: Lot 2",
+          "notes": "Bruno E2E property"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('property_cadastral', 'CIRC-01-SEC-A-PARC-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idProperty and persists attributes", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idProperty');
+            expect(b.address).to.equal('5000 Libertador Ave');
+            expect(b.cadastralDesignation).to.equal(bru.getVar('property_cadastral'));
+            bru.setVar('property_id', b.idProperty);
+          });

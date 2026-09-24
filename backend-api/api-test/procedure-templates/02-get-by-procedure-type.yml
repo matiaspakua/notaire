@@ -1,0 +1,22 @@
+info:
+  name: List procedure templates by procedure type
+  type: http
+  seq: 2
+  description: |-
+      ## List procedure templates by procedure type — GET /api/v1/plantilla-tramite/tipo-tramite/1
+      Read-only lookup against seeded procedure type 1.
+      Traceability: CU03 (RF #14, #15), CU79 (RF #61, #62, #63, #64, #65)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/plantilla-tramite/tipo-tramite/1"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns an array", function () { expect(res.getBody()).to.be.an('array'); });

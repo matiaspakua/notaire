@@ -1,0 +1,40 @@
+info:
+  name: Login returns a well-formed JWT
+  type: http
+  seq: 15
+  description: |-
+      ## Login returns a well-formed JWT — POST /api/v1/usuarios/login
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        {"name": "{{jwt_user_name}}", "password": "Test1234!"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response contains a token", function () {
+            const b = res.getBody();
+            expect(b.token).to.be.a('string');
+            expect(b.token.length).to.be.greaterThan(0);
+          });
+          test("Token has header.payload.signature format", function () {
+            const parts = res.getBody().token.split('.');
+            expect(parts.length).to.equal(3);
+            parts.forEach(function (part) { expect(part.length).to.be.greaterThan(0); });
+          });
+          test("Token payload has sub matching the user and a future exp", function () {
+            const payload = JSON.parse(Buffer.from(res.getBody().token.split('.')[1], 'base64').toString('utf-8'));
+            expect(payload.sub).to.equal(bru.getVar('jwt_user_name'));
+            expect(payload.exp).to.be.a('number');
+            expect(payload.exp * 1000).to.be.greaterThan(Date.now());
+          });

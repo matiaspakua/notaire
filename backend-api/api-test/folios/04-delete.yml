@@ -1,7 +1,10 @@
 info:
-  name: Delete Folio
+  name: Delete folio
   type: http
   seq: 5
+  description: |-
+      ## Delete folio — DELETE /api/v1/folio/{id}
+      Traceability: CU33 (RF #55, #58, #94, #96, #97, #98)
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/folio/{{folio_id}}"

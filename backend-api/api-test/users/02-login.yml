@@ -1,0 +1,25 @@
+info:
+  name: Login as the created user
+  type: http
+  seq: 2
+  description: |-
+      ## Login as the created user — POST /api/v1/usuarios/login
+      Traceability: CU78 (RF #81, #82, #83, #84, #85)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios/login"
+  body:
+    type: json
+    data: |-
+        {"name": "{{api_user_name}}", "password": "Test1234!"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Login is valid for correct credentials", function () { expect(res.getBody().valido).to.equal(true); });

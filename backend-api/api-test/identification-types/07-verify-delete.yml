@@ -1,0 +1,19 @@
+info:
+  name: Verify identification type deleted
+  type: http
+  seq: 7
+  description: |-
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-identificacion/{{identification_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 after delete", function () { expect(res.getStatus()).to.equal(404); });

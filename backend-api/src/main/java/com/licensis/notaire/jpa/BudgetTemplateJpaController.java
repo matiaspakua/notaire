@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.transaction.UserTransaction;
@@ -179,28 +178,15 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            BudgetTemplate budgetTemplate;
-            try
+            BudgetTemplate budgetTemplate = em.find(BudgetTemplate.class, id);
+            if (budgetTemplate == null)
             {
-                budgetTemplate = em.getReference(BudgetTemplate.class, id);
-                budgetTemplate.getBudgetTemplatePK();
+                throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.");
             }
-            catch (EntityNotFoundException enfe)
-            {
-                throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.", enfe);
-            }
-            ProcedureType procedureType = budgetTemplate.getProcedureType();
-            if (procedureType != null)
-            {
-                procedureType.getBudgetTemplateList().remove(budgetTemplate);
-                procedureType = em.merge(procedureType);
-            }
-            Concept concept = budgetTemplate.getConcept();
-            if (concept != null)
-            {
-                concept.getBudgetTemplateList().remove(budgetTemplate);
-                concept = em.merge(concept);
-            }
+            // find(), not getReference(): a proxy does not match the loaded instance in the parents'
+            // cascade-ALL lists, so it stayed there and flush re-persisted it, undoing the delete.
+            budgetTemplate.getProcedureType().getBudgetTemplateList().remove(budgetTemplate);
+            budgetTemplate.getConcept().getBudgetTemplateList().remove(budgetTemplate);
             em.remove(budgetTemplate);
             em.getTransaction().commit();
         }

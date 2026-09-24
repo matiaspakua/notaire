@@ -1,0 +1,47 @@
+info:
+  name: Setup - Create notary person
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/people
+      Creates the notary person required by the management, so the folder is
+      self-contained on a freshly migrated database. The identification number
+      and management number are unique per run; both rows are deleted by the
+      teardown requests at the end of the folder.
+      Traceability: CU48 (RF #43, #113, #114)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Notary",
+          "lastName": "History E2E",
+          "identificationNumber": "{{history_notary_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const now = Date.now();
+          bru.setVar('history_notary_document', String(now).slice(-8));
+          bru.setVar('history_management_number', 100000000 + (now % 900000000));
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the notary person id", function () {
+            const id = res.getBody().personId;
+            expect(id).to.be.a('number');
+            bru.setVar('history_notary_id', id);
+          });

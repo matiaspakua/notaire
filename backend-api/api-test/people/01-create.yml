@@ -1,0 +1,45 @@
+info:
+  name: Create person
+  type: http
+  seq: 1
+  description: |-
+      ## Create person — POST /api/v1/people
+      Traceability: CU17, CU18 (RF #12, #38, #39)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Ana",
+          "lastName": "{{person_last_name}}",
+          "identificationNumber": "{{person_document}}",
+          "isClient": true,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Femenino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const base = Date.now() % 100000000;
+          bru.setVar('person_document', String(base).padStart(8, '0'));
+          bru.setVar('person_updated_document', String((base + 1) % 100000000).padStart(8, '0'));
+          bru.setVar('person_last_name', 'Lopez E2E ' + base);
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns personId and is marked as client", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('personId');
+            expect(b.isClient).to.equal(true);
+            bru.setVar('person_id', b.personId);
+          });

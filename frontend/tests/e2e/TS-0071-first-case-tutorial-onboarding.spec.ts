@@ -45,13 +45,6 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
   await pause(page);
 }
 
-async function chooseLast(page: Page, triggerTestId: string): Promise<void> {
-  await page.getByTestId(triggerTestId).click();
-  await pause(page, 0.5);
-  await page.getByRole("option").last().evaluate((element) => (element as HTMLElement).click());
-  await pause(page);
-}
-
 async function saveDialog(page: Page): Promise<void> {
   await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
@@ -170,8 +163,9 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await page.getByTestId("btn-nueva-gestion").click();
       await page.getByTestId("input-numero-gestion").fill(gestion);
       await pause(page);
-      // The quote just created is the newest entry offered by the select.
-      await chooseLast(page, "select-presupuesto-gestion");
+      // Budget options are labeled with the client's name, so the tutorial links the
+      // case to its own quote rather than relying on list order.
+      await choose(page, "select-presupuesto-gestion", new RegExp(cliente, "i"));
       await chooseFirst(page, "select-escribano-gestion");
       await chooseFirst(page, "select-estado-gestion");
       await choose(page, "select-tipo-tramite-gestion", new RegExp(tipoTramite, "i"));

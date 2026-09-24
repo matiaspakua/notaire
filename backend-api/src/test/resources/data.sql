@@ -54,3 +54,7 @@ INSERT INTO users (version, username, password, user_type, status, fk_id_person)
 -- property_amount must be large enough to cover the payment amounts asserted against it in integration tests.
 INSERT INTO budgets (version, number, budget_date, heading, status, property_amount) VALUES
 (0, 20250001, '2025-01-15', 'Presupuesto de prueba', 'PENDIENTE', 50000.00);
+
+-- Procedure folder numbers come from this sequence (Flyway V38); Hibernate's
+-- ddl-auto=create only builds tables, so H2 needs it declared here (#1038).
+CREATE SEQUENCE IF NOT EXISTS procedure_folder_number_seq;

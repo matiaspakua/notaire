@@ -1,0 +1,30 @@
+info:
+  name: Update property
+  type: http
+  seq: 4
+  description: |-
+      ## Update property — PUT /api/v1/inmueble/{property_id}
+      Traceability: CU69 (RF #117)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/inmueble/{{property_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "cadastralDesignation": "{{property_cadastral}}-MOD",
+          "address": "5000 Libertador Ave, 2nd floor",
+          "fiscalAppraisal": 300000.0,
+          "registrationNumber": "M-9988-B",
+          "notes": "E2E property updated"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

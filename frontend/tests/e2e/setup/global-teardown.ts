@@ -93,7 +93,10 @@ async function globalTeardown(): Promise<void> {
         } else if (result.status === 404) {
           console.log(`[global-teardown] ${del.label} already deleted (404)`);
         } else {
-          console.warn(`[global-teardown] Failed to delete ${del.label}: ${result.status}`);
+          console.warn(
+            `[global-teardown] Failed to delete ${del.label}: ${result.status}`,
+            result.error ?? JSON.stringify(result.data),
+          );
         }
       } catch (err) {
         console.warn(`[global-teardown] Error deleting ${del.label}:`, err);

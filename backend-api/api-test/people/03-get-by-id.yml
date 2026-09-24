@@ -1,0 +1,23 @@
+info:
+  name: Get person by ID
+  type: http
+  seq: 3
+  description: |-
+      ## Get person by ID — GET /api/v1/people/{{person_id}}
+      Traceability: CU46 (RF #38, #41)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/people/{{person_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested person", function () {
+            expect(res.getBody().personId).to.equal(Number(bru.getVar('person_id')));
+          });

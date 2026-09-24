@@ -1,0 +1,26 @@
+info:
+  name: List budgets
+  type: http
+  seq: 2
+  description: |-
+      ## List budgets — GET /api/v1/presupuestos
+      Traceability: CU60 (RF #4, #5, #7)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/presupuestos"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Created budget is listed", function () {
+            const id = Number(bru.getVar('budget_id'));
+            const page = res.getBody();
+            expect(page).to.have.property('content');
+            expect(page.content.some(p => p.idBudget === id)).to.equal(true);
+          });

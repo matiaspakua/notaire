@@ -1,0 +1,25 @@
+info:
+  name: Verify property update
+  type: http
+  seq: 5
+  description: |-
+      ## Verify property update — GET /api/v1/inmueble/{property_id}
+      Traceability: CU69 (RF #117)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/inmueble/{{property_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Attributes were updated", function () {
+            const b = res.getBody();
+            expect(b.address).to.equal('5000 Libertador Ave, 2nd floor');
+            expect(b.cadastralDesignation).to.equal(bru.getVar('property_cadastral') + '-MOD');
+          });

@@ -1,0 +1,38 @@
+info:
+  name: Setup - Create budget with amount
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/presupuestos
+      Creates a budget with `propertyAmount` set so there is a pending balance to pay
+      against; deleted by `13-teardown-delete-budget.yml`.
+      Traceability: CU01 (RF #4, #5, #7, #9)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "person": { "personId": 1 },
+          "date": "2026-09-05",
+          "encabezado": "Payments E2E budget",
+          "status": "Pendiente",
+          "propertyAmount": 10000.0,
+          "notes": "created by the payments suite"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the budget id", function () {
+            const b = res.getBody();
+            expect(b.idBudget).to.be.a('number');
+            bru.setVar('payments_budget_id', b.idBudget);
+          });

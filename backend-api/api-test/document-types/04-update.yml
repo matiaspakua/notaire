@@ -1,0 +1,23 @@
+info:
+  name: Update document type
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU32 (RF #55, #57)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-de-documento/{{document_type_id}}"
+  body:
+    type: json
+    data: |-
+        {"name":"E2E Document Type Updated","expires":true,"dueDays":30,"deliveredBy":"Escribano"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

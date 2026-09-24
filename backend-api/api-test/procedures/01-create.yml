@@ -1,0 +1,32 @@
+info:
+  name: Create procedure
+  type: http
+  seq: 1
+  description: |-
+      ## Create procedure — POST /api/v1/tramites
+      Uses seeded procedure type 1 (referenced only, never modified);
+      deleted by `06-delete.yml`.
+      Traceability: CU02 (RF #3, #10)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tramites"
+  body:
+    type: json
+    data: |-
+        {"notes":"E2E procedure","idProcedureType":1}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the procedure id", function () {
+            const b = res.getBody();
+            expect(b.idProcedure).to.be.a('number');
+            bru.setVar('procedure_id', b.idProcedure);
+          });
+          test("Persists notes", function () { expect(res.getBody().notes).to.equal('E2E procedure'); });

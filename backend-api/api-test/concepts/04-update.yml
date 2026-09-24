@@ -1,0 +1,31 @@
+info:
+  name: Update concept
+  type: http
+  seq: 4
+  description: |-
+      ## Update concept — PUT /api/v1/conceptos/{id}
+      Regression guard for issue #415: payload omits `enabled` and must not 500.
+      Traceability: CU34 (RF #55, #60)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/conceptos/{{concept_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "E2E Concept Updated",
+                    "value": 2750.00
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 (no NPE when enabled omitted)", function () {
+            expect(res.getStatus()).to.equal(200);
+          });
