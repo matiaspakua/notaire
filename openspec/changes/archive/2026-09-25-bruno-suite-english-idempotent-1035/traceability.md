@@ -10,17 +10,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1035 | in-progress |
+| Issue | #1035 | closed |
 | Use Case | CU76 – Quality Assurance and Testing Infrastructure | exists |
-| Specification | `openspec/changes/bruno-suite-english-idempotent-1035/` | created |
-| Branch | `test/1035_bruno_suite_english_idempotent` | created |
-| Tasks | `tasks.md` | implementation done; PR/merge pending |
+| Specification | `openspec/changes/archive/2026-09-25-bruno-suite-english-idempotent-1035/` | archived |
+| Branch | `test/1035_bruno_suite_english_idempotent` | merged |
+| Tasks | `tasks.md` | all done |
 | Commits | `b7ace0a` (fix #1036), `5e0f246` (suite), `4e7a07a` (env rename), `a45689a` docs (`Closes #1035`), `1054df0` md-lint, `cddba90` (fix #1038, V38 folder-number sequence), `f34d567` (E2E fix #1037) | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | n/a — test suite only | pending |
-| Smoke test | CI "API Tests (Bruno)" job | pending |
+| Pull Request | #1039 | merged |
+| CI run | 35979255785 (API Tests (Bruno): 164/164 passed) | green |
+| Merge commit | `5a8fa14` | done |
+| Release / tag | n/a — test suite only | n/a |
+| Smoke test | CI "API Tests (Bruno)" job | passed |
 
 ## Requirement coverage
 

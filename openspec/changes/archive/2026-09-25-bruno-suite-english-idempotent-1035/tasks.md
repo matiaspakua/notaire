@@ -60,9 +60,9 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin test/1035_bruno_suite_english_idempotent`
-- [ ] 10.2 PR opened, titled `[#1035] test: translate Bruno suite to English and make it idempotent`
-- [ ] 10.3 Mergeability verified (`gh pr view --json mergeable,mergeStateStatus`)
+- [x] 10.1 `git push -u origin test/1035_bruno_suite_english_idempotent`
+- [x] 10.2 PR opened, titled `[#1035] test: translate Bruno suite to English and make it idempotent`
+- [x] 10.3 Mergeability verified (`gh pr view --json mergeable,mergeStateStatus`)
 
 ## 11. Deploy
 
@@ -70,9 +70,9 @@
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 CI "API Tests (Bruno)" job green
-- [ ] 12.2 Issue #1035 closed on merge
-- [ ] 12.3 `openspec archive bruno-suite-english-idempotent-1035` after merge
+- [x] 12.1 CI "API Tests (Bruno)" job green
+- [x] 12.2 Issue #1035 closed on merge
+- [x] 12.3 `openspec archive bruno-suite-english-idempotent-1035` after merge
 
 ## Definition of Done
 
@@ -81,5 +81,5 @@
 - [x] Suite green twice in a row
 - [x] Permanent documentation updated
 - [x] Commits atomic and conventional
-- [ ] PR created, CI green
-- [ ] `traceability.md` complete from Issue through PR
+- [x] PR created, CI green
+- [x] `traceability.md` complete from Issue through PR
