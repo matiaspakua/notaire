@@ -10,6 +10,7 @@ ciclo de vida: negocio, arquitectura y desarrollo.
 | [`100-business/`](100-business/) | Requerimientos, casos de uso, actores y trazabilidad de negocio |
 | [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, diseño, diagramas, modelo de datos, seguridad, monitoreo, DevSecOps y deployment |
 | [`300-development/`](300-development/) | Guías de setup, estándares de código y estrategia de testing |
+| [`github/`](github/) | Organización de GitHub (tablero, milestones, labels) y auditoría de preparación para producción 2026-09 |
 | [`000-archive/`](000-archive/) | Documentos y artefactos legacy superados, conservados por trazabilidad histórica |
 
 ## Punto de entrada recomendado
@@ -18,6 +19,7 @@ ciclo de vida: negocio, arquitectura y desarrollo.
 2. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
 3. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
    trabajo obligatorio para cualquier cambio de código.
+4. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
 
 ## Convenciones
 
