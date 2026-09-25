@@ -18,5 +18,5 @@
     "MD060": false // table-column-style — pre-existing tables use mixed styles
   },
   "globs": ["**/*.md"],
-  "ignores": ["**/node_modules/**", "**/target/**", "**/.next/**", "docs/archive/**"]
+  "ignores": ["**/node_modules/**", "**/target/**", "**/.next/**", "docs/archive/**", "docs/000-archive/**"]
 }
