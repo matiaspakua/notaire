@@ -25,20 +25,20 @@
 
 Two new unit tests will be added and made to fail before implementation:
 
-- [ ] 3.1 Write `ApplicationPropertiesHygieneTest.shouldNotDefineDeadSecurityUserKeys`
+- [x] 3.1 Write `ApplicationPropertiesHygieneTest.shouldNotDefineDeadSecurityUserKeys`
   - Arrange: Create a `Properties` object with `spring.security.user.name`,
     `spring.security.user.password`, `spring.security.user.roles` keys
   - Act: Call `ApplicationPropertiesHygiene.validateProperties(properties)`
   - Assert: Test fails with `No key shall start with "spring.security.user."`
   
-- [ ] 3.2 Write `ApplicationResourceTest.shouldNotIncludeConfigProperties`
+- [x] 3.2 Write `ApplicationResourceTest.shouldNotIncludeConfigProperties`
   - Arrange: Assume classpath resource `/config.properties` exists
   - Act: Look up resource `"/config.properties"`
   - Assert: Test fails with `Resource is not absent`
   
-- [ ] 3.3 Run tests — both fail (dead keys present)
+- [x] 3.3 Run tests — both fail (dead keys present)
 - [ ] 3.4 n/a — no integration tests apply
-- [ ] 3.5 n/a — no delta spec scenarios (`skip_specs: true`)
+- [x] 3.5 n/a — no delta spec scenarios (`skip_specs: true`)
 
 ## 4. Implementación
 
