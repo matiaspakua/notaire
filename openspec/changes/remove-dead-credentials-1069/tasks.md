@@ -37,7 +37,7 @@ Two new unit tests will be added and made to fail before implementation:
   - Assert: Test fails with `Resource is not absent`
   
 - [x] 3.3 Run tests — both fail (dead keys present)
-- [ ] 3.4 n/a — no integration tests apply
+- [x] 3.4 n/a — no integration tests apply
 - [x] 3.5 n/a — no delta spec scenarios (`skip_specs: true`)
 
 ## 4. Implementación
