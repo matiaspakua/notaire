@@ -137,7 +137,7 @@ class AgentRulesTest(unittest.TestCase):
         self.assertNotIn("docs/real/", result.stdout)
 
     def test_ignores_placeholders(self):
-        self.write(".claude/rules/a.md", "Use `docs/real/` and `openspec/changes/<name>/` and `docs/*.md`.\n")
+        self.write(".claude/rules/a.md", "Use `docs/real/`, `openspec/changes/<name>/`, `docs/*.md`, branch `docs/257_readme`.\n")
         self.assertEqual(run("check-agent-rules.sh", self.root, cwd=self.root).returncode, 0)
 
 
