@@ -1,0 +1,50 @@
+name: SDLC Process
+
+# Mechanical checks of the CONSTITUTION process on every PR (local-ai/AUDIT.md
+# E2, E3, S1, P2, P5). Separate from pr-validation.yml so that adding or removing
+# the `sdlc-exception` label re-runs only these checks. Mirrored locally by
+# scripts/preflight.sh — keep the two in sync (preflight.sh --list).
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened, labeled, unlabeled ]
+
+permissions:
+  contents: read
+
+jobs:
+  process-checks:
+    name: Process Checks
+    runs-on: ubuntu-latest
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Commit messages are Conventional Commits
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-commit-messages.sh "$BASE_SHA"
+
+      - name: Tests come before production code
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-tdd-evidence.sh "$BASE_SHA"
+
+      - name: OpenSpec change or approved sdlc-exception
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-sdlc-exception.sh "$BASE_SHA"
+
+      - name: Agent rule files are valid
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-agent-rules.sh
+
+      - name: Process script and harness self-tests
+        if: ${{ !cancelled() }}
+        run: |
+          python3 -m unittest discover -s scripts/tests
+          python3 -m unittest discover -s local-ai/sdlc/tests
