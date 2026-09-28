@@ -17,6 +17,7 @@
 #      SKIP_PIPELINE=1 (skip run_pipeline.sh; only for docs/ci-only changes),
 #      STOP_AFTER=<phase> (pause after a phase, for foreman inspection).
 set -uo pipefail
+[ "${BASH_VERSINFO[0]}" -ge 4 ] || { echo "foreman.sh needs bash >= 4 (macOS: brew install bash)" >&2; exit 2; }
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 WS="$(cd "$HERE/../../.." && pwd)"
