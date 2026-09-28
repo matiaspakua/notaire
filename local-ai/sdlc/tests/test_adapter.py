@@ -41,6 +41,16 @@ class GetTest(unittest.TestCase):
         self.assertIn(path, r.stderr)
 
 
+class ValidateTest(unittest.TestCase):
+    def test_lists_every_missing_required_key(self):
+        missing = adapter.missing_keys({"spec": {"schema": "x"}})
+        self.assertIn("gates.preflight", missing)
+        self.assertNotIn("spec.schema", missing)
+
+    def test_real_adapter_is_complete(self):
+        self.assertEqual(adapter.missing_keys(adapter.load(REAL)), [])
+
+
 class SurfacesTest(unittest.TestCase):
     def test_two_surfaces_in_adapter_order(self):
         self.assertEqual(adapter.surfaces(CFG, ["frontend/src/a.tsx", "backend-api/pom.xml"]), "backend,frontend")
@@ -72,11 +82,6 @@ class CheckTestCmdTest(unittest.TestCase):
 
 
 class RealAdapterTest(unittest.TestCase):
-    def test_real_adapter_has_the_keys_the_harness_reads(self):
-        cfg = adapter.load(REAL)
-        for key in adapter.REQUIRED:
-            adapter.get(cfg, key, {"change": "c", "files": "f", "test": "T"})
-
     def test_real_adapter_regexes_compile(self):
         cfg = adapter.load(REAL)
         for key in ("test_files", "source_roots", "guards.forbidden"):
