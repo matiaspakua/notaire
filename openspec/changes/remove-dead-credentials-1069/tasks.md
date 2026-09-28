@@ -46,12 +46,14 @@ Two new unit tests will be added and made to fail before implementation:
 
 - [x] 4a.1 Edit `backend-api/src/main/resources/application.properties`:
   - Remove lines 92-94 containing:
-    ```
+
+    ```text
     # Prometheus will use admin/admin for scraping
     spring.security.user.name=admin
     spring.security.user.password=admin
     spring.security.user.roles=ACTUATOR,ADMIN
     ```
+
   - Remove the misleading Prometheus comment line
   - Use `sed` or manual edit to preserve formatting
 
@@ -94,11 +96,11 @@ Two new unit tests will be added and made to fail before implementation:
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update CHANGELOG.md: add entry `chore(security): remove dead default credentials`
-- [ ] 8.2 n/a — no endpoint changed
-- [ ] 8.3 n/a — not user-visible
-- [ ] 8.4 Nothing to archive
-- [ ] 8.5 Confirmed: no duplication introduced
+- [x] 8.1 Update CHANGELOG.md: add entry `chore(security): remove dead default credentials`
+- [x] 8.2 n/a — no endpoint changed
+- [x] 8.3 n/a — not user-visible
+- [x] 8.4 Nothing to archive
+- [x] 8.5 Confirmed: no duplication introduced
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — PREFLIGHT PASSED
 
 ## 9. Commits atómicos

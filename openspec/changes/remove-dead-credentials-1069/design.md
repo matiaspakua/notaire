@@ -20,12 +20,14 @@ referenced by any code in the modernized stack.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Remove dead `spring.security.user.*` keys from `application.properties` to
   eliminate confusion and avoid overriding the runtime security configuration.
 - Remove the misleading Prometheus scraping comment.
 - Delete the unused `config.properties` file.
 
 **Non-Goals:**
+
 - Adding new credential validation logic — the existing `ProductionCredentialsGuard`
   already enforces datasource credential security at startup.
 - Changing application behavior — this is configuration cleanup only.
@@ -49,6 +51,7 @@ referenced by any code in the modernized stack.
 ## Testing Strategy
 
 ### Unit Tests
+
 Two new unit tests will be added and made to fail before implementation:
 
 1. `ApplicationPropertiesHygieneTest.shouldNotDefineDeadSecurityUserKeys`
@@ -66,6 +69,7 @@ Two new unit tests will be added and made to fail before implementation:
    - **Expected result**: Test FAILS initially (file exists), PASSES after deletion
 
 ### Integration Tests
+
 **n/a** — The dead keys being removed do not affect integration test assertions.
 Existing tests for datasource connection, authentication, and other features
 will continue to use credentials from environment variables.
@@ -78,6 +82,7 @@ n/a — no UI surface. This change touches only backend configuration files (`ap
 ## Regression Strategy
 
 ### Affected Areas
+
 - **CI/CD**: The `config.properties` file may be referenced in build scripts.
   After deletion, verify `mvn clean install` still completes without resource
   lookup errors.
@@ -87,6 +92,7 @@ n/a — no UI surface. This change touches only backend configuration files (`ap
   legacy artifact. Actuator endpoints now use `actuator.security.*` keys.
 
 ### Validation Commands
+
 ```bash
 # Verify backend still builds
 mvn clean install -pl backend-api -am
