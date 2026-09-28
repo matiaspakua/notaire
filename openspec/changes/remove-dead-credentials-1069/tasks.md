@@ -44,7 +44,7 @@ Two new unit tests will be added and made to fail before implementation:
 
 ### 4a. Remove dead keys from application.properties
 
-- [ ] 4a.1 Edit `backend-api/src/main/resources/application.properties`:
+- [x] 4a.1 Edit `backend-api/src/main/resources/application.properties`:
   - Remove lines 92-94 containing:
     ```
     # Prometheus will use admin/admin for scraping
@@ -57,29 +57,29 @@ Two new unit tests will be added and made to fail before implementation:
 
 ### 4b. Delete config.properties
 
-- [ ] 4b.1 Delete `backend-api/src/main/resources/config.properties`
+- [x] 4b.1 Delete `backend-api/src/main/resources/config.properties`
   - Backup first: `git show HEAD:backend-api/src/main/resources/config.properties > config.properties.bak`
 
 ### 4c. Run new tests — verify they now pass
 
-- [ ] 4c.1 `mvn test -pl backend-api -Dtest=ApplicationPropertiesHygieneTest`
-- [ ] 4c.2 `mvn test -pl backend-api -Dtest=ApplicationResourceTest`
-- [ ] 4c.3 Both tests pass (100%)
+- [x] 4c.1 `mvn test -pl backend-api -Dtest=ApplicationPropertiesHygieneTest`
+- [x] 4c.2 `mvn test -pl backend-api -Dtest=ApplicationResourceTest`
+- [x] 4c.3 Both tests pass (100%)
 
 ### 4d. Static verification
 
-- [ ] 4d.1 `grep -E "^spring\.security\.user\." backend-api/src/main/resources/application.properties`
+- [x] 4d.1 `grep -E "^spring\.security\.user\." backend-api/src/main/resources/application.properties`
   - Should return nothing (exit code 1)
-- [ ] 4d.2 `test ! -f backend-api/src/main/resources/config.properties`
+- [x] 4d.2 `test ! -f backend-api/src/main/resources/config.properties`
   - Should return 0 (true)
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Check if any existing tests reference removed config keys
+- [x] 5.1 Check if any existing tests reference removed config keys
   - Search: `grep -r "spring.security.user" src/test/`
   - Update tests that use the removed keys, if any exist
-- [ ] 5.2 n/a
-- [ ] 5.3 n/a
+- [x] 5.2 n/a
+- [x] 5.3 n/a
 
 ## 6. Ejecutar regresión
 
