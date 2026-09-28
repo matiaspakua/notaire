@@ -14,13 +14,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1069 | in-progress |
+| Issue | #1069 | open |
 | Use Case | CU78 — Security, Privacy and Compliance | registered |
 | Specification | `openspec/changes/remove-dead-credentials-1069/` | written |
 | Branch | `chore/1069_remove_dead_credentials` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | 3cee9db, d976c34, 9ece620, d95e7b3, 1f71060, 291226c, 49434e7, ca6bc81 | done |
-| Pull Request | #1073 | created |
+| Pull Request | #1073 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
