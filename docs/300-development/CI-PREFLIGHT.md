@@ -10,6 +10,7 @@ CI spreads its gates across four workflows:
 | `pr-validation.yml` | Validate PR, Quick Build, Dependency Analysis (report-only), **Code Lint (Checkstyle + Spotless)**, Branch Naming |
 | `frontend-ci.yml` | TypeScript Check, ESLint, Unit Tests (Vitest), Build (Next.js) |
 | `playwright-e2e.yml` | Build Backend/Frontend, API Tests (Bruno), UI E2E Tests (Playwright) |
+| `sdlc-process.yml` | Commit messages, TDD evidence, `sdlc-exception` label, agent rule files, process-script self-tests |
 
 **Not all of these are reachable from the commands developers normally run.** The
 clearest example, and the one that motivated this tooling: Spotless is
@@ -147,3 +148,7 @@ mirrors, and `--list` prints the mapping, so drift is easy to spot in review.
 
 Checks that CI runs with `|| true` (Checkstyle) are non-blocking here too, so
 local severity matches CI severity rather than being stricter.
+
+The `sdlc-process.yml` checks run locally against `origin/main..HEAD`. The
+`sdlc-exception` label check needs the PR's labels, so preflight reads them
+with `gh pr view` and skips that one check while the branch has no PR yet.

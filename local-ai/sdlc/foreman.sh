@@ -7,14 +7,17 @@
 #   foreman.sh <issue> <phase>    run from <phase> (re-runs it even if done)
 #   foreman.sh <issue> merge      after foreman review: merge + Gate 5
 #   foreman.sh <issue> fix        worker applies $RUNS/<issue>/gate4.md (foreman review), then ci + review
+#   foreman.sh <issue> check      run the CHECK/EXPECTED lines of the pending review notes (no worker run)
 #
 # Env: WT (worker worktree, default ../notaire-localai),
 #      RUNS (harness state, default ../notaire-localai-runs),
-#      PROFILE (codex profile, omlx), MAX_ATTEMPTS (3),
+#      PROFILE (codex profile, omlx), PROFILE_<PHASE> (per-phase override, e.g. PROFILE_SPEC),
+#      MAX_ATTEMPTS (3),
 #      WORKER_TIMEOUT (seconds per worker run, 3600),
 #      SKIP_PIPELINE=1 (skip run_pipeline.sh; only for docs/ci-only changes),
 #      STOP_AFTER=<phase> (pause after a phase, for foreman inspection).
 set -uo pipefail
+[ "${BASH_VERSINFO[0]}" -ge 4 ] || { echo "foreman.sh needs bash >= 4 (macOS: brew install bash)" >&2; exit 2; }
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 WS="$(cd "$HERE/../../.." && pwd)"
@@ -45,7 +48,7 @@ trap 'rm -rf "$STATE/.lock"' EXIT
 
 log()  { printf '\033[1;36m[foreman #%s] %s\033[0m\n' "$ISSUE" "$*" | tee -a "$STATE/foreman.log"; }
 fail() { printf '\033[31m[foreman #%s] STOP: %s\033[0m\n' "$ISSUE" "$*" | tee -a "$STATE/foreman.log"; exit 1; }
-kv()   { grep -E "^$2=" "$1" 2>/dev/null | head -1 | cut -d= -f2- | sed 's/[[:space:]]*#.*$//;s/[[:space:]]*$//'; }
+kv()   { python3 "$HERE/bin/envfile.py" "$1" "$2"; }   # drops ' # comment' and surrounding quotes
 tv()   { kv "$STATE/triage.env" "$1"; }   # normalized triage (written by gate_triage)
 git_wt() { git -C "$WT" "$@"; }
 has()    { grep "$@" > /dev/null; }   # like grep -q, but reads all input: grep -q + pipefail = SIGPIPE false negatives
@@ -58,13 +61,11 @@ render() {  # render <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     python3 - "$HERE/WORKER.md" "$HERE/prompts/$1" "$STATE" "$IO" "$ISSUE" "${2:-}" "${3:-}" <<'PY'
 import os, sys, re
 brief, tpl, state, io, issue, gate_cmd, gate_file = sys.argv[1:8]
+sys.path.insert(0, os.path.join(os.path.dirname(brief), "bin"))
+from envfile import read_env
 env = {}
 for p in (os.path.join(state, "triage.env"), os.path.join(io, "tests.env"), os.path.join(state, "tests.env")):
-    if os.path.exists(p):
-        for line in open(p):
-            m = re.match(r"^([A-Z_]+)=(.*)$", line.strip())
-            if m:
-                env[m.group(1)] = re.sub(r"\s+#.*$", "", m.group(2)).strip()
+    env.update(read_env(p))
 env.update(ISSUE=issue, IO=io, GATE_CMD=gate_cmd, EDIT=os.path.join(state, "edit.py"))
 env["GATE_OUTPUT"] = open(gate_file).read()[-6000:] if gate_file else ""
 it = os.path.join(state, "issue.md")
@@ -98,11 +99,13 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     cp "$HERE/bin/edit.py" "$STATE/edit.py"   # the worker's edit tool (Codex apply_patch fails with the local model)
     { echo "BASE=$pre_sha"; echo "BRANCH=$(git_wt symbolic-ref -q --short HEAD)"
       echo "ALLOW_COMMIT=${ALLOW_COMMIT:-1}"; printf "FORBIDDEN='%s'\n" "$FORBIDDEN"; printf "SCOPE='%s'\n" "${SCOPE:-.}"; } > "$hooks/state.env"
-    log "worker → $label (timeout ${WORKER_TIMEOUT}s)"
+    local profile_var; profile_var="PROFILE_$(tr '[:lower:]' '[:upper:]' <<< "${label%%-*}")"
+    local profile="${!profile_var:-$PROFILE}"
+    log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
     # perl alarm: portable timeout on macOS (no coreutils).
     perl -e 'alarm shift; exec @ARGV' "$WORKER_TIMEOUT" \
-        codex exec --profile "$PROFILE" --skip-git-repo-check -C "$WT" \
+        codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
         -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
@@ -191,7 +194,10 @@ with_retries() {
 }
 
 # ------------------------------------------------------------------ gates
-gate_log() { echo "$(date '+%F %T') | $1 | $2" >> "$STATE/gates.log"; }
+gate_log() {
+    echo "$(date '+%F %T') | $1 | $2" >> "$STATE/gates.log"
+    python3 "$HERE/bin/metrics.py" "$STATE/metrics.jsonl" "$ISSUE" "$1" "$2"
+}
 gate_msg() { printf '%b' "$1" > "$STATE/gate.out"; return 1; }
 
 run_gate() {  # run_gate <name> <cmd...>; output kept in $STATE/gate-<name>.out
@@ -330,6 +336,7 @@ gate_red() {
         && e+="- .localai/ files are committed — they are foreman scratch, never commit them: git rm -r --cached .localai && git commit --amend\n"
     git_wt log --format=%B origin/main..HEAD | has "Closes #" \
         && e+="- a commit says 'Closes #...' — only the final implementation commit may. Use 'Refs #$ISSUE' (git commit --amend is fine: the branch is not pushed)\n"
+    local static; static="$(python3 "$HERE/bin/static_checks.py" "$WT" origin/main)" || e+="$static\n"
     [ -z "$e" ] || gate_msg "Fix before the red run:\n$e" || return 1
     if run_gate red bash -c "$cmd"; then
         { echo "TEST_CMD passed, but in this phase it MUST fail (TDD red): your tests do not"
@@ -696,7 +703,19 @@ review_fix() {
     mv "$notes" "$STATE/gate4-applied-$(date +%s).md"
 }
 
+# review_notes_check: run the CHECK lines of every pending review note in the worker worktree, so the
+# foreman sees which notes are already met before re-running the gate (no worker run)
+review_notes_check() {
+    local f notes=()
+    for f in "$STATE"/review-*.md "$STATE/gate4.md"; do
+        [ -f "$f" ] && [[ "$f" != *.done.md ]] && notes+=("$f")
+    done
+    [ ${#notes[@]} -gt 0 ] || fail "no pending review notes in $STATE"
+    python3 "$HERE/bin/review_check.py" "$WT" "${notes[@]}"
+}
+
 # ------------------------------------------------------------------ main
+[ "$FROM" = check ] && { review_notes_check; exit $?; }
 [ "$FROM" = merge ] && { merge_and_close; exit 0; }
 [ "$FROM" = fix ] && { review_fix; FROM=ci; }
 if [ -n "$FROM" ]; then  # forget $FROM and every later phase

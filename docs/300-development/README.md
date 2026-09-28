@@ -18,7 +18,7 @@ trabajo obligatorio.
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
 
 OpenSpec ↔ Constitution: ver [`openspec/NOTAIRE-ADAPTATIONS.md`](../../openspec/NOTAIRE-ADAPTATIONS.md)
-(SpecKit ↔ Constitution: [`speckit/NOTAIRE-ADAPTATIONS.md`](../../speckit/NOTAIRE-ADAPTATIONS.md)).
+(SpecKit, retirado en #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).
 
 ## Antes de tocar código
 

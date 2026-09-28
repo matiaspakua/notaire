@@ -8,12 +8,9 @@
 > documentación permanente). Tracked under #783 (adopción original) y #870
 > (consolidación).
 >
-> Este documento cubre **únicamente OpenSpec**. El proyecto también evalúa
-> **SpecKit** como segundo framework spec-driven bajo `speckit/` — ver
-> `speckit/NOTAIRE-ADAPTATIONS.md` para su propia historia de adaptación. Los
-> dos se mantienen deliberadamente separados: directorios distintos, scripts de
-> validación distintos, sin código compartido ni referencias cruzadas más allá
-> de esta oración.
+> Este documento cubre **únicamente OpenSpec**, el único framework spec-driven
+> del proyecto. SpecKit se evaluó en paralelo y se retiró en #1083; su historia
+> queda en `docs/000-archive/speckit/`.
 
 ---
 

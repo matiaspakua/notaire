@@ -43,7 +43,11 @@ Local check                     CI job                          Workflow
 ------------------------------  ------------------------------  --------------------
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
-sdlc plan (speckit features)    SpecKit Plan Validation           pr-validation.yml  (BLOCKING)
+commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
+tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
+sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
+agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
+process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
@@ -123,9 +127,20 @@ fi
 # SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
 run "sdlc plan validation" bash scripts/validate-sdlc-plan.sh
 
-# Same gate, for the SpecKit-adapted flow under speckit/ (evaluated alongside
-# OpenSpec — see speckit/NOTAIRE-ADAPTATIONS.md).
-run "speckit plan validation" bash scripts/validate-speckit-plan.sh
+# Process checks over the branch (sdlc-process.yml). Labels come from the open
+# PR, if there is one: the sdlc-exception label is a human decision.
+PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || true)"
+export PR_LABELS
+run "commit messages" bash scripts/check-commit-messages.sh origin/main
+run "tdd evidence" bash scripts/check-tdd-evidence.sh origin/main
+if gh pr view >/dev/null 2>&1; then
+    run "sdlc exception label" bash scripts/check-sdlc-exception.sh origin/main
+else
+    skip "sdlc exception label" "no PR yet — CI WILL run this"
+fi
+run "agent rule files" bash scripts/check-agent-rules.sh
+run "process script self-tests" bash -c \
+    "python3 -m unittest discover -s scripts/tests && python3 -m unittest discover -s local-ai/sdlc/tests"
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"

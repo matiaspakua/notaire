@@ -61,7 +61,9 @@ local-ai/sdlc/foreman.sh 1069                     # runs triage … ci, stops at
 STOP_AFTER=spec local-ai/sdlc/foreman.sh 1069     # pause after a phase to inspect
 local-ai/sdlc/foreman.sh 1069 tests               # re-run from a phase
 local-ai/sdlc/foreman.sh 1069 fix                 # worker applies $RUNS/1069/gate4.md, then ci + review
+local-ai/sdlc/foreman.sh 1069 check               # run the CHECK lines of pending review notes
 local-ai/sdlc/foreman.sh 1069 merge               # after review: merge + Gate 5
+PROFILE_SPEC=omlx-large local-ai/sdlc/foreman.sh 1069   # a different codex profile for one phase
 ```
 
 The worker runs in a **dedicated git worktree** (`../notaire-localai`) so it
@@ -101,6 +103,14 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Plan shape is gated | `validate-sdlc-plan.sh` skips a change without `schema: notaire-sdlc` and only checks task group numbers. `gate_spec` also requires the schema line and the template's 12 group headings plus item IDs, which the ledger ticks (`10.1`, `10.2`) |
 | No builds in spec | The #1063 worker started Maven in the spec phase and polled it for 15+ minutes. `03-spec.md` forbids builds; coverage and test facts come from the issue and triage |
 | Gates | deterministic, with actionable messages (exact line, exact fix). Cosmetic noise (backticks, dash variants) is normalized, not failed |
+| History policy | The harness owns the branch history. `phase_spec` commits the spec itself and folds every review round into that one commit (`--amend`); `squash_spec_churn` folds a trailing run of openspec-only commits into one before the PR. Nothing already pushed is rewritten. The PR is merged with `gh pr merge --merge`, so main keeps the red→green commits as evidence of Gate 2 |
+| Quoted env values | `bin/envfile.py` reads every `KEY=value` file the worker writes (`triage.env`, `tests.env`). It strips one pair of surrounding quotes and a trailing `# comment`, as a shell would. #1063's `TEST_CMD="mvn …"` kept its quotes, so the red gate ran a command named `mvn …` and "failed" for the wrong reason |
+| Static test checks | `bin/static_checks.py`, run by the red gate on the branch's test changes: no absolute home path (`/Users/`, `/home/`), no new test class whose file name already exists elsewhere (extend it instead), and at least one added assertion. A failing test is not proof of a useful test |
+| Review notes are executable | `foreman.sh <n> check` runs every `CHECK:` line of the pending `review-*.md` notes and `gate4.md` (`bin/review_check.py`). A single-token `EXPECTED` gives PASS/FAIL, free text gives JUDGE for the foreman; exit 1 on any FAIL |
+| Gate metrics | `gate_log` also appends `{ts, issue, gate, result, detail}` to `RUNS/<n>/metrics.jsonl` (`bin/metrics.py`), so retries and failure causes per gate can be counted across issues |
+| Per-phase model | `PROFILE_<PHASE>` (e.g. `PROFILE_SPEC`) overrides the codex `PROFILE` for one phase, so a larger model can take the phases a 9B model gets wrong |
+| bash ≥ 4 | `foreman.sh` exits at once under bash 3 (macOS `/bin/bash` is 3.2), whose empty-array expansion under `set -u` broke the harness case by case. Run it as `./foreman.sh` so `env` picks Homebrew bash |
+| Harness self-tests | `python3 -m unittest discover -s local-ai/sdlc/tests`; they run in `sdlc-process.yml` |
 | Cross-checks | `TYPE` must equal the issue title prefix; `DB_CHANGE=yes` needs a new `V*__.sql`; criteria come only from the issue's checklist |
 
 ## Foreman duties

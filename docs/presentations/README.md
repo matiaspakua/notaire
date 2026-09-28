@@ -30,7 +30,7 @@ con dos demos basadas en cambios **reales y ya mergeados** en Notaire.
 ### 🎯 Demos grounded en artefactos reales del repo
 
 - **OpenSpec**: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
-- **Spec Kit**: `speckit/specs/archive/003-cu43-reingresar-documentacion/`
+- **Spec Kit**: `docs/000-archive/speckit/specs/archive/003-cu43-reingresar-documentacion/`
 
 Todos los números de Issue/PR y resultados de tests citados en la presentación
 provienen de esos artefactos y del historial de commits, no son ejemplos inventados.
@@ -64,7 +64,7 @@ python -m http.server 8000
 ### 🔗 Referencias
 
 - OpenSpec demo real: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
-- Spec Kit demo real: `speckit/specs/archive/003-cu43-reingresar-documentacion/`
+- Spec Kit demo real: `docs/000-archive/speckit/specs/archive/003-cu43-reingresar-documentacion/`
 - Constitución: `CONSTITUTION.md` §5 (SDLC Workflow), §6 (Quality Gates)
 
 ---

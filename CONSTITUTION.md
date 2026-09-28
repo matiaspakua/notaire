@@ -36,7 +36,8 @@
 This Constitution defines the mandatory engineering process for the Notaire
 repository: a multi-module modernization of a Java Swing monolith into a
 three-tier system (PostgreSQL 16 + Spring Boot 4.1 REST API + Next.js 16
-frontend), with a transitional Swing REST client.
+frontend). The legacy Swing client has been removed from the repository;
+all client work belongs in `frontend/`.
 
 It applies to **every change** in the repository:
 
@@ -207,7 +208,7 @@ maps every requirement of this Constitution to the artifact that carries it.
 Acceptance Criteria are the delta spec's `#### Scenario:` blocks. → **Gate 1.**
 
 **4. Impact Analysis.** Identify affected modules (backend-api, frontend,
-frontend-swing, notaire-shared), entities, endpoints, database schema, tests,
+notaire-shared), entities, endpoints, database schema, tests,
 and documentation. List risks and dependencies.
 
 **5. Architecture Review.** Verify the design follows the existing
@@ -520,8 +521,8 @@ centralize information in the most coherent place; move outdated documents to
 | Changelog | `CHANGELOG.md` (Keep a Changelog) | Every user-visible change |
 
 Specifications describe **only the change** (they are not permanent
-documentation) and are stored with the Issue or under
-`docs/300-development/specifications/`.
+documentation) and are stored as OpenSpec changes under `openspec/changes/`;
+`openspec archive` moves them to `openspec/changes/archive/`.
 
 ---
 
@@ -584,6 +585,15 @@ Agent-specific entry points:
 - **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
 - **Any agent** → `AGENTS.md` at repo root; `.claude/skills/openspec-*`
 - **Any agent, via the CLI** → `openspec instructions <artifact> --change <name>`
+- **Local-AI SDLC harness** → `local-ai/sdlc/` (`foreman.sh`, see `local-ai/sdlc/AI-SDLC.md`)
+
+### Roles
+
+| Role | Who | Responsibilities |
+|------|-----|------------------|
+| **Owner** | The human code owner (`CODEOWNERS`) | Approves specifications and merges PRs; the only role that may grant an exception ([section 12](#12-governance-exceptions-and-enforcement)) |
+| **Foreman** | Supervising AI agent | Runs and validates the gates, writes review notes, and changes the harness only through its own Issue and PR; does not implement the change under review |
+| **Worker** | Implementing AI agent | Implements the change phase by phase and answers review notes; never merges, pushes to `main` or grants itself an exception |
 
 ---
 
@@ -613,12 +623,16 @@ Agent-specific entry points:
 - **Exceptions:** Only in extreme circumstances and with explicit human
   approval: emergency security hotfixes, one-time migration scripts, and
   trivial documentation-only typo fixes. The exception must be documented in
-  the commit and the PR.
+  the commit and the PR, and the Owner marks it with the `sdlc-exception`
+  label. A PR that carries no OpenSpec change must have that label, and the
+  label is only valid on such a PR (`scripts/check-sdlc-exception.sh`).
 - **Enforcement:**
   - Local: `scripts/preflight.sh` + pre-push git hook (mirrors CI gates);
     `scripts/run_pipeline.sh` is the mandatory, dashboarded final check
     before opening a PR (→ Gate 3).
-  - CI: GitHub Actions workflows block PRs that violate quality gates.
+  - CI: GitHub Actions workflows block PRs that violate quality gates;
+    `sdlc-process.yml` checks the process itself (commit messages, TDD
+    evidence, the exception label, agent rule files).
   - Human: code review by code owner (`CODEOWNERS`) before merge.
 
 ---
@@ -640,7 +654,10 @@ drift.
 | Lifecycle skill composition | `.claude/skills/README.md`; generic skills under `.claude/skills/`; project skills for implementation details |
 | Skill references and evaluation | `<skill>/references/` for progressive disclosure; `<skill>/evals/evals.json` for repeatable scenarios |
 | Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `openspec/NOTAIRE-ADAPTATIONS.md` |
-| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>` |
+| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `scripts/check-commit-messages.sh` (`sdlc-process.yml`) |
+| TDD evidence (Gate 2) | `scripts/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
+| Agent rule files | `scripts/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |
+| Local-AI harness | `local-ai/sdlc/foreman.sh`; harness self-tests in `local-ai/sdlc/tests/` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
@@ -648,13 +665,13 @@ drift.
 | E2E | `playwright-e2e.yml` (Playwright + Bruno API suite) |
 | Local preflight | `bash scripts/preflight.sh [--fix / --fast / --full]`; pre-push hook |
 | Pre-PR pipeline gate (Gate 3) | `bash scripts/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
-| CI/CD | `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
+| CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
 | Agent rules | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/*`, `.claude/skills/*` |
 
 ---
 
-*Last reviewed: 2026-08-08. This Constitution supersedes the process
+*Last reviewed: 2026-09-28. This Constitution supersedes the process
 summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
 document remains the operational implementation.*

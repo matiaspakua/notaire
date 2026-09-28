@@ -20,8 +20,8 @@
 #   design.md        testing / regression / Playwright / deployment / rollback
 #   tasks.md         the twelve mandatory SDLC groups + Definition of Done
 #
-# Changes created with a different schema are skipped: this policy applies to the
-# notaire-sdlc workflow only.
+# Changes that declare a different schema are skipped: this policy applies to the
+# notaire-sdlc workflow only. A change with no `schema:` line fails.
 #
 # EXPLORE → ISSUE → PROPOSE
 # --------------------------
@@ -133,9 +133,16 @@ validate_change() {
   local name
   name="$(basename "$dir")"
 
-  # Only govern changes created with this schema.
+  # Only govern changes created with this schema. A change must declare its
+  # schema: a missing line used to skip it silently (local-ai/AUDIT.md S4).
   local meta="$dir/.openspec.yaml"
-  if [ -f "$meta" ] && ! grep -qE "^\s*schema:\s*${SCHEMA_NAME}\s*$" "$meta"; then
+  if ! grep -qE '^\s*schema:' "$meta" 2>/dev/null; then
+    section "$name"
+    CHECKED=$((CHECKED + 1))
+    bad ".openspec.yaml: no 'schema:' line — add 'schema: $SCHEMA_NAME' (or name the schema it really uses)"
+    return 0
+  fi
+  if ! grep -qE "^\s*schema:\s*${SCHEMA_NAME}\s*$" "$meta"; then
     note "$name — skipped (schema is not $SCHEMA_NAME)"
     return 0
   fi
