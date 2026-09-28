@@ -140,6 +140,11 @@ class AgentRulesTest(unittest.TestCase):
         self.write(".claude/rules/a.md", "Use `docs/real/`, `openspec/changes/<name>/`, `docs/*.md`, branch `docs/257_readme`.\n")
         self.assertEqual(run("check-agent-rules.sh", self.root, cwd=self.root).returncode, 0)
 
+    def test_rejects_root_without_rule_files(self):
+        result = run("check-agent-rules.sh", self.root, cwd=self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("no agent rule files", result.stdout)
+
 
 class SchemaLineTest(unittest.TestCase):
     def test_validator_fails_change_without_schema_line(self):
