@@ -24,4 +24,4 @@ Use the narrowest project-specific skill for implementation details and the gene
 
 `delivery-maturity-roadmap` -> `analyst`/`product-owner` -> `openspec-triage` -> `openspec-propose` -> `architecture-decision-design` + `secure-threat-modeling` -> `qa-automation-strategy` + `api-contract-testing` -> `openspec-apply-change` -> `ci-cd-quality-gates` -> `operations-observability-readiness` -> `openspec-archive-change`.
 
-All generic skills include domain references and evaluation manifests. Their examples are provider-neutral; adapt commands to the actual Notaire toolchain documented in `CONSTITUTION.md` and `openspec/NOTAIRE-ADAPTATIONS.md`.
+All generic skills include domain references and an evaluation manifest (`<skill>/evals/evals.json`). The manifests are scenarios for running by hand when a skill changes; no CI job runs them yet. Their examples are provider-neutral; adapt commands to the actual Notaire toolchain documented in `CONSTITUTION.md` and `openspec/NOTAIRE-ADAPTATIONS.md`.
