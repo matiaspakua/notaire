@@ -33,7 +33,8 @@ STATE="$RUNS/$ISSUE"
 IO="$WT/.localai/$ISSUE"
 mkdir -p "$STATE" "$IO"
 # never committed by the worker: build output, logs, harness scratch, editor/backup files
-FORBIDDEN='(^|/)(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
+# build-output dirs sit at the root or one module deep: deeper names (openspec/changes/x/specs/coverage/) are real content
+FORBIDDEN='^([^/]+/)?(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
 # one foreman per issue: two runs on the same worktree corrupt each other's branch and gates
 if ! mkdir "$STATE/.lock" 2>/dev/null; then
     echo "foreman #$ISSUE already running (pid $(cat "$STATE/.lock/pid" 2>/dev/null)); remove $STATE/.lock if stale" >&2
