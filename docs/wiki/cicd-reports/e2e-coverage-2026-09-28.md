@@ -12,8 +12,8 @@ title: E2E Coverage Report - 2026-09-28
 - **Total:** 526
 - **Passed:** 509
 - **Failed:** 0
-- **Skipped:** 17
-- **Flaky:** 0
+- **Skipped:** 16
+- **Flaky:** 1
 
 ## Bruno API Test Results
 
