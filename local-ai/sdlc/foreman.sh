@@ -9,9 +9,11 @@
 #   foreman.sh <issue> fix        worker applies $RUNS/<issue>/gate4.md (foreman review), then ci + review
 #   foreman.sh <issue> check      run the CHECK/EXPECTED lines of the pending review notes (no worker run)
 #
-# Env: WT (worker worktree, default ../notaire-localai),
-#      RUNS (harness state, default ../notaire-localai-runs),
-#      PROFILE (codex profile, omlx), PROFILE_<PHASE> (per-phase override, e.g. PROFILE_SPEC),
+# Project values (paths, commands, surfaces, guards) come from the adapter
+# .aisdlc/project.yml (AISDLC_PROJECT overrides its path), read via bin/adapter.py.
+# Env: WT (worker worktree, default adapter paths.worktree),
+#      RUNS (harness state, default adapter paths.runs),
+#      PROFILE (codex profile, default adapter backend.profile), PROFILE_<PHASE> (per-phase override, e.g. PROFILE_SPEC),
 #      MAX_ATTEMPTS (3),
 #      WORKER_TIMEOUT (seconds per worker run, 3600),
 #      SKIP_PIPELINE=1 (skip run_pipeline.sh; only for docs/ci-only changes),
@@ -20,10 +22,20 @@ set -uo pipefail
 [ "${BASH_VERSINFO[0]}" -ge 4 ] || { echo "foreman.sh needs bash >= 4 (macOS: brew install bash)" >&2; exit 2; }
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-WS="$(cd "$HERE/../../.." && pwd)"
-WT="${WT:-$WS/notaire-localai}"
-RUNS="${RUNS:-$WS/notaire-localai-runs}"
-PROFILE="${PROFILE:-omlx}"
+REPO="$(cd "$HERE/../.." && pwd)"
+ADAPTER="${AISDLC_PROJECT:-$REPO/.aisdlc/project.yml}"
+cfg()  { python3 "$HERE/bin/adapter.py" --file "$ADAPTER" "$@"; }
+need() { cfg get "$@" || { echo "foreman.sh: fix the adapter $ADAPTER" >&2; exit 2; }; }
+repo_path() { python3 -c 'import os, sys; print(os.path.normpath(os.path.join(sys.argv[1], sys.argv[2])))' "$REPO" "$1"; }
+# a broken adapter stops the run here, not in a late phase
+cfg validate || exit 2
+WT="${WT:-$(repo_path "$(need paths.worktree)")}"
+RUNS="${RUNS:-$(repo_path "$(need paths.runs)")}"
+PROFILE="${PROFILE:-$(need backend.profile)}"
+SPEC_SCHEMA="$(need spec.schema)"; TASKS_TEMPLATE="$(need spec.tasks_template)"
+TEST_FILES="$(need test_files)"; SOURCE_ROOTS="$(need source_roots)"; DB_MIGRATIONS="$(need db_migrations)"
+COMPOSE_PROJECT="$(need compose_project)"; HEALTH_URL="$(need gates.health_url)"
+FORBIDDEN="$(need guards.forbidden)"
 MAX_ATTEMPTS="${MAX_ATTEMPTS:-3}"
 WORKER_TIMEOUT="${WORKER_TIMEOUT:-3600}"
 PHASES=(triage setup spec tests implement docs quality pipeline pr ci review)
@@ -35,9 +47,6 @@ FROM="${2:-}"
 STATE="$RUNS/$ISSUE"
 IO="$WT/.localai/$ISSUE"
 mkdir -p "$STATE" "$IO"
-# never committed by the worker: build output, logs, harness scratch, editor/backup files
-# build-output dirs sit at the root or one module deep: deeper names (openspec/changes/x/specs/coverage/) are real content
-FORBIDDEN='^([^/]+/)?(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
 # one foreman per issue: two runs on the same worktree corrupt each other's branch and gates
 if ! mkdir "$STATE/.lock" 2>/dev/null; then
     echo "foreman #$ISSUE already running (pid $(cat "$STATE/.lock/pid" 2>/dev/null)); remove $STATE/.lock if stale" >&2
@@ -256,24 +265,21 @@ gate_triage() {
         && e+="- triage.md: a PR/issue number is not a proof. Also: criteria come ONLY from the issue's '## Acceptance Criteria' checklist — 'Technical Notes'/'Related' items are out of scope, drop them\n"
     grep -qE '^[0-9]+\. TODO' <<<"$crit" \
         || e+="- triage.md: no TODO criterion. If the issue is fully resolved, write $IO/BLOCKED.md with the evidence\n"
-    local files be=no fe=no p
+    local files p
     files="$(sed -n '/^## Files to Edit/,/^## /p' "$md" | grep -E '^- ' | sed 's/^- *//;s/`//g;s/[[:space:]].*$//')"
     [ -n "$files" ] || e+="- triage.md: '## Files to Edit' lists no '- path' lines\n"
     for p in $files; do
-        [ -e "$WT/$p" ] || [[ "$p" == *"/db/migration/V"* ]] \
-            || e+="- triage.md: Files to Edit path '$p' does not exist in the repo (list existing paths; new files only for Flyway migrations)\n"
-        [[ "$p" == backend-api/* ]] && be=yes
-        [[ "$p" == frontend/* ]] && fe=yes
+        [ -e "$WT/$p" ] || [[ "$p" == "$DB_MIGRATIONS"V* ]] \
+            || e+="- triage.md: Files to Edit path '$p' does not exist in the repo (list existing paths; new files only for DB migrations under $DB_MIGRATIONS)\n"
     done
-    [ "$(iv DB_CHANGE)" != yes ] || has '/db/migration/V' <<<"$files" \
-        || e+="- DB_CHANGE=yes but Files to Edit has no new Flyway migration (backend-api/src/main/resources/db/migration/V<n>__x.sql). Deleting/editing a .properties file is NOT a DB change — set DB_CHANGE=no unless a migration is really needed\n"
-    [ "$(iv KIND)" != code ] || [ $be = yes ] || [ $fe = yes ] \
-        || e+="- KIND=code but no file under backend-api/ or frontend/ in Files to Edit — fix KIND or the list\n"
+    local surface; surface="$(cfg surfaces <<<"$files")" || fail "adapter: cannot derive surfaces"
+    [ "$(iv DB_CHANGE)" != yes ] || has -F "$DB_MIGRATIONS"V <<<"$files" \
+        || e+="- DB_CHANGE=yes but Files to Edit has no new migration (${DB_MIGRATIONS}V<n>__x.sql). Deleting/editing a .properties file is NOT a DB change — set DB_CHANGE=no unless a migration is really needed\n"
+    [ "$(iv KIND)" != code ] || [ "$surface" != none ] \
+        || e+="- KIND=code but no Files to Edit path is under a surface root (surfaces in $ADAPTER) — fix KIND or the list\n"
     [ -z "$e" ] || gate_msg "Fix these problems in $IO/triage.env and $IO/triage.md:\n$e" || return 1
 
-    local surface=none type slug
-    [ $be = yes ] && surface=backend
-    [ $fe = yes ] && surface=$([ $be = yes ] && echo both || echo frontend)
+    local type slug
     type="$(iv TYPE)"; slug="$(iv SLUG)"
     local uct; uct="$(sed -n '/^## Use Case/,/^## /p' "$STATE/issue.md" | grep -m1 -E "$(iv USE_CASE)" \
         | perl -CSD -pe 's/^.*?(CU|RF|RNF)-?[0-9]+\s*[-\x{2013}\x{2014}:]*\s*//; s/[`*]//g; s/\s+$//')"
@@ -287,20 +293,21 @@ gate_triage() {
 
 gate_spec() {
     local c; c="$(tv CHANGE)"
-    run_gate spec-validate openspec validate "$c" --strict \
-        || { { echo "openspec validate $c --strict failed:"; tail -60 "$STATE/gate-spec-validate.out"; } > "$STATE/gate.out"; return 1; }
-    run_gate spec-sdlc bash scripts/validate-sdlc-plan.sh "$c" \
-        || { { echo "bash scripts/validate-sdlc-plan.sh $c failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
+    local validate plan; validate="$(need spec.validate change="$c")"; plan="$(need spec.plan_check change="$c")"
+    run_gate spec-validate bash -c "$validate" \
+        || { { echo "$validate failed:"; tail -60 "$STATE/gate-spec-validate.out"; } > "$STATE/gate.out"; return 1; }
+    run_gate spec-sdlc bash -c "$plan" \
+        || { { echo "$plan failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
     local d="$WT/openspec/changes/$c" e="" t
     # without the schema line validate-sdlc-plan.sh skips the change and "passes": Constitution checks silently off
     # the ledger ticks template IDs (10.1, 10.2, ...): the 12 mandatory group headings must be the template's, verbatim
-    local tpl_h; tpl_h="$(grep -E '^## [0-9]+\. ' "$WT/openspec/schemas/notaire-sdlc/templates/tasks.md")"
+    local tpl_h; tpl_h="$(grep -E '^## [0-9]+\. ' "$WT/$TASKS_TEMPLATE")"
     [ "$(grep -E '^## [0-9]+\. ' "$d/tasks.md" 2>/dev/null)" = "$tpl_h" ] \
-        || e+="- tasks.md: group headings must be exactly the template's (openspec/schemas/notaire-sdlc/templates/tasks.md), in order:\n$tpl_h\n  Copy the template over tasks.md and write your change-specific tasks as 4.1, 4.2, ... in group 4.\n"
+        || e+="- tasks.md: group headings must be exactly the template's ($TASKS_TEMPLATE), in order:\n$tpl_h\n  Copy the template over tasks.md and write your change-specific tasks as 4.1, 4.2, ... in group 4.\n"
     grep -qE '^- \[.\] 10\.1 ' "$d/tasks.md" 2>/dev/null \
         || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
-    grep -qx 'schema: notaire-sdlc' "$d/.openspec.yaml" 2>/dev/null \
-        || e+="- .openspec.yaml must keep its first line 'schema: notaire-sdlc' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
+    grep -qx "schema: $SPEC_SCHEMA" "$d/.openspec.yaml" 2>/dev/null \
+        || e+="- .openspec.yaml must keep its first line 'schema: $SPEC_SCHEMA' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
     [ -z "$(tv USE_CASE_TITLE)" ] || has -iF "$(tv USE_CASE_TITLE)" "$d/proposal.md" \
         || e+="- proposal.md: the Use Case row must read '$(tv USE_CASE) — $(tv USE_CASE_TITLE)' (the title from the issue, do not invent one)\n"
@@ -323,7 +330,8 @@ test_cmd() { if [ -f "$STATE/tests.env" ]; then kv "$STATE/tests.env" TEST_CMD; 
 gate_red() {
     local cmd; cmd="$(test_cmd)"
     [ -n "$cmd" ] || gate_msg "Missing TEST_CMD=... line in $IO/tests.env\n" || return 1
-    git_wt diff --name-only origin/main..HEAD | has -E '(src/test/|\.test\.tsx?$|tests/e2e/)' \
+    local form; form="$(cfg check-test-cmd "$(tv SURFACE)" "$cmd")" || gate_msg "$form\n" || return 1
+    git_wt diff --name-only origin/main..HEAD | has -E "$TEST_FILES" \
         || gate_msg "No committed test file on this branch. Write the tests, then git add + git commit them.\n" || return 1
     require_clean_branch || return 1
     local e="" t m
@@ -358,21 +366,14 @@ gate_red() {
     cp "$IO/tests.env" "$STATE/tests.env"
 }
 
-suite_cmd() {
-    case "$(tv SURFACE)" in
-        backend)  echo "mvn -q -B test -pl backend-api" ;;
-        frontend) echo "cd frontend && npx vitest run" ;;
-        both)     echo "mvn -q -B test -pl backend-api && cd frontend && npx vitest run" ;;
-        *)        echo "true" ;;
-    esac
-}
+suite_cmd() { cfg suite "$(tv SURFACE)"; }
 
 # a small model "edits" by rewriting a file from the part it read: flag modified files that lost a big share of lines
 collateral_deletions() {
     local base="$1" f added removed total
     git_wt diff --numstat --diff-filter=M "$base"..HEAD | while read -r added removed f; do
         [ "$added" = - ] && continue
-        [[ "$f" =~ (^|/)src/test/|\.test\.tsx?$|^frontend/tests/ ]] && continue
+        [[ "$f" =~ $TEST_FILES ]] && continue
         total="$(git_wt show "$base:$f" | wc -l | tr -d " ")"
         [ "$removed" -gt 10 ] && [ $((removed * 4)) -gt "$total" ] && [ "$removed" -gt $((added * 2)) ] \
             && echo "- $f: $removed of $total lines removed (+$added). Restore it (git checkout $base -- $f) and delete ONLY the lines the spec names, with apply_patch or sed -i '' 'N,Md'. Never rewrite a whole file."
@@ -406,7 +407,7 @@ gate_green() {
         || return 1
     # tests edited after the red run are legal only as genuine fixes — surface them for Gate 4 review
     local changed; [ -f "$STATE/red.sha" ] \
-        && changed="$(git_wt diff --name-only "$(cat "$STATE/red.sha")"..HEAD -- '*src/test/*' '*.test.ts' '*.test.tsx' 'frontend/tests/*')"
+        && changed="$(git_wt diff --name-only "$(cat "$STATE/red.sha")"..HEAD | grep -E "$TEST_FILES")"
     [ -z "${changed:-}" ] || gate_log tests-edited-after-red "REVIEW :: $(tr '\n' ' ' <<<"$changed")"
 }
 
@@ -419,10 +420,11 @@ gate_docs() {
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
     local md; md="$(git_wt diff --name-only --diff-filter=d origin/main..HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
-    [ -z "$md" ] || run_gate docs-lint bash -c "cd '$WT' && frontend/node_modules/.bin/markdownlint-cli2 --no-globs $md" \
+    [ -z "$md" ] || run_gate docs-lint bash -c "cd '$WT' && $(need gates.docs_lint files="$md")" \
         || { { echo "markdown lint failed (fix only the reported lines; a closing fence stays a bare \`\`\`):"; tail -60 "$STATE/gate-docs-lint.out"; } > "$STATE/gate.out"; return 1; }
-    run_gate docs-sdlc bash scripts/validate-sdlc-plan.sh "$c" \
-        || { { echo "bash scripts/validate-sdlc-plan.sh $c failed:"; tail -80 "$STATE/gate-docs-sdlc.out"; } > "$STATE/gate.out"; return 1; }
+    local plan; plan="$(need spec.plan_check change="$c")"
+    run_gate docs-sdlc bash -c "$plan" \
+        || { { echo "$plan failed:"; tail -80 "$STATE/gate-docs-sdlc.out"; } > "$STATE/gate.out"; return 1; }
     require_clean_branch
 }
 
@@ -508,14 +510,14 @@ phase_spec() {
 
 phase_tests() {
     is_code || { log "KIND=$(tv KIND): no tests phase"; return 0; }
-    SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/|.*src/test/|frontend/src/.*\.test\.tsx?$|frontend/tests/)" \
+    SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/)|$TEST_FILES" \
         with_retries tests 04-tests.md gate_red
 }
 
 phase_implement() {
     is_code || { log "KIND=$(tv KIND): implementation is the docs/ci edit itself"; echo "TEST_CMD=true" | tee "$IO/tests.env" > "$STATE/tests.env"; }
     local scope=.
-    is_code && scope="^(\.localai/|openspec/changes/$(tv CHANGE)/|backend-api/|frontend/|notaire-shared/)"
+    is_code && scope="^(\.localai/|openspec/changes/$(tv CHANGE)/)|$SOURCE_ROOTS"
     SCOPE="$scope" with_retries implement 05-implement.md gate_green
 }
 
@@ -550,7 +552,7 @@ record_ledger() {
     git_wt add "$f" && git_wt commit -q -m "docs(openspec): record $(tv CHANGE) commits in ledger" -m "Refs #$ISSUE" \
         || fail "could not commit the ledger"
 }
-phase_quality() { harness_gate_loop preflight "bash scripts/preflight.sh"; }
+phase_quality() { harness_gate_loop preflight "$(need gates.preflight)"; }
 
 phase_pipeline() {
     if [ "${SKIP_PIPELINE:-0}" = 1 ]; then
@@ -558,10 +560,10 @@ phase_pipeline() {
         log "pipeline skipped (docs/ci only)"; gate_log pipeline "SKIPPED :: KIND=$(tv KIND)"; return 0
     fi
     # the stack reads the git-ignored .env; the worktree has none, so reuse the main checkout's (a symlink: never copied, never committed)
-    local env="$HERE/../../.env"
+    local env="$REPO/.env"
     [ -e "$WT/.env" ] || { [ -f "$env" ] && ln -s "$(cd "$(dirname "$env")" && pwd)/.env" "$WT/.env"; } \
         || fail "no .env in $WT and none at $env to link — create it from .env.example"
-    harness_gate_loop pipeline "COMPOSE_PROJECT_NAME=notaire-localai bash scripts/run_pipeline.sh"
+    harness_gate_loop pipeline "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT $(need gates.pipeline)"
 }
 
 # push_branch: pushing is mechanics, so the harness does it. The local model marks `git push` as needing sandbox
@@ -669,7 +671,7 @@ merge_and_close() {
     gate_log merge "PASS :: PR #$pr merged"
     sha="$(cd "$WT" && gh pr view "$pr" --json mergeCommit --jq .mergeCommit.oid)"
     log "Gate 5: waiting for CI + CD on $sha"
-    for wf in ci.yml cd.yml; do
+    for wf in $(need gates.main_workflows); do
         id=""
         for _ in $(seq 1 30); do
             id="$(main_run "$wf" "$sha")"
@@ -681,10 +683,10 @@ merge_and_close() {
     done
     log "smoke test: stack from merged main"
     git_wt fetch -q origin && git_wt checkout -q --detach origin/main
-    (cd "$WT" && COMPOSE_PROJECT_NAME=notaire-localai bash scripts/start.sh > "$STATE/gate-smoke.out" 2>&1)
-    for _ in $(seq 1 40); do curl -sf localhost:8080/actuator/health | has UP && { ok=0; break; }; sleep 6; done
+    (cd "$WT" && COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT bash -c "$(need gates.start)" > "$STATE/gate-smoke.out" 2>&1)
+    for _ in $(seq 1 40); do curl -sf "$HEALTH_URL" | has UP && { ok=0; break; }; sleep 6; done
     [ $ok -eq 0 ] || fail "smoke test failed (see $STATE/gate-smoke.out)"
-    gate_log smoke "PASS :: /actuator/health UP on $sha"
+    gate_log smoke "PASS :: $HEALTH_URL UP on $sha"
     (cd "$WT" && gh issue view "$ISSUE" --json state --jq .state | has CLOSED) \
         || (cd "$WT" && gh issue close "$ISSUE" --comment "Merged in #$pr; CI+CD green on main, smoke test passed (Gate 5).")
     (cd "$WT" && gh issue edit "$ISSUE" --remove-label in-progress >/dev/null 2>&1)
