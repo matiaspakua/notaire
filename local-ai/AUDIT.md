@@ -200,3 +200,11 @@ ruleset (E1), a Constitution freshness check (P4), semantic traceability (S2),
 automatic archive after merge (S3), Claude `Stop`/`PostToolUse` hooks (E4),
 a phase-routing policy (H2), a fresh-clone dry run (H5), and the adapter/split
 of `foreman.sh` (§3.5, §4).
+
+Issue #1085 did the first step of §4.2: `.aisdlc/project.yml` now holds every
+project value `foreman.sh` used (paths, profile, spec checks, surfaces, test and
+source patterns, gate commands, Compose project, forbidden paths), read through
+`bin/adapter.py`. The red gate also checks the TEST_CMD form. Still open for
+§4: Notaire examples inside the phase prompts, the Java-only
+`new test Class#method` triage format, per-phase routing in the adapter, and
+the `foreman.sh` split into modules.
