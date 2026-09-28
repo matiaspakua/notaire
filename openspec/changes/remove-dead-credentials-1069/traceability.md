@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1069_remove_dead_credentials` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | 3cee9db, d976c34, 9ece620, d95e7b3, 1f71060, 291226c, 49434e7, ca6bc81 | done |
-| Pull Request | pending | pending |
+| Pull Request | #1073 | created |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |

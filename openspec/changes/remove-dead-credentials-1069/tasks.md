@@ -115,8 +115,8 @@ Two new unit tests will be added and made to fail before implementation:
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin chore/1069_remove_dead_credentials`
-- [ ] 10.2 Open PR titled `[#1069] chore(security): remove dead default credentials`
+- [x] 10.1 `git push -u origin chore/1069_remove_dead_credentials`
+- [x] 10.2 Open PR titled `[#1069] chore(security): remove dead default credentials`
 - [ ] 10.3 All 26 checks passed: Build, Tests, Sonar, Checkstyle, Spotless, etc.
 - [ ] 10.4 Gate 4 — CI green, no merge conflicts, docs complete; PR merged
 
