@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/common.sh"
+[ "${ALLOW_COMMIT:-1}" = 1 ] || deny "this phase makes no commits — the foreman records it in the ledger"
+bad="$(git diff --cached --name-only --diff-filter=AM | grep -E "$FORBIDDEN" || true)"
+[ -z "$bad" ] || deny "these paths may never be committed (build output, logs, scratch, backups):
+$bad
+Unstage them: git restore --staged <path>   (never use git add -f)"
+out="$(git diff --cached --name-only | grep -vE "$SCOPE" || true)"
+[ -z "$out" ] || deny "outside this phase's scope ($SCOPE):
+$out
+Unstage and revert them: git restore --staged <path> && git checkout -- <path>"
+chain "$@"

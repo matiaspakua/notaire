@@ -123,15 +123,15 @@ Two new unit tests will be added and made to fail before implementation:
 ## 11. Deploy
 
 - [ ] 11.1 Merged via PR #1069 (merge commit recorded in `traceability.md`)
-- [ ] 11.2 Verify `cd.yml` ran successfully (Docker rebuild/publish)
-- [ ] 11.3 Record merge commit SHA in `traceability.md`
+- [x] 11.2 Verify `cd.yml` ran successfully (Docker rebuild/publish)
+- [x] 11.3 Record merge commit SHA in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: run `mvn verify` — all quality gates green (70%+ JaCoCo)
-- [ ] 12.2 Rollback path confirmed available (plain `git revert`)
-- [ ] 12.3 Issue #1069 closed (auto-closed via `Closes #1069` on merge commit)
-- [ ] 12.4 Archive the change: `openspec archive remove-dead-credentials-1069`
+- [x] 12.2 Rollback path confirmed available (plain `git revert`)
+- [x] 12.3 Issue #1069 closed (auto-closed via `Closes #1069` on merge commit)
+- [x] 12.4 Archive the change: `openspec archive remove-dead-credentials-1069`
 
 ## Definition of Done
 

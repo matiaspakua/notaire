@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/common.sh"
+# the local model marks `git push` as needing sandbox escalation and loops when refused — the harness pushes
+deny "the worker never pushes — the foreman pushes"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Blocks: history rewrites below the phase start, touching any branch but the
+# working branch, deleting refs. Rewriting the phase's OWN new commits (amend,
+# reset --soft within them) stays allowed.
+. "$(dirname "$0")/common.sh"
+[ "$1" = prepared ] || exit 0
+zero=0000000000000000000000000000000000000000
+while read -r old new ref; do
+    case "$ref" in
+        HEAD|ORIG_HEAD|FETCH_HEAD|refs/remotes/*|refs/stash|MERGE_HEAD|AUTO_MERGE|REBASE_HEAD|CHERRY_PICK_HEAD) continue ;;
+        "refs/heads/$BRANCH") ;;
+        *) deny "only refs/heads/$BRANCH may change (tried $ref) — the foreman owns branches" ;;
+    esac
+    [ "$new" != "$zero" ] || deny "deleting $ref is not allowed"
+    git merge-base --is-ancestor "$BASE" "$new" 2>/dev/null \
+        || deny "history rewrite below the phase start ($BASE) is not allowed (reset/rebase/pull). Only amend or reset your own new commits."
+done
+exit 0
