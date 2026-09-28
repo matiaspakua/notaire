@@ -31,7 +31,7 @@ The hook only looks at the resolved destination branch of a `git push`
 invocation (explicit refspec, or the current branch when none is given). It
 does not attempt to block `--force`/`--force-with-lease` in general, or
 `git push` via alternate remote names beyond the common case — see
-`openspec/changes/enforce-workflow-gates-via-hooks/design.md` (Riesgos /
+`openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/design.md` (Riesgos /
 Trade-offs) for the full list of known edge cases and why the scope was kept
 small deliberately.
 
@@ -47,7 +47,7 @@ purpose. The `SessionStart` status hook plus the existing
 `scripts/validate-sdlc-plan.sh` and the pre-push git hook
 (`scripts/preflight.sh`, installed via `scripts/install-git-hooks.sh`) already
 cover this at a coarser, non-annoying granularity. Full rationale in
-`openspec/changes/enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
+`openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
 
 ## How these were tested
 
