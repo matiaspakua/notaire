@@ -139,9 +139,12 @@ ref_guard() {  # the worker never switches branches, creates branches or (with N
         msg+="committed forbidden paths ($(head -3 <<<"$junk" | tr '\n' ' ')…); "
         git_wt reset -q "$pre_sha"   # the files stay on disk, ignored again — harmless
     fi
-    for b in $(git_wt for-each-ref --format='%(refname:short)' refs/heads); do
+    # worktrees share refs: a branch checked out in another worktree (e.g. the foreman's own PR branch) is not the worker's
+    local wtp
+    while read -r b wtp; do
+        [ -n "$wtp" ] && [ "$wtp" != "$WT" ] && continue
         grep -qxF "$b" <<<"$pre_branches" || { msg+="created branch $b; "; git_wt branch -q -D "$b"; }
-    done
+    done < <(git_wt for-each-ref --format='%(refname:short) %(worktreepath)' refs/heads)
     [ -z "$msg" ] && return 0
     log "ref guard ($label): $msg— reverted"
     printf 'GIT VIOLATION in %s — the foreman reverted it: %s\nThe foreman owns branches. Never git checkout/switch/branch/commit/push unless the phase says so.\n' \
