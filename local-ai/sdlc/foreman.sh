@@ -190,7 +190,10 @@ with_retries() {
 }
 
 # ------------------------------------------------------------------ gates
-gate_log() { echo "$(date '+%F %T') | $1 | $2" >> "$STATE/gates.log"; }
+gate_log() {
+    echo "$(date '+%F %T') | $1 | $2" >> "$STATE/gates.log"
+    python3 "$HERE/bin/metrics.py" "$STATE/metrics.jsonl" "$ISSUE" "$1" "$2"
+}
 gate_msg() { printf '%b' "$1" > "$STATE/gate.out"; return 1; }
 
 run_gate() {  # run_gate <name> <cmd...>; output kept in $STATE/gate-<name>.out
