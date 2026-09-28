@@ -33,7 +33,8 @@ STATE="$RUNS/$ISSUE"
 IO="$WT/.localai/$ISSUE"
 mkdir -p "$STATE" "$IO"
 # never committed by the worker: build output, logs, harness scratch, editor/backup files
-FORBIDDEN='(^|/)(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
+# build-output dirs sit at the root or one module deep: deeper names (openspec/changes/x/specs/coverage/) are real content
+FORBIDDEN='^([^/]+/)?(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
 # one foreman per issue: two runs on the same worktree corrupt each other's branch and gates
 if ! mkdir "$STATE/.lock" 2>/dev/null; then
     echo "foreman #$ISSUE already running (pid $(cat "$STATE/.lock/pid" 2>/dev/null)); remove $STATE/.lock if stale" >&2
@@ -139,9 +140,12 @@ ref_guard() {  # the worker never switches branches, creates branches or (with N
         msg+="committed forbidden paths ($(head -3 <<<"$junk" | tr '\n' ' ')…); "
         git_wt reset -q "$pre_sha"   # the files stay on disk, ignored again — harmless
     fi
-    for b in $(git_wt for-each-ref --format='%(refname:short)' refs/heads); do
+    # worktrees share refs: a branch checked out in another worktree (e.g. the foreman's own PR branch) is not the worker's
+    local wtp
+    while read -r b wtp; do
+        [ -n "$wtp" ] && [ "$wtp" != "$WT" ] && continue
         grep -qxF "$b" <<<"$pre_branches" || { msg+="created branch $b; "; git_wt branch -q -D "$b"; }
-    done
+    done < <(git_wt for-each-ref --format='%(refname:short) %(worktreepath)' refs/heads)
     [ -z "$msg" ] && return 0
     log "ref guard ($label): $msg— reverted"
     printf 'GIT VIOLATION in %s — the foreman reverted it: %s\nThe foreman owns branches. Never git checkout/switch/branch/commit/push unless the phase says so.\n' \
@@ -282,6 +286,15 @@ gate_spec() {
     run_gate spec-sdlc bash scripts/validate-sdlc-plan.sh "$c" \
         || { { echo "bash scripts/validate-sdlc-plan.sh $c failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
     local d="$WT/openspec/changes/$c" e="" t
+    # without the schema line validate-sdlc-plan.sh skips the change and "passes": Constitution checks silently off
+    # the ledger ticks template IDs (10.1, 10.2, ...): the 12 mandatory group headings must be the template's, verbatim
+    local tpl_h; tpl_h="$(grep -E '^## [0-9]+\. ' "$WT/openspec/schemas/notaire-sdlc/templates/tasks.md")"
+    [ "$(grep -E '^## [0-9]+\. ' "$d/tasks.md" 2>/dev/null)" = "$tpl_h" ] \
+        || e+="- tasks.md: group headings must be exactly the template's (openspec/schemas/notaire-sdlc/templates/tasks.md), in order:\n$tpl_h\n  Copy the template over tasks.md and write your change-specific tasks as 4.1, 4.2, ... in group 4.\n"
+    grep -qE '^- \[.\] 10\.1 ' "$d/tasks.md" 2>/dev/null \
+        || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
+    grep -qx 'schema: notaire-sdlc' "$d/.openspec.yaml" 2>/dev/null \
+        || e+="- .openspec.yaml must keep its first line 'schema: notaire-sdlc' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
     [ -z "$(tv USE_CASE_TITLE)" ] || has -iF "$(tv USE_CASE_TITLE)" "$d/proposal.md" \
         || e+="- proposal.md: the Use Case row must read '$(tv USE_CASE) — $(tv USE_CASE_TITLE)' (the title from the issue, do not invent one)\n"
@@ -476,9 +489,13 @@ phase_setup() {
 phase_spec() {
     NO_COMMIT=1 SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/)" with_retries spec 03-spec.md gate_spec
     # the harness commits: the worker kept writing "Closes #n" into spec commits
-    git_wt add "openspec/changes/$(tv CHANGE)" \
-        && git_wt commit -q -m "docs(openspec): specify $(tv CHANGE)" -m "Refs #$ISSUE" \
-        || fail "could not commit the spec"
+    local subject="docs(openspec): specify $(tv CHANGE)" amend=()
+    git_wt add "openspec/changes/$(tv CHANGE)" || fail "could not stage the spec"
+    # a RECHECK or a review round with no edits leaves nothing to commit
+    git_wt diff --cached --quiet && { log "spec unchanged — nothing to commit"; return 0; }
+    # review rounds fold into the one spec commit instead of stacking new ones
+    [ "$(git_wt log -1 --format=%s)" = "$subject" ] && amend=(--amend)
+    git_wt commit -q ${amend[@]+"${amend[@]}"} -m "$subject" -m "Refs #$ISSUE" || fail "could not commit the spec"
     require_clean_branch || fail "branch dirty after spec commit: $(cat "$STATE/gate.out")"
 }
 

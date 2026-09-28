@@ -18,11 +18,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1074_local_ai_sdlc_harness` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | e88ea49, 76c0a5e, 7b56ada, b7ff0ec, 63772f4, 1bbdb78, 8fad856 | done |
-| Pull Request | #1075 | open |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
+| Pull Request | #1075 | merged |
+| CI run | CI 36420453498, Playwright 36420453557, Frontend 36420453564 on 5da876f | green |
+| Merge commit | 937c340 | merged 2026-09-28 |
 | Release / tag | n/a — internal tooling, no release artifact | pending |
-| Smoke test | pending | pending |
+| Smoke test | foreman.sh 1063 ran triage → setup → spec with the #1075 harness (identical pre-merge copy); fresh-clone run (12.1) not done | partial |
 
 ## Requirement coverage
 

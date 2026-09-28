@@ -2,6 +2,8 @@
 
 Branch `{{BRANCH}}` and change `openspec/changes/{{CHANGE}}/` already exist.
 Your triage is in `{{IO}}/triage.md` and `{{IO}}/triage.env` — read both first.
+Never run mvn, npm or any build/test here: coverage and test results come from
+the issue and triage, and a build started in this phase stalls it.
 
 Fill the artifacts in this order. For EACH one, first run
 `openspec instructions <artifact> --change {{CHANGE}}` and follow it, and look at
