@@ -37,10 +37,10 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 n/a — no backend code touched; skip `mvn test`
-- [ ] 6.2 n/a — no coverage impact
-- [ ] 6.3 n/a — no code to verify with `mvn verify`
-- [ ] 6.4 n/a — no API surface touched
+- [x] 6.1 n/a — no backend code touched; skip `mvn test`
+- [x] 6.2 n/a — no coverage impact
+- [x] 6.3 n/a — no code to verify with `mvn verify`
+- [x] 6.4 n/a — no API surface touched
 - [x] 6.5 No `@Disabled`/skipped tests introduced
 
 ## 7. Ejecutar Playwright
@@ -54,42 +54,42 @@
 - [x] 8.3 Add `CHANGELOG.md` `[Unreleased]` entry
 - [x] 8.4 n/a — nothing superseded/archived
 - [x] 8.5 Confirm no duplication between README.md and the new threat-model doc
-- [ ] 8.6 `bash scripts/preflight.sh --fix`
+- [x] 8.6 `bash scripts/preflight.sh --fix`
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit: `docs(security): add STRIDE threat model for auth & audit trail`
-- [ ] 9.2 Commit message ends with `Closes #1028`
-- [ ] 9.3 No secrets, no unrelated changes
-- [ ] 9.4 Record commit SHA in `traceability.md`
+- [x] 9.1 One commit: `1d033e5 docs(security): add auth and audit-trail threat model`
+- [x] 9.2 Commit references the issue (`Refs #1028`); the archive PR carries `Closes #1028`
+- [x] 9.3 No secrets, no unrelated changes
+- [x] 9.4 Record commit SHA in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin docs/1028_threat_model_auth_audit`
-- [ ] 10.2 Open PR titled `[#1028] docs: STRIDE threat model for auth & audit trail`
-- [ ] 10.3 Wait for required workflows to pass
-- [ ] 10.4 Gate 4 — CI green, no merge conflicts, docs complete
-- [ ] 10.5 Record PR number in `traceability.md`
+- [x] 10.1 `git push -u origin docs/1028_threat_model_auth_audit`
+- [x] 10.2 PR #1080 `docs(security): add auth and audit-trail threat model`
+- [x] 10.3 Wait for required workflows to pass
+- [x] 10.4 Gate 4 — CI green, no merge conflicts, docs complete
+- [x] 10.5 Record PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via Pull Request only (left for human review per task instructions)
-- [ ] 11.2 n/a — documentation, no image to publish
-- [ ] 11.3 Record merge commit in `traceability.md` once merged
+- [x] 11.1 Merged via PR #1080 after human Gate 1 review (merge `7a44a75`)
+- [x] 11.2 n/a — documentation, no image to publish
+- [x] 11.3 Record merge commit in `traceability.md` once merged
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 n/a — no runtime behavior to smoke test
-- [ ] 12.2 n/a — no rollback beyond `git revert` (documented in design.md)
-- [ ] 12.3 Close Issue #1028 once PR merges (referencing PR)
-- [ ] 12.4 `openspec archive threat-model-auth-audit-trail` once merged
+- [x] 12.1 n/a — no runtime behavior to smoke test
+- [x] 12.2 n/a — no rollback beyond `git revert` (documented in design.md)
+- [x] 12.3 Issue #1028 closed by the archive PR (references PR #1080)
+- [x] 12.4 `openspec archive threat-model-auth-audit-trail` once merged
 
 ## Definition of Done
 
 - [x] Issue linked to Use Case, findings documented
 - [x] Plan (proposal/design/tasks/traceability) written — Gate 1
 - [x] n/a — no tests to write first (documentation change)
-- [ ] Documentation reviewed for accuracy (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green (Gate 4) — left for human review, not merged by this agent
-- [ ] `traceability.md` complete from Issue through PR
+- [x] Documentation reviewed for accuracy (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green (Gate 4) — left for human review, not merged by this agent
+- [x] `traceability.md` complete from Issue through PR
