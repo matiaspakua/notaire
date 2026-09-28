@@ -1,4 +1,13 @@
-## ADDED Requirements
+# ai-sdlc-enforcement Specification
+
+## Purpose
+
+Mechanical checks of the CONSTITUTION process: the local-AI harness gates
+(env parsing, static test checks, runnable review notes, metrics) and the PR
+checks run by `sdlc-process.yml` and `scripts/preflight.sh`. Issue #1083
+introduced them from the findings in `local-ai/AUDIT.md`.
+
+## Requirements
 
 ### Requirement: Harness env files accept quoted values
 
@@ -146,6 +155,11 @@ references a repository path that does not exist.
 
 - **WHEN** a rule file references `` `docs/does-not-exist/` ``
 - **THEN** the check fails and names the file and the path
+
+#### Scenario: No rule files found
+
+- **WHEN** the check runs against a root that has no agent rule files
+- **THEN** it fails instead of passing with nothing checked
 
 ### Requirement: Changes must declare their schema
 

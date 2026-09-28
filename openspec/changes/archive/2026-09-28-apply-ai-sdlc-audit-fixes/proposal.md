@@ -48,7 +48,9 @@ Process and CI:
   repo paths they reference exist (P2, P5).
 - `validate-sdlc-plan.sh` fails a change that has no `schema:` line, instead of
   skipping it (S4).
-- All five run in `pr-validation.yml` and `scripts/preflight.sh` (CLAUDE.md:
+- The four PR checks and both self-test suites run in a new
+  `sdlc-process.yml` workflow and in `scripts/preflight.sh`; the schema check
+  runs inside `validate-sdlc-plan.sh` (CLAUDE.md:
   a new CI gate is mirrored in preflight in the same PR).
 
 Policy and cleanup:
@@ -93,7 +95,7 @@ None.
 | `frontend` | no | — |
 | `notaire-shared` | no | — |
 | `infra` / observability | no | — |
-| CI/CD (`.github/workflows`) | yes | `pr-validation.yml` new checks, SpecKit job removed; `e2e-swing.yml` deleted |
+| CI/CD (`.github/workflows`) | yes | new `sdlc-process.yml`; SpecKit job removed from `pr-validation.yml`; `e2e-swing.yml` deleted |
 | `local-ai/sdlc` harness | yes | see What Changes |
 
 ### Surface area
