@@ -1,4 +1,4 @@
-# Phase 4 — Write FAILING tests for #{{ISSUE}} (Gate 2). No production code.
+# Phase 4 — Write FAILING tests for #{{ISSUE}} (Gate 2). No production code
 
 Read `openspec/changes/{{CHANGE}}/specs/` (the scenarios) and the Testing
 Strategy in `openspec/changes/{{CHANGE}}/design.md`.
@@ -14,9 +14,10 @@ Strategy in `openspec/changes/{{CHANGE}}/design.md`.
 3. Write `{{IO}}/tests.env` with one line — the exact command that runs ONLY
    your new/changed tests, e.g.
 
-```
-TEST_CMD=mvn -q -B test -pl backend-api -Dtest=FooServiceTest,FooControllerIntegrationTest
-```
+   ```text
+   TEST_CMD=mvn -q -B test -pl backend-api -Dtest=FooServiceTest,FooControllerIntegrationTest
+   ```
+
    (frontend example: `TEST_CMD=cd frontend && npx vitest run src/components/foo/Foo.test.tsx`)
 
 4. Tick the group 3 tasks you completed in `openspec/changes/{{CHANGE}}/tasks.md`.

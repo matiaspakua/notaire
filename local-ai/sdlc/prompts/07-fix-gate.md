@@ -13,6 +13,6 @@ test, the doc or the config that is actually wrong. Rules:
 
 ## Gate output
 
-```
+```text
 {{GATE_OUTPUT}}
 ```

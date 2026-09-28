@@ -2,7 +2,7 @@
 
 Stack de desarrollo con IA que corre íntegramente en tu Mac (sin nube, sin API keys de LLM):
 
-```
+```text
 ┌──────────────────────────────────────────────┐
 │  MacBook Pro M5 / 24 GB                      │
 │                                              │
@@ -104,6 +104,3 @@ codex exec --profile omlx --skip-git-repo-check -C ~/workspace/mi-proyecto "Impl
 | `~/.omlx/cache/` | Bloques KV fríos en SSD |
 | `~/.omlx/logs/server.log` | Log estructurado del servidor |
 | `~/.codex/omlx.config.toml` | Perfil Codex para el modelo local |
-
-
-codex resume 01a0d9aa-d9e7-74a3-a70c-18689182391f

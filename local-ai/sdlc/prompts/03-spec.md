@@ -1,4 +1,4 @@
-# Phase 3 — Specification for #{{ISSUE}} (Gate 1). Documents only, no code.
+# Phase 3 — Specification for #{{ISSUE}} (Gate 1). Documents only, no code
 
 Branch `{{BRANCH}}` and change `openspec/changes/{{CHANGE}}/` already exist.
 Your triage is in `{{IO}}/triage.md` and `{{IO}}/triage.env` — read both first.
@@ -33,7 +33,7 @@ as a model of the expected depth:
 
 Then check, and fix until both pass:
 
-```
+```text
 openspec validate {{CHANGE}} --strict
 bash scripts/validate-sdlc-plan.sh {{CHANGE}}
 ```

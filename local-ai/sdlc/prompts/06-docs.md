@@ -19,4 +19,4 @@ Read the "Documentation Impact" section of `openspec/changes/{{CHANGE}}/proposal
    rows — the harness records SHAs itself after this phase.
 5. Run `bash scripts/validate-sdlc-plan.sh {{CHANGE}}` — must pass.
    Do not touch code or tests in this phase.
-6. Commit: `docs(<scope>): <what> ` with body `Refs #{{ISSUE}}`.
+6. Commit: `docs(<scope>): <what>` with body `Refs #{{ISSUE}}`.
