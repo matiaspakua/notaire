@@ -10,16 +10,16 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1028 | in-progress |
+| Issue | #1028 | closed by this archive PR |
 | Use Case | CU84 (Login), CU73 (Registro de Auditoría) | exists |
-| Specification | `openspec/changes/threat-model-auth-audit-trail/` | drafted |
-| Branch | `docs/1028_threat_model_auth_audit` | created |
-| Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
-| Release / tag | pending | pending |
+| Specification | `openspec/changes/archive/2026-09-28-threat-model-auth-audit-trail/` | archived |
+| Branch | `docs/1028_threat_model_auth_audit` | merged |
+| Tasks | `tasks.md` | done |
+| Commits | `1d033e5` | done |
+| Pull Request | #1080 | merged |
+| CI run | 27 checks on `1d033e5` | green |
+| Merge commit | `7a44a75` | done |
+| Release / tag | n/a — documentation only | n/a |
 | Smoke test | n/a — no runtime behavior change | n/a |
 
 ## Requirement coverage
@@ -33,9 +33,9 @@ automated tests.
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md` | pending | pending |
-| `docs/200-architecture/206-security/README.md` | pending | pending |
-| `CHANGELOG.md` | pending | pending |
+| `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md` | yes | `1d033e5` |
+| `docs/200-architecture/206-security/README.md` | yes | `1d033e5` |
+| `CHANGELOG.md` | yes | `1d033e5` |
 
 ## Gate log
 
@@ -43,9 +43,9 @@ automated tests.
 |------|-----------|--------|----------|
 | 1 | Issue + Specification | yes | Issue #1028, this plan |
 | 2 | n/a — no code, no tests | n/a | documentation-only change |
-| 3 | Docs updated, preflight clean | pending | — |
-| 4 | CI green, review approved | pending | — |
-| 5 | Merged, Issue closed | pending | — |
+| 3 | Docs updated, preflight clean | yes | pre-push preflight on `1d033e5` |
+| 4 | CI green, review approved | yes | PR #1080 green; human Gate 1 review 2026-09-28 |
+| 5 | Merged, Issue closed | yes | merge `7a44a75`; this PR closes #1028 |
 
 ## Exceptions
 
