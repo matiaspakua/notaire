@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read the project adapter (.aisdlc/project.yml), the harness's only project-specific input.
 
+  adapter.py [--file F] validate                            exit 2 listing every required key the adapter lacks
   adapter.py [--file F] get <dotted.key> [name=value ...]   value with {name} filled; lists one item per line
   adapter.py [--file F] surfaces                            file paths on stdin -> "backend,frontend" | "none"
   adapter.py [--file F] suite <surfaces>                    full-suite command for those surfaces
@@ -33,6 +34,16 @@ def _lookup(cfg, key):
             raise KeyError(key)
         node = node[part]
     return node
+
+
+def missing_keys(cfg):
+    missing = []
+    for key in REQUIRED:
+        try:
+            _lookup(cfg, key)
+        except KeyError:
+            missing.append(key)
+    return missing
 
 
 def _fill(text, subs):
@@ -80,7 +91,12 @@ def main(argv):
     cfg = load(path)
     cmd, args = argv[0], argv[1:]
     try:
-        if cmd == "get":
+        if cmd == "validate":
+            missing = missing_keys(cfg)
+            if missing:
+                print("adapter %s lacks: %s" % (os.path.abspath(path), ", ".join(missing)), file=sys.stderr)
+                return 2
+        elif cmd == "get":
             subs = dict(a.split("=", 1) for a in args[1:])
             print(get(cfg, args[0], subs))
         elif cmd == "surfaces":
