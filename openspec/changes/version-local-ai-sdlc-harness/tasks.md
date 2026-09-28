@@ -71,11 +71,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin chore/1074_local_ai_sdlc_harness`
-- [ ] 10.2 Open PR titled `[#1074] chore(local-ai): version the local-AI SDLC harness`
+- [x] 10.1 `git push -u origin chore/1074_local_ai_sdlc_harness`
+- [x] 10.2 Open PR titled `[#1074] chore(local-ai): version the local-AI SDLC harness`
 - [ ] 10.3 Wait for required workflows to pass
 - [ ] 10.4 Gate 4 — CI green, review approved, no merge conflicts
-- [ ] 10.5 Record PR number in `traceability.md`
+- [x] 10.5 Record PR number in `traceability.md`
 
 ## 11. Deploy
 

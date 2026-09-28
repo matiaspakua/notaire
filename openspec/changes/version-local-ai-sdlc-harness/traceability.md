@@ -18,7 +18,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1074_local_ai_sdlc_harness` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | e88ea49, 76c0a5e, 7b56ada, b7ff0ec, 63772f4, 1bbdb78, 8fad856 | done |
-| Pull Request | pending | pending |
+| Pull Request | #1075 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a — internal tooling, no release artifact | pending |
