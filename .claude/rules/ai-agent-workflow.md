@@ -619,4 +619,6 @@ Only in **extreme circumstances** with **explicit human approval**:
 2. Documentation-only changes (minor spelling/formatting)
 3. One-time migration scripts
 
-Document any exception in the commit message.
+Document any exception in the commit message and the PR. The human owner marks
+the PR with the `sdlc-exception` label; a PR without an OpenSpec change fails
+`sdlc-process.yml` unless it carries that label (CONSTITUTION §12).
