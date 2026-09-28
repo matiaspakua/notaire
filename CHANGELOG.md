@@ -266,6 +266,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   status codes, persisted data and DB schema are identical, and the pattern is
   deliberately scoped to this one slice pending review.
 
+### Security
+
+- **Dead default credentials removed** (issue #1069, CU78): dropped the unused
+  `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
+  and deleted the legacy Swing-era `config.properties` (plain-text database
+  credentials) that no code read. Actuator auth is unchanged (#1069)
+
 ### Fixed
 
 - **E2E suite no longer collides across workers or leaks seed rows**
