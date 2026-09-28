@@ -285,6 +285,9 @@ gate_spec() {
     run_gate spec-sdlc bash scripts/validate-sdlc-plan.sh "$c" \
         || { { echo "bash scripts/validate-sdlc-plan.sh $c failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
     local d="$WT/openspec/changes/$c" e="" t
+    # without the schema line validate-sdlc-plan.sh skips the change and "passes": Constitution checks silently off
+    grep -qx 'schema: notaire-sdlc' "$d/.openspec.yaml" 2>/dev/null \
+        || e+="- .openspec.yaml must keep its first line 'schema: notaire-sdlc' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
     [ -z "$(tv USE_CASE_TITLE)" ] || has -iF "$(tv USE_CASE_TITLE)" "$d/proposal.md" \
         || e+="- proposal.md: the Use Case row must read '$(tv USE_CASE) — $(tv USE_CASE_TITLE)' (the title from the issue, do not invent one)\n"
