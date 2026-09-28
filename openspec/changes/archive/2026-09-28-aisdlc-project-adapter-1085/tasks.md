@@ -20,29 +20,29 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, missing key, legacy `both`, bad TEST_CMD
-- [ ] 3.2 `local-ai/sdlc/tests/test_adapter.py` covers every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: happy path, missing key, legacy `both`, bad TEST_CMD
+- [x] 3.2 `local-ai/sdlc/tests/test_adapter.py` covers every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `.aisdlc/project.yml` with today's values, copied verbatim
-- [ ] 4.2 `local-ai/sdlc/bin/adapter.py`: `get`, `surfaces`, `suite`, `check-test-cmd`
-- [ ] 4.3 `foreman.sh` reads paths, profile, spec, surfaces, gates, compose name and forbidden paths through the adapter
-- [ ] 4.4 Red gate runs `check-test-cmd` before the red run
+- [x] 4.1 `.aisdlc/project.yml` with today's values, copied verbatim
+- [x] 4.2 `local-ai/sdlc/bin/adapter.py`: `get`, `surfaces`, `suite`, `check-test-cmd`
+- [x] 4.3 `foreman.sh` reads paths, profile, spec, surfaces, gates, compose name and forbidden paths through the adapter
+- [x] 4.4 Red gate runs `check-test-cmd` before the red run
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing harness self-tests unchanged and green
+- [x] 5.1 Existing harness self-tests unchanged and green
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/sdlc/foreman.sh`; `foreman.sh 1063 check` loads the adapter
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 No `@Disabled` or skipped tests introduced
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/sdlc/foreman.sh`; `foreman.sh <n> check` loads the adapter (scratch `WT`/`RUNS`: #1063 was running)
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
@@ -50,16 +50,16 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md`: adapter section, `SURFACE` format
-- [ ] 8.2 `local-ai/AUDIT.md` §7: adapter step 1 done, the rest still open
-- [ ] 8.3 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md`: adapter section, `SURFACE` format
+- [x] 8.2 `local-ai/AUDIT.md` §7: adapter step 1 done, the rest still open
+- [x] 8.3 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1085`
-- [ ] 9.2 Only the final commit carries `Closes #1085`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1085`
+- [x] 9.2 Only the final commit carries `Closes #1085`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -79,18 +79,18 @@
 - [ ] 12.1 Smoke test: the next `foreman.sh` run starts with the adapter
 - [x] 12.2 Rollback path confirmed (`git revert`)
 - [ ] 12.3 Issue #1085 closed on merge
-- [ ] 12.4 Change archived (`openspec archive aisdlc-project-adapter-1085`)
+- [x] 12.4 Change archived in this PR (`openspec archive aisdlc-project-adapter-1085`)
 
 ## Definition of Done
 
 - [x] Issue linked to Use Case CU76
 - [x] Specification written and reviewed (Gate 1)
-- [ ] Tests written first and observed failing (Gate 2)
-- [ ] New suites green; existing suites unaffected
+- [x] Tests written first and observed failing (Gate 2)
+- [x] New suites green; existing suites unaffected
 - [x] Coverage at or above the JaCoCo ratchet floor (unaffected — no backend code)
 - [x] Playwright E2E: n/a, no UI surface
-- [ ] Permanent documentation updated
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Permanent documentation updated
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green (Gate 4)
 - [ ] Merged, CD green, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
