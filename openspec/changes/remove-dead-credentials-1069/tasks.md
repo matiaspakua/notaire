@@ -98,7 +98,7 @@ Two new unit tests will be added and made to fail before implementation:
 
 - [x] 8.1 Update CHANGELOG.md: add entry `chore(security): remove dead default credentials`
 - [x] 8.2 n/a — no endpoint changed
-- [x] 8.3 n/a — not user-visible
+- [ ] 8.3 n/a — not user-visible
 - [x] 8.4 Nothing to archive
 - [x] 8.5 Confirmed: no duplication introduced
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — PREFLIGHT PASSED
