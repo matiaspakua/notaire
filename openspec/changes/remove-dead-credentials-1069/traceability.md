@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/remove-dead-credentials-1069/` | written |
 | Branch | `chore/1069_remove_dead_credentials` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | 3cee9db, d976c34, 9ece620, d95e7b3, 1f71060, 291226c, 49434e7, 39a033d, 6bcba4f, 7a26bdb, e4c48f3, d4ef40d | done |
+| Commits | 3cee9db, d976c34, 9ece620, d95e7b3, 1f71060, 291226c, 49434e7, ca6bc81 | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
