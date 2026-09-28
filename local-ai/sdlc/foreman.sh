@@ -328,6 +328,7 @@ gate_red() {
         && e+="- .localai/ files are committed — they are foreman scratch, never commit them: git rm -r --cached .localai && git commit --amend\n"
     git_wt log --format=%B origin/main..HEAD | has "Closes #" \
         && e+="- a commit says 'Closes #...' — only the final implementation commit may. Use 'Refs #$ISSUE' (git commit --amend is fine: the branch is not pushed)\n"
+    local static; static="$(python3 "$HERE/bin/static_checks.py" "$WT" origin/main)" || e+="$static\n"
     [ -z "$e" ] || gate_msg "Fix before the red run:\n$e" || return 1
     if run_gate red bash -c "$cmd"; then
         { echo "TEST_CMD passed, but in this phase it MUST fail (TDD red): your tests do not"
