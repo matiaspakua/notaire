@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit;
 
-import java.io.InputStream;
+import java.net.URL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +14,10 @@ class ApplicationResourceTest {
     void shouldNotIncludeConfigProperties() {
         // Arrange: No setup needed - we're checking the classpath resource
 
-        // Act: Look up the legacy config.properties resource
-        String resourceName = "/config.properties";
-        InputStream resource = getClass().getResourceAsStream(resourceName);
+        // Act
+        URL resource = getClass().getResource("/config.properties");
 
-        // Assert: Test should FAIL because the legacy file currently exists
+        // Assert
         assertThat(resource).isNull();
     }
 }

@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Properties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,29 +12,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApplicationPropertiesHygieneTest {
 
     @Test
-    @DisplayName("Should not define dead security user keys (spring.security.user.*)" + " in application.properties")
-    void shouldNotDefineDeadSecurityUserKeys() {
-        // Arrange: Load the real application.properties file
+    @DisplayName("Should not define dead security user keys (spring.security.user.*) in application.properties")
+    void shouldNotDefineDeadSecurityUserKeys() throws IOException {
+        // Arrange
+        Properties props = new Properties();
         try (InputStream in = getClass().getResourceAsStream("/application.properties")) {
-            Properties props = new Properties();
             props.load(in);
-
-            String firstDeadKey = null;
-            
-            // Act: Check for dead security user keys
-            Iterator<String> keyIterator = props.stringPropertyNames().iterator();
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                if (key.startsWith("spring.security.user.")) {
-                    firstDeadKey = key;
-                    break;
-                }
-            }
-
-            // Assert: Test should FAIL because dead keys currently exist
-            assertThat(firstDeadKey).isNull();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+
+        // Act / Assert
+        assertThat(props.stringPropertyNames()).noneMatch(key -> key.startsWith("spring.security.user."));
     }
 }
