@@ -73,22 +73,22 @@
 
 - [x] 10.1 `git push -u origin chore/1074_local_ai_sdlc_harness`
 - [x] 10.2 Open PR titled `[#1074] chore(local-ai): version the local-AI SDLC harness`
-- [ ] 10.3 Wait for required workflows to pass
-- [ ] 10.4 Gate 4 — CI green, review approved, no merge conflicts
+- [x] 10.3 Wait for required workflows to pass
+- [x] 10.4 Gate 4 — CI green, review approved, no merge conflicts
 - [x] 10.5 Record PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via Pull Request only
+- [x] 11.1 Merge via Pull Request only
 - [ ] 11.2 n/a — no image publish impact from `local-ai/`
-- [ ] 11.3 Record merge commit in `traceability.md`
+- [x] 11.3 Record merge commit in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: `local-ai/sdlc/foreman.sh <issue>` starts from a fresh clone of main
 - [ ] 12.2 Rollback path confirmed (plain revert)
-- [ ] 12.3 Close Issue #1074 referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive version-local-ai-sdlc-harness` (after merge)
+- [x] 12.3 Close Issue #1074 referencing the PR
+- [x] 12.4 Archive the change: `openspec archive version-local-ai-sdlc-harness` (after merge)
 
 ## Definition of Done
 
