@@ -48,7 +48,7 @@
 <!-- Change-specific work goes here. Break it into small, verifiable tasks ordered
      by dependency. Write only the code needed to make the tests of group 3 pass. -->
 
-- [ ] 4.1 `backend-api/pom.xml`: LINE `<minimum>0.70</minimum>` → `<minimum>0.80</minimum>`, BRANCH `<minimum>0.25</minimum>` → `<minimum>0.65</minimum>`
+- [x] 4.1 `backend-api/pom.xml`: LINE `<minimum>0.70</minimum>` → `<minimum>0.80</minimum>`, BRANCH `<minimum>0.25</minimum>` → `<minimum>0.65</minimum>`
 - [ ] 4.2 `.claude/rules/code-quality.md` line 27: `**70% line / 25% branch**` → `**80% line / 65% branch**`
 - [ ] 4.3 `CONSTITUTION.md` line 496 cell: `70% line / 25% branch` → `80% line / 65% branch`
 - [ ] 4.4 `mvn jacoco:check -pl backend-api` passes (current: 84.9% line / 74.0% branch)
