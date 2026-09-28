@@ -7,6 +7,7 @@
 #   foreman.sh <issue> <phase>    run from <phase> (re-runs it even if done)
 #   foreman.sh <issue> merge      after foreman review: merge + Gate 5
 #   foreman.sh <issue> fix        worker applies $RUNS/<issue>/gate4.md (foreman review), then ci + review
+#   foreman.sh <issue> check      run the CHECK/EXPECTED lines of the pending review notes (no worker run)
 #
 # Env: WT (worker worktree, default ../notaire-localai),
 #      RUNS (harness state, default ../notaire-localai-runs),
@@ -695,7 +696,19 @@ review_fix() {
     mv "$notes" "$STATE/gate4-applied-$(date +%s).md"
 }
 
+# review_notes_check: run the CHECK lines of every pending review note in the worker worktree, so the
+# foreman sees which notes are already met before re-running the gate (no worker run)
+review_notes_check() {
+    local f notes=()
+    for f in "$STATE"/review-*.md "$STATE/gate4.md"; do
+        [ -f "$f" ] && [[ "$f" != *.done.md ]] && notes+=("$f")
+    done
+    [ ${#notes[@]} -gt 0 ] || fail "no pending review notes in $STATE"
+    python3 "$HERE/bin/review_check.py" "$WT" "${notes[@]}"
+}
+
 # ------------------------------------------------------------------ main
+[ "$FROM" = check ] && { review_notes_check; exit $?; }
 [ "$FROM" = merge ] && { merge_and_close; exit 0; }
 [ "$FROM" = fix ] && { review_fix; FROM=ci; }
 if [ -n "$FROM" ]; then  # forget $FROM and every later phase
