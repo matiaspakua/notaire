@@ -226,6 +226,8 @@ gate_triage() {
     for v in UI_CHANGE API_CHANGE DB_CHANGE; do
         [[ "$(iv $v)" =~ ^(yes|no)$ ]] || e+="- triage.env: $v=$(iv $v) — write yes or no\n"
     done
+    # SLUG separators are cosmetic (the model writes the change-name style, a-b-c): normalize, do not retry
+    sed -i '' '/^SLUG=/s/[-[:space:]]/_/g' "$IO/triage.env"
     [[ "$(iv SLUG)" =~ ^[a-z0-9]+(_[a-z0-9]+){2,5}$ ]] \
         || e+="- triage.env: SLUG=$(iv SLUG) — write 3-6 lowercase words joined by _, e.g. remove_dead_default_credentials\n"
     for v in "## Evidence" "## Acceptance Criteria" "## Files to Edit" "## Risks"; do
@@ -234,7 +236,7 @@ gate_triage() {
     grep -q 'example' "$md" && e+="- triage.md: still contains skeleton 'example' lines — replace them with real content\n"
     # normalize cosmetics (backticks, bold, dash variants) — judge substance, not typography
     local crit; crit="$(sed -n '/^## Acceptance Criteria/,/^## /p' "$md" | grep -E '^[0-9]+\.' \
-        | perl -CSD -pe 's/[`*]//g; s/\s+[-\x{2013}\x{2014}:]+\s+/ \x{2014} /g; s/proven by\s*[:\x{2014}]*\s*/proven by: /i' || true)"
+        | perl -CSD -pe 's/[`*]//g; s/\s+[-\x{2013}\x{2014}:]+\s+/ \x{2014} /g; s/proven by\s*[:\x{2014}]*\s*/proven by: /i; s/proven by: existing test /proven by: /i' || true)"
     [ -n "$crit" ] || e+="- triage.md: no numbered acceptance criteria\n"
     grep -vqE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit" \
         && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n"
@@ -435,6 +437,16 @@ gate_pr() {
 }
 
 # ------------------------------------------------------------------ phases
+seed_triage() {  # seed_triage <use-case>: fresh triage files in $IO
+    local uc="$1"
+    rm -rf "$IO" && mkdir -p "$IO"
+    # pre-fill whatever is derivable: every decision taken from the model is one it cannot get wrong
+    local tp; tp="$(sed -nE '1s/^# #[0-9]+ (feat|fix|refactor|test|docs|chore|ci|design)[(:].*/\1/p' "$STATE/issue.md")"
+    sed "s/{{ISSUE}}/$ISSUE/g;s/{{USE_CASE}}/${uc:-NONE}/g;s/^TYPE=?$/TYPE=${tp:-?}/" \
+        "$HERE/templates/triage.env" > "$IO/triage.env"
+    sed "s/{{ISSUE}}/$ISSUE/g" "$HERE/templates/triage.md" > "$IO/triage.md"
+}
+
 phase_triage() {
     (cd "$WT" && gh issue view "$ISSUE" --json number,title,state,labels,body,comments \
         --jq '"# #\(.number) \(.title)\nstate: \(.state) | labels: \([.labels[].name]|join(", "))\n\n\(.body)\n\n## Comments\n\([.comments[] | "- \(.author.login): \(.body)"] | join("\n"))"') \
@@ -443,12 +455,8 @@ phase_triage() {
     git_wt status --porcelain | grep -v '^?? \.localai/' | has . && fail "worktree $WT is dirty"
     git_wt fetch -q origin && git_wt checkout -q --detach origin/main
     local uc; uc="$(sed -n '/Use Case/,/^## /p' "$STATE/issue.md" | grep -oE '(CU|RF|RNF)-?[0-9]+' | head -1)"
-    rm -rf "$IO" && mkdir -p "$IO"
-    # pre-fill whatever is derivable: every decision taken from the model is one it cannot get wrong
-    local tp; tp="$(sed -nE '1s/^# #[0-9]+ (feat|fix|refactor|test|docs|chore|ci|design)[(:].*/\1/p' "$STATE/issue.md")"
-    sed "s/{{ISSUE}}/$ISSUE/g;s/{{USE_CASE}}/${uc:-NONE}/g;s/^TYPE=?$/TYPE=${tp:-?}/" \
-        "$HERE/templates/triage.env" > "$IO/triage.env"
-    sed "s/{{ISSUE}}/$ISSUE/g" "$HERE/templates/triage.md" > "$IO/triage.md"
+    # RECHECK keeps the worker's triage: re-seeding would hand the gate an empty skeleton
+    [ "${RECHECK:-0}" = 1 ] || seed_triage "$uc"
     NO_COMMIT=1 SCOPE='^\.localai/' with_retries triage 01-triage.md gate_triage
 }
 
