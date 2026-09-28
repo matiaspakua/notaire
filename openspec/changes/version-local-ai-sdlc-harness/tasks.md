@@ -23,14 +23,14 @@
 - [ ] 3.1 n/a — no delta spec scenarios (`skip_specs: true`); verification plan in design.md
 - [ ] 3.2 n/a — no unit-testable application code
 - [ ] 3.3 n/a — no integration-testable application code
-- [ ] 3.4 Run `bash -n` on every script and `py_compile` on `bin/*.py`
+- [x] 3.4 Run `bash -n` on every script and `py_compile` on `bin/*.py`
 - [ ] 3.5 n/a — no spec scenarios to map
 
 ## 4. Implementación
 
-- [ ] 4.1 Add `local-ai/` (model stack scripts, README) without `.serena/` or caches
-- [ ] 4.2 Add `local-ai/sdlc/` (foreman, prompts, githooks, bin, templates, AI-SDLC.md)
-- [ ] 4.3 Confirm no secrets or `.env` in the added files
+- [x] 4.1 Add `local-ai/` (model stack scripts, README) without `.serena/` or caches
+- [x] 4.2 Add `local-ai/sdlc/` (foreman, prompts, githooks, bin, templates, AI-SDLC.md)
+- [x] 4.3 Confirm no secrets or `.env` in the added files
 
 ## 5. Actualizar tests existentes
 
@@ -44,29 +44,29 @@
 - [ ] 6.2 n/a — no coverage-affecting code changed
 - [ ] 6.3 n/a — no Java/TS code changed
 - [ ] 6.4 n/a — no API surface changed
-- [ ] 6.5 No `@Disabled`/skipped tests introduced
+- [x] 6.5 No `@Disabled`/skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
 - [ ] 7.1 n/a — no UI surface (see design.md — Playwright Strategy)
 - [ ] 7.2 n/a
 - [ ] 7.3 n/a
-- [ ] 7.4 Recorded "n/a — no UI surface" in design.md
+- [x] 7.4 Recorded "n/a — no UI surface" in design.md
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md` and `local-ai/README.md` added per proposal.md — Documentation Impact
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md` and `local-ai/README.md` added per proposal.md — Documentation Impact
 - [ ] 8.2 n/a — no endpoints changed
 - [ ] 8.3 n/a — `CHANGELOG.md` not updated; not user-visible (internal dev tooling)
 - [ ] 8.4 n/a — nothing to archive
-- [ ] 8.5 Confirmed no duplication — AI-SDLC.md links to CONSTITUTION.md instead of restating it
+- [x] 8.5 Confirmed no duplication — AI-SDLC.md links to CONSTITUTION.md instead of restating it
 - [ ] 8.6 `bash scripts/preflight.sh` run before push
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Committed in small, self-contained units, Conventional Commits format
+- [x] 9.1 Committed in small, self-contained units, Conventional Commits format
 - [ ] 9.2 Commit closing the issue ends with `Closes #1074`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI

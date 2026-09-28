@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/version-local-ai-sdlc-harness/` (`skip_specs: true`) | drafted |
 | Branch | `chore/1074_local_ai_sdlc_harness` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | e88ea49, 76c0a5e, 7b56ada, b7ff0ec, 63772f4, 1bbdb78, 8fad856 | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -30,16 +30,16 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1074.
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| `local-ai/` committed without secrets, `.env` or caches | Manual: `git ls-files local-ai`, secret grep | pending |
-| Every script parses | `bash -n`, `py_compile` | pending |
+| `local-ai/` committed without secrets, `.env` or caches | Manual: `git ls-files local-ai`, secret grep | passed |
+| Every script parses | `bash -n`, `py_compile` | passed |
 | Repo gates unaffected | `bash scripts/preflight.sh` | pending |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `local-ai/sdlc/AI-SDLC.md` | pending | pending |
-| `local-ai/README.md` | pending | pending |
+| `local-ai/sdlc/AI-SDLC.md` | yes | 7b56ada, 8fad856 |
+| `local-ai/README.md` | yes | 76c0a5e, 1bbdb78 |
 
 ## Gate log
 
