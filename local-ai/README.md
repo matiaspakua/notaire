@@ -104,3 +104,5 @@ codex exec --profile omlx --skip-git-repo-check -C ~/workspace/mi-proyecto "Impl
 | `~/.omlx/cache/` | Bloques KV fríos en SSD |
 | `~/.omlx/logs/server.log` | Log estructurado del servidor |
 | `~/.codex/omlx.config.toml` | Perfil Codex para el modelo local |
+| `local-ai/sdlc/AI-SDLC.md` | Proceso foreman/worker (fases, gates, guards) |
+| `local-ai/AUDIT.md` | Auditoría del AI SDLC: hallazgos, brechas y plantilla genérica |
