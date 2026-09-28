@@ -11,7 +11,8 @@
 #
 # Env: WT (worker worktree, default ../notaire-localai),
 #      RUNS (harness state, default ../notaire-localai-runs),
-#      PROFILE (codex profile, omlx), MAX_ATTEMPTS (3),
+#      PROFILE (codex profile, omlx), PROFILE_<PHASE> (per-phase override, e.g. PROFILE_SPEC),
+#      MAX_ATTEMPTS (3),
 #      WORKER_TIMEOUT (seconds per worker run, 3600),
 #      SKIP_PIPELINE=1 (skip run_pipeline.sh; only for docs/ci-only changes),
 #      STOP_AFTER=<phase> (pause after a phase, for foreman inspection).
@@ -97,11 +98,13 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     cp "$HERE/bin/edit.py" "$STATE/edit.py"   # the worker's edit tool (Codex apply_patch fails with the local model)
     { echo "BASE=$pre_sha"; echo "BRANCH=$(git_wt symbolic-ref -q --short HEAD)"
       echo "ALLOW_COMMIT=${ALLOW_COMMIT:-1}"; printf "FORBIDDEN='%s'\n" "$FORBIDDEN"; printf "SCOPE='%s'\n" "${SCOPE:-.}"; } > "$hooks/state.env"
-    log "worker → $label (timeout ${WORKER_TIMEOUT}s)"
+    local profile_var; profile_var="PROFILE_$(tr '[:lower:]' '[:upper:]' <<< "${label%%-*}")"
+    local profile="${!profile_var:-$PROFILE}"
+    log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
     # perl alarm: portable timeout on macOS (no coreutils).
     perl -e 'alarm shift; exec @ARGV' "$WORKER_TIMEOUT" \
-        codex exec --profile "$PROFILE" --skip-git-repo-check -C "$WT" \
+        codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
         -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
