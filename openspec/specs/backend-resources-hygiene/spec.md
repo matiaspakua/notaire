@@ -1,8 +1,11 @@
 # backend-resources-hygiene Specification
 
 ## Purpose
+
 Ensures application resource files are free from dead default credential keys and legacy configuration files that pose security risks and confuse developers.
+
 ## Requirements
+
 ### Requirement: ApplicationPropertiesHygiene
 
 The application SHALL reject startup properties that contain dead default security user keys.
@@ -24,4 +27,3 @@ The application SHALL reject resources that contain dead configuration files.
 - **THEN** the resource must be absent (null)
 
 **Evidence**: `backend-api/src/main/resources/config.properties` — legacy Swing-era file not referenced by any code
-
