@@ -43,46 +43,46 @@ Severity: **H** = blocks autonomy or allows wrong work to merge; **M** = costs f
 
 ### 3.1 Policy layer (CONSTITUTION, rules, skills)
 
-| # | Sev | Finding | Fix |
-|---|-----|---------|-----|
-| P1 | H | CONSTITUTION, `CLAUDE.md`, `AGENTS.md` and `.claude/rules/ai-agent-workflow.md` never mention the foreman/worker model. Who may approve Gate 1, merge, or waive §12 when the author is a local model? Nothing says. | Add a "Roles" section to the CONSTITUTION: human owner, foreman agent, worker agent. List each role's allowed actions and the gates each may sign. |
-| P2 | H | `.claude/rules/ai-agent-workflow.md` has no OpenSpec/Specification step, and its "Step 9: Create PR + Close Issue" conflicts with the CONSTITUTION (issue closes on merge). The file was also truncated to 0 bytes on main between 2026-09-25 and PR #1078. | Rewrite it as a short pointer to the CONSTITUTION's steps. Add a CI check that every always-loaded rule file is non-empty. |
-| P3 | M | `.claude/agents/issue-loop.md` (2026-08-01) runs a self-merging loop with no OpenSpec step and no failing-test-first check. Two automation paths now compete. | Retire it or make it call `local-ai/sdlc/foreman.sh`. |
-| P4 | M | The CONSTITUTION is stale: it still describes the removed Swing client (lines 37-39, 210), `docs/300-development/specifications/` does not exist, and it was last reviewed 2026-08-08. `.github/workflows/e2e-swing.yml` still builds `frontend-swing` and has failed on every run since 2026-07-23. | Refresh pass, delete `e2e-swing.yml`, add a "last reviewed" freshness check to CI. |
-| P5 | M | An uncommitted rewrite of `.claude/rules/refactoring.md` (triaged in PR #1078) required Service/ServiceImpl pairs, Redis, Sentry and `@RequestAttribute actorId`, which the code contradicts. Always-loaded rules are the highest-leverage prompt a worker reads, and nothing checks them against the code. | Treat rule files like code: PR + review, plus a lint step that flags referenced paths that do not exist. |
-| P6 | L | Two spec systems: OpenSpec and SpecKit validation both run in CI. The `speckit/` drafts found on main were stubs. | Pick OpenSpec (it has the schema and validator). Archive SpecKit. |
-| P7 | L | `.claude/skills/README.md` says skills have evals. None were found to run anywhere. | Remove the claim, or add a skill-eval job. |
+| # | Sev | Finding | Fix | Status |
+|---|-----|---------|-----|--------|
+| P1 | H | CONSTITUTION, `CLAUDE.md`, `AGENTS.md` and `.claude/rules/ai-agent-workflow.md` never mention the foreman/worker model. Who may approve Gate 1, merge, or waive §12 when the author is a local model? Nothing says. | Add a "Roles" section to the CONSTITUTION: human owner, foreman agent, worker agent. List each role's allowed actions and the gates each may sign. | Done #1083: CONSTITUTION §10 Roles |
+| P2 | H | `.claude/rules/ai-agent-workflow.md` has no OpenSpec/Specification step, and its "Step 9: Create PR + Close Issue" conflicts with the CONSTITUTION (issue closes on merge). The file was also truncated to 0 bytes on main between 2026-09-25 and PR #1078. | Rewrite it as a short pointer to the CONSTITUTION's steps. Add a CI check that every always-loaded rule file is non-empty. | Done #1083: rule rewritten as a pointer; `check-agent-rules.sh` in CI |
+| P3 | M | `.claude/agents/issue-loop.md` (2026-08-01) runs a self-merging loop with no OpenSpec step and no failing-test-first check. Two automation paths now compete. | Retire it or make it call `local-ai/sdlc/foreman.sh`. | Done #1083: archived to `docs/000-archive/issue-loop/` |
+| P4 | M | The CONSTITUTION is stale: it still describes the removed Swing client (lines 37-39, 210), `docs/300-development/specifications/` does not exist, and it was last reviewed 2026-08-08. `.github/workflows/e2e-swing.yml` still builds `frontend-swing` and has failed on every run since 2026-07-23. | Refresh pass, delete `e2e-swing.yml`, add a "last reviewed" freshness check to CI. | Done #1083: CONSTITUTION refreshed, `e2e-swing.yml` deleted. Freshness check open |
+| P5 | M | An uncommitted rewrite of `.claude/rules/refactoring.md` (triaged in PR #1078) required Service/ServiceImpl pairs, Redis, Sentry and `@RequestAttribute actorId`, which the code contradicts. Always-loaded rules are the highest-leverage prompt a worker reads, and nothing checks them against the code. | Treat rule files like code: PR + review, plus a lint step that flags referenced paths that do not exist. | Done #1078 (not committed); `check-agent-rules.sh` catches missing paths |
+| P6 | L | Two spec systems: OpenSpec and SpecKit validation both run in CI. The `speckit/` drafts found on main were stubs. | Pick OpenSpec (it has the schema and validator). Archive SpecKit. | Done #1083: SpecKit archived to `docs/000-archive/speckit/` |
+| P7 | L | `.claude/skills/README.md` says skills have evals. None were found to run anywhere. | Remove the claim, or add a skill-eval job. | Done #1083: README says evals are manual |
 
 ### 3.2 Specification layer (OpenSpec `notaire-sdlc`)
 
-| # | Sev | Finding | Fix |
-|---|-----|---------|-----|
-| S1 | H | 17 of the last 40 merged PRs touched no `openspec/changes/` path. Some are legitimate §12 docs/chore work, but nothing records that the §12 exception was *approved*. | CI: a PR with no change folder must carry an `sdlc-exception` label set by a human, or fail. |
-| S2 | M | `validate-sdlc-plan.sh` checks structure: 12 task groups, required headings, open issue. It does not check meaning: traceability files exist, planned tests name real or new classes, no requirement lacks a scenario. | Add `traceability-check`: every planned file/test path either exists or is marked NEW, and each one appears in the final diff. |
-| S3 | M | No automatic archive after merge, so finished changes sit in `openspec/changes/` and fail the "issue CLOSED" check on the next PR. | Post-merge job (or `foreman.sh <n> merge`) runs `openspec archive`. |
-| S4 | L | Changes created without the `schema:` line are silently skipped by the validator. | Fail instead of skip. |
+| # | Sev | Finding | Fix | Status |
+|---|-----|---------|-----|--------|
+| S1 | H | 17 of the last 40 merged PRs touched no `openspec/changes/` path. Some are legitimate §12 docs/chore work, but nothing records that the §12 exception was *approved*. | CI: a PR with no change folder must carry an `sdlc-exception` label set by a human, or fail. | Done #1083: `check-sdlc-exception.sh` + `sdlc-exception` label |
+| S2 | M | `validate-sdlc-plan.sh` checks structure: 12 task groups, required headings, open issue. It does not check meaning: traceability files exist, planned tests name real or new classes, no requirement lacks a scenario. | Add `traceability-check`: every planned file/test path either exists or is marked NEW, and each one appears in the final diff. | Open |
+| S3 | M | No automatic archive after merge, so finished changes sit in `openspec/changes/` and fail the "issue CLOSED" check on the next PR. | Post-merge job (or `foreman.sh <n> merge`) runs `openspec archive`. | Open (manual archive documented in AI-SDLC.md) |
+| S4 | L | Changes created without the `schema:` line are silently skipped by the validator. | Fail instead of skip. | Done #1083 |
 
 ### 3.3 Enforcement layer (hooks, CI, preflight)
 
-| # | Sev | Finding | Fix |
-|---|-----|---------|-----|
-| E1 | H | **No branch protection on `main`** (API returns 404). The only push guard is a Claude Code `PreToolUse` hook plus the harness's own `pre-push` deny. Any other agent or terminal can push to `main`. | Enable protection: required checks, one approving review, no force-push. |
-| E2 | H | **TDD is not enforced outside the harness.** The harness has a `red` gate. CI, preflight and the Claude hooks do not. A red→green history is not checked on PRs. | CI job: for PRs that change `src/main`, check that a commit touching only tests exists and fails on its own (or that the harness ledger shows `red PASS`). |
-| E3 | M | Commit messages are not checked. Only PR titles are (`pr-validation.yml` lines 45-52). The worker's `feat(test)` spec commit would have merged. | `commitlint` over the PR range, mirrored in `preflight.sh`. |
-| E4 | M | Claude-side hooks cover only `SessionStart` and `PreToolUse(Bash: git push)`. There are no `Stop` hooks (block "done" while the preflight is red) and no `PostToolUse` hooks (format/lint an edited file right away). | Add a `Stop` hook that runs `preflight.sh --quick`. Add a `PostToolUse` hook for Spotless/Prettier on the edited path only. |
-| E5 | M | Review-quality defects (duplicate classes, absolute paths, tests that assert nothing new) have no automated check. | Cheap static gates in the harness `tests` phase: no absolute home paths in `src/`, no new test class whose name overlaps an existing one, and the diff must add at least one assertion. |
-| E6 | L | CD (`cd.yml`) is not in the harness `pipeline` phase. The harness stops at a green PR. | Fine for now. Document it as the human's step. |
+| # | Sev | Finding | Fix | Status |
+|---|-----|---------|-----|--------|
+| E1 | H | **No branch protection on `main`** (API returns 404). The only push guard is a Claude Code `PreToolUse` hook plus the harness's own `pre-push` deny. Any other agent or terminal can push to `main`. | Enable protection: required checks, one approving review, no force-push. | Partial: ruleset blocks force-push and deletion; PR/checks rules wait on moving bot report commits off `main` |
+| E2 | H | **TDD is not enforced outside the harness.** The harness has a `red` gate. CI, preflight and the Claude hooks do not. A red→green history is not checked on PRs. | CI job: for PRs that change `src/main`, check that a commit touching only tests exists and fails on its own (or that the harness ledger shows `red PASS`). | Done #1083: `check-tdd-evidence.sh` |
+| E3 | M | Commit messages are not checked. Only PR titles are (`pr-validation.yml` lines 45-52). The worker's `feat(test)` spec commit would have merged. | `commitlint` over the PR range, mirrored in `preflight.sh`. | Done #1083: `check-commit-messages.sh` |
+| E4 | M | Claude-side hooks cover only `SessionStart` and `PreToolUse(Bash: git push)`. There are no `Stop` hooks (block "done" while the preflight is red) and no `PostToolUse` hooks (format/lint an edited file right away). | Add a `Stop` hook that runs `preflight.sh --quick`. Add a `PostToolUse` hook for Spotless/Prettier on the edited path only. | Open |
+| E5 | M | Review-quality defects (duplicate classes, absolute paths, tests that assert nothing new) have no automated check. | Cheap static gates in the harness `tests` phase: no absolute home paths in `src/`, no new test class whose name overlaps an existing one, and the diff must add at least one assertion. | Done #1083: `bin/static_checks.py` in the red gate |
+| E6 | L | CD (`cd.yml`) is not in the harness `pipeline` phase. The harness stops at a green PR. | Fine for now. Document it as the human's step. | Done #1083: Owner runs `foreman.sh <n> merge` (Gate 5), documented |
 
 ### 3.4 Harness layer (`local-ai/sdlc`)
 
-| # | Sev | Finding | Fix |
-|---|-----|---------|-----|
-| H1 | H | The foreman's review protocol (`review-<phase>.md` with OLD/NEW + CHECK/EXPECTED) is the most valuable part, and it is manual. The CHECK lines are machine-runnable, but nothing runs them. | `foreman.sh <n> check` runs every CHECK in the active review file and diffs the output against EXPECTED before the gate re-runs. |
-| H2 | H | Worker quality is capped by the model (Qwen3.5-9B). Every phase needed foreman notes. | Route by phase: keep the local model for mechanical phases (tests scaffold, docs, fix-gate). Escalate spec and review to a stronger model, or keep a human/foreman there. Record the pass rate per phase to decide. |
-| H3 | M | No run metrics beyond `gates.log`. Retries, notes and wall time were counted by hand for this audit. | `ledger.py` writes one JSON line per phase (attempts, gate results, foreman notes, tokens, duration). |
-| H4 | M | Spec review rounds became extra commits until a manual amend fix. Squash policy is undocumented. | The harness owns history: one commit per phase, amended on every round. Document it in `AI-SDLC.md`. |
-| H5 | M | Fresh-clone smoke test (task 12.1 of the harness change) was never run. | CI job: `foreman.sh --dry-run` on a fixture issue. |
-| H6 | L | bash 3.2 quirks (`${arr[@]+…}`) are fixed case by case. | Require bash ≥4 in `setup`, or port the orchestrator to Python (see §4). |
+| # | Sev | Finding | Fix | Status |
+|---|-----|---------|-----|--------|
+| H1 | H | The foreman's review protocol (`review-<phase>.md` with OLD/NEW + CHECK/EXPECTED) is the most valuable part, and it is manual. The CHECK lines are machine-runnable, but nothing runs them. | `foreman.sh <n> check` runs every CHECK in the active review file and diffs the output against EXPECTED before the gate re-runs. | Done #1083: `foreman.sh <n> check` |
+| H2 | H | Worker quality is capped by the model (Qwen3.5-9B). Every phase needed foreman notes. | Route by phase: keep the local model for mechanical phases (tests scaffold, docs, fix-gate). Escalate spec and review to a stronger model, or keep a human/foreman there. Record the pass rate per phase to decide. | Partial #1083: `PROFILE_<PHASE>`; routing policy open |
+| H3 | M | No run metrics beyond `gates.log`. Retries, notes and wall time were counted by hand for this audit. | `ledger.py` writes one JSON line per phase (attempts, gate results, foreman notes, tokens, duration). | Done #1083: `metrics.jsonl` per gate |
+| H4 | M | Spec review rounds became extra commits until a manual amend fix. Squash policy is undocumented. | The harness owns history: one commit per phase, amended on every round. Document it in `AI-SDLC.md`. | Done #1083: documented in AI-SDLC.md |
+| H5 | M | Fresh-clone smoke test (task 12.1 of the harness change) was never run. | CI job: `foreman.sh --dry-run` on a fixture issue. | Partial #1083: harness self-tests in CI; dry run open |
+| H6 | L | bash 3.2 quirks (`${arr[@]+…}`) are fixed case by case. | Require bash ≥4 in `setup`, or port the orchestrator to Python (see §4). | Done #1083: bash ≥ 4 check at start-up |
 
 ### 3.5 Portability
 
@@ -187,3 +187,16 @@ The human owner alone merges and approves policy exceptions.
 - PR #1078: cleared 55 uncommitted files from the main checkout. Triage and backup are kept outside the repo in `notaire-wip-backup-2026-09-28/`.
 - #1063: rejected the tests-phase commit (duplicate test class, absolute path) with a review note. The run continues under the harness.
 - #1028: an abandoned agent worktree held a complete threat-model draft. It was committed as found and opened as a draft PR for Gate 1 review.
+
+## 7. Follow-up (2026-09-28)
+
+#1083 applied the findings marked Done above, plus a harness fix found while
+parking #1063: `kv()` kept the quotes around `TEST_CMD="…"`, so the red gate ran
+a command named `mvn …`. `bin/envfile.py` now strips one pair of surrounding
+quotes and a trailing comment.
+
+Still open, each for its own issue: branch protection beyond the current
+ruleset (E1), a Constitution freshness check (P4), semantic traceability (S2),
+automatic archive after merge (S3), Claude `Stop`/`PostToolUse` hooks (E4),
+a phase-routing policy (H2), a fresh-clone dry run (H5), and the adapter/split
+of `foreman.sh` (§3.5, §4).
