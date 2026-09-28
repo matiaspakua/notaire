@@ -45,7 +45,7 @@ trap 'rm -rf "$STATE/.lock"' EXIT
 
 log()  { printf '\033[1;36m[foreman #%s] %s\033[0m\n' "$ISSUE" "$*" | tee -a "$STATE/foreman.log"; }
 fail() { printf '\033[31m[foreman #%s] STOP: %s\033[0m\n' "$ISSUE" "$*" | tee -a "$STATE/foreman.log"; exit 1; }
-kv()   { grep -E "^$2=" "$1" 2>/dev/null | head -1 | cut -d= -f2- | sed 's/[[:space:]]*#.*$//;s/[[:space:]]*$//'; }
+kv()   { python3 "$HERE/bin/envfile.py" "$1" "$2"; }   # drops ' # comment' and surrounding quotes
 tv()   { kv "$STATE/triage.env" "$1"; }   # normalized triage (written by gate_triage)
 git_wt() { git -C "$WT" "$@"; }
 has()    { grep "$@" > /dev/null; }   # like grep -q, but reads all input: grep -q + pipefail = SIGPIPE false negatives
@@ -58,13 +58,11 @@ render() {  # render <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     python3 - "$HERE/WORKER.md" "$HERE/prompts/$1" "$STATE" "$IO" "$ISSUE" "${2:-}" "${3:-}" <<'PY'
 import os, sys, re
 brief, tpl, state, io, issue, gate_cmd, gate_file = sys.argv[1:8]
+sys.path.insert(0, os.path.join(os.path.dirname(brief), "bin"))
+from envfile import read_env
 env = {}
 for p in (os.path.join(state, "triage.env"), os.path.join(io, "tests.env"), os.path.join(state, "tests.env")):
-    if os.path.exists(p):
-        for line in open(p):
-            m = re.match(r"^([A-Z_]+)=(.*)$", line.strip())
-            if m:
-                env[m.group(1)] = re.sub(r"\s+#.*$", "", m.group(2)).strip()
+    env.update(read_env(p))
 env.update(ISSUE=issue, IO=io, GATE_CMD=gate_cmd, EDIT=os.path.join(state, "edit.py"))
 env["GATE_OUTPUT"] = open(gate_file).read()[-6000:] if gate_file else ""
 it = os.path.join(state, "issue.md")

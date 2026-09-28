@@ -16,6 +16,9 @@ class ParseValueTest(unittest.TestCase):
     def test_keeps_inner_quotes(self):
         self.assertEqual(envfile.parse_value('bash -c "exit 1"'), 'bash -c "exit 1"')
 
+    def test_unescapes_quotes_inside_a_quoted_value(self):
+        self.assertEqual(envfile.parse_value('"bash -c \\"exit 3\\""'), 'bash -c "exit 3"')
+
     def test_keeps_hash_without_leading_space(self):
         self.assertEqual(envfile.parse_value("mvn test -Dtest=FooTest#bar"), "mvn test -Dtest=FooTest#bar")
 
