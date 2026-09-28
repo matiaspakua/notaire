@@ -60,14 +60,14 @@
 - [ ] 8.3 n/a — `CHANGELOG.md` not updated; not user-visible (internal dev tooling)
 - [ ] 8.4 n/a — nothing to archive
 - [x] 8.5 Confirmed no duplication — AI-SDLC.md links to CONSTITUTION.md instead of restating it
-- [ ] 8.6 `bash scripts/preflight.sh` run before push
+- [x] 8.6 `bash scripts/preflight.sh` run before push
 
 ## 9. Commits atómicos
 
 - [x] 9.1 Committed in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Commit closing the issue ends with `Closes #1074`
+- [x] 9.2 Commit closing the issue ends with `Closes #1074`
 - [x] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
