@@ -1,4 +1,4 @@
-"""Tests for the PR-range process checks run by pr-validation.yml and preflight.sh."""
+"""Tests for the PR-range process checks run by sdlc-process.yml and preflight.sh."""
 import os
 import shutil
 import subprocess
