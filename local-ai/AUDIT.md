@@ -190,7 +190,7 @@ The human owner alone merges and approves policy exceptions.
 
 ## 7. Follow-up (2026-09-28)
 
-#1083 applied the findings marked Done above, plus a harness fix found while
+Issue #1083 applied the findings marked Done above, plus a harness fix found while
 parking #1063: `kv()` kept the quotes around `TEST_CMD="…"`, so the red gate ran
 a command named `mvn …`. `bin/envfile.py` now strips one pair of surrounding
 quotes and a trailing comment.

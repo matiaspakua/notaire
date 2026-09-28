@@ -3,7 +3,7 @@
 ### Requirement: Harness env files accept quoted values
 
 The harness SHALL read `KEY=value` files (`triage.env`, `tests.env`) with one
-parser that drops a trailing ` # comment` and one pair of surrounding single or
+parser that drops a trailing `#` comment and one pair of surrounding single or
 double quotes, both in `kv()` and in the prompt renderer.
 
 #### Scenario: Double-quoted command
