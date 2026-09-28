@@ -49,9 +49,14 @@ application data.
 | SQL injection | JPA/Hibernate parameterized queries throughout (see [SQL Injection Prevention](SQL-INJECTION-PREVENTION.md)) | None known |
 | Tampering with audit trail | `RegistroAuditoriaService` records acting user from `SecurityContextHolder` (JWT identity), never a client-supplied header | GETs are not audited (read access to PII is not logged) |
 
-This is a lightweight risk register, not a formal STRIDE exercise — revisit
-with a fuller threat model before any production deployment (none is
-currently defined; see the SAD's Risks and Technical Debt, §11.1).
+For the two highest-risk subsystems — authentication and the audit trail —
+this table is superseded by a formal STRIDE threat model:
+[THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md), with numbered
+security requirements (`SR-01`..`SR-10`) and an explicit
+Mitigated/Partial/Open status per threat. Other subsystems (e.g.
+Escritura/Testimonio legal documents, Presupuesto financial data) are not
+yet covered by a formal threat model — see the SAD's Risks and Technical
+Debt, §11.1, and issue #1028's follow-up recommendations.
 
 ## Security Features
 

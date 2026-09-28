@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **STRIDE threat model for authentication & audit trail** (issue #1028):
+  added `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md`
+  with numbered security requirements (`SR-01`..`SR-10`) and an explicit
+  Mitigated/Partial/Open status for each threat against the login and
+  audit-trail subsystems, replacing the informal risk register for those
+  two areas. Documentation only, no behavior change.
 - **Vincular escritura a folio y validar copia de testimonio ya inscripto**
   (issue #838, CU87): `POST`/`PUT /api/v1/folio` accept an optional
   `escrituraId`; linking sets the folio's `estado` to `Utilizado` and
