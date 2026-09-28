@@ -70,6 +70,30 @@ The worker runs in a **dedicated git worktree** (`../notaire-localai`) so it
 never touches the maintainer's working copy. Its Docker stack uses
 `COMPOSE_PROJECT_NAME=notaire-localai`.
 
+### Project adapter (`.aisdlc/project.yml`)
+
+Every project-specific value the harness uses lives in one file at the repo
+root, `.aisdlc/project.yml`; `foreman.sh` holds only the generic phase and gate
+machinery. It reads the file through `bin/adapter.py` and stops at start-up if
+a required key is missing (`adapter.py validate`). `AISDLC_PROJECT` points it
+at another file.
+
+| Key | Used for |
+|---|---|
+| `paths.worktree`, `paths.runs` | defaults for `WT` and `RUNS` (relative to the repo root) |
+| `backend.profile` | default Codex `PROFILE` |
+| `spec.schema`, `spec.tasks_template`, `spec.validate`, `spec.plan_check` | spec and docs gates (`{change}` is filled in) |
+| `surfaces.<name>.root`, `.test_one`, `.suite` | a change's surfaces, its full suite and the TEST_CMD form |
+| `source_roots`, `test_files`, `db_migrations` | phase scopes, test-file detection, the DB-change cross-check |
+| `gates.docs_lint`, `gates.preflight`, `gates.pipeline`, `gates.start`, `gates.health_url`, `gates.main_workflows` | docs, quality, pipeline and Gate 5 commands |
+| `compose_project`, `guards.forbidden` | Docker project name; paths the worker may never commit |
+
+`SURFACE` in `triage.env` is the comma list of surfaces whose `root` holds a
+file from triage's Files to Edit (`backend`, `frontend`, `backend,frontend`,
+`none`). The older value `both` still means every surface. To use the harness
+in another repo, write its adapter; the phase prompts still carry Notaire
+examples (AUDIT §7).
+
 Two directories per issue, so the worker can never damage harness evidence:
 
 | Where | Owner | Content |
@@ -110,6 +134,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Gate metrics | `gate_log` also appends `{ts, issue, gate, result, detail}` to `RUNS/<n>/metrics.jsonl` (`bin/metrics.py`), so retries and failure causes per gate can be counted across issues |
 | Per-phase model | `PROFILE_<PHASE>` (e.g. `PROFILE_SPEC`) overrides the codex `PROFILE` for one phase, so a larger model can take the phases a 9B model gets wrong |
 | bash ≥ 4 | `foreman.sh` exits at once under bash 3 (macOS `/bin/bash` is 3.2), whose empty-array expansion under `set -u` broke the harness case by case. Run it as `./foreman.sh` so `env` picks Homebrew bash |
+| TEST_CMD form | The red gate rejects a `TEST_CMD` that does not start with the surface's `test_one` command up to `{test}`, and shows the expected form. #1063's worker dropped `-pl backend-api`, so Maven errored in another module instead of failing on the new assertions |
 | Harness self-tests | `python3 -m unittest discover -s local-ai/sdlc/tests`; they run in `sdlc-process.yml` |
 | Cross-checks | `TYPE` must equal the issue title prefix; `DB_CHANGE=yes` needs a new `V*__.sql`; criteria come only from the issue's checklist |
 
