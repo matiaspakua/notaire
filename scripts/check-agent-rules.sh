@@ -18,6 +18,10 @@ files=()
 for f in "$ROOT"/.claude/rules/*.md "$ROOT"/CLAUDE.md "$ROOT"/AGENTS.md "$ROOT"/CONSTITUTION.md; do
   [ -e "$f" ] && files+=("$f")
 done
+if [ "${#files[@]}" -eq 0 ]; then
+  echo "✗ no agent rule files under $ROOT (usage: check-agent-rules.sh [repo-root])"
+  exit 1
+fi
 bad=0
 for f in "${files[@]}"; do
   rel="${f#"$ROOT"/}"
