@@ -1,3 +1,4 @@
+schema: spec-driven   # predates notaire-sdlc; not governed by validate-sdlc-plan.sh
 schema_version: "1.0"
 change_id: "gestion-archive-deuda-check"
 gate: 1
