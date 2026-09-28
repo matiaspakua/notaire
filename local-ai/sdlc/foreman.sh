@@ -287,6 +287,12 @@ gate_spec() {
         || { { echo "bash scripts/validate-sdlc-plan.sh $c failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
     local d="$WT/openspec/changes/$c" e="" t
     # without the schema line validate-sdlc-plan.sh skips the change and "passes": Constitution checks silently off
+    # the ledger ticks template IDs (10.1, 10.2, ...): the 12 mandatory group headings must be the template's, verbatim
+    local tpl_h; tpl_h="$(grep -E '^## [0-9]+\. ' "$WT/openspec/schemas/notaire-sdlc/templates/tasks.md")"
+    [ "$(grep -E '^## [0-9]+\. ' "$d/tasks.md" 2>/dev/null)" = "$tpl_h" ] \
+        || e+="- tasks.md: group headings must be exactly the template's (openspec/schemas/notaire-sdlc/templates/tasks.md), in order:\n$tpl_h\n  Copy the template over tasks.md and write your change-specific tasks as 4.1, 4.2, ... in group 4.\n"
+    grep -qE '^- \[.\] 10\.1 ' "$d/tasks.md" 2>/dev/null \
+        || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
     grep -qx 'schema: notaire-sdlc' "$d/.openspec.yaml" 2>/dev/null \
         || e+="- .openspec.yaml must keep its first line 'schema: notaire-sdlc' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
