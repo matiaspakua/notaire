@@ -111,7 +111,7 @@ Two new unit tests will be added and made to fail before implementation:
   - Deletes: `config.properties`
   - Ends with `Closes #1069`
 - [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
