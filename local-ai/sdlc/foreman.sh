@@ -489,9 +489,13 @@ phase_setup() {
 phase_spec() {
     NO_COMMIT=1 SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/)" with_retries spec 03-spec.md gate_spec
     # the harness commits: the worker kept writing "Closes #n" into spec commits
-    git_wt add "openspec/changes/$(tv CHANGE)" \
-        && git_wt commit -q -m "docs(openspec): specify $(tv CHANGE)" -m "Refs #$ISSUE" \
-        || fail "could not commit the spec"
+    local subject="docs(openspec): specify $(tv CHANGE)" amend=()
+    git_wt add "openspec/changes/$(tv CHANGE)" || fail "could not stage the spec"
+    # a RECHECK or a review round with no edits leaves nothing to commit
+    git_wt diff --cached --quiet && { log "spec unchanged — nothing to commit"; return 0; }
+    # review rounds fold into the one spec commit instead of stacking new ones
+    [ "$(git_wt log -1 --format=%s)" = "$subject" ] && amend=(--amend)
+    git_wt commit -q ${amend[@]+"${amend[@]}"} -m "$subject" -m "Refs #$ISSUE" || fail "could not commit the spec"
     require_clean_branch || fail "branch dirty after spec commit: $(cat "$STATE/gate.out")"
 }
 
