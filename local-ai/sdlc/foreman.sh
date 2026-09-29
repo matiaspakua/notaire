@@ -296,11 +296,13 @@ gate_triage() {
         [ -e "$WT/$p" ] || [[ "$p" == "$DB_MIGRATIONS"V* ]] \
             || e+="- triage.md: Files to Edit path '$p' does not exist in the repo (list existing paths; new files only for DB migrations under $DB_MIGRATIONS)\n"
     done
-    local surface; surface="$(cfg surfaces <<<"$files")" || fail "adapter: cannot derive surfaces"
+    # a code rule about a docs/data file is proven by a test that reads it: TEST_SURFACE says where that test runs
+    local fallback=""; [ "$(iv KIND)" != code ] || fallback="$(iv TEST_SURFACE)"
+    local surface; surface="$(cfg surfaces --fallback "$fallback" <<<"$files")" || fail "adapter: cannot derive surfaces"
     [ "$(iv DB_CHANGE)" != yes ] || has -F "$DB_MIGRATIONS"V <<<"$files" \
         || e+="- DB_CHANGE=yes but Files to Edit has no new migration (${DB_MIGRATIONS}V<n>__x.sql). Deleting/editing a .properties file is NOT a DB change — set DB_CHANGE=no unless a migration is really needed\n"
     [ "$(iv KIND)" != code ] || [ "$surface" != none ] \
-        || e+="- KIND=code but no Files to Edit path is under a surface root (surfaces in $ADAPTER) — fix KIND or the list\n"
+        || e+="- KIND=code but no Files to Edit path is under a surface root and TEST_SURFACE=$(iv TEST_SURFACE) is not a surface — write TEST_SURFACE=backend (or frontend): where the test that proves the change runs\n"
     [ -z "$e" ] || gate_msg "Fix these problems in $IO/triage.env and $IO/triage.md:\n$e" || return 1
 
     local type slug
