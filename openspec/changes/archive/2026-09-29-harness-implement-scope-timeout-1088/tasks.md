@@ -20,44 +20,44 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: planned non-source file, unplanned file, non-path cell, in-time exit, TERM-ignoring worker with a child
-- [ ] 3.2 `local-ai/sdlc/tests/test_scope.py` and `test_watchdog.py` cover every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: planned non-source file, unplanned file, non-path cell, in-time exit, TERM-ignoring worker with a child
+- [x] 3.2 `local-ai/sdlc/tests/test_scope.py` and `test_watchdog.py` cover every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `local-ai/sdlc/bin/scope.py implement`: planned files from triage and traceability, exact-path ERE
-- [ ] 4.2 `local-ai/sdlc/bin/watchdog.py`: process group, TERM, KILL after grace, exit 124, forwards TERM/INT
-- [ ] 4.3 `foreman.sh`: `phase_implement` uses `scope.py`; `run_worker` uses `watchdog.py`
+- [x] 4.1 `local-ai/sdlc/bin/scope.py implement`: planned files from triage and traceability, exact-path ERE
+- [x] 4.2 `local-ai/sdlc/bin/watchdog.py`: process group, TERM, KILL after grace, exit 124, forwards TERM/INT
+- [x] 4.3 `foreman.sh`: `phase_implement` uses `scope.py`; `run_worker` uses `watchdog.py`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing harness self-tests unchanged and green
+- [x] 5.1 Existing harness self-tests unchanged and green
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/sdlc/foreman.sh`; `scope.py implement` on the stored #1063 state admits `CONSTITUTION.md` and `.claude/rules/code-quality.md`
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 No `@Disabled` or skipped tests introduced
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/sdlc/foreman.sh`; `scope.py implement` on the stored #1063 state admits `CONSTITUTION.md` and `.claude/rules/code-quality.md`
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md`: scope guard row (implement scope) and timeout row (watchdog)
-- [ ] 8.2 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md`: scope guard row (implement scope) and timeout row (watchdog)
+- [x] 8.2 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1088`
-- [ ] 9.2 Only the final commit carries `Closes #1088`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1088`
+- [x] 9.2 Only the final commit carries `Closes #1088`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -77,18 +77,18 @@
 - [ ] 12.1 Smoke test: the #1063 rerun passes the implement phase
 - [x] 12.2 Rollback path confirmed (`git revert`)
 - [ ] 12.3 Issue #1088 closed on merge
-- [ ] 12.4 Change archived in this PR (`openspec archive harness-implement-scope-timeout-1088`)
+- [x] 12.4 Change archived in this PR (`openspec archive harness-implement-scope-timeout-1088`)
 
 ## Definition of Done
 
 - [x] Issue linked to Use Case CU76
 - [x] Specification written and reviewed (Gate 1)
-- [ ] Tests written first and observed failing (Gate 2)
-- [ ] New suites green; existing suites unaffected
-- [ ] Coverage at or above the JaCoCo ratchet floor (unaffected — no backend code)
-- [ ] Playwright E2E: n/a, no UI surface
-- [ ] Permanent documentation updated
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Tests written first and observed failing (Gate 2)
+- [x] New suites green; existing suites unaffected
+- [x] Coverage at or above the JaCoCo ratchet floor (unaffected — no backend code)
+- [x] Playwright E2E: n/a, no UI surface
+- [x] Permanent documentation updated
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green (Gate 4)
 - [ ] Merged, CD green, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
