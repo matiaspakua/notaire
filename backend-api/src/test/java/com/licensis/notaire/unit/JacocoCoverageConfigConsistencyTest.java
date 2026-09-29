@@ -42,8 +42,8 @@ class JacocoCoverageConfigConsistencyTest {
         String pomContent = Files.readString(Paths.get(POM_PATH));
         String codeQualityMd = Files.readString(Paths.get(CODE_QUALITY_MD_PATH));
 
-        double linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
-        double branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
+        int linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
+        int branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
 
         String expectedFragment = linePercent + "% line / " + branchPercent + "% branch";
 
@@ -51,10 +51,6 @@ class JacocoCoverageConfigConsistencyTest {
                 .as("code-quality.md is the single source of truth for the enforced floor and must match "
                         + "pom.xml's <minimum> values")
                 .contains(expectedFragment);
-
-        // The ratchet floor should match the pom.xml values
-        assertThat(linePercent).as("Enforced ratchet floor should match pom.xml line minimum").isEqualTo(80);
-        assertThat(branchPercent).as("Enforced ratchet floor should match pom.xml branch minimum").isEqualTo(65);
     }
 
     @Test
@@ -62,8 +58,8 @@ class JacocoCoverageConfigConsistencyTest {
     void shouldEnforceRaisedCoverageFloor() throws IOException {
         String pomContent = Files.readString(Paths.get(POM_PATH));
 
-        double linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
-        double branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
+        int linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
+        int branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
 
         assertThat(linePercent).as("Line coverage floor must be 80%").isEqualTo(80);
         assertThat(branchPercent).as("Branch coverage floor must be 65%").isEqualTo(65);
@@ -75,10 +71,9 @@ class JacocoCoverageConfigConsistencyTest {
         String pomContent = Files.readString(Paths.get(POM_PATH));
         String constitutionMd = Files.readString(Paths.get(CONSTITUTION_MD_PATH));
 
-        double linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
-        double branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
+        int linePercent = extractPercent(pomContent, LINE_MINIMUM_PATTERN);
+        int branchPercent = extractPercent(pomContent, BRANCH_MINIMUM_PATTERN);
 
-        // Check CONSTITUTION.md floor values match pom.xml
         assertThat(constitutionMd)
                 .as("CONSTITUTION.md floor values must match pom.xml")
                 .contains(linePercent + "% line / " + branchPercent + "% branch");
@@ -96,7 +91,7 @@ class JacocoCoverageConfigConsistencyTest {
                 .doesNotContain("28% line / 14% branch");
     }
 
-    private int extractPercent(String pomContent, Pattern pattern) throws IOException {
+    private int extractPercent(String pomContent, Pattern pattern) {
         Matcher matcher = pattern.matcher(pomContent);
         assertThat(matcher.find()).as("pom.xml must declare a %s COVEREDRATIO minimum", pattern).isTrue();
         return Math.round(Float.parseFloat(matcher.group(1)) * 100);

@@ -495,7 +495,7 @@ Execution Strategy:
 
 | Tool | Check | Enforced at | Ratchet Floor |
 |------|-------|-------------|---------------|
-| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 80.0% line / 65.0% branch |
+| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 80% line / 65% branch |
 | Vitest | Line coverage (frontend) | CI job `frontend-ci` | 75% line |
 | Bruno | REST endpoint coverage | CI job `playwright-e2e` | 80–100% endpoints |
 | Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per Use Case |

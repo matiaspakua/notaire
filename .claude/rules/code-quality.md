@@ -24,7 +24,7 @@ Coverage is split into an **aspirational target** and an **enforced ratchet floo
 - **Long-term target**: 80% line / 80% branch.
 - **Enforced gate** (`jacoco:check`, bound to `mvn verify`, BUNDLE scope, legacy
   `jpa`/`service.Administrador*` packages excluded): a ratchet floor of
-  **80.0% line / 65.0% branch** as of 2026-09-28 (#1063) (actual: ~84% line / ~74% branch
+  **80% line / 65% branch** as of 2026-09-28 (#1063) (actual: ~84% line / ~74% branch
   as of 2026-07-23). The build fails if coverage drops below the floor.
 - **Policy**: raise the floor as coverage improves; never lower it. The historical
   per-class 80% rule was bound to `<phase>none</phase>` and never ran, so the prior
