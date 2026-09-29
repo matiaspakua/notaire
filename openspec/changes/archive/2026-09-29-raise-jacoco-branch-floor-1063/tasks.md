@@ -94,22 +94,22 @@
 
 - [x] 10.1 `git push -u origin <branch-name>`
 - [x] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
+- [x] 12.1 Run the smoke test on the target environment (health endpoint + the key flow of this change)
 - [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive <change-name>`
+- [x] 12.3 Close the GitHub Issue, referencing the PR
+- [x] 12.4 Archive the change: `openspec archive <change-name>`
 
 - [-] 3.8 Tests compile, run, and fail as expected per Gate 2 criteria
 - [-] 3.9 Add `./localai/1063/tests.env` with the exact test command
