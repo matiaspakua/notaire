@@ -189,7 +189,9 @@ with_retries() {
     # RECHECK=1: the work is already on the branch (foreman fixed a gate bug) — just re-run the gate
     [ "${RECHECK:-0}" = 1 ] || run_worker "$phase" "$tpl"
     for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-        if gate_scope && "$gate"; then rm -f "$STATE/retry.md"; return 0; fi
+        gate_scope
+        if "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; return 0; fi
+        scope_to_gate_out
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
         # RECHECK is a gate-only run: a failure goes back to the foreman, never to a worker retry
@@ -221,9 +223,16 @@ run_gate() {  # run_gate <name> <cmd...>; output kept in $STATE/gate-<name>.out
     return $rc
 }
 
+# a guard violation is already reverted: the gate judges what is left, the attempt is not lost for it.
+# Gate 4 sees it in gates.log; the worker sees it only if the gate fails (the revert may be why)
 gate_scope() {
     [ -s "$STATE/scope.out" ] || return 0
-    mv "$STATE/scope.out" "$STATE/gate.out"; return 1
+    gate_log scope-reverted "REVIEW :: $(grep -m1 VIOLATION "$STATE/scope.out")"
+}
+scope_to_gate_out() {
+    [ -s "$STATE/scope.out" ] || return 0
+    { cat "$STATE/scope.out"; echo; cat "$STATE/gate.out" 2>/dev/null; } > "$STATE/gate.out.new"
+    mv "$STATE/gate.out.new" "$STATE/gate.out"; rm -f "$STATE/scope.out"
 }
 
 # md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
