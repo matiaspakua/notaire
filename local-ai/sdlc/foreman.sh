@@ -384,17 +384,21 @@ collateral_deletions() {
     done
 }
 
-# tasks_only_ticked <base>: after Gate 2, tasks.md may only change by [ ] -> [x] (the worker kept rewriting it with invented results)
-tasks_only_ticked() {
-    local f="openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md"
+# repair_tasks <base>: after Gate 2, tasks.md may only change by [ ] -> [x] (the worker kept rewriting it with
+# invented results, and could not undo it in three retries) — the harness restores the plan, keeps the ticks
+repair_tasks() {
+    local f="openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md" fixed="$STATE/tasks-fixed.md"
     git_wt show "$1:$f" > "$old" 2>/dev/null || return 0
     local diff; diff="$(python3 "$HERE/bin/ledger.py" ticks-only "$old" "$WT/$f")" && return 0
-    gate_msg "$f changed beyond ticking checkboxes. Put these lines back exactly as expected (only '- [ ]' -> '- [x]' may differ; blank lines and fence languages are ignored), with the edit tool:\n$diff\n"
+    python3 "$HERE/bin/ledger.py" restore-ticks "$old" "$WT/$f" > "$fixed" && cp "$fixed" "$WT/$f" \
+        && git_wt commit -q -m "docs(openspec): restore $(tv CHANGE) tasks to plan plus ticks" -m "Refs #$ISSUE" -- "$f" \
+        || gate_msg "could not repair $f — foreman must intervene\n" || return 1
+    gate_log tasks-repaired "REPAIRED :: discarded (review at Gate 4): $(tr '\n' ' ' <<<"$diff")"
 }
 
 gate_green() {
     require_clean_branch || return 1
-    tasks_only_ticked "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
+    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
     local lost; lost="$(collateral_deletions "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)")"
     local base; base="$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)"
     git_wt diff --check "$base"..HEAD > "$STATE/diff-check.out" \
@@ -417,7 +421,7 @@ gate_green() {
 
 gate_docs() {
     local c; c="$(tv CHANGE)"
-    tasks_only_ticked "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
+    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
     if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main..HEAD | has -x CHANGELOG.md; then
         gate_msg "TYPE=$(tv TYPE) is user-visible: add a line under '## [Unreleased]' in CHANGELOG.md ending with (#$ISSUE), then commit\n"
         return 1
