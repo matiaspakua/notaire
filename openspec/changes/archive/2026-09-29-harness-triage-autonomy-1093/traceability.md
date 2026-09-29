@@ -16,8 +16,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `openspec/changes/harness-triage-autonomy-1093/` | written |
 | Branch | `chore/1093_harness_triage_autonomy` | created |
-| Tasks | `tasks.md` | groups 1-2 done |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | groups 1-9 done; 10-12 at PR/merge |
+| Commits | `85c4d48` (plan) … final archive commit; tests first: `2bec8b1` | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -28,21 +28,21 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Triage may name the surface its tests live on (3 scenarios) | `local-ai/sdlc/tests/test_adapter.py` | pending |
+| Triage may name the surface its tests live on (3 scenarios) | `local-ai/sdlc/tests/test_adapter.py` | green |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `local-ai/sdlc/AI-SDLC.md` | pending | pending |
+| `local-ai/sdlc/AI-SDLC.md` | yes | `b168767` |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #1093, this folder, `validate-sdlc-plan.sh` green |
-| 2 | Failing tests written, test cases designed | pending | pending |
-| 3 | Suite green, coverage held, docs updated | pending | pending |
+| 2 | Failing tests written, test cases designed | yes | `2bec8b1` committed and failing (no `fallback` argument) before `c16a20c` |
+| 3 | Suite green, coverage held, docs updated | yes | harness self-tests green (4 new); `gate_scope` flow simulated (pass drops the violation, failure prepends it); no backend code changed; `preflight.sh` passed |
 | 4 | CI green, review approved, no conflicts | pending | pending |
 | 5 | Deployed, smoke test passed, Issue closed | pending | pending |
 

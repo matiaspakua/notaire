@@ -20,45 +20,45 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: fallback used, path surface wins, unknown fallback ignored
-- [ ] 3.2 `local-ai/sdlc/tests/test_adapter.py` covers every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: fallback used, path surface wins, unknown fallback ignored
+- [x] 3.2 `local-ai/sdlc/tests/test_adapter.py` covers every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `adapter.py surfaces`: `TEST_SURFACE` fallback
-- [ ] 4.2 `templates/triage.env` and `gate_triage`: `TEST_SURFACE` pre-filled, validated, passed as fallback
-- [ ] 4.3 `foreman.sh`: `gate_scope` logs reverted violations, and prepends them to `gate.out` only on failure
-- [ ] 4.4 `prompts/01-triage.md`: file-rule proof example; no OpenSpec in triage
+- [x] 4.1 `adapter.py surfaces`: `TEST_SURFACE` fallback
+- [x] 4.2 `templates/triage.env` and `gate_triage`: `TEST_SURFACE` pre-filled, validated, passed as fallback
+- [x] 4.3 `foreman.sh`: `gate_scope` logs reverted violations, and prepends them to `gate.out` only on failure
+- [x] 4.4 `prompts/01-triage.md`: file-rule proof example; no OpenSpec in triage
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing harness self-tests unchanged and green
+- [x] 5.1 Existing harness self-tests unchanged and green
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/sdlc/foreman.sh`
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 No `@Disabled` or skipped tests introduced
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/sdlc/foreman.sh`
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md`: scope guard row, triage `TEST_SURFACE`
-- [ ] 8.2 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md`: scope guard row, triage `TEST_SURFACE`
+- [x] 8.2 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1093`
-- [ ] 9.2 Only the final commit carries `Closes #1093`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1093`
+- [x] 9.2 Only the final commit carries `Closes #1093`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
