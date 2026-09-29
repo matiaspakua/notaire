@@ -23,7 +23,7 @@ CU76 — Quality Assurance and Testing Infrastructure
 | Specification | `openspec/changes/raise-jacoco-branch-floor-1063/` | valid |
 | Branch | `test/1063_raise_jacoco_branch_floor` | open |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | 322f9ee, ba46127, 63f4581, ae4300f, d819b54, eff58fe | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
