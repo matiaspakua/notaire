@@ -49,7 +49,9 @@ Keep the four `##` headings exactly. Replace the example lines.
   - `N. DONE — <criterion> — proven by: <ExistingTestClass>#<method>`
   - `N. TODO — <criterion> — proven by: command <shell command that must pass>`
     (only for things no unit test can see, e.g. a Gitleaks/Trivy scan or
-    `bash scripts/preflight.sh`)
+    `bash scripts/preflight.sh`). `grep`, `find`, `cat`, `ls`, `git ls-tree`
+    and the like are NOT proofs: they succeed whether or not the criterion
+    holds. Any `new test` needs `KIND=code`
 
   Almost everything IS unit-testable — prefer a test over a command:
   - config key removed → a test loads `application.properties` into
