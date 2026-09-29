@@ -312,6 +312,9 @@ gate_spec() {
         || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
     grep -qx "schema: $SPEC_SCHEMA" "$d/.openspec.yaml" 2>/dev/null \
         || e+="- .openspec.yaml must keep its first line 'schema: $SPEC_SCHEMA' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
+    # the harness writes these rows later (record_ledger, record_pr): a spec that dropped one fails the run at the docs phase
+    python3 "$HERE/bin/ledger.py" rows "$d/traceability.md" Commits "Pull Request" 2>/dev/null \
+        || e+="- traceability.md: keep the template's 'Commits' and 'Pull Request' rows, exactly once each (the harness fills them)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
     [ -z "$(tv USE_CASE_TITLE)" ] || has -iF "$(tv USE_CASE_TITLE)" "$d/proposal.md" \
         || e+="- proposal.md: the Use Case row must read '$(tv USE_CASE) — $(tv USE_CASE_TITLE)' (the title from the issue, do not invent one)\n"
