@@ -30,7 +30,7 @@ earned. So:
 
 | Phase | Who | Constitution step | Gate (deterministic) |
 |---|---|---|---|
-| `triage` | worker | 1 Issue, 2 Refine | `triage.env` schema + cross-checks; every criterion DONE/TODO with a test (or `command`) as proof |
+| `triage` | worker | 1 Issue, 2 Refine | `triage.env` schema + cross-checks; every criterion DONE/TODO with a test (or `command`) as proof. Seeded `ISSUE`/`USE_CASE`/`TYPE` are restored (`triage-repaired REVIEW`); search/print commands are not proofs; `new test` needs `KIND=code` (`bin/triage_check.py`) |
 | `setup` | harness | 6 Branch, IN PROGRESS | branch from fresh `origin/main`, `openspec new change`, `in-progress` label |
 | `spec` | worker | 3 Spec, 4 Impact, 5 Arch, 7 AC | `openspec validate --strict` + `validate-sdlc-plan.sh` → **Gate 1** |
 | `tests` | worker | 8–10 test design, TDD | tests committed, `TEST_CMD` must **fail** → **Gate 2** |
