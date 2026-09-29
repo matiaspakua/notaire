@@ -16,6 +16,20 @@ CU76 — Quality Assurance and Testing Infrastructure
 #1063 → CU76 → [requirements] → [tests] → [files]
 ```
 
+| Link | Reference | Status |
+|------|-----------|--------|
+| Issue | #1063 | in-progress |
+| Use Case | CU76 | exists |
+| Specification | `openspec/changes/raise-jacoco-branch-floor-1063/` | valid |
+| Branch | `test/1063_raise_jacoco_branch_floor` | open |
+| Tasks | `tasks.md` | in progress |
+| Commits | pending | pending |
+| Pull Request | pending | pending |
+| CI run | pending | pending |
+| Merge commit | pending | pending |
+| Release / tag | pending | pending |
+| Smoke test | pending | pending |
+
 ## Requirements and Scenarios
 
 | Requirement | Scenario | Test | File |
@@ -48,7 +62,10 @@ CU76 — Quality Assurance and Testing Infrastructure
 
 ## Permanent documentation updated
 
-- `.claude/rules/code-quality.md`: JaCoCo floor thresholds updated 70%/25% → 80%/65%
+| Document | Updated | Commit |
+|----------|---------|--------|
+| `.claude/rules/code-quality.md` | yes | ae4300f |
+| `CONSTITUTION.md` | yes | ae4300f |
 
 ## Gate log
 
