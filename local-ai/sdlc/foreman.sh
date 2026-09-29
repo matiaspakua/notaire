@@ -226,6 +226,17 @@ gate_scope() {
     mv "$STATE/scope.out" "$STATE/gate.out"; return 1
 }
 
+# md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
+md_fix() {
+    local fix; fix="$(need gates.docs_lint_fix files="$1")"
+    ( cd "$WT" && bash -c "$fix" ) > "$STATE/gate-lint-fix.out" 2>&1   # non-zero = errors left: md_lint names them
+    git_wt diff --quiet -- $1 || gate_log lint-fix "FIXED :: $(git_wt diff --name-only -- $1 | tr '\n' ' ')"
+}
+md_lint() {  # md_lint <gate-name> <files>
+    run_gate "$1" bash -c "$(need gates.docs_lint files="$2")" \
+        || { { echo "markdown lint failed (fix only the reported lines; a closing fence stays a bare \`\`\`):"; tail -60 "$STATE/gate-$1.out"; } > "$STATE/gate.out"; return 1; }
+}
+
 require_clean_branch() {
     local branch dirty bad; branch="$(tv BRANCH)"
     [ "$(git_wt branch --show-current)" = "$branch" ] \
@@ -328,6 +339,10 @@ gate_spec() {
         done
     fi
     [ -z "$e" ] || gate_msg "Fix these in openspec/changes/$c/:\n$e" || return 1
+    # lint here, not first in the docs gate: the errors go back to the phase that wrote them (the harness commits the fixes)
+    local md; md="$(cd "$WT" && find "openspec/changes/$c" -name '*.md' | tr '\n' ' ')"
+    md_fix "$md"
+    md_lint spec-lint "$md" || return 1
     [ "$(tv USE_CASE)" = NONE ] || has -E "$(tv USE_CASE | sed 's/^\([A-Z]*\)-\{0,1\}/\1-?/')" "$WT/openspec/changes/$c/proposal.md" \
         || gate_msg "proposal.md must reference Use Case $(tv USE_CASE)\n" || return 1
 }
@@ -431,8 +446,13 @@ gate_docs() {
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
     local md; md="$(git_wt diff --name-only --diff-filter=d origin/main..HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
-    [ -z "$md" ] || run_gate docs-lint bash -c "cd '$WT' && $(need gates.docs_lint files="$md")" \
-        || { { echo "markdown lint failed (fix only the reported lines; a closing fence stays a bare \`\`\`):"; tail -60 "$STATE/gate-docs-lint.out"; } > "$STATE/gate.out"; return 1; }
+    if [ -n "$md" ]; then
+        # only committed files: a worker's uncommitted edit must not ride in the style commit
+        git_wt diff --quiet HEAD -- $md && md_fix "$md"
+        git_wt diff --quiet -- $md || git_wt commit -q -m "style(docs): fix markdown lint" -m "Refs #$ISSUE" -- $md \
+            || fail "could not commit markdown lint fixes"
+        md_lint docs-lint "$md" || return 1
+    fi
     local plan; plan="$(need spec.plan_check change="$c")"
     run_gate docs-sdlc bash -c "$plan" \
         || { { echo "$plan failed:"; tail -80 "$STATE/gate-docs-sdlc.out"; } > "$STATE/gate.out"; return 1; }
