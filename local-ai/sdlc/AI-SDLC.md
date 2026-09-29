@@ -90,7 +90,9 @@ at another file.
 
 `SURFACE` in `triage.env` is the comma list of surfaces whose `root` holds a
 file from triage's Files to Edit (`backend`, `frontend`, `backend,frontend`,
-`none`). The older value `both` still means every surface. To use the harness
+`none`). When no path is under a root and `KIND=code`, it is triage's
+`TEST_SURFACE` (pre-filled `backend`): a rule about a docs/data file is proven
+by a test that reads the file (#1064). The older value `both` still means every surface. To use the harness
 in another repo, write its adapter; the phase prompts still carry Notaire
 examples (AUDIT §7).
 
@@ -105,7 +107,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 
 | Guard | What it does |
 |---|---|
-| Scope guard | paths outside the phase's allowed regex are reverted; worker is told in the retry. The implement scope (`bin/scope.py`) also admits, as exact paths, the existing files planned in triage `## Files to Edit` and traceability `## Planned Files`, so a spec that plans a doc outside the source roots can go green |
+| Scope guard | paths outside the phase's allowed regex are reverted. A reverted violation does not fail the attempt: it is logged `scope-reverted REVIEW` in `gates.log` for Gate 4, and heads `gate.out` only if the phase gate fails (#1064 lost a triage attempt to an OpenSpec file already reverted). The implement scope (`bin/scope.py`) also admits, as exact paths, the existing files planned in triage `## Files to Edit` and traceability `## Planned Files`, so a spec that plans a doc outside the source roots can go green |
 | Ref guard | branch switches, new local branches, and commits in no-commit phases (triage) are reverted |
 | Git hooks (at commit time) | the worker's git runs with `core.hooksPath=RUNS/<n>/githooks` (injected via `GIT_CONFIG_*`, which Codex would otherwise strip). `pre-commit` rejects forbidden files (build output, logs, `.localai/`, `.env`, backups) and files outside the phase scope; `pre-push` refuses unless the phase is `pr`; `reference-transaction` refuses any ref update except fast-forwards of the issue branch from `BASE` (no branch switch, no new branch, no rewriting earlier phases) |
 | Ref guard (after the run) | backstop for the hooks: reverts HEAD switches, deletes new branches, mixed-resets commits that rewrite history or add forbidden paths |

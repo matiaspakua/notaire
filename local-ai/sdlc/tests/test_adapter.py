@@ -61,6 +61,20 @@ class SurfacesTest(unittest.TestCase):
     def test_no_surface(self):
         self.assertEqual(adapter.surfaces(CFG, ["docs/README.md"]), "none")
 
+    def test_fallback_used_when_no_path_under_a_surface(self):
+        self.assertEqual(adapter.surfaces(CFG, ["docs/x.csv"], fallback="backend"), "backend")
+
+    def test_path_surface_wins_over_fallback(self):
+        self.assertEqual(adapter.surfaces(CFG, ["frontend/a.tsx"], fallback="backend"), "frontend")
+
+    def test_unknown_fallback_ignored(self):
+        self.assertEqual(adapter.surfaces(CFG, ["docs/x.csv"], fallback="mobile"), "none")
+
+    def test_cli_fallback_flag(self):
+        r = subprocess.run([sys.executable, os.path.join(helpers.BIN, "adapter.py"), "surfaces", "--fallback", "backend"],
+                           input="docs/x.csv\n", capture_output=True, text=True)
+        self.assertEqual(r.stdout.strip(), "backend")
+
     def test_suite_for_two_surfaces_runs_each_in_a_subshell(self):
         self.assertEqual(adapter.suite(CFG, "backend,frontend"),
                          "(mvn -q -B test -pl backend-api) && (cd frontend && npx vitest run)")

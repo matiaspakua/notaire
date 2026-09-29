@@ -189,7 +189,9 @@ with_retries() {
     # RECHECK=1: the work is already on the branch (foreman fixed a gate bug) — just re-run the gate
     [ "${RECHECK:-0}" = 1 ] || run_worker "$phase" "$tpl"
     for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-        if gate_scope && "$gate"; then rm -f "$STATE/retry.md"; return 0; fi
+        gate_scope
+        if "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; return 0; fi
+        scope_to_gate_out
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
         # RECHECK is a gate-only run: a failure goes back to the foreman, never to a worker retry
@@ -221,9 +223,16 @@ run_gate() {  # run_gate <name> <cmd...>; output kept in $STATE/gate-<name>.out
     return $rc
 }
 
+# a guard violation is already reverted: the gate judges what is left, the attempt is not lost for it.
+# Gate 4 sees it in gates.log; the worker sees it only if the gate fails (the revert may be why)
 gate_scope() {
     [ -s "$STATE/scope.out" ] || return 0
-    mv "$STATE/scope.out" "$STATE/gate.out"; return 1
+    gate_log scope-reverted "REVIEW :: $(grep -m1 VIOLATION "$STATE/scope.out")"
+}
+scope_to_gate_out() {
+    [ -s "$STATE/scope.out" ] || return 0
+    { cat "$STATE/scope.out"; echo; cat "$STATE/gate.out" 2>/dev/null; } > "$STATE/gate.out.new"
+    mv "$STATE/gate.out.new" "$STATE/gate.out"; rm -f "$STATE/scope.out"
 }
 
 # md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
@@ -287,11 +296,13 @@ gate_triage() {
         [ -e "$WT/$p" ] || [[ "$p" == "$DB_MIGRATIONS"V* ]] \
             || e+="- triage.md: Files to Edit path '$p' does not exist in the repo (list existing paths; new files only for DB migrations under $DB_MIGRATIONS)\n"
     done
-    local surface; surface="$(cfg surfaces <<<"$files")" || fail "adapter: cannot derive surfaces"
+    # a code rule about a docs/data file is proven by a test that reads it: TEST_SURFACE says where that test runs
+    local fallback=""; [ "$(iv KIND)" != code ] || fallback="$(iv TEST_SURFACE)"
+    local surface; surface="$(cfg surfaces --fallback "$fallback" <<<"$files")" || fail "adapter: cannot derive surfaces"
     [ "$(iv DB_CHANGE)" != yes ] || has -F "$DB_MIGRATIONS"V <<<"$files" \
         || e+="- DB_CHANGE=yes but Files to Edit has no new migration (${DB_MIGRATIONS}V<n>__x.sql). Deleting/editing a .properties file is NOT a DB change — set DB_CHANGE=no unless a migration is really needed\n"
     [ "$(iv KIND)" != code ] || [ "$surface" != none ] \
-        || e+="- KIND=code but no Files to Edit path is under a surface root (surfaces in $ADAPTER) — fix KIND or the list\n"
+        || e+="- KIND=code but no Files to Edit path is under a surface root and TEST_SURFACE=$(iv TEST_SURFACE) is not a surface — write TEST_SURFACE=backend (or frontend): where the test that proves the change runs\n"
     [ -z "$e" ] || gate_msg "Fix these problems in $IO/triage.env and $IO/triage.md:\n$e" || return 1
 
     local type slug

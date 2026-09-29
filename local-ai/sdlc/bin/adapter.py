@@ -3,7 +3,7 @@
 
   adapter.py [--file F] validate                            exit 2 listing every required key the adapter lacks
   adapter.py [--file F] get <dotted.key> [name=value ...]   value with {name} filled; lists one item per line
-  adapter.py [--file F] surfaces                            file paths on stdin -> "backend,frontend" | "none"
+  adapter.py [--file F] surfaces [--fallback S]             file paths on stdin -> "backend,frontend" | S | "none"
   adapter.py [--file F] suite <surfaces>                    full-suite command for those surfaces
   adapter.py [--file F] check-test-cmd <surfaces> <cmd>     exit 1 + expected form if cmd is not a test_one command
 """
@@ -65,8 +65,11 @@ def _named(cfg, names):
     return [all_surfaces[n] for n in wanted]
 
 
-def surfaces(cfg, paths):
+def surfaces(cfg, paths, fallback=None):
+    """Surfaces whose root holds a path; else fallback (triage's TEST_SURFACE) if the adapter defines it."""
     hit = [n for n, s in cfg["surfaces"].items() if any(p.startswith(s["root"]) for p in paths)]
+    if not hit and fallback in cfg["surfaces"]:
+        hit = [fallback]
     return ",".join(hit) or "none"
 
 
@@ -100,7 +103,8 @@ def main(argv):
             subs = dict(a.split("=", 1) for a in args[1:])
             print(get(cfg, args[0], subs))
         elif cmd == "surfaces":
-            print(surfaces(cfg, [line.strip() for line in sys.stdin if line.strip()]))
+            fallback = args[1] if args[:1] == ["--fallback"] else None
+            print(surfaces(cfg, [line.strip() for line in sys.stdin if line.strip()], fallback))
         elif cmd == "suite":
             print(suite(cfg, args[0]))
         elif cmd == "check-test-cmd":

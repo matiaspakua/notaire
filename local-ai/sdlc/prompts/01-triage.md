@@ -1,7 +1,8 @@
 # Phase 1 — Triage issue #{{ISSUE}} (analysis only)
 
-You read code and fill in TWO files. Nothing else: no branches, no OpenSpec,
-no edits to repository files, no `git add`.
+You read code and fill in TWO files. Nothing else: no branches, no edits to
+repository files, no `git add`. Do NOT create anything under `openspec/` —
+a later phase writes the specification; the foreman reverts it here.
 
 ## Steps
 
@@ -24,7 +25,8 @@ Replace each `?` — keep the keys exactly, one per line, no quotes, no comments
 | Key | Allowed values | How to decide |
 |---|---|---|
 | `TYPE` | feat, fix, refactor, test, docs, chore, ci, design | copy the issue title prefix (`chore(security): …` → `chore`); the foreman rejects anything else |
-| `KIND` | code, docs, ci | `code` if any file under `backend-api/` or `frontend/` changes (incl. resources); `ci` for `.github/`, `scripts/`, `infra/`; else `docs` |
+| `KIND` | code, docs, ci | `code` if any file under `backend-api/` or `frontend/` changes (incl. resources), or if a test must prove the change (see below); `ci` for `.github/`, `scripts/`, `infra/`; else `docs` |
+| `TEST_SURFACE` | backend, frontend | pre-filled `backend`: where the proving tests run. Change it only if they are frontend tests |
 | `UI_CHANGE` | yes, no | a page or component a user sees changes |
 | `API_CHANGE` | yes, no | a REST request/response shape or status code changes |
 | `DB_CHANGE` | yes, no | `yes` ONLY if you list a new `db/migration/V<n>__*.sql` in Files to Edit. Editing `.properties` or datasource config is `no` |
@@ -55,6 +57,11 @@ Keep the four `##` headings exactly. Replace the example lines.
   - resource file removed → a test asserts
     `getClass().getResource("/config.properties")` is null
   - startup guard → a test builds the bean and asserts it throws
+  - rule about a repository docs/data file (e.g. a `.csv` or `.md` under
+    `docs/` or the repo root) → a backend test reads the file from the repo
+    root (`Path.of("..", "docs", "x.csv")`) and asserts the rule, like
+    `JacocoCoverageConfigConsistencyTest` reads `CONSTITUTION.md`. Use
+    `KIND=code`; Files to Edit lists the docs file, the test is new
   Example: `1. TODO — dead spring.security.user.* keys removed — proven by: new test BackendResourcesHygieneTest#shouldNotDefineSpringSecurityUser`
   At least one TODO. If everything is DONE, write `{{IO}}/BLOCKED.md`
   explaining that the issue is already resolved, with the evidence, and stop.
