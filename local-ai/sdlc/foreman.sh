@@ -623,6 +623,9 @@ record_pr() {
 }
 
 phase_pr() {
+    # checked here, on full messages: the worker read `git log --oneline` subjects and blocked twice on #1063
+    git_wt log --format=%B origin/main..HEAD | has "Closes #$ISSUE" \
+        || fail "no commit on $(tv BRANCH) says 'Closes #$ISSUE' — the implement gate should have caught this"
     cp "$STATE/gates.log" "$IO/gates.log"
     push_branch
     ALLOW_COMMIT=0 with_retries pr 09-pr.md gate_pr
