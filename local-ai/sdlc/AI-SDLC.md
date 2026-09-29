@@ -85,7 +85,7 @@ at another file.
 | `spec.schema`, `spec.tasks_template`, `spec.validate`, `spec.plan_check` | spec and docs gates (`{change}` is filled in) |
 | `surfaces.<name>.root`, `.test_one`, `.suite` | a change's surfaces, its full suite and the TEST_CMD form |
 | `source_roots`, `test_files`, `db_migrations` | phase scopes, test-file detection, the DB-change cross-check |
-| `gates.docs_lint`, `gates.preflight`, `gates.pipeline`, `gates.start`, `gates.health_url`, `gates.main_workflows` | docs, quality, pipeline and Gate 5 commands |
+| `gates.docs_lint`, `gates.docs_lint_fix`, `gates.preflight`, `gates.pipeline`, `gates.start`, `gates.health_url`, `gates.main_workflows` | docs, quality, pipeline and Gate 5 commands |
 | `compose_project`, `guards.forbidden` | Docker project name; paths the worker may never commit |
 
 `SURFACE` in `triage.env` is the comma list of surfaces whose `root` holds a
@@ -114,7 +114,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Diff hygiene in `gate_green` | `git diff --check` (conflict markers, whitespace) and a collateral-deletion check (a non-test file losing >10 lines and >25% of its content) |
 | Phase base | guards measure from the phase start, not the attempt start, so a retry may amend the phase's own commits; the CI fix loop re-bases after every push so pushed commits are never rewritten |
 | Full suite is harness-only | the worker runs single test classes; `gate_green` runs the full suite. A 9B model does not wait for a 6-minute Maven run: it reruns it in parallel and corrupts `target/` |
-| Ledger is harness-owned | `bin/ledger.py`. After Gate 2, `tasks.md` may change only by `[ ]`→`[x]` (`ticks-only`, checked in `gate_green`/`gate_docs`); the worker kept rewriting it with invented results ("PR created", "CI green") or rewording items instead of ticking them. After the docs phase the foreman writes the Commits and CHANGELOG rows of `traceability.md` (`record_ledger`); the worker copied SHAs from `main` |
+| Ledger is harness-owned | `bin/ledger.py`. After Gate 2, `tasks.md` may change only by `[ ]`→`[x]`. When it changes otherwise, `repair_tasks` (in `gate_green`/`gate_docs`) restores the base file with the worker's ticks (`restore-ticks`, matched by task ID), commits the repair and logs the discarded lines as `tasks-repaired` for Gate 4 — the #1063 worker could not undo its own `[-]` marks and added items in three retries; the worker kept rewriting it with invented results ("PR created", "CI green") or rewording items instead of ticking them. `gate_spec` requires the `Commits` and `Pull Request` rows exactly once (`ledger.py rows`), because the harness fills them later. After the docs phase the foreman writes the Commits and CHANGELOG rows of `traceability.md` (`record_ledger`); the worker copied SHAs from `main` |
 | Harness pushes | `push_branch`/`record_pr` in `phase_pr`; `githooks/pre-push` denies every worker push. The local model marked `git push` as needing sandbox escalation (refused under approval=never) and looped: sed-edits of the ledger, duplicate commits, `git reset` to the remote, `pkill -9 git`, `--no-verify`, `-f`. Earlier, the repo's 10-minute pre-push preflight made it start a second push; two Maven runs on one `target/` failed 452 tests. The harness rebases over CI-bot report commits, pushes with `PREFLIGHT_SKIP=1` (quality already ran preflight; CI re-runs it), and records the PR number and ticks 10.1–10.2 itself. The worker only writes the PR body and runs `gh pr create/edit` |
 | Foreman backups are hidden | Manual foreman backups of worker commits go to `refs/foreman/backup/<issue>-<phase>`, never `refs/heads/`: the worker lists branches and checked out a `backup/` branch to "recover" discarded commits. `push_branch` refuses a detached HEAD (it would push the stale branch ref), and `ALLOW_COMMIT=0` makes `githooks/pre-commit` deny commits in the pr phase |
 | CI judged on the last real commit | CI bots push `docs: add PR validation report … [skip ci]` onto the PR branch. That commit has no check runs, so `gh pr checks` (which reads the PR head) reported failure and started a needless ci-fix worker. `ci_sha`/`ci_state`/`wait_ci` read `check-runs` of the last commit whose message lacks `[skip ci]`; the merge gate uses the same test |
@@ -125,6 +125,9 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Sibling worktrees are not the worker's | Worktrees share `refs/heads`. The ref guard used to delete any branch created during a run, so the foreman's own PR branch in `../notaire-harness` was blamed on the #1063 worker and burned its last retry. Branches checked out in another worktree are now skipped |
 | Build dirs anchored | `FORBIDDEN` matched `(^\|/)coverage/` anywhere, so the pre-commit hook refused `openspec/changes/<c>/specs/coverage/spec.md` and the worker "cleaned up" by deleting its own spec. Build-output dirs now match only at the root or one module deep |
 | Plan shape is gated | `validate-sdlc-plan.sh` skips a change without `schema: notaire-sdlc` and only checks task group numbers. `gate_spec` also requires the schema line and the template's 12 group headings plus item IDs, which the ledger ticks (`10.1`, `10.2`) |
+| Harness fixes lint | `md_fix` runs `gates.docs_lint_fix` (`markdownlint-cli2 --fix`) before `md_lint`: in `gate_spec` on the change folder (the spec commit carries the fixes) and in `gate_docs` on every touched `.md` (committed as `style(docs): fix markdown lint`). The worker gets only errors `--fix` cannot solve. The #1063 docs worker was handed blank-line errors the spec phase left |
+| Stale block cleared | `run_worker` deletes `IO/BLOCKED.md` before each run; the run's copy stays in `RUNS/<n>/io-<label>/`. A block written by the #1063 pr worker failed the later Gate 4 fix run after the fix was committed |
+| `Closes` checked by the harness | `phase_pr` checks `Closes #n` in full commit messages before the worker runs; `09-pr.md` no longer asks. The #1063 pr worker read `--oneline` subjects and blocked twice |
 | No builds in spec | The #1063 worker started Maven in the spec phase and polled it for 15+ minutes. `03-spec.md` forbids builds; coverage and test facts come from the issue and triage |
 | Gates | deterministic, with actionable messages (exact line, exact fix). Cosmetic noise (backticks, dash variants) is normalized, not failed |
 | History policy | The harness owns the branch history. `phase_spec` commits the spec itself and folds every review round into that one commit (`--amend`); `squash_spec_churn` folds a trailing run of openspec-only commits into one before the PR. Nothing already pushed is rewritten. The PR is merged with `gh pr merge --merge`, so main keeps the red→green commits as evidence of Gate 2 |
@@ -161,7 +164,8 @@ Two directories per issue, so the worker can never damage harness evidence:
   them. The model otherwise writes results it never produced ("1,940 tests pass").
 - **Harness bugs look like worker bugs.** Before sending a retry, reproduce the
   failing gate by hand. `RECHECK=1 ./foreman.sh <n> <phase>` re-runs a phase's
-  gate without calling the worker. Never use `| grep -q` in the harness:
+  gate without calling the worker; a failing gate stops the run instead of
+  starting a worker retry. Never use `| grep -q` in the harness:
   under `pipefail` it gives SIGPIPE false negatives (use `has`).
 - **Check commit messages against the diff.** The worker writes plausible
   bodies that claim changes it never made. Gate 4 compares every body line

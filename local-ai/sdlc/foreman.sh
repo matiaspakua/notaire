@@ -98,6 +98,8 @@ PY
 run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     local label="$1" prompt="$STATE/prompt-$1.md" rc pre_ref pre_sha pre_branches hooks="$STATE/githooks"
     render "$2" "${3:-}" "${4:-}" > "$prompt"
+    # a block is one run's message to the foreman (kept in $STATE/io-<label>/): a stale one fails a later, successful run
+    rm -f "$IO/BLOCKED.md"
     pre_ref="$(git_wt symbolic-ref -q --short HEAD || git_wt rev-parse HEAD)"
     pre_sha="${PHASE_BASE:-$(git_wt rev-parse HEAD)}"
     pre_branches="$(git_wt for-each-ref --format='%(refname:short)' refs/heads)"
@@ -190,6 +192,8 @@ with_retries() {
         if gate_scope && "$gate"; then rm -f "$STATE/retry.md"; return 0; fi
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
+        # RECHECK is a gate-only run: a failure goes back to the foreman, never to a worker retry
+        [ "${RECHECK:-0}" = 1 ] && break
         { echo "# RETRY $attempt — the foreman gate REJECTED your previous attempt at this phase"
           echo
           echo "The gate output below is complete. Do not search for the gate, do not read"
@@ -220,6 +224,17 @@ run_gate() {  # run_gate <name> <cmd...>; output kept in $STATE/gate-<name>.out
 gate_scope() {
     [ -s "$STATE/scope.out" ] || return 0
     mv "$STATE/scope.out" "$STATE/gate.out"; return 1
+}
+
+# md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
+md_fix() {
+    local fix; fix="$(need gates.docs_lint_fix files="$1")"
+    ( cd "$WT" && bash -c "$fix" ) > "$STATE/gate-lint-fix.out" 2>&1   # non-zero = errors left: md_lint names them
+    git_wt diff --quiet -- $1 || gate_log lint-fix "FIXED :: $(git_wt diff --name-only -- $1 | tr '\n' ' ')"
+}
+md_lint() {  # md_lint <gate-name> <files>
+    run_gate "$1" bash -c "$(need gates.docs_lint files="$2")" \
+        || { { echo "markdown lint failed (fix only the reported lines; a closing fence stays a bare \`\`\`):"; tail -60 "$STATE/gate-$1.out"; } > "$STATE/gate.out"; return 1; }
 }
 
 require_clean_branch() {
@@ -308,6 +323,9 @@ gate_spec() {
         || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
     grep -qx "schema: $SPEC_SCHEMA" "$d/.openspec.yaml" 2>/dev/null \
         || e+="- .openspec.yaml must keep its first line 'schema: $SPEC_SCHEMA' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
+    # the harness writes these rows later (record_ledger, record_pr): a spec that dropped one fails the run at the docs phase
+    python3 "$HERE/bin/ledger.py" rows "$d/traceability.md" Commits "Pull Request" 2>/dev/null \
+        || e+="- traceability.md: keep the template's 'Commits' and 'Pull Request' rows, exactly once each (the harness fills them)\n"
     grep -q "#$ISSUE" "$d/proposal.md" || e+="- proposal.md must reference issue #$ISSUE in its header table\n"
     [ -z "$(tv USE_CASE_TITLE)" ] || has -iF "$(tv USE_CASE_TITLE)" "$d/proposal.md" \
         || e+="- proposal.md: the Use Case row must read '$(tv USE_CASE) — $(tv USE_CASE_TITLE)' (the title from the issue, do not invent one)\n"
@@ -321,6 +339,10 @@ gate_spec() {
         done
     fi
     [ -z "$e" ] || gate_msg "Fix these in openspec/changes/$c/:\n$e" || return 1
+    # lint here, not first in the docs gate: the errors go back to the phase that wrote them (the harness commits the fixes)
+    local md; md="$(cd "$WT" && find "openspec/changes/$c" -name '*.md' | tr '\n' ' ')"
+    md_fix "$md"
+    md_lint spec-lint "$md" || return 1
     [ "$(tv USE_CASE)" = NONE ] || has -E "$(tv USE_CASE | sed 's/^\([A-Z]*\)-\{0,1\}/\1-?/')" "$WT/openspec/changes/$c/proposal.md" \
         || gate_msg "proposal.md must reference Use Case $(tv USE_CASE)\n" || return 1
 }
@@ -380,17 +402,21 @@ collateral_deletions() {
     done
 }
 
-# tasks_only_ticked <base>: after Gate 2, tasks.md may only change by [ ] -> [x] (the worker kept rewriting it with invented results)
-tasks_only_ticked() {
-    local f="openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md"
+# repair_tasks <base>: after Gate 2, tasks.md may only change by [ ] -> [x] (the worker kept rewriting it with
+# invented results, and could not undo it in three retries) — the harness restores the plan, keeps the ticks
+repair_tasks() {
+    local f="openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md" fixed="$STATE/tasks-fixed.md"
     git_wt show "$1:$f" > "$old" 2>/dev/null || return 0
     local diff; diff="$(python3 "$HERE/bin/ledger.py" ticks-only "$old" "$WT/$f")" && return 0
-    gate_msg "$f changed beyond ticking checkboxes. Put these lines back exactly as expected (only '- [ ]' -> '- [x]' may differ; blank lines and fence languages are ignored), with the edit tool:\n$diff\n"
+    python3 "$HERE/bin/ledger.py" restore-ticks "$old" "$WT/$f" > "$fixed" && cp "$fixed" "$WT/$f" \
+        && git_wt commit -q -m "docs(openspec): restore $(tv CHANGE) tasks to plan plus ticks" -m "Refs #$ISSUE" -- "$f" \
+        || gate_msg "could not repair $f — foreman must intervene\n" || return 1
+    gate_log tasks-repaired "REPAIRED :: discarded (review at Gate 4): $(tr '\n' ' ' <<<"$diff")"
 }
 
 gate_green() {
     require_clean_branch || return 1
-    tasks_only_ticked "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
+    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
     local lost; lost="$(collateral_deletions "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)")"
     local base; base="$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)"
     git_wt diff --check "$base"..HEAD > "$STATE/diff-check.out" \
@@ -413,15 +439,20 @@ gate_green() {
 
 gate_docs() {
     local c; c="$(tv CHANGE)"
-    tasks_only_ticked "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
+    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
     if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main..HEAD | has -x CHANGELOG.md; then
         gate_msg "TYPE=$(tv TYPE) is user-visible: add a line under '## [Unreleased]' in CHANGELOG.md ending with (#$ISSUE), then commit\n"
         return 1
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
     local md; md="$(git_wt diff --name-only --diff-filter=d origin/main..HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
-    [ -z "$md" ] || run_gate docs-lint bash -c "cd '$WT' && $(need gates.docs_lint files="$md")" \
-        || { { echo "markdown lint failed (fix only the reported lines; a closing fence stays a bare \`\`\`):"; tail -60 "$STATE/gate-docs-lint.out"; } > "$STATE/gate.out"; return 1; }
+    if [ -n "$md" ]; then
+        # only committed files: a worker's uncommitted edit must not ride in the style commit
+        git_wt diff --quiet HEAD -- $md && md_fix "$md"
+        git_wt diff --quiet -- $md || git_wt commit -q -m "style(docs): fix markdown lint" -m "Refs #$ISSUE" -- $md \
+            || fail "could not commit markdown lint fixes"
+        md_lint docs-lint "$md" || return 1
+    fi
     local plan; plan="$(need spec.plan_check change="$c")"
     run_gate docs-sdlc bash -c "$plan" \
         || { { echo "$plan failed:"; tail -80 "$STATE/gate-docs-sdlc.out"; } > "$STATE/gate.out"; return 1; }
@@ -592,6 +623,9 @@ record_pr() {
 }
 
 phase_pr() {
+    # checked here, on full messages: the worker read `git log --oneline` subjects and blocked twice on #1063
+    git_wt log --format=%B origin/main..HEAD | has "Closes #$ISSUE" \
+        || fail "no commit on $(tv BRANCH) says 'Closes #$ISSUE' — the implement gate should have caught this"
     cp "$STATE/gates.log" "$IO/gates.log"
     push_branch
     ALLOW_COMMIT=0 with_retries pr 09-pr.md gate_pr

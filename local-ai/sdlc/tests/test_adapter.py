@@ -47,6 +47,9 @@ class ValidateTest(unittest.TestCase):
         self.assertIn("gates.preflight", missing)
         self.assertNotIn("spec.schema", missing)
 
+    def test_lint_fix_command_is_required(self):
+        self.assertIn("gates.docs_lint_fix", adapter.missing_keys({"gates": {"docs_lint": "lint {files}"}}))
+
     def test_real_adapter_is_complete(self):
         self.assertEqual(adapter.missing_keys(adapter.load(REAL)), [])
 

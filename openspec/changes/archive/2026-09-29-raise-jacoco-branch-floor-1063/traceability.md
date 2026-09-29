@@ -18,17 +18,17 @@ CU76 — Quality Assurance and Testing Infrastructure
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1063 | in-progress |
+| Issue | #1063 | closed |
 | Use Case | CU76 | exists |
 | Specification | `openspec/changes/raise-jacoco-branch-floor-1063/` | valid |
 | Branch | `test/1063_raise_jacoco_branch_floor` | open |
 | Tasks | `tasks.md` | in progress |
 | Commits | 322f9ee, ba46127, 63f4581, ae4300f, d819b54, eff58fe | done |
-| Pull Request | #1090 | open |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
-| Release / tag | pending | pending |
-| Smoke test | pending | pending |
+| Pull Request | #1090 | merged |
+| CI run | ci.yml 36547641597 on `e52307f` | green |
+| Merge commit | `e52307f` | merged |
+| Release / tag | cd.yml 36548557870 (GHCR image) | published |
+| Smoke test | `/actuator/health` UP on `e52307f` | passed |
 
 ## Requirements and Scenarios
 
@@ -71,7 +71,8 @@ CU76 — Quality Assurance and Testing Infrastructure
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| Gate 0 | Issue + Use Case + Acceptance Criteria | pending | Currently validating |
+| 4 | CI green, review approved, no conflicts | yes | PR #1090 reviewed by the foreman, merged by the owner |
+| 5 | Deployed, smoke test passed, Issue closed | yes | ci.yml 36547641597, cd.yml 36548557870, health UP, #1063 closed |
 
 ## Exceptions
 
