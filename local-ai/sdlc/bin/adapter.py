@@ -17,7 +17,7 @@ DEFAULT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "
 REQUIRED = (
     "paths.worktree", "paths.runs", "backend.profile", "spec.schema", "spec.tasks_template", "spec.validate",
     "spec.plan_check", "surfaces", "source_roots", "test_files", "db_migrations", "gates.docs_lint",
-    "gates.preflight", "gates.pipeline", "gates.start", "gates.health_url", "gates.main_workflows",
+    "gates.docs_lint_fix", "gates.preflight", "gates.pipeline", "gates.start", "gates.health_url", "gates.main_workflows",
     "compose_project", "guards.forbidden",
 )
 

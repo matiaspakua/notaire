@@ -34,6 +34,7 @@ db_migrations: backend-api/src/main/resources/db/migration/
 
 gates:
   docs_lint: frontend/node_modules/.bin/markdownlint-cli2 --no-globs {files}
+  docs_lint_fix: frontend/node_modules/.bin/markdownlint-cli2 --fix --no-globs {files}   # run by the harness before docs_lint
   preflight: bash scripts/preflight.sh
   pipeline: bash scripts/run_pipeline.sh
   start: bash scripts/start.sh
