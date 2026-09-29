@@ -260,6 +260,9 @@ require_clean_branch() {
 gate_triage() {
     local f="$IO/triage.env" md="$IO/triage.md" e="" v
     iv() { kv "$f" "$1"; }
+    # the worker overwrote the seeded TYPE in 2 of 3 #1064 attempts: what the harness derived, it restores
+    local fixed; fixed="$(python3 "$HERE/bin/triage_check.py" restore "$f" "$STATE/triage.seed.env")"
+    [ -z "$fixed" ] || gate_log triage-repaired "REVIEW :: restored seeded $fixed"
     [[ "$(iv TYPE)" =~ ^(feat|fix|refactor|test|docs|chore|ci|design)$ ]] \
         || e+="- triage.env: TYPE=$(iv TYPE) — write one of feat fix refactor test docs chore ci design (issue title prefix)\n"
     local tprefix; tprefix="$(sed -n '1s/^# #[0-9]* \([a-z]*\)[(:].*/\1/p' "$STATE/issue.md")"
@@ -287,6 +290,10 @@ gate_triage() {
         && e+="- triage.md: a shell command as proof must start with the word 'command', e.g. 'proven by: command bash scripts/preflight.sh'. A removal (git rm) is not a proof — prove it with a test, e.g. 'new test BackendResourcesHygieneTest#shouldNotPackageLegacyConfigProperties' asserting getClass().getResource(\"/config.properties\") is null\n"
     grep -qiE 'proven by: .*(PR #|issue #|#[0-9]+)' <<<"$crit" \
         && e+="- triage.md: a PR/issue number is not a proof. Also: criteria come ONLY from the issue's '## Acceptance Criteria' checklist — 'Technical Notes'/'Related' items are out of scope, drop them\n"
+    local search; search="$(python3 "$HERE/bin/triage_check.py" bad-proofs <<<"$crit")"
+    [ -z "$search" ] || e+="- triage.md: a search/print command passes whether or not the criterion holds, so it is not a proof. Prove it with a new test instead (a test can read any repository file):\n$search\n"
+    python3 "$HERE/bin/triage_check.py" kind-conflict "$(iv KIND)" <<<"$crit" \
+        || e+="- triage.env: KIND=$(iv KIND) has no tests phase, so the 'new test' proofs would never be written — write KIND=code\n"
     grep -qE '^[0-9]+\. TODO' <<<"$crit" \
         || e+="- triage.md: no TODO criterion. If the issue is fully resolved, write $IO/BLOCKED.md with the evidence\n"
     local files p
@@ -508,6 +515,7 @@ seed_triage() {  # seed_triage <use-case>: fresh triage files in $IO
     local tp; tp="$(sed -nE '1s/^# #[0-9]+ (feat|fix|refactor|test|docs|chore|ci|design)[(:].*/\1/p' "$STATE/issue.md")"
     sed "s/{{ISSUE}}/$ISSUE/g;s/{{USE_CASE}}/${uc:-NONE}/g;s/^TYPE=?$/TYPE=${tp:-?}/" \
         "$HERE/templates/triage.env" > "$IO/triage.env"
+    cp "$IO/triage.env" "$STATE/triage.seed.env"
     sed "s/{{ISSUE}}/$ISSUE/g" "$HERE/templates/triage.md" > "$IO/triage.md"
 }
 
