@@ -105,7 +105,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 
 | Guard | What it does |
 |---|---|
-| Scope guard | paths outside the phase's allowed regex are reverted; worker is told in the retry |
+| Scope guard | paths outside the phase's allowed regex are reverted; worker is told in the retry. The implement scope (`bin/scope.py`) also admits, as exact paths, the existing files planned in triage `## Files to Edit` and traceability `## Planned Files`, so a spec that plans a doc outside the source roots can go green |
 | Ref guard | branch switches, new local branches, and commits in no-commit phases (triage) are reverted |
 | Git hooks (at commit time) | the worker's git runs with `core.hooksPath=RUNS/<n>/githooks` (injected via `GIT_CONFIG_*`, which Codex would otherwise strip). `pre-commit` rejects forbidden files (build output, logs, `.localai/`, `.env`, backups) and files outside the phase scope; `pre-push` refuses unless the phase is `pr`; `reference-transaction` refuses any ref update except fast-forwards of the issue branch from `BASE` (no branch switch, no new branch, no rewriting earlier phases) |
 | Ref guard (after the run) | backstop for the hooks: reverts HEAD switches, deletes new branches, mixed-resets commits that rewrite history or add forbidden paths |
@@ -177,4 +177,4 @@ Two directories per issue, so the worker can never damage harness evidence:
 | GitHub | `gh` CLI, keychain auth |
 | Docker | Docker Desktop socket |
 | Non-interactive codex | `codex exec … </dev/null` (without it, exec waits on stdin forever) |
-| Timeouts on macOS | `perl -e 'alarm …; exec …'` (no coreutils `timeout`) |
+| Timeouts on macOS | `bin/watchdog.py WORKER_TIMEOUT codex exec …` (no coreutils `timeout`): the worker runs in its own process group, which gets TERM on timeout and KILL after `WATCHDOG_GRACE` s (exit 124). A perl alarm did not stop `codex exec` |
