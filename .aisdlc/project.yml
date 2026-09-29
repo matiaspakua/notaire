@@ -1,0 +1,48 @@
+# The only project-specific input of the local-AI SDLC harness (local-ai/sdlc/).
+# foreman.sh reads it through local-ai/sdlc/bin/adapter.py; see local-ai/sdlc/AI-SDLC.md.
+# Relative paths are relative to the repo root. {name} placeholders are filled by the harness.
+project: notaire
+
+paths:
+  worktree: ../notaire-localai       # the worker's git worktree (env WT overrides)
+  runs: ../notaire-localai-runs      # harness-owned state per issue (env RUNS overrides)
+
+backend:
+  profile: omlx                      # Codex profile (env PROFILE / PROFILE_<PHASE> override)
+
+spec:
+  schema: notaire-sdlc
+  tasks_template: openspec/schemas/notaire-sdlc/templates/tasks.md
+  validate: openspec validate {change} --strict
+  plan_check: bash scripts/validate-sdlc-plan.sh {change}
+
+# A change's surfaces are the ones whose root holds a file from triage's "Files to Edit".
+# test_one must end with {test}: the red gate requires TEST_CMD to start with the text before it.
+surfaces:
+  backend:
+    root: backend-api/
+    test_one: mvn -q -B test -pl backend-api -Dtest={test}
+    suite: mvn -q -B test -pl backend-api
+  frontend:
+    root: frontend/
+    test_one: cd frontend && npx vitest run {test}
+    suite: cd frontend && npx vitest run
+
+source_roots: '^(backend-api|frontend|notaire-shared)/'
+test_files: '(^|/)src/test/|\.test\.tsx?$|^frontend/tests/'
+db_migrations: backend-api/src/main/resources/db/migration/
+
+gates:
+  docs_lint: frontend/node_modules/.bin/markdownlint-cli2 --no-globs {files}
+  preflight: bash scripts/preflight.sh
+  pipeline: bash scripts/run_pipeline.sh
+  start: bash scripts/start.sh
+  health_url: http://localhost:8080/actuator/health
+  main_workflows: [ci.yml, cd.yml]
+
+compose_project: notaire-localai
+
+guards:
+  # never committed by the worker: build output, logs, harness scratch, editor/backup files.
+  # Build-output dirs sit at the root or one module deep: deeper names are real content.
+  forbidden: '^([^/]+/)?(target|logs|node_modules|\.next|coverage|test-results|playwright-report)/|^\.localai/|\.(bak|orig|backup|new|rej|log|jar|class)$|(^|/)\.env$'
