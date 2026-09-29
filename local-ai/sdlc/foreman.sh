@@ -98,6 +98,8 @@ PY
 run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     local label="$1" prompt="$STATE/prompt-$1.md" rc pre_ref pre_sha pre_branches hooks="$STATE/githooks"
     render "$2" "${3:-}" "${4:-}" > "$prompt"
+    # a block is one run's message to the foreman (kept in $STATE/io-<label>/): a stale one fails a later, successful run
+    rm -f "$IO/BLOCKED.md"
     pre_ref="$(git_wt symbolic-ref -q --short HEAD || git_wt rev-parse HEAD)"
     pre_sha="${PHASE_BASE:-$(git_wt rev-parse HEAD)}"
     pre_branches="$(git_wt for-each-ref --format='%(refname:short)' refs/heads)"
@@ -190,6 +192,8 @@ with_retries() {
         if gate_scope && "$gate"; then rm -f "$STATE/retry.md"; return 0; fi
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
+        # RECHECK is a gate-only run: a failure goes back to the foreman, never to a worker retry
+        [ "${RECHECK:-0}" = 1 ] && break
         { echo "# RETRY $attempt — the foreman gate REJECTED your previous attempt at this phase"
           echo
           echo "The gate output below is complete. Do not search for the gate, do not read"
