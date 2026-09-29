@@ -20,44 +20,44 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: derived value restored, underivable kept, search rejected, script accepted, docs+new test rejected, code+new test accepted
-- [ ] 3.2 `local-ai/sdlc/tests/test_triage_check.py` covers every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: derived value restored, underivable kept, search rejected, script accepted, docs+new test rejected, code+new test accepted
+- [x] 3.2 `local-ai/sdlc/tests/test_triage_check.py` covers every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `bin/triage_check.py`: `restore`, `bad-proofs`, `kind-conflict`
-- [ ] 4.2 `seed_triage` keeps `$STATE/triage.seed.env`; `gate_triage` restores from it and logs `triage-repaired`
-- [ ] 4.3 `gate_triage` rejects search-command proofs and non-code `KIND` with new tests
+- [x] 4.1 `bin/triage_check.py`: `restore`, `bad-proofs`, `kind-conflict`
+- [x] 4.2 `seed_triage` keeps `$STATE/triage.seed.env`; `gate_triage` restores from it and logs `triage-repaired`
+- [x] 4.3 `gate_triage` rejects search-command proofs and non-code `KIND` with new tests
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing harness self-tests unchanged and green
+- [x] 5.1 Existing harness self-tests unchanged and green
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/sdlc/foreman.sh`
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 No `@Disabled` or skipped tests introduced
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/sdlc/foreman.sh`
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md`: triage row — seed repair, proof and KIND rules
-- [ ] 8.2 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md`: triage row — seed repair, proof and KIND rules
+- [x] 8.2 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1095`
-- [ ] 9.2 Only the final commit carries `Closes #1095`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1095`
+- [x] 9.2 Only the final commit carries `Closes #1095`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
