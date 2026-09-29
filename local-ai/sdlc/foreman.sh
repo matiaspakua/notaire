@@ -112,8 +112,8 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     local profile="${!profile_var:-$PROFILE}"
     log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
-    # perl alarm: portable timeout on macOS (no coreutils).
-    perl -e 'alarm shift; exec @ARGV' "$WORKER_TIMEOUT" \
+    # watchdog: kills the worker's whole process group on timeout (a perl alarm did not stop codex)
+    python3 "$HERE/bin/watchdog.py" "$WORKER_TIMEOUT" \
         codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
@@ -517,7 +517,8 @@ phase_tests() {
 phase_implement() {
     is_code || { log "KIND=$(tv KIND): implementation is the docs/ci edit itself"; echo "TEST_CMD=true" | tee "$IO/tests.env" > "$STATE/tests.env"; }
     local scope=.
-    is_code && scope="^(\.localai/|openspec/changes/$(tv CHANGE)/)|$SOURCE_ROOTS"
+    is_code && scope="$(python3 "$HERE/bin/scope.py" implement "$WT" "$(tv CHANGE)" "$SOURCE_ROOTS" \
+        "$STATE/triage.md" "$WT/openspec/changes/$(tv CHANGE)/traceability.md")"
     SCOPE="$scope" with_retries implement 05-implement.md gate_green
 }
 
