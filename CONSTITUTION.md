@@ -446,6 +446,7 @@ Every modification must produce or update:
 ### Testing Fixtures & Patterns
 
 All tests must follow fixture patterns documented in:
+
 - **[`TESTING-PATTERNS.md`](docs/300-development/303-testing/TESTING-PATTERNS.md)**: Concrete code examples
   - Unit: AAA pattern, Test Data Builders, Mockito
   - Component: React Testing Library, QueryClient wrappers, hook testing
@@ -454,7 +455,7 @@ All tests must follow fixture patterns documented in:
 
 ### Test Pyramid & Execution Strategy
 
-```
+```text
                      ╱╲
                     ╱  ╲  E2E (Playwright)  ~5% tests, 60 min weekly
                    ╱    ╲ 35 suites, 448 tests (TS-nnnn nomenclature)
@@ -494,7 +495,7 @@ Execution Strategy:
 
 | Tool | Check | Enforced at | Ratchet Floor |
 |------|-------|-------------|---------------|
-| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 70% line / 25% branch |
+| JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 80% line / 65% branch |
 | Vitest | Line coverage (frontend) | CI job `frontend-ci` | 75% line |
 | Bruno | REST endpoint coverage | CI job `playwright-e2e` | 80–100% endpoints |
 | Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per Use Case |

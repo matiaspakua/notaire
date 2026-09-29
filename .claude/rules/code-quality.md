@@ -24,7 +24,7 @@ Coverage is split into an **aspirational target** and an **enforced ratchet floo
 - **Long-term target**: 80% line / 80% branch.
 - **Enforced gate** (`jacoco:check`, bound to `mvn verify`, BUNDLE scope, legacy
   `jpa`/`service.Administrador*` packages excluded): a ratchet floor of
-  **70% line / 25% branch** as of 2026-06-16, Phase 8 (actual: ~84% line / ~74% branch
+  **80% line / 65% branch** as of 2026-09-28 (#1063) (actual: ~84% line / ~74% branch
   as of 2026-07-23). The build fails if coverage drops below the floor.
 - **Policy**: raise the floor as coverage improves; never lower it. The historical
   per-class 80% rule was bound to `<phase>none</phase>` and never ran, so the prior
@@ -46,6 +46,7 @@ open backend-api/target/site/jacoco/index.html
 ### CI Integration
 
 Coverage reports are:
+
 - Generated in CI pipeline
 - Uploaded as artifacts
 - Commented on PRs via madrapps/jacoco-action
@@ -80,6 +81,7 @@ open backend-api/target/checkstyle-result.html
 ### Ignoring Files
 
 To skip checkstyle for specific files, add to the class JavaDoc:
+
 ```java
 /**
  * @checkstyle ignore for 10 lines
@@ -137,6 +139,7 @@ trivy fs . --severity HIGH,CRITICAL
 ### CI Integration
 
 Trivy runs automatically in:
+
 - CI pipeline (filesystem scan)
 - CD pipeline (Docker image scan)
 - Results uploaded as SARIF to GitHub Security tab
@@ -159,6 +162,7 @@ mvn site -pl backend-api
 ### VS Code
 
 Install extensions:
+
 - Checkstyle for Java
 - SonarLint
 - Error Prone
