@@ -46,6 +46,7 @@ open backend-api/target/site/jacoco/index.html
 ### CI Integration
 
 Coverage reports are:
+
 - Generated in CI pipeline
 - Uploaded as artifacts
 - Commented on PRs via madrapps/jacoco-action
@@ -80,6 +81,7 @@ open backend-api/target/checkstyle-result.html
 ### Ignoring Files
 
 To skip checkstyle for specific files, add to the class JavaDoc:
+
 ```java
 /**
  * @checkstyle ignore for 10 lines
@@ -137,6 +139,7 @@ trivy fs . --severity HIGH,CRITICAL
 ### CI Integration
 
 Trivy runs automatically in:
+
 - CI pipeline (filesystem scan)
 - CD pipeline (Docker image scan)
 - Results uploaded as SARIF to GitHub Security tab
@@ -159,6 +162,7 @@ mvn site -pl backend-api
 ### VS Code
 
 Install extensions:
+
 - Checkstyle for Java
 - SonarLint
 - Error Prone

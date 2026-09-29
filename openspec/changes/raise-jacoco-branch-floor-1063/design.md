@@ -10,6 +10,7 @@ Current JaCoCo configuration in `backend-api/pom.xml`, `.claude/rules/code-quali
 quality improvements.
 
 Evidence:
+
 - `backend-api/pom.xml:329,334`: floor 70% line / 25% branch, actual 84.9% / 74.0%
 - JaCoCo reports: line 74%, branch 25%
 - `JacocoCoverageConfigConsistencyTest#shouldHaveConsistentCoverageFloorAcrossDocsAndPom`:
@@ -18,6 +19,7 @@ Evidence:
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Raise JaCoCo line coverage floor from 70% to 80%
 - Raise JaCoCo branch coverage floor from 25% to 65%
 - Ensure both pom.xml and code-quality.md have aligned threshold values
@@ -47,18 +49,21 @@ Evidence:
 ## Testing Strategy
 
 ### Unit Tests
+
 - `JacocoCoverageConfigConsistencyTest#shouldHaveConsistentCoverageFloorAcrossDocsAndPom`
   - Arrange: Load current pom.xml and code-quality.md
   - Act: Call coverage floor accessor
   - Assert: Both have line coverage floor/line coverage floor = 80, branch coverage floor/branch coverage floor = 65
 
 ### Integration Tests
+
 - `mvn jacoco:check -pl backend-api`
   - Arrange: Run JaCoCo analysis on backend-api module
   - Act: Quality gate validates thresholds
   - Assert: No threshold violation exceptions thrown
 
 ### Frontend E2E
+
 - N/A — no UI or API changes in this change
 
 ## Regression Strategy
@@ -76,22 +81,26 @@ n/a — no UI surface changes.
 ## Deployment Strategy
 
 ### Pre-deployment
+
 - No database migration needed (Flyway schema unchanged)
 - No configuration in `.env` required
 
 ### Deployment
+
 - No app redeploy needed — CI changes only
 - Changes affect:
   - JaCoCo analysis during builds
   - Quality gate validation in CI
 
 ### Post-deployment verification
+
 - Run `mvn jacoco:check -pl backend-api` locally
 - Verify CI "Quality Gate" job passes (Gate 4)
 
 ## Rollback Strategy
 
 If new thresholds cause excessive CI failures:
+
 1. Revert pom.xml and code-quality.md to 70%/25%
 2. Restore test expectations in `JacocoCoverageConfigConsistencyTest`
 3. File new issue to address coverage gaps (DeedManagement, business package) incrementally

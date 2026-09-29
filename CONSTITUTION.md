@@ -446,6 +446,7 @@ Every modification must produce or update:
 ### Testing Fixtures & Patterns
 
 All tests must follow fixture patterns documented in:
+
 - **[`TESTING-PATTERNS.md`](docs/300-development/303-testing/TESTING-PATTERNS.md)**: Concrete code examples
   - Unit: AAA pattern, Test Data Builders, Mockito
   - Component: React Testing Library, QueryClient wrappers, hook testing
@@ -454,7 +455,7 @@ All tests must follow fixture patterns documented in:
 
 ### Test Pyramid & Execution Strategy
 
-```
+```text
                      ╱╲
                     ╱  ╲  E2E (Playwright)  ~5% tests, 60 min weekly
                    ╱    ╲ 35 suites, 448 tests (TS-nnnn nomenclature)

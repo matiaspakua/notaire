@@ -12,7 +12,7 @@ CU76 — Quality Assurance and Testing Infrastructure
 
 ## Chain
 
-```
+```text
 #1063 → CU76 → [requirements] → [tests] → [files]
 ```
 
@@ -41,7 +41,7 @@ CU76 — Quality Assurance and Testing Infrastructure
 
 | File | Purpose | Action |
 |------|---------|--------|
-| `backend-api/pom.xml` | JaCoCo configuration | JaCoCo ratchet floor | LINE 0.70→0.80, BRANCH 0.25→0.65 |
+| `backend-api/pom.xml` | JaCoCo ratchet floor | LINE 0.70→0.80, BRANCH 0.25→0.65 |
 | `.claude/rules/code-quality.md` | Documented floor | 70% line / 25% branch → 80% line / 65% branch |
 | `CONSTITUTION.md` | Documented floor (line 496) | 70% line / 25% branch → 80% line / 65% branch |
 | `JacocoCoverageConfigConsistencyTest.java` | Consistency test | add shouldEnforceRaisedCoverageFloor, shouldMatchConstitutionFloorToPom |
