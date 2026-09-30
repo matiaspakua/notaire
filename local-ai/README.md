@@ -1,4 +1,4 @@
-# IA 100% local en macOS — oMLX + Qwen3.5-9B + Codex CLI
+# IA 100% local en macOS — oMLX + Qwen3-Coder-30B-A3B + Codex CLI
 
 Stack de desarrollo con IA que corre íntegramente en tu Mac (sin nube, sin API keys de LLM):
 
@@ -14,8 +14,9 @@ Stack de desarrollo con IA que corre íntegramente en tu Mac (sin nube, sin API 
 │      ·  API OpenAI Responses compatible      │
 │      ·  KV cache en SSD (sesiones largas)    │
 │      ▼                                       │
-│  Qwen3.5-9B-MLX-4bit  (~5.6 GB en RAM)       │
-│      contexto nativo 256K · tool calling     │
+│  Qwen3-Coder-30B-A3B-Instruct-4bit           │
+│      MoE 30B (3B activos) · ~16 GiB en RAM   │
+│      contexto 32K (256K nativo) · tools XML  │
 └──────────────────────────────────────────────┘
 ```
 
@@ -33,13 +34,36 @@ Stack de desarrollo con IA que corre íntegramente en tu Mac (sin nube, sin API 
 El script:
 
 1. Instala `oMLX.app` (DMG oficial con kernels precompilados) si falta
-2. Descarga el modelo `lmstudio-community/Qwen3.5-9B-MLX-4bit` a `~/.omlx/models/` si falta
+2. Descarga el modelo [`mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit`](https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit)
+   (~17 GB, con `hf download`) a `~/.omlx/models/` si falta
 3. Aplica ajustes de performance en `~/.omlx/settings.json` y reinicia el servidor si cambió algo:
-   - `memory_guard_tier = aggressive`, techo 17.5 GB
+   - `memory_guard_tier = custom`, techo 20 GB (= límite Metal; los otros tiers topan en la
+     RAM reclamable del momento, ~16 GB con un navegador abierto, y rechazan el modelo)
    - KV cache paginado a SSD en `~/.omlx/cache`
-   - `chunked_prefill` activado
-4. Crea el perfil de Codex en `~/.codex/omlx.config.toml` (no toca tu config global)
-5. Smoke test de inferencia end-to-end
+   - `chunked_prefill` activado, `max_context_window = 32768`, `prefill_memory_guard` apagado
+     (rechazaba prompts de >12K tokens que sí caben), `max_tokens 4096` (corta pronto una tool
+     call que no cierra), `auto_start_on_launch` activado
+   - en `~/.omlx/model_settings.json`: `temperature 0.3`, `top_p 0.8`, `top_k 20`,
+     `repetition_penalty 1.0` y KV cache en fp16. Qwen recomienda 0.7 y 1.05, y TurboQuant
+     ahorra memoria, pero los tres rompen las tool calls XML del modelo (ver comentarios del script)
+4. Verifica `iogpu.wired_limit_mb` (ver abajo) y avisa si hay que subirlo
+5. Crea el perfil de Codex en `~/.codex/omlx.config.toml` (no toca tu config global)
+6. Smoke test de inferencia end-to-end
+
+Otro modelo: `MODEL_REPO=<org>/<repo> CONTEXT_WINDOW=<n> bash setup-omlx-codex.sh`.
+
+### Memoria Metal (obligatorio para el 30B en 24 GB)
+
+macOS limita la memoria GPU a ~75 % de la RAM (~17.8 GB en 24 GB) y los pesos ya ocupan
+~16 GiB. Sin subir el límite el modelo no deja sitio al KV cache:
+
+```bash
+sudo sysctl iogpu.wired_limit_mb=20480                               # hasta reiniciar
+echo 'iogpu.wired_limit_mb=20480' | sudo tee -a /etc/sysctl.conf     # persistente
+```
+
+Con 20 GiB para Metal quedan ~4 GB para macOS, Maven y el resto: cierra apps pesadas
+mientras corre el worker.
 
 ## Uso diario
 
@@ -61,8 +85,8 @@ cd ~/workspace/mi-proyecto
 codex --profile omlx
 ```
 
-Codex queda conectado al modelo local con sandbox `workspace-write`: puede leer/escribir
-archivos del proyecto y ejecutar comandos (compilar, testear, git…).
+Codex queda conectado al modelo local con sandbox `danger-full-access`: puede leer/escribir
+archivos y ejecutar comandos (mvn, npm, gh, docker, git…).
 
 ### Tareas autónomas (sin sesión interactiva)
 
@@ -78,17 +102,17 @@ codex exec --profile omlx --skip-git-repo-check -C ~/workspace/mi-proyecto "Impl
   global de npm (`~/.npm`). Ejecuta `npm install` tú antes y dile al agente que NO instale
   dependencias. Alternativa puntual: `npm_config_cache=/tmp/npm-cache codex exec …`
 - **Tareas acotadas**: pide archivo-por-archivo o hitos cortos ("primero el esquema,
-  verifica compilación, luego rutas…") — un modelo 9B rinde mucho mejor con pasos pequeños.
+  verifica compilación, luego rutas…") — un modelo local rinde mucho mejor con pasos pequeños.
 - **`AGENTS.md` en la raíz del proyecto**: fija stack obligatorio, comandos y criterios de
   aceptación; Codex lo lee automáticamente al empezar.
-- **Sesiones largas**: el perfil limita la ventana a 64K para que Codex auto-comprima antes;
-  pasados ~100K tokens acumulados un modelo local en 24 GB empieza a sufrir.
+- **Sesiones largas**: el perfil limita la ventana a 32K y compacta a 2/3 (~21K): con
+  16 GiB de pesos es todo el KV cache que cabe en 24 GB.
 
 ## Solución de problemas
 
 | Síntoma | Causa / solución |
 |---|---|
-| `prefill_memory_exceeded` o *Prefill throttled* en logs | Memoria justa: cierra apps, reinicia servidor, o divide la tarea. El techo físico de Metal en 24 GB es ~17.8 GB. |
+| `prefill_memory_exceeded` o *Prefill throttled* en logs | Memoria justa: cierra apps, reinicia servidor, o divide la tarea. Sin `iogpu.wired_limit_mb` el techo de Metal en 24 GB es ~17.8 GB: súbelo (ver *Memoria Metal*). |
 | `wire_api = "chat" is no longer supported` | Codex moderno exige `"responses"` (ya configurado así). |
 | `--profile 'x' cannot be used … [profiles.x]` | Los perfiles viven ahora en `~/.codex/<perfil>.config.toml` (ya migrado). |
 | El shim dice *"Complete the oMLX first-run setup"* | Abre `oMLX.app` una vez manualmente y completa el asistente. |
