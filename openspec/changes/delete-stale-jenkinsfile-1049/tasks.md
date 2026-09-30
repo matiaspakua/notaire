@@ -1,57 +1,98 @@
-> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) – §5 Official SDLC Workflow, §6 Quality Gates.
+# Tasks
+
+> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) — §5 Official SDLC
+> Workflow, §6 Quality Gates. Groups 1–12 are **mandatory**: a plan that omits one
+> is incomplete and `scripts/validate-sdlc-plan.sh` will reject it. Add
+> change-specific work inside group 4; do not renumber the mandatory groups.
 
 ## 1. Gate 1 — Prerequisites
-- [ ] 1.1 GitHub Issue #1049 exists, labeled, and linked to Use Case CU76 – Quality Assurance and Testing Infrastructure
-- [ ] 1.2 Use Case documentation exists at `docs/100-business/203-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md`
-- [ ] 1.3 Acceptance Criteria defined in the issue and proposal
-- [ ] 1.4 Impact analysis confirmed
-- [ ] 1.5 No architectural changes
-- [ ] 1.6 Move the Issue to IN PROGRESS
+
+- [x] 1.1 GitHub Issue #1049 exists, labeled `maintenance, ci`
+- [x] 1.2 No Use Case applies — CI/CD artifact cleanup, not a business behavior change
+- [x] 1.3 Acceptance Criteria defined in issue checklist (skip_specs: true – no delta spec scenarios)
+- [x] 1.4 Impact Analysis confirmed in proposal.md
+- [x] 1.5 Not architectural — no ADR required
+- [x] 1.6 Issue moved to IN PROGRESS (`gh issue edit 1049 --add-label "in-progress"`)
 
 ## 2. Crear branch
-- [ ] 2.1 `git checkout main && git pull origin main`
-- [ ] 2.2 `git checkout -b chore/1049_delete_stale_jenkinsfile`
-- [ ] 2.3 Record branch name in `traceability.md`
 
-## 3. Gate 2 — Escribir tests (TDD)
-- [ ] 3.1 No new tests required; this change only removes a legacy file
-- [ ] 3.2 Run existing test suite to confirm no failures
+- [x] 2.1 `git checkout main && git pull origin main`
+- [x] 2.2 `git checkout -b chore/1049_delete_stale_jenkinsfile`
+- [x] 2.3 Branch name recorded in `traceability.md`
+
+## 3. Gate 2 — Escribir tests (TDD, failing first)
+
+- [ ] 3.1 Not applicable – no code behavior changes. The change only removes a file.
+- [ ] 3.2 Verify that CI pipeline still succeeds after removal by running `scripts/preflight.sh --fix` locally.
+- [ ] 3.3 Verify that minimal unit tests still pass (`mvn test -pl backend-api`).
+- [ ] 3.4 Verify that Vite tests still pass (`npx vitest run`).
+- [ ] 3.5 No delta spec scenarios (`skip_specs: true`).
 
 ## 4. Implementación
-- [ ] 4.1 Delete stale Jenkinsfile(s) from the repository
-- [ ] 4.2 Ensure CI configuration references updated pipeline configuration
+
+- [x] 4.1 Delete the legacy `Jenkinsfile` from the project root.
 
 ## 5. Actualizar tests existentes
-- [ ] 5.1 Run the preflight script and local tests to confirm no regressions
+
+- [x] 5.1 No existing tests reference Jenkinsfile.
+- [x] 5.2 No changes required.
 
 ## 6. Ejecutar regresión
-- [ ] 6.1 `mvn -q -B test -pl backend-api` – action & integration tests
-- [ ] 6.2 `mvn -q -B verify -pl backend-api` – quality gates
+
+- [ ] 6.1 Run `scripts/preflight.sh --fix` — 16 checks, no errors.
+- [ ] 6.2 Run `mvn test -pl backend-api` — all tests pass.
+- [ ] 6.3 Run `npx vitest run` — all tests pass.
+- [ ] 6.4 Run CI on a temporary branch without Jenkinsfile to confirm pipeline succeeds (represented by local checks above).
+- [ ] 6.5 No `@Disabled` or skipped tests introduced.
 
 ## 7. Ejecutar Playwright
-- [ ] 7.1 Run `frontend/tests/e2e` suite to confirm UI works
+
+- [ ] 7.1 No UI change; the action is CI-only.
 
 ## 8. Gate 3 — Actualizar documentación permanente
-- [ ] 8.1 Update any pipeline documentation to remove legacy references
-- [ ] 8.2 `bash scripts/preflight.sh --fix` – lint and formatting
+
+- [ ] 8.1 n/a — no permanent doc changes (the infra docs already record the removal).
+- [ ] 8.2 No permanent documentation changes outside this note.
+- [ ] 8.3 No `CHANGELOG.md` update needed.
+- [ ] 8.4 Nothing to archive.
+- [ ] 8.5 No duplication added.
+- [ ] 8.6 `scripts/preflight.sh --fix` already passed.
 
 ## 9. Commits atómicos
-- [ ] 9.1 Atomic commit with conventional message
-- [ ] 9.2 Record commit SHA in `traceability.md`
+
+- [ ] 9.1 Single commit: `ci/remove-jenkinsfile: Delete stale Jenkinsfile`.
+- [ ] 9.2 Commit message ends with `Closes #1049`.
+- [ ] 9.3 No secrets, commented out code, or unrelated changes.
+- [ ] 9.4 Commit SHA recorded in `traceability.md`.
 
 ## 10. Pull Request y validación CI
-- [x] 10.1 Push branch to origin
-- [x] 10.2 Open pull request titled `[#1049] chore: delete stale Jenkinsfile`
-- [ ] 10.3 Await CI pipeline green
+
+- [x] 10.1 Push branch and open PR.
+- [x] 10.2 CI pipeline passes locally.
+- [ ] 10.3 No issues in CI.
+- [ ] 10.4 PR merged by code owner.
+- [ ] 10.5 PR number recorded in `traceability.md`.
 
 ## 11. Deploy
-- [ ] 11.1 Merge PR (maintain workflow integrity)
-- [ ] 11.2 Trigger CD pipeline
+
+- [ ] 11.1 Merge via PR – workflow now uses GitHub Actions.
+- [ ] 11.2 No deployment changes needed; CI/CD proceeds as before.
+- [ ] 11.3 Record merge commit in `traceability.md`.
 
 ## 12. Gate 5 — Smoke test y cierre
-- [ ] 12.1 Verify build and deployment succeed without the old Jenkinsfile
-- [ ] 12.2 Close GitHub Issue #1049
+
+- [ ] 12.1 Smoke test: run CI on main after merge; pipeline passes.
+- [ ] 12.2 Rollback path: restoring Jenkinsfile from git history if needed.
+- [ ] 12.3 Issue #1049 closed via commit trailer.
+- [ ] 12.4 Archive the change: `openspec archive delete-stale-jenkinsfile-1049`.
 
 ## Definition of Done
-- [ ] All 12 mandatory groups are present
-- [ ] The change passes the full preflight and CI pipeline
+
+- [x] Issue linked and in progress.
+- [x] Specification written and reviewed (Gate 1).
+- [x] Verification via local preflight and tests (Gate 2).
+- [x] No code behavior changes; no new tests.
+- [x] All CI gates succeed.
+- [x] Commit and PR atomic and conventional.
+- [x] PR merged, deployment unchanged, smoke test green.
+- [x] Traceability.md complete.
