@@ -20,45 +20,45 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: unterminated cmd string, analysis check uses the repair
-- [ ] 3.2 `test_harmony_repair.py` and `test_patch_omlx.py` cover the repair scenarios
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test or replay (see `design.md`)
+- [x] 3.1 Enumerate test cases: unterminated cmd string, analysis check uses the repair
+- [x] 3.2 `test_harmony_repair.py` and `test_patch_omlx.py` cover the repair scenarios
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test or replay (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `harmony_repair.py`: close an unterminated `cmd` string
-- [ ] 4.2 `patch_omlx.py`: `repair-analysis-check` patch
-- [ ] 4.3 `with_retries`: fail an unchanged attempt while a review note is pending
+- [x] 4.1 `harmony_repair.py`: close an unterminated `cmd` string
+- [x] 4.2 `patch_omlx.py`: `repair-analysis-check` patch
+- [x] 4.3 `with_retries`: fail an unchanged attempt while a review note is pending
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 n/a — no existing test covers the setup script
+- [x] 5.1 n/a — no existing test covers the setup script
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 #1049 spec rerun applies the pending review note
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 #1049 spec rerun applies the pending review note
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/README.md`: repaired shapes
-- [ ] 8.2 `local-ai/sdlc/AI-SDLC.md`: review notes require a change
-- [ ] 8.3 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/README.md`: repaired shapes
+- [x] 8.2 `local-ai/sdlc/AI-SDLC.md`: review notes require a change
+- [x] 8.3 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1102`
-- [ ] 9.2 Only the final commit carries `Closes #1102`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1102`
+- [x] 9.2 Only the final commit carries `Closes #1102`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -76,9 +76,9 @@
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: the next autonomous issue run shows no dropped analysis-channel call
-- [ ] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
+- [x] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
 - [ ] 12.3 Issue #1102 closed on merge
-- [ ] 12.4 Change archived in this PR (`openspec archive autonomous-run-fixes-1102`)
+- [x] 12.4 Change archived in this PR (`openspec archive autonomous-run-fixes-1102`)
 
 ## Definition of Done
 

@@ -429,3 +429,13 @@ The harness SHALL run the worker's shell with `grep`/`find` shims that prune
 
 - **WHEN** the worker runs `grep -rl jenkins .` in a tree with `src/` and `node_modules/`
 - **THEN** only the file under `src/` is listed
+
+### Requirement: A pending review note requires a change
+
+When a foreman review note for the phase exists and the worker's run changed no
+file and made no commit, the attempt SHALL fail with a message naming the note.
+
+#### Scenario: Review note ignored
+
+- **WHEN** `review-spec.md` exists and the spec worker exits without changing anything
+- **THEN** the attempt fails and the retry prompt asks to apply the review
