@@ -13,6 +13,7 @@
 # .aisdlc/project.yml (AISDLC_PROJECT overrides its path), read via bin/adapter.py.
 # Env: WT (worker worktree, default adapter paths.worktree),
 #      RUNS (harness state, default adapter paths.runs),
+#      AGENT (worker: codex | opencode, default adapter backend.agent), OPENCODE_MODEL (default backend.opencode_model),
 #      PROFILE (codex profile, default adapter backend.profile), PROFILE_<PHASE> (per-phase override, e.g. PROFILE_SPEC),
 #      MAX_ATTEMPTS (3),
 #      WORKER_TIMEOUT (seconds per worker run, 3600),
@@ -32,6 +33,7 @@ cfg validate || exit 2
 WT="${WT:-$(repo_path "$(need paths.worktree)")}"
 RUNS="${RUNS:-$(repo_path "$(need paths.runs)")}"
 PROFILE="${PROFILE:-$(need backend.profile)}"
+AGENT="${AGENT:-$(need backend.agent)}"; OPENCODE_MODEL="${OPENCODE_MODEL:-$(need backend.opencode_model)}"
 SPEC_SCHEMA="$(need spec.schema)"; TASKS_TEMPLATE="$(need spec.tasks_template)"
 TEST_FILES="$(need test_files)"; SOURCE_ROOTS="$(need source_roots)"; DB_MIGRATIONS="$(need db_migrations)"
 COMPOSE_PROJECT="$(need compose_project)"; HEALTH_URL="$(need gates.health_url)"
@@ -115,22 +117,11 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
       echo "ALLOW_COMMIT=${ALLOW_COMMIT:-1}"; printf "FORBIDDEN='%s'\n" "$FORBIDDEN"; printf "SCOPE='%s'\n" "${SCOPE:-.}"; } > "$hooks/state.env"
     local profile_var; profile_var="PROFILE_$(tr '[:lower:]' '[:upper:]' <<< "${label%%-*}")"
     local profile="${!profile_var:-$PROFILE}"
-    log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
-    # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
+    log "worker → $label ($AGENT, profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # watchdog: kills the worker's whole process group on timeout (a perl alarm did not stop codex)
-    # project_doc_max_bytes=0: WORKER.md is the worker's brief; AGENTS.md cost ~1.7K tokens and contradicts it
-    # ZDOTDIR: the worker's `zsh -lc` puts the crawl_guard grep/find shims first on PATH; the shell
-    # snapshot restores the PATH Codex captured at startup, so it would undo them
     python3 "$HERE/bin/watchdog.py" "$WORKER_TIMEOUT" \
-        codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
-        -c project_doc_max_bytes=0 \
-        -c features.shell_snapshot=false \
-        -c "shell_environment_policy.set.ZDOTDIR=\"$HERE/zdot\"" \
-        -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
-        -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
-        -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
-        -o "$STATE/last-$label.md" "$(cat "$prompt")" \
-        < /dev/null >> "$STATE/worker-$label.log" 2>&1
+        python3 "$HERE/bin/worker.py" "$AGENT" "$WT" "$profile" "$OPENCODE_MODEL" "$hooks" \
+        "$STATE/last-$label.md" "$prompt" < /dev/null >> "$STATE/worker-$label.log" 2>&1
     rc=$?
     log "worker ← $label exit $rc"
     mkdir -p "$STATE/io-$label" && cp -R "$IO/." "$STATE/io-$label/" 2>/dev/null
