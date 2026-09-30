@@ -90,7 +90,10 @@ if os.path.exists(review):
             + open(review).read())
 retry = os.path.join(state, "retry.md")
 if os.path.exists(retry):
-    out += "\n\n---\n\n" + open(retry).read()
+    # at the end only, a 12K-token phase prompt won: #1049's retries redid the whole
+    # investigation and ran out of turns before fixing the two files the gate named
+    note = open(retry).read()
+    out = note + "\n\n---\n\n# Reference: the phase instructions\n\n" + out + "\n\n---\n\n" + note
 print(out)
 PY
 }
@@ -115,8 +118,10 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
     # watchdog: kills the worker's whole process group on timeout (a perl alarm did not stop codex)
+    # project_doc_max_bytes=0: WORKER.md is the worker's brief; AGENTS.md cost ~1.7K tokens and contradicts it
     python3 "$HERE/bin/watchdog.py" "$WORKER_TIMEOUT" \
         codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
+        -c project_doc_max_bytes=0 \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
         -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
