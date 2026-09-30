@@ -1,0 +1,50 @@
+import json
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "omlx"))
+import harmony_repair  # noqa: E402
+
+
+def repair(name, args):
+    return harmony_repair.repair_tool_call(name, args)
+
+
+class ArgumentsTest(unittest.TestCase):
+    def test_argv_list_as_cmd_becomes_its_script(self):
+        _, args = repair("exec_command", '{"cmd": ["bash", "-lc", "ls -R"]}')
+        self.assertEqual(json.loads(args), {"cmd": "ls -R"})
+
+    def test_argv_list_without_shell_is_joined(self):
+        _, args = repair("exec_command", '{"cmd": ["sed", "-n", "1,80p", "a b.py"]}')
+        self.assertEqual(json.loads(args), {"cmd": "sed -n 1,80p 'a b.py'"})
+
+    def test_classic_command_key_becomes_cmd(self):
+        _, args = repair("exec_command", '{"command": ["bash", "-lc", "pwd"], "workdir": "/tmp"}')
+        self.assertEqual(json.loads(args), {"cmd": "pwd", "workdir": "/tmp"})
+
+    def test_stray_bracket_after_heredoc_dropped(self):
+        _, args = repair("exec_command", '{"cmd":"cat > a.py <<\'EOF\'\\nx = 1\\nEOF"]}')
+        self.assertEqual(json.loads(args), {"cmd": "cat > a.py <<'EOF'\nx = 1\nEOF"})
+
+    def test_valid_call_unchanged(self):
+        self.assertEqual(repair("exec_command", '{"cmd": "ls"}'), ("exec_command", '{"cmd": "ls"}'))
+
+    def test_unrepairable_arguments_pass_through(self):
+        self.assertEqual(repair("exec_command", '{"cmd": "ls'), ("exec_command", '{"cmd": "ls'))
+
+    def test_other_tool_arguments_untouched(self):
+        self.assertEqual(repair("view_image", '{"path": ["a"]}'), ("view_image", '{"path": ["a"]}'))
+
+
+class NameTest(unittest.TestCase):
+    def test_header_tokens_after_name_dropped(self):
+        self.assertEqual(repair("exec_command<|channel|>commentary", '{"cmd": "ls"}')[0], "exec_command")
+
+    def test_constraint_word_after_name_dropped(self):
+        self.assertEqual(repair("exec_command code", '{"cmd": "ls"}')[0], "exec_command")
+
+
+if __name__ == "__main__":
+    unittest.main()
