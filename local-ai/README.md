@@ -80,8 +80,9 @@ fase concreta (ver `sdlc/AI-SDLC.md`).
   abre la respuesta.
 - gpt-oss aprendió las tools clásicas de Codex (`shell` con argv y `apply_patch`
   aparte); Codex 0.159 solo ofrece `exec_command` con `cmd` string. Las llamadas mal
-  formadas (argv como `cmd`, `]` sobrante tras un heredoc, escapes de regex crudos,
-  tokens de cabecera en el nombre) se reparan antes de llegar a Codex. `apply_patch`
+  formadas (argv como `cmd`, `]` sobrante tras un heredoc, escapes de regex crudos, un
+  `cmd` sin comilla de cierre, tokens de cabecera en el nombre; también las que gpt-oss
+  manda por el canal `analysis`) se reparan antes de llegar a Codex. `apply_patch`
   sí funciona dentro de `exec_command` (Codex lo intercepta) y el prompt de gpt-oss
   (`codex-local-instructions-gpt-oss.md`) lo indica.
 

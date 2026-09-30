@@ -18,6 +18,7 @@ SHELL_TOOL = "exec_command"
 SHELLS = {"bash", "sh", "zsh"}
 NAME = re.compile(r"[A-Za-z0-9_.\-]+")
 STRAY_BRACKET = re.compile(r'"\s*\]\s*\}\s*$')
+UNTERMINATED = re.compile(r'([^"\s])\s*\}\s*$')
 INVALID_ESCAPE = re.compile(r'(?<!\\)((?:\\\\)*)\\(?=[^"\\/bfnrtu])')
 
 
@@ -33,8 +34,9 @@ def _parse(arguments):
         return args
     # a regex's \s written raw in the string: JSON allows only \" \\ \/ \b \f \n \r \t \uXXXX
     arguments = INVALID_ESCAPE.sub(r"\1\\\\", arguments)
-    # a heredoc closed as if cmd were a list: {"cmd": "...EOF"]}
-    return _parse_strict(arguments) or _parse_strict(STRAY_BRACKET.sub('"}', arguments))
+    # a heredoc closed as if cmd were a list: {"cmd": "...EOF"]}, or a string never closed: {"cmd": "ls}
+    return (_parse_strict(arguments) or _parse_strict(STRAY_BRACKET.sub('"}', arguments))
+            or _parse_strict(UNTERMINATED.sub(r'\1"}', arguments)))
 
 
 def _repair_arguments(arguments):

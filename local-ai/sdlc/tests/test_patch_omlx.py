@@ -29,6 +29,14 @@ def parse_tool_calls_from_tokens(token_ids, prepend_start=True):
         pass
 
 
+def _is_tool_call_message(msg):
+    recipient = getattr(msg, "recipient", None)
+    try:
+        return isinstance(json.loads(_message_content_text(msg)), dict)
+    except ValueError:
+        return False
+
+
 class HarmonyStreamingParser:
     def get_tool_calls(self):
         try:
@@ -81,6 +89,10 @@ class PatchTest(unittest.TestCase):
         patch_omlx.restore(self.root)
         self.assertEqual(self.read(), HARMONY)
         self.assertFalse(os.path.exists(os.path.join(self.adapter, "notaire_harmony_repair.py")))
+
+    def test_analysis_call_check_uses_the_repair(self):
+        patch_omlx.apply(self.root)
+        self.assertIn("_, arguments = repair_tool_call(recipient[10:], _message_content_text(msg))", self.read())
 
     def test_patched_module_compiles(self):
         patch_omlx.apply(self.root)

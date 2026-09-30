@@ -42,6 +42,17 @@ PATCHES = [
                 )""",
      """                name, arguments = repair_tool_call(msg.recipient[10:], _message_content_text(msg))
                 tool_calls.append({"name": name, "arguments": arguments})"""),
+    # an analysis-channel call counts only when its JSON parses: check the repaired arguments
+    ("repair-analysis-check",
+     """    try:
+        return isinstance(json.loads(_message_content_text(msg)), dict)
+    except ValueError:
+        return False""",
+     """    _, arguments = repair_tool_call(recipient[10:], _message_content_text(msg))
+    try:
+        return isinstance(json.loads(arguments), dict)
+    except ValueError:
+        return False"""),
     ("repair-streamed-call",
      """\n                tool_calls.append({"name": name, "arguments": content})\n""",
      """\n                name, content = repair_tool_call(name, content)

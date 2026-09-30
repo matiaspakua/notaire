@@ -188,6 +188,32 @@ scope_guard() {
         "$label" "$bad" >> "$STATE/scope.out"
 }
 
+wt_fingerprint() { { git_wt rev-parse HEAD; git_wt status --porcelain; git_wt diff; } | md5 -q; }
+
+# review_ignored <phase> <fingerprint-before>: a pending foreman note the worker did not act on.
+# The gate would pass on the previous artifacts and the note would be lost (#1049 spec, #1102).
+review_ignored() {
+    local note="$STATE/review-$1.md"
+    [ -f "$note" ] && [ "${RECHECK:-0}" != 1 ] && [ "$(wt_fingerprint)" = "$2" ] || return 1
+    gate_msg "You changed no file, but the foreman review below is pending. Apply every point of it now:\n\n$(cat "$note")\n" || true
+}
+
+# review_checks_pass <phase>: the CHECK/EXPECTED lines of a pending note gate the phase too.
+# A gate cannot see what the note asked for; the #1049 spec worker edited one unrelated line and passed.
+review_checks_pass() {
+    local note="$STATE/review-$1.md"
+    [ -f "$note" ] && grep -q '^CHECK:' "$note" || return 0
+    python3 "$HERE/bin/review_check.py" "$WT" "$note" > "$STATE/gate-review.out" 2>&1 && return 0
+    gate_msg "The foreman review is not applied yet. These checks from it fail:\n\n$(cat "$STATE/gate-review.out")\n\nThe review:\n\n$(cat "$note")\n"
+}
+
+# a note applied in a passing run is kept as evidence, out of the review-*.md glob `render` and `check` read
+retire_review() {
+    [ -f "$STATE/review-$1.md" ] && [ "${RECHECK:-0}" != 1 ] || return 0
+    mv "$STATE/review-$1.md" "$STATE/applied-review-$1-$(date +%Y%m%d%H%M%S).md"
+    gate_log review-applied "REVIEW :: review-$1.md applied in a passing run"
+}
+
 # with_retries <phase> <template> <gate-fn>: run phase, gate it, re-run the same
 # phase with the gate output attached until it passes or attempts run out.
 with_retries() {
@@ -196,10 +222,16 @@ with_retries() {
     # retries fix the phase's own commits (amend): the guards measure from the phase start, not the attempt start
     PHASE_BASE="$(git_wt rev-parse HEAD)"
     # RECHECK=1: the work is already on the branch (foreman fixed a gate bug) — just re-run the gate
+    local before; before="$(wt_fingerprint)"
     [ "${RECHECK:-0}" = 1 ] || run_worker "$phase" "$tpl"
     for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
         gate_scope
-        if "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; return 0; fi
+        if review_ignored "$phase" "$before"; then
+            :
+        elif "$gate" && review_checks_pass "$phase"; then
+            rm -f "$STATE/retry.md" "$STATE/scope.out"; retire_review "$phase"; return 0
+        fi
+        before="$(wt_fingerprint)"
         scope_to_gate_out
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
@@ -395,7 +427,7 @@ gate_red() {
     local cmd; cmd="$(test_cmd)"
     [ -n "$cmd" ] || gate_msg "Missing TEST_CMD=... line in $IO/tests.env\n" || return 1
     local form; form="$(cfg check-test-cmd "$(tv SURFACE)" "$cmd")" || gate_msg "$form\n" || return 1
-    git_wt diff --name-only origin/main..HEAD | has -E "$TEST_FILES" \
+    git_wt diff --name-only origin/main...HEAD | has -E "$TEST_FILES" \
         || gate_msg "No committed test file on this branch. Write the tests, then git add + git commit them.\n" || return 1
     require_clean_branch || return 1
     local e="" t m
@@ -404,7 +436,7 @@ gate_red() {
         git_wt grep -q "void $m(" HEAD -- '*src/test/*' \
             || e+="- planned test ${t%%#*}#$m (triage) not found in committed tests — write it with exactly that method name\n"
     done
-    git_wt diff --name-only origin/main..HEAD | has '^\.localai/' \
+    git_wt diff --name-only origin/main...HEAD | has '^\.localai/' \
         && e+="- .localai/ files are committed — they are foreman scratch, never commit them: git rm -r --cached .localai && git commit --amend\n"
     git_wt log --format=%B origin/main..HEAD | has "Closes #" \
         && e+="- a commit says 'Closes #...' — only the final implementation commit may. Use 'Refs #$ISSUE' (git commit --amend is fine: the branch is not pushed)\n"
@@ -456,16 +488,23 @@ repair_tasks() {
     gate_log tasks-repaired "REPAIRED :: discarded (review at Gate 4): $(tr '\n' ' ' <<<"$diff")"
 }
 
+# green_base: Gate 2's commit, or for a non-code change the branch's fork point — origin/main itself has moved
+# on since the branch was cut, and diffing against it counted main's newer lines as the worker's deletions (#1049)
+green_base() { cat "$STATE/red.sha" 2>/dev/null || git_wt merge-base HEAD origin/main; }
+
 gate_green() {
     require_clean_branch || return 1
-    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
-    local lost; lost="$(collateral_deletions "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)")"
-    local base; base="$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)"
+    local base; base="$(green_base)"
+    repair_tasks "$base" || return 1
+    local lost; lost="$(collateral_deletions "$base")"
     git_wt diff --check "$base"..HEAD > "$STATE/diff-check.out" \
         || gate_msg "Leftover conflict markers or whitespace errors (git diff --check):\n$(head -20 "$STATE/diff-check.out")\n" || return 1
     [ -z "$lost" ] || gate_msg "Unrequested deletions — you destroyed content outside the change:\n$lost\n" || return 1
-    git_wt diff --name-only origin/main..HEAD | grep -vE '^(openspec/|\.localai/)' | has . \
+    git_wt diff --name-only origin/main...HEAD | grep -vE '^(openspec/|\.localai/)' | has . \
         || gate_msg "No implementation committed on this branch yet.\n" || return 1
+    local stray; stray="$(git_wt diff --name-only --diff-filter=A origin/main...HEAD -- openspec/changes \
+        | grep -v "^openspec/changes/$(tv CHANGE)/" || true)"
+    [ -z "$stray" ] || gate_msg "Files added under openspec/changes/ outside this change ($(tv CHANGE)) — remove them (git rm -r) and amend:\n$stray\n" || return 1
     run_gate green bash -c "$(test_cmd)" \
         || { { echo "TEST_CMD ($(test_cmd)) fails:"; tail -120 "$STATE/gate-green.out"; } > "$STATE/gate.out"; return 1; }
     run_gate suite bash -c "$(suite_cmd)" \
@@ -482,12 +521,12 @@ gate_green() {
 gate_docs() {
     local c; c="$(tv CHANGE)"
     repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
-    if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main..HEAD | has -x CHANGELOG.md; then
+    if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main...HEAD | has -x CHANGELOG.md; then
         gate_msg "TYPE=$(tv TYPE) is user-visible: add a line under '## [Unreleased]' in CHANGELOG.md ending with (#$ISSUE), then commit\n"
         return 1
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
-    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main..HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
+    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main...HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
     if [ -n "$md" ]; then
         # only committed files: a worker's uncommitted edit must not ride in the style commit
         git_wt diff --quiet HEAD -- $md && md_fix "$md"
