@@ -243,6 +243,7 @@ scope_to_gate_out() {
 # md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
 md_fix() {
     local fix; fix="$(need gates.docs_lint_fix files="$1")"
+    ( cd "$WT" && python3 "$HERE/bin/md_repair.py" $1 )   # MD040/MD055, which --fix cannot solve
     ( cd "$WT" && bash -c "$fix" ) > "$STATE/gate-lint-fix.out" 2>&1   # non-zero = errors left: md_lint names them
     git_wt diff --quiet -- $1 || gate_log lint-fix "FIXED :: $(git_wt diff --name-only -- $1 | tr '\n' ' ')"
 }
@@ -329,9 +330,23 @@ gate_triage() {
     log "triage: $(tr '\n' ' ' < "$STATE/triage.env")"
 }
 
+# repair_spec <change-dir>: fixes with one right answer never cost the worker an attempt (#1049)
+repair_spec() {
+    local d="$1" unticked
+    # the worker sets skip_specs yet leaves a delta-less specs/ behind: openspec validate rejects the leftover
+    if [ "$(tv KIND)" != code ] && grep -q 'skip_specs: *true' "$d/.openspec.yaml" 2>/dev/null && [ -d "$d/specs" ]; then
+        rm -rf "$d/specs"; gate_log spec-repaired "REVIEW :: skip_specs set, removed leftover specs/"
+    fi
+    # nothing past the branch (groups 1-2) is done before Gate 2; the worker ticked 4.1/4.2 anyway
+    [ -f "$d/tasks.md" ] || return 0
+    unticked="$(python3 "$HERE/bin/ledger.py" untick-after "$d/tasks.md" 2)"
+    [ -z "$unticked" ] || gate_log spec-repaired "REVIEW :: unticked $unticked"
+}
+
 gate_spec() {
     local c; c="$(tv CHANGE)"
     local validate plan; validate="$(need spec.validate change="$c")"; plan="$(need spec.plan_check change="$c")"
+    repair_spec "$WT/openspec/changes/$c"
     run_gate spec-validate bash -c "$validate" \
         || { { echo "$validate failed:"; tail -60 "$STATE/gate-spec-validate.out"; } > "$STATE/gate.out"; return 1; }
     run_gate spec-sdlc bash -c "$plan" \
