@@ -86,8 +86,13 @@ fase concreta (ver `sdlc/AI-SDLC.md`).
   sí funciona dentro de `exec_command` (Codex lo intercepta) y el prompt de gpt-oss
   (`codex-local-instructions-gpt-oss.md`) lo indica.
 
+Si gpt-oss dirige una llamada a una tool pero no se puede parsear ninguna (p. ej. el modelo
+corta justo después de `<|constrain|>`, ~2.6 % de las respuestas), oMLX devuelve un
+`exec_command` con un `echo` que le pide reenviarla: el turno de Codex sigue en vez de
+terminar vacío.
+
 Cada parche reemplaza un fragmento exacto de 0.7.0: si oMLX cambió ese código, lo salta
-y avisa. Una actualización de oMLX deshace el parche; re-ejecutar el setup lo vuelve a
+y avisa. Cada ejecución reconstruye `harmony.py` desde `harmony.py.orig`. Una actualización de oMLX deshace el parche; re-ejecutar el setup lo vuelve a
 aplicar. `patch_omlx.py --check` muestra el estado y `--restore` restaura el original
 (`harmony.py.orig`). Límite conocido: una `"` sin escapar dentro de un parche largo no
 es reparable (intención ambigua); la llamada se pierde y Codex termina el turno. En 8

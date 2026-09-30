@@ -34,7 +34,7 @@ PATCHES = [
         )"""),
     ("repair-import",
      "import json\nimport logging\n",
-     "import json\nimport logging\n\nfrom .notaire_harmony_repair import repair_tool_call\n"),
+     "import json\nimport logging\n\nfrom .notaire_harmony_repair import recovery_call, repair_tool_call, tool_call_lost\n"),
     ("repair-parsed-call",
      """                name = msg.recipient[10:]  # Remove "functions." prefix
                 tool_calls.append(
@@ -53,6 +53,23 @@ PATCHES = [
         return isinstance(json.loads(arguments), dict)
     except ValueError:
         return False"""),
+    # a lost call ends the Codex turn empty; a recovery call tells the model and keeps the turn going.
+    # Not an exception: this runs inside the scheduler step shared by every request.
+    ("recover-lost-call",
+     """        return output_text, analysis_text, tool_calls
+
+    except Exception as e:
+        logger.warning(f"Error parsing tool calls from tokens: {e}")
+        return "", "", []""",
+     """        if tool_call_lost(decoded_text, tool_calls, output_text):
+            tool_calls = [recovery_call()]
+        return output_text, analysis_text, tool_calls
+
+    except Exception as e:
+        logger.warning(f"Error parsing tool calls from tokens: {e}")
+        if tool_call_lost(locals().get("decoded_text", ""), [], ""):
+            return "", "", [recovery_call()]
+        return "", "", []"""),
     ("repair-streamed-call",
      """\n                tool_calls.append({"name": name, "arguments": content})\n""",
      """\n                name, content = repair_tool_call(name, content)
@@ -82,19 +99,21 @@ def check(omlx_dir):
 
 
 def apply(omlx_dir):
+    """Rebuild harmony.py from its pristine copy, so a changed patch set upgrades an old patch cleanly."""
     harmony, repair = _paths(omlx_dir)
-    text = open(harmony).read()
-    report = {}
+    if not os.path.exists(harmony + ".orig"):
+        shutil.copy2(harmony, harmony + ".orig")
+    current, text = open(harmony).read(), open(harmony + ".orig").read()
+    found = {}
     for name, old, new in PATCHES:
-        report[name] = _status(text, old, new)
-        if report[name] == "pending":
+        found[name] = text.count(old) == 1
+        if found[name]:
             text = text.replace(old, new)
-            report[name] = "applied"
-    if "applied" in report.values():
-        if not os.path.exists(harmony + ".orig"):
-            shutil.copy2(harmony, harmony + ".orig")
+    changed = text != current
+    if changed:
         with open(harmony, "w") as f:
             f.write(text)
+    report = {name: ("applied" if changed else "already") if ok else "skipped" for name, ok in found.items()}
     report["repair-module"] = "skipped"
     if report["repair-import"] in ("applied", "already"):
         report["repair-module"] = _sync(os.path.join(HERE, "harmony_repair.py"), repair)

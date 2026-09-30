@@ -25,8 +25,12 @@ def parse_tool_calls_from_tokens(token_ids, prepend_start=True):
                 tool_calls.append(
                     {"name": name, "arguments": _message_content_text(msg)}
                 )
-    except Exception:
-        pass
+
+        return output_text, analysis_text, tool_calls
+
+    except Exception as e:
+        logger.warning(f"Error parsing tool calls from tokens: {e}")
+        return "", "", []
 
 
 def _is_tool_call_message(msg):
@@ -93,6 +97,10 @@ class PatchTest(unittest.TestCase):
     def test_analysis_call_check_uses_the_repair(self):
         patch_omlx.apply(self.root)
         self.assertIn("_, arguments = repair_tool_call(recipient[10:], _message_content_text(msg))", self.read())
+
+    def test_lost_call_is_replaced_by_a_recovery_call(self):
+        patch_omlx.apply(self.root)
+        self.assertIn("tool_calls = [recovery_call()]", self.read())
 
     def test_patched_module_compiles(self):
         patch_omlx.apply(self.root)

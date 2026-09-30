@@ -293,7 +293,8 @@ require_clean_branch() {
     [ "$(git_wt branch --show-current)" = "$branch" ] \
         || gate_msg "You are not on branch $branch. Run: git checkout $branch\n" || return 1
     dirty="$(git_wt status --porcelain | grep -v '^?? \.localai/' || true)"
-    [ -z "$dirty" ] || gate_msg "Uncommitted changes — commit them (atomic, Conventional Commits) or remove them:\n$dirty\n" || return 1
+    # the #1049 worker ran `git commit --amend --no-edit` three times without staging: spell out the add
+    [ -z "$dirty" ] || gate_msg "Uncommitted changes — commit them (atomic, Conventional Commits) or remove them:\n$dirty\nA commit takes only staged files. To fold them into your last commit run exactly:\n  git add -A -- $(awk '{print $NF}' <<<"$dirty" | tr '\n' ' ')&& git commit --amend --no-edit\n" || return 1
     bad="$(git_wt log --format=%s origin/main..HEAD \
         | grep -vE '^(feat|fix|docs|refactor|test|chore|ci|style|perf|design)(\([a-z0-9._/-]+\))?!?: .+' || true)"
     [ -z "$bad" ] || gate_msg "These commit subjects are not Conventional Commits (type(scope): description):\n$bad\nFix with: git commit --amend (last commit) — never rewrite commits already pushed.\n"
