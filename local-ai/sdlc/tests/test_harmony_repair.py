@@ -54,5 +54,21 @@ class NameTest(unittest.TestCase):
         self.assertEqual(repair("exec_command code", '{"cmd": "ls"}')[0], "exec_command")
 
 
+class LostCallTest(unittest.TestCase):
+    TEXT = "<|start|>assistant<|channel|>commentary to=functions.exec_command<|constrain|>"
+
+    def test_empty_turn_that_addressed_a_tool_is_lost(self):
+        self.assertTrue(harmony_repair.tool_call_lost(self.TEXT, [], ""))
+
+    def test_turn_with_a_call_is_not_lost(self):
+        self.assertFalse(harmony_repair.tool_call_lost(self.TEXT, [{"name": "exec_command"}], ""))
+
+    def test_final_answer_is_not_lost(self):
+        self.assertFalse(harmony_repair.tool_call_lost(self.TEXT, [], "3"))
+
+    def test_turn_without_tool_syntax_is_not_lost(self):
+        self.assertFalse(harmony_repair.tool_call_lost("<|channel|>analysis<|message|>hm", [], ""))
+
+
 if __name__ == "__main__":
     unittest.main()
