@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `chore/1049_delete_stale_jenkinsfile` | created |
 | Tasks | `tasks.md` | pending |
 | Commits | 6a82c93, 5f79d74, 9b1fc99, f4930b2 | done |
-| Pull Request | pending | pending |
+| Pull Request | #1104 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a | pending |

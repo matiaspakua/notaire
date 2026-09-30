@@ -40,8 +40,8 @@
 - [ ] 9.2 Record commit SHA in `traceability.md`
 
 ## 10. Pull Request y validación CI
-- [ ] 10.1 Push branch to origin
-- [ ] 10.2 Open pull request titled `[#1049] chore: delete stale Jenkinsfile`
+- [x] 10.1 Push branch to origin
+- [x] 10.2 Open pull request titled `[#1049] chore: delete stale Jenkinsfile`
 - [ ] 10.3 Await CI pipeline green
 
 ## 11. Deploy
