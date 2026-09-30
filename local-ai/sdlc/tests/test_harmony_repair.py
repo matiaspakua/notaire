@@ -32,6 +32,10 @@ class ArgumentsTest(unittest.TestCase):
         _, args = repair("exec_command", r'{"cmd": "grep -E \s+ a.py"}')
         self.assertEqual(json.loads(args), {"cmd": r"grep -E \s+ a.py"})
 
+    def test_unterminated_cmd_string_closed(self):
+        _, args = repair("exec_command", '{"cmd":"ls -R . | sed -e \'1p\' -e \'4p\'}')
+        self.assertEqual(json.loads(args), {"cmd": "ls -R . | sed -e '1p' -e '4p'"})
+
     def test_valid_call_unchanged(self):
         self.assertEqual(repair("exec_command", '{"cmd": "ls"}'), ("exec_command", '{"cmd": "ls"}'))
 
