@@ -179,7 +179,9 @@ scope_guard() {
         "$label" "$bad" >> "$STATE/scope.out"
 }
 
-wt_fingerprint() { { git_wt rev-parse HEAD; git_wt status --porcelain; git_wt diff; } | md5 -q; }
+# the phase IO files (triage.env/md) live under the git-ignored .localai/: git status alone missed the
+# worker's triage edits and review_ignored rejected an applied note (#1062)
+wt_fingerprint() { { git_wt rev-parse HEAD; git_wt status --porcelain; git_wt diff; cat "$IO"/* 2>/dev/null; } | md5 -q; }
 
 # review_ignored <phase> <fingerprint-before>: a pending foreman note the worker did not act on.
 # The gate would pass on the previous artifacts and the note would be lost (#1049 spec, #1102).
