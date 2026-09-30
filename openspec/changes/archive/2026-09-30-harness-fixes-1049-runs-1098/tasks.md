@@ -20,47 +20,47 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: premature tick removed, prerequisite tick kept, bare opening fence, table row without pipe, recursive grep skips node_modules
-- [ ] 3.2 `test_ledger.py`, `test_md_repair.py`, `test_crawl_guard.py` cover every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: premature tick removed, prerequisite tick kept, bare opening fence, table row without pipe, recursive grep skips node_modules
+- [x] 3.2 `test_ledger.py`, `test_md_repair.py`, `test_crawl_guard.py` cover every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `gate_spec` removes a leftover `specs/` under `skip_specs`
-- [ ] 4.2 `ledger.py untick-after`; `gate_spec` unticks groups 3-12 and logs `spec-repaired`
-- [ ] 4.3 `bin/md_repair.py`, run by `md_fix` before the adapter's lint fix
-- [ ] 4.4 `bin/crawl_guard.py`, `bin/shims/`, `zdot/`; `run_worker` sets `ZDOTDIR`
-- [ ] 4.5 Pending #1049 work committed: Qwen3-Coder setup and local prompt, triage search guidance and removal proofs, retry feedback placement
+- [x] 4.1 `gate_spec` removes a leftover `specs/` under `skip_specs`
+- [x] 4.2 `ledger.py untick-after`; `gate_spec` unticks groups 3-12 and logs `spec-repaired`
+- [x] 4.3 `bin/md_repair.py`, run by `md_fix` before the adapter's lint fix
+- [x] 4.4 `bin/crawl_guard.py`, `bin/shims/`, `zdot/`; `run_worker` sets `ZDOTDIR`
+- [x] 4.5 Pending #1049 work committed: Qwen3-Coder setup and local prompt, triage search guidance and removal proofs, retry feedback placement
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 `test_triage_check.py`: removal and negated-search proofs accepted
+- [x] 5.1 `test_triage_check.py`: removal and negated-search proofs accepted
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/sdlc/foreman.sh` and `bash -n local-ai/setup-omlx-codex.sh`
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 No `@Disabled` or skipped tests introduced
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/sdlc/foreman.sh` and `bash -n local-ai/setup-omlx-codex.sh`
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 No `@Disabled` or skipped tests introduced
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md`: spec repairs, markdown repair, crawl guard
-- [ ] 8.2 `local-ai/README.md`: Qwen3-Coder-30B-A3B setup
-- [ ] 8.3 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/sdlc/AI-SDLC.md`: spec repairs, markdown repair, crawl guard
+- [x] 8.2 `local-ai/README.md`: Qwen3-Coder-30B-A3B setup
+- [x] 8.3 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1098`
-- [ ] 9.2 Only the final commit carries `Closes #1098`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1098`
+- [x] 9.2 Only the final commit carries `Closes #1098`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -78,9 +78,9 @@
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: `gate_spec` replay on the stored #1049 spec repairs ticks, lint and leftover specs
-- [ ] 12.2 Rollback path confirmed (`git revert`)
+- [x] 12.2 Rollback path confirmed (`git revert`)
 - [ ] 12.3 Issue #1098 closed on merge
-- [ ] 12.4 Change archived in this PR (`openspec archive harness-fixes-1049-runs-1098`)
+- [x] 12.4 Change archived in this PR (`openspec archive harness-fixes-1049-runs-1098`)
 
 ## Definition of Done
 
