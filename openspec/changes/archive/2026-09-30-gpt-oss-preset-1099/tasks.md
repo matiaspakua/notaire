@@ -20,46 +20,46 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: argv list, stray bracket, header tokens, valid call, command key, second patch run, missing anchor
-- [ ] 3.2 `test_harmony_repair.py` and `test_patch_omlx.py` cover every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: argv list, stray bracket, header tokens, valid call, command key, second patch run, missing anchor
+- [x] 3.2 `test_harmony_repair.py` and `test_patch_omlx.py` cover every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `local-ai/omlx/harmony_repair.py`: `repair_tool_call`
-- [ ] 4.2 `local-ai/omlx/patch_omlx.py`: harmony header fix and repair hook, `--check`, `--restore`
-- [ ] 4.3 `setup-omlx-codex.sh`: `PRESET` table, per-preset oMLX settings, catalog, profile and smoke test; runs `patch_omlx.py` for gpt-oss
-- [ ] 4.4 `local-ai/codex-local-instructions-gpt-oss.md`
+- [x] 4.1 `local-ai/omlx/harmony_repair.py`: `repair_tool_call`
+- [x] 4.2 `local-ai/omlx/patch_omlx.py`: harmony header fix and repair hook, `--check`, `--restore`
+- [x] 4.3 `setup-omlx-codex.sh`: `PRESET` table, per-preset oMLX settings, catalog, profile and smoke test; runs `patch_omlx.py` for gpt-oss
+- [x] 4.4 `local-ai/codex-local-instructions-gpt-oss.md`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 n/a — no existing test covers the setup script
+- [x] 5.1 n/a — no existing test covers the setup script
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 Coding smoke task passes in at least 7 of 8 runs with `--profile omlx-gptoss`
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 Coding smoke task passes in at least 7 of 8 runs with `--profile omlx-gptoss` (7/8)
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/README.md`: presets, oMLX patches, gpt-oss profile
-- [ ] 8.2 `local-ai/sdlc/AI-SDLC.md`: per-phase model row
-- [ ] 8.3 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/README.md`: presets, oMLX patches, gpt-oss profile
+- [x] 8.2 `local-ai/sdlc/AI-SDLC.md`: per-phase model row
+- [x] 8.3 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1099`
-- [ ] 9.2 Only the final commit carries `Closes #1099`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1099`
+- [x] 9.2 Only the final commit carries `Closes #1099`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -77,9 +77,9 @@
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: `PRESET=gpt-oss bash local-ai/setup-omlx-codex.sh` on a clean profile, then the coding smoke task
-- [ ] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
+- [x] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
 - [ ] 12.3 Issue #1099 closed on merge
-- [ ] 12.4 Change archived in this PR (`openspec archive gpt-oss-preset-1099`)
+- [x] 12.4 Change archived in this PR (`openspec archive gpt-oss-preset-1099`)
 
 ## Definition of Done
 
