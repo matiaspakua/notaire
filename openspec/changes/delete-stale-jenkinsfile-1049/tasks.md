@@ -30,12 +30,12 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Delete the legacy `Jenkinsfile` from the project root.
+- [x] 4.1 Delete the legacy `Jenkinsfile` from the project root.
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 No existing tests reference Jenkinsfile.
-- [ ] 5.2 No changes required.
+- [x] 5.1 No existing tests reference Jenkinsfile.
+- [x] 5.2 No changes required.
 
 ## 6. Ejecutar regresión
 
