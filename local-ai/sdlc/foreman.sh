@@ -188,6 +188,23 @@ scope_guard() {
         "$label" "$bad" >> "$STATE/scope.out"
 }
 
+wt_fingerprint() { { git_wt rev-parse HEAD; git_wt status --porcelain; git_wt diff; } | md5 -q; }
+
+# review_ignored <phase> <fingerprint-before>: a pending foreman note the worker did not act on.
+# The gate would pass on the previous artifacts and the note would be lost (#1049 spec, #1102).
+review_ignored() {
+    local note="$STATE/review-$1.md"
+    [ -f "$note" ] && [ "${RECHECK:-0}" != 1 ] && [ "$(wt_fingerprint)" = "$2" ] || return 1
+    gate_msg "You changed no file, but the foreman review below is pending. Apply every point of it now:\n\n$(cat "$note")\n" || true
+}
+
+# a note applied in a passing run is kept as evidence, out of the review-*.md glob `render` and `check` read
+retire_review() {
+    [ -f "$STATE/review-$1.md" ] && [ "${RECHECK:-0}" != 1 ] || return 0
+    mv "$STATE/review-$1.md" "$STATE/applied-review-$1-$(date +%Y%m%d%H%M%S).md"
+    gate_log review-applied "REVIEW :: review-$1.md applied in a passing run"
+}
+
 # with_retries <phase> <template> <gate-fn>: run phase, gate it, re-run the same
 # phase with the gate output attached until it passes or attempts run out.
 with_retries() {
@@ -196,10 +213,14 @@ with_retries() {
     # retries fix the phase's own commits (amend): the guards measure from the phase start, not the attempt start
     PHASE_BASE="$(git_wt rev-parse HEAD)"
     # RECHECK=1: the work is already on the branch (foreman fixed a gate bug) — just re-run the gate
+    local before; before="$(wt_fingerprint)"
     [ "${RECHECK:-0}" = 1 ] || run_worker "$phase" "$tpl"
     for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
         gate_scope
-        if "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; return 0; fi
+        if review_ignored "$phase" "$before"; then
+            :
+        elif "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; retire_review "$phase"; return 0; fi
+        before="$(wt_fingerprint)"
         scope_to_gate_out
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
         [ "$attempt" -eq "$MAX_ATTEMPTS" ] && break
