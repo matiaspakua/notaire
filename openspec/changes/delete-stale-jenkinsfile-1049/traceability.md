@@ -18,7 +18,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/delete-stale-jenkinsfile-1049/` | written |
 | Branch | `chore/1049_delete_stale_jenkinsfile` | created |
 | Tasks | `tasks.md` | pending |
-| Commits | pending | pending |
+| Commits | 6a82c93, 5f79d74, 9b1fc99, f4930b2 | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
