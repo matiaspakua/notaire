@@ -13,17 +13,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1049 | in-progress |
+| Issue | #1049 | closed (Gate 5) |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | n/a |
 | Specification | `openspec/changes/delete-stale-jenkinsfile-1049/` | written |
 | Branch | `chore/1049_delete_stale_jenkinsfile` | created |
 | Tasks | `tasks.md` | pending |
 | Commits | 6a82c93, 5f79d74, 9b1fc99, f4930b2 | done |
-| Pull Request | #1104 | open |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
-| Release / tag | n/a | pending |
-| Smoke test | pending | pending |
+| Pull Request | #1104 | merged (Gate 4: code owner via foreman) |
+| CI run | ci.yml run 36783289677 on main | green |
+| Merge commit | `0ec5c79` | merged |
+| Release / tag | cd.yml run 36784048442 | green |
+| Smoke test | /actuator/health UP on 0ec5c79 | passed |
 
 ## Requirement coverage
 

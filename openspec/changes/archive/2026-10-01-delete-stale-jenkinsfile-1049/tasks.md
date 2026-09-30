@@ -22,11 +22,11 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Not applicable – no code behavior changes. The change only removes a file.
-- [ ] 3.2 Verify that CI pipeline still succeeds after removal by running `scripts/preflight.sh --fix` locally.
-- [ ] 3.3 Verify that minimal unit tests still pass (`mvn test -pl backend-api`).
-- [ ] 3.4 Verify that Vite tests still pass (`npx vitest run`).
-- [ ] 3.5 No delta spec scenarios (`skip_specs: true`).
+- [x] 3.1 Not applicable – no code behavior changes. The change only removes a file.
+- [x] 3.2 Verify that CI pipeline still succeeds after removal by running `scripts/preflight.sh --fix` locally.
+- [x] 3.3 Verify that minimal unit tests still pass (`mvn test -pl backend-api`).
+- [x] 3.4 Verify that Vite tests still pass (`npx vitest run`).
+- [x] 3.5 No delta spec scenarios (`skip_specs: true`).
 
 ## 4. Implementación
 
@@ -39,52 +39,52 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Run `scripts/preflight.sh --fix` — 16 checks, no errors.
-- [ ] 6.2 Run `mvn test -pl backend-api` — all tests pass.
-- [ ] 6.3 Run `npx vitest run` — all tests pass.
-- [ ] 6.4 Run CI on a temporary branch without Jenkinsfile to confirm pipeline succeeds (represented by local checks above).
-- [ ] 6.5 No `@Disabled` or skipped tests introduced.
+- [x] 6.1 Run `scripts/preflight.sh --fix` — 16 checks, no errors.
+- [x] 6.2 Run `mvn test -pl backend-api` — all tests pass.
+- [x] 6.3 Run `npx vitest run` — all tests pass.
+- [x] 6.4 Run CI on a temporary branch without Jenkinsfile to confirm pipeline succeeds (represented by local checks above).
+- [x] 6.5 No `@Disabled` or skipped tests introduced.
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 No UI change; the action is CI-only.
+- [x] 7.1 No UI change; the action is CI-only.
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 n/a — no permanent doc changes (the infra docs already record the removal).
-- [ ] 8.2 No permanent documentation changes outside this note.
-- [ ] 8.3 No `CHANGELOG.md` update needed.
-- [ ] 8.4 Nothing to archive.
-- [ ] 8.5 No duplication added.
-- [ ] 8.6 `scripts/preflight.sh --fix` already passed.
+- [x] 8.1 n/a — no permanent doc changes (the infra docs already record the removal).
+- [x] 8.2 No permanent documentation changes outside this note.
+- [x] 8.3 No `CHANGELOG.md` update needed.
+- [x] 8.4 Nothing to archive.
+- [x] 8.5 No duplication added.
+- [x] 8.6 `scripts/preflight.sh --fix` already passed.
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Single commit: `ci/remove-jenkinsfile: Delete stale Jenkinsfile`.
-- [ ] 9.2 Commit message ends with `Closes #1049`.
-- [ ] 9.3 No secrets, commented out code, or unrelated changes.
-- [ ] 9.4 Commit SHA recorded in `traceability.md`.
+- [x] 9.1 Single commit: `ci/remove-jenkinsfile: Delete stale Jenkinsfile`.
+- [x] 9.2 Commit message ends with `Closes #1049`.
+- [x] 9.3 No secrets, commented out code, or unrelated changes.
+- [x] 9.4 Commit SHA recorded in `traceability.md`.
 
 ## 10. Pull Request y validación CI
 
 - [x] 10.1 Push branch and open PR.
 - [x] 10.2 CI pipeline passes locally.
-- [ ] 10.3 No issues in CI.
-- [ ] 10.4 PR merged by code owner.
-- [ ] 10.5 PR number recorded in `traceability.md`.
+- [x] 10.3 No issues in CI.
+- [x] 10.4 PR merged by code owner.
+- [x] 10.5 PR number recorded in `traceability.md`.
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via PR – workflow now uses GitHub Actions.
-- [ ] 11.2 No deployment changes needed; CI/CD proceeds as before.
-- [ ] 11.3 Record merge commit in `traceability.md`.
+- [x] 11.1 Merge via PR – workflow now uses GitHub Actions.
+- [x] 11.2 No deployment changes needed; CI/CD proceeds as before.
+- [x] 11.3 Record merge commit in `traceability.md`.
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke test: run CI on main after merge; pipeline passes.
-- [ ] 12.2 Rollback path: restoring Jenkinsfile from git history if needed.
-- [ ] 12.3 Issue #1049 closed via commit trailer.
-- [ ] 12.4 Archive the change: `openspec archive delete-stale-jenkinsfile-1049`.
+- [x] 12.1 Smoke test: run CI on main after merge; pipeline passes.
+- [x] 12.2 Rollback path: restoring Jenkinsfile from git history if needed.
+- [x] 12.3 Issue #1049 closed via commit trailer.
+- [x] 12.4 Archive the change: `openspec archive delete-stale-jenkinsfile-1049`.
 
 ## Definition of Done
 
