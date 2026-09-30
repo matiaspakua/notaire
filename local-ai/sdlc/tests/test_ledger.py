@@ -53,5 +53,16 @@ class MissingRowsTest(unittest.TestCase):
         self.assertEqual(ledger.missing_rows(text, ["Commits", "Pull Request"]), ["Pull Request"])
 
 
+class UntickAfterTest(unittest.TestCase):
+    def test_premature_tick_removed(self):
+        text, unticked = ledger.untick_after(BASE, 2)
+        self.assertIn("- [ ] 4.1 write the fix", text)
+        self.assertEqual(unticked, ["4.1"])
+
+    def test_prerequisite_tick_kept(self):
+        tasks = "## 1. Gate 1\n\n- [x] 1.1 GitHub Issue exists\n"
+        self.assertEqual(ledger.untick_after(tasks, 2), (tasks, []))
+
+
 if __name__ == "__main__":
     unittest.main()
