@@ -6,6 +6,7 @@
   ledger.py ticks-only OLD_FILE NEW_FILE      exit 1 unless NEW differs from OLD only by [ ] -> [x]
   ledger.py restore-ticks BASE_FILE NEW_FILE  print BASE with the [x] ticks NEW sets on BASE's task IDs
   ledger.py rows  TRACE_MD LABEL...           exit 1 naming each row not present exactly once
+  ledger.py untick-after TASKS_MD GROUP       untick every task of a group above GROUP, print their IDs
 
 Every command changes nothing and exits non-zero when its target is not found exactly once.
 """
@@ -71,6 +72,19 @@ def restore_ticks(base, new):
     return TASK.sub(lambda m: f"{m.group(1)}[x] {m.group(3)} " if m.group(3) in ticked else m.group(0), base)
 
 
+def untick_after(text, group):
+    """Untick the tasks of every group above GROUP: in the spec phase nothing past the branch is done yet."""
+    unticked = []
+
+    def untick(m):
+        if m.group(2) == "x" and int(m.group(3).split(".")[0]) > group:
+            unticked.append(m.group(3))
+            return f"{m.group(1)}[ ] {m.group(3)} "
+        return m.group(0)
+
+    return TASK.sub(untick, text), unticked
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 4:
         die(__doc__)
@@ -87,5 +101,9 @@ if __name__ == "__main__":
         missing = missing_rows(open(target).read(), args)
         if missing:
             die(f"rows not found exactly once in {target}: {', '.join(missing)}")
+    elif cmd == "untick-after":
+        text, unticked = untick_after(open(target).read(), int(args[0]))
+        open(target, "w").write(text)
+        print(" ".join(unticked))
     else:
         die(f"unknown command {cmd}")

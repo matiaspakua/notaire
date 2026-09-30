@@ -90,7 +90,10 @@ if os.path.exists(review):
             + open(review).read())
 retry = os.path.join(state, "retry.md")
 if os.path.exists(retry):
-    out += "\n\n---\n\n" + open(retry).read()
+    # at the end only, a 12K-token phase prompt won: #1049's retries redid the whole
+    # investigation and ran out of turns before fixing the two files the gate named
+    note = open(retry).read()
+    out = note + "\n\n---\n\n# Reference: the phase instructions\n\n" + out + "\n\n---\n\n" + note
 print(out)
 PY
 }
@@ -115,8 +118,14 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     log "worker → $label (profile $profile, timeout ${WORKER_TIMEOUT}s)"
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
     # watchdog: kills the worker's whole process group on timeout (a perl alarm did not stop codex)
+    # project_doc_max_bytes=0: WORKER.md is the worker's brief; AGENTS.md cost ~1.7K tokens and contradicts it
+    # ZDOTDIR: the worker's `zsh -lc` puts the crawl_guard grep/find shims first on PATH; the shell
+    # snapshot restores the PATH Codex captured at startup, so it would undo them
     python3 "$HERE/bin/watchdog.py" "$WORKER_TIMEOUT" \
         codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
+        -c project_doc_max_bytes=0 \
+        -c features.shell_snapshot=false \
+        -c "shell_environment_policy.set.ZDOTDIR=\"$HERE/zdot\"" \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
         -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
@@ -238,6 +247,7 @@ scope_to_gate_out() {
 # md_fix <files>: markdownlint's mechanical fixes (blank lines, list markers) are the harness's job, not the worker's
 md_fix() {
     local fix; fix="$(need gates.docs_lint_fix files="$1")"
+    ( cd "$WT" && python3 "$HERE/bin/md_repair.py" $1 )   # MD040/MD055, which --fix cannot solve
     ( cd "$WT" && bash -c "$fix" ) > "$STATE/gate-lint-fix.out" 2>&1   # non-zero = errors left: md_lint names them
     git_wt diff --quiet -- $1 || gate_log lint-fix "FIXED :: $(git_wt diff --name-only -- $1 | tr '\n' ' ')"
 }
@@ -274,8 +284,8 @@ gate_triage() {
     done
     # SLUG separators are cosmetic (the model writes the change-name style, a-b-c): normalize, do not retry
     sed -i '' '/^SLUG=/s/[-[:space:]]/_/g' "$IO/triage.env"
-    [[ "$(iv SLUG)" =~ ^[a-z0-9]+(_[a-z0-9]+){2,5}$ ]] \
-        || e+="- triage.env: SLUG=$(iv SLUG) — write 3-6 lowercase words joined by _, e.g. remove_dead_default_credentials\n"
+    [[ "$(iv SLUG)" =~ ^[a-z0-9]+(_[a-z0-9]+){1,5}$ ]] \
+        || e+="- triage.env: SLUG=$(iv SLUG) — write 2-6 lowercase words joined by _, e.g. remove_dead_default_credentials\n"
     for v in "## Evidence" "## Acceptance Criteria" "## Files to Edit" "## Risks"; do
         grep -q "^$v" "$md" || e+="- triage.md: heading '$v' is missing — restore it\n"
     done
@@ -285,7 +295,7 @@ gate_triage() {
         | perl -CSD -pe 's/[`*]//g; s/\s+[-\x{2013}\x{2014}:]+\s+/ \x{2014} /g; s/proven by\s*[:\x{2014}]*\s*/proven by: /i; s/proven by: existing test /proven by: /i' || true)"
     [ -n "$crit" ] || e+="- triage.md: no numbered acceptance criteria\n"
     grep -vqE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit" \
-        && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n"
+        && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n  Rewrite each whole line, e.g. '1. TODO — Jenkinsfile removed — proven by: command test ! -e Jenkinsfile'\n"
     grep -qE 'proven by: (git |bash |mvn |npm |npx |gh )' <<<"$crit" \
         && e+="- triage.md: a shell command as proof must start with the word 'command', e.g. 'proven by: command bash scripts/preflight.sh'. A removal (git rm) is not a proof — prove it with a test, e.g. 'new test BackendResourcesHygieneTest#shouldNotPackageLegacyConfigProperties' asserting getClass().getResource(\"/config.properties\") is null\n"
     grep -qiE 'proven by: .*(PR #|issue #|#[0-9]+)' <<<"$crit" \
@@ -324,9 +334,23 @@ gate_triage() {
     log "triage: $(tr '\n' ' ' < "$STATE/triage.env")"
 }
 
+# repair_spec <change-dir>: fixes with one right answer never cost the worker an attempt (#1049)
+repair_spec() {
+    local d="$1" unticked
+    # the worker sets skip_specs yet leaves a delta-less specs/ behind: openspec validate rejects the leftover
+    if [ "$(tv KIND)" != code ] && grep -q 'skip_specs: *true' "$d/.openspec.yaml" 2>/dev/null && [ -d "$d/specs" ]; then
+        rm -rf "$d/specs"; gate_log spec-repaired "REVIEW :: skip_specs set, removed leftover specs/"
+    fi
+    # nothing past the branch (groups 1-2) is done before Gate 2; the worker ticked 4.1/4.2 anyway
+    [ -f "$d/tasks.md" ] || return 0
+    unticked="$(python3 "$HERE/bin/ledger.py" untick-after "$d/tasks.md" 2)"
+    [ -z "$unticked" ] || gate_log spec-repaired "REVIEW :: unticked $unticked"
+}
+
 gate_spec() {
     local c; c="$(tv CHANGE)"
     local validate plan; validate="$(need spec.validate change="$c")"; plan="$(need spec.plan_check change="$c")"
+    repair_spec "$WT/openspec/changes/$c"
     run_gate spec-validate bash -c "$validate" \
         || { { echo "$validate failed:"; tail -60 "$STATE/gate-spec-validate.out"; } > "$STATE/gate.out"; return 1; }
     run_gate spec-sdlc bash -c "$plan" \

@@ -48,6 +48,13 @@ class BadProofsTest(unittest.TestCase):
     def test_script_command_accepted(self):
         self.assertEqual(triage_check.bad_proofs("1. TODO — clean — proven by: command bash scripts/preflight.sh"), [])
 
+    def test_negated_search_accepted(self):
+        # fails while the stale mention is still there, unlike a bare search
+        self.assertEqual(triage_check.bad_proofs("1. TODO — gone — proven by: command ! git grep -qi x -- docs"), [])
+
+    def test_removed_file_check_accepted(self):
+        self.assertEqual(triage_check.bad_proofs("1. TODO — gone — proven by: command test ! -e Jenkinsfile"), [])
+
     def test_test_proof_accepted(self):
         self.assertEqual(triage_check.bad_proofs("1. TODO — x — proven by: new test XTest#shouldY"), [])
 

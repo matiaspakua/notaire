@@ -1,14 +1,14 @@
 # Local AI SDLC — foreman/worker harness
 
 How Notaire issues get solved end-to-end by the **local worker** (Codex CLI +
-Qwen3.5-9B on oMLX), supervised by a **foreman** (Claude Code, or a human).
+Qwen3-Coder-30B-A3B on oMLX), supervised by a **foreman** (Claude Code, or a human).
 The process itself is `CONSTITUTION.md`; this harness is one way of executing
 it. It adds nothing on top of the Constitution, it just splits it into phases a
-9B model can manage and checks each one mechanically.
+small local model can manage and checks each one mechanically.
 
 ## Why a harness
 
-A 9B local model with a 64K window cannot hold the Constitution, the rules and
+A local model with a 32K window cannot hold the Constitution, the rules and
 a codebase in its head at once, and it tends to report success it has not
 earned. So:
 
@@ -115,7 +115,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Edit tool | `bin/edit.py` (copied to `RUNS/<n>/edit.py`): exact-once OLD/NEW search-replace. Codex `apply_patch` fails with the local model; `sed` line edits are not idempotent and a small model stacks them; `cat >` rewrites drop unread parts. It refuses stray marker lines and ambiguous matches |
 | Diff hygiene in `gate_green` | `git diff --check` (conflict markers, whitespace) and a collateral-deletion check (a non-test file losing >10 lines and >25% of its content) |
 | Phase base | guards measure from the phase start, not the attempt start, so a retry may amend the phase's own commits; the CI fix loop re-bases after every push so pushed commits are never rewritten |
-| Full suite is harness-only | the worker runs single test classes; `gate_green` runs the full suite. A 9B model does not wait for a 6-minute Maven run: it reruns it in parallel and corrupts `target/` |
+| Full suite is harness-only | the worker runs single test classes; `gate_green` runs the full suite. A local model does not wait for a 6-minute Maven run: it reruns it in parallel and corrupts `target/` |
 | Ledger is harness-owned | `bin/ledger.py`. After Gate 2, `tasks.md` may change only by `[ ]`→`[x]`. When it changes otherwise, `repair_tasks` (in `gate_green`/`gate_docs`) restores the base file with the worker's ticks (`restore-ticks`, matched by task ID), commits the repair and logs the discarded lines as `tasks-repaired` for Gate 4 — the #1063 worker could not undo its own `[-]` marks and added items in three retries; the worker kept rewriting it with invented results ("PR created", "CI green") or rewording items instead of ticking them. `gate_spec` requires the `Commits` and `Pull Request` rows exactly once (`ledger.py rows`), because the harness fills them later. After the docs phase the foreman writes the Commits and CHANGELOG rows of `traceability.md` (`record_ledger`); the worker copied SHAs from `main` |
 | Harness pushes | `push_branch`/`record_pr` in `phase_pr`; `githooks/pre-push` denies every worker push. The local model marked `git push` as needing sandbox escalation (refused under approval=never) and looped: sed-edits of the ledger, duplicate commits, `git reset` to the remote, `pkill -9 git`, `--no-verify`, `-f`. Earlier, the repo's 10-minute pre-push preflight made it start a second push; two Maven runs on one `target/` failed 452 tests. The harness rebases over CI-bot report commits, pushes with `PREFLIGHT_SKIP=1` (quality already ran preflight; CI re-runs it), and records the PR number and ticks 10.1–10.2 itself. The worker only writes the PR body and runs `gh pr create/edit` |
 | Foreman backups are hidden | Manual foreman backups of worker commits go to `refs/foreman/backup/<issue>-<phase>`, never `refs/heads/`: the worker lists branches and checked out a `backup/` branch to "recover" discarded commits. `push_branch` refuses a detached HEAD (it would push the stale branch ref), and `ALLOW_COMMIT=0` makes `githooks/pre-commit` deny commits in the pr phase |
@@ -126,8 +126,10 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Archive after merge | `validate-sdlc-plan.sh` rejects any change whose issue is CLOSED, and it runs on every PR. After Gate 5 closed #1069, every open PR failed plan validation until `remove-dead-credentials-1069` was archived (done in #1074, precedent `3dfb3f0`). Until the harness does it itself: after `merge`, the next PR fills the ledger rows (CI run, merge commit, cd.yml, smoke) with `bin/ledger.py` and runs `openspec archive <change> --yes` |
 | Sibling worktrees are not the worker's | Worktrees share `refs/heads`. The ref guard used to delete any branch created during a run, so the foreman's own PR branch in `../notaire-harness` was blamed on the #1063 worker and burned its last retry. Branches checked out in another worktree are now skipped |
 | Build dirs anchored | `FORBIDDEN` matched `(^\|/)coverage/` anywhere, so the pre-commit hook refused `openspec/changes/<c>/specs/coverage/spec.md` and the worker "cleaned up" by deleting its own spec. Build-output dirs now match only at the root or one module deep |
+| Spec repairs | `repair_spec`, first in `gate_spec`, applies fixes with one right answer and logs `spec-repaired REVIEW`: a non-code change with `skip_specs: true` loses a leftover `specs/` (Qwen3-Coder lost 3 #1049 attempts to one), and `ledger.py untick-after 2` unticks every task past groups 1-2 (gpt-oss ticked 4.1/4.2 before implementation) |
+| Worker searches skip dependency trees | `bin/crawl_guard.py`, linked as `bin/shims/grep` and `bin/shims/find`, prunes `node_modules`, `target`, `.git` and `.next` from recursive searches. `run_worker` sets `ZDOTDIR=sdlc/zdot`, whose startup files source the user's own and then put the shims first on `PATH`, and turns off Codex's shell snapshot, which restores the `PATH` captured at startup. #1049: 30 of 40 worker searches were `find`/`grep -r` |
 | Plan shape is gated | `validate-sdlc-plan.sh` skips a change without `schema: notaire-sdlc` and only checks task group numbers. `gate_spec` also requires the schema line and the template's 12 group headings plus item IDs, which the ledger ticks (`10.1`, `10.2`) |
-| Harness fixes lint | `md_fix` runs `gates.docs_lint_fix` (`markdownlint-cli2 --fix`) before `md_lint`: in `gate_spec` on the change folder (the spec commit carries the fixes) and in `gate_docs` on every touched `.md` (committed as `style(docs): fix markdown lint`). The worker gets only errors `--fix` cannot solve. The #1063 docs worker was handed blank-line errors the spec phase left |
+| Harness fixes lint | `md_fix` runs `bin/md_repair.py` (a bare opening fence gets `text`, MD040; a table row gets its trailing pipe, MD055 — neither is `--fix`-able, and the #1049 gpt-oss spec failed its last attempt only on them), then `gates.docs_lint_fix` (`markdownlint-cli2 --fix`) before `md_lint`: in `gate_spec` on the change folder (the spec commit carries the fixes) and in `gate_docs` on every touched `.md` (committed as `style(docs): fix markdown lint`). The worker gets only errors `--fix` cannot solve. The #1063 docs worker was handed blank-line errors the spec phase left |
 | Stale block cleared | `run_worker` deletes `IO/BLOCKED.md` before each run; the run's copy stays in `RUNS/<n>/io-<label>/`. A block written by the #1063 pr worker failed the later Gate 4 fix run after the fix was committed |
 | `Closes` checked by the harness | `phase_pr` checks `Closes #n` in full commit messages before the worker runs; `09-pr.md` no longer asks. The #1063 pr worker read `--oneline` subjects and blocked twice |
 | No builds in spec | The #1063 worker started Maven in the spec phase and polled it for 15+ minutes. `03-spec.md` forbids builds; coverage and test facts come from the issue and triage |
@@ -137,7 +139,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Static test checks | `bin/static_checks.py`, run by the red gate on the branch's test changes: no absolute home path (`/Users/`, `/home/`), no new test class whose file name already exists elsewhere (extend it instead), and at least one added assertion. A failing test is not proof of a useful test |
 | Review notes are executable | `foreman.sh <n> check` runs every `CHECK:` line of the pending `review-*.md` notes and `gate4.md` (`bin/review_check.py`). A single-token `EXPECTED` gives PASS/FAIL, free text gives JUDGE for the foreman; exit 1 on any FAIL |
 | Gate metrics | `gate_log` also appends `{ts, issue, gate, result, detail}` to `RUNS/<n>/metrics.jsonl` (`bin/metrics.py`), so retries and failure causes per gate can be counted across issues |
-| Per-phase model | `PROFILE_<PHASE>` (e.g. `PROFILE_SPEC`) overrides the codex `PROFILE` for one phase, so a larger model can take the phases a 9B model gets wrong |
+| Per-phase model | `PROFILE_<PHASE>` (e.g. `PROFILE_SPEC`) overrides the codex `PROFILE` for one phase, so a larger model can take the phases the default local model gets wrong |
 | bash ≥ 4 | `foreman.sh` exits at once under bash 3 (macOS `/bin/bash` is 3.2), whose empty-array expansion under `set -u` broke the harness case by case. Run it as `./foreman.sh` so `env` picks Homebrew bash |
 | TEST_CMD form | The red gate rejects a `TEST_CMD` that does not start with the surface's `test_one` command up to `{test}`, and shows the expected form. #1063's worker dropped `-pl backend-api`, so Maven errored in another module instead of failing on the new assertions |
 | Harness self-tests | `python3 -m unittest discover -s local-ai/sdlc/tests`; they run in `sdlc-process.yml` |

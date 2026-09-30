@@ -8,9 +8,11 @@ a later phase writes the specification; the foreman reverts it here.
 
 1. Read the issue at the end of this prompt.
 2. For EVERY file or class the issue mentions, open it and read the relevant
-   lines (`sed -n '80,100p' <file>`). A grep hit is not reading.
+   lines (`sed -n '80,100p' <file>`). A grep hit is not reading. Find where a
+   name is mentioned with exactly `git grep -n -i "<name>"` — one name, no
+   options added; `find` and `grep -r` crawl `node_modules/`.
 3. Find the existing tests for those classes:
-   `grep -rln "<ClassName>" backend-api/src/test frontend/src frontend/tests`.
+   `git grep -ln "<ClassName>" -- backend-api/src/test frontend/src frontend/tests`.
    Open them. The issue may be partly stale: something it asks for may already
    be true on `main` and already tested.
 4. For each acceptance criterion of the issue decide:
@@ -30,7 +32,7 @@ Replace each `?` — keep the keys exactly, one per line, no quotes, no comments
 | `UI_CHANGE` | yes, no | a page or component a user sees changes |
 | `API_CHANGE` | yes, no | a REST request/response shape or status code changes |
 | `DB_CHANGE` | yes, no | `yes` ONLY if you list a new `db/migration/V<n>__*.sql` in Files to Edit. Editing `.properties` or datasource config is `no` |
-| `SLUG` | 3–6 lowercase words joined by `_` | e.g. `remove_dead_default_credentials` |
+| `SLUG` | 2–6 lowercase words joined by `_` | e.g. `remove_dead_default_credentials` |
 
 `ISSUE`, `USE_CASE` (and `TYPE` when the title has a prefix) are pre-filled by the foreman — leave them. The foreman
 derives the branch name, the OpenSpec change name and the surface from your
@@ -48,8 +50,10 @@ Keep the four `##` headings exactly. Replace the example lines.
   - `N. TODO — <criterion> — proven by: new test <TestClass>#<shouldMethod>`
   - `N. DONE — <criterion> — proven by: <ExistingTestClass>#<method>`
   - `N. TODO — <criterion> — proven by: command <shell command that must pass>`
-    (only for things no unit test can see, e.g. a Gitleaks/Trivy scan or
-    `bash scripts/preflight.sh`). `grep`, `find`, `cat`, `ls`, `git ls-tree`
+    (only for things no unit test can see, e.g. a Gitleaks/Trivy scan,
+    `bash scripts/preflight.sh`, a file removed outside `backend-api/` and
+    `frontend/` — `command test ! -e Jenkinsfile` — or a stale mention removed
+    from docs — `command ! git grep -qi jenkins -- docs README.md`). `grep`, `find`, `cat`, `ls`, `git ls-tree`
     and the like are NOT proofs: they succeed whether or not the criterion
     holds. Any `new test` needs `KIND=code`
 
