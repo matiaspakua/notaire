@@ -25,15 +25,20 @@ def parse_tool_calls_from_tokens(token_ids, prepend_start=True):
                 tool_calls.append(
                     {"name": name, "arguments": _message_content_text(msg)}
                 )
+    except Exception:
+        pass
 
 
 class HarmonyStreamingParser:
     def get_tool_calls(self):
-        for msg in messages:
-            name = msg.recipient[10:]  # Remove "functions." prefix
-            content = _message_content_text(msg)
+        try:
+            for msg in messages:
+                name = msg.recipient[10:]  # Remove "functions." prefix
+                content = _message_content_text(msg)
 
-            tool_calls.append({"name": name, "arguments": content})
+                tool_calls.append({"name": name, "arguments": content})
+        except Exception:
+            pass
 '''
 
 
