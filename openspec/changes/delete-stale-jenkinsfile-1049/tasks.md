@@ -51,12 +51,12 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 n/a — no permanent doc changes (the infra docs already record the removal).
-- [ ] 8.2 No permanent documentation changes outside this note.
-- [ ] 8.3 No `CHANGELOG.md` update needed.
-- [ ] 8.4 Nothing to archive.
-- [ ] 8.5 No duplication added.
-- [ ] 8.6 `scripts/preflight.sh --fix` already passed.
+- [x] 8.1 n/a — no permanent doc changes (the infra docs already record the removal).
+- [x] 8.2 No permanent documentation changes outside this note.
+- [x] 8.3 No `CHANGELOG.md` update needed.
+- [x] 8.4 Nothing to archive.
+- [x] 8.5 No duplication added.
+- [x] 8.6 `scripts/preflight.sh --fix` already passed.
 
 ## 9. Commits atómicos
 
