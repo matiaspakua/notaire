@@ -427,7 +427,7 @@ gate_red() {
     local cmd; cmd="$(test_cmd)"
     [ -n "$cmd" ] || gate_msg "Missing TEST_CMD=... line in $IO/tests.env\n" || return 1
     local form; form="$(cfg check-test-cmd "$(tv SURFACE)" "$cmd")" || gate_msg "$form\n" || return 1
-    git_wt diff --name-only origin/main..HEAD | has -E "$TEST_FILES" \
+    git_wt diff --name-only origin/main...HEAD | has -E "$TEST_FILES" \
         || gate_msg "No committed test file on this branch. Write the tests, then git add + git commit them.\n" || return 1
     require_clean_branch || return 1
     local e="" t m
@@ -436,7 +436,7 @@ gate_red() {
         git_wt grep -q "void $m(" HEAD -- '*src/test/*' \
             || e+="- planned test ${t%%#*}#$m (triage) not found in committed tests — write it with exactly that method name\n"
     done
-    git_wt diff --name-only origin/main..HEAD | has '^\.localai/' \
+    git_wt diff --name-only origin/main...HEAD | has '^\.localai/' \
         && e+="- .localai/ files are committed — they are foreman scratch, never commit them: git rm -r --cached .localai && git commit --amend\n"
     git_wt log --format=%B origin/main..HEAD | has "Closes #" \
         && e+="- a commit says 'Closes #...' — only the final implementation commit may. Use 'Refs #$ISSUE' (git commit --amend is fine: the branch is not pushed)\n"
@@ -488,16 +488,23 @@ repair_tasks() {
     gate_log tasks-repaired "REPAIRED :: discarded (review at Gate 4): $(tr '\n' ' ' <<<"$diff")"
 }
 
+# green_base: Gate 2's commit, or for a non-code change the branch's fork point — origin/main itself has moved
+# on since the branch was cut, and diffing against it counted main's newer lines as the worker's deletions (#1049)
+green_base() { cat "$STATE/red.sha" 2>/dev/null || git_wt merge-base HEAD origin/main; }
+
 gate_green() {
     require_clean_branch || return 1
-    repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
-    local lost; lost="$(collateral_deletions "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)")"
-    local base; base="$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)"
+    local base; base="$(green_base)"
+    repair_tasks "$base" || return 1
+    local lost; lost="$(collateral_deletions "$base")"
     git_wt diff --check "$base"..HEAD > "$STATE/diff-check.out" \
         || gate_msg "Leftover conflict markers or whitespace errors (git diff --check):\n$(head -20 "$STATE/diff-check.out")\n" || return 1
     [ -z "$lost" ] || gate_msg "Unrequested deletions — you destroyed content outside the change:\n$lost\n" || return 1
-    git_wt diff --name-only origin/main..HEAD | grep -vE '^(openspec/|\.localai/)' | has . \
+    git_wt diff --name-only origin/main...HEAD | grep -vE '^(openspec/|\.localai/)' | has . \
         || gate_msg "No implementation committed on this branch yet.\n" || return 1
+    local stray; stray="$(git_wt diff --name-only --diff-filter=A origin/main...HEAD -- openspec/changes \
+        | grep -v "^openspec/changes/$(tv CHANGE)/" || true)"
+    [ -z "$stray" ] || gate_msg "Files added under openspec/changes/ outside this change ($(tv CHANGE)) — remove them (git rm -r) and amend:\n$stray\n" || return 1
     run_gate green bash -c "$(test_cmd)" \
         || { { echo "TEST_CMD ($(test_cmd)) fails:"; tail -120 "$STATE/gate-green.out"; } > "$STATE/gate.out"; return 1; }
     run_gate suite bash -c "$(suite_cmd)" \
@@ -514,12 +521,12 @@ gate_green() {
 gate_docs() {
     local c; c="$(tv CHANGE)"
     repair_tasks "$(cat "$STATE/red.sha" 2>/dev/null || echo origin/main)" || return 1
-    if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main..HEAD | has -x CHANGELOG.md; then
+    if [[ "$(tv TYPE)" =~ ^(feat|fix)$ ]] && ! git_wt diff --name-only origin/main...HEAD | has -x CHANGELOG.md; then
         gate_msg "TYPE=$(tv TYPE) is user-visible: add a line under '## [Unreleased]' in CHANGELOG.md ending with (#$ISSUE), then commit\n"
         return 1
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
-    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main..HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
+    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main...HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
     if [ -n "$md" ]; then
         # only committed files: a worker's uncommitted edit must not ride in the style commit
         git_wt diff --quiet HEAD -- $md && md_fix "$md"
