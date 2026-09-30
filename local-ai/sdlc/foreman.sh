@@ -119,9 +119,13 @@ run_worker() {  # run_worker <label> <template> [GATE_CMD] [GATE_OUTPUT_FILE]
     # stdin from /dev/null: codex exec otherwise waits on a non-TTY stdin forever.
     # watchdog: kills the worker's whole process group on timeout (a perl alarm did not stop codex)
     # project_doc_max_bytes=0: WORKER.md is the worker's brief; AGENTS.md cost ~1.7K tokens and contradicts it
+    # ZDOTDIR: the worker's `zsh -lc` puts the crawl_guard grep/find shims first on PATH; the shell
+    # snapshot restores the PATH Codex captured at startup, so it would undo them
     python3 "$HERE/bin/watchdog.py" "$WORKER_TIMEOUT" \
         codex exec --profile "$profile" --skip-git-repo-check -C "$WT" \
         -c project_doc_max_bytes=0 \
+        -c features.shell_snapshot=false \
+        -c "shell_environment_policy.set.ZDOTDIR=\"$HERE/zdot\"" \
         -c 'shell_environment_policy.set.GIT_CONFIG_COUNT="1"' \
         -c 'shell_environment_policy.set.GIT_CONFIG_KEY_0="core.hooksPath"' \
         -c "shell_environment_policy.set.GIT_CONFIG_VALUE_0=\"$hooks\"" \
