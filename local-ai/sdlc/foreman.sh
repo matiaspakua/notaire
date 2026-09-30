@@ -198,6 +198,15 @@ review_ignored() {
     gate_msg "You changed no file, but the foreman review below is pending. Apply every point of it now:\n\n$(cat "$note")\n" || true
 }
 
+# review_checks_pass <phase>: the CHECK/EXPECTED lines of a pending note gate the phase too.
+# A gate cannot see what the note asked for; the #1049 spec worker edited one unrelated line and passed.
+review_checks_pass() {
+    local note="$STATE/review-$1.md"
+    [ -f "$note" ] && grep -q '^CHECK:' "$note" || return 0
+    python3 "$HERE/bin/review_check.py" "$WT" "$note" > "$STATE/gate-review.out" 2>&1 && return 0
+    gate_msg "The foreman review is not applied yet. These checks from it fail:\n\n$(cat "$STATE/gate-review.out")\n\nThe review:\n\n$(cat "$note")\n"
+}
+
 # a note applied in a passing run is kept as evidence, out of the review-*.md glob `render` and `check` read
 retire_review() {
     [ -f "$STATE/review-$1.md" ] && [ "${RECHECK:-0}" != 1 ] || return 0
@@ -219,7 +228,9 @@ with_retries() {
         gate_scope
         if review_ignored "$phase" "$before"; then
             :
-        elif "$gate"; then rm -f "$STATE/retry.md" "$STATE/scope.out"; retire_review "$phase"; return 0; fi
+        elif "$gate" && review_checks_pass "$phase"; then
+            rm -f "$STATE/retry.md" "$STATE/scope.out"; retire_review "$phase"; return 0
+        fi
         before="$(wt_fingerprint)"
         scope_to_gate_out
         log "gate $gate failed (attempt $attempt/$MAX_ATTEMPTS): $(head -3 "$STATE/gate.out" | tr '\n' ' ')"
