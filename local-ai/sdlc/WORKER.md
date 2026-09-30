@@ -88,6 +88,9 @@ the closing fence is always a bare ```` ``` ````.
 - When the foreman gives you a skeleton file, edit it in place and keep its
   headings, keys and line formats exactly.
 
+- Search with `git grep -n "<text>"` and list files with `git ls-files | grep <name>`:
+  they read only tracked files. `grep -r` and `find .` walk `node_modules/` and `target/`,
+  take seconds and flood your context with minified code.
 - Small steps. After each edit, run the narrowest command that proves it.
 - Never run the FULL backend/frontend suite — the foreman runs it after you and
   sends you any failure. You run only single test classes (`-Dtest=...`).

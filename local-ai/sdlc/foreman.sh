@@ -279,8 +279,8 @@ gate_triage() {
     done
     # SLUG separators are cosmetic (the model writes the change-name style, a-b-c): normalize, do not retry
     sed -i '' '/^SLUG=/s/[-[:space:]]/_/g' "$IO/triage.env"
-    [[ "$(iv SLUG)" =~ ^[a-z0-9]+(_[a-z0-9]+){2,5}$ ]] \
-        || e+="- triage.env: SLUG=$(iv SLUG) — write 3-6 lowercase words joined by _, e.g. remove_dead_default_credentials\n"
+    [[ "$(iv SLUG)" =~ ^[a-z0-9]+(_[a-z0-9]+){1,5}$ ]] \
+        || e+="- triage.env: SLUG=$(iv SLUG) — write 2-6 lowercase words joined by _, e.g. remove_dead_default_credentials\n"
     for v in "## Evidence" "## Acceptance Criteria" "## Files to Edit" "## Risks"; do
         grep -q "^$v" "$md" || e+="- triage.md: heading '$v' is missing — restore it\n"
     done
@@ -290,7 +290,7 @@ gate_triage() {
         | perl -CSD -pe 's/[`*]//g; s/\s+[-\x{2013}\x{2014}:]+\s+/ \x{2014} /g; s/proven by\s*[:\x{2014}]*\s*/proven by: /i; s/proven by: existing test /proven by: /i' || true)"
     [ -n "$crit" ] || e+="- triage.md: no numbered acceptance criteria\n"
     grep -vqE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit" \
-        && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n"
+        && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n  Rewrite each whole line, e.g. '1. TODO — Jenkinsfile removed — proven by: command test ! -e Jenkinsfile'\n"
     grep -qE 'proven by: (git |bash |mvn |npm |npx |gh )' <<<"$crit" \
         && e+="- triage.md: a shell command as proof must start with the word 'command', e.g. 'proven by: command bash scripts/preflight.sh'. A removal (git rm) is not a proof — prove it with a test, e.g. 'new test BackendResourcesHygieneTest#shouldNotPackageLegacyConfigProperties' asserting getClass().getResource(\"/config.properties\") is null\n"
     grep -qiE 'proven by: .*(PR #|issue #|#[0-9]+)' <<<"$crit" \
