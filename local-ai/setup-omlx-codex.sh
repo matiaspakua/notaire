@@ -1,14 +1,51 @@
 #!/bin/bash
-# setup-omlx-codex.sh — oMLX + Qwen3-Coder-30B-A3B (MLX) + Codex CLI, todo local en Apple Silicon
+# setup-omlx-codex.sh — oMLX + un modelo local (MLX) + Codex CLI, todo local en Apple Silicon
 # Idempotente: re-ejecutar es seguro. Aplica ajustes de performance para agentes de código.
+#   PRESET=qwen3-coder (default) | gpt-oss   — cada preset tiene su perfil de Codex propio
 set -euo pipefail
 
-MODEL_REPO="${MODEL_REPO:-mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit}"
+LOCAL_AI_DIR="$(cd "$(dirname "$0")" && pwd)"
+PRESET="${PRESET:-qwen3-coder}"
+case "$PRESET" in
+  qwen3-coder)
+    # 30B-A3B 4-bit: 16 GiB de pesos + ~96 KB/token de KV (48 capas x 4 KV heads x 128 x fp16).
+    # 32K de contexto = ~3 GiB de KV -> necesita ~20 GiB de Metal (default de Apple en 24 GB: ~17.8 GB).
+    PRESET_REPO="mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit"
+    PRESET_CONTEXT=32768
+    # temperature 0.3, no el 0.7 de Qwen: con 0.7 el modelo erró el nombre del parámetro o
+    # repitió la llamada en 5 de 20 primeras tool calls de un prompt de triage, con 0.3 en 0 de 20.
+    # Sin repetition_penalty (1.0, no el 1.05 de Qwen): penaliza las etiquetas de cierre de
+    # tool call, que se repiten en todo el contexto de un agente; con 1.05 el modelo escribió
+    # texto en vez de `</tool_call>` en 1 de 6 llamadas, con 1.0 en 0 de 18.
+    PRESET_SAMPLING='{"temperature": 0.3, "top_p": 0.8, "top_k": 20, "repetition_penalty": 1.0}'
+    PRESET_REASONING=""                     # modelo sin modo thinking
+    CODEX_PROFILE="omlx"
+    PRESET_INSTRUCTIONS=""
+    PRESET_OMLX_PATCH=0
+    PRESET_IS_DEFAULT=1
+    PRESET_SUMMARY="MoE 30B / 3B activos, ~17 GB, tools XML"
+    ;;
+  gpt-oss)
+    # MXFP4 original de OpenAI en los expertos + 8 bits en atención: 12.1 GB. El KV es chico
+    # (24 capas, la mitad con ventana deslizante de 128), así que 64K de contexto caben.
+    PRESET_REPO="mlx-community/gpt-oss-20b-MXFP4-Q8"
+    PRESET_CONTEXT=65536
+    # los valores que recomienda OpenAI; 0.6/0.95 no dio más tool calls limpias (14/14 vs 17/18)
+    PRESET_SAMPLING='{"temperature": 1.0, "top_p": 1.0, "top_k": 0, "repetition_penalty": 1.0}'
+    PRESET_REASONING="medium"               # harmony: low | medium | high
+    CODEX_PROFILE="omlx-gptoss"
+    PRESET_INSTRUCTIONS="$LOCAL_AI_DIR/codex-local-instructions-gpt-oss.md"
+    PRESET_OMLX_PATCH=1                     # omlx/patch_omlx.py: tool calls de gpt-oss (#1099)
+    PRESET_IS_DEFAULT=0
+    PRESET_SUMMARY="MoE 21B / 3.6B activos, ~12 GB, harmony"
+    ;;
+  *) printf '\033[31m ERROR: PRESET=%s desconocido (qwen3-coder | gpt-oss)\033[0m\n' "$PRESET" >&2; exit 1 ;;
+esac
+
+MODEL_REPO="${MODEL_REPO:-$PRESET_REPO}"
 MODEL_DIR="$HOME/.omlx/models/$MODEL_REPO"
 MODEL_ID="$(basename "$MODEL_REPO")"   # oMLX expone el modelo por nombre de directorio
-# 30B-A3B 4-bit: 16 GiB de pesos + ~96 KB/token de KV (48 capas x 4 KV heads x 128 x fp16).
-# 32K de contexto = ~3 GiB de KV -> necesita ~20 GiB de Metal (default de Apple en 24 GB: ~17.8 GB).
-CONTEXT_WINDOW="${CONTEXT_WINDOW:-32768}"
+CONTEXT_WINDOW="${CONTEXT_WINDOW:-$PRESET_CONTEXT}"
 WIRED_LIMIT_MB="${WIRED_LIMIT_MB:-20480}"
 MEMORY_CEILING_GB=$((WIRED_LIMIT_MB / 1024))   # techo oMLX = límite Metal
 OMLX_PORT="${OMLX_PORT:-8000}"
@@ -16,8 +53,8 @@ BASE_URL="http://localhost:$OMLX_PORT/v1"
 CODEX_CONFIG="$HOME/.codex/config.toml"
 # Codex solo conoce los modelos de OpenAI: sin entrada propia en el catálogo usa metadata
 # genérica (prompt GPT de ~5K tokens, apply_patch, sin límites de contexto) y avisa.
-CODEX_CATALOG="$HOME/.codex/omlx.models.json"
-CODEX_INSTRUCTIONS="$(cd "$(dirname "$0")" && pwd)/codex-local-instructions.md"
+CODEX_CATALOG="$HOME/.codex/$CODEX_PROFILE.models.json"
+CODEX_INSTRUCTIONS="$LOCAL_AI_DIR/codex-local-instructions.md"
 SSD_CACHE_DIR="$HOME/.omlx/cache"
 
 log() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
@@ -64,10 +101,11 @@ mkdir -p "$HOME/.omlx/models" "$SSD_CACHE_DIR"
 # momento (~16 GB con navegador abierto) y rechazan el 30B (16.8 GB). Con techo fijo
 # macOS comprime/swapea las otras apps en vez de que oMLX se niegue a cargar.
 apply_perf_settings() {
-  python3 - "$HOME/.omlx" "$SSD_CACHE_DIR" "$MODEL_ID" "$CONTEXT_WINDOW" "$MEMORY_CEILING_GB" <<'PYEOF'
+  python3 - "$HOME/.omlx" "$SSD_CACHE_DIR" "$MODEL_ID" "$CONTEXT_WINDOW" "$MEMORY_CEILING_GB" \
+    "$PRESET_SAMPLING" "$PRESET_IS_DEFAULT" <<'PYEOF'
 import json, os, sys
 omlx_dir, ssd_dir, model_id, ctx = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4])
-ceiling_gb = float(sys.argv[5])
+ceiling_gb, sampling, is_default = float(sys.argv[5]), json.loads(sys.argv[6]), sys.argv[7] == "1"
 defaults = {
     ("memory", "memory_guard_tier"): "custom",
     ("memory", "memory_guard_custom_ceiling_gb"): ceiling_gb,
@@ -85,30 +123,24 @@ defaults = {
     ("server", "sse_keepalive_mode"): "chunk",
     # A fresh app launch otherwise leaves the server stopped and the worker's requests refused.
     ("server", "auto_start_on_launch"): True,
-    ("sampling", "max_context_window"): ctx,
-    ("integrations", "codex_model"): model_id,
     # A tool call that misses its closing </tool_call> runs on inside the envelope, where oMLX
     # streams nothing, until this cap: at ~35 tok/s 4096 wastes ~2 min before Codex retries.
     # A heredoc write of a whole test or spec file still fits.
     ("sampling", "max_tokens"): 4096,
 }
-# Qwen3-Coder: top_p/top_k recomendados por Qwen (sin modo thinking). Por modelo, no global.
-# temperature 0.3, no el 0.7 de Qwen: con 0.7 el modelo erró el nombre del parámetro o
-# repitió la llamada en 5 de 20 primeras tool calls de un prompt de triage, con 0.3 en 0 de 20.
-# Sin repetition_penalty (1.0, no el 1.05 de Qwen): penaliza las etiquetas de cierre de
-# tool call, que se repiten en todo el contexto de un agente; con 1.05 el modelo escribió
-# texto en vez de `</tool_call>` en 1 de 6 llamadas, con 1.0 en 0 de 18.
+# the server-wide model and window belong to the default preset; another preset only adds its model
+if is_default:
+    defaults[("sampling", "max_context_window")] = ctx
+    defaults[("integrations", "codex_model")] = model_id
+# sampling por modelo (ver el preset): cada modelo conserva la suya
 model_defaults = {
     "max_context_window": ctx,
-    "temperature": 0.3,
-    "top_p": 0.8,
-    "top_k": 20,
-    "repetition_penalty": 1.0,
+    **sampling,
     # TurboQuant KV rompe las tool calls XML de Qwen3-Coder: limpias 9 de 20 con 4 bits y
     # 9 de 12 con 8 bits, frente a 20 de 20 en fp16. Una ventana de 32K en fp16 son ~3 GB y
     # cabe junto a los 16 GB de pesos bajo el límite Metal de 20 GB.
     "turboquant_kv_enabled": False,
-    "is_default": True,
+    "is_default": is_default,
 }
 
 def apply(path, section_of, wanted, missing_msg):
@@ -125,7 +157,9 @@ def apply(path, section_of, wanted, missing_msg):
         if section.get(name) != val:
             section[name] = val
             changed.append(f"{os.path.basename(path)}: {'.'.join(key) if isinstance(key, tuple) else model_id + '.' + key}={val}")
-    json.dump(cfg, open(path, "w"), indent=4)
+    # only on a real change: oMLX saves these files compact, so a rewrite alone restarted the server
+    if changed:
+        json.dump(cfg, open(path, "w"), indent=4)
     return changed
 
 changed = apply(os.path.join(omlx_dir, "settings.json"),
@@ -167,11 +201,23 @@ apply_perf_settings || warn "settings.json no disponible aún; se aplicará en l
 AFTER=$(settings_hash)
 [ "$BEFORE" != "$AFTER" ] && SETTINGS_CHANGED=1
 
+# oMLX 0.7.0 pierde tool calls de gpt-oss y Codex rechaza las que llegan mal formadas (#1099).
+# Una actualización de oMLX deshace el parche: re-ejecutar este script lo vuelve a aplicar.
+if [ "$PRESET_OMLX_PATCH" = "1" ]; then
+  log "Parcheando oMLX para las tool calls de $MODEL_ID (local-ai/omlx/patch_omlx.py)"
+  PATCH_OUT=$(python3 "$LOCAL_AI_DIR/omlx/patch_omlx.py") \
+    || warn "parte del parche no aplica (¿oMLX cambió ese código?):"
+  printf '%s\n' "$PATCH_OUT"
+  grep -q ": applied" <<< "$PATCH_OUT" && SETTINGS_CHANGED=1
+fi
+
 log "Límite de memoria Metal"
 check_wired_limit || true
 
 restart_server() {
   log "Reiniciando servidor oMLX para aplicar los nuevos settings"
+  # la app entera: matar solo omlx-server deja la app abierta sin servidor, y `open -a` no lo relanza
+  pkill -x oMLX 2>/dev/null || true
   pkill -f omlx-server 2>/dev/null || true
   sleep 3
   if [ -d /Applications/oMLX.app ]; then open -a oMLX || true; fi
@@ -215,7 +261,7 @@ start_server() {
 if [ -f "$MODEL_DIR/config.json" ] && [ -n "$(ls "$MODEL_DIR"/*.safetensors 2>/dev/null | head -1)" ]; then
   ok "modelo presente: $MODEL_REPO ($(du -sh "$MODEL_DIR" | cut -f1))"
 else
-  log "Descargando modelo $MODEL_REPO (~17 GB)"
+  log "Descargando modelo $MODEL_REPO ($PRESET_SUMMARY)"
   if ! command -v hf >/dev/null && ! command -v huggingface-cli >/dev/null; then
     python3 -m pip install -q -U "huggingface_hub[cli]" || die "instalando huggingface_hub"
   fi
@@ -243,23 +289,30 @@ print('  respuesta:',r['choices'][0]['message']['content'].strip()[:80])" \
 ok "inferencia local funcionando"
 
 # ---------------------------------------------------------------- 4. Codex CLI
-log "Configurando Codex CLI (perfil 'omlx' en ~/.codex/omlx.config.toml)"
+log "Configurando Codex CLI (perfil '$CODEX_PROFILE' en ~/.codex/$CODEX_PROFILE.config.toml)"
 command -v codex >/dev/null || [ -x "/Applications/ChatGPT.app/Contents/Resources/codex" ] \
   || die "Codex CLI no encontrado (npm i -g @openai/codex)"
 
 cp "$CODEX_CONFIG" "$CODEX_CONFIG.bak-$(date +%Y%m%d-%H%M%S)" 2>/dev/null || true
 
 [ -f "$CODEX_INSTRUCTIONS" ] || die "falta $CODEX_INSTRUCTIONS"
-python3 - "$CODEX_CATALOG" "$CODEX_INSTRUCTIONS" "$MODEL_ID" "$CONTEXT_WINDOW" <<'PYEOF'
+[ -z "$PRESET_INSTRUCTIONS" ] || [ -f "$PRESET_INSTRUCTIONS" ] || die "falta $PRESET_INSTRUCTIONS"
+python3 - "$CODEX_CATALOG" "$CODEX_INSTRUCTIONS" "$MODEL_ID" "$CONTEXT_WINDOW" "$PRESET_INSTRUCTIONS" \
+  "$PRESET_REASONING" <<'PYEOF'
 import json, sys
 path, instructions, model, ctx = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4])
+extra, reasoning = sys.argv[5], sys.argv[6]
+prompt = open(instructions).read()
+if extra:
+    prompt = prompt.rstrip() + "\n\n" + open(extra).read()
 entry = {
     "slug": model,
     "display_name": f"{model} (oMLX)",
     "description": "Local model served by oMLX",
     # replaces Codex's GPT-tuned prompt: short, so the 32K window goes to the task
-    "base_instructions": open(instructions).read(),
-    "supported_reasoning_levels": [],   # non-thinking model
+    "base_instructions": prompt,
+    "supported_reasoning_levels": [{"effort": e, "description": e} for e in ("low", "medium", "high")]
+                                  if reasoning else [],
     "shell_type": "unified_exec",
     # no apply_patch_tool_type: apply_patch fails with the local model, so it is not offered.
     # no tool_mode: "direct" makes the model print tool calls as text instead of running them.
@@ -274,17 +327,23 @@ entry = {
     "experimental_supported_tools": [],
     "input_modalities": ["text"],
 }
+if reasoning:
+    entry["default_reasoning_level"] = reasoning
 json.dump({"models": [entry]}, open(path, "w"), indent=2)
 print(f"  escrito {path}")
 PYEOF
 
-python3 - "$CODEX_CONFIG" "$OMLX_PORT" "$MODEL_ID" "$CONTEXT_WINDOW" "$CODEX_CATALOG" <<'PYEOF'
+python3 - "$CODEX_CONFIG" "$OMLX_PORT" "$MODEL_ID" "$CONTEXT_WINDOW" "$CODEX_CATALOG" "$CODEX_PROFILE" \
+  "$PRESET_REASONING" <<'PYEOF'
 import sys, re, os
 path, port, model, ctx, catalog = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
+profile_name, reasoning = sys.argv[6], sys.argv[7]
+effort = (f'# harmony reasoning model: OpenAI recommends medium for agentic use.\nmodel_reasoning_effort = "{reasoning}"'
+          if reasoning else '# non-thinking model: reasoning effort has no effect on it.\nmodel_reasoning_effort = "low"')
 block_start = "# >>> omlx-local-managed >>>"
 block_end = "# <<< omlx-local-managed <<<"
-profile_path = os.path.join(os.path.dirname(path), "omlx.config.toml")
-profile = f"""# perfil local: codex --profile omlx
+profile_path = os.path.join(os.path.dirname(path), f"{profile_name}.config.toml")
+profile = f"""# perfil local: codex --profile {profile_name}  (written by setup-omlx-codex.sh)
 # MLX-powered local inference via oMLX (Apple Silicon, 24 GB, iogpu.wired_limit_mb raised)
 model = "{model}"
 model_provider = "omlx"
@@ -293,10 +352,9 @@ approval_policy = "never"
 # in ~/.docker) and git worktrees (.git outside -C). workspace-write blocks all of
 # these. Guardrails live in the SDLC harness (local-ai/sdlc) and git hooks instead.
 sandbox_mode = "danger-full-access"
-# Qwen3-Coder is a non-thinking model: reasoning effort has no effect on it.
-model_reasoning_effort = "low"
-# M5 Pro / 24 GB: the 30B-A3B weights take 16 GiB, so the KV cache only has room
-# for ~32K tokens (native ctx is 256K). Must match oMLX sampling.max_context_window.
+{effort}
+# Must match the model's oMLX max_context_window (M5 Pro / 24 GB: weights + fp16 KV
+# under the 20 GB Metal limit — 32K for Qwen3-Coder-30B, 64K for gpt-oss-20b).
 # Compact at 2/3: one turn adds up to max_tokens (4K) of output plus a 4K tool output,
 # and at 75% (#1049) the next request reached 33.9K and oMLX refused it.
 # NOTE: model_max_output_tokens is NOT valid in codex 0.156.1+; output tokens
@@ -363,8 +421,8 @@ if cfg != original:
     open(path, "w").write(cfg.rstrip() + "\n")
     print("  limpiado bloque legado de", path)
 PYEOF
-ok "Codex configurado: codex --profile omlx  |  codex exec --profile omlx ..."
-CODEX_SMOKE=$(OMLX_API_KEY=1234 codex exec --profile omlx --skip-git-repo-check -C "$(mktemp -d)" \
+ok "Codex configurado: codex --profile $CODEX_PROFILE  |  codex exec --profile $CODEX_PROFILE ..."
+CODEX_SMOKE=$(OMLX_API_KEY=1234 codex exec --profile "$CODEX_PROFILE" --skip-git-repo-check -C "$(mktemp -d)" \
   "Reply with exactly: OK" </dev/null 2>&1) || die "codex exec falló: $(tail -3 <<< "$CODEX_SMOKE")"
 if grep -q "fallback metadata" <<< "$CODEX_SMOKE"; then
   warn "Codex ignora el catálogo $CODEX_CATALOG (¿cambió su formato en esta versión de Codex?)"
@@ -416,11 +474,12 @@ launchctl setenv OMLX_API_KEY "1234" && ok "OMLX_API_KEY registrado en launchd (
 log "SETUP COMPLETO"
 cat <<EOF
   Servidor : oMLX en http://localhost:$OMLX_PORT/v1  (admin: http://localhost:$OMLX_PORT/admin)
-  Modelo   : $MODEL_REPO  (MoE 30B / 3B activos, ~17 GB, ctx ${CONTEXT_WINDOW} de 256K nativo, tools XML)
+  Preset   : $PRESET
+  Modelo   : $MODEL_REPO  ($PRESET_SUMMARY, ctx ${CONTEXT_WINDOW})
   Perf     : memory guard custom (${MEMORY_CEILING_GB} GB) + Metal wired ${WIRED_LIMIT_MB} MB + KV cache en SSD ($SSD_CACHE_DIR)
              + chunked prefill -> sesiones largas de agente sin estrangulamiento
-  Codex    : interactivo : codex --profile omlx
-             autónomo    : codex exec --profile omlx --full-auto "<tarea>"
+  Codex    : interactivo : codex --profile $CODEX_PROFILE
+             autónomo    : codex exec --profile $CODEX_PROFILE --full-auto "<tarea>"
   Notas    : sandbox danger-full-access (mvn/npm/gh/docker); aprobaciones nunca.
              Si el servidor ya corría con settings viejos, este script lo reinicia.
 EOF
