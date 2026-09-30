@@ -1,4 +1,4 @@
-# IA 100% local en macOS — oMLX + Qwen3-Coder-30B-A3B + Codex CLI
+# IA 100% local en macOS — oMLX + Qwen3-Coder-30B-A3B / gpt-oss-20b + Codex CLI
 
 Stack de desarrollo con IA que corre íntegramente en tu Mac (sin nube, sin API keys de LLM):
 
@@ -51,6 +51,46 @@ El script:
 6. Smoke test de inferencia end-to-end
 
 Otro modelo: `MODEL_REPO=<org>/<repo> CONTEXT_WINDOW=<n> bash setup-omlx-codex.sh`.
+
+### Presets de modelo
+
+`PRESET` elige el modelo y todo lo que depende de él; cada preset tiene su perfil de
+Codex, así que instalar uno no toca el otro.
+
+| `PRESET` | Modelo | Ventana | Sampling | Perfil Codex |
+|---|---|---|---|---|
+| `qwen3-coder` (default) | `mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit` (~17 GB) | 32K | temp 0.3, top_p 0.8, top_k 20 | `omlx` |
+| `gpt-oss` | `mlx-community/gpt-oss-20b-MXFP4-Q8` (12.1 GB) | 64K | temp 1.0, top_p 1.0 (OpenAI), reasoning `medium` | `omlx-gptoss` |
+
+```bash
+PRESET=gpt-oss bash local-ai/setup-omlx-codex.sh
+codex --profile omlx-gptoss
+```
+
+Solo el preset default fija el modelo y la ventana globales de oMLX; los demás solo
+agregan su modelo. En el harness SDLC, `PROFILE_SPEC=omlx-gptoss` usa gpt-oss en una
+fase concreta (ver `sdlc/AI-SDLC.md`).
+
+### Parche de oMLX para gpt-oss
+
+`PRESET=gpt-oss` ejecuta `local-ai/omlx/patch_omlx.py` sobre la app instalada
+(`/Applications/oMLX.app/.../omlx/adapter/harmony.py`):
+
+- oMLX 0.7.0 lee dos veces la cabecera `<|start|>assistant` y pierde toda tool call que
+  abre la respuesta.
+- gpt-oss aprendió las tools clásicas de Codex (`shell` con argv y `apply_patch`
+  aparte); Codex 0.159 solo ofrece `exec_command` con `cmd` string. Las llamadas mal
+  formadas (argv como `cmd`, `]` sobrante tras un heredoc, escapes de regex crudos,
+  tokens de cabecera en el nombre) se reparan antes de llegar a Codex. `apply_patch`
+  sí funciona dentro de `exec_command` (Codex lo intercepta) y el prompt de gpt-oss
+  (`codex-local-instructions-gpt-oss.md`) lo indica.
+
+Cada parche reemplaza un fragmento exacto de 0.7.0: si oMLX cambió ese código, lo salta
+y avisa. Una actualización de oMLX deshace el parche; re-ejecutar el setup lo vuelve a
+aplicar. `patch_omlx.py --check` muestra el estado y `--restore` restaura el original
+(`harmony.py.orig`). Límite conocido: una `"` sin escapar dentro de un parche largo no
+es reparable (intención ambigua); la llamada se pierde y Codex termina el turno. En 8
+corridas de una tarea TDD corta, 7 terminaron en verde.
 
 ### Memoria Metal (obligatorio para el 30B en 24 GB)
 
@@ -117,6 +157,7 @@ codex exec --profile omlx --skip-git-repo-check -C ~/workspace/mi-proyecto "Impl
 | `--profile 'x' cannot be used … [profiles.x]` | Los perfiles viven ahora en `~/.codex/<perfil>.config.toml` (ya migrado). |
 | El shim dice *"Complete the oMLX first-run setup"* | Abre `oMLX.app` una vez manualmente y completa el asistente. |
 | El servidor no aplica cambios de settings | Re-ejecuta el setup: detecta settings cambiados y reinicia solo. |
+| gpt-oss termina el turno sin editar, o `failed to parse function arguments` | Parche de oMLX ausente (¿se actualizó la app?): `python3 local-ai/omlx/patch_omlx.py --check`, y re-ejecuta `PRESET=gpt-oss bash local-ai/setup-omlx-codex.sh`. |
 
 ## Archivos de referencia
 
@@ -127,6 +168,7 @@ codex exec --profile omlx --skip-git-repo-check -C ~/workspace/mi-proyecto "Impl
 | `~/.omlx/models/` | Modelos descargados |
 | `~/.omlx/cache/` | Bloques KV fríos en SSD |
 | `~/.omlx/logs/server.log` | Log estructurado del servidor |
-| `~/.codex/omlx.config.toml` | Perfil Codex para el modelo local |
+| `~/.codex/omlx.config.toml`, `~/.codex/omlx-gptoss.config.toml` | Perfiles Codex por preset (los escribe el setup; no editarlos a mano) |
+| `local-ai/omlx/` | Reparación de tool calls de gpt-oss y el parcheador de oMLX |
 | `local-ai/sdlc/AI-SDLC.md` | Proceso foreman/worker (fases, gates, guards) |
 | `local-ai/AUDIT.md` | Auditoría del AI SDLC: hallazgos, brechas y plantilla genérica |
