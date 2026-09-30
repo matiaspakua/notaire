@@ -439,3 +439,13 @@ file and made no commit, the attempt SHALL fail with a message naming the note.
 
 - **WHEN** `review-spec.md` exists and the spec worker exits without changing anything
 - **THEN** the attempt fails and the retry prompt asks to apply the review
+
+### Requirement: The uncommitted-changes gate names the staging command
+
+The message SHALL include `git add -A -- <files> && git commit --amend --no-edit`
+for the files it lists.
+
+#### Scenario: Unstaged edits after an amend
+
+- **WHEN** the branch has uncommitted changes to `a.md`
+- **THEN** the message contains `git add -A -- a.md && git commit --amend --no-edit`
