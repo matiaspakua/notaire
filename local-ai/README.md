@@ -71,6 +71,16 @@ Solo el preset default fija el modelo y la ventana globales de oMLX; los demás 
 agregan su modelo. En el harness SDLC, `PROFILE_SPEC=omlx-gptoss` usa gpt-oss en una
 fase concreta (ver `sdlc/AI-SDLC.md`).
 
+### Worker del harness con OpenCode
+
+El harness SDLC (`local-ai/sdlc/foreman.sh`) corre el worker con Codex por defecto;
+`AGENT=opencode` usa OpenCode con la config aislada `local-ai/opencode/` (ver
+`sdlc/AI-SDLC.md`):
+
+```bash
+AGENT=opencode PROFILE=omlx-gptoss ./local-ai/sdlc/foreman.sh <issue>
+```
+
 ### Parche de oMLX para gpt-oss
 
 `PRESET=gpt-oss` ejecuta `local-ai/omlx/patch_omlx.py` sobre la app instalada

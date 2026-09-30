@@ -1,7 +1,7 @@
 # Local AI SDLC — foreman/worker harness
 
-How Notaire issues get solved end-to-end by the **local worker** (Codex CLI +
-Qwen3-Coder-30B-A3B on oMLX), supervised by a **foreman** (Claude Code, or a human).
+How Notaire issues get solved end-to-end by the **local worker** (Codex CLI or
+OpenCode + a local model on oMLX), supervised by a **foreman** (Claude Code, or a human).
 The process itself is `CONSTITUTION.md`; this harness is one way of executing
 it. It adds nothing on top of the Constitution, it just splits it into phases a
 small local model can manage and checks each one mechanically.
@@ -140,6 +140,7 @@ Two directories per issue, so the worker can never damage harness evidence:
 | Review notes are enforced | A pending `RUNS/<n>/review-<phase>.md` must be acted on: an attempt whose worker changed no file fails with the note repeated, and the note's `CHECK:`/`EXPECTED:` lines run after the phase gate (`review_checks_pass`), so a note the worker only half-applied goes back with the failing checks. A note applied in a passing run is renamed `applied-review-<phase>-<ts>.md` (logged `review-applied`), out of the glob `render` reads. #1049's spec worker first ignored a note, then edited one unrelated line, and the gate passed both times |
 | Review notes are executable | `foreman.sh <n> check` runs every `CHECK:` line of the pending `review-*.md` notes and `gate4.md` (`bin/review_check.py`). A single-token `EXPECTED` gives PASS/FAIL, free text gives JUDGE for the foreman; exit 1 on any FAIL |
 | Gate metrics | `gate_log` also appends `{ts, issue, gate, result, detail}` to `RUNS/<n>/metrics.jsonl` (`bin/metrics.py`), so retries and failure causes per gate can be counted across issues |
+| Worker agent | `AGENT` (adapter `backend.agent`) picks `codex` or `opencode`; `bin/worker.py` holds the differences. OpenCode runs with the versioned config `local-ai/opencode/` and `OPENCODE_DISABLE_PROJECT_CONFIG` (the repo's `opencode.json` loads `CLAUDE.md`, the rules and every skill), no Claude Code prompts or external skills, an empty `XDG_CONFIG_HOME` (no global MCP servers; `GH_CONFIG_DIR` keeps `gh`), stdin from `/dev/null`. Its bash tool inherits the hooks path and the shims on `PATH`. With gpt-oss it has real edit tools: 8/8 on the TDD smoke task against 7/8 through Codex |
 | Per-phase model | `PROFILE_<PHASE>` (e.g. `PROFILE_SPEC=omlx-gptoss`) overrides the codex `PROFILE` for one phase, so another model can take the phases the default local model gets wrong. The profiles come from `setup-omlx-codex.sh` presets (`local-ai/README.md`); on #1049 gpt-oss-20b passed the spec checks Qwen3-Coder failed 6 times |
 | bash ≥ 4 | `foreman.sh` exits at once under bash 3 (macOS `/bin/bash` is 3.2), whose empty-array expansion under `set -u` broke the harness case by case. Run it as `./foreman.sh` so `env` picks Homebrew bash |
 | TEST_CMD form | The red gate rejects a `TEST_CMD` that does not start with the surface's `test_one` command up to `{test}`, and shows the expected form. #1063's worker dropped `-pl backend-api`, so Maven errored in another module instead of failing on the new assertions |
