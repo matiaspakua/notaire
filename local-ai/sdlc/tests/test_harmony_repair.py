@@ -66,6 +66,11 @@ class LostCallTest(unittest.TestCase):
     def test_final_answer_is_not_lost(self):
         self.assertFalse(harmony_repair.tool_call_lost(self.TEXT, [], "3"))
 
+    def test_recovery_call_is_a_valid_echo(self):
+        call = harmony_repair.recovery_call()
+        self.assertEqual(call["name"], "exec_command")
+        self.assertTrue(json.loads(call["arguments"])["cmd"].startswith("echo "))
+
     def test_turn_without_tool_syntax_is_not_lost(self):
         self.assertFalse(harmony_repair.tool_call_lost("<|channel|>analysis<|message|>hm", [], ""))
 

@@ -69,3 +69,20 @@ def repair_tool_call(name, arguments):
     if name == SHELL_TOOL and isinstance(arguments, str):
         arguments = _repair_arguments(arguments)
     return name, arguments
+
+
+LOST_CALL_NOTE = ("Your previous tool call was cut off or malformed and did not run. "
+                  "Send it again as one exec_command call whose cmd is a single JSON string.")
+
+
+def tool_call_lost(text, tool_calls, output_text):
+    """A turn that addressed a tool but yields no call and no answer: Codex would end it empty.
+
+    ~2.6% of gpt-oss responses (#1102): an EOS right after <|constrain|>, or arguments no repair can parse.
+    """
+    return "to=functions." in text and not tool_calls and not output_text.strip()
+
+
+def recovery_call():
+    """A harmless call that tells the model its call was lost, so the Codex turn goes on instead of ending."""
+    return {"name": SHELL_TOOL, "arguments": json.dumps({"cmd": "echo " + shlex.quote(LOST_CALL_NOTE)})}

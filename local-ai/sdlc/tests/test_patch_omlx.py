@@ -98,9 +98,9 @@ class PatchTest(unittest.TestCase):
         patch_omlx.apply(self.root)
         self.assertIn("_, arguments = repair_tool_call(recipient[10:], _message_content_text(msg))", self.read())
 
-    def test_lost_call_is_raised_for_a_retry(self):
+    def test_lost_call_is_replaced_by_a_recovery_call(self):
         patch_omlx.apply(self.root)
-        self.assertIn("raise ToolCallLost", self.read())
+        self.assertIn("tool_calls = [recovery_call()]", self.read())
 
     def test_patched_module_compiles(self):
         patch_omlx.apply(self.root)
