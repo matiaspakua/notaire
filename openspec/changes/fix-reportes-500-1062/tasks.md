@@ -54,7 +54,7 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
 - [ ] 8.4 Archive superseded documents into `docs/000-archive/`
