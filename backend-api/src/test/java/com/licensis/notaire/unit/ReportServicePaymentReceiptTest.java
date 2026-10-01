@@ -7,6 +7,9 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
+import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,11 +40,32 @@ class ReportServiceReciboPaymentTest {
     @Mock
     private ItemRepository itemRepository;
 
+    @Mock
+    private BudgetRepository budgetRepository;
+
+    @Mock
+    private DeedManagementRepository deedManagementRepository;
+
+    @Mock
+    private SubmittedDocumentRepository submittedDocumentRepository;
+
     private ReportService reporteService;
 
     @BeforeEach
     void setUp() {
-        reporteService = new ReportService(dataSource, null, null, null, paymentRepository, itemRepository);
+        // Provide all constructor arguments; mock objects are sufficient for
+        // the tests that rely only on paymentRepository and itemRepository.
+        reporteService = new ReportService(
+                dataSource,
+                null,
+                null,
+                null,
+                paymentRepository,
+                itemRepository,
+                budgetRepository,
+                deedManagementRepository,
+                submittedDocumentRepository
+        );
     }
 
     private Payment buildPayment(Integer idPayment, float amount, Person client) {
