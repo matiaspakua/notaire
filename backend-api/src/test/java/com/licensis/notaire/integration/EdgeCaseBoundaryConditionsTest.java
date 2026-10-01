@@ -65,7 +65,7 @@ class EdgeCaseBoundaryConditionsTest {
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
                                     .as("Should respond without crashing")
-                                    .isIn(200, 400, 500));
+                .isEqualTo(200));
         }
 
         @Test
@@ -261,7 +261,7 @@ class EdgeCaseBoundaryConditionsTest {
                     .andExpect(result ->
                             assertThat(result.getResponse().getStatus())
                                     .as("Empty search query should not crash")
-                                    .isIn(200, 400));
+                .isEqualTo(200));
         }
 
         @Test

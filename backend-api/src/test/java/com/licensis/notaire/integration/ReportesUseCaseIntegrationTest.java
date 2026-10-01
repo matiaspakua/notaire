@@ -128,14 +128,14 @@ class ReportesUseCaseIntegrationTest {
     void shouldHandleBudgetEndpointGracefully() throws Exception {
         int nonExistentId = 99999;
         mockMvc.perform(get("/api/v1/reportes/presupuesto/" + nonExistentId))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU01/CU45: budget-inmuebles endpoint handles missing data gracefully")
     void shouldHandleBudgetPropertiesEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -150,14 +150,14 @@ class ReportesUseCaseIntegrationTest {
     @DisplayName("CU13: history-gestion endpoint handles missing gestion gracefully")
     void shouldHandleHistoryManagementEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/historial-gestion/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU42: documents-por-vencer endpoint handles missing document gracefully")
     void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
