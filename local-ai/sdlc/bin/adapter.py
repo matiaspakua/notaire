@@ -15,7 +15,7 @@ import yaml
 DEFAULT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".aisdlc", "project.yml")
 # every key foreman.sh reads: a self-test checks the real adapter has them all
 REQUIRED = (
-    "paths.worktree", "paths.runs", "backend.profile", "spec.schema", "spec.tasks_template", "spec.validate",
+    "paths.worktree", "paths.runs", "backend.profile", "backend.agent", "backend.opencode_model", "spec.schema", "spec.tasks_template", "spec.validate",
     "spec.plan_check", "surfaces", "source_roots", "test_files", "db_migrations", "gates.docs_lint",
     "gates.docs_lint_fix", "gates.preflight", "gates.pipeline", "gates.start", "gates.health_url", "gates.main_workflows",
     "compose_project", "guards.forbidden",

@@ -9,6 +9,8 @@ paths:
 
 backend:
   profile: omlx                      # Codex profile (env PROFILE / PROFILE_<PHASE> override)
+  agent: codex                       # worker agent: codex | opencode (env AGENT overrides)
+  opencode_model: omlx/gpt-oss-20b-MXFP4-Q8   # provider/model in local-ai/opencode/opencode.json
 
 spec:
   schema: notaire-sdlc
