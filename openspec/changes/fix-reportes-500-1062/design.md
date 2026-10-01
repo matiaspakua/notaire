@@ -90,7 +90,7 @@ n/a — no UI change (`UI_CHANGE=no` in triage).
 
 ## Rollback Strategy
 
-- Revert safe: 
+- Revert safe:
 
 - Database rollback: none needed
 - Data written under the new behavior after revert:
