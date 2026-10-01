@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-reportes-500-1062/` | written |
 | Branch | `test/1062_fix_reportes_500` | created |
 | Tasks | `tasks.md` | pending |
-| Commits | pending | pending |
+| Commits | 5d4864b, 76874f0, eb5f8e9, e875c61, 0e8cfc6, 60f4bfa | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
