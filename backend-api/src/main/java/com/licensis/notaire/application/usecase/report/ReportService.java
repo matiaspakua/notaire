@@ -14,6 +14,9 @@ import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.PaymentRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
+import com.licensis.notaire.repository.BudgetRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -41,6 +44,9 @@ public class ReportService {
     private final RegistrationDraftRepository registrationDraftRepository;
     private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
+    private final BudgetRepository budgetRepository;
+    private final DeedManagementRepository deedManagementRepository;
+    private final SubmittedDocumentRepository submittedDocumentRepository;
 
     private static final String REPORT_PATH_BUDGET = "reportes/reportePresupuestoSinInmueble.jasper";
     private static final String REPORT_PATH_BUDGET_PROPERTIES = "reportes/reportePresupuestoInmuebles.jasper";
@@ -54,21 +60,33 @@ public class ReportService {
                            NotebookRepository notebookRepository,
                            RegistrationDraftRepository registrationDraftRepository,
                            PaymentRepository paymentRepository,
-                           ItemRepository itemRepository) {
+                           ItemRepository itemRepository,
+                           BudgetRepository budgetRepository,
+                           DeedManagementRepository deedManagementRepository,
+                           SubmittedDocumentRepository submittedDocumentRepository) {
         this.dataSource = dataSource;
         this.testimonyRepository = testimonyRepository;
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;
         this.paymentRepository = paymentRepository;
         this.itemRepository = itemRepository;
+        this.budgetRepository = budgetRepository;
+        this.deedManagementRepository = deedManagementRepository;
+        this.submittedDocumentRepository = submittedDocumentRepository;
     }
 
     public byte[] generateBudgetReport(Integer idBudget) throws Exception {
+        if (!budgetRepository.existsById(idBudget)) {
+            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
+        }
         Map<String, Object> parameters = Map.of("pIdPresupuesto", idBudget);
         return generatePdfFromTemplate(REPORT_PATH_BUDGET, parameters);
     }
 
     public byte[] generateBudgetPropertiesReport(Integer idBudget) throws Exception {
+        if (!budgetRepository.existsById(idBudget)) {
+            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
+        }
         Map<String, Object> parameters = Map.of("idPresupuestoParam", idBudget);
         return generatePdfFromTemplate(REPORT_PATH_BUDGET_PROPERTIES, parameters);
     }
@@ -79,11 +97,17 @@ public class ReportService {
     }
 
     public byte[] generateManagementHistoryReport(Integer idManagement) throws Exception {
+        if (!deedManagementRepository.existsById(idManagement)) {
+            throw new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement);
+        }
         Map<String, Object> parameters = Map.of("idGestion", idManagement);
         return generatePdfFromTemplate(REPORT_PATH_MANAGEMENT_HISTORY, parameters);
     }
 
     public byte[] generateDocumentsDueSoonReport(Integer idSubmittedDocument) throws Exception {
+        if (!submittedDocumentRepository.existsById(idSubmittedDocument)) {
+            throw new ResourceNotFoundException("Documento presentado no encontrado con ID: " + idSubmittedDocument);
+        }
         Map<String, Object> parameters = Map.of("idDocumentoPresentado", idSubmittedDocument);
         return generatePdfFromTemplate(REPORT_PATH_DOCUMENTS_DUE_SOON, parameters);
     }

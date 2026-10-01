@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.report;
 
 import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,6 +53,8 @@ public class ReportController {
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                     .body(pdfBytes);
+        } catch (ResourceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to generate report '{}'", filename, e);
             return ResponseEntity.internalServerError().build();

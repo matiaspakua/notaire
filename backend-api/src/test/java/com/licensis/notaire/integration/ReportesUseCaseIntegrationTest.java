@@ -128,14 +128,14 @@ class ReportesUseCaseIntegrationTest {
     void shouldHandleBudgetEndpointGracefully() throws Exception {
         int nonExistentId = 99999;
         mockMvc.perform(get("/api/v1/reportes/presupuesto/" + nonExistentId))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU01/CU45: budget-inmuebles endpoint handles missing data gracefully")
     void shouldHandleBudgetPropertiesEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -150,14 +150,14 @@ class ReportesUseCaseIntegrationTest {
     @DisplayName("CU13: history-gestion endpoint handles missing gestion gracefully")
     void shouldHandleHistoryManagementEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/historial-gestion/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU42: documents-por-vencer endpoint handles missing document gracefully")
     void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -183,25 +183,25 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("All report endpoints are mapped (not 404)")
     void shouldMapAllReportEndpoints() throws Exception {
-        int[] statuses = {
-            mockMvc.perform(get("/api/v1/reportes/presupuesto/1")).andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite").param("nombreTipoTramite", "x"))
-                    .andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/historial-gestion/1")).andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numberManagement", "1"))
-                    .andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/libro-indice").param("anio", "2026"))
-                    .andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual").param("anio", "2026").param("mes", "6"))
-                    .andReturn().getResponse().getStatus(),
-            mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas").param("anio", "2026").param("mes", "6"))
-                    .andReturn().getResponse().getStatus()
+        MvcResult[] results = new MvcResult[] {
+                mockMvc.perform(get("/api/v1/reportes/presupuesto/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite").param("nombreTipoTramite", "x"))
+                        .andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/historial-gestion/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numberManagement", "1"))
+                        .andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/libro-indice").param("anio", "2026"))
+                        .andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual").param("anio", "2026").param("mes", "6"))
+                        .andReturn(),
+                mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas").param("anio", "2026").param("mes", "6"))
+                        .andReturn()
         };
 
-        for (int status : statuses) {
-            assertThat(status).as("Endpoint must be mapped (not 404)").isNotEqualTo(404);
+        for (MvcResult result : results) {
+            assertThat(result.getHandler()).as("Endpoint must be mapped (not 404)").isNotNull();
         }
     }
 }
