@@ -20,45 +20,45 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: opencode argv, opencode env isolation, codex argv unchanged, guards for both, last message extraction
-- [ ] 3.2 `test_worker.py` covers every scenario in the delta spec
-- [ ] 3.3 n/a — no integration tests apply
-- [ ] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
-- [ ] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
+- [x] 3.1 Enumerate test cases: opencode argv, opencode env isolation, codex argv unchanged, guards for both, last message extraction
+- [x] 3.2 `test_worker.py` covers every scenario in the delta spec
+- [x] 3.3 n/a — no integration tests apply
+- [x] 3.4 Run them and observe them fail — `python3 -m unittest discover -s local-ai/sdlc/tests`
+- [x] 3.5 Every `#### Scenario:` maps to a test (see `design.md`)
 
 ## 4. Implementación
 
-- [ ] 4.1 `bin/worker.py`: `command`, `environment`, `last_message`, `run`
-- [ ] 4.2 `local-ai/opencode/opencode.json`
-- [ ] 4.3 Adapter keys `backend.agent`, `backend.opencode_model`; `run_worker` calls `worker.py`
+- [x] 4.1 `bin/worker.py`: `command`, `environment`, `last_message`, `run`
+- [x] 4.2 `local-ai/opencode/opencode.json`
+- [x] 4.3 Adapter keys `backend.agent`, `backend.opencode_model`; `run_worker` calls `worker.py`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 n/a — no existing test covers the setup script
+- [x] 5.1 n/a — no existing test covers the setup script
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
-- [ ] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
-- [ ] 6.3 `bash scripts/preflight.sh` green on the branch
-- [ ] 6.4 A foreman run of a real issue with `AGENT=opencode` reaches its PR
+- [x] 6.1 `python3 -m unittest discover -s local-ai/sdlc/tests` and `-s scripts/tests` green
+- [x] 6.2 `bash -n local-ai/setup-omlx-codex.sh`; default preset rerun is a no-op
+- [x] 6.3 `bash scripts/preflight.sh` green on the branch
+- [x] 6.4 A foreman run of a real issue with `AGENT=opencode` reaches its PR
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI surface
+- [x] 7.1 n/a — no UI surface
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `local-ai/README.md`: running the worker with OpenCode
-- [ ] 8.2 `local-ai/sdlc/AI-SDLC.md`: worker agents and OpenCode isolation
-- [ ] 8.3 `CHANGELOG.md`: n/a — not user visible
+- [x] 8.1 `local-ai/README.md`: running the worker with OpenCode
+- [x] 8.2 `local-ai/sdlc/AI-SDLC.md`: worker agents and OpenCode isolation
+- [x] 8.3 `CHANGELOG.md`: n/a — not user visible
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One commit per concern, Conventional Commits, `Refs #1107`
-- [ ] 9.2 Only the final commit carries `Closes #1107`
-- [ ] 9.3 No secrets, no commented-out code
-- [ ] 9.4 Commit SHAs recorded in `traceability.md`
+- [x] 9.1 One commit per concern, Conventional Commits, `Refs #1107`
+- [x] 9.2 Only the final commit carries `Closes #1107`
+- [x] 9.3 No secrets, no commented-out code
+- [x] 9.4 Commit SHAs recorded in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -76,9 +76,9 @@
 ## 12. Gate 5 — Smoke test y cierre
 
 - [ ] 12.1 Smoke test: `AGENT=opencode foreman.sh <n>` completes a real issue end to end
-- [ ] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
+- [x] 12.2 Rollback path confirmed (`patch_omlx.py --restore`, `git revert`)
 - [ ] 12.3 Issue #1107 closed on merge
-- [ ] 12.4 Change archived in this PR (`openspec archive opencode-worker-backend-1107`)
+- [x] 12.4 Change archived in this PR (`openspec archive opencode-worker-backend-1107`)
 
 ## Definition of Done
 
