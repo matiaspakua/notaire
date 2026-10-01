@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `test/1062_fix_reportes_500` | created |
 | Tasks | `tasks.md` | pending |
 | Commits | 5d4864b, 76874f0, eb5f8e9, e875c61, 0e8cfc6, 60f4bfa | done |
-| Pull Request | pending | pending |
+| Pull Request | #1110 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
