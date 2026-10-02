@@ -74,11 +74,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push `cursor/gh-secure-codeql-pipeline-2d5b`
-- [ ] 10.2 Open the PR referencing Issue #1135 and CU78
+- [x] 10.1 Push `cursor/gh-secure-codeql-pipeline-2d5b`
+- [x] 10.2 Open the PR referencing Issue #1135 and CU78 (#1136)
 - [ ] 10.3 Wait for CI, including the new CodeQL workflow
 - [ ] 10.4 Gate 4 — CI green and review
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md` (#1136)
 
 ## 11. Deploy
 

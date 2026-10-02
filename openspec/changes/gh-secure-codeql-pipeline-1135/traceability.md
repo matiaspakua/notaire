@@ -18,7 +18,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/gh-secure-codeql-pipeline-2d5b` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `d47f7d98` ci(security): add CodeQL and the gh-secure baseline | in progress |
-| Pull Request | pending | pending |
+| Pull Request | #1136 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a — pipeline only, no release artifact | pending |
