@@ -34,7 +34,9 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
     });
     expect(created.ok, `createUsuario failed: ${created.status} ${created.error}`).toBe(true);
 
-    // Clear admin session so UI login is as EMPLEADO.
+    // Clear admin session only after a same-origin navigation — localStorage is
+    // denied on about:blank (SecurityError). Mirror TS-0093 / setup/auth.ts.
+    await page.goto("/login");
     await page.context().clearCookies();
     await page.evaluate(() => localStorage.clear());
 
