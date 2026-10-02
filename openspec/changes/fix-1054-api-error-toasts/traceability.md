@@ -20,9 +20,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1054-api-error-toasts/` | Gate 1 complete |
 | Branch | `cursor/fix-1054-api-error-toasts-69d3` | active |
 | Tasks | `tasks.md` | implementing |
-| Commits | pending (record after commit) | pending |
-| Pull Request | pending | pending |
-| CI run | pending | pending |
+| Commits | `3d560ca3` | recorded |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1145 | draft |
+| CI run | pending (watching heavy gates) | pending |
+
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
