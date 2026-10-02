@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/docs-ai-sdlc-cloud-fleet-learnings-1120/` (`skip_specs: true`) | drafted |
 | Branch | `cursor/docs-ai-sdlc-cloud-learnings-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `f059f991` — docs(ai-sdlc): record Cloud fleet process learnings | done |
+| Commits | `ca59a095` — docs(ai-sdlc): record Cloud fleet process learnings | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -33,16 +33,16 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1120.
 | Checklist / architecture / README document the five learnings | Grep under `docs/300-development/304-ai-sdlc-cloud/` | passed |
 | Docs-only change; no product code | `git diff` scoped to docs + openspec | passed |
 | OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | passed |
-| PR commits include `Closes #1120` | Commit message inspection | passed (`f059f991`) |
+| PR commits include `Closes #1120` | Commit message inspection | passed (`ca59a095`) |
 | Does not use or depend on `local-ai/` | Grep change for runtime local-ai deps | passed |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | `f059f991` |
-| `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | `f059f991` |
-| `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | `f059f991` |
+| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | `ca59a095` |
+| `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | `ca59a095` |
+| `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | `ca59a095` |
 
 ## Gate log
 
