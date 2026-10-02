@@ -7,6 +7,8 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.ConceptRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
