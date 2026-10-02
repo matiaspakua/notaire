@@ -1,19 +1,25 @@
 package com.licensis.notaire.adapter.in.web.budget;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.dto.DtoBudgetResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.Person;
 import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
 import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
 import com.licensis.notaire.application.usecase.budget.BudgetService;
+import com.licensis.notaire.repository.PersonRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,27 +49,94 @@ public class BudgetController {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
 
+    record PersonRef(Integer personId) {}
+
+    record BudgetRequest(
+            Integer number,
+            Date date,
+            String encabezado,
+            @NotBlank String status,
+            @JsonAlias("amount") Float propertyAmount,
+            String notes,
+            Integer personId,
+            @JsonProperty("person") PersonRef person) {}
+
+    record BudgetResponse(
+            Integer idBudget,
+            int number,
+            Date date,
+            String encabezado,
+            String status,
+            Float propertyAmount,
+            String notes,
+            Integer personId,
+            int version) {}
+
     private final BudgetService budgetService;
     private final GetBudgetSummaryUseCase budgetSummaryUseCase;
     private final BudgetTemplateService budgetTemplateService;
     private final BudgetCatalogItemsService budgetCatalogoItemsService;
+    private final PersonRepository personRepository;
 
     public BudgetController(BudgetService budgetService,
             GetBudgetSummaryUseCase budgetSummaryUseCase,
             BudgetTemplateService budgetTemplateService,
-            BudgetCatalogItemsService budgetCatalogoItemsService) {
+            BudgetCatalogItemsService budgetCatalogoItemsService,
+            PersonRepository personRepository) {
         this.budgetService = budgetService;
         this.budgetSummaryUseCase = budgetSummaryUseCase;
         this.budgetTemplateService = budgetTemplateService;
         this.budgetCatalogoItemsService = budgetCatalogoItemsService;
+        this.personRepository = personRepository;
+    }
+
+    private Integer resolvePersonId(BudgetRequest request) {
+        if (request.personId() != null) {
+            return request.personId();
+        }
+        return request.person() != null ? request.person().personId() : null;
+    }
+
+    private BudgetResponse toResponse(Budget budget) {
+        Integer personId = budget.getFkIdPerson() != null ? budget.getFkIdPerson().getPersonId() : null;
+        return new BudgetResponse(
+                budget.getIdBudget(),
+                budget.getNumber(),
+                budget.getDate(),
+                budget.getEncabezado(),
+                budget.getStatus(),
+                budget.getPropertyAmount(),
+                budget.getNotes(),
+                personId,
+                budget.getVersion());
+    }
+
+    private void applyRequest(Budget budget, BudgetRequest request) {
+        if (request.number() != null) {
+            budget.setNumber(request.number());
+        }
+        if (request.date() != null) {
+            budget.setDate(request.date());
+        }
+        budget.setEncabezado(request.encabezado());
+        budget.setStatus(request.status());
+        budget.setPropertyAmount(request.propertyAmount());
+        budget.setNotes(request.notes());
+        Integer personId = resolvePersonId(request);
+        if (personId != null) {
+            Person person = personRepository.findById(personId).orElse(null);
+            budget.setFkIdPerson(person);
+        } else {
+            budget.setFkIdPerson(null);
+        }
     }
 
     @GetMapping
     @Operation(summary = "Obtener presupuestos paginados",
             description = "Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)")
-    public ResponseEntity<Page<Budget>> getAll(
+    public ResponseEntity<Page<BudgetResponse>> getAll(
             @PageableDefault(size = 20, sort = "idBudget", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(budgetService.findAllPaged(pageable));
+        return ResponseEntity.ok(budgetService.findAllPaged(pageable).map(this::toResponse));
     }
 
     @ApiResponses({
@@ -72,8 +146,9 @@ public class BudgetController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener presupuesto por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Budget> getById(@PathVariable Integer id) {
+    public ResponseEntity<BudgetResponse> getById(@PathVariable Integer id) {
         return budgetService.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -95,16 +170,16 @@ public class BudgetController {
     @GetMapping("/persona/{idPerson}")
     @Operation(summary = "Obtener presupuestos de una persona (CU60)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Budget>> getByPerson(@PathVariable Integer idPerson) {
-        return ResponseEntity.ok(budgetService.findByPerson(idPerson));
+    public ResponseEntity<List<BudgetResponse>> getByPerson(@PathVariable Integer idPerson) {
+        return ResponseEntity.ok(budgetService.findByPerson(idPerson).stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/buscar")
     @Operation(summary = "Buscar presupuestos por estado (CU60)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Budget>> search(
+    public ResponseEntity<List<BudgetResponse>> search(
             @Parameter(description = "Estado del presupuesto") @RequestParam(required = false) String status) {
-        return ResponseEntity.ok(budgetService.findByStatus(status));
+        return ResponseEntity.ok(budgetService.findByStatus(status).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -114,9 +189,11 @@ public class BudgetController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo presupuesto")
-    public ResponseEntity<Budget> create(@RequestBody Budget entity) {
+    public ResponseEntity<BudgetResponse> create(@Valid @RequestBody BudgetRequest request) {
+        Budget entity = new Budget();
+        applyRequest(entity, request);
         Budget saved = budgetService.create(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @ApiResponses({
@@ -125,10 +202,15 @@ public class BudgetController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar presupuesto")
-    public ResponseEntity<Budget> update(@PathVariable Integer id, @RequestBody Budget entity) {
+    public ResponseEntity<BudgetResponse> update(@PathVariable Integer id, @Valid @RequestBody BudgetRequest request) {
         try {
-            Budget updated = budgetService.update(id, entity);
-            return ResponseEntity.ok(updated);
+            return budgetService.findById(id)
+                    .map(existing -> {
+                        applyRequest(existing, request);
+                        Budget updated = budgetService.update(id, existing);
+                        return ResponseEntity.ok(toResponse(updated));
+                    })
+                    .orElse(ResponseEntity.notFound().build());
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

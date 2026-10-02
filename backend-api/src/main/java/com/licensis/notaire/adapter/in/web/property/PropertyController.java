@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +26,60 @@ import java.util.List;
 @Tag(name = "Inmueble", description = "API para gestionar inmueble")
 public class PropertyController {
 
+    record PropertyRequest(
+            String cadastralDesignation,
+            Float fiscalAppraisal,
+            String address,
+            String notes,
+            String registrationNumber,
+            String volumeFolioLandRecord,
+            String boundaries) {}
+
+    record PropertyResponse(
+            Integer idProperty,
+            String cadastralDesignation,
+            Float fiscalAppraisal,
+            String address,
+            String notes,
+            String registrationNumber,
+            String volumeFolioLandRecord,
+            String boundaries,
+            int version) {}
+
     private final PropertyRepository repository;
 
     public PropertyController(PropertyRepository repository) {
         this.repository = repository;
     }
 
+    private PropertyResponse toResponse(Property entity) {
+        return new PropertyResponse(
+                entity.getIdProperty(),
+                entity.getCadastralDesignation(),
+                entity.getFiscalAppraisal(),
+                entity.getAddress(),
+                entity.getNotes(),
+                entity.getRegistrationNumber(),
+                entity.getVolumeFolioLandRecord(),
+                entity.getBoundaries(),
+                entity.getVersion());
+    }
+
+    private void applyRequest(Property entity, PropertyRequest request) {
+        entity.setCadastralDesignation(request.cadastralDesignation());
+        entity.setFiscalAppraisal(request.fiscalAppraisal());
+        entity.setAddress(request.address());
+        entity.setNotes(request.notes());
+        entity.setRegistrationNumber(request.registrationNumber());
+        entity.setVolumeFolioLandRecord(request.volumeFolioLandRecord());
+        entity.setBoundaries(request.boundaries());
+    }
+
     @GetMapping
     @Operation(summary = "Obtener todos los inmueble")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Property>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<PropertyResponse>> getAll() {
+        return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -45,8 +89,9 @@ public class PropertyController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener inmueble por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Property> getById(@PathVariable Integer id) {
+    public ResponseEntity<PropertyResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -58,10 +103,12 @@ public class PropertyController {
     })
     @PostMapping
     @Operation(summary = "Crear nuevo inmueble")
-    public ResponseEntity<Object> create(@RequestBody Property entity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody PropertyRequest request) {
         try {
+            Property entity = new Property();
+            applyRequest(entity, request);
             Property saved = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -73,13 +120,10 @@ public class PropertyController {
     })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar inmueble")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Property entity) {
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody PropertyRequest request) {
         return repository.findById(id).map(existing -> {
-            entity.setIdProperty(id);
-            if (entity.getVersion() == 0 && existing.getVersion() > 0) {
-                entity.setVersion(existing.getVersion());
-            }
-            repository.save(entity);
+            applyRequest(existing, request);
+            repository.save(existing);
             return ResponseEntity.ok().<Void>build();
         }).orElse(ResponseEntity.notFound().build());
     }

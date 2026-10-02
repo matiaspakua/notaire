@@ -43,13 +43,16 @@ class PaginationTest {
     @Mock
     private BudgetCatalogItemsService budgetCatalogoItemsService;
 
+    @Mock
+    private com.licensis.notaire.repository.PersonRepository personRepository;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                 new BudgetController(budgetService, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogoItemsService))
+                        budgetTemplateService, budgetCatalogoItemsService, personRepository))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

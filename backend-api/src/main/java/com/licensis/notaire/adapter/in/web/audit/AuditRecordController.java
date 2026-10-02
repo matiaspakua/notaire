@@ -1,7 +1,6 @@
 package com.licensis.notaire.adapter.in.web.audit;
 
 import com.licensis.notaire.dto.DtoAuditRecord;
-import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.application.usecase.audit.AuditRecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,8 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,18 +85,6 @@ public class AuditRecordController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
         return ResponseEntity.ok(service.findByUserIdAsDto(idUser));
-    }
-
-    @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
-})
-    @PostMapping
-    @Operation(summary = "Crear nuevo registro de auditoria")
-    public ResponseEntity<AuditRecord> create(@RequestBody AuditRecord entity) {
-        AuditRecord saved = service.save(entity);
-        return ResponseEntity.ok(saved);
     }
 
     private Pageable buildPageable(Integer page, Integer size, String sort) {

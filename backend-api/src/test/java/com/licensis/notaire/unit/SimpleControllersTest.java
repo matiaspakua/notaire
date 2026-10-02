@@ -25,6 +25,7 @@ import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Person;
@@ -93,8 +94,12 @@ class SimpleControllersTest {
     @DisplayName("CopiaController")
     class CopyControllerTests {
         private final CopyService service = mock(CopyService.class);
+        private final com.licensis.notaire.repository.PersonRepository personRepository =
+                mock(com.licensis.notaire.repository.PersonRepository.class);
+        private final com.licensis.notaire.repository.TestimonyRepository testimonyRepository =
+                mock(com.licensis.notaire.repository.TestimonyRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new CopyController(service)).build();
+                standaloneSetup(new CopyController(service, personRepository, testimonyRepository)).build();
 
         @Test
         @DisplayName("GET all should return 200")
@@ -120,14 +125,16 @@ class SimpleControllersTest {
         @DisplayName("POST should return 201 on success and 500 on failure")
         void create() throws Exception {
             Copy c = new Copy();
+            c.setNumber(1);
             when(service.save(any(Copy.class))).thenReturn(c);
             when(service.canCreateCopyForTestimony(any())).thenReturn(true);
+            String body = "{\"number\":1,\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copia").contentType("application/json")
-                            .content(mapper.writeValueAsString(c)))
+                            .content(body))
                     .andExpect(status().isCreated());
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/copia").contentType("application/json")
-                            .content(mapper.writeValueAsString(c)))
+                            .content(body))
                     .andExpect(status().isInternalServerError());
         }
 
@@ -135,15 +142,17 @@ class SimpleControllersTest {
         @DisplayName("PUT should return 200 when present, 404 when missing, 500 on failure")
         void update() throws Exception {
             Copy c = new Copy();
-            when(service.existsById(1)).thenReturn(true);
-            when(service.existsById(2)).thenReturn(false);
+            c.setNumber(1);
+            when(service.findById(1)).thenReturn(Optional.of(c));
+            when(service.findById(2)).thenReturn(Optional.empty());
+            String body = "{\"number\":1,\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(c))).andExpect(status().isOk());
+                    .content(body)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/copia/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(c))).andExpect(status().isNotFound());
+                    .content(body)).andExpect(status().isNotFound());
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(c))).andExpect(status().isInternalServerError());
+                    .content(body)).andExpect(status().isInternalServerError());
         }
 
         @Test
@@ -239,8 +248,10 @@ class SimpleControllersTest {
     @DisplayName("HistorialController")
     class HistoryControllerTests {
         private final HistoryRepository repo = mock(HistoryRepository.class);
+        private final ManagementStatusRepository statusRepo = mock(ManagementStatusRepository.class);
+        private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new HistoryController(repo)).build();
+                standaloneSetup(new HistoryController(repo, statusRepo, managementRepo)).build();
 
         @Test
         @DisplayName("GET all and by id and by gestion should work")
@@ -260,31 +271,37 @@ class SimpleControllersTest {
         @Test
         @DisplayName("POST/PUT/DELETE should cover happy and error paths")
         void writeEndpoints() throws Exception {
-            History h = new History();
-            when(repo.existsById(1)).thenReturn(true);
-            when(repo.existsById(2)).thenReturn(false);
+            String body = "{\"notes\":\"n\",\"managementStatusId\":1,\"managementId\":2}";
+            ManagementStatus status = new ManagementStatus();
+            DeedManagement management = new DeedManagement();
+            when(statusRepo.findById(1)).thenReturn(Optional.of(status));
+            when(managementRepo.findById(2)).thenReturn(Optional.of(management));
+            History saved = new History();
+            saved.setIdHistory(1);
+            when(repo.save(any(History.class))).thenReturn(saved);
+            when(repo.findById(1)).thenReturn(Optional.of(saved));
+            when(repo.findById(2)).thenReturn(Optional.empty());
+
             mvc.perform(post("/api/v1/historial").contentType("application/json")
-                    .content(mapper.writeValueAsString(h))).andExpect(status().isCreated());
+                    .content(body)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/historial/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(h))).andExpect(status().isOk());
+                    .content(body)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/historial/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(h))).andExpect(status().isNotFound());
+                    .content(body)).andExpect(status().isNotFound());
 
             History toDelete = new History();
-            com.licensis.notaire.business.ManagementStatus status =
-                    new com.licensis.notaire.business.ManagementStatus();
             status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
             toDelete.setFkIdManagementStatus(status);
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
-            when(repo.findById(2)).thenReturn(Optional.empty());
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(History.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/historial").contentType("application/json")
-                    .content(mapper.writeValueAsString(h))).andExpect(status().isInternalServerError());
+                    .content(body)).andExpect(status().isInternalServerError());
+            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             mvc.perform(put("/api/v1/historial/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(h))).andExpect(status().isInternalServerError());
+                    .content(body)).andExpect(status().isInternalServerError());
 
             doThrow(new RuntimeException("fk")).when(repo).delete(toDelete);
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isConflict());
@@ -371,6 +388,8 @@ class SimpleControllersTest {
         void allPaths() throws Exception {
             Deed e = new Deed();
             e.setIdDeed(1);
+            e.setStatus("BORRADOR");
+            e.setNumber(10);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(e), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(e));
             when(service.findById(2)).thenReturn(Optional.empty());
@@ -384,18 +403,19 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/escrituras/escribanos-disponibles")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/escrituras/buscar?numero=10")).andExpect(status().isOk());
 
+            String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
-                    .content(mapper.writeValueAsString(e))).andExpect(status().isCreated());
+                    .content(deedBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/escrituras/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(e))).andExpect(status().isOk());
+                    .content(deedBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/escrituras/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(e))).andExpect(status().isNotFound());
+                    .content(deedBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/escrituras/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/escrituras/2")).andExpect(status().isNotFound());
 
             when(service.save(any(Deed.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
-                    .content(mapper.writeValueAsString(e))).andExpect(status().isInternalServerError());
+                    .content(deedBody)).andExpect(status().isInternalServerError());
         }
     }
 
@@ -409,9 +429,11 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
         private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogoItemsService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
+        private final com.licensis.notaire.repository.PersonRepository personRepository =
+                mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogoItemsService))
+                        budgetTemplateService, budgetCatalogoItemsService, personRepository))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -420,6 +442,9 @@ class SimpleControllersTest {
         void allPaths() throws Exception {
             Budget p = new Budget();
             p.setIdBudget(1);
+            p.setStatus("Pending");
+            p.setEncabezado("Test");
+            p.setNumber(1);
             when(service.findAllPaged(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
@@ -434,15 +459,18 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/presupuestos/persona/5")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/presupuestos/buscar?estado=activo")).andExpect(status().isOk());
 
+            String budgetBody = """
+                    {"number":1,"encabezado":"Test","status":"Pending","propertyAmount":10.0}
+                    """;
             mvc.perform(post("/api/v1/presupuestos").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
+                    .content(budgetBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isOk());
+                    .content(budgetBody)).andExpect(status().isOk());
 
-            when(service.update(any(Integer.class), any(Budget.class)))
-                    .thenThrow(new ResourceNotFoundException("not found"));
+            when(service.findById(1)).thenReturn(Optional.empty());
             mvc.perform(put("/api/v1/presupuestos/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isNotFound());
+                    .content(budgetBody)).andExpect(status().isNotFound());
+            when(service.findById(1)).thenReturn(Optional.of(p));
 
             mvc.perform(delete("/api/v1/presupuestos/1")).andExpect(status().isNoContent());
             doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
@@ -698,25 +726,27 @@ class SimpleControllersTest {
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(repo.save(any(IdentificationType.class))).thenReturn(t);
 
             mvc.perform(get("/api/v1/tipo-identificacion")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
 
+            String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
             mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isCreated());
+                    .content(typeBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/tipo-identificacion/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isOk());
+                    .content(typeBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/tipo-identificacion/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isNotFound());
+                    .content(typeBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
 
             when(repo.save(any(IdentificationType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
+                    .content(typeBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/tipo-identificacion/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(t))).andExpect(status().isInternalServerError());
+                    .content(typeBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isConflict());
         }
@@ -813,28 +843,29 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/people/2")).andExpect(status().isNotFound());
             mvc.perform(get("/api/v1/people/search?firstName=Juan")).andExpect(status().isOk());
 
+            String personBody = """
+                    {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
+                    """;
             mvc.perform(post("/api/v1/people").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
+                    .content(personBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/people/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isOk());
+                    .content(personBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/people/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isNotFound());
+                    .content(personBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
             // POST with missing tipo identificacion should use default
-            Person person2 = new Person();
-            person2.setPersonId(2);
-            person2.setFirstName("Ana");
-            person2.setLastName("Gomez");
-            person2.setIdentificationNumber("87654321");
+            String person2Body = """
+                    {"firstName":"Ana","lastName":"Gomez","identificationNumber":"87654321","isClient":false}
+                    """;
             mvc.perform(post("/api/v1/people").contentType("application/json")
-                    .content(mapper.writeValueAsString(person2))).andExpect(status().isCreated());
+                    .content(person2Body)).andExpect(status().isCreated());
 
             // POST when save fails
             when(service.save(any(Person.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/people").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isConflict());
+                    .content(personBody)).andExpect(status().isConflict());
         }
 
         @Test
@@ -851,8 +882,11 @@ class SimpleControllersTest {
             when(typeRepo.save(any(IdentificationType.class))).thenReturn(created);
             when(service.save(any(Person.class))).thenReturn(p);
 
+            String personBody = """
+                    {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
+                    """;
             mvc.perform(post("/api/v1/people").contentType("application/json")
-                    .content(mapper.writeValueAsString(p))).andExpect(status().isCreated());
+                    .content(personBody)).andExpect(status().isCreated());
             verify(typeRepo).save(any(IdentificationType.class));
         }
     }

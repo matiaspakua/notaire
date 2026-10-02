@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.budget;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.config.JpaControllerProvider;
 import com.licensis.notaire.jpa.BudgetTemplateJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,16 +47,58 @@ public class BudgetTemplateController {
 
     private static final Logger LOG = Logger.getLogger(BudgetTemplateController.class.getName());
 
+    record BudgetTemplatePkRequest(
+            @JsonProperty("fkIdProcedureType") Integer fkIdProcedureType,
+            @JsonProperty("fkIdConcept") Integer fkIdConcept) {}
+
+    record BudgetTemplateRequest(
+            String notes,
+            Integer fkIdProcedureType,
+            Integer fkIdConcept,
+            @JsonProperty("budgetTemplatePK") BudgetTemplatePkRequest budgetTemplatePK) {}
+
+    record BudgetTemplateResponse(
+            Integer fkIdProcedureType,
+            Integer fkIdConcept,
+            String notes,
+            int version) {}
+
     private BudgetTemplateJpaController getJpaController() {
         return new BudgetTemplateJpaController(null, JpaControllerProvider.getEntityManagerFactory());
+    }
+
+    private Integer resolveProcedureTypeId(BudgetTemplateRequest request) {
+        if (request.fkIdProcedureType() != null) {
+            return request.fkIdProcedureType();
+        }
+        return request.budgetTemplatePK() != null
+                ? request.budgetTemplatePK().fkIdProcedureType() : null;
+    }
+
+    private Integer resolveConceptId(BudgetTemplateRequest request) {
+        if (request.fkIdConcept() != null) {
+            return request.fkIdConcept();
+        }
+        return request.budgetTemplatePK() != null
+                ? request.budgetTemplatePK().fkIdConcept() : null;
+    }
+
+    private BudgetTemplateResponse toResponse(BudgetTemplate entity) {
+        BudgetTemplatePK pk = entity.getBudgetTemplatePK();
+        return new BudgetTemplateResponse(
+                pk != null ? pk.getFkIdProcedureType() : null,
+                pk != null ? pk.getFkIdConcept() : null,
+                entity.getNotes(),
+                entity.getVersion());
     }
 
     @GetMapping
     @Operation(summary = "Obtener todas las plantillas de presupuesto")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<BudgetTemplate>> getAll() {
+    public ResponseEntity<List<BudgetTemplateResponse>> getAll() {
         try {
-            return ResponseEntity.ok(getJpaController().findBudgetTemplateEntities());
+            return ResponseEntity.ok(getJpaController().findBudgetTemplateEntities()
+                    .stream().map(this::toResponse).toList());
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error al obtener plantillas de presupuesto", e);
             return ResponseEntity.internalServerError().build();
@@ -64,9 +108,11 @@ public class BudgetTemplateController {
     @GetMapping("/tipo-tramite/{idProcedureType}")
     @Operation(summary = "Obtener plantillas de presupuesto por tipo de tramite")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<BudgetTemplate>> getByTypeProcedure(@PathVariable Integer idProcedureType) {
+    public ResponseEntity<List<BudgetTemplateResponse>> getByTypeProcedure(
+            @PathVariable Integer idProcedureType) {
         try {
-            return ResponseEntity.ok(getJpaController().findBudgetTemplates(idProcedureType));
+            return ResponseEntity.ok(getJpaController().findBudgetTemplates(idProcedureType)
+                    .stream().map(this::toResponse).toList());
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error al obtener plantillas por tipo de tramite " + idProcedureType, e);
             return ResponseEntity.internalServerError().build();
@@ -80,8 +126,15 @@ public class BudgetTemplateController {
 })
     @PostMapping
     @Operation(summary = "Crear nueva plantilla de presupuesto")
-    public ResponseEntity<?> create(@RequestBody BudgetTemplate entity) {
+    public ResponseEntity<?> create(@Valid @RequestBody BudgetTemplateRequest request) {
+        Integer procedureTypeId = resolveProcedureTypeId(request);
+        Integer conceptId = resolveConceptId(request);
+        if (procedureTypeId == null || conceptId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "fkIdProcedureType y fkIdConcept son requeridos"));
+        }
         try {
+            BudgetTemplate entity = new BudgetTemplate(new BudgetTemplatePK(procedureTypeId, conceptId));
+            entity.setNotes(request.notes());
             getJpaController().create(entity);
             BudgetTemplatePK pk = entity.getBudgetTemplatePK();
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -97,55 +150,35 @@ public class BudgetTemplateController {
         }
     }
 
-    /**
-     * Update a PlantillaPresupuesto.
-     *
-     * To prevent OptimisticLockException (issue #340), we first retrieve the current
-     * persisted entity and copy the client's changes onto it. This ensures the
-     * @Version field is always current, avoiding stale-data conflicts when the
-     * caller does not send the version field.
-     */
     @PutMapping("/tipo-tramite/{idProcedureType}/concepto/{idConcept}")
     @Operation(summary = "Actualizar plantilla de presupuesto")
     public ResponseEntity<?> update(
             @PathVariable Integer idProcedureType,
             @PathVariable Integer idConcept,
-            @RequestBody BudgetTemplate entity
+            @Valid @RequestBody BudgetTemplateRequest request
     ) {
         try {
             BudgetTemplatePK pk = new BudgetTemplatePK(idProcedureType, idConcept);
 
-            // Fetch current state to carry the correct @Version value
             BudgetTemplate current = getJpaController().findBudgetTemplate(pk);
             if (current == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            // Apply incoming changes (only mutable fields — PK and version come from DB)
-            entity.setBudgetTemplatePK(pk);
-            if (entity.getNotes() != null) {
-                current.setNotes(entity.getNotes());
-            }
-            // Propagate related entities if provided
-            if (entity.getConcept() != null) {
-                current.setConcept(entity.getConcept());
-            }
-            if (entity.getProcedureType() != null) {
-                current.setProcedureType(entity.getProcedureType());
+            if (request.notes() != null) {
+                current.setNotes(request.notes());
             }
 
             getJpaController().edit(current);
             return ResponseEntity.ok().build();
 
         } catch (OptimisticLockException e) {
-            // Concurrent modification detected — client should re-fetch and retry
             LOG.log(Level.WARNING, "Conflicto de concurrencia al actualizar plantilla de presupuesto", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Conflicto de concurrencia: la plantilla fue modificada por otro usuario. Recargue y vuelva a intentarlo."));
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            // Check if the root cause is an OptimisticLockException (can be wrapped in RollbackException)
             Throwable cause = e.getCause();
             while (cause != null) {
                 if (cause instanceof OptimisticLockException) {
