@@ -274,6 +274,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Audit-log HTTP mutations denied end-to-end** (issue #1060 residual, CU73/CU78):
+  confirms GET-only `/api/v1/audit-log` (POST already removed in #1124); unit +
+  integration coverage for PUT/DELETE → 405; Bruno negatives under
+  `api-test/audit-records/`; OpenAPI tag is consult-only; threat model SR-07
+  notes the HTTP forge vector is closed.
 - **Request DTOs replace JPA `@RequestBody` entity binding** (issue #1068, CU78):
   thirteen write endpoints now bind validated request records (client-writable
   fields only) and return response DTOs, so clients cannot mass-assign

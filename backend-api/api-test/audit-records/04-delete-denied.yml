@@ -1,0 +1,25 @@
+info:
+  name: Reject DELETE audit-log
+  type: http
+  seq: 4
+  description: |-
+      ## Deny forge — DELETE /api/v1/audit-log/{id}
+      Audit rows must not be deleted over HTTP. Expect 405 (issue #1060 AC).
+      Traceability: CU73, CU78, #1060 / #556
+
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/audit-log/1"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 405 Method Not Allowed", function () {
+            expect(res.getStatus()).to.equal(405);
+          });

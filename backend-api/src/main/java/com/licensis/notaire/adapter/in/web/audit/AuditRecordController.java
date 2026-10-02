@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/audit-log")
-@Tag(name = "RegistroAuditoria", description = "API para consultar y administrar auditoria de usuarios")
+@Tag(name = "RegistroAuditoria", description = "API para consultar auditoria de usuarios (solo lectura; mutaciones denegadas)")
 public class AuditRecordController {
 
     private final AuditRecordService service;
