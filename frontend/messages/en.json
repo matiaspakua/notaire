@@ -830,7 +830,8 @@
     "username": "Username",
     "password": "Password",
     "submit": "Sign in",
-    "error": "Invalid username or password"
+    "error": "Invalid username or password",
+    "sessionExpired": "Your session has expired. Please sign in again."
   },
   "confirmDialog": {
     "title": "Confirm deletion?",

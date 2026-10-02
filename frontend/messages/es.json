@@ -830,7 +830,8 @@
     "username": "Usuario",
     "password": "Contraseña",
     "submit": "Ingresar",
-    "error": "Usuario o contraseña incorrectos"
+    "error": "Usuario o contraseña incorrectos",
+    "sessionExpired": "Su sesión ha expirado. Inicie sesión nuevamente."
   },
   "confirmDialog": {
     "title": "¿Confirmar eliminación?",

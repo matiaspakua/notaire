@@ -3,6 +3,7 @@
  * All API calls go through these helpers — never use fetch() directly in components.
  */
 import { logger } from "@/lib/logger";
+import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
 
 // Use relative path so requests are proxied by the Next.js server (rewrites in next.config.ts).
 // This ensures the browser never needs to resolve internal Docker hostnames like "backend".
@@ -56,14 +57,21 @@ function buildHeaders(base: Record<string, string> = {}): Record<string, string>
  */
 export class ApiError extends Error {
   readonly status: number;
+  readonly path: string;
   readonly body: string;
 
   constructor(status: number, path: string, body: string) {
     super(`[${status}] ${path}: ${body}`);
     this.name = "ApiError";
     this.status = status;
+    this.path = path;
     this.body = body;
   }
+}
+
+function rejectApiFailure(status: number, path: string, body: string): never {
+  handleAuthenticatedSessionExpiry(status, path);
+  throw new ApiError(status, path, body);
 }
 
 async function handleResponse<T>(res: Response, path: string, method: string): Promise<T> {
@@ -75,7 +83,7 @@ async function handleResponse<T>(res: Response, path: string, method: string): P
       status: res.status,
       body: text.slice(0, 500),
     });
-    throw new ApiError(res.status, path, text);
+    rejectApiFailure(res.status, path, text);
   }
   const text = await res.text();
   return text ? (JSON.parse(text) as T) : ({} as T);
@@ -147,15 +155,22 @@ export async function apiDelete(path: string): Promise<void> {
       status: res.status,
       body: text.slice(0, 500),
     });
-    throw new Error(`[${res.status}] DELETE ${path}: ${text}`);
+    // Throw ApiError so 401 reaches the same session-expiry path as other verbs.
+    rejectApiFailure(res.status, path, text);
   }
 }
 
 export async function apiGetBytes(path: string): Promise<Blob> {
   const res = await fetch(`${BASE_URL}${path}`, { headers: buildHeaders() });
   if (!res.ok) {
-    logger.error("api_call_failed", { method: "GET", path, status: res.status });
-    throw new Error(`[${res.status}] GET ${path}`);
+    const text = await res.text().catch(() => "");
+    logger.error("api_call_failed", {
+      method: "GET",
+      path,
+      status: res.status,
+      body: text.slice(0, 500),
+    });
+    rejectApiFailure(res.status, path, text);
   }
   return res.blob();
 }

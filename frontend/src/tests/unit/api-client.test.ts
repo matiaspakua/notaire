@@ -3,12 +3,16 @@
  * Uses fetch mock — no real network calls.
  * Tests CU patterns: list, get, create, update, delete
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { apiGet, apiPost, apiPut, apiDelete, ApiError } from "@/lib/api-client";
+import { resetSessionExpiryGuardForTests } from "@/lib/session-expiry";
+import { useAuthStore } from "@/store/auth-store";
 
 // Mock global fetch
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
+
+const assignMock = vi.fn();
 
 function makeResponse(body: unknown, status = 200) {
   const json = JSON.stringify(body);
@@ -22,7 +26,17 @@ function makeResponse(body: unknown, status = 200) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  resetSessionExpiryGuardForTests();
   window.localStorage.clear();
+  useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    value: { ...window.location, assign: assignMock, href: "http://localhost/dashboard" },
+  });
+});
+
+afterEach(() => {
+  resetSessionExpiryGuardForTests();
 });
 
 describe("Authorization header (issue #552)", () => {
@@ -142,5 +156,61 @@ describe("apiDelete()", () => {
       Promise.resolve({ ok: false, status: 500, text: () => Promise.resolve("") } as Response)
     );
     await expect(apiDelete("/gestiones/1")).rejects.toThrow("500");
+  });
+
+  it("throws ApiError and triggers session expiry on authenticated 401 (issue #1053)", async () => {
+    useAuthStore.setState({
+      user: { nombre: "admin", tipo: "ADMIN", valido: true },
+      token: "expired-jwt",
+      isAuthenticated: true,
+    });
+    mockFetch.mockReturnValueOnce(
+      Promise.resolve({
+        ok: false,
+        status: 401,
+        text: () => Promise.resolve("Unauthorized"),
+      } as Response)
+    );
+
+    await expect(apiDelete("/gestiones/1")).rejects.toBeInstanceOf(ApiError);
+    expect(assignMock).toHaveBeenCalledWith("/login?expired=1");
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+  });
+});
+
+describe("session expiry via handleResponse (issue #1053)", () => {
+  it("redirects to /login?expired=1 on authenticated GET 401", async () => {
+    useAuthStore.setState({
+      user: { nombre: "admin", tipo: "ADMIN", valido: true },
+      token: "expired-jwt",
+      isAuthenticated: true,
+    });
+    mockFetch.mockReturnValueOnce(makeResponse({ message: "Unauthorized" }, 401));
+
+    await expect(apiGet("/gestiones")).rejects.toBeInstanceOf(ApiError);
+    expect(assignMock).toHaveBeenCalledWith("/login?expired=1");
+    expect(useAuthStore.getState().token).toBeNull();
+  });
+
+  it("does not redirect on login POST 401", async () => {
+    mockFetch.mockReturnValueOnce(makeResponse({ valido: false }, 401));
+
+    await expect(apiPost("/usuarios/login", { name: "x", password: "y" })).rejects.toBeInstanceOf(
+      ApiError
+    );
+    expect(assignMock).not.toHaveBeenCalled();
+  });
+
+  it("does not redirect on authenticated 500", async () => {
+    useAuthStore.setState({
+      user: { nombre: "admin", tipo: "ADMIN", valido: true },
+      token: "valid-jwt",
+      isAuthenticated: true,
+    });
+    mockFetch.mockReturnValueOnce(makeResponse({ message: "boom" }, 500));
+
+    await expect(apiGet("/gestiones")).rejects.toThrow("500");
+    expect(assignMock).not.toHaveBeenCalled();
+    expect(useAuthStore.getState().isAuthenticated).toBe(true);
   });
 });

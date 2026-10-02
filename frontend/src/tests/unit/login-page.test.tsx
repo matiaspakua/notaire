@@ -1,14 +1,17 @@
 /**
  * Unit tests for LoginPage
- * Covers: CU — Autenticación de usuario
+ * Covers: CU — Autenticación de usuario / CU84 session expiry (#1053)
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
+let mockSearchParams = new URLSearchParams();
+
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 // Mock sonner
@@ -40,6 +43,7 @@ vi.mock("next-intl", () => ({
         password: "Contraseña",
         submit: "Ingresar",
         error: "Usuario o contraseña incorrectos",
+        sessionExpired: "Su sesión ha expirado. Inicie sesión nuevamente.",
       },
     };
     return translations[ns]?.[key] ?? key;
@@ -61,6 +65,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockSearchParams = new URLSearchParams();
   useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 });
 
@@ -215,5 +220,18 @@ describe("LoginPage", () => {
         "No se pudo conectar al servidor. Verifique que el backend esté en ejecución."
       );
     });
+  });
+
+  it("shows the session-expired message when expired=1 is in the query string (issue #1053)", () => {
+    mockSearchParams = new URLSearchParams("expired=1");
+    render(<LoginPage />, { wrapper });
+    expect(screen.getByTestId("session-expired-message").textContent).toContain(
+      "Su sesión ha expirado"
+    );
+  });
+
+  it("does not show the session-expired message without expired=1", () => {
+    render(<LoginPage />, { wrapper });
+    expect(screen.queryByTestId("session-expired-message")).toBeNull();
   });
 });
