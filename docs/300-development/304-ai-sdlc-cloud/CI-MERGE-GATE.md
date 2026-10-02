@@ -69,6 +69,10 @@ gh run list --branch <pr-head-branch> --limit 10
 ```
 
 Exit 0 from `check-heavy-ci.sh` is the only subscription-safe merge signal.
+The script treats required checks that are absent from `gh pr checks` as
+**fail**: if the parent workflow (`CI - Build, Test & Security` or
+`Playwright E2E — Full Suite`) is queued/pending/in_progress on the PR head, it
+prints `pending (workflow …)` instead of bare `missing` — still not mergeable.
 Also confirm no required check on the head SHA is still `pending` / `queued` /
 `in_progress`.
 

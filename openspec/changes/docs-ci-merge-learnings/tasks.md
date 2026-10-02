@@ -33,6 +33,7 @@
 - [x] 4.3 Document CodeQL advanced vs default in `208-devsecops/README.md`
 - [x] 4.4 Harden `.claude/agents/cloud-foreman.md`
 - [x] 4.5 Add this OpenSpec change folder (`skip_specs: true`) via `scripts/seed-openspec-change.sh`
+- [x] 4.6 Harden `scripts/check-heavy-ci.sh`: when a required check is `missing`, report parent workflow queued/pending/in_progress as `pending (workflow …)` (still fail)
 
 ## 5. Actualizar tests existentes
 
