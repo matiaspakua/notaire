@@ -41,6 +41,10 @@ Checks) is **insufficient**.
 ## Verify before merge
 
 ```bash
+# Preferred — agents must run this before `gh pr merge`:
+bash scripts/check-heavy-ci.sh <pr-number>
+
+# Or manually:
 gh run list --branch <pr-head-branch> --limit 10
 # Ensure CI - Build, Test & Security and Playwright E2E are completed success
 # for the PR head SHA (not merely queued/in_progress).
@@ -49,8 +53,15 @@ gh run list --branch <pr-head-branch> --limit 10
 Also confirm no required check on the head SHA is still `pending` / `queued` /
 `in_progress`.
 
+## Related regression: BudgetResponse.person shape
+
+A nested `person: { personId }` alone is **not** enough for UI E2E. The
+frontend presupuesto pickers read `person.name` and `person.lastName`; missing
+names render as `undefined, undefined` and fail Playwright (pagos/gestiones).
+`PersonRef` must include `personId` **and** `name`/`lastName`.
+
 ## Context
 
-Observed 2026-10-02 on PRs around #1126 / #1128: premature merge was avoided
-after light CI reported success while backend CI and Playwright were still
-pending. Applies to all future autonomous merges.
+Observed 2026-10-02 on PRs around #1126 / #1128 / #1132: premature merge was
+avoided after light CI (~12 checks) reported success while backend CI and
+Playwright were still pending. Applies to all future autonomous merges.
