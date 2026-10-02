@@ -155,6 +155,10 @@ class RequestBodyDtoBindingIntegrationTest {
                                 """.formatted(personId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.idBudget").exists())
+                // Nested person must carry picker labels (DtoPerson name/lastName) — not personId alone.
+                .andExpect(jsonPath("$.person.personId").value(personId))
+                .andExpect(jsonPath("$.person.name").value("Budget"))
+                .andExpect(jsonPath("$.person.lastName").value("Client1068"))
                 .andReturn();
 
         JsonNode body = mapper.readTree(result.getResponse().getContentAsString());

@@ -50,7 +50,7 @@ public class BudgetController {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
 
-    /**
+/**
      * Nested client on budget payloads. Wire keys match frontend {@code DtoPerson}:
      * {@code personId}, {@code name}, {@code lastName}.
      */
