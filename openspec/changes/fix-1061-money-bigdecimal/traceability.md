@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1061-money-bigdecimal/` | Gate 1 passed |
 | Branch | `cursor/fix-1061-money-bigdecimal-69d3` | created (cloud prefix; Constitution form would be `fix/1061_money_bigdecimal`) |
 | Tasks | `tasks.md` | in progress |
-| Commits | | pending |
-| Pull Request | | pending |
-| CI run | | pending |
+| Commits | `52312892` | pushed |
+| Pull Request | [#1126](https://github.com/matiaspakua/notaire/pull/1126) | draft |
+| CI run | pending | subscribed |
 | Merge commit | | pending |
 | Release / tag | | pending |
 | Smoke test | | pending |
