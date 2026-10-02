@@ -69,17 +69,23 @@ describe("useAuthStore — logout()", () => {
     expect(state.token).toBeNull();
   });
 
-  it("clears the notaire-auth-status cookie on logout (issue #392)", () => {
-    // Simulate the cookie set by the login flow.
-    document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
-    expect(document.cookie).toContain("notaire-auth-status=1");
+  it("clears middleware auth cookies on logout (issues #392 / #1052)", () => {
+    const { login, logout } = useAuthStore.getState();
+    login(adminUser, "fake-jwt-token");
+    expect(document.cookie).toContain("notaire-auth-status=");
+    expect(document.cookie).toContain("notaire-auth-role=ADMIN");
 
-    useAuthStore.setState({ user: adminUser, token: "fake-jwt-token", isAuthenticated: true });
-    useAuthStore.getState().logout();
+    logout();
 
-    // After logout, the middleware-facing cookie must be gone so that
-    // navigating to /login is not bounced back to /dashboard.
+    // After logout, middleware cookies must be gone so /login is not bounced
+    // back to /dashboard and admin paths are not edge-allowed.
     expect(document.cookie).not.toContain("notaire-auth-status=1");
+    expect(document.cookie).not.toContain("notaire-auth-role=ADMIN");
+  });
+
+  it("sets role cookie on login for edge admin guard (issue #1052)", () => {
+    useAuthStore.getState().login(empleadoUser, "tok");
+    expect(document.cookie).toContain("notaire-auth-role=EMPLEADO");
   });
 });
 

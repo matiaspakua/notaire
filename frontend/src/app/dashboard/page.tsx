@@ -17,7 +17,8 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -133,6 +134,23 @@ function WorkflowHero() {
   );
 }
 
+function AccessDeniedBanner() {
+  const td = useTranslations("dashboard");
+  const searchParams = useSearchParams();
+  if (searchParams.get("forbidden") !== "1") {
+    return null;
+  }
+  return (
+    <p
+      data-testid="access-denied-message"
+      role="status"
+      className="rounded-[16px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 font-medium"
+    >
+      {td("accessDenied")}
+    </p>
+  );
+}
+
 export default function DashboardPage() {
   const td = useTranslations("dashboard");
   const locale = useLocale();
@@ -152,6 +170,9 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-12">
+      <Suspense fallback={null}>
+        <AccessDeniedBanner />
+      </Suspense>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1.5">
           <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">

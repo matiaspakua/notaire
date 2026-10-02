@@ -80,6 +80,7 @@ test.describe("Language Switcher — l10n feature", () => {
     await page.context().addCookies([
       { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
       { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
     ]);
     await page.addInitScript(() => {
       localStorage.setItem(
@@ -117,6 +118,7 @@ test.describe("l10n — Dashboard page translations", () => {
     await page.context().addCookies([
       { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
       { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
     ]);
     await page.addInitScript(() => {
       localStorage.setItem(
@@ -158,6 +160,7 @@ test.describe("l10n — Admin pages translations", () => {
     await page.context().addCookies([
       { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
       { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
     ]);
     await page.addInitScript(() => {
       localStorage.setItem(

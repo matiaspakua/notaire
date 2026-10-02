@@ -63,6 +63,7 @@
     "today": "Today's activity summary",
     "availableModules": "Available modules",
     "viewAll": "View all services",
+    "accessDenied": "You do not have permission to access that administration section.",
     "workflowProgress": "Workflow progress",
     "workflow": {
       "searchLabel": "Reference number",
