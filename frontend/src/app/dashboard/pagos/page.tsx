@@ -22,8 +22,11 @@ import { usePagos, useCreatePago, useUpdatePago, useDeletePago, usePagoEstado } 
 import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
 import { useReciboPago } from "@/hooks/useReportes";
 import { ApiError } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
+
+const PAGO_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
 
 const EMPTY: Partial<Pago> = { idBudget: undefined, amount: undefined, date: "", paymentMethod: "", notes: "" };
 
@@ -42,6 +45,7 @@ export default function PagosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Pago>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Fetch saldo for selected presupuesto (Issue #796)
   const { data: resumen, isLoading: resumenLoading } = usePresupuestoResumen(
@@ -56,10 +60,21 @@ export default function PagosPage() {
     PAID: t("estadoSaldado"),
   };
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(p: Pago) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(p: Pago) {
+    setEditing(p);
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   async function handleSave() {
+    setFieldErrors({});
     try {
       if (isEditMode && editing.idPayment) {
         await updateMutation.mutateAsync({ id: editing.idPayment, data: editing });
@@ -70,11 +85,12 @@ export default function PagosPage() {
       }
       setModalOpen(false);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
-        toast.error(t("saldoExcedido"));
-      } else {
-        toast.error(t("errorSave"));
-      }
+      presentMutationError(err, {
+        fallback:
+          err instanceof ApiError && err.status === 409 ? t("saldoExcedido") : t("errorSave"),
+        fieldNames: PAGO_FIELD_NAMES,
+        setFieldErrors,
+      });
     }
   }
 
@@ -83,15 +99,18 @@ export default function PagosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch { toast.error(t("errorDelete")); }
-    finally { setDeleteId(null); }
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
+    } finally {
+      setDeleteId(null);
+    }
   }
 
   async function handleEmitirRecibo(idPago: number) {
     try {
       await reciboPago.download(idPago);
-    } catch {
-      toast.error(t("errorRecibo"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorRecibo") });
     }
   }
 
@@ -179,17 +198,42 @@ export default function PagosPage() {
                 </div>
               )}
 
-              <FormField label={tc("date")} required>
-                <Input type="date" value={editing.date ?? ""} onChange={(e) => setEditing({ ...editing, date: e.target.value })} />
+              <FormField label={tc("date")} required error={fieldErrors.date}>
+                <Input
+                  type="date"
+                  value={editing.date ?? ""}
+                  onChange={(e) => setEditing({ ...editing, date: e.target.value })}
+                  aria-invalid={!!fieldErrors.date}
+                />
               </FormField>
-              <FormField label={`${tc("amount")} ($)`} required>
-                <Input type="number" step="0.01" value={editing.amount ?? ""} onChange={(e) => setEditing({ ...editing, amount: parseFloat(e.target.value) })} />
+              <FormField label={`${tc("amount")} ($)`} required error={fieldErrors.amount}>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={editing.amount ?? ""}
+                  onChange={(e) => setEditing({ ...editing, amount: parseFloat(e.target.value) })}
+                  aria-invalid={!!fieldErrors.amount}
+                  data-testid="input-monto-pago"
+                />
               </FormField>
-              <FormField label={t("fields.metodoPago")} helperText={t("fields.metodoPlaceholder")}>
-                <Input value={editing.paymentMethod ?? ""} onChange={(e) => setEditing({ ...editing, paymentMethod: e.target.value })} placeholder={t("methods.efectivo")} />
+              <FormField
+                label={t("fields.metodoPago")}
+                helperText={t("fields.metodoPlaceholder")}
+                error={fieldErrors.paymentMethod}
+              >
+                <Input
+                  value={editing.paymentMethod ?? ""}
+                  onChange={(e) => setEditing({ ...editing, paymentMethod: e.target.value })}
+                  placeholder={t("methods.efectivo")}
+                  aria-invalid={!!fieldErrors.paymentMethod}
+                />
               </FormField>
-              <FormField label={tc("observations")}>
-                <Input value={editing.notes ?? ""} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} />
+              <FormField label={tc("observations")} error={fieldErrors.notes}>
+                <Input
+                  value={editing.notes ?? ""}
+                  onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
+                  aria-invalid={!!fieldErrors.notes}
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">

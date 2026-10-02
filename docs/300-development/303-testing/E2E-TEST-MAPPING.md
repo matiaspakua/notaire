@@ -24,6 +24,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 |----------|-----------|--------|
 | AUTH-001 / CU84 | TS-0001, TS-0002, TS-0093 | Authentication / session expiry |
 | CU78 (frontend admin guard) | TS-0094 | Admin route access denial for non-admins |
+| CU15 / CU20 (#1054) | TS-0095 | API business errors on mutation toasts / field errors |
 | CU01–CU09 | TS-0010 to TS-0014 | Presupuesto, Gestiones, Documentación, Escrituras |
 | CU10–CU23 | TS-0015 to TS-0023 | Personas, Usuarios, Suplencias, Reportes |
 | CU24–CU68 | TS-0020 to TS-0035 | Administration, Workflows, Features |
@@ -43,6 +44,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0003** | `TS-0003-dashboard-navigation.spec.ts` | Navigation | Role-based layout | Login + sidebar | 4 expect() | ✅ Passing |
 | **TS-0093** | `TS-0093-session-expiry.spec.ts` | CU84 (#1053, #690) | Corrupt JWT → real API 401 | Login + dashboard navigate | expired redirect + re-login + viewports | ✅ Passing |
 | **TS-0094** | `TS-0094-admin-route-guard.spec.ts` | CU78 (#1052) | Create EMPLEADO via API | Login as non-admin + admin URL | forbidden redirect + message + viewports | ✅ Passing |
+| **TS-0095** | `TS-0095-api-error-toasts.spec.ts` | CU15, CU20 (#1054, #615 slice) | Route stub 4xx ErrorResponse | Login + CRUD mutation | server toast + FormField/aria-invalid + viewports | ✅ Added |
 
 **Fixture Pattern**: Direct page navigation + form fill (no GherkinSteps needed, simple auth flow)
 **Dependencies**: None (foundation for all other tests)

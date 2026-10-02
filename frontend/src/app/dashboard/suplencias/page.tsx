@@ -16,6 +16,7 @@ import {
   useUpdateSuplencia,
   useDeleteSuplencia,
 } from "@/hooks/useSuplencias";
+import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
 
@@ -75,8 +76,8 @@ export default function SuplenciasPage() {
         toast.success("Suplencia registrada");
       }
       setModalOpen(false);
-    } catch {
-      toast.error("Error al guardar la suplencia");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al guardar la suplencia" });
     }
   }
 
@@ -85,8 +86,8 @@ export default function SuplenciasPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success("Suplencia eliminada");
-    } catch {
-      toast.error("Error al eliminar");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al eliminar" });
     } finally {
       setDeleteId(null);
     }

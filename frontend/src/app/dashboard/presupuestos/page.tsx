@@ -21,6 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, ApiError } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
 import {
   usePresupuestos,
   usePresupuestoResumen,
@@ -82,11 +83,12 @@ export default function PresupuestosPage() {
       });
       toast.success(t("items.loadedFromPlantilla"));
     } catch (e) {
-      toast.error(
-        e instanceof ApiError && e.status === 400
-          ? t("items.errorNoPlantilla")
-          : t("items.errorCargar")
-      );
+      presentMutationError(e, {
+        fallback:
+          e instanceof ApiError && e.status === 400
+            ? t("items.errorNoPlantilla")
+            : t("items.errorCargar"),
+      });
     }
   }
 
@@ -99,8 +101,8 @@ export default function PresupuestosPage() {
       });
       toast.success(t("items.addedFromCatalogo"));
       setSelectedCatalogItemId("");
-    } catch {
-      toast.error(t("items.errorAgregar"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("items.errorAgregar") });
     }
   }
 
@@ -140,8 +142,8 @@ export default function PresupuestosPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -150,8 +152,8 @@ export default function PresupuestosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }

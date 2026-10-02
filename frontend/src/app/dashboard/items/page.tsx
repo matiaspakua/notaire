@@ -17,6 +17,7 @@ import {
   useUpdateItem,
   useDeleteItem,
 } from "@/hooks/useItems";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Item } from "@/types";
 
 export default function ItemsPage() {
@@ -63,8 +64,8 @@ export default function ItemsPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -73,8 +74,8 @@ export default function ItemsPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }

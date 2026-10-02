@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
+import { presentMutationError } from "@/lib/mutation-error";
 import {
   useDocumentosPresentados,
   useCreateDocumentoPresentado,
@@ -73,8 +74,8 @@ export default function DocumentosPage() {
         toast.success(t("registered"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -83,8 +84,8 @@ export default function DocumentosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }

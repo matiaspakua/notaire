@@ -17,6 +17,7 @@ import {
   useUpdateCopia,
   useDeleteCopia,
 } from "@/hooks/useCopias";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Copia } from "@/types";
 
 export default function CopiasPage() {
@@ -71,8 +72,8 @@ export default function CopiasPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -81,8 +82,8 @@ export default function CopiasPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }

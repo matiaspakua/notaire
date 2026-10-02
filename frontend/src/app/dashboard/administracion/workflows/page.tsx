@@ -15,6 +15,7 @@ import {
   useUpdateWorkflowDefinition,
   useDeleteWorkflowDefinition,
 } from "@/hooks/useWorkflow";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { WorkflowDefinition } from "@/types";
 
 const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
@@ -63,8 +64,8 @@ export default function WorkflowsPage() {
         toast.success("Workflow creado");
       }
       setModalOpen(false);
-    } catch {
-      toast.error("Error al guardar");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al guardar" });
     } finally {
       setSaving(false);
     }
@@ -75,8 +76,10 @@ export default function WorkflowsPage() {
     try {
       await deleteWf.mutateAsync(deleteId);
       toast.success("Workflow eliminado");
-    } catch {
-      toast.error("No se puede eliminar: el workflow tiene nodos");
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: "No se puede eliminar: el workflow tiene nodos",
+      });
     } finally {
       setDeleteId(null);
     }

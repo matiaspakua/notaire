@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **CRUD screens show backend validation messages** (issue #1054, CU15/CU20):
+  mutation failures on ~15 dashboard pages use a shared `presentMutationError`
+  helper so users see the API `message`/`error` text (400/404/409/422/500) in
+  toasts instead of generic “error al guardar/eliminar” copy. When the body
+  includes bean-validation style `field: msg` detail that matches a form
+  control, the matching `FormField` shows the error and the control is marked
+  `aria-invalid`. Authenticated 401 remains on the session-expiry path (#1053).
+  Covered by unit tests and Playwright `TS-0095` (focused #615 slice).
+
 - **Admin screens blocked for non-admin users** (issue #1052, CU78): navigating
   to `/dashboard/administracion/**` without an admin-capable role redirects to
   `/dashboard?forbidden=1` with an access-denied message (edge middleware +
