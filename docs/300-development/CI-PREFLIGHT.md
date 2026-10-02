@@ -157,3 +157,19 @@ local severity matches CI severity rather than being stricter.
 The `sdlc-process.yml` checks run locally against `origin/main..HEAD`. The
 `sdlc-exception` label check needs the PR's labels, so preflight reads them
 with `gh pr view` and skips that one check while the branch has no PR yet.
+
+## Merge gate (after CI runs on the PR)
+
+`preflight.sh` predicts push-time failures. It does **not** replace waiting for
+remote heavy CI before squash-merge. Light-only green (~12 quick checks) is
+insufficient — see
+[`304-ai-sdlc-cloud/CI-MERGE-GATE.md`](304-ai-sdlc-cloud/CI-MERGE-GATE.md):
+
+```bash
+bash scripts/check-heavy-ci.sh <pr-number>
+```
+
+Required terminal success: Integration Tests, Coverage Gate (`mvn verify`),
+API Tests (Bruno), UI E2E Tests (Playwright). Docs-only PRs may still run
+Playwright. If those jobs fail with Budget/person / `undefined, undefined` on a
+tip behind `main`, rebase onto `main` first (#1132).

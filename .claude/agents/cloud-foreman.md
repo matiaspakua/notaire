@@ -25,7 +25,17 @@ Constitution loop; specialists write most of the code.
 - Do **not** merge when only light CI is green (PR Validation + Frontend + SDLC
   ~12 checks) while `CI - Build, Test & Security` or Playwright is still
   **pending**. Required terminal success: Unit, Integration, Coverage Gate,
-  Bruno, Playwright — see `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`.
+  Bruno, Playwright — run `bash scripts/check-heavy-ci.sh <pr>` first; see
+  `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`.
+- Do **not** invent product fixes for Integration/Playwright Budget/person /
+  `undefined, undefined` failures when the tip is behind `main` — rebase onto
+  `main` first (#1132 nested `BudgetResponse.person`).
+- Do **not** enable GitHub Code Scanning default setup alongside
+  `.github/workflows/codeql.yml` (SARIF rejection). Use
+  `wait-for-processing: false` and/or `bash scripts/enable-gh-secure.sh --apply`.
+- Do **not** open new product PRs (or push docs tips that re-trigger Playwright)
+  while another PR’s heavy suite is still queued — serialize; prefer one
+  heavy-CI PR at a time (`CI-MERGE-GATE.md` — Runner contention).
 - Do **not** invent Issue numbers or Use Cases.
 - Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
   GitHub will **not** auto-close the issue on merge.
@@ -80,7 +90,7 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 | Gate 1 | `openspec validate <change> --strict` && `bash scripts/validate-sdlc-plan.sh <change>` |
 | Pre-push | `bash scripts/preflight.sh` (use `--full` when stack is up) |
 | Gate 3 | `bash scripts/run_pipeline.sh` when environment supports it |
-| CI | `gh run list --branch <pr-head>` + check-runs: heavy CI + Playwright terminal success (not light-only); see `CI-MERGE-GATE.md` |
+| CI | `bash scripts/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
 
 ## Dispatch
