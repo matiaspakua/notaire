@@ -9,8 +9,8 @@
 #   - Dependabot alerts and security updates
 #
 # Code scanning is .github/workflows/codeql.yml. Do not also pass
-# `code-scanning` to gh-secure: default setup would scan the same commits
-# a second time.
+# `code-scanning` to gh-secure: default setup plus the advanced workflow
+# makes GitHub reject advanced SARIF processing and fails Analyze jobs.
 #
 # Branch protection is opt-in. gh-secure's default rule requires one
 # approving review, which blocks an unattended merge. Pass
@@ -91,6 +91,21 @@ if [ "$DRY" = 1 ]; then
   args+=(--dry-run)
 fi
 args+=("${features[@]}")
+
+echo ""
+echo "=== disable CodeQL default setup (advanced workflow owns scanning) ==="
+if [ "$DRY" = 1 ]; then
+  echo "(dry-run) would PATCH code-scanning/default-setup state=not-configured"
+else
+  # Ignore 404/403: older API or missing administration scope.
+  if ! gh api --method PATCH \
+    -H "Accept: application/vnd.github+json" \
+    "repos/${REPO}/code-scanning/default-setup" \
+    -f state=not-configured; then
+    echo "warn: could not disable CodeQL default setup (need admin)." >&2
+    echo "warn: Settings → Code security → Code scanning → disable default setup." >&2
+  fi
+fi
 
 echo ""
 echo "=== gh ${args[*]} ==="

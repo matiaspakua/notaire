@@ -6,10 +6,17 @@ name: CodeQL
 # findings are uploaded to the Security tab and do not fail the job unless
 # analysis itself fails.
 #
-# Do not also enable CodeQL default setup (gh secure code-scanning). The two
-# setups analyze the same commits twice.
+# Do not also enable CodeQL default setup (gh secure code-scanning). When
+# default setup is enabled, GitHub rejects advanced SARIF processing with:
+# "CodeQL analyses from advanced configurations cannot be processed when the
+# default setup is enabled" — the Analyze job then fails. Disable default
+# setup (Settings → Code security → Code scanning, or
+# scripts/enable-gh-secure.sh --apply which turns it off) before relying on
+# this workflow's uploads.
 #
-# Local preflight does not run CodeQL. See scripts/preflight.sh --list.
+# wait-for-processing is false so a leftover default-setup conflict does not
+# fail the job after a successful analysis+upload; findings land once default
+# setup is off. Local preflight does not run CodeQL. See scripts/preflight.sh.
 
 on:
   pull_request:
@@ -76,3 +83,6 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
+          # Avoid hard-fail when default setup is still enabled on the repo
+          # (processing rejects advanced SARIF). Analysis + upload still run.
+          wait-for-processing: false

@@ -38,7 +38,7 @@ enabled. The same token receives HTTP 403 on administration endpoints.
 
 - [Java analysis time] → The job timeout is 45 minutes and the matrix is `fail-fast: false`, so a slow Java build does not cancel the JavaScript or Actions jobs.
 - [Admin never runs the script] → Push protection and Dependabot security updates stay off until an owner with administration scope runs `--apply`. The pipeline still gains CodeQL and npm Dependabot without that step.
-- [Someone enables default setup later] → The workflow header and the script tell them not to. Duplicate alerts are noisy, not a runtime failure.
+- [Someone enables default setup later] → GitHub rejects advanced SARIF processing and the Analyze job fails. The workflow uses `wait-for-processing: false` so leftover default setup does not hard-fail CI after a successful analysis; `enable-gh-secure.sh --apply` disables default setup. An admin must still turn it off for findings to appear in the Security tab.
 - [CodeQL alerts on existing code] → Alerts do not fail CI. Triage happens in the Security tab.
 
 ## Testing Strategy
