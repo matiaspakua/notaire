@@ -35,6 +35,7 @@
 - [x] 4.5 Add this OpenSpec change folder (`skip_specs: true`) via `scripts/seed-openspec-change.sh`
 - [x] 4.6 Harden `scripts/check-heavy-ci.sh`: when a required check is `missing`, report parent workflow queued/pending/in_progress as `pending (workflow …)` (still fail)
 - [x] 4.7 Document runner serialization in `CI-MERGE-GATE.md` (+ fleet architecture): one heavy-CI PR at a time; docs wait; no new product PRs until in-flight suite finishes
+- [x] 4.8 Document Dependabot flood mitigation: convert Dependabot PRs to draft while feature heavy CI runs (#1139–#1144)
 
 ## 5. Actualizar tests existentes
 

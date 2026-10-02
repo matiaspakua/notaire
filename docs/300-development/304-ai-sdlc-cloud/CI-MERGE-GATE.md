@@ -116,9 +116,16 @@ heavy workflows are still pending). That is **not** mergeable — always run
 | In-flight product / hotfix PR waiting on Integration or Playwright | Let its heavy suite finish (or fail) before pushing more tips that enqueue another full suite |
 | Docs / rebase / low-priority PRs | Wait — do not push commits that re-trigger Playwright while a higher-priority tip is queued |
 | New product work | Do **not** open a new product PR until the in-flight heavy suite finishes |
+| Dependabot / bulk dependency PRs | Convert to draft while a feature PR’s heavy suite is queued or running |
 
 Agents with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403),
 so avoid creating the queue in the first place.
+
+**Dependabot floods:** a batch of Dependabot PRs can enqueue many Playwright
+suites and starve feature tips. Convert those Dependabot PRs to **draft** so
+new runs stop competing (agents often cannot cancel in-flight runs — HTTP 403).
+Re-ready them only after the product PR’s heavy gate is green or merged.
+(Observed #1139–#1144 vs #1137/#1138, 2026-10-02.)
 
 ## Related: CodeQL advanced vs default setup
 
