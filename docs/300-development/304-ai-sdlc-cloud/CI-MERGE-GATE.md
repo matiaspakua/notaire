@@ -65,3 +65,10 @@ names render as `undefined, undefined` and fail Playwright (pagos/gestiones).
 Observed 2026-10-02 on PRs around #1126 / #1128 / #1132: premature merge was
 avoided after light CI (~12 checks) reported success while backend CI and
 Playwright were still pending. Applies to all future autonomous merges.
+
+## Runner contention
+
+Many open PR tips each trigger a full Playwright suite. Hotfixes can sit
+`queued` for minutes behind superseded tips. Prefer not pushing docs-only or
+low-priority PR commits while a main hotfix is waiting on Playwright. Agents
+with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403).
