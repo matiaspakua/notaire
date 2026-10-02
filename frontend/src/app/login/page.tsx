@@ -52,8 +52,8 @@ function LoginForm() {
       });
 
       if (result.valido && result.token) {
+        // Cookies for edge gating are set inside auth-store.login (issue #1052).
         login(result, result.token);
-        document.cookie = "notaire-auth-status=1; path=/; SameSite=Lax";
         toast.success(`Bienvenido, ${result.nombre}`);
         router.push("/dashboard");
       } else {

@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Admin screens blocked for non-admin users** (issue #1052, CU78): navigating
+  to `/dashboard/administracion/**` without an admin-capable role redirects to
+  `/dashboard?forbidden=1` with an access-denied message (edge middleware +
+  administración layout). Login sets a non-credential `notaire-auth-role`
+  cookie for the edge check. Covered by unit tests and Playwright `TS-0094`.
+  Backend RBAC remains #559; HttpOnly token migration remains #1051.
+
 - **Expired sessions redirect to login with a clear message** (issue #1053, CU84):
   when an authenticated API call returns HTTP `401`, the Next.js client clears
   local auth state and navigates to `/login?expired=1`, showing that the session

@@ -63,6 +63,7 @@
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
     "viewAll": "Ver todos los servicios",
+    "accessDenied": "No tiene permisos para acceder a esa sección de administración.",
     "workflowProgress": "Progreso del workflow",
     "workflow": {
       "searchLabel": "Número de referencia",

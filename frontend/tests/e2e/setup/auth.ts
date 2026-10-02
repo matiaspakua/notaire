@@ -25,15 +25,18 @@ export async function authenticateAsAdmin(
   nombre: string = "admin",
   contrasenia: string = "admin",
 ): Promise<void> {
-  await page.context().addCookies([
-    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-  ]);
-
   const result = await apiPost<LoginResponse>(page, "/usuarios/login", {
     name: nombre,
     password: contrasenia,
   });
   const data = result.ok ? result.data : undefined;
+  const role = (data?.tipo ?? "ADMIN").toUpperCase();
+
+  // Non-credential UI markers for Next.js middleware (issue #1052 role guard).
+  await page.context().addCookies([
+    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+    { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
+  ]);
 
   await page.addInitScript(
     ([token, user]) => {

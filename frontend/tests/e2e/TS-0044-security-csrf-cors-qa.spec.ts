@@ -29,10 +29,12 @@ test.describe("CSRF posture (issue #691)", () => {
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
     const cookies = await page.context().cookies();
-    // The only cookie set is a client-side, non-sensitive marker used by the
-    // Next.js middleware for route gating (frontend/src/middleware.ts) — it
-    // carries no credential and is not read by the backend for authentication.
-    expect(cookies.map((c) => c.name)).toEqual(["notaire-auth-status"]);
+    // Client-side, non-sensitive markers used by Next.js middleware for route
+    // gating (status + role for admin paths, issue #1052). They carry no JWT
+    // and are not read by the backend for authentication.
+    const names = cookies.map((c) => c.name).sort();
+    expect(names).toEqual(["notaire-auth-role", "notaire-auth-status"]);
+    expect(cookies.every((c) => c.httpOnly !== true)).toBe(true);
   });
 
   test("a request carrying cookies but no Authorization header is rejected", async ({ page }) => {
