@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/seed-openspec-templates-reject-unfilled-1108/` | Gate 1 writing |
 | Branch | `cursor/chore-1108-openspec-template-seed-30a2` | created |
 | Tasks | `tasks.md` | 0/N complete |
-| Commits | pending | pending |
+| Commits | c2dcb85c | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
