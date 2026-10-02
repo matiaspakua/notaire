@@ -16,6 +16,7 @@ trabajo obligatorio.
 | [`303-testing/`](303-testing/) | Suites de test, matriz CU↔API y guías de QA |
 | [`templates/`](templates/) | Plantillas para especificaciones OpenSpec |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
+| [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, validation (not `local-ai/`) |
 
 OpenSpec ↔ Constitution: ver [`openspec/NOTAIRE-ADAPTATIONS.md`](../../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, retirado en #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).

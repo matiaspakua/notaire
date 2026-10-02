@@ -1,0 +1,191 @@
+# Cursor Cloud AI SDLC — fleet manifest
+# Machine-readable map for the foreman. Human authority:
+# docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md
+#
+# Models are Cursor Cloud / subagent slugs (cost-to-value defaults).
+# Runtime: Cursor Cloud only. Do NOT invoke local-ai/.
+
+version: 1
+runtime: cursor-cloud
+excludes:
+  - local-ai/
+  - local-ai/sdlc/foreman.sh
+  - .aisdlc/project.yml   # local harness adapter; not used by cloud fleet
+
+authority:
+  constitution: CONSTITUTION.md
+  agents_index: AGENTS.md
+  skills_root: .claude/skills/
+  agents_root: .claude/agents/
+  openspec_schema: notaire-sdlc
+  preflight: bash scripts/preflight.sh
+  plan_validate: bash scripts/validate-sdlc-plan.sh
+  openspec_validate: openspec validate {change} --strict
+  pipeline: bash scripts/run_pipeline.sh
+
+foreman:
+  id: cloud-foreman
+  agent_file: .claude/agents/cloud-foreman.md
+  model: claude-sonnet-5-5-medium
+  model_upgrade: claude-opus-5-5-medium
+  skills:
+    - ai-agent-workflow
+    - devsecops-traceability
+    - ci-cd-quality-gates
+    - openspec-archive-change
+  owns:
+    - issue_pick
+    - gate_orchestration
+    - branch_lifecycle
+    - pr_create_update
+    - ci_watch
+    - merge
+    - next_issue
+
+roles:
+  openspec-planner:
+    agent_file: .claude/agents/openspec-planner.md
+    model: claude-sonnet-5-5-high
+    model_upgrade: claude-opus-5-5-medium
+    skills:
+      - openspec-propose
+      - openspec-update-change
+      - openspec-triage
+      - openspec-explore
+      - openspec-sync-specs
+      - analyst
+      - product-owner
+      - architecture-decision-design
+    phases: [triage, spec, docs]
+
+  analyst:
+    agent_file: .claude/agents/openspec-planner.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: gpt-5.6-terra-medium
+    skills:
+      - analyst
+      - product-owner
+      - delivery-maturity-roadmap
+    phases: [triage]
+
+  java-architect:
+    agent_file: .claude/agents/java-architect.md
+    model: claude-opus-5-5-medium
+    model_upgrade: claude-opus-5-5-high
+    skills:
+      - java
+      - hexagonal-arch
+      - architecture-decision-design
+      - flyway
+      - backend
+    phases: [spec, implement]
+    when: backend architecture, package migration, Flyway design
+
+  backend-implementer:
+    agent_file: .claude/agents/backend-implementer.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: claude-sonnet-5-5-high
+    skills:
+      - backend
+      - java
+      - programming
+      - maven-build
+      - flyway
+      - openspec-apply-change
+      - ai-agent-workflow
+    phases: [tests, implement, ci-fix]
+    surfaces: [backend]
+
+  frontend-design:
+    agent_file: .claude/agents/frontend-design.md
+    model: claude-sonnet-5-5-high
+    model_upgrade: gpt-5.6-terra-medium
+    skills:
+      - frontend-design
+      - motion-design
+      - openspec-apply-change
+    phases: [tests, implement]
+    surfaces: [frontend]
+
+  testing-qa:
+    agent_file: .claude/agents/testing-qa.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: claude-sonnet-5-5-high
+    skills:
+      - testing
+      - qa-automation-strategy
+      - api-rest
+      - api-contract-testing
+      - maven-build
+    phases: [tests, implement]
+
+  devops-engineer:
+    agent_file: .claude/agents/devops-engineer.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: gpt-5.6-terra-medium
+    skills:
+      - devops
+      - ci-cd-quality-gates
+      - operations-observability-readiness
+    phases: [implement, ci-fix]
+    when: Docker, CI workflows, infra/, scripts/
+
+  security-auditor:
+    agent_file: .claude/agents/security-auditor.md
+    model: claude-opus-5-5-medium
+    model_upgrade: claude-opus-5-5-high
+    skills:
+      - secure-threat-modeling
+      - backend
+    phases: [review]
+    when: auth, JWT, secrets, PII, schema ACLs
+
+  code-reviewer:
+    agent_file: .claude/agents/code-reviewer.md
+    model: claude-sonnet-5-5-high
+    model_upgrade: claude-opus-5-5-medium
+    skills:
+      - ai-agent-workflow
+      - programming
+    phases: [review]
+
+  sync-issues:
+    agent_file: .claude/agents/sync_issues_and_code.md
+    model: composer-2.5-fast
+    model_upgrade: claude-sonnet-5-5-low
+    skills:
+      - product-owner
+      - devsecops-traceability
+    phases: [branch, pr, merge]
+
+  efficiency-fallback:
+    agent_file: .claude/agents/efficiency_config_agent.md
+    model: claude-sonnet-5-5-medium
+    model_upgrade: claude-sonnet-5-5-high
+    skills:
+      - ai-agent-workflow
+      - openspec-apply-change
+    phases: [implement, docs]
+    when: SURFACE unclear or docs/chore only
+
+dispatch_rules:
+  - if: surface contains backend and not frontend
+    primary: backend-implementer
+  - if: surface contains frontend and not backend
+    primary: frontend-design
+  - if: surface is backend,frontend
+    primary: [backend-implementer, frontend-design]
+    serialize: true
+  - if: phase is spec
+    primary: openspec-planner
+  - if: phase is review
+    primary: [code-reviewer]
+    optional: [security-auditor]
+  - if: phase is ci-fix and failing_job matches /docker|workflow|compose/i
+    primary: devops-engineer
+  - if: phase is ci-fix
+    primary: backend-implementer
+
+handoff:
+  brief_schema: docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md#51-brief-foreman--specialist
+  result_schema: docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md#52-result-specialist--foreman
