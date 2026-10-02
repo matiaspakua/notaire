@@ -28,14 +28,16 @@
 
 - [x] 4.1 `BudgetResponse` uses nested `PersonRef person`
 - [x] 4.2 `@JsonInclude(NON_NULL)` on response
-- [x] 4.3 `toResponse` builds `PersonRef` from `fkIdPerson`
+- [x] 4.3 `toResponse` builds `PersonRef` from `fkIdPerson` (personId + name + lastName)
 - [x] 4.4 OpenSpec change folder added
+- [x] 4.5 `PersonRef` expanded with `name`/`lastName` for frontend DtoPerson / Playwright
 
 ## 5. Actualizar tests existentes
 
-- [x] 5.1 PG IT assertions already correct (no edit)
-- [x] 5.2 Bruno request bodies already nested
-- [x] 5.3 No obsolete tests removed
+- [x] 5.1 PG IT asserts `personId` + `name` + `lastName`
+- [x] 5.2 Unit test asserts DtoPerson name fields on get-by-id
+- [x] 5.3 Bruno request bodies already nested
+- [x] 5.4 No obsolete tests removed
 
 ## 6. Ejecutar regresión
 
