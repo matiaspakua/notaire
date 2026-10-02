@@ -18,7 +18,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/docs-ai-sdlc-cloud-learnings-69d3` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `ca59a095` — docs(ai-sdlc): record Cloud fleet process learnings | done |
-| Pull Request | pending | pending |
+| Pull Request | #1122 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a — docs-only, no release artifact | pending |
