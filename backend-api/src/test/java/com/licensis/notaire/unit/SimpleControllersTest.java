@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.copy.CopyController;
 import com.licensis.notaire.adapter.in.web.deed.DeedController;
@@ -494,7 +493,8 @@ class SimpleControllersTest {
             doThrow(new ResourceNotFoundException("not found")).when(service).deleteById(99);
             mvc.perform(delete("/api/v1/presupuestos/99")).andExpect(status().isNotFound());
 
-            com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(1, "Sellado", new java.math.BigDecimal("500"));
+            com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
+                    1, "Sellado", new java.math.BigDecimal("500"));
             when(budgetTemplateService.cargarItemsDesdeTemplate(1, 5)).thenReturn(List.of(item));
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-plantilla?tipoTramiteId=5"))
                     .andExpect(status().isOk());
