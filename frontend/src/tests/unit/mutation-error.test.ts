@@ -126,4 +126,25 @@ describe("presentMutationError()", () => {
     presentMutationError(err, { fallback: "Error al eliminar" });
     expect(toast.error).toHaveBeenCalledWith("Documento no encontrado");
   });
+
+  it("preferFallback toasts curated fallback even when body has a message", async () => {
+    const { toast } = await import("sonner");
+    const err = new ApiError(
+      400,
+      "/presupuestos/1/items-desde-plantilla",
+      JSON.stringify({ message: "El tipo de trámite no tiene plantilla configurada" })
+    );
+
+    const result = presentMutationError(err, {
+      fallback: "El tipo de trámite seleccionado no tiene una plantilla configurada",
+      preferFallback: true,
+    });
+
+    expect(result.message).toBe(
+      "El tipo de trámite seleccionado no tiene una plantilla configurada"
+    );
+    expect(toast.error).toHaveBeenCalledWith(
+      "El tipo de trámite seleccionado no tiene una plantilla configurada"
+    );
+  });
 });

@@ -9,6 +9,12 @@ import { extractApiError } from "@/lib/utils";
 export type PresentMutationErrorOptions = {
   /** Shown when the API body has no parseable business message. */
   fallback: string;
+  /**
+   * When true, toast `fallback` even if `extractApiError` finds a body message.
+   * Use for curated UX copy that must win over a terse/English server string
+   * (e.g. CU39 400 → items.errorNoPlantilla).
+   */
+  preferFallback?: boolean;
   /** Form control names that may receive inline errors from `field: msg` bodies. */
   fieldNames?: string[];
   setFieldErrors?: (errors: Record<string, string>) => void;
@@ -61,7 +67,9 @@ export function presentMutationError(
     return { message: "", fieldErrors: {}, toasted: false };
   }
 
-  const message = extractApiError(err) ?? options.fallback;
+  const message = options.preferFallback
+    ? options.fallback
+    : (extractApiError(err) ?? options.fallback);
   const fieldErrors = parseFieldErrors(message, options.fieldNames);
 
   if (options.setFieldErrors && Object.keys(fieldErrors).length > 0) {

@@ -83,11 +83,12 @@ export default function PresupuestosPage() {
       });
       toast.success(t("items.loadedFromPlantilla"));
     } catch (e) {
+      // CU39: keep curated Spanish for "no plantilla" (400). Server body is
+      // terse and would otherwise replace items.errorNoPlantilla via extractApiError.
+      const noPlantilla = e instanceof ApiError && e.status === 400;
       presentMutationError(e, {
-        fallback:
-          e instanceof ApiError && e.status === 400
-            ? t("items.errorNoPlantilla")
-            : t("items.errorCargar"),
+        fallback: noPlantilla ? t("items.errorNoPlantilla") : t("items.errorCargar"),
+        preferFallback: noPlantilla,
       });
     }
   }
