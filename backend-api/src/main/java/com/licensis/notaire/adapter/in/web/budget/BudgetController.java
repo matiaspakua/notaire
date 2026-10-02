@@ -50,7 +50,11 @@ public class BudgetController {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
 
-    record PersonRef(Integer personId) {}
+    /**
+     * Nested client on budget payloads. Wire keys match frontend {@code DtoPerson}:
+     * {@code personId}, {@code name}, {@code lastName}.
+     */
+    record PersonRef(Integer personId, String name, String lastName) {}
 
     record BudgetRequest(
             Integer number,
@@ -103,8 +107,9 @@ public class BudgetController {
 
     private BudgetResponse toResponse(Budget budget) {
         PersonRef person = null;
-        if (budget.getFkIdPerson() != null && budget.getFkIdPerson().getPersonId() != null) {
-            person = new PersonRef(budget.getFkIdPerson().getPersonId());
+        Person linked = budget.getFkIdPerson();
+        if (linked != null && linked.getPersonId() != null) {
+            person = new PersonRef(linked.getPersonId(), linked.getFirstName(), linked.getLastName());
         }
         return new BudgetResponse(
                 budget.getIdBudget(),
