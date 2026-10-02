@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoBudget;
@@ -80,7 +82,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     private String status;
 
     @Column(name = "property_amount")
-    private Float propertyAmount;
+    private BigDecimal propertyAmount;
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -305,11 +307,11 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.status = status;
     }
 
-    public Float getPropertyAmount() {
+    public BigDecimal getPropertyAmount() {
         return propertyAmount;
     }
 
-    public void setPropertyAmount(Float propertyAmount) {
+    public void setPropertyAmount(BigDecimal propertyAmount) {
         this.propertyAmount = propertyAmount;
     }
 
@@ -330,20 +332,20 @@ public class Budget implements Serializable, Persistable<Integer> {
     }
 
     @Deprecated
-    public Float getSaldo() {
+    public BigDecimal getSaldo() {
         return null;
     }
 
     @Deprecated
-    public void setSaldo(Float saldo) {
+    public void setSaldo(BigDecimal saldo) {
     }
 
     @Deprecated
-    public Float getTotal() {
+    public BigDecimal getTotal() {
         return propertyAmount;
     }
 
     @Deprecated
-    public void setTotal(Float total) {
+    public void setTotal(BigDecimal total) {
     }
 }

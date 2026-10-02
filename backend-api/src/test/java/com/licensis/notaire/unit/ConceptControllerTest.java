@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.concept.ConceptController;
 import com.licensis.notaire.application.usecase.concept.ConceptService;
@@ -51,7 +53,7 @@ class ConceptControllerTest {
         Concept c = new Concept();
         c.setIdConcept(1);
         c.setName("Honorarios");
-        c.setValue(100.0f);
+        c.setValue(new java.math.BigDecimal("100.0"));
         c.setPercentage(0);
         c.setEnabled(true);
         return c;
@@ -87,7 +89,7 @@ class ConceptControllerTest {
     private DtoConcept buildDto() {
         DtoConcept dto = new DtoConcept();
         dto.setName("Honorarios");
-        dto.setValue(100f);
+        dto.setValue(new java.math.BigDecimal("100"));
         dto.setPercentage(0);
         dto.setEnabled(true);
         dto.setVersion(0);

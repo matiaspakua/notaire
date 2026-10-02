@@ -28,7 +28,7 @@ public class PropertyController {
 
     record PropertyRequest(
             String cadastralDesignation,
-            Float fiscalAppraisal,
+            java.math.BigDecimal fiscalAppraisal,
             String address,
             String notes,
             String registrationNumber,
@@ -38,7 +38,7 @@ public class PropertyController {
     record PropertyResponse(
             Integer idProperty,
             String cadastralDesignation,
-            Float fiscalAppraisal,
+            java.math.BigDecimal fiscalAppraisal,
             String address,
             String notes,
             String registrationNumber,

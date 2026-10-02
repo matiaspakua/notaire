@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
@@ -56,7 +58,7 @@ public class Concept implements Serializable, Persistable<Integer>
     private int version = 0;
     @Basic(optional = false)
     @Column(name = "amount")
-    private float value;
+    private BigDecimal value;
     @Basic(optional = false)
     @Column(name = "percentage")
     private int percentage;
@@ -81,7 +83,7 @@ public class Concept implements Serializable, Persistable<Integer>
         this.idConcept = idConcept;
     }
 
-    public Concept(Integer idConcept, String name, Float value, Integer percentage)
+    public Concept(Integer idConcept, String name, BigDecimal value, Integer percentage)
     {
         this.idConcept = idConcept;
         this.name = name;
@@ -224,12 +226,12 @@ public class Concept implements Serializable, Persistable<Integer>
         this.version = version;
     }
 
-    public float getValue()
+    public BigDecimal getValue()
     {
         return value;
     }
 
-    public void setValue(float value)
+    public void setValue(BigDecimal value)
     {
         this.value = value;
     }

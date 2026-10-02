@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.port.in.payment;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Date;
  */
 public record ProcessPaymentCommand(
         Integer budgetId,
-        Float amount,
+        BigDecimal amount,
         Date date,
         String notes,
         String paymentMethod) {

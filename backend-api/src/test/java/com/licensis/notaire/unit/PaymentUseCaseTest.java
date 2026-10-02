@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.adapter.out.persistence.payment.BudgetLookupAdapter;
 import com.licensis.notaire.adapter.out.persistence.payment.PaymentPersistenceAdapter;
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
@@ -80,10 +82,10 @@ class PaymentUseCaseTest {
 
         testBudget = new Budget();
         testBudget.setIdBudget(1);
-        testBudget.setPropertyAmount(10000.00f);
+        testBudget.setPropertyAmount(new java.math.BigDecimal("10000.00"));
     }
 
-    private ProcessPaymentCommand command(Integer budgetId, Float amount, Date date, String notes) {
+    private ProcessPaymentCommand command(Integer budgetId, java.math.BigDecimal amount, Date date, String notes) {
         return new ProcessPaymentCommand(budgetId, amount, date, notes, null);
     }
 
@@ -96,21 +98,21 @@ class PaymentUseCaseTest {
         void shouldProcessPaymentSuccessfully() {
             // Arrange
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(3000.00f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("3000.00"));
 
             Payment savedPayment = new Payment();
             savedPayment.setIdPayment(1);
-            savedPayment.setAmount(2000.00f);
+            savedPayment.setAmount(new java.math.BigDecimal("2000.00"));
             savedPayment.setDate(new Date());
             savedPayment.setBudget(testBudget);
             when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
 
             // Act
-            PaymentDetails result = processPayment.process(command(1, 2000.00f, new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
 
             // Assert
             assertThat(result).isNotNull();
-            assertThat(result.amount()).isEqualTo(2000.00f);
+            assertThat(result.amount()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
             assertThat(result.budgetId()).isEqualTo(testBudget.getIdBudget());
             verify(paymentRepository).save(any(Payment.class));
         }
@@ -122,7 +124,7 @@ class PaymentUseCaseTest {
             when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> processPayment.process(command(999, 1000.00f, new Date(), "Test")))
+            assertThatThrownBy(() -> processPayment.process(command(999, new java.math.BigDecimal("1000.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Presupuesto no encontrado");
         }
@@ -134,7 +136,7 @@ class PaymentUseCaseTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
             // Act & Assert
-            assertThatThrownBy(() -> processPayment.process(command(1, 0.00f, new Date(), "Test")))
+            assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("0.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("El monto del pago debe ser mayor a cero");
         }
@@ -146,7 +148,7 @@ class PaymentUseCaseTest {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
 
             // Act & Assert
-            assertThatThrownBy(() -> processPayment.process(command(1, -500.00f, new Date(), "Test")))
+            assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("-500.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("El monto del pago debe ser mayor a cero");
         }
@@ -168,11 +170,11 @@ class PaymentUseCaseTest {
         void shouldUseCurrentDateWhenDateIsNull() {
             // Arrange
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             // Act
-            PaymentDetails result = processPayment.process(command(1, 1000.00f, null, "Test"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("1000.00"), null, "Test"));
 
             // Assert
             assertThat(result.date()).isNotNull();
@@ -187,13 +189,13 @@ class PaymentUseCaseTest {
         void shouldCalculatePendingBalanceCorrectly() {
             // Arrange
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(4000.00f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("4000.00"));
 
             // Act
-            float pendingBalance = paymentStatus.pendingBalance(1);
+            java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(1);
 
             // Assert
-            assertThat(pendingBalance).isEqualTo(6000.00f);
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("6000.00"));
         }
 
         @Test
@@ -204,10 +206,10 @@ class PaymentUseCaseTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
             // Act
-            float pendingBalance = paymentStatus.pendingBalance(1);
+            java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(1);
 
             // Assert
-            assertThat(pendingBalance).isEqualTo(10000.00f);
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("10000.00"));
         }
     }
 
@@ -221,7 +223,7 @@ class PaymentUseCaseTest {
             // Arrange
             Payment expectedPayment = new Payment();
             expectedPayment.setIdPayment(1);
-            expectedPayment.setAmount(5000.00f);
+            expectedPayment.setAmount(new java.math.BigDecimal("5000.00"));
             when(paymentRepository.findById(1)).thenReturn(Optional.of(expectedPayment));
 
             // Act
@@ -230,7 +232,7 @@ class PaymentUseCaseTest {
             // Assert
             assertThat(result).isPresent();
             assertThat(result.get().id()).isEqualTo(1);
-            assertThat(result.get().amount()).isEqualTo(5000.00f);
+            assertThat(result.get().amount()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test
@@ -256,8 +258,8 @@ class PaymentUseCaseTest {
         void shouldFindAllPaymentsByBudgetId() {
             // Arrange
             List<Payment> expectedPayments = List.of(
-                    createPayment(1, 1000.00f),
-                    createPayment(2, 2000.00f)
+                    createPayment(1, new java.math.BigDecimal("1000.00")),
+                    createPayment(2, new java.math.BigDecimal("2000.00"))
             );
             when(paymentRepository.findByFkIdBudgetIdBudget(1)).thenReturn(expectedPayments);
 
@@ -274,9 +276,9 @@ class PaymentUseCaseTest {
         void shouldFindAllPayments() {
             // Arrange
             List<Payment> expectedPayments = List.of(
-                    createPayment(1, 1000.00f),
-                    createPayment(2, 2000.00f),
-                    createPayment(3, 3000.00f)
+                    createPayment(1, new java.math.BigDecimal("1000.00")),
+                    createPayment(2, new java.math.BigDecimal("2000.00")),
+                    createPayment(3, new java.math.BigDecimal("3000.00"))
             );
             when(paymentRepository.findAll()).thenReturn(expectedPayments);
 
@@ -312,7 +314,7 @@ class PaymentUseCaseTest {
                     .hasMessageContaining("Pago no encontrado");
         }
 
-        private Payment createPayment(Integer id, Float amount) {
+        private Payment createPayment(Integer id, java.math.BigDecimal amount) {
             Payment payment = new Payment();
             payment.setIdPayment(id);
             payment.setAmount(amount);
@@ -329,11 +331,11 @@ class PaymentUseCaseTest {
         @DisplayName("Should persist paymentMethod when processing a payment")
         void shouldPersistPaymentMethodWhenProcesarPayment() {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = processPayment.process(
-                    new ProcessPaymentCommand(1, 2000.00f, new Date(), "Pago parcial", "Efectivo"));
+                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial", "Efectivo"));
 
             assertThat(result.paymentMethod()).isEqualTo("Efectivo");
         }
@@ -342,10 +344,10 @@ class PaymentUseCaseTest {
         @DisplayName("Should allow null paymentMethod when processing a payment")
         void shouldAllowNullPaymentMethodOnProcesarPayment() {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PaymentDetails result = processPayment.process(command(1, 2000.00f, new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
 
             assertThat(result.paymentMethod()).isNull();
         }
@@ -355,7 +357,7 @@ class PaymentUseCaseTest {
         void shouldUpdatePaymentMethodWhenEditarPayment() {
             Payment existing = new Payment();
             existing.setIdPayment(1);
-            existing.setAmount(1000f);
+            existing.setAmount(new java.math.BigDecimal("1000"));
             existing.setDate(new Date());
             existing.setPaymentMethod("Efectivo");
             when(paymentRepository.existsById(1)).thenReturn(true);
@@ -363,7 +365,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = editPayment.edit(
-                    new EditPaymentCommand(1, 1000f, new Date(), "Editado", "Transferencia"));
+                    new EditPaymentCommand(1, new java.math.BigDecimal("1000"), new Date(), "Editado", "Transferencia"));
 
             assertThat(result.paymentMethod()).isEqualTo("Transferencia");
         }
@@ -374,7 +376,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> editPayment.edit(
-                    new EditPaymentCommand(999, 1000f, new Date(), "Test", "Efectivo")))
+                    new EditPaymentCommand(999, new java.math.BigDecimal("1000"), new Date(), "Test", "Efectivo")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Pago no encontrado");
 
@@ -391,13 +393,13 @@ class PaymentUseCaseTest {
         void shouldRejectPaymentExceedingSaldo() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(50000f);
+            budget.setPropertyAmount(new java.math.BigDecimal("50000"));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(30000f); // Already paid 30k
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("30000")); // Already paid 30k
 
             // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
-            assertThatThrownBy(() -> processPayment.process(command(1, 25000f, new Date(), "Overpay attempt")))
+            assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("25000"), new Date(), "Overpay attempt")))
                     .isInstanceOf(PendingBalanceExceededException.class)
                     .hasMessageContaining("no puede exceder el saldo pendiente");
 
@@ -409,10 +411,10 @@ class PaymentUseCaseTest {
         void shouldAcceptPaymentEqualToSaldo() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(50000f);
+            budget.setPropertyAmount(new java.math.BigDecimal("50000"));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(30000f); // Already paid 30k
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("30000")); // Already paid 30k
             when(paymentRepository.save(any(Payment.class))).thenAnswer(inv -> {
                 Payment p = inv.getArgument(0);
                 p.setIdPayment(1);
@@ -420,10 +422,10 @@ class PaymentUseCaseTest {
             });
 
             // Saldo = 50k - 30k = 20k, paying exactly 20k should succeed
-            PaymentDetails result = processPayment.process(command(1, 20000f, new Date(), "Exact payment"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("20000"), new Date(), "Exact payment"));
 
             assertThat(result).isNotNull();
-            assertThat(result.amount()).isEqualTo(20000f);
+            assertThat(result.amount()).isEqualByComparingTo(new java.math.BigDecimal("20000"));
             verify(paymentRepository).save(any(Payment.class));
         }
 
@@ -432,10 +434,10 @@ class PaymentUseCaseTest {
         void shouldAcceptPartialPayment() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(50000f);
+            budget.setPropertyAmount(new java.math.BigDecimal("50000"));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(30000f); // Already paid 30k
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("30000")); // Already paid 30k
             when(paymentRepository.save(any(Payment.class))).thenAnswer(inv -> {
                 Payment p = inv.getArgument(0);
                 p.setIdPayment(1);
@@ -443,10 +445,10 @@ class PaymentUseCaseTest {
             });
 
             // Saldo = 50k - 30k = 20k, paying 15k should succeed
-            PaymentDetails result = processPayment.process(command(1, 15000f, new Date(), "Partial payment"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("15000"), new Date(), "Partial payment"));
 
             assertThat(result).isNotNull();
-            assertThat(result.amount()).isEqualTo(15000f);
+            assertThat(result.amount()).isEqualByComparingTo(new java.math.BigDecimal("15000"));
             verify(paymentRepository).save(any(Payment.class));
         }
     }
@@ -455,7 +457,7 @@ class PaymentUseCaseTest {
     @DisplayName("Descuentos y recargos en el total (Issue #822)")
     class DescuentosYRecargosTests {
 
-        private Item buildItem(TypeItem type, float value) {
+        private Item buildItem(TypeItem type, java.math.BigDecimal value) {
             Item item = new Item();
             item.setName("Item de prueba");
             item.setValue(value);
@@ -468,18 +470,18 @@ class PaymentUseCaseTest {
         void shouldSubtractDiscountItemFromTotal() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(0f);
+            budget.setPropertyAmount(new java.math.BigDecimal("0"));
             budget.setItemList(List.of(
-                    buildItem(TypeItem.NORMAL, 10000f),
-                    buildItem(TypeItem.DESCUENTO, 2000f)
+                    buildItem(TypeItem.NORMAL, new java.math.BigDecimal("10000")),
+                    buildItem(TypeItem.DESCUENTO, new java.math.BigDecimal("2000"))
             ));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
 
-            float pendingBalance = paymentStatus.pendingBalance(1);
+            java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(1);
 
-            assertThat(pendingBalance).isEqualTo(8000f);
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("8000"));
         }
 
         @Test
@@ -487,18 +489,18 @@ class PaymentUseCaseTest {
         void shouldAddSurchargeItemToTotal() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(0f);
+            budget.setPropertyAmount(new java.math.BigDecimal("0"));
             budget.setItemList(List.of(
-                    buildItem(TypeItem.NORMAL, 10000f),
-                    buildItem(TypeItem.RECARGO, 1500f)
+                    buildItem(TypeItem.NORMAL, new java.math.BigDecimal("10000")),
+                    buildItem(TypeItem.RECARGO, new java.math.BigDecimal("1500"))
             ));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
 
-            float pendingBalance = paymentStatus.pendingBalance(1);
+            java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(1);
 
-            assertThat(pendingBalance).isEqualTo(11500f);
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("11500"));
         }
 
         @Test
@@ -506,18 +508,18 @@ class PaymentUseCaseTest {
         void shouldSumOnlyNormalItemsWhenNoDiscountsOrSurcharges() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
-            budget.setPropertyAmount(0f);
+            budget.setPropertyAmount(new java.math.BigDecimal("0"));
             budget.setItemList(List.of(
-                    buildItem(TypeItem.NORMAL, 10000f),
-                    buildItem(TypeItem.NORMAL, 5000f)
+                    buildItem(TypeItem.NORMAL, new java.math.BigDecimal("10000")),
+                    buildItem(TypeItem.NORMAL, new java.math.BigDecimal("5000"))
             ));
 
             when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(0f);
+            when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
 
-            float pendingBalance = paymentStatus.pendingBalance(1);
+            java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(1);
 
-            assertThat(pendingBalance).isEqualTo(15000f);
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("15000"));
         }
     }
 }

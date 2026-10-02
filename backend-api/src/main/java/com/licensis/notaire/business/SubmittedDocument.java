@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoSubmittedDocument;
 import com.licensis.notaire.dto.DtoDocumentType;
 import com.licensis.notaire.dto.DtoProcedure;
@@ -107,7 +109,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     private Integer dueDays;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "amount_to_pay")
-    private Float amountToPay;
+    private BigDecimal amountToPay;
     @Column(name = "notes")
     private String notes;
     @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id")
@@ -230,12 +232,12 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
         this.dueDays = dueDays;
     }
 
-    public Float getAmountToPay()
+    public BigDecimal getAmountToPay()
     {
         return amountToPay;
     }
 
-    public void setAmountToPay(Float amountToPay)
+    public void setAmountToPay(BigDecimal amountToPay)
     {
         this.amountToPay = amountToPay;
     }

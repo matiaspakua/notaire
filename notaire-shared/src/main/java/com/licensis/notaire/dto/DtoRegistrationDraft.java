@@ -1,12 +1,14 @@
 package com.licensis.notaire.dto;
 
+import java.math.BigDecimal;
+
 import java.util.Date;
 
 public class DtoRegistrationDraft {
 
     private Integer idRegistrationDraft;
     private int number;
-    private Float operationPrice;
+    private BigDecimal operationPrice;
     private String status;
     private Date dateGeneration;
     private Date dateSubmission;
@@ -20,7 +22,7 @@ public class DtoRegistrationDraft {
     public DtoRegistrationDraft() {
     }
 
-    public DtoRegistrationDraft(Integer idRegistrationDraft, int number, Float operationPrice, String status,
+    public DtoRegistrationDraft(Integer idRegistrationDraft, int number, BigDecimal operationPrice, String status,
             Date dateGeneration, Date dateSubmission, String registryEntryNumber, Date dateReception,
             String finalRegistrationNumber, String registryNotes, Date dateCorrection,
             Integer idDeed) {
@@ -54,11 +56,11 @@ public class DtoRegistrationDraft {
         this.number = number;
     }
 
-    public Float getOperationPrice() {
+    public BigDecimal getOperationPrice() {
         return operationPrice;
     }
 
-    public void setOperationPrice(Float operationPrice) {
+    public void setOperationPrice(BigDecimal operationPrice) {
         this.operationPrice = operationPrice;
     }
 

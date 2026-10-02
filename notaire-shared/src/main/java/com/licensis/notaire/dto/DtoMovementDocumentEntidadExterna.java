@@ -1,5 +1,7 @@
 package com.licensis.notaire.dto;
 
+import java.math.BigDecimal;
+
 import java.util.Date;
 
 /**
@@ -12,7 +14,7 @@ public record DtoMovementDocumentEntidadExterna(
         Date dateEntry,
         Date dateExit,
         Boolean flagged,
-        Float amountToPay,
+        BigDecimal amountToPay,
         Date datePayment,
         Date dateReleased,
         String notes,

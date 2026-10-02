@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.IdentificationType;
@@ -55,7 +57,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         budget.setDate(new Date());
         budget.setEncabezado("Presupuesto Test");
         budget.setStatus("BORRADOR");
-        budget.setPropertyAmount(100000.0f);
+        budget.setPropertyAmount(new java.math.BigDecimal("100000.0"));
         budget.setFkIdPerson(person);
 
         Budget saved = budgetRepository.save(budget);

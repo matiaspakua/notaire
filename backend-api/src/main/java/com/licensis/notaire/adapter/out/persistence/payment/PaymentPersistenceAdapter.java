@@ -10,6 +10,7 @@ import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.PaymentRepository;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
     }
 
     @Override
-    public Float sumAmountByBudgetId(Integer budgetId) {
+    public BigDecimal sumAmountByBudgetId(Integer budgetId) {
         return paymentRepository.sumAmountByBudgetId(budgetId);
     }
 

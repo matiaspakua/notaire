@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -54,7 +56,7 @@ public class Property implements Serializable, Persistable<Integer> {
     @Column(name = "nomenclature")
     private String cadastralDesignation;
     @Column(name = "fiscal_valuation")
-    private Float fiscalAppraisal;
+    private BigDecimal fiscalAppraisal;
     @Basic(optional = false)
     @Column(name = "address")
     private String address;
@@ -114,11 +116,11 @@ public class Property implements Serializable, Persistable<Integer> {
         this.cadastralDesignation = cadastralDesignation;
     }
 
-    public Float getFiscalAppraisal() {
+    public BigDecimal getFiscalAppraisal() {
         return fiscalAppraisal;
     }
 
-    public void setFiscalAppraisal(Float fiscalAppraisal) {
+    public void setFiscalAppraisal(BigDecimal fiscalAppraisal) {
         this.fiscalAppraisal = fiscalAppraisal;
     }
 

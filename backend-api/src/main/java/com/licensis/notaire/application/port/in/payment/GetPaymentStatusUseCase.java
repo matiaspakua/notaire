@@ -2,6 +2,8 @@ package com.licensis.notaire.application.port.in.payment;
 
 import com.licensis.notaire.domain.payment.PaymentStatus;
 
+import java.math.BigDecimal;
+
 /**
  * Inbound port for CU47 "Consultar Estado de Pago": the financial position of a budget.
  */
@@ -12,7 +14,7 @@ public interface GetPaymentStatusUseCase {
      *
      * @throws IllegalArgumentException if the budget does not exist
      */
-    float pendingBalance(Integer budgetId);
+    BigDecimal pendingBalance(Integer budgetId);
 
     /**
      * Aggregated payment status of the budget.

@@ -1,4 +1,6 @@
 package com.licensis.notaire.dto;
+
+import java.math.BigDecimal;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
 import com.licensis.notaire.dto.interfaces.DtoValido;
@@ -13,7 +15,7 @@ public class DtoProperty implements DtoValido
 
     private Integer idProperty;
     private String cadastralDesignation = "";
-    private Float fiscalAppraisal;
+    private BigDecimal fiscalAppraisal;
     private String address = "";
     private String typeProperty = "";
     private String notes = "";
@@ -34,7 +36,7 @@ public class DtoProperty implements DtoValido
         this.typeProperty = typeProperty;
     }
 
-    public DtoProperty(String cadastralDesignation, Float fiscalAppraisal, String address, String typeProperty, String notes, ArrayList<DtoProcedure> dtoProcedures)
+    public DtoProperty(String cadastralDesignation, BigDecimal fiscalAppraisal, String address, String typeProperty, String notes, ArrayList<DtoProcedure> dtoProcedures)
     {
         this.cadastralDesignation = cadastralDesignation;
         this.fiscalAppraisal = fiscalAppraisal;
@@ -64,12 +66,12 @@ public class DtoProperty implements DtoValido
         this.cadastralDesignation = cadastralDesignation;
     }
 
-    public Float getFiscalAppraisal()
+    public BigDecimal getFiscalAppraisal()
     {
         return this.fiscalAppraisal;
     }
 
-    public void setFiscalAppraisal(Float fiscalAppraisal)
+    public void setFiscalAppraisal(BigDecimal fiscalAppraisal)
     {
         this.fiscalAppraisal = fiscalAppraisal;
     }

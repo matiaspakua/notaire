@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +70,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idBudget").asInt();
     }
 
-    private Item createCatalogItem(String name, float value) {
+    private Item createCatalogItem(String name, java.math.BigDecimal value) {
         Item item = new Item(null, name, value);
         item.setPercentage(15);
         item.setNotes("Item de catálogo IT");
@@ -80,7 +82,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
     void shouldAddCatalogItemToBudget() throws Exception {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
-        Item catalogItem = createCatalogItem("Sellado IT", 500f);
+        Item catalogItem = createCatalogItem("Sellado IT", new java.math.BigDecimal("500"));
 
         mockMvc.perform(post("/api/v1/presupuestos/" + budgetId + "/items-desde-catalogo")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +108,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when the budget does not exist")
     void shouldReturnNotFoundForUnknownBudget() throws Exception {
-        Item catalogItem = createCatalogItem("Honorarios IT", 1000f);
+        Item catalogItem = createCatalogItem("Honorarios IT", new java.math.BigDecimal("1000"));
 
         mockMvc.perform(post("/api/v1/presupuestos/999999/items-desde-catalogo")
                         .contentType(MediaType.APPLICATION_JSON)

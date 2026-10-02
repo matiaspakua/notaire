@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoPayment;
 import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.business.Payment;
@@ -26,9 +28,9 @@ class PaymentEntityTest {
             Payment payment = new Payment();
             payment.setIdPayment(1);
             payment.setDate(new Date());
-            payment.setAmount(5000.00f);
+            payment.setAmount(new java.math.BigDecimal("5000.00"));
 
-            assertThat(payment.getAmount()).isEqualTo(5000.00f);
+            assertThat(payment.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test
@@ -46,10 +48,10 @@ class PaymentEntityTest {
         @DisplayName("Should initialize with full constructor")
         void shouldInitializeWithFullConstructor() {
             Date date = new Date();
-            Payment payment = new Payment(5, 1500.0f, date);
+            Payment payment = new Payment(5, new java.math.BigDecimal("1500.0"), date);
 
             assertThat(payment.getIdPayment()).isEqualTo(5);
-            assertThat(payment.getAmount()).isEqualTo(1500.0f);
+            assertThat(payment.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("1500.0"));
             assertThat(payment.getDate()).isEqualTo(date);
         }
     }
@@ -63,12 +65,12 @@ class PaymentEntityTest {
         void getDtoWithNullNotes() {
             Payment payment = new Payment(1);
             payment.setDate(new Date());
-            payment.setAmount(1000.0f);
+            payment.setAmount(new java.math.BigDecimal("1000.0"));
 
             var dto = payment.getDto();
 
             assertThat(dto.getIdPayment()).isEqualTo(1);
-            assertThat(dto.getAmount()).isEqualTo(1000.0f);
+            assertThat(dto.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("1000.0"));
         }
 
         @Test
@@ -76,7 +78,7 @@ class PaymentEntityTest {
         void getDtoWithNonNullNotes() {
             Payment payment = new Payment(2);
             payment.setDate(new Date());
-            payment.setAmount(500.0f);
+            payment.setAmount(new java.math.BigDecimal("500.0"));
             payment.setNotes("Pago parcial");
 
             var dto = payment.getDto();
@@ -95,13 +97,13 @@ class PaymentEntityTest {
             DtoPayment dto = new DtoPayment();
             dto.setIdPayment(3);
             dto.setDate(new Date());
-            dto.setAmount(2000.0f);
+            dto.setAmount(new java.math.BigDecimal("2000.0"));
 
             Payment payment = new Payment();
             payment.setAtributos(dto);
 
             assertThat(payment.getIdPayment()).isEqualTo(3);
-            assertThat(payment.getAmount()).isEqualTo(2000.0f);
+            assertThat(payment.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("2000.0"));
         }
 
         @Test
@@ -110,7 +112,7 @@ class PaymentEntityTest {
             DtoPayment dto = new DtoPayment();
             dto.setIdPayment(4);
             dto.setDate(new Date());
-            dto.setAmount(300.0f);
+            dto.setAmount(new java.math.BigDecimal("300.0"));
             dto.setNotes("Cuota 1");
 
             Payment payment = new Payment();
@@ -125,7 +127,7 @@ class PaymentEntityTest {
             DtoPayment dto = new DtoPayment();
             dto.setIdPayment(5);
             dto.setDate(new Date());
-            dto.setAmount(750.0f);
+            dto.setAmount(new java.math.BigDecimal("750.0"));
             DtoBudget dtoBudget = new DtoBudget();
             dtoBudget.setIdBudget(10);
             dtoBudget.setNumber(1001);
@@ -148,7 +150,7 @@ class PaymentEntityTest {
         void toStringWithNullNotes() {
             Payment payment = new Payment(1);
             payment.setDate(new Date());
-            payment.setAmount(100.0f);
+            payment.setAmount(new java.math.BigDecimal("100.0"));
 
             String str = payment.toString();
 
@@ -160,7 +162,7 @@ class PaymentEntityTest {
         void toStringWithNonNullNotes() {
             Payment payment = new Payment(2);
             payment.setDate(new Date());
-            payment.setAmount(200.0f);
+            payment.setAmount(new java.math.BigDecimal("200.0"));
             payment.setNotes("Observación de prueba");
 
             String str = payment.toString();

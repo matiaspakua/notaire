@@ -1,5 +1,7 @@
 package com.licensis.notaire.service.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.application.port.out.document.DocumentRepositoryPort;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.business.DocumentCostTemplate;
@@ -51,9 +53,9 @@ class DocumentCostTemplateServiceTest {
         when(documentRepository.saveCostTemplate(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, 1500f, null);
+        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, new java.math.BigDecimal("1500"), null);
 
-        assertThat(result.getFixedAmount()).isEqualTo(1500f);
+        assertThat(result.getFixedAmount()).isEqualByComparingTo(new java.math.BigDecimal("1500"));
         assertThat(result.getVariablePercentage()).isNull();
     }
 
@@ -65,16 +67,16 @@ class DocumentCostTemplateServiceTest {
         when(documentRepository.saveCostTemplate(any(DocumentCostTemplate.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, null, 5f);
+        DocumentCostTemplate result = documentCostTemplateService.create(1, 1, null, new java.math.BigDecimal("5"));
 
-        assertThat(result.getVariablePercentage()).isEqualTo(5f);
+        assertThat(result.getVariablePercentage()).isEqualByComparingTo(new java.math.BigDecimal("5"));
         assertThat(result.getFixedAmount()).isNull();
     }
 
     @Test
     @DisplayName("Should reject when both fixed and variable cost provided")
     void shouldRejectWhenBothFixedAndVariableCostProvided() {
-        assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, 1500f, 5f))
+        assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, new java.math.BigDecimal("1500"), new java.math.BigDecimal("5")))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("exactamente uno");
     }

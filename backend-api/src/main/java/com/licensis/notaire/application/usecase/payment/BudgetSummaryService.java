@@ -6,18 +6,20 @@ import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
 import com.licensis.notaire.application.port.out.payment.BudgetDescriptor;
 import com.licensis.notaire.application.port.out.payment.BudgetLookupPort;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * CU47 "Consultar Pago": assembles the financial summary of a budget.
  *
- * <p>The total is intentionally derived as {@code pendingBalance + totalPaid} rather than
- * recomputed from the budget charges, preserving the exact floating-point result the
- * previous implementation returned.
+ * <p>The total is derived as {@code pendingBalance + totalPaid} rather than
+ * recomputed from the budget charges, preserving the previous formula with exact
+ * {@link BigDecimal} arithmetic (issue #1061).
  */
 @Service
 public class BudgetSummaryService implements GetBudgetSummaryUseCase {
@@ -40,9 +42,12 @@ public class BudgetSummaryService implements GetBudgetSummaryUseCase {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + budgetId));
 
-        float pendingBalance = paymentStatus.pendingBalance(budgetId);
+        BigDecimal pendingBalance = paymentStatus.pendingBalance(budgetId);
         List<PaymentDetails> payments = paymentQueries.findByBudget(budgetId);
-        float totalPaid = (float) payments.stream().mapToDouble(PaymentDetails::amount).sum();
+        BigDecimal totalPaid = payments.stream()
+                .map(PaymentDetails::amount)
+                .map(Money::nullToZero)
+                .reduce(Money.zero(), BigDecimal::add);
 
         return new BudgetSummary(
                 descriptor.budgetId(),
@@ -50,7 +55,7 @@ public class BudgetSummaryService implements GetBudgetSummaryUseCase {
                 descriptor.managementId(),
                 descriptor.managementNumber(),
                 descriptor.managementHeading(),
-                pendingBalance + totalPaid,
+                Money.of(pendingBalance.add(totalPaid)),
                 pendingBalance,
                 payments);
     }

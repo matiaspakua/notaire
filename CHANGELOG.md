@@ -289,6 +289,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Monetary amounts use `BigDecimal` / `NUMERIC` (issue #1061, CU15):**
+  entities, shared DTOs, payment domain (`BudgetCharges`, status/summary),
+  ports, controllers, and receipt PDF formatting no longer use `float`/`Float`
+  for money. Flyway `V39` converts remaining `real` money columns to
+  `NUMERIC(19,2)` (percentage `NUMERIC(7,4)`). Unit tests cover exact cent
+  sums (`10.10 + 20.20`) and overpayment against an exact tenths balance
+  (`0.1 + 0.2` vs `0.3`). Layout floats (`WorkflowNode` positions) unchanged.
 - **E2E suite no longer collides across workers or leaks seed rows**
   (issue #1037, CU76): `uniqueId()` gives each Playwright worker its own
   residue class, so parallel workers never send the same `E2E<n>` document

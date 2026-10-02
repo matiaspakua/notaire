@@ -212,8 +212,12 @@ public class ReportService {
         return generateReceiptPdf(nameClient, payment.getDate(), conceptos, payment.getAmount());
     }
 
-    private byte[] generateReceiptPdf(String client, java.util.Date date, String conceptos, float amount) {
+    private byte[] generateReceiptPdf(String client, java.util.Date date, String conceptos,
+            java.math.BigDecimal amount) {
         try {
+            String amountText = amount == null
+                    ? "0.00"
+                    : amount.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");
             stream.append("/F1 20 Tf\n");
@@ -227,7 +231,7 @@ public class ReportService {
             stream.append("0 -20 Td\n");
             stream.append("(Concepto(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Total abonado: ").append(escapePdfText(String.valueOf(amount))).append(") Tj\n");
+            stream.append("(Total abonado: ").append(escapePdfText(amountText)).append(") Tj\n");
             stream.append("0 -40 Td\n");
             stream.append("(Recibo generado por backend API - CU15.) Tj\n");
             stream.append("ET\n");

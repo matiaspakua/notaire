@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
@@ -60,7 +62,7 @@ class BudgetSummaryDtoTest {
         descriptor = new BudgetDescriptor(BUDGET_ID, BUDGET_NUMBER, 1, 500, "Gestión Test");
     }
 
-    private PaymentDetails paymentOf(Integer idPayment, float amount) {
+    private PaymentDetails paymentOf(Integer idPayment, java.math.BigDecimal amount) {
         return new PaymentDetails(idPayment, BUDGET_ID, amount, new Date(), null, null);
     }
 
@@ -77,12 +79,12 @@ class BudgetSummaryDtoTest {
         void shouldReturnFullBalanceWhenNoPayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of());
-            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(5000.00f);
+            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("5000.00"));
 
             DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualTo(5000.00f);
-            assertThat(resumen.total()).isEqualTo(5000.00f);
+            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
             assertThat(resumen.payments()).isEmpty();
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.numberManagement()).isEqualTo(500);
@@ -93,16 +95,16 @@ class BudgetSummaryDtoTest {
         @DisplayName("Presupuesto con un pago reduce el saldo y lo incluye en la lista")
         void shouldReturnReducedBalanceWithOnePayment() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
-            when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of(paymentOf(1, 2000.00f)));
-            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(3000.00f);
+            when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of(paymentOf(1, new java.math.BigDecimal("2000.00"))));
+            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("3000.00"));
 
             DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualTo(3000.00f);
-            assertThat(resumen.total()).isEqualTo(5000.00f);
+            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
+            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
             assertThat(resumen.payments()).hasSize(1);
             assertThat(resumen.payments().get(0).idPayment()).isEqualTo(1);
-            assertThat(resumen.payments().get(0).amount()).isEqualTo(2000.00f);
+            assertThat(resumen.payments().get(0).amount()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
             assertThat(resumen.payments().get(0).idBudget()).isEqualTo(BUDGET_ID);
         }
 
@@ -111,13 +113,13 @@ class BudgetSummaryDtoTest {
         void shouldReturnNetBalanceWithMultiplePayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID))
-                    .thenReturn(List.of(paymentOf(1, 2000.00f), paymentOf(2, 1000.00f)));
-            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(2000.00f);
+                    .thenReturn(List.of(paymentOf(1, new java.math.BigDecimal("2000.00")), paymentOf(2, new java.math.BigDecimal("1000.00"))));
+            when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("2000.00"));
 
             DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualTo(2000.00f);
-            assertThat(resumen.total()).isEqualTo(5000.00f);
+            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
+            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
             assertThat(resumen.payments()).hasSize(2);
         }
 

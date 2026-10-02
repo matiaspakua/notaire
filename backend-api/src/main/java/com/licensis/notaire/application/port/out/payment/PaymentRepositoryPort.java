@@ -27,7 +27,7 @@ public interface PaymentRepositoryPort {
     /**
      * Sum of every amount paid for the budget, or {@code null} when no payment exists.
      */
-    Float sumAmountByBudgetId(Integer budgetId);
+    java.math.BigDecimal sumAmountByBudgetId(Integer budgetId);
 
     boolean existsById(Integer paymentId);
 

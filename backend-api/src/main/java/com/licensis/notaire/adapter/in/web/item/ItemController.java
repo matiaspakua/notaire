@@ -41,7 +41,7 @@ public class ItemController {
 
     record ItemRequest(
             @NotBlank String name,
-            float value,
+            java.math.BigDecimal value,
             Integer percentage,
             String notes,
             TypeItem type,
@@ -53,7 +53,7 @@ public class ItemController {
     record ItemResponse(
             Integer idItem,
             String name,
-            float value,
+            java.math.BigDecimal value,
             Integer percentage,
             String notes,
             TypeItem type,

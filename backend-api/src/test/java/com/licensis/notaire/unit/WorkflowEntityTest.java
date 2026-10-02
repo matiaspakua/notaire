@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;

@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.BusinessConstants;
@@ -60,7 +62,7 @@ class RegistrationDraftServiceTest {
         property = new Property();
         property.setIdProperty(1);
         property.setCadastralDesignation("123-456-789");
-        property.setFiscalAppraisal(1000f);
+        property.setFiscalAppraisal(new java.math.BigDecimal("1000"));
         property.setAddress("Calle Falsa 123");
         property.setRegistrationNumber("M-1");
         property.setVolumeFolioLandRecord("T1-F2-FN3");

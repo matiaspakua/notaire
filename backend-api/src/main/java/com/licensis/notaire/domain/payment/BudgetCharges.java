@@ -1,5 +1,6 @@
 package com.licensis.notaire.domain.payment;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -10,35 +11,39 @@ import java.util.List;
  * <p>Framework-free domain value object holding the budget total rule that previously
  * lived inside {@code PaymentService}. The percentage is intentionally compounded over
  * the <em>running</em> total rather than over the line value, preserving the legacy
- * arithmetic exactly.
+ * arithmetic order with exact {@link BigDecimal} scale-2 results.
  *
  * @param lines                  charge/discount lines, never {@code null} after construction
  * @param propertyAmount         fallback amount used only when there are no lines
  * @param submittedDocumentCosts total cost of documents submitted in the budget's procedures
  */
-public record BudgetCharges(List<ChargeLine> lines, Float propertyAmount, float submittedDocumentCosts) {
+public record BudgetCharges(List<ChargeLine> lines, BigDecimal propertyAmount, BigDecimal submittedDocumentCosts) {
 
     public BudgetCharges {
         lines = lines == null ? List.of() : List.copyOf(lines);
+        submittedDocumentCosts = Money.nullToZero(submittedDocumentCosts);
     }
 
     /**
      * Total value of the budget, including submitted document costs.
      */
-    public float total() {
-        float total;
+    public BigDecimal total() {
+        BigDecimal total;
         if (lines.isEmpty()) {
-            total = propertyAmount != null ? propertyAmount : 0f;
+            total = Money.nullToZero(propertyAmount);
         } else {
-            total = 0f;
+            total = Money.zero();
             for (ChargeLine line : lines) {
-                total += line.signedValue();
+                total = Money.of(total.add(line.signedValue()));
                 if (line.hasPercentage()) {
-                    total += total * (line.percentage() / 100.0f);
+                    BigDecimal surcharge = total
+                            .multiply(BigDecimal.valueOf(line.percentage()))
+                            .divide(BigDecimal.valueOf(100), Money.SCALE, Money.ROUNDING);
+                    total = Money.of(total.add(surcharge));
                 }
             }
         }
-        return total + submittedDocumentCosts;
+        return Money.of(total.add(submittedDocumentCosts));
     }
 
     /**
@@ -46,7 +51,7 @@ public record BudgetCharges(List<ChargeLine> lines, Float propertyAmount, float 
      *
      * @param totalPaid amount already paid; {@code null} is treated as nothing paid
      */
-    public float pendingBalanceAfter(Float totalPaid) {
-        return total() - (totalPaid != null ? totalPaid : 0f);
+    public BigDecimal pendingBalanceAfter(BigDecimal totalPaid) {
+        return Money.of(total().subtract(Money.nullToZero(totalPaid)));
     }
 }

@@ -1,5 +1,7 @@
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoRegistrationDraft;
 
 import jakarta.persistence.Basic;
@@ -42,7 +44,7 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     private int number;
 
     @Column(name = "operation_price")
-    private Float operationPrice;
+    private BigDecimal operationPrice;
 
     @Basic(optional = false)
     @Column(name = "status")
@@ -114,11 +116,11 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
         this.number = number;
     }
 
-    public Float getOperationPrice() {
+    public BigDecimal getOperationPrice() {
         return operationPrice;
     }
 
-    public void setOperationPrice(Float operationPrice) {
+    public void setOperationPrice(BigDecimal operationPrice) {
         this.operationPrice = operationPrice;
     }
 

@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.repository.PropertyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,14 +31,14 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
         Property property = new Property();
         property.setCadastralDesignation("Nomenclatura 123");
         property.setAddress("Calle Principal 123, Apartamento 4B");
-        property.setFiscalAppraisal(100000f);
+        property.setFiscalAppraisal(new java.math.BigDecimal("100000"));
         property.setNotes("Test property");
         Property saved = propertyRepository.save(property);
 
         assertThat(saved.getIdProperty()).isNotNull();
         assertThat(saved.getAddress()).isEqualTo("Calle Principal 123, Apartamento 4B");
         assertThat(saved.getCadastralDesignation()).isEqualTo("Nomenclatura 123");
-        assertThat(saved.getFiscalAppraisal()).isEqualTo(100000f);
+        assertThat(saved.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("100000"));
         assertThat(saved.getNotes()).isEqualTo("Test property");
     }
 
@@ -74,15 +76,15 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
         Property property = new Property();
         property.setCadastralDesignation("Update Test");
         property.setAddress("Original Street");
-        property.setFiscalAppraisal(100000f);
+        property.setFiscalAppraisal(new java.math.BigDecimal("100000"));
         Property saved = propertyRepository.save(property);
 
         saved.setAddress("Avenida Corrientes 1234");
-        saved.setFiscalAppraisal(150000f);
+        saved.setFiscalAppraisal(new java.math.BigDecimal("150000"));
         Property updated = propertyRepository.save(saved);
 
         assertThat(updated.getAddress()).isEqualTo("Avenida Corrientes 1234");
-        assertThat(updated.getFiscalAppraisal()).isEqualTo(150000f);
+        assertThat(updated.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("150000"));
 
         Optional<Property> fetched = propertyRepository.findById(saved.getIdProperty());
         assertThat(fetched.get().getAddress()).isEqualTo("Avenida Corrientes 1234");
@@ -125,7 +127,7 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
             Property property = new Property();
             property.setCadastralDesignation("Nomenclatura " + i);
             property.setAddress("Calle " + i);
-            property.setFiscalAppraisal((float) (50000 + (i * 10000)));
+            property.setFiscalAppraisal(java.math.BigDecimal.valueOf(50000 + (i * 10000L)));
             propertyRepository.save(property);
         }
 

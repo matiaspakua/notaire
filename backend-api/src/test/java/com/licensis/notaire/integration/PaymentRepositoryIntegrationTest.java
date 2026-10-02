@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -57,12 +59,12 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         testBudget.setDate(new Date());
         testBudget.setEncabezado("Presupuesto Test");
         testBudget.setStatus("PENDIENTE");
-        testBudget.setPropertyAmount(500000f);
+        testBudget.setPropertyAmount(new java.math.BigDecimal("500000"));
         testBudget.setFkIdPerson(testPerson);
         testBudget = budgetRepository.save(testBudget);
 
         testPayment = new Payment();
-        testPayment.setAmount(100000f);
+        testPayment.setAmount(new java.math.BigDecimal("100000"));
         testPayment.setDate(new Date());
         testPayment.setBudget(testBudget);
     }
@@ -78,7 +80,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(p -> {
-                    assertThat(p.getAmount()).isEqualTo(100000f);
+                    assertThat(p.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("100000"));
                     assertThat(p.getDate()).isNotNull();
                 });
     }
@@ -100,20 +102,20 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         paymentRepository.save(testPayment);
 
         Payment pago2 = new Payment();
-        pago2.setAmount(50000f);
+        pago2.setAmount(new java.math.BigDecimal("50000"));
         pago2.setDate(new Date());
         pago2.setBudget(testBudget);
         paymentRepository.save(pago2);
 
-        Float sum = paymentRepository.sumAmountByBudgetId(testBudget.getIdBudget());
+        java.math.BigDecimal sum = paymentRepository.sumAmountByBudgetId(testBudget.getIdBudget());
 
-        assertThat(sum).isEqualTo(150000f);
+        assertThat(sum).isEqualByComparingTo(new java.math.BigDecimal("150000"));
     }
 
     @Test
     @DisplayName("Should return null for sum when no payments exist")
     void shouldReturnNullForSumWhenNoPaymentsExist() {
-        Float sum = paymentRepository.sumAmountByBudgetId(9999);
+        java.math.BigDecimal sum = paymentRepository.sumAmountByBudgetId(9999);
 
         assertThat(sum).isNull();
     }
@@ -137,7 +139,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void shouldUpdatePayment() {
         Payment saved = paymentRepository.save(testPayment);
 
-        saved.setAmount(120000f);
+        saved.setAmount(new java.math.BigDecimal("120000"));
         saved.setNotes("Pago actualizado");
         paymentRepository.save(saved);
 
@@ -145,7 +147,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
         assertThat(updated).isPresent()
                 .hasValueSatisfying(p -> {
-                    assertThat(p.getAmount()).isEqualTo(120000f);
+                    assertThat(p.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
                     assertThat(p.getNotes()).isEqualTo("Pago actualizado");
                 });
     }

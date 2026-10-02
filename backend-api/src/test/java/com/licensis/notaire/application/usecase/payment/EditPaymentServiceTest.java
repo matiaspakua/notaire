@@ -1,5 +1,7 @@
 package com.licensis.notaire.application.usecase.payment;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,23 +28,23 @@ class EditPaymentServiceTest {
     void setUp() {
         payments = new InMemoryPaymentRepository();
         editPayment = new EditPaymentService(payments);
-        existing = payments.given(new PaymentDetails(1, 10, 500f, new Date(), "EFECTIVO", "Original"));
+        existing = payments.given(new PaymentDetails(1, 10, new java.math.BigDecimal("500"), new Date(), "EFECTIVO", "Original"));
     }
 
     @Test
     @DisplayName("Should update the amount when a new one is supplied")
     void shouldUpdateAmount() {
         PaymentDetails updated = editPayment.edit(
-                new EditPaymentCommand(existing.id(), 750f, null, null, null));
+                new EditPaymentCommand(existing.id(), new java.math.BigDecimal("750"), null, null, null));
 
-        assertThat(updated.amount()).isEqualTo(750f);
+        assertThat(updated.amount()).isEqualByComparingTo(new java.math.BigDecimal("750"));
     }
 
     @Test
     @DisplayName("Should leave untouched every field left null")
     void shouldLeaveNullFieldsUnchanged() {
         PaymentDetails updated = editPayment.edit(
-                new EditPaymentCommand(existing.id(), 750f, null, null, null));
+                new EditPaymentCommand(existing.id(), new java.math.BigDecimal("750"), null, null, null));
 
         assertThat(updated.notes()).isEqualTo("Original");
         assertThat(updated.paymentMethod()).isEqualTo("EFECTIVO");
@@ -60,17 +62,17 @@ class EditPaymentServiceTest {
         assertThat(updated.notes()).isEqualTo("Corregido");
         assertThat(updated.paymentMethod()).isEqualTo("TRANSFERENCIA");
         assertThat(updated.date()).isEqualTo(newDate);
-        assertThat(updated.amount()).isEqualTo(500f);
+        assertThat(updated.amount()).isEqualByComparingTo(new java.math.BigDecimal("500"));
     }
 
     @Test
     @DisplayName("Should reject a zero or negative amount")
     void shouldRejectNonPositiveAmount() {
-        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), 0f, null, null, null)))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), new java.math.BigDecimal("0"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("El monto del pago debe ser mayor a cero");
 
-        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), -5f, null, null, null)))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), new java.math.BigDecimal("-5"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("El monto del pago debe ser mayor a cero");
     }
@@ -78,7 +80,7 @@ class EditPaymentServiceTest {
     @Test
     @DisplayName("Should reject editing a payment that does not exist")
     void shouldRejectUnknownPayment() {
-        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, 100f, null, null, null)))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("100"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Pago no encontrado con ID: 999");
     }
@@ -86,7 +88,7 @@ class EditPaymentServiceTest {
     @Test
     @DisplayName("Should reject an unknown payment before validating the amount")
     void shouldCheckExistenceBeforeAmount() {
-        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, -1f, null, null, null)))
+        assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("-1"), null, null, null)))
                 .hasMessage("Pago no encontrado con ID: 999");
     }
 }

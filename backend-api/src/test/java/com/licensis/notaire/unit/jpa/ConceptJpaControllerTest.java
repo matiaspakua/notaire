@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit.jpa;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.jpa.ConceptJpaController;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
@@ -84,7 +86,7 @@ class ConceptJpaControllerTest {
         @Test
         @DisplayName("should persist concepto and return its id")
         void shouldPersistAndReturnId() {
-            Concept concept = new Concept(null, "Test Concept", 100.0f, 10);
+            Concept concept = new Concept(null, "Test Concept", new java.math.BigDecimal("100.0"), 10);
 
             Integer result = controller.create(concept);
 
@@ -98,7 +100,7 @@ class ConceptJpaControllerTest {
         @Test
         @DisplayName("should initialize plantillaPresupuestoList when null")
         void shouldInitializeTemplateListWhenNull() {
-            Concept concept = new Concept(1, "Test", 100f, 10);
+            Concept concept = new Concept(1, "Test", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(null);
 
             controller.create(concept);
@@ -110,7 +112,7 @@ class ConceptJpaControllerTest {
         @Test
         @DisplayName("should close entity manager in finally block")
         void shouldCloseEmInFinally() {
-            Concept concept = new Concept(1, "Test", 100f, 10);
+            Concept concept = new Concept(1, "Test", new java.math.BigDecimal("100"), 10);
             controller.create(concept);
             verify(em).close();
         }
@@ -129,10 +131,10 @@ class ConceptJpaControllerTest {
         @DisplayName("should merge concepto when version matches")
         void shouldMergeWhenVersionMatches() throws Exception {
             Integer id = 1;
-            Concept concept = new Concept(id, "Updated", 200f, 20);
+            Concept concept = new Concept(id, "Updated", new java.math.BigDecimal("200"), 20);
             concept.setVersion(0);
 
-            Concept persistentConcept = new Concept(id, "Original", 100f, 10);
+            Concept persistentConcept = new Concept(id, "Original", new java.math.BigDecimal("100"), 10);
             persistentConcept.setVersion(0);
             persistentConcept.setBudgetTemplateList(new ArrayList<>());
 
@@ -151,10 +153,10 @@ class ConceptJpaControllerTest {
         @DisplayName("should throw ClassModifiedException when version differs")
         void shouldThrowWhenVersionDiffers() {
             Integer id = 1;
-            Concept concept = new Concept(id, "Updated", 200f, 20);
+            Concept concept = new Concept(id, "Updated", new java.math.BigDecimal("200"), 20);
             concept.setVersion(0);
 
-            Concept persistentConcept = new Concept(id, "Original", 100f, 10);
+            Concept persistentConcept = new Concept(id, "Original", new java.math.BigDecimal("100"), 10);
             persistentConcept.setVersion(1); // DB has version 1, memory has 0
 
             when(em.find(Concept.class, id)).thenReturn(persistentConcept);
@@ -170,7 +172,7 @@ class ConceptJpaControllerTest {
         @DisplayName("should throw ClassEliminatedException when entity not found and not close EM")
         void shouldThrowWhenEntityNotFound() {
             Integer id = 999;
-            Concept concept = new Concept(id, "Ghost", 100f, 10);
+            Concept concept = new Concept(id, "Ghost", new java.math.BigDecimal("100"), 10);
 
             when(em.find(Concept.class, id)).thenReturn(null);
 
@@ -190,11 +192,11 @@ class ConceptJpaControllerTest {
             List<BudgetTemplate> oldList = new ArrayList<>();
             oldList.add(pp);
 
-            Concept concept = new Concept(id, "Updated", 200f, 20);
+            Concept concept = new Concept(id, "Updated", new java.math.BigDecimal("200"), 20);
             concept.setVersion(0);
             concept.setBudgetTemplateList(new ArrayList<>()); // empty new list
 
-            Concept persistentConcept = new Concept(id, "Original", 100f, 10);
+            Concept persistentConcept = new Concept(id, "Original", new java.math.BigDecimal("100"), 10);
             persistentConcept.setVersion(0);
             persistentConcept.setBudgetTemplateList(oldList);
 
@@ -223,7 +225,7 @@ class ConceptJpaControllerTest {
         @DisplayName("should remove concepto when no orphans exist")
         void shouldRemoveWhenNoOrphans() throws Exception {
             Integer id = 1;
-            Concept concept = new Concept(id, "To delete", 100f, 10);
+            Concept concept = new Concept(id, "To delete", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(new ArrayList<>());
 
             when(em.find(Concept.class, id)).thenReturn(concept);
@@ -260,7 +262,7 @@ class ConceptJpaControllerTest {
             List<BudgetTemplate> orphans = new ArrayList<>();
             orphans.add(pp);
 
-            Concept concept = new Concept(id, "Has orphans", 100f, 10);
+            Concept concept = new Concept(id, "Has orphans", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(orphans);
 
             when(em.find(Concept.class, id)).thenReturn(concept);
@@ -279,7 +281,7 @@ class ConceptJpaControllerTest {
         @DisplayName("should throw NonexistentEntityException on EntityNotFoundException")
         void shouldThrowOnEntityNotFoundDuringRemove() {
             Integer id = 1;
-            Concept concept = new Concept(id, "Gone", 100f, 10);
+            Concept concept = new Concept(id, "Gone", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(new ArrayList<>());
 
             when(em.find(Concept.class, id)).thenReturn(concept);
@@ -301,8 +303,8 @@ class ConceptJpaControllerTest {
         @DisplayName("should return all entities")
         void shouldFindAll() {
             List<Concept> expectedList = new ArrayList<>();
-            expectedList.add(new Concept(1, "A", 100f, 10));
-            expectedList.add(new Concept(2, "B", 200f, 20));
+            expectedList.add(new Concept(1, "A", new java.math.BigDecimal("100"), 10));
+            expectedList.add(new Concept(2, "B", new java.math.BigDecimal("200"), 20));
 
             when(em.createQuery("select object(o) from Concept as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
@@ -318,7 +320,7 @@ class ConceptJpaControllerTest {
         @DisplayName("should return paginated entities")
         void shouldFindPaginated() {
             List<Concept> expectedList = new ArrayList<>();
-            expectedList.add(new Concept(1, "A", 100f, 10));
+            expectedList.add(new Concept(1, "A", new java.math.BigDecimal("100"), 10));
 
             when(em.createQuery("select object(o) from Concept as o")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
@@ -341,7 +343,7 @@ class ConceptJpaControllerTest {
         void shouldFindByName() {
             String name = "Test Concept";
             List<Concept> expectedList = new ArrayList<>();
-            expectedList.add(new Concept(1, name, 100f, 10));
+            expectedList.add(new Concept(1, name, new java.math.BigDecimal("100"), 10));
 
             when(em.createNamedQuery("Concepto.findByNombre")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
@@ -363,7 +365,7 @@ class ConceptJpaControllerTest {
         @Test
         @DisplayName("should return concepto by id")
         void shouldFindById() {
-            Concept expected = new Concept(1, "Found", 100f, 10);
+            Concept expected = new Concept(1, "Found", new java.math.BigDecimal("100"), 10);
             when(em.find(Concept.class, 1)).thenReturn(expected);
 
             Concept result = controller.findConcept(1);

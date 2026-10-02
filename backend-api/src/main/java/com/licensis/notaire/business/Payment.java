@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoPayment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
@@ -50,7 +52,7 @@ public class Payment implements Serializable, Persistable<Integer>
     private int version = 0;
     @Basic(optional = false)
     @Column(name = "amount")
-    private float amount;
+    private BigDecimal amount;
     @Basic(optional = false)
     @Column(name = "payment_date")
     @Temporal(TemporalType.DATE)
@@ -79,7 +81,7 @@ public class Payment implements Serializable, Persistable<Integer>
         this.idPayment = idPayment;
     }
 
-    public Payment(Integer idPayment, Float amount, Date date)
+    public Payment(Integer idPayment, BigDecimal amount, Date date)
     {
         this.idPayment = idPayment;
         this.amount = amount;
@@ -236,12 +238,12 @@ public class Payment implements Serializable, Persistable<Integer>
         this.version = version;
     }
 
-    public float getAmount()
+    public BigDecimal getAmount()
     {
         return amount;
     }
 
-    public void setAmount(float amount)
+    public void setAmount(BigDecimal amount)
     {
         this.amount = amount;
     }

@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.business.Concept;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ class ConceptDtoMappingTest {
         Concept concept = new Concept();
         concept.setIdConcept(7);
         concept.setName("Concepto test");
-        concept.setValue(150.75f);
+        concept.setValue(new java.math.BigDecimal("150.75"));
         concept.setPercentage(12);
         concept.setEnabled(true);
         concept.setFixedConcept(false);
@@ -25,7 +27,7 @@ class ConceptDtoMappingTest {
 
         assertEquals(7, dto.getIdConcept());
         assertEquals("Concepto test", dto.getName());
-        assertEquals(150.75f, dto.getValue());
+        assertEquals(new java.math.BigDecimal("150.75"), dto.getValue());
         assertEquals(12, dto.getPercentage());
         assertTrue(dto.getEnabled());
         assertFalse(dto.isFixed());

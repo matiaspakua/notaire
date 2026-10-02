@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -65,7 +67,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
         budget.setDate(new Date());
         budget.setEncabezado("Presupuesto Test");
         budget.setStatus("PENDIENTE");
-        budget.setPropertyAmount(500000f);
+        budget.setPropertyAmount(new java.math.BigDecimal("500000"));
         budget.setFkIdPerson(person);
         budget = budgetRepository.save(budget);
         idBudget = budget.getIdBudget();

@@ -17,11 +17,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
     List<Payment> findByFkIdBudgetIdBudget(Integer idBudget);
 
-    List<Payment> findByAmount(Float amount);
+    List<Payment> findByAmount(java.math.BigDecimal amount);
 
     @Query("SELECT p FROM Payment p WHERE p.date BETWEEN :startDate AND :endDate")
     List<Payment> findByDateBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.fkIdBudget.idBudget = :idPresupuesto")
-    Float sumAmountByBudgetId(@Param("idPresupuesto") Integer idBudget);
+    java.math.BigDecimal sumAmountByBudgetId(@Param("idPresupuesto") Integer idBudget);
 }

@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +92,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                 .andExpect(status().isCreated());
     }
 
-    private int createPayment(int idBudget, float amount) throws Exception {
+    private int createPayment(int idBudget, java.math.BigDecimal amount) throws Exception {
         String body = """
                 {
                   "idBudget": %d,
@@ -114,7 +116,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
         int idPerson = createClient();
         int idBudget = createBudget(idPerson);
         createItem(idBudget, "Escritura de compraventa");
-        int idPayment = createPayment(idBudget, 4000f);
+        int idPayment = createPayment(idBudget, new java.math.BigDecimal("4000"));
 
         MvcResult result = mockMvc.perform(get("/api/v1/reportes/recibo-pago/" + idPayment))
                 .andExpect(status().isOk())

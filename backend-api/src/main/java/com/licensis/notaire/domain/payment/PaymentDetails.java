@@ -1,5 +1,6 @@
 package com.licensis.notaire.domain.payment;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -22,12 +23,13 @@ import java.util.Date;
 public record PaymentDetails(
         Integer id,
         Integer budgetId,
-        float amount,
+        BigDecimal amount,
         Date date,
         String paymentMethod,
         String notes) {
 
     public PaymentDetails {
+        amount = Money.of(amount);
         date = copy(date);
     }
 

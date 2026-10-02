@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Budget;
@@ -34,7 +36,7 @@ class BudgetCatalogItemsServiceTest {
     @InjectMocks
     private BudgetCatalogItemsService budgetCatalogoItemsService;
 
-    private Item buildCatalogItem(Integer id, String name, float value) {
+    private Item buildCatalogItem(Integer id, String name, java.math.BigDecimal value) {
         Item item = new Item(id, name, value);
         item.setNotes("Observación de catálogo");
         item.setPercentage(15);
@@ -47,7 +49,7 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", 500f)));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", new java.math.BigDecimal("500"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10));
@@ -55,7 +57,7 @@ class BudgetCatalogItemsServiceTest {
         assertThat(result).hasSize(1);
         Item copy = result.get(0);
         assertThat(copy.getName()).isEqualTo("Sellado");
-        assertThat(copy.getValue()).isEqualTo(500f);
+        assertThat(copy.getValue()).isEqualByComparingTo(new java.math.BigDecimal("500"));
         assertThat(copy.getNotes()).isEqualTo("Observación de catálogo");
         assertThat(copy.getFkIdBudget()).isEqualTo(budget);
     }
@@ -66,8 +68,8 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", 500f)));
-        when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", 1000f)));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", new java.math.BigDecimal("500"))));
+        when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10, 11));

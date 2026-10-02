@@ -1,5 +1,7 @@
 package com.licensis.notaire.integration;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.application.port.in.payment.DeletePaymentUseCase;
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.EditPaymentUseCase;
@@ -81,61 +83,61 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
         testBudget.setDate(new Date());
         testBudget.setEncabezado("Presupuesto Test");
         testBudget.setStatus("PENDIENTE");
-        testBudget.setPropertyAmount(500000f);
+        testBudget.setPropertyAmount(new java.math.BigDecimal("500000"));
         testBudget.setFkIdPerson(testPerson);
         testBudget = budgetRepository.save(testBudget);
     }
 
-    private PaymentDetails process(Integer budgetId, Float amount, Date date, String notes) {
+    private PaymentDetails process(Integer budgetId, java.math.BigDecimal amount, Date date, String notes) {
         return processPayment.process(new ProcessPaymentCommand(budgetId, amount, date, notes, null));
     }
 
-    private PaymentDetails edit(Integer paymentId, Float amount, Date date, String notes) {
+    private PaymentDetails edit(Integer paymentId, java.math.BigDecimal amount, Date date, String notes) {
         return editPayment.edit(new EditPaymentCommand(paymentId, amount, date, notes, null));
     }
 
     @Test
     @DisplayName("Should process valid pago through service")
     void shouldProcessValidPaymentThroughService() {
-        PaymentDetails result = process(testBudget.getIdBudget(), 100000f, new Date(), "Primer pago");
+        PaymentDetails result = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Primer pago");
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isNotNull();
-        assertThat(result.amount()).isEqualTo(100000f);
+        assertThat(result.amount()).isEqualByComparingTo(new java.math.BigDecimal("100000"));
     }
 
     @Test
     @DisplayName("Should throw exception when budget not found")
     void shouldThrowExceptionWhenBudgetNotFound() {
-        assertThatThrownBy(() -> process(9999, 100000f, new Date(), "Test"))
+        assertThatThrownBy(() -> process(9999, new java.math.BigDecimal("100000"), new Date(), "Test"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("Should calculate saldo pendiente correctly")
     void shouldCalculateSaldoPendingCorrectly() {
-        process(testBudget.getIdBudget(), 100000f, new Date(), "Pago 1");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago 1");
 
-        float pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
+        java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
 
-        assertThat(pendingBalance).isEqualTo(400000f);
+        assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("400000"));
     }
 
     @Test
     @DisplayName("Should calculate saldo pendiente with multiple payments")
     void shouldCalculateSaldoPendingWithMultiplePayments() {
-        process(testBudget.getIdBudget(), 100000f, new Date(), "Pago 1");
-        process(testBudget.getIdBudget(), 150000f, new Date(), "Pago 2");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago 1");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("150000"), new Date(), "Pago 2");
 
-        float pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
+        java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
 
-        assertThat(pendingBalance).isEqualTo(250000f);
+        assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("250000"));
     }
 
     @Test
     @DisplayName("Should reject a pago exceeding saldo pendiente and not persist it")
     void shouldRejectPaymentExceedingSaldoPending() {
-        assertThatThrownBy(() -> process(testBudget.getIdBudget(), 600000f, new Date(), "Overpay attempt"))
+        assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("600000"), new Date(), "Overpay attempt"))
                 .isInstanceOf(PendingBalanceExceededException.class);
 
         List<PaymentDetails> payments = paymentQueries.findByBudget(testBudget.getIdBudget());
@@ -145,10 +147,10 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should reject a pago exceeding saldo already reduced by a prior payment")
     void shouldRejectPaymentExceedingSaldoReducedByPriorPayment() {
-        process(testBudget.getIdBudget(), 400000f, new Date(), "Pago 1");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("400000"), new Date(), "Pago 1");
 
         assertThatThrownBy(() ->
-                process(testBudget.getIdBudget(), 150000f, new Date(), "Overpay against reduced saldo"))
+                process(testBudget.getIdBudget(), new java.math.BigDecimal("150000"), new Date(), "Overpay against reduced saldo"))
                 .isInstanceOf(PendingBalanceExceededException.class);
 
         List<PaymentDetails> payments = paymentQueries.findByBudget(testBudget.getIdBudget());
@@ -158,7 +160,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find payments by budget through service")
     void shouldFindPaymentsByBudgetThroughService() {
-        process(testBudget.getIdBudget(), 100000f, new Date(), "Pago 1");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago 1");
 
         List<PaymentDetails> found = paymentQueries.findByBudget(testBudget.getIdBudget());
 
@@ -170,7 +172,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find all payments through service")
     void shouldFindAllPaymentsThroughService() {
-        process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
         List<PaymentDetails> all = paymentQueries.findAll();
 
@@ -180,19 +182,19 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should find pago by id through service")
     void shouldFindPaymentByIdThroughService() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
         Optional<PaymentDetails> found = paymentQueries.findById(saved.id());
 
         assertThat(found).isPresent()
-                .hasValueSatisfying(p -> assertThat(p.amount()).isEqualTo(100000f));
+                .hasValueSatisfying(p -> assertThat(p.amount()).isEqualByComparingTo(new java.math.BigDecimal("100000")));
     }
 
     @Test
     @DisplayName("Should find payments by date range through service")
     void shouldFindPaymentsByDateRangeThroughService() {
         Date now = new Date();
-        process(testBudget.getIdBudget(), 100000f, now, "Pago");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), now, "Pago");
 
         Date startDate = new Date(now.getTime() - 86400000);
         Date endDate = new Date(now.getTime() + 86400000);
@@ -205,7 +207,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should delete pago through service")
     void shouldDeletePaymentThroughService() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
         deletePayment.delete(saved.id());
 
@@ -216,25 +218,25 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should edit pago through service")
     void shouldEditPaymentThroughService() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
-        PaymentDetails edited = edit(saved.id(), 120000f, new Date(), "Editado");
+        PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), "Editado");
 
         assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", 120000f);
+                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"));
     }
 
     @Test
     @DisplayName("Should enforce amount validation in service")
     void shouldEnforcAmountValidationInService() {
-        assertThatThrownBy(() -> process(testBudget.getIdBudget(), -100f, new Date(), "Invalid"))
+        assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("-100"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("Should maintain transaction consistency across service methods")
     void shouldMaintainTransactionConsistency() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
         deletePayment.delete(saved.id());
 
@@ -245,12 +247,12 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle editarPago with null amount")
     void shouldHandleEditarPaymentWithNullAmount() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago Original");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago Original");
 
         PaymentDetails edited = edit(saved.id(), null, new Date(), "Updated");
 
         assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", 100000f)
+                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("100000"))
                 .hasFieldOrPropertyWithValue("notes", "Updated");
     }
 
@@ -258,33 +260,33 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle editarPago with null date")
     void shouldHandleEditarPaymentWithNullDate() {
         Date originalDate = new Date();
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, originalDate, "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), originalDate, "Pago");
 
-        PaymentDetails edited = edit(saved.id(), 120000f, null, "Updated");
+        PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), null, "Updated");
 
         assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", 120000f)
+                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"))
                 .hasFieldOrPropertyWithValue("date", originalDate);
     }
 
     @Test
     @DisplayName("Should handle editarPago with null notes")
     void shouldHandleEditarPaymentWithNullNotes() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Original");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Original");
 
-        PaymentDetails edited = edit(saved.id(), 120000f, new Date(), null);
+        PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), null);
 
         assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", 120000f)
+                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"))
                 .hasFieldOrPropertyWithValue("notes", "Original");
     }
 
     @Test
     @DisplayName("Should reject negative amount in editarPago")
     void shouldRejectNegativeAmountInEditarPayment() {
-        PaymentDetails saved = process(testBudget.getIdBudget(), 100000f, new Date(), "Pago");
+        PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Pago");
 
-        assertThatThrownBy(() -> edit(saved.id(), -50000f, new Date(), "Invalid"))
+        assertThatThrownBy(() -> edit(saved.id(), new java.math.BigDecimal("-50000"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mayor a cero");
     }
@@ -292,7 +294,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should throw exception when editing non-existent pago")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
-        assertThatThrownBy(() -> edit(9999, 100000f, new Date(), "Test"))
+        assertThatThrownBy(() -> edit(9999, new java.math.BigDecimal("100000"), new Date(), "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("no encontrado");
     }
@@ -310,7 +312,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldHandleProcessPaymentWithNullDate() {
         long beforeTime = System.currentTimeMillis();
 
-        PaymentDetails result = process(testBudget.getIdBudget(), 100000f, null, "Pago");
+        PaymentDetails result = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), null, "Pago");
 
         long afterTime = System.currentTimeMillis();
 
@@ -322,7 +324,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle zero amount in procesarPago")
     void shouldRejectZeroAmountInProcessarPayment() {
-        assertThatThrownBy(() -> process(testBudget.getIdBudget(), 0f, new Date(), "Invalid"))
+        assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("0"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mayor a cero");
     }
@@ -330,9 +332,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle multiple payments with different amounts")
     void shouldHandleMultiplePaymentsWithDifferentAmounts() {
-        float monto1 = 50000f;
-        float monto2 = 75000f;
-        float monto3 = 125000f;
+        java.math.BigDecimal monto1 = new java.math.BigDecimal("50000");
+        java.math.BigDecimal monto2 = new java.math.BigDecimal("75000");
+        java.math.BigDecimal monto3 = new java.math.BigDecimal("125000");
 
         process(testBudget.getIdBudget(), monto1, new Date(), "Pago 1");
         process(testBudget.getIdBudget(), monto2, new Date(), "Pago 2");
@@ -345,9 +347,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
                 .extracting(PaymentDetails::amount)
                 .containsExactlyInAnyOrder(monto1, monto2, monto3);
 
-        float pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
-        float totalPaid = monto1 + monto2 + monto3;
-        assertThat(pendingBalance).isEqualTo(500000f - totalPaid);
+        java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
+        java.math.BigDecimal totalPaid = monto1.add(monto2).add(monto3);
+        assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("500000").subtract(totalPaid));
     }
 
     @Test
@@ -358,9 +360,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
         Date date2 = new Date(now - 86400000);
         Date date3 = new Date(now);
 
-        process(testBudget.getIdBudget(), 100000f, date1, "Pago 1");
-        process(testBudget.getIdBudget(), 100000f, date2, "Pago 2");
-        process(testBudget.getIdBudget(), 100000f, date3, "Pago 3");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), date1, "Pago 1");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), date2, "Pago 2");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), date3, "Pago 3");
 
         Date startDate = new Date(now - 3 * 86400000);
         Date endDate = new Date(now + 86400000);
@@ -376,9 +378,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should calculate saldo correctly with full payment")
     void shouldCalculateSaldoWithFullPayment() {
-        process(testBudget.getIdBudget(), 500000f, new Date(), "Full payment");
+        process(testBudget.getIdBudget(), new java.math.BigDecimal("500000"), new Date(), "Full payment");
 
-        float pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
+        java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
         assertThat(pendingBalance).isZero();
     }
 

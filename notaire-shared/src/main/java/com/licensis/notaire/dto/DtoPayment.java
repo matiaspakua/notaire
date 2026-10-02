@@ -1,4 +1,6 @@
 package com.licensis.notaire.dto;
+
+import java.math.BigDecimal;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
 import com.licensis.notaire.dto.interfaces.DtoValido;
@@ -12,7 +14,7 @@ public class DtoPayment implements DtoValido
 
     private Integer idPayment;
     private DtoBudget budget;
-    private Float amount;
+    private BigDecimal amount;
     private Date date;
     private String notes;
     private String paymentMethod;
@@ -22,14 +24,14 @@ public class DtoPayment implements DtoValido
     {
     }
 
-    public DtoPayment(DtoBudget presupuestos, Float amount, Date date)
+    public DtoPayment(DtoBudget presupuestos, BigDecimal amount, Date date)
     {
         this.budget = presupuestos;
         this.amount = amount;
         this.date = date;
     }
 
-    public DtoPayment(DtoBudget presupuestos, Float amount, Date date, String notes)
+    public DtoPayment(DtoBudget presupuestos, BigDecimal amount, Date date, String notes)
     {
         this.budget = presupuestos;
         this.amount = amount;
@@ -67,12 +69,12 @@ public class DtoPayment implements DtoValido
         this.budget = presupuestos;
     }
 
-    public Float getAmount()
+    public BigDecimal getAmount()
     {
         return this.amount;
     }
 
-    public void setAmount(Float amount)
+    public void setAmount(BigDecimal amount)
     {
         this.amount = amount;
     }

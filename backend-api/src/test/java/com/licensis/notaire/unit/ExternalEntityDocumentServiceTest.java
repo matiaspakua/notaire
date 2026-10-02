@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort;
 import com.licensis.notaire.dto.DtoDocumentEntidadExterna;
 import com.licensis.notaire.dto.DtoManagementDocumentsEntidadesExternas;
@@ -147,7 +149,7 @@ class ExternalEntityDocumentServiceTest {
 
             Date dateEntry = new Date();
             DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
-                    true, 7, dateEntry, null, false, 1500f, null, null, "Retirado a tiempo", false);
+                    true, 7, dateEntry, null, false, new java.math.BigDecimal("1500"), null, null, "Retirado a tiempo", false);
 
             DtoDocumentEntidadExterna resultado =
                     documentEntidadExternaService.registerMovement(1, 50, movement);
@@ -155,7 +157,7 @@ class ExternalEntityDocumentServiceTest {
             assertThat(resultado.prepared()).isTrue();
             assertThat(resultado.cardNumber()).isEqualTo(7);
             assertThat(resultado.dateEntry()).isEqualTo(dateEntry);
-            assertThat(resultado.amountToPay()).isEqualTo(1500f);
+            assertThat(resultado.amountToPay()).isEqualByComparingTo(new java.math.BigDecimal("1500"));
             assertThat(resultado.notes()).isEqualTo("Retirado a tiempo");
             assertThat(resultado.delivered()).isFalse();
             verify(managementTransitionService, never()).transition(anyInt(), any());

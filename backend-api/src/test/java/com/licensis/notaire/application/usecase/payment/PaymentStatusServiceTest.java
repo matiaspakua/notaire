@@ -1,5 +1,7 @@
 package com.licensis.notaire.application.usecase.payment;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.domain.payment.BudgetCharges;
 import com.licensis.notaire.domain.payment.ChargeLine;
 import com.licensis.notaire.domain.payment.PaymentDetails;
@@ -32,34 +34,34 @@ class PaymentStatusServiceTest {
         payments = new InMemoryPaymentRepository();
         budgets = new InMemoryBudgetLookup();
         paymentStatus = new PaymentStatusService(payments, budgets);
-        budgets.given(BUDGET_ID, new BudgetCharges(List.of(ChargeLine.charge(10000f, null)), null, 0f));
+        budgets.given(BUDGET_ID, new BudgetCharges(List.of(ChargeLine.charge(new java.math.BigDecimal("10000"), null)), null, new java.math.BigDecimal("0")));
     }
 
-    private void givenPaymentOf(float amount) {
+    private void givenPaymentOf(java.math.BigDecimal amount) {
         payments.given(new PaymentDetails(null, BUDGET_ID, amount, new Date(), null, null));
     }
 
     @Test
     @DisplayName("Should return the full total as pending when nothing was paid")
     void shouldReturnFullTotalWhenNothingPaid() {
-        assertThat(paymentStatus.pendingBalance(BUDGET_ID)).isEqualTo(10000f);
+        assertThat(paymentStatus.pendingBalance(BUDGET_ID)).isEqualByComparingTo(new java.math.BigDecimal("10000"));
     }
 
     @Test
     @DisplayName("Should subtract registered payments from the pending balance")
     void shouldSubtractRegisteredPayments() {
-        givenPaymentOf(2500f);
-        givenPaymentOf(1500f);
+        givenPaymentOf(new java.math.BigDecimal("2500"));
+        givenPaymentOf(new java.math.BigDecimal("1500"));
 
-        assertThat(paymentStatus.pendingBalance(BUDGET_ID)).isEqualTo(6000f);
+        assertThat(paymentStatus.pendingBalance(BUDGET_ID)).isEqualByComparingTo(new java.math.BigDecimal("6000"));
     }
 
     @Test
     @DisplayName("Should use the property amount when the budget has no charge lines")
     void shouldUsePropertyAmountWhenNoLines() {
-        budgets.given(2, new BudgetCharges(List.of(), 4200f, 0f));
+        budgets.given(2, new BudgetCharges(List.of(), new java.math.BigDecimal("4200"), new java.math.BigDecimal("0")));
 
-        assertThat(paymentStatus.pendingBalance(2)).isEqualTo(4200f);
+        assertThat(paymentStatus.pendingBalance(2)).isEqualByComparingTo(new java.math.BigDecimal("4200"));
     }
 
     @Test
@@ -71,7 +73,7 @@ class PaymentStatusServiceTest {
     @Test
     @DisplayName("Should report PARTIAL when a balance is still pending")
     void shouldReportPartial() {
-        givenPaymentOf(4000f);
+        givenPaymentOf(new java.math.BigDecimal("4000"));
 
         assertThat(paymentStatus.status(BUDGET_ID)).isEqualTo(PaymentStatus.PARTIAL);
     }
@@ -79,7 +81,7 @@ class PaymentStatusServiceTest {
     @Test
     @DisplayName("Should report PAID when the budget is fully settled")
     void shouldReportPaid() {
-        givenPaymentOf(10000f);
+        givenPaymentOf(new java.math.BigDecimal("10000"));
 
         assertThat(paymentStatus.status(BUDGET_ID)).isEqualTo(PaymentStatus.PAID);
     }

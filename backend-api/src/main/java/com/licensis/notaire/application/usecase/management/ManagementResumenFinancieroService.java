@@ -2,6 +2,7 @@ package com.licensis.notaire.application.usecase.management;
 
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
 import com.licensis.notaire.business.Budget;
@@ -10,6 +11,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,23 +40,25 @@ public class ManagementResumenFinancieroService {
 
     @Transactional(readOnly = true)
     public DtoManagementResumenFinanciero getSummary(Integer idManagement) {
-        Float pendingBalance = managementArchiveDebtService.calculatePendingBalance(idManagement);
+        BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(idManagement);
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
         Set<Integer> idsBudgetContados = new HashSet<>();
-        float totalPresupuestado = 0f;
-        float totalCobrado = 0f;
+        BigDecimal totalPresupuestado = Money.zero();
+        BigDecimal totalCobrado = Money.zero();
 
         for (Procedure procedure : procedures) {
             Budget budget = procedure.getFkIdBudget();
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            float saldoBudget = paymentStatus.pendingBalance(budget.getIdBudget());
-            float cobradoBudget = (float) paymentQueries.findByBudget(budget.getIdBudget())
-                    .stream().mapToDouble(PaymentDetails::amount).sum();
-            totalCobrado += cobradoBudget;
-            totalPresupuestado += saldoBudget + cobradoBudget;
+            BigDecimal saldoBudget = paymentStatus.pendingBalance(budget.getIdBudget());
+            BigDecimal cobradoBudget = paymentQueries.findByBudget(budget.getIdBudget()).stream()
+                    .map(PaymentDetails::amount)
+                    .map(Money::nullToZero)
+                    .reduce(Money.zero(), BigDecimal::add);
+            totalCobrado = Money.of(totalCobrado.add(cobradoBudget));
+            totalPresupuestado = Money.of(totalPresupuestado.add(saldoBudget).add(cobradoBudget));
         }
 
         return new DtoManagementResumenFinanciero(idManagement, totalPresupuestado, totalCobrado, pendingBalance);

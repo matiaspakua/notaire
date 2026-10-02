@@ -26,7 +26,7 @@
 | 8 | El Recepcionista/Escribano solicita generar un nuevo pago. |  |
 | 9 |  | Solicita el monto del mismo, fecha de pago, método de pago y observaciones adicionales. |
 | 10 | El Recepcionista/Escribano indica los datos solicitados y guarda los mismos. |  |
-| 11 |  | Valida que el monto no exceda el saldo pendiente del presupuesto; si es válido, registra el pago realizado (incluyendo el método de pago), recalcula el saldo pendiente y lo muestra. |
+| 11 |  | Valida que el monto no exceda el saldo pendiente del presupuesto (comparación exacta con `BigDecimal` escala 2; issue #1061); si es válido, registra el pago realizado (incluyendo el método de pago), recalcula el saldo pendiente y lo muestra. |
 | 12 | Solicita la generación del recibo correspondiente. |  |
 | 13 |  | Genera el recibo común correspondiente, donde figura: (Fecha de Pago; Número de presupuesto; Número de pago; Nombre, Apellido, Tipo y número de identificación del Cliente; Número de la gestión asociada.) |
 | 14 | El Recepcionista/Escribano hace entrega del recibo generado al Cliente. |  |

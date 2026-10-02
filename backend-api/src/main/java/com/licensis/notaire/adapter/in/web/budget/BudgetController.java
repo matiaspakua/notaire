@@ -61,7 +61,7 @@ public class BudgetController {
             Date date,
             String encabezado,
             @NotBlank String status,
-            @JsonAlias("amount") Float propertyAmount,
+            @JsonAlias("amount") java.math.BigDecimal propertyAmount,
             String notes,
             Integer personId,
             @JsonProperty("person") PersonRef person) {}
@@ -75,7 +75,7 @@ public class BudgetController {
             Date date,
             String encabezado,
             String status,
-            Float propertyAmount,
+            java.math.BigDecimal propertyAmount,
             String notes,
             PersonRef person,
             int version) {}

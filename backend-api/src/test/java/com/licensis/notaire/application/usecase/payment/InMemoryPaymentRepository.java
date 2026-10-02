@@ -3,8 +3,10 @@ package com.licensis.notaire.application.usecase.payment;
 import com.licensis.notaire.application.port.out.payment.NewPayment;
 import com.licensis.notaire.application.port.out.payment.PaymentChanges;
 import com.licensis.notaire.application.port.out.payment.PaymentRepositoryPort;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -60,14 +62,14 @@ class InMemoryPaymentRepository implements PaymentRepositoryPort {
     }
 
     @Override
-    public Float sumAmountByBudgetId(Integer budgetId) {
+    public BigDecimal sumAmountByBudgetId(Integer budgetId) {
         List<PaymentDetails> forBudget = findByBudgetId(budgetId);
         if (forBudget.isEmpty()) {
             return null;
         }
-        float sum = 0f;
+        BigDecimal sum = Money.zero();
         for (PaymentDetails payment : forBudget) {
-            sum += payment.amount();
+            sum = Money.of(sum.add(Money.nullToZero(payment.amount())));
         }
         return sum;
     }
