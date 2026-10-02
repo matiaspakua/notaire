@@ -14,13 +14,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1052 | open (implement starting; in-progress label may ACL-deny) |
-| Use Case | CU78 – Security and Compliance; CU20/CU21 | exists |
+| Issue | #1052 | open (in-progress label ACL denied) |
+| Use Case | CU78 – Security and Compliance; CU20/CU21 | updated (alt 3.2) |
 | Specification | `openspec/changes/fix-1052-admin-route-guard/` | written |
 | Branch | `cursor/fix-1052_admin-route-guard-69d3` | created |
-| Tasks | `tasks.md` | Gate 1 done; Gate 2 pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Tasks | `tasks.md` | implement done; CI pending |
+| Commits | `1b229d86` fix(frontend): guard admin routes for non-admin users | pushed |
+| Pull Request | #1137 | open (draft) |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |

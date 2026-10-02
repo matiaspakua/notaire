@@ -67,18 +67,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #<issue-number>` (`Closes #1052`)
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #<issue-number>` (`Closes #1052`)
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-1052_admin-route-guard-69d3`
-- [ ] 10.2 Open the PR titled `[#1052] fix(frontend): guard admin routes for non-admin users`, referencing Issue and CU78
+- [x] 10.1 `git push -u origin cursor/fix-1052_admin-route-guard-69d3`
+- [x] 10.2 Open the PR titled `[#1052] fix(frontend): guard admin routes for non-admin users`, referencing Issue and CU78
 - [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 - [ ] 10.6 `bash scripts/check-heavy-ci.sh` before merge — never light-only
 
 ## 11. Deploy
