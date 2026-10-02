@@ -7,6 +7,10 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.business.ProcedureType;
+import com.licensis.notaire.repository.ConceptRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -62,6 +66,16 @@ public class BudgetTemplateController {
             Integer fkIdConcept,
             String notes,
             int version) {}
+
+    private final ConceptRepository conceptRepository;
+    private final ProcedureTypeRepository procedureTypeRepository;
+
+    public BudgetTemplateController(
+            ConceptRepository conceptRepository,
+            ProcedureTypeRepository procedureTypeRepository) {
+        this.conceptRepository = conceptRepository;
+        this.procedureTypeRepository = procedureTypeRepository;
+    }
 
     private BudgetTemplateJpaController getJpaController() {
         return new BudgetTemplateJpaController(null, JpaControllerProvider.getEntityManagerFactory());
@@ -132,9 +146,15 @@ public class BudgetTemplateController {
         if (procedureTypeId == null || conceptId == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "fkIdProcedureType y fkIdConcept son requeridos"));
         }
+        if (!conceptRepository.existsById(conceptId) || !procedureTypeRepository.existsById(procedureTypeId)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "concepto o tipo de trámite no encontrado"));
+        }
         try {
             BudgetTemplate entity = new BudgetTemplate(new BudgetTemplatePK(procedureTypeId, conceptId));
             entity.setNotes(request.notes());
+            // Legacy JpaController.create reads getConcept()/getProcedureType() IDs at line 51–52.
+            entity.setConcept(conceptRepository.getReferenceById(conceptId));
+            entity.setProcedureType(procedureTypeRepository.getReferenceById(procedureTypeId));
             getJpaController().create(entity);
             BudgetTemplatePK pk = entity.getBudgetTemplatePK();
             return ResponseEntity.status(HttpStatus.CREATED)
