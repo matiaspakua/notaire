@@ -14,6 +14,8 @@ not yet captured in permanent cloud docs.
 **Goals:**
 - Capture five concrete process learnings where agents will read them (checklist,
   fleet architecture, README index).
+- Harden `.claude/agents/` so loadable agent prompts enforce `Closes #<n>` and
+  Saved Environment `bash .cursor/install.sh` (`openspec` + `bc` on PATH).
 - Keep Gate 1 complete with `skip_specs: true` and CU76 / #1120 traceability.
 
 **Non-Goals:**
@@ -30,6 +32,8 @@ not yet captured in permanent cloud docs.
   starting point (#1108 / #1116).
 - **Closes keyword**: state explicitly that `Issue: #N` alone does not close GitHub
   issues on merge — commits/PR body need `Closes #<issue>`.
+- **Agent-file mirror**: put the same hard rule in `cloud-foreman.md` and specialists
+  that mention commit/PR format, coordinated onto the learnings branch (no duplicate Issue).
 
 ## Riesgos / Trade-offs
 

@@ -32,6 +32,8 @@
 - [x] 4.2 Update `FLEET-ARCHITECTURE.md` with Closes / skip-ci / seed-script foreman rules
 - [x] 4.3 Update `README.md` to index the learnings
 - [x] 4.4 Add this OpenSpec change folder (`skip_specs: true`) seeded via `scripts/seed-openspec-change.sh`
+- [x] 4.5 Harden `.claude/agents/cloud-foreman.md` with hard `Closes #<n>` rule (reject `Issue: #n` alone) + Saved Environment `bash .cursor/install.sh` for `openspec`/`bc` on PATH
+- [x] 4.6 Align specialist agents that mention commit/PR format (`sync_issues_and_code`, `efficiency_config_agent`, `devops-engineer`, `backend-implementer`, `openspec-planner`)
 
 ## 5. Actualizar tests existentes
 

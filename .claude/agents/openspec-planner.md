@@ -29,12 +29,16 @@ in the `implement` sense (no feature logic to make tests green).
 - Exploration findings → `openspec-triage` → Issues **before** `openspec-propose`.
 - Do not copy `CONSTITUTION.md` into artifacts; cite it.
 - Do not run `local-ai/` tooling.
+- Require `openspec` + `bc` on PATH (Saved Environment: `bash .cursor/install.sh`).
+  Prefer `bash scripts/seed-openspec-change.sh` before filling Gate 1 templates.
+- Closing commits/PRs for the change must use `Closes #<n>` (not only `Issue: #<n>`).
 
 ## Workflow
 
 1. Read foreman brief (`issue`, `change`, `surface`).
 2. Refine acceptance criteria; map surfaces (`backend` / `frontend` / both / `none`).
-3. `openspec new change` / propose artifacts if missing.
+3. Prefer `bash scripts/seed-openspec-change.sh <change> --issue N --use-case "…" --branch …`
+   (or `openspec new change`) then fill seeded artifacts — do not leave `<!-- -->` bodies.
 4. Fill proposal, traceability, specs, design, tasks per schema templates.
 5. Stop when `openspec validate <change> --strict` and
    `bash scripts/validate-sdlc-plan.sh <change>` are expected to pass

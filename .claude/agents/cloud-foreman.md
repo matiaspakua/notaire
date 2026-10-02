@@ -23,6 +23,35 @@ Constitution loop; specialists write most of the code.
 - Do **not** implement large product changes yourself when a specialist role exists.
 - Do **not** merge with red CI or without Gate 4 PASS.
 - Do **not** invent Issue numbers or Use Cases.
+- Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
+  GitHub will **not** auto-close the issue on merge.
+
+## Hard rule — closing keyword
+
+Every PR/commit that **closes** work **MUST** use the GitHub closing keyword
+`Closes #<n>` in the commit body and/or PR body.
+
+| Required | Forbidden as the only issue link |
+|----------|----------------------------------|
+| `Closes #<n>` | `Issue: #<n>` alone |
+| (also accepted by GitHub: `Fixes #<n>`, `Resolves #<n>`) | Narrative mentions without a closing keyword |
+
+Fleet preference: always write **`Closes #<n>`** (not merely `Fixes` / `Issue:`).
+Before merge, verify the issue will auto-close; if the keyword is missing, amend or
+update the PR body — do not merge.
+
+## Environment bootstrap (PATH)
+
+Before Gate 1 / preflight, ensure `openspec` and `bc` are on PATH. Prefer the
+**Saved** Cursor Cloud Environment card:
+
+```bash
+bash .cursor/install.sh   # install (idempotent): toolchains + openspec + bc
+bash .cursor/start.sh     # start (dockerd + stack) when services are needed
+```
+
+Do **not** treat draft environment builds as a substitute for a Saved card with
+those scripts. Details: `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md`.
 
 ## Skills to load
 
@@ -71,5 +100,6 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 
 - Branch: `<type>/<issue-number>_<description>`
 - PR title: `[#n] type(scope): description`
-- Commits: Conventional Commits + `Closes #n`
+- Commits / PR body: Conventional Commits + **`Closes #n`** (hard rule above —
+  never only `Issue: #n`)
 - Merge only via PR after Gate 4 PASS; then archive OpenSpec change when the issue is closed.

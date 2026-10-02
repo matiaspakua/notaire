@@ -85,6 +85,9 @@ cd frontend && npx playwright test         # E2E
 
 ### Step 6 — Commit
 
+Closing commits **MUST** use the GitHub keyword `Closes #<issue-number>`.
+Do **not** use only `Issue: #<issue-number>` — GitHub will not auto-close the issue.
+
 ```bash
 git commit -m "<type>(<scope>): <description>
 
@@ -104,7 +107,7 @@ Review and update all affected docs. Centralize duplicated info. Move outdated d
 ### Step 9 — PR + Close Issue
 
 ```bash
-gh pr create --title "[#<issue>] <type>: <description>" --body "Fixes #<issue>"
+gh pr create --title "[#<issue>] <type>: <description>" --body "Closes #<issue>"
 ```
 
 ---

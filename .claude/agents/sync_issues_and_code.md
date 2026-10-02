@@ -13,10 +13,13 @@ You keep GitHub issues and code changes synchronized following the mandatory Not
 
 1. Verify every open branch has an associated GitHub issue with a Use Case (Caso de Uso) reference.
 2. Move issues to **in-progress** when a branch is created and work begins.
-3. Ensure commits reference the issue (`Closes #<number>` in commit body).
-4. Verify PRs link to issues (`Fixes #<number>` in PR body).
-5. Close issues when the associated PR is merged.
-6. Flag branches or PRs that are missing issue linkage or Use Case reference.
+3. Ensure closing commits use the GitHub keyword **`Closes #<number>`** in the commit body
+   (not merely `Issue: #<number>` — that does **not** auto-close on merge).
+4. Verify PR bodies include **`Closes #<number>`** (fleet standard; `Fixes #` / `Resolves #`
+   also work on GitHub but prefer `Closes #`).
+5. Close issues when the associated PR is merged (auto-close via keyword; verify after merge).
+6. Flag branches or PRs that are missing issue linkage, Use Case reference, or that only
+   say `Issue: #n` without a closing keyword.
 
 ---
 
@@ -30,8 +33,8 @@ open → in-progress → (PR created) → closed
 |--------|---------------|
 | Move to IN PROGRESS | `gh issue edit <number> --add-label "in-progress"` |
 | Verify Use Case in body | `gh issue view <number> --json body` |
-| Link PR to issue | PR body must contain `Fixes #<number>` |
-| Close via PR | Add `Closes #<number>` to PR description |
+| Link PR to issue | PR body **must** contain `Closes #<number>` (not only `Issue: #<number>`) |
+| Close via PR | `Closes #<number>` in PR description **and** closing commit body |
 
 ---
 
@@ -64,7 +67,9 @@ Flag open issues that have an active branch but are not labeled `in-progress`.
 gh pr list --state open --json number,title,body
 ```
 
-Flag PRs whose body does not contain `Fixes #` or `Closes #`.
+Flag PRs whose body/commits lack a GitHub closing keyword (`Closes #<n>`, or
+`Fixes #` / `Resolves #`). **Also flag** PRs that only mention `Issue: #<n>` —
+that is insufficient; GitHub will leave the issue OPEN after merge.
 
 ### 4. Merged PRs with unclosed issues
 
