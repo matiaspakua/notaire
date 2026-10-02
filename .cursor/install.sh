@@ -30,7 +30,7 @@ fi
 sudo apt-get update -qq
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
   ca-certificates curl gnupg fuse3 fuse-overlayfs iptables \
-  docker.io docker-compose-v2 postgresql-client \
+  docker.io docker-compose-v2 postgresql-client bc \
   -o Dpkg::Options::="--force-confnew" || true
 sudo update-alternatives --set iptables /usr/sbin/iptables-legacy 2>/dev/null || true
 sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy 2>/dev/null || true
