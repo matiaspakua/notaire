@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/chore-1108-openspec-template-seed-30a2` | created |
 | Tasks | `tasks.md` | 0/N complete |
 | Commits | c2dcb85c | done |
-| Pull Request | pending | pending |
+| Pull Request | #1116 | open (draft) |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
