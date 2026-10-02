@@ -72,7 +72,7 @@ merge, or skip gates.
 - Fabricate Issue numbers or Use Cases.
 - Close the loop with only `Issue: #n` in commits — **issues stay OPEN** unless commits/PR use a GitHub closing keyword (`Closes #n`).
 - Commit PR Validation wiki reports onto PR heads (especially with `[skip ci]`). That pattern was removed from `pr-validation.yml` on `main` (#1111 / #1117); agents must not reintroduce it by hand.
-- Assume bridge Docker networking works in Cloud VMs — use `docker-compose.cloud.yml` (host network) and ensure `bc` is installed for `validate-sdlc-plan.sh`.
+- Assume bridge Docker networking works in Cloud VMs — use `docker-compose.cloud.yml` (host network). Until the Environment card is Saved, run `bash .cursor/install.sh` for `openspec` + `bc` (and the rest of the toolchain).
 - Treat draft environment builds as a substitute for a **Saved** Environment card with `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh`.
 - Skip `scripts/seed-openspec-change.sh` and hand-author empty OpenSpec templates (leftover `<!-- -->` bodies fail Gate 1 validation — #1108 / #1116).
 
@@ -203,7 +203,7 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 | `CONSTITUTION.md` | Highest process authority |
 | `openspec/` + `notaire-sdlc` | Gate 1 artifacts |
 | `scripts/seed-openspec-change.sh` | Prefer before filling Gate 1 templates (#1108) |
-| `scripts/validate-sdlc-plan.sh` | Constitution checks on plans (needs `bc`) |
+| `scripts/validate-sdlc-plan.sh` | Constitution checks on plans (scenario sum via awk; `bc` optional) |
 | `scripts/preflight.sh` | Pre-push CI mirror |
 | `scripts/run_pipeline.sh` | Full Gate 3 when stack is up |
 | `.cursor/install.sh` / `.cursor/start.sh` | Saved Environment card install/start |
@@ -230,7 +230,7 @@ Operational failures while landing the fleet. Full table:
 
 1. **`Closes #<issue>` is mandatory** on closing commits — `Issue: #N` does not auto-close.
 2. **Never commit PR Validation wiki reports onto PR heads with `[skip ci]`** — fixed in `pr-validation.yml` on `main`; do not reintroduce.
-3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`) and **`bc`** for `validate-sdlc-plan.sh`.
+3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`). Run `bash .cursor/install.sh` until the Environment card is Saved (`openspec` + `bc` come from that script; Gate 1 no longer hard-depends on `bc`).
 4. **Save** the Environment card with `.cursor/install.sh` / `.cursor/start.sh`; draft builds are not enough.
 5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
 

@@ -9,8 +9,12 @@ hosts the AI SDLC foreman fleet. Populate secrets from `.env.example` keys
 > **Nested Docker:** bridge CNI between containers often fails in Cloud Agent VMs.
 > Use **host-network compose** (`docker-compose.cloud.yml` on `main`, or equivalent)
 > and point the backend JDBC URL at `127.0.0.1`. Boot `start` must start `dockerd`
-> (fuse-overlayfs + iptables-legacy) before `docker compose up`. Install **`bc`**
-> on PATH — `scripts/validate-sdlc-plan.sh` uses it to count Gate 1 scenarios.
+> (fuse-overlayfs + iptables-legacy) before `docker compose up`.
+>
+> **Until the Environment card is Saved** with `install=bash .cursor/install.sh`,
+> Cloud Agents must run `bash .cursor/install.sh` themselves — that script is the
+> source of `openspec` (`@fission-ai/openspec`) and `bc` on PATH. Gate 1 scenario
+> counting in `validate-sdlc-plan.sh` no longer hard-depends on `bc` (awk sum).
 
 ---
 
@@ -44,7 +48,7 @@ Saving the card.
 | OpenSpec CLI | current project-supported | Gate 1 `openspec validate` | `openspec --version` |
 | Python 3 | 3.11+ | occasional scripts / unittest helpers | `python3 --version` |
 | `curl` / `jq` | any | health checks, JSON parsing | `curl --version`; `jq --version` |
-| `bc` | any | `validate-sdlc-plan.sh` scenario counting (Gate 1) | `bc --version` |
+| `bc` | any | Installed by `.cursor/install.sh` (optional for Gate 1; validator uses awk) | `bc --version` |
 
 ### Frontend / E2E extras
 
@@ -159,7 +163,8 @@ Hard rules discovered while landing the fleet. Also restated for the foreman in
 |----------|----|--------|
 | **Issue close keyword** | Put `Closes #<issue>` in commit messages (and PR body). GitHub only auto-closes on merge with closing keywords. | Rely on `Issue: #N` or a body mention alone — the issue stays **OPEN** after merge. |
 | **PR Validation wiki** | Leave wiki/CI reports to workflows that do **not** commit onto the PR head. Fixed on `main` in `pr-validation.yml` (#1111 / #1117). | Reintroduce committing `docs/wiki/cicd-reports/pr-validation-*.md` onto PR heads with `[skip ci]` — that moves HEAD to a SHA with an empty check suite and stalls merge-when-green. |
-| **Nested Docker + `bc`** | Use `docker-compose.cloud.yml` (host network) + install `bc` for `validate-sdlc-plan.sh`. | Assume bridge networking between containers works in Cloud VMs, or omit `bc`. |
+| **Nested Docker** | Use `docker-compose.cloud.yml` (host network). | Assume bridge networking between containers works in Cloud VMs. |
+| **Run install until Saved** | Run `bash .cursor/install.sh` when `openspec`/`bc`/Maven/Docker are missing; Save the Environment card so new boots wire it automatically. | Assume draft builds already put OpenSpec/`bc` on PATH without running install. |
 | **Saved Environment card** | Save `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh` on the Environment card. | Treat draft builds from feature branches as a substitute for a Saved card. |
 | **OpenSpec Gate 1 seed** | Prefer `bash scripts/seed-openspec-change.sh <name> --issue N --use-case "CU…" --branch … --create` before filling artifacts (#1108 / #1116). | Hand-write empty proposal/design/tasks from scratch (templates get rejected by `validate-sdlc-plan.sh` when `<!-- -->` bodies remain). |
 

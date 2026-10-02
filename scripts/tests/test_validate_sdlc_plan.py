@@ -366,6 +366,40 @@ class LeftoverCommentRejectionTest(unittest.TestCase):
         result = self._validate_files(dict(MINIMAL_FILLED))
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_accepts_scenarios_when_bc_unavailable(self):
+        """Gate 1 must not false-fail if bc is missing or broken (Cloud Agents)."""
+        files = dict(MINIMAL_FILLED)
+        change = write_change(os.path.join(self.tmp, "no-bc-change"), files)
+        root = tempfile.mkdtemp(prefix="repo-")
+        self.addCleanup(shutil.rmtree, root, ignore_errors=True)
+        changes = os.path.join(root, "openspec", "changes")
+        os.makedirs(changes)
+        shutil.copytree(change, os.path.join(changes, "no-bc-change"))
+        scripts = os.path.join(root, "scripts")
+        os.makedirs(scripts)
+        shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), scripts)
+        bin_dir = os.path.join(root, "bin")
+        os.makedirs(bin_dir)
+        # Broken bc first on PATH — old paste|bc path would count 0 and fail Gate 1.
+        bc = os.path.join(bin_dir, "bc")
+        with open(bc, "w") as f:
+            f.write("#!/bin/sh\nexit 1\n")
+        os.chmod(bc, 0o755)
+        gh = os.path.join(bin_dir, "gh")
+        with open(gh, "w") as f:
+            f.write("#!/bin/sh\nexit 1\n")
+        os.chmod(gh, 0o755)
+        env = {**os.environ, "PATH": f"{bin_dir}:/usr/bin:/bin"}
+        result = subprocess.run(
+            ["bash", os.path.join(scripts, "validate-sdlc-plan.sh"), "no-bc-change"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("scenario", result.stdout.lower())
+
     def test_rejection_names_file_and_heading_for_design(self):
         files = dict(MINIMAL_FILLED)
         files["design.md"] = files["design.md"].replace(

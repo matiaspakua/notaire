@@ -252,8 +252,11 @@ validate_change() {
     if [ "$spec_count" -eq 0 ]; then
       bad "specs: no delta spec found (set skip_specs: true only if behavior does not change)"
     else
+      # Sum per-file counts without requiring `bc` (Cloud Agents may skip install).
+      # awk is always available; identical result to `paste -sd+ | bc` when bc exists.
       local scenarios
-      scenarios=$(grep -rhcE '^#### Scenario:' "$dir/specs" 2>/dev/null | paste -sd+ - | bc 2>/dev/null || echo 0)
+      scenarios=$(grep -rhcE '^#### Scenario:' "$dir/specs" 2>/dev/null \
+        | awk '{ s += $1 } END { print s + 0 }' || echo 0)
       if [ "${scenarios:-0}" -eq 0 ]; then
         bad "specs: no '#### Scenario:' found — scenarios ARE the Acceptance Criteria (Gate 1)"
       else
