@@ -7,9 +7,26 @@ hosts the AI SDLC foreman fleet. Populate secrets from `.env.example` keys
 > This fleet does **not** require `local-ai/`, oMLX, or Codex local profiles.
 >
 > **Nested Docker:** bridge CNI between containers often fails in Cloud Agent VMs.
-> Use host networking (`docker-compose.cloud.yml` or equivalent) and point the backend
-> JDBC URL at `127.0.0.1`. Boot `start` must start `dockerd` (fuse-overlayfs +
-> iptables-legacy) before `docker compose up`.
+> Use **host-network compose** (`docker-compose.cloud.yml` on `main`, or equivalent)
+> and point the backend JDBC URL at `127.0.0.1`. Boot `start` must start `dockerd`
+> (fuse-overlayfs + iptables-legacy) before `docker compose up`. Install **`bc`**
+> on PATH — `scripts/validate-sdlc-plan.sh` uses it to count Gate 1 scenarios.
+
+---
+
+## 0. Cursor Environment card (must be Saved)
+
+Draft environment builds alone are **not** enough for auto boot. On the Cursor
+Cloud Environment dashboard card:
+
+1. Set `install` to `bash .cursor/install.sh`
+2. Set `start` to `bash .cursor/start.sh`
+3. **Save** the card (promotable / bootable config on the default branch)
+
+Until the card is Saved with those self-contained scripts (present on `main` via
+PR #1112), new agents may boot without Maven/Docker/OpenSpec/`bc` and Gate 1 / stack
+bring-up will fail. Triggering a draft build from a feature branch does not replace
+Saving the card.
 
 ---
 
@@ -72,18 +89,20 @@ Also required **outside** `.env`:
 
 ## 3. Boot / start scripts
 
-Wire into environment `install` / `start` as appropriate:
+Prefer the repo scripts wired on the **Saved** Environment card:
 
 ```bash
-# install (idempotent)
-cp -n .env.example .env   # or inject secrets
-# ensure JDK21, Maven, Node, Docker, gh, openspec on PATH
-cd frontend && npm ci && npx playwright install --with-deps
+# environment.json (Saved card)
+install: bash .cursor/install.sh
+start:   bash .cursor/start.sh
+```
 
-# optional warm caches
-mvn -q -B -pl backend-api -am dependency:go-offline || true
+`.cursor/install.sh` is idempotent (JDK/Maven/Node/Docker/`bc`/OpenSpec, `.env`,
+frontend deps, Maven reactor). `.cursor/start.sh` starts `dockerd` then brings up
+the stack with host-network compose:
 
-# start (detached services for Gate 3)
+```bash
+export COMPOSE_FILE=docker-compose.yml:docker-compose.cloud.yml
 bash scripts/start.sh     # DB + backend; frontend may be separate
 # for full autonomy including observability: bash scripts/start-all.sh
 ```
@@ -100,8 +119,9 @@ curl -sf http://localhost:8080/actuator/health
 
 Agents assume these commands work without interactive prompts:
 
-- `mvn`, `java`, `node`, `npm`, `npx`, `docker`, `docker compose`, `gh`, `openspec`
+- `mvn`, `java`, `node`, `npm`, `npx`, `docker`, `docker compose`, `gh`, `openspec`, `bc`
 - `bash scripts/preflight.sh`, `bash scripts/validate-sdlc-plan.sh`
+- `bash scripts/seed-openspec-change.sh` (Gate 1 scaffold — prefer before filling artifacts)
 - `bash scripts/start.sh` / `stop.sh` / `run_pipeline.sh`
 
 Install OpenSpec CLI the same way CI/devs do for this repo (document the exact
@@ -130,9 +150,24 @@ Gate 1 cannot pass.
 
 ---
 
-## 7. Handoff to environment.json author
+## 7. Process learnings (Cloud fleet — from PRs #1111 / #1112 / #1116)
 
-Use this checklist as the source list for install steps and secrets. Sibling
-task “Map env requirements” should translate rows into concrete
-`environment.json` `install`/`start` commands once versions are confirmed on
-the Cloud snapshot.
+Hard rules discovered while landing the fleet. Also restated for the foreman in
+[`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md).
+
+| Learning | Do | Do not |
+|----------|----|--------|
+| **Issue close keyword** | Put `Closes #<issue>` in commit messages (and PR body). GitHub only auto-closes on merge with closing keywords. | Rely on `Issue: #N` or a body mention alone — the issue stays **OPEN** after merge. |
+| **PR Validation wiki** | Leave wiki/CI reports to workflows that do **not** commit onto the PR head. Fixed on `main` in `pr-validation.yml` (#1111 / #1117). | Reintroduce committing `docs/wiki/cicd-reports/pr-validation-*.md` onto PR heads with `[skip ci]` — that moves HEAD to a SHA with an empty check suite and stalls merge-when-green. |
+| **Nested Docker + `bc`** | Use `docker-compose.cloud.yml` (host network) + install `bc` for `validate-sdlc-plan.sh`. | Assume bridge networking between containers works in Cloud VMs, or omit `bc`. |
+| **Saved Environment card** | Save `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh` on the Environment card. | Treat draft builds from feature branches as a substitute for a Saved card. |
+| **OpenSpec Gate 1 seed** | Prefer `bash scripts/seed-openspec-change.sh <name> --issue N --use-case "CU…" --branch … --create` before filling artifacts (#1108 / #1116). | Hand-write empty proposal/design/tasks from scratch (templates get rejected by `validate-sdlc-plan.sh` when `<!-- -->` bodies remain). |
+
+---
+
+## 8. Handoff to environment.json author
+
+Use this checklist as the source list for install steps and secrets. The Saved
+card must already point at `.cursor/install.sh` / `.cursor/start.sh` on the
+default branch; translate any remaining version pins into the dashboard only when
+they differ from those scripts.

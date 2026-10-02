@@ -84,7 +84,8 @@ All infrastructure changes follow the CONSTITUTION.md workflow:
 3. Move issue to IN PROGRESS.
 4. Implement and test (scripts, Docker configs, CI pipelines).
 5. Update `infra/README.md` and relevant docs.
-6. Commit (Conventional Commits) + PR.
+6. Commit (Conventional Commits) + PR. Closing commit/PR body must include
+   `Closes #<issue>` (not merely `Issue: #<issue>`).
 
 ## Relevant Rules & Skills
 

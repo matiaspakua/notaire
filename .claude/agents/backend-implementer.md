@@ -34,6 +34,13 @@ You implement **backend-api** (and `notaire-shared` when needed) under foreman d
 4. Tick tasks.md only `[ ]`→`[x]` for your groups; do not invent results.
 5. Do not push unless foreman asks; when asked, run `bash scripts/preflight.sh` first.
 
+## Commits (when foreman asks you to commit)
+
+- Conventional Commits.
+- Any commit that **closes** the issue must end with `Closes #<n>` — never only
+  `Issue: #<n>` (GitHub will not auto-close). Intermediate commits may use
+  `Refs #<n>` / `Part of #<n>` when the foreman reserves `Closes` for the final commit.
+
 ## Exclusions
 
 - No `local-ai/` harness.

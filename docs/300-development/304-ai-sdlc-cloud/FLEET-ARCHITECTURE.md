@@ -54,14 +54,14 @@ merge, or skip gates.
 |-------|----------------|---------------------|
 | **Pick** | Select one open issue that is not an epic/roadmap umbrella; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present |
 | **Triage** | Dispatch analyst / openspec-planner for refine + surface map (`backend` / `frontend` / both / `none`) | Written brief: issue #, UC, TYPE, SURFACE, acceptance criteria list |
-| **Gate 1** | Ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash scripts/validate-sdlc-plan.sh <change>` |
+| **Gate 1** | Prefer `bash scripts/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash scripts/validate-sdlc-plan.sh <change>` |
 | **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; label `in-progress` | Branch name regex + `gh issue edit … --add-label in-progress` |
 | **Dispatch implement** | Route by SURFACE to backend / frontend / both; require TDD-first | Specialist commits show failing tests before green commits |
 | **Quality** | Run local CI mirror before push | `bash scripts/preflight.sh` (and `--full` when stack is up) |
-| **PR** | Open/update PR; body links issue; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; `Closes #n` in commits |
+| **PR** | Open/update PR; body links issue with **`Closes #n`**; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; every closing commit must end with `Closes #n` (not merely `Issue: #n`) |
 | **CI watch** | Subscribe or poll checks; on failure dispatch CI-fix specialist with failing job logs | All required checks green on last non-`[skip ci]` commit |
 | **Gate 4** | Dispatch `code-reviewer` (+ `security-auditor` when auth/secrets/schema) | Review verdict PASS or concrete FIX notes |
-| **Gate 5** | Merge via PR only; wait CI/CD on `main`; smoke `/actuator/health`; close issue; archive OpenSpec change | Health UP; issue CLOSED; `openspec archive` when applicable |
+| **Gate 5** | Merge via PR only; wait CI/CD on `main`; smoke `/actuator/health`; close issue; archive OpenSpec change | Health UP; issue CLOSED (proves `Closes #` worked); `openspec archive` when applicable |
 | **Next** | Update run ledger; pick next eligible issue | Do not start a second concurrent product issue on the same worktree without isolation |
 
 ### Foreman must never
@@ -70,6 +70,11 @@ merge, or skip gates.
 - Call or depend on `local-ai/sdlc/foreman.sh`, oMLX, Codex local profiles, or `../notaire-localai` worktrees.
 - Merge with failing CI or without Gate 4 PASS.
 - Fabricate Issue numbers or Use Cases.
+- Close the loop with only `Issue: #n` in commits — **issues stay OPEN** unless commits/PR use a GitHub closing keyword (`Closes #n`).
+- Commit PR Validation wiki reports onto PR heads (especially with `[skip ci]`). That pattern was removed from `pr-validation.yml` on `main` (#1111 / #1117); agents must not reintroduce it by hand.
+- Assume bridge Docker networking works in Cloud VMs — use `docker-compose.cloud.yml` (host network) and ensure `bc` is installed for `validate-sdlc-plan.sh`.
+- Treat draft environment builds as a substitute for a **Saved** Environment card with `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh`.
+- Skip `scripts/seed-openspec-change.sh` and hand-author empty OpenSpec templates (leftover `<!-- -->` bodies fail Gate 1 validation — #1108 / #1116).
 
 ---
 
@@ -197,12 +202,15 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 |-------|--------------------|
 | `CONSTITUTION.md` | Highest process authority |
 | `openspec/` + `notaire-sdlc` | Gate 1 artifacts |
-| `scripts/validate-sdlc-plan.sh` | Constitution checks on plans |
+| `scripts/seed-openspec-change.sh` | Prefer before filling Gate 1 templates (#1108) |
+| `scripts/validate-sdlc-plan.sh` | Constitution checks on plans (needs `bc`) |
 | `scripts/preflight.sh` | Pre-push CI mirror |
 | `scripts/run_pipeline.sh` | Full Gate 3 when stack is up |
+| `.cursor/install.sh` / `.cursor/start.sh` | Saved Environment card install/start |
+| `docker-compose.cloud.yml` | Host-network compose for nested Docker |
 | `.claude/skills/*` | Specialist playbooks |
 | `.claude/agents/*` | Role prompts (this fleet extends them) |
-| `.github/workflows/*` | CI truth; foreman watches |
+| `.github/workflows/*` | CI truth; foreman watches — do not push `[skip ci]` wiki commits onto PR heads |
 | `.env` / `.env.example` | Secrets; never commit `.env` |
 
 ---
@@ -215,9 +223,22 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 
 ---
 
-## 9. Related docs
+## 9. Process learnings (post #1111 / #1112 / #1116)
 
-- [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs
+Operational failures while landing the fleet. Full table:
+[`ENVIRONMENT-CHECKLIST.md` §7](ENVIRONMENT-CHECKLIST.md).
+
+1. **`Closes #<issue>` is mandatory** on closing commits — `Issue: #N` does not auto-close.
+2. **Never commit PR Validation wiki reports onto PR heads with `[skip ci]`** — fixed in `pr-validation.yml` on `main`; do not reintroduce.
+3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`) and **`bc`** for `validate-sdlc-plan.sh`.
+4. **Save** the Environment card with `.cursor/install.sh` / `.cursor/start.sh`; draft builds are not enough.
+5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
+
+---
+
+## 10. Related docs
+
+- [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs + process learnings table
 - [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) — readiness before first issue
 - [`fleet-manifest.yaml`](fleet-manifest.yaml) — role map
 - Local (reference only): `local-ai/sdlc/AI-SDLC.md`
