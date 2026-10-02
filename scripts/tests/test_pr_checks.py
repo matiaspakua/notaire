@@ -150,6 +150,45 @@ class AgentRulesTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("no agent rule files", result.stdout)
 
+    def _current_stack_refactoring(self):
+        return (
+            "# Refactoring\n"
+            "Package root `com.licensis.notaire`. "
+            "Spring Boot 4.1, Java 21, PostgreSQL 16, Next.js frontend. "
+            "DTOs named `DtoUsuario`.\n"
+        )
+
+    def test_rejects_obsolete_package_in_refactoring_md(self):
+        self.write(".claude/rules/refactoring.md", "Package: com.notaria.backend\n")
+        result = run("check-agent-rules.sh", self.root, cwd=self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("com\\.notaria", result.stdout)
+
+    def test_rejects_swing_target_markers_in_refactoring_md(self):
+        self.write(
+            ".claude/rules/refactoring.md",
+            self._current_stack_refactoring() + "Use SwingWorker and JOptionPane.\n",
+        )
+        result = run("check-agent-rules.sh", self.root, cwd=self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(
+            "SwingWorker" in result.stdout or "JOptionPane" in result.stdout,
+            result.stdout,
+        )
+
+    def test_rejects_obsolete_boot_markers_in_refactoring_md(self):
+        self.write(
+            ".claude/rules/refactoring.md",
+            "Spring Boot 3.x with Java 17 and PostgreSQL 15. EntityRequestDTO.\n",
+        )
+        result = run("check-agent-rules.sh", self.root, cwd=self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("#1070", result.stdout)
+
+    def test_accepts_current_stack_refactoring_md(self):
+        self.write(".claude/rules/refactoring.md", self._current_stack_refactoring())
+        self.assertEqual(run("check-agent-rules.sh", self.root, cwd=self.root).returncode, 0)
+
 
 class SchemaLineTest(unittest.TestCase):
     def test_validator_fails_change_without_schema_line(self):

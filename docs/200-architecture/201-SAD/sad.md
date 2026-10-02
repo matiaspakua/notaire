@@ -237,12 +237,16 @@ rectangle "Phase 6\nDeprecation" #Gray {
 
 | Phase | Status | Details |
 |-------|--------|---------|
-| Phase 1: Analysis | ✅ Complete | Legacy documented in `deprecated-frontend-swing/`, 73 use cases cataloged in `docs/100-business/102-use-cases/` |
+| Phase 1: Analysis | ✅ Complete | Legacy documented in `deprecated-frontend-swing/`, use cases cataloged in `docs/100-business/102-use-cases/` |
 | Phase 2: Foundation | ✅ Complete | `notaire-shared`, Maven multi-module, Docker Compose |
-| Phase 3: Backend API | ✅ Complete | 31 controllers, 31 repositories, 32 entities, Flyway V1→V14 |
-| Phase 4: Frontend | 🔄 In Progress | Next.js 16 app with login, dashboard, auditoria pages |
+| Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
+| Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
-| Phase 6: Deprecation | ⬜ Planned | `deprecated-frontend-swing` excluded from Maven build, `jpa` package targeted |
+| Phase 6: Deprecation | 🔶 Partial | Swing client removed from the active build; `jpa` → `repository` migration ongoing |
+
+Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/projects/1) /
+[docs/github/README.md](../../github/README.md). Phase narrative:
+[DEVELOPMENT-PLAN.md §5](../../300-development/DEVELOPMENT-PLAN.md).
 
 ---
 
@@ -1097,10 +1101,13 @@ O --> (Deployability Docker)
 
 ### 11.3 Evolution Roadmap
 
-> 📊 **Dashboard de seguimiento**: [Notaire Dashboard — GitHub Project #4](https://github.com/users/matiaspakua/projects/4)
+> 📊 **Estado vivo**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
+> [`docs/github/README.md`](../../github/README.md) ·
+> [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
+> Snapshots históricos (no actualizar): [`docs/000-archive/github/`](../../000-archive/github/).
 >
-> El roadmap está sincronizado con los milestones y el project board de GitHub.
-> Cada ítem tiene un issue de tracking con criterios de aceptación, labels `roadmap`/`tech-debt`/`risk`, y milestone asignado.
+> El roadmap está sincronizado con los milestones y el Delivery Board de GitHub.
+> Cada ítem tiene un issue de tracking con criterios de aceptación, labels, y milestone asignado.
 
 #### Migration Phases — Alignment with GitHub Milestones
 
@@ -1111,7 +1118,7 @@ O --> (Deployability Docker)
 | Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entidades, Flyway V1→V14 |
 | Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 CU en Next.js 16 |
 | Phase 5 — Observability | [#10 Phase 5 — Observability](https://github.com/matiaspakua/notaire/milestone/10) | ✅ Complete | LPG stack + SonarQube + Homer |
-| Phase 6 — Deprecation | [#11 Phase 6 — Deprecation](https://github.com/matiaspakua/notaire/milestone/11) | ⬜ Planned | [#899](https://github.com/matiaspakua/notaire/issues/899) — Retire Swing, jpa cleanup |
+| Phase 6 — Deprecation | [#11 Phase 6 — Deprecation](https://github.com/matiaspakua/notaire/milestone/11) | 🔶 Partial | Swing removed from active build; remaining work is `jpa` cleanup ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
 #### Short Term (Phase 4 — Modern Frontend)
 
@@ -1123,7 +1130,7 @@ O --> (Deployability Docker)
 #### Medium Term (Phase 6 — Deprecation)
 
 4. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
-5. **Remove `deprecated-frontend-swing` module** — [#811](https://github.com/matiaspakua/notaire/issues/811), [#899](https://github.com/matiaspakua/notaire/issues/899).
+5. **Swing client retirement** — done for the active build (history under `deprecated-frontend-swing/`; do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
 6. **Enable quality gates** that are currently advisory-only: Checkstyle [#710](https://github.com/matiaspakua/notaire/issues/710), SpotBugs [#711](https://github.com/matiaspakua/notaire/issues/711), Trivy [#712](https://github.com/matiaspakua/notaire/issues/712).
 7. **Implement RBAC enforcement** (per-role authorization) — [#559](https://github.com/matiaspakua/notaire/issues/559).
 
