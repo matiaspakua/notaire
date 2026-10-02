@@ -417,6 +417,23 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
                     .content(deedBody)).andExpect(status().isInternalServerError());
         }
+
+        @Test
+        @DisplayName("Should default status to Sin Firmar when frontend omits it (CU05 / #1124 fallout)")
+        void shouldDefaultStatusWhenOmittedOnCreate() throws Exception {
+            when(service.save(any(Deed.class))).thenAnswer(invocation -> {
+                Deed saved = invocation.getArgument(0);
+                saved.setIdDeed(42);
+                return saved;
+            });
+
+            mvc.perform(post("/api/v1/escrituras").contentType("application/json")
+                            .content("""
+                                    {"number":55,"dateDeedrecording":"2026-08-05","notes":"seed","idFolio":1}
+                                    """))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.status").value("Sin Firmar"));
+        }
     }
 
     @Nested

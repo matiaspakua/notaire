@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.substitution;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.licensis.notaire.application.usecase.substitution.SubstitutionService;
 import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.business.Person;
@@ -34,13 +35,31 @@ public class SubstitutionController {
 
     private static final Logger log = LoggerFactory.getLogger(SubstitutionController.class);
 
+    /**
+     * Nested person shape for frontend {@code Suplencia.fkIdSubstitute/fkIdSubstituted}
+     * ({@code DtoPerson}: personId, name, lastName). Request only needs personId.
+     */
+    record PersonRef(Integer personId, String name, String lastName) {
+        PersonRef(Integer personId) {
+            this(personId, null, null);
+        }
+    }
+
+    /**
+     * Accepts Bruno/API flat IDs ({@code substitutePersonId}) and the frontend/E2E nested
+     * form ({@code fkIdSubstitute: { personId }}).
+     */
     record SubstitutionRequest(
             @NotNull Date dateStart,
             @NotNull Date dateEnd,
             String notes,
-            @NotNull Integer substitutePersonId,
-            @NotNull Integer substitutedPersonId) {}
+            Integer substitutePersonId,
+            Integer substitutedPersonId,
+            PersonRef fkIdSubstitute,
+            PersonRef fkIdSubstituted) {}
 
+    // Flat IDs kept for Bruno + SubstitutionControllerIntegrationTest; nested refs for UI.
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     record SubstitutionResponse(
             Integer idSubstitution,
             Date dateStart,
@@ -48,6 +67,8 @@ public class SubstitutionController {
             String notes,
             Integer substitutePersonId,
             Integer substitutedPersonId,
+            PersonRef fkIdSubstitute,
+            PersonRef fkIdSubstituted,
             int version) {}
 
     private final SubstitutionService service;
@@ -58,11 +79,32 @@ public class SubstitutionController {
         this.personRepository = personRepository;
     }
 
+    private Integer resolveSubstituteId(SubstitutionRequest request) {
+        if (request.substitutePersonId() != null) {
+            return request.substitutePersonId();
+        }
+        return request.fkIdSubstitute() != null ? request.fkIdSubstitute().personId() : null;
+    }
+
+    private Integer resolveSubstitutedId(SubstitutionRequest request) {
+        if (request.substitutedPersonId() != null) {
+            return request.substitutedPersonId();
+        }
+        return request.fkIdSubstituted() != null ? request.fkIdSubstituted().personId() : null;
+    }
+
+    private PersonRef toPersonRef(Person person) {
+        if (person == null || person.getPersonId() == null) {
+            return null;
+        }
+        return new PersonRef(person.getPersonId(), person.getFirstName(), person.getLastName());
+    }
+
     private SubstitutionResponse toResponse(Substitution entity) {
-        Integer substituteId = entity.getFkIdSubstitute() != null
-                ? entity.getFkIdSubstitute().getPersonId() : null;
-        Integer substitutedId = entity.getFkIdSubstituted() != null
-                ? entity.getFkIdSubstituted().getPersonId() : null;
+        Person substitute = entity.getFkIdSubstitute();
+        Person substituted = entity.getFkIdSubstituted();
+        Integer substituteId = substitute != null ? substitute.getPersonId() : null;
+        Integer substitutedId = substituted != null ? substituted.getPersonId() : null;
         return new SubstitutionResponse(
                 entity.getIdSubstitution(),
                 entity.getDateStart(),
@@ -70,12 +112,19 @@ public class SubstitutionController {
                 entity.getNotes(),
                 substituteId,
                 substitutedId,
+                toPersonRef(substitute),
+                toPersonRef(substituted),
                 entity.getVersion());
     }
 
     private boolean applyRequest(Substitution entity, SubstitutionRequest request) {
-        Person substitute = personRepository.findById(request.substitutePersonId()).orElse(null);
-        Person substituted = personRepository.findById(request.substitutedPersonId()).orElse(null);
+        Integer substituteId = resolveSubstituteId(request);
+        Integer substitutedId = resolveSubstitutedId(request);
+        if (substituteId == null || substitutedId == null) {
+            return false;
+        }
+        Person substitute = personRepository.findById(substituteId).orElse(null);
+        Person substituted = personRepository.findById(substitutedId).orElse(null);
         if (substitute == null || substituted == null) {
             return false;
         }
