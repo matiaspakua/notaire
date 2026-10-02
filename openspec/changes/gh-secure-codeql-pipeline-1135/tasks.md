@@ -70,7 +70,7 @@
 - [x] 9.1 One Conventional Commit for the baseline
 - [x] 9.2 Commit message ends with `Closes #1135`
 - [x] 9.3 No secrets and no unrelated product edits
-- [ ] 9.4 Record the commit SHA in `traceability.md` after the commit
+- [x] 9.4 Record the commit SHA in `traceability.md` after the commit (`d47f7d98`)
 
 ## 10. Pull Request y validación CI
 
@@ -102,7 +102,7 @@
 - [x] n/a coverage — ratchet inputs unchanged
 - [x] n/a Playwright — no UI surface
 - [x] Permanent documentation updated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, CodeQL run green, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release

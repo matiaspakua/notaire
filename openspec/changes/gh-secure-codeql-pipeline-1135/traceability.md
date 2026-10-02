@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/gh-secure-codeql-pipeline-1135/` (`skip_specs: true`) | drafted |
 | Branch | `cursor/gh-secure-codeql-pipeline-2d5b` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `d47f7d98` ci(security): add CodeQL and the gh-secure baseline | in progress |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -41,10 +41,10 @@ n/a — `skip_specs: true`. Acceptance Criteria are on Issue #1135.
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/208-devsecops/README.md` | yes | pending |
-| `docs/300-development/CI-PREFLIGHT.md` | yes | pending |
-| `CHANGELOG.md` | yes | pending |
-| `SECURITY.md` | yes | pending |
+| `docs/200-architecture/208-devsecops/README.md` | yes | `d47f7d98` |
+| `docs/300-development/CI-PREFLIGHT.md` | yes | `d47f7d98` |
+| `CHANGELOG.md` | yes | `d47f7d98` |
+| `SECURITY.md` | yes | `d47f7d98` |
 
 ## Gate log
 
