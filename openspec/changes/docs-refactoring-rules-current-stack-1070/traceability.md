@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/docs-1070-refactoring-rules-f458` | created (cloud prefix required; Constitution form would be `docs/1070_refactoring_rules_current_stack`) |
 | Tasks | `tasks.md` | 0/N complete |
 | Commits | bd65ae00 docs(rules): rewrite refactoring.md for current Boot 4.1/Next.js stack<br>96a8a46b test(scripts): guard refactoring.md against obsolete stack markers<br>ec0acb02 chore(openspec): archive completed fix-reportes-500-1062 change | recorded |
-| Pull Request | | pending |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1113 | open (draft) |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
