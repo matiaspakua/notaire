@@ -8,19 +8,28 @@
 
 **Light CI can look fully green while heavy CI is still pending.**
 
-After a PR push, these often finish first (~12 checks):
+After a PR push, these often finish first (~12–18 checks):
 
 - PR Validation
 - Frontend (Vitest / TypeScript / lint)
 - SDLC Process Checks
+- Other fast jobs (CodeQL Analyze matrix, Dependabot submit, …)
 
-Meanwhile these may still be **pending**:
+Meanwhile these may still be **pending** (or not yet reported to the
+subscription):
 
 - `CI - Build, Test & Security` (backend Unit, Integration, Coverage Gate, …)
 - `Playwright E2E — Full Suite` (Bruno API + UI E2E)
 
-Subscriptions and `gh pr checks` can report “all green” when they only see the
-completed light suite. That is **not** mergeable.
+**Do not trust CI subscription success alone.** Cursor / GitHub CI subscriptions
+can deliver “all N checks success” (e.g. **18 checks** on #1137) when they only
+see the completed light suite — while `CI - Build, Test & Security` and/or
+Playwright are still **pending** or not yet in the rollup. That delivery is
+**not** mergeable. Always run `bash scripts/check-heavy-ci.sh <pr>` before
+`gh pr merge`; ignore subscription “success” unless that script exits 0.
+
+`gh pr checks` has the same blind spot when heavy jobs are missing or still
+queued. Count of green checks ≠ heavy gate.
 
 ## Hard rule
 
@@ -36,7 +45,8 @@ completed light suite. That is **not** mergeable.
 | UI E2E Tests (Playwright) | `Playwright E2E — Full Suite` |
 
 Light-only green (Validate PR, Code Lint, Frontend Vitest/TypeScript, Process
-Checks) is **insufficient**.
+Checks, CodeQL Analyze, …) is **insufficient** — even when a subscription says
+“all N checks success.”
 
 Docs-only PRs are not exempt: `playwright-e2e.yml` still runs on PRs into
 `main`, so Bruno + Playwright remain required unless the workflow is
@@ -48,15 +58,17 @@ Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
 ## Verify before merge
 
 ```bash
-# Preferred — agents must run this before `gh pr merge`:
+# REQUIRED — agents must run this before `gh pr merge`.
+# Do not merge on subscription “all checks success” alone.
 bash scripts/check-heavy-ci.sh <pr-number>
 
-# Or manually:
+# Or manually (still confirm the four required names are success):
 gh run list --branch <pr-head-branch> --limit 10
 # Ensure CI - Build, Test & Security and Playwright E2E are completed success
 # for the PR head SHA (not merely queued/in_progress).
 ```
 
+Exit 0 from `check-heavy-ci.sh` is the only subscription-safe merge signal.
 Also confirm no required check on the head SHA is still `pending` / `queued` /
 `in_progress`.
 
@@ -79,10 +91,11 @@ Checklist when Integration/Playwright go red on a long-lived tip:
 
 ## Context
 
-Observed 2026-10-02 on PRs around #1126 / #1128 / #1132 / #1136: premature
-merge was avoided after light CI (~12 checks) reported success while backend
-CI and Playwright were still pending; stale tips looked like product bugs
-until rebased onto #1132. Applies to all future autonomous merges.
+Observed 2026-10-02 on PRs around #1126 / #1128 / #1132 / #1136 / #1137:
+premature merge was avoided after light CI (~12–18 checks) or a CI
+subscription “all N checks success” while backend CI and Playwright were still
+pending; stale tips looked like product bugs until rebased onto #1132. Applies
+to all future autonomous merges.
 
 ## Runner contention
 
