@@ -87,8 +87,13 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await page.getByRole("option", { name: /Sin Plantilla E2E/i }).last().click();
     await dialog.getByTestId("btn-cargar-plantilla").click();
 
-    // THEN: se informa el error y no se agrega ningún ítem
-    await expect(page.getByText(/no tiene una plantilla configurada/i)).toBeVisible({ timeout: 8000 });
+    // THEN: toast surfaces the backend message (#1054 presentMutationError),
+    // not the older i18n-only "no tiene una plantilla configurada" phrasing.
+    await expect(
+      page
+        .locator("[data-sonner-toast]")
+        .getByText(/no tiene plantilla configurada/i)
+    ).toBeVisible({ timeout: 8000 });
     await expect(dialog.getByTestId("items-sin-datos")).toBeVisible();
   });
 });

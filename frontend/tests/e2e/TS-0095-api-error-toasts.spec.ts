@@ -88,7 +88,11 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       "aria-invalid",
       "true"
     );
-    await expect(page.getByText(/must not be blank/i)).toBeVisible();
+    // FormField renders "⚠️ {detail}" — scope to dialog so the toast's
+    // "name: must not be blank" does not trigger a strict-mode collision.
+    await expect(
+      page.getByRole("dialog").getByText(/⚠️\s*must not be blank/i)
+    ).toBeVisible();
   });
 
   test("error toast / field error visible at 320px, 768px, and 1024px", async ({
