@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;

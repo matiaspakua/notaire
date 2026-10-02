@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit;
 
-import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.adapter.in.web.copy.CopyController;

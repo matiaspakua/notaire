@@ -1,6 +1,5 @@
 package com.licensis.notaire.adapter.out.persistence.payment;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.ProcessPaymentCommand;

@@ -1,6 +1,5 @@
 package com.licensis.notaire.application.usecase.payment;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.domain.payment.BudgetCharges;
 import com.licensis.notaire.domain.payment.ChargeLine;

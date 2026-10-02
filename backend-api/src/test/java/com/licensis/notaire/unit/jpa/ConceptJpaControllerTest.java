@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit.jpa;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.jpa.ConceptJpaController;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;

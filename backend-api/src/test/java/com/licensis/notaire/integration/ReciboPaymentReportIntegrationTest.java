@@ -1,6 +1,5 @@
 package com.licensis.notaire.integration;
 
-import java.math.BigDecimal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.testing.RequirementCoverage;

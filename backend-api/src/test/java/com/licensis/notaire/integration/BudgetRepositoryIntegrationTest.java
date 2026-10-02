@@ -1,6 +1,5 @@
 package com.licensis.notaire.integration;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;

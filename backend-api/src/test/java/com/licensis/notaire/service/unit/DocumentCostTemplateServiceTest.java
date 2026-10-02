@@ -1,6 +1,5 @@
 package com.licensis.notaire.service.unit;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.application.port.out.document.DocumentRepositoryPort;
 import com.licensis.notaire.exception.BusinessValidationException;

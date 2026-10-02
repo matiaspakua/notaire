@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;

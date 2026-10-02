@@ -1,6 +1,5 @@
 package com.licensis.notaire.unit;
 
-import java.math.BigDecimal;
 
 import com.licensis.notaire.dto.DtoPayment;
 import com.licensis.notaire.dto.DtoBudget;
