@@ -487,6 +487,30 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(List.of(1))))
                     .andExpect(status().isOk());
         }
+
+        @Test
+        @DisplayName("Should expose person name and lastName on BudgetResponse (DtoPerson)")
+        void shouldExposePersonNameAndLastNameOnGetById() throws Exception {
+            Person client = new Person();
+            client.setPersonId(42);
+            client.setFirstName("Ana");
+            client.setLastName("García");
+
+            Budget budget = new Budget();
+            budget.setIdBudget(7);
+            budget.setNumber(7);
+            budget.setStatus("BORRADOR");
+            budget.setEncabezado("Con cliente");
+            budget.setFkIdPerson(client);
+
+            when(service.findById(7)).thenReturn(Optional.of(budget));
+
+            mvc.perform(get("/api/v1/presupuestos/7"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.person.personId").value(42))
+                    .andExpect(jsonPath("$.person.name").value("Ana"))
+                    .andExpect(jsonPath("$.person.lastName").value("García"));
+        }
     }
 
     @Nested
