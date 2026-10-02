@@ -37,11 +37,14 @@ class ItemControllerTest {
     @Mock
     private ItemService itemService;
 
+    @Mock
+    private com.licensis.notaire.repository.BudgetRepository budgetRepository;
+
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        ItemController controller = new ItemController(itemService);
+        ItemController controller = new ItemController(itemService, budgetRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -151,7 +154,8 @@ class ItemControllerTest {
                 {
                     "name": "Descuento sin reason",
                     "value": 500.0,
-                    "type": "DESCUENTO"
+                    "type": "DESCUENTO",
+                    "fixedConcept": false
                 }
                 """;
 
@@ -164,6 +168,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("PUT /api/v1/items/{id} should return 200 when updated")
     void shouldUpdateItem() throws Exception {
+        when(itemService.findById(1)).thenReturn(Optional.of(buildItem(1, TypeItem.NORMAL, null)));
         when(itemService.update(anyInt(), any(Item.class))).thenReturn(buildItem(1, TypeItem.NORMAL, null));
 
         String json = """
@@ -182,8 +187,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("PUT /api/v1/items/{id} should return 404 when item not found")
     void shouldReturn404OnUpdateNotFound() throws Exception {
-        when(itemService.update(anyInt(), any(Item.class)))
-                .thenThrow(new ResourceNotFoundException("Item no encontrado con ID: 999"));
+        when(itemService.findById(999)).thenReturn(Optional.empty());
 
         String json = """
                 {

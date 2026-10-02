@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,17 +31,40 @@ public class IdentificationTypeController {
 
     private static final Logger log = LoggerFactory.getLogger(IdentificationTypeController.class);
 
+    record IdentificationTypeRequest(
+            @NotBlank String name,
+            String characters) {}
+
+    record IdentificationTypeResponse(
+            Integer idIdentificationType,
+            String name,
+            String characters,
+            int version) {}
+
     private final IdentificationTypeRepository repository;
 
     public IdentificationTypeController(IdentificationTypeRepository repository) {
         this.repository = repository;
     }
 
+    private IdentificationTypeResponse toResponse(IdentificationType entity) {
+        return new IdentificationTypeResponse(
+                entity.getIdIdentificationType(),
+                entity.getName(),
+                entity.getCharacters(),
+                entity.getVersion());
+    }
+
+    private void applyRequest(IdentificationType entity, IdentificationTypeRequest request) {
+        entity.setName(request.name());
+        entity.setCharacters(request.characters());
+    }
+
     @GetMapping
     @Operation(summary = "Obtener todos los tipos de identificacion")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<IdentificationType>> getAll() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<IdentificationTypeResponse>> getAll() {
+        return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -50,8 +74,9 @@ public class IdentificationTypeController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener tipo de identificacion por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<IdentificationType> getById(@PathVariable Integer id) {
+    public ResponseEntity<IdentificationTypeResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -63,10 +88,12 @@ public class IdentificationTypeController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo tipo de identificacion")
-    public ResponseEntity<Object> create(@Valid @RequestBody IdentificationType entity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody IdentificationTypeRequest request) {
         try {
+            IdentificationType entity = new IdentificationType();
+            applyRequest(entity, request);
             entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
             log.error("Failed to create tipo de identificacion", e);
             return ResponseEntity.internalServerError().build();
@@ -79,18 +106,18 @@ public class IdentificationTypeController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de identificacion")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody IdentificationType entity) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            entity.setIdIdentificationType(id);
-            repository.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Failed to update tipo de identificacion id {}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Void> update(@PathVariable Integer id,
+            @Valid @RequestBody IdentificationTypeRequest request) {
+        return repository.findById(id).map(existing -> {
+            try {
+                applyRequest(existing, request);
+                repository.save(existing);
+                return ResponseEntity.ok().<Void>build();
+            } catch (Exception e) {
+                log.error("Failed to update tipo de identificacion id {}", id, e);
+                return ResponseEntity.internalServerError().<Void>build();
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({

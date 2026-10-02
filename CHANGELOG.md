@@ -274,6 +274,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Request DTOs replace JPA `@RequestBody` entity binding** (issue #1068, CU78):
+  thirteen write endpoints now bind validated request records (client-writable
+  fields only) and return response DTOs, so clients cannot mass-assign
+  server-managed fields (`id`, `version`, status/audit). Affected resources:
+  property, identification type, person, budget, deed, item, history, copy,
+  substitution, procedure template, budget template, and management CRUD.
+  `POST /api/v1/audit-log` is removed — audit rows are written only by
+  `AuditoriaAspect` (aligns with #1060). Bruno bodies updated to flat FK ids.
 - **Dead default credentials removed** (issue #1069, CU78): dropped the unused
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database

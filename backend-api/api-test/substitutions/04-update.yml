@@ -11,7 +11,7 @@ http:
   body:
     type: json
     data: |-
-        {"dateStart":"2026-02-01","dateEnd":"2026-02-28","fkIdSubstitute":{"personId":{{substitute_person_id}}},"fkIdSubstituted":{"personId":{{replaced_person_id}}}}
+        {"dateStart":"2026-02-01","dateEnd":"2026-02-28","substitutePersonId":{{substitute_person_id}},"substitutedPersonId":{{replaced_person_id}}}
   headers:
     - name: Content-Type
       value: application/json

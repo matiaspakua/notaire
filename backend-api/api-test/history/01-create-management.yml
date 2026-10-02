@@ -17,8 +17,8 @@ http:
           "dateStart": "2026-09-05",
           "number": {{history_management_number}},
           "encabezado": "History E2E management",
-          "fkIdNotaryPerson": { "personId": {{history_notary_id}} },
-          "fkIdManagementStatus": { "idManagementStatus": 1 }
+          "notaryPersonId": {{history_notary_id}},
+          "managementStatusId": 1
         }
   headers:
     - name: Content-Type

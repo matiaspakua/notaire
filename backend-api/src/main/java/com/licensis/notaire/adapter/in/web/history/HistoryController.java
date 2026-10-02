@@ -3,11 +3,17 @@ package com.licensis.notaire.adapter.in.web.history;
 import com.licensis.notaire.dto.DtoHistorySummary;
 import com.licensis.notaire.application.usecase.history.HistoryMapper;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.repository.HistoryRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.ManagementStatusRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,10 +38,35 @@ public class HistoryController {
 
     private static final Logger log = LoggerFactory.getLogger(HistoryController.class);
 
-    private final HistoryRepository repository;
+    record HistoryRequest(
+            Date date,
+            String notes,
+            @NotNull Integer managementStatusId,
+            @NotNull Integer managementId) {}
 
-    public HistoryController(HistoryRepository repository) {
+    private final HistoryRepository repository;
+    private final ManagementStatusRepository managementStatusRepository;
+    private final DeedManagementRepository deedManagementRepository;
+
+    public HistoryController(HistoryRepository repository,
+            ManagementStatusRepository managementStatusRepository,
+            DeedManagementRepository deedManagementRepository) {
         this.repository = repository;
+        this.managementStatusRepository = managementStatusRepository;
+        this.deedManagementRepository = deedManagementRepository;
+    }
+
+    private boolean applyRequest(History entity, HistoryRequest request) {
+        ManagementStatus status = managementStatusRepository.findById(request.managementStatusId()).orElse(null);
+        DeedManagement management = deedManagementRepository.findById(request.managementId()).orElse(null);
+        if (status == null || management == null) {
+            return false;
+        }
+        entity.setDate(request.date() != null ? request.date() : new Date());
+        entity.setNotes(request.notes());
+        entity.setFkIdManagementStatus(status);
+        entity.setFkIdManagement(management);
+        return true;
     }
 
     @GetMapping
@@ -75,10 +107,14 @@ public class HistoryController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo registro de historial")
-    public ResponseEntity<Object> create(@RequestBody History entity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody HistoryRequest request) {
         try {
+            History entity = new History();
+            if (!applyRequest(entity, request)) {
+                return ResponseEntity.badRequest().build();
+            }
             entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(HistoryMapper.toDto(entity));
         } catch (Exception e) {
             log.error("Failed to create historial", e);
             return ResponseEntity.internalServerError().build();
@@ -91,18 +127,19 @@ public class HistoryController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar historial")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody History entity) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            entity.setIdHistory(id);
-            repository.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Failed to update historial id {}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody HistoryRequest request) {
+        return repository.findById(id).map(existing -> {
+            try {
+                if (!applyRequest(existing, request)) {
+                    return ResponseEntity.badRequest().<Void>build();
+                }
+                repository.save(existing);
+                return ResponseEntity.ok().<Void>build();
+            } catch (Exception e) {
+                log.error("Failed to update historial id {}", id, e);
+                return ResponseEntity.internalServerError().<Void>build();
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
@@ -118,10 +155,6 @@ public class HistoryController {
             return ResponseEntity.notFound().build();
         }
         try {
-            // EstadoDeGestion.historialList is an eagerly-fetched, cascade=ALL, bidirectional
-            // collection that this entity belongs to. Hibernate's cascade processing on that
-            // stale collection reference silently cancels a direct entityManager.remove() at
-            // flush time unless the entity is unlinked from it first.
             entity.getFkIdManagementStatus().getHistoryList().remove(entity);
             repository.delete(entity);
             return ResponseEntity.ok().build();

@@ -12,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +27,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/escrituras")
 @Tag(name = "Escrituras", description = "API para gestionar escrituras")
 public class DeedController {
+
+    record DeedRequest(
+            Integer number,
+            String body,
+            @NotBlank String status,
+            Date dateDeedrecording,
+            Date dateRegistration,
+            String registrationEntryNumber,
+            String notes,
+            Integer idFolio) {}
+
+    record DeedResponse(
+            Integer idDeed,
+            int number,
+            String body,
+            String status,
+            Date dateDeedrecording,
+            Date dateRegistration,
+            String registrationEntryNumber,
+            String notes,
+            int version) {}
 
     private final DeedService deedService;
     private final DeedSigningService deedFirmaService;
@@ -43,12 +67,37 @@ public class DeedController {
         this.folioRepository = folioRepository;
     }
 
+    private DeedResponse toResponse(Deed deed) {
+        return new DeedResponse(
+                deed.getIdDeed(),
+                deed.getNumber(),
+                deed.getBody(),
+                deed.getStatus(),
+                deed.getDateDeedrecording(),
+                deed.getDateRegistration(),
+                deed.getRegistrationEntryNumber(),
+                deed.getNotes(),
+                deed.getVersion());
+    }
+
+    private void applyRequest(Deed deed, DeedRequest request) {
+        if (request.number() != null) {
+            deed.setNumber(request.number());
+        }
+        deed.setBody(request.body());
+        deed.setStatus(request.status());
+        deed.setDateDeedrecording(request.dateDeedrecording());
+        deed.setDateRegistration(request.dateRegistration());
+        deed.setRegistrationEntryNumber(request.registrationEntryNumber());
+        deed.setNotes(request.notes());
+    }
+
     @GetMapping
     @Operation(summary = "Obtener todas las escrituras")
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<Deed>> getAll(
+    public ResponseEntity<Page<DeedResponse>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(deedService.findAllPaged(pageable));
+        return ResponseEntity.ok(deedService.findAllPaged(pageable).map(this::toResponse));
     }
 
     @ApiResponses({
@@ -58,8 +107,9 @@ public class DeedController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener escritura por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Deed> getById(@PathVariable Integer id) {
+    public ResponseEntity<DeedResponse> getById(@PathVariable Integer id) {
         return deedService.findById(id)
+                .map(this::toResponse)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -72,10 +122,12 @@ public class DeedController {
     @PostMapping
     @Operation(summary = "Crear nueva escritura")
     @Transactional
-    public ResponseEntity<Deed> create(@RequestBody Deed entity) {
+    public ResponseEntity<DeedResponse> create(@Valid @RequestBody DeedRequest request) {
+        Deed entity = new Deed();
+        applyRequest(entity, request);
         Deed saved = deedService.save(entity);
-        linkFolio(saved, entity.getIdFolio());
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        linkFolio(saved, request.idFolio());
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
     @ApiResponses({
@@ -85,13 +137,12 @@ public class DeedController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar escritura")
     @Transactional
-    public ResponseEntity<Deed> update(@PathVariable Integer id, @RequestBody Deed entity) {
+    public ResponseEntity<DeedResponse> update(@PathVariable Integer id, @Valid @RequestBody DeedRequest request) {
         return deedService.findById(id)
                 .map(existing -> {
-                    entity.setIdDeed(id);
-                    entity.setVersion(existing.getVersion());
-                    Deed updated = deedService.save(entity);
-                    return ResponseEntity.ok(updated);
+                    applyRequest(existing, request);
+                    Deed updated = deedService.save(existing);
+                    return ResponseEntity.ok(toResponse(updated));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -131,8 +182,8 @@ public class DeedController {
     @GetMapping("/buscar")
     @Operation(summary = "Buscar escrituras por numero")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Deed>> searchDeeds(@RequestParam(required = false) Integer number) {
-        return ResponseEntity.ok(deedService.searchPorNumber(number));
+    public ResponseEntity<List<DeedResponse>> searchDeeds(@RequestParam(required = false) Integer number) {
+        return ResponseEntity.ok(deedService.searchPorNumber(number).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -143,7 +194,7 @@ public class DeedController {
     @PostMapping("/{id}/firmar")
     @Operation(summary = "Firmar escritura",
                description = "Transiciona una escritura 'Sin Firmar' con folio asignado al estado 'Firmada'")
-    public ResponseEntity<Deed> firmar(@PathVariable Integer id) {
-        return ResponseEntity.ok(deedFirmaService.sign(id));
+    public ResponseEntity<DeedResponse> firmar(@PathVariable Integer id) {
+        return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));
     }
 }

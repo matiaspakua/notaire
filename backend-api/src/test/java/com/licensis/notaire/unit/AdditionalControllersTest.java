@@ -170,6 +170,9 @@ class AdditionalControllersTest {
             when(queryService.findByNumber(99)).thenReturn(Optional.empty());
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
+            when(repo.findById(1)).thenReturn(Optional.of(g));
+            when(repo.findById(2)).thenReturn(Optional.empty());
+            when(repo.save(any(DeedManagement.class))).thenReturn(g);
             History h = new History();
             h.setIdHistory(1);
             h.setDate(new Date());
@@ -185,12 +188,13 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/gestiones/1/estado-actual")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/gestiones/2/estado-actual")).andExpect(status().isNotFound());
 
+            String managementBody = "{\"number\":1,\"encabezado\":\"Gestion\"}";
             mvc.perform(post("/api/v1/gestiones").contentType("application/json")
-                    .content(mapper.writeValueAsString(g))).andExpect(status().isCreated());
+                    .content(managementBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/gestiones/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(g))).andExpect(status().isOk());
+                    .content(managementBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/gestiones/2").contentType("application/json")
-                    .content(mapper.writeValueAsString(g))).andExpect(status().isNotFound());
+                    .content(managementBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
 
@@ -218,9 +222,9 @@ class AdditionalControllersTest {
 
             when(repo.save(any(DeedManagement.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/gestiones").contentType("application/json")
-                    .content(mapper.writeValueAsString(g))).andExpect(status().isInternalServerError());
+                    .content(managementBody)).andExpect(status().isInternalServerError());
             mvc.perform(put("/api/v1/gestiones/1").contentType("application/json")
-                    .content(mapper.writeValueAsString(g))).andExpect(status().isInternalServerError());
+                    .content(managementBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
             mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isConflict());
         }

@@ -60,6 +60,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -318,6 +320,71 @@ public class ManagementController {
             .orElse(ResponseEntity.notFound().build());
     }
 
+    record ManagementRequest(
+            Integer number,
+            String encabezado,
+            Date dateStart,
+            String notes,
+            Integer notaryPersonId,
+            Integer managementStatusId,
+            Boolean pendingDebtAtArchiving) {}
+
+    record ManagementResponse(
+            Integer idManagement,
+            int number,
+            String encabezado,
+            Date dateStart,
+            String notes,
+            Integer notaryPersonId,
+            Integer managementStatusId,
+            Boolean pendingDebtAtArchiving,
+            int version) {}
+
+    private ManagementResponse toManagementResponse(DeedManagement entity) {
+        Integer notaryId = entity.getFkIdNotaryPerson() != null
+                ? entity.getFkIdNotaryPerson().getPersonId() : null;
+        Integer statusId = entity.getFkIdManagementStatus() != null
+                ? entity.getFkIdManagementStatus().getIdManagementStatus() : null;
+        return new ManagementResponse(
+                entity.getIdManagement(),
+                entity.getNumber(),
+                entity.getEncabezado(),
+                entity.getDateStart(),
+                entity.getNotes(),
+                notaryId,
+                statusId,
+                entity.getPendingDebtAtArchiving(),
+                entity.getVersion());
+    }
+
+    private boolean applyManagementRequest(DeedManagement entity, ManagementRequest request) {
+        if (request.number() != null) {
+            entity.setNumber(request.number());
+        }
+        entity.setEncabezado(request.encabezado());
+        entity.setDateStart(request.dateStart() != null ? request.dateStart() : new Date());
+        entity.setNotes(request.notes());
+        if (request.pendingDebtAtArchiving() != null) {
+            entity.setPendingDebtAtArchiving(request.pendingDebtAtArchiving());
+        }
+        if (request.notaryPersonId() != null) {
+            Person notary = personRepository.findById(request.notaryPersonId()).orElse(null);
+            if (notary == null) {
+                return false;
+            }
+            entity.setFkIdNotaryPerson(notary);
+        }
+        if (request.managementStatusId() != null) {
+            ManagementStatus status = statusRepository.findById(request.managementStatusId())
+                    .orElse(null);
+            if (status == null) {
+                return false;
+            }
+            entity.setFkIdManagementStatus(status);
+        }
+        return true;
+    }
+
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
     @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
@@ -325,9 +392,18 @@ public class ManagementController {
 })
     @PostMapping
     @Operation(summary = "Crear nueva gestion")
-    public ResponseEntity<Object> create(@RequestBody DeedManagement entity) {
-        entity = repository.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+    public ResponseEntity<Object> create(@Valid @RequestBody ManagementRequest request) {
+        try {
+            DeedManagement entity = new DeedManagement();
+            if (!applyManagementRequest(entity, request)) {
+                return ResponseEntity.badRequest().build();
+            }
+            entity = repository.save(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(toManagementResponse(entity));
+        } catch (Exception e) {
+            log.error("Failed to create gestion", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @ApiResponses({
@@ -336,18 +412,19 @@ public class ManagementController {
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar gestion")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody DeedManagement entity) {
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            entity.setIdManagement(id);
-            repository.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Failed to update gestion id {}", id, e);
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ManagementRequest request) {
+        return repository.findById(id).map(existing -> {
+            try {
+                if (!applyManagementRequest(existing, request)) {
+                    return ResponseEntity.badRequest().<Void>build();
+                }
+                repository.save(existing);
+                return ResponseEntity.ok().<Void>build();
+            } catch (Exception e) {
+                log.error("Failed to update gestion id {}", id, e);
+                return ResponseEntity.internalServerError().<Void>build();
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({

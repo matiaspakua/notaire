@@ -21,6 +21,6 @@ runtime:
           test("Contains the created template", function () {
             const pt = Number(bru.getVar('template_procedure_type_id'));
             const c = Number(bru.getVar('template_concept_id'));
-            expect(res.getBody().some(t => t.budgetTemplatePK.fkIdProcedureType === pt
-              && t.budgetTemplatePK.fkIdConcept === c)).to.equal(true);
+            expect(res.getBody().some(t => t.fkIdProcedureType === pt
+              && t.fkIdConcept === c)).to.equal(true);
           });

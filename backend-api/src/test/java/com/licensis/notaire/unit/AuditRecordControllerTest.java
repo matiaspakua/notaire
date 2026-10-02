@@ -171,15 +171,13 @@ class AuditRecordControllerTest {
     }
 
     @Test
-    @DisplayName("Should create a new registro and return its entity")
-    void shouldCreateNewRecordAndReturnEntity() throws Exception {
-        when(service.save(any(AuditRecord.class))).thenReturn(sampleEntity);
-
+    @DisplayName("Should reject create — audit trail is append-only via AuditoriaAspect (#1068/#1060)")
+    void shouldRejectCreateOfAuditRecords() throws Exception {
         mockMvc.perform(post("/api/v1/audit-log")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(sampleEntity)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idAuditRecord").value(100));
+                .andExpect(status().isMethodNotAllowed());
+        verify(service, never()).save(any(AuditRecord.class));
     }
 
     @Test

@@ -11,7 +11,7 @@ http:
   body:
     type: json
     data: |-
-        {"budgetTemplatePK":{"fkIdProcedureType":{{template_procedure_type_id}},"fkIdConcept":{{template_concept_id}}},"procedureType":{"idProcedureType":{{template_procedure_type_id}}},"concept":{"idConcept":{{template_concept_id}}},"notes":"E2E budget template"}
+        {"fkIdProcedureType":{{template_procedure_type_id}},"fkIdConcept":{{template_concept_id}},"notes":"E2E budget template"}
   headers:
     - name: Content-Type
       value: application/json

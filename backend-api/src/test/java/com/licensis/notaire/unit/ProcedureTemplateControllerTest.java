@@ -102,7 +102,7 @@ class ProcedureTemplateControllerTest {
     void shouldUpdateTemplate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(1, 2);
         ProcedureTemplate pt = buildTemplate(1, 2);
-        when(repository.existsById(pk)).thenReturn(true);
+        when(repository.findById(pk)).thenReturn(Optional.of(pt));
         when(repository.save(any(ProcedureTemplate.class))).thenReturn(pt);
         mockMvc.perform(put("/api/v1/plantilla-tramite/1/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +114,7 @@ class ProcedureTemplateControllerTest {
     @DisplayName("PUT /plantilla-tramite/{idTipoTramite}/{idDocumentType} returns 404 when not exists")
     void shouldReturn404OnUpdate() throws Exception {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(9, 9);
-        when(repository.existsById(pk)).thenReturn(false);
+        when(repository.findById(pk)).thenReturn(Optional.empty());
         mockMvc.perform(put("/api/v1/plantilla-tramite/9/9")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(buildTemplate(9, 9))))

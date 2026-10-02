@@ -14,8 +14,8 @@ http:
         {
           "date": "2026-09-05",
           "notes": "Management in progress",
-          "fkIdManagement": { "idManagement": {{history_management_id}} },
-          "fkIdManagementStatus": { "idManagementStatus": 2 }
+          "managementId": {{history_management_id}},
+          "managementStatusId": 2
         }
   headers:
     - name: Content-Type
