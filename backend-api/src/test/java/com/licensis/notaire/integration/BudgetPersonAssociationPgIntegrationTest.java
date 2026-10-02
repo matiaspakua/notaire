@@ -23,11 +23,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * CU01 - Preparar Presupuesto, against the real Flyway-managed Postgres
- * schema. {@code PresupuestoController.create}/{@code .update} bind directly
- * to the raw {@code Presupuesto} entity, whose client relation field is
- * {@code fkIdPersona}; the real frontend sends {@code persona} (the DTO's
- * field name), so every Presupuesto created or edited from the UI silently
- * loses its client association (Issue #883).
+ * schema. After #1068/#1124, create/update bind {@code BudgetRequest} (accepts
+ * nested {@code person.personId} or flat {@code personId}) and return
+ * {@code BudgetResponse} with nested {@code person} matching frontend
+ * {@code DtoPerson} ({@code personId}, {@code name}, {@code lastName}) —
+ * Issue #883 / PR #1132.
  */
 @SpringBootTest
 @ActiveProfiles("integration")
@@ -73,7 +73,9 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.person.personId").value(personId));
+                .andExpect(jsonPath("$.person.personId").value(personId))
+                .andExpect(jsonPath("$.person.name").value("Client IT"))
+                .andExpect(jsonPath("$.person.lastName").value("CU01"));
     }
 
     @Test
@@ -101,7 +103,9 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.person.personId").value(personId));
+                .andExpect(jsonPath("$.person.personId").value(personId))
+                .andExpect(jsonPath("$.person.name").value("Client IT"))
+                .andExpect(jsonPath("$.person.lastName").value("CU01"));
     }
 
     @Test
@@ -137,7 +141,9 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(get("/api/v1/presupuestos/" + budgetId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.person.personId").value(personId));
+                .andExpect(jsonPath("$.person.personId").value(personId))
+                .andExpect(jsonPath("$.person.name").value("Client IT"))
+                .andExpect(jsonPath("$.person.lastName").value("CU01"));
     }
 
     @Test
@@ -170,7 +176,9 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                 .get("idBudget").asInt();
 
         mockMvc.perform(get("/api/v1/presupuestos/" + withPersonId))
-                .andExpect(jsonPath("$.person.personId").value(personId));
+                .andExpect(jsonPath("$.person.personId").value(personId))
+                .andExpect(jsonPath("$.person.name").value("Client IT"))
+                .andExpect(jsonPath("$.person.lastName").value("CU01"));
         mockMvc.perform(get("/api/v1/presupuestos/" + withoutPersonId))
                 .andExpect(jsonPath("$.person").doesNotExist());
     }

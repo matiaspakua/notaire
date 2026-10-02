@@ -417,6 +417,23 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
                     .content(deedBody)).andExpect(status().isInternalServerError());
         }
+
+        @Test
+        @DisplayName("Should default status to Sin Firmar when frontend omits it (CU05 / #1124 fallout)")
+        void shouldDefaultStatusWhenOmittedOnCreate() throws Exception {
+            when(service.save(any(Deed.class))).thenAnswer(invocation -> {
+                Deed saved = invocation.getArgument(0);
+                saved.setIdDeed(42);
+                return saved;
+            });
+
+            mvc.perform(post("/api/v1/escrituras").contentType("application/json")
+                            .content("""
+                                    {"number":55,"dateDeedrecording":"2026-08-05","notes":"seed","idFolio":1}
+                                    """))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.status").value("Sin Firmar"));
+        }
     }
 
     @Nested
@@ -486,6 +503,30 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/presupuestos/1/items-desde-catalogo").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))
                     .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should expose person name and lastName on BudgetResponse (DtoPerson)")
+        void shouldExposePersonNameAndLastNameOnGetById() throws Exception {
+            Person client = new Person();
+            client.setPersonId(42);
+            client.setFirstName("Ana");
+            client.setLastName("García");
+
+            Budget budget = new Budget();
+            budget.setIdBudget(7);
+            budget.setNumber(7);
+            budget.setStatus("BORRADOR");
+            budget.setEncabezado("Con cliente");
+            budget.setFkIdPerson(client);
+
+            when(service.findById(7)).thenReturn(Optional.of(budget));
+
+            mvc.perform(get("/api/v1/presupuestos/7"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.person.personId").value(42))
+                    .andExpect(jsonPath("$.person.name").value("Ana"))
+                    .andExpect(jsonPath("$.person.lastName").value("García"));
         }
     }
 

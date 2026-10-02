@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,8 @@ public class DeedController {
     record DeedRequest(
             Integer number,
             String body,
-            @NotBlank String status,
+            // Optional: frontend create form omits status; default applied in applyRequest (CU05).
+            String status,
             Date dateDeedrecording,
             Date dateRegistration,
             String registrationEntryNumber,
@@ -85,7 +85,11 @@ public class DeedController {
             deed.setNumber(request.number());
         }
         deed.setBody(request.body());
-        deed.setStatus(request.status());
+        String status = request.status();
+        if (status == null || status.isBlank()) {
+            status = "Sin Firmar";
+        }
+        deed.setStatus(status);
         deed.setDateDeedrecording(request.dateDeedrecording());
         deed.setDateRegistration(request.dateRegistration());
         deed.setRegistrationEntryNumber(request.registrationEntryNumber());

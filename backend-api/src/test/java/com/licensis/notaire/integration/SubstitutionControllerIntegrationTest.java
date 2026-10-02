@@ -74,7 +74,32 @@ class SubstitutionControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idSubstitution").value(id))
                 .andExpect(jsonPath("$.substitutePersonId").isNumber())
-                .andExpect(jsonPath("$.substitutedPersonId").isNumber());
+                .andExpect(jsonPath("$.substitutedPersonId").isNumber())
+                .andExpect(jsonPath("$.fkIdSubstitute.personId").isNumber())
+                .andExpect(jsonPath("$.fkIdSubstituted.personId").isNumber())
+                .andExpect(jsonPath("$.fkIdSubstitute.lastName").value("Substitution IT"));
+    }
+
+    @Test
+    @DisplayName("Should accept nested fkIdSubstitute/fkIdSubstituted from frontend (CU22 / #1124 fallout)")
+    void shouldCreateWithNestedPersonRefs() throws Exception {
+        long suffix = System.nanoTime() % 100000;
+        Integer substituteId = createPerson("SubNestA", "420" + suffix);
+        Integer substitutedId = createPerson("SubNestB", "421" + suffix);
+        String body = """
+                {"dateStart": "2026-06-01", "dateEnd": "2026-06-30",
+                 "fkIdSubstitute": {"personId": %d}, "fkIdSubstituted": {"personId": %d}}
+                """.formatted(substituteId, substitutedId);
+
+        mockMvc.perform(post("/api/v1/suplencia")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.idSubstitution").isNumber())
+                .andExpect(jsonPath("$.fkIdSubstitute.personId").value(substituteId))
+                .andExpect(jsonPath("$.fkIdSubstituted.personId").value(substitutedId))
+                .andExpect(jsonPath("$.fkIdSubstitute.name").value("SubNestA"))
+                .andExpect(jsonPath("$.fkIdSubstituted.name").value("SubNestB"));
     }
 
     @Test

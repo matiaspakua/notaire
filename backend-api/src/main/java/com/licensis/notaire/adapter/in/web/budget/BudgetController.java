@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.budget;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
@@ -49,7 +50,11 @@ public class BudgetController {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
 
-    record PersonRef(Integer personId) {}
+    /**
+     * Nested client on budget payloads. Wire keys match frontend {@code DtoPerson}:
+     * {@code personId}, {@code name}, {@code lastName}.
+     */
+    record PersonRef(Integer personId, String name, String lastName) {}
 
     record BudgetRequest(
             Integer number,
@@ -61,6 +66,9 @@ public class BudgetController {
             Integer personId,
             @JsonProperty("person") PersonRef person) {}
 
+    // NON_NULL so omitted client association is absent (not "person": null) — matches CU01 /
+    // frontend Presupuesto.person?: DtoPerson and BudgetPersonAssociationPgIntegrationTest.
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     record BudgetResponse(
             Integer idBudget,
             int number,
@@ -69,7 +77,7 @@ public class BudgetController {
             String status,
             Float propertyAmount,
             String notes,
-            Integer personId,
+            PersonRef person,
             int version) {}
 
     private final BudgetService budgetService;
@@ -98,7 +106,11 @@ public class BudgetController {
     }
 
     private BudgetResponse toResponse(Budget budget) {
-        Integer personId = budget.getFkIdPerson() != null ? budget.getFkIdPerson().getPersonId() : null;
+        PersonRef person = null;
+        Person linked = budget.getFkIdPerson();
+        if (linked != null && linked.getPersonId() != null) {
+            person = new PersonRef(linked.getPersonId(), linked.getFirstName(), linked.getLastName());
+        }
         return new BudgetResponse(
                 budget.getIdBudget(),
                 budget.getNumber(),
@@ -107,7 +119,7 @@ public class BudgetController {
                 budget.getStatus(),
                 budget.getPropertyAmount(),
                 budget.getNotes(),
-                personId,
+                person,
                 budget.getVersion());
     }
 
