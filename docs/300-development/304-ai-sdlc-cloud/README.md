@@ -5,10 +5,12 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 
 | Document | Purpose |
 |----------|---------|
-| [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion |
-| [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` |
+| [`FLEET-ARCHITECTURE.md`](FLEET-ARCHITECTURE.md) | Foreman + specialist roles, model recommendations, handoffs, local-ai exclusion, process learnings |
+| [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) | Toolchain/secrets checklist for Cloud `environment.json` + Saved-card and ops pitfalls |
 | [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) | Prove the fleet is ready before picking the first GitHub issue |
 | [`fleet-manifest.yaml`](fleet-manifest.yaml) | Machine-readable role → skills → model map |
+
+**Process learnings (must follow):** `Closes #<issue>` (not only `Issue: #N`); never commit PR Validation wiki reports onto PR heads with `[skip ci]`; host-network compose + `bc`; **Save** Environment card with `.cursor/install.sh` / `.cursor/start.sh`; prefer `scripts/seed-openspec-change.sh` for Gate 1. Details in [ENVIRONMENT-CHECKLIST §7](ENVIRONMENT-CHECKLIST.md) and [FLEET-ARCHITECTURE §9](FLEET-ARCHITECTURE.md).
 
 **Agent definitions** (loadable by Cursor / Claude-compatible agents):
 
