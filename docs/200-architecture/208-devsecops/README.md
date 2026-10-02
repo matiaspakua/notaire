@@ -139,7 +139,7 @@ permissions:
 |------|---------|------|
 | Trivy | Scan source code and Docker images | OS and library vulnerabilities |
 | SpotBugs | Static code analysis | Code quality bugs |
-| CodeQL (`codeql.yml`) | Java, JavaScript/TypeScript, and GitHub Actions | Code scanning alerts (does not fail the job on findings) |
+| CodeQL (`codeql.yml`) | Java, JavaScript/TypeScript, and GitHub Actions | Code scanning alerts (does not fail the job on findings); see [advanced vs default](#codeql-advanced-vs-default-setup) |
 
 ### Security Best Practices Implemented
 
@@ -147,6 +147,40 @@ permissions:
 2. **Secret Handling**: Uses GitHub secrets for sensitive data
 3. **Container Security**: Scans Docker images before publishing
 4. **SBOM Generation**: Creates Software Bill of Materials for traceability
+
+### CodeQL advanced vs default setup
+
+GitHub supports **either** Code Scanning default setup **or** an advanced
+workflow (`.github/workflows/codeql.yml`), not both for the same repo.
+
+If default setup is enabled while `codeql.yml` uploads SARIF, Analyze fails with
+a processing rejection such as *"CodeQL analyses from advanced configurations
+cannot be processed when the default setup is enabled"*.
+
+Fleet / ops rules:
+
+1. Prefer the advanced workflow in-repo (languages, build steps, schedule).
+2. Set `wait-for-processing: false` on `github/codeql-action/analyze` so a
+   leftover default-setup conflict does not fail the job after a successful
+   analysis+upload; findings land once default setup is off.
+3. Disable default setup (admin): `bash scripts/enable-gh-secure.sh --apply`
+   (script PATCHes `code-scanning/default-setup` to `not-configured`), or
+   Settings → Code security → Code scanning → disable default setup.
+4. Do **not** pass `code-scanning` to gh-secure’s enable list — that turns
+   default setup back on and re-breaks advanced SARIF.
+
+Status / dry-run:
+
+```bash
+bash scripts/enable-gh-secure.sh            # status
+bash scripts/enable-gh-secure.sh --dry-run  # preview
+bash scripts/enable-gh-secure.sh --apply    # admin/maintain token
+```
+
+Merge-when-green still requires heavy CI (Integration, Coverage, Bruno,
+Playwright) via `bash scripts/check-heavy-ci.sh <pr>` — see
+[CI merge gate](../../300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md).
+CodeQL is not a substitute for that gate.
 
 ---
 
@@ -215,7 +249,7 @@ env:
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |
 | `claude.yml` / `opencode.yml` | Issue/PR comment events | AI coding-agent triggers (Claude Code, OpenCode) |
 | `copilot-setup-steps.yml` | Push/PR touching itself, manual dispatch | Environment setup used by GitHub Copilot coding agent |
-| `codeql.yml` | PR into `main`, push to `main`, weekly schedule, manual dispatch | CodeQL advanced setup. Findings upload to the Security tab. Do not also enable CodeQL default setup |
+| `codeql.yml` | PR into `main`, push to `main`, weekly schedule, manual dispatch | CodeQL advanced setup. Findings upload to the Security tab. Do not also enable default setup — see [CodeQL advanced vs default setup](#codeql-advanced-vs-default-setup) |
 
 ---
 

@@ -234,7 +234,9 @@ Operational failures while landing the fleet. Full table:
 3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`). Run `bash .cursor/install.sh` until the Environment card is Saved (`openspec` + `bc` come from that script; Gate 1 no longer hard-depends on `bc`).
 4. **Save** the Environment card with `.cursor/install.sh` / `.cursor/start.sh`; draft builds are not enough.
 5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
-6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128).
+6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success. Gate: `bash scripts/check-heavy-ci.sh <pr>` ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128 / #1134).
+7. **Stale PR: rebase first** — Budget/person / `undefined, undefined` Integration or Playwright failures on a tip behind `main` are usually fixed by rebasing onto #1132’s nested `BudgetResponse.person`, not by new product code.
+8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `scripts/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
 
 ---
 
@@ -242,6 +244,8 @@ Operational failures while landing the fleet. Full table:
 
 - [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs + process learnings table
 - [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) — light CI false-positive; required terminal checks before merge
+- [`../CI-PREFLIGHT.md`](../CI-PREFLIGHT.md) — local gates mirroring CI (`preflight.sh`)
+- [DevSecOps / CodeQL](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup) — advanced vs default setup
 - [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) — readiness before first issue
 - [`fleet-manifest.yaml`](fleet-manifest.yaml) — role map
 - Local (reference only): `local-ai/sdlc/AI-SDLC.md`

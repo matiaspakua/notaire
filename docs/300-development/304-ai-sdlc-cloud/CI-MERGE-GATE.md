@@ -38,6 +38,13 @@ completed light suite. That is **not** mergeable.
 Light-only green (Validate PR, Code Lint, Frontend Vitest/TypeScript, Process
 Checks) is **insufficient**.
 
+Docs-only PRs are not exempt: `playwright-e2e.yml` still runs on PRs into
+`main`, so Bruno + Playwright remain required unless the workflow is
+explicitly skipped for that tip.
+
+Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
+(`bash scripts/preflight.sh`, optionally `--full`).
+
 ## Verify before merge
 
 ```bash
@@ -53,18 +60,29 @@ gh run list --branch <pr-head-branch> --limit 10
 Also confirm no required check on the head SHA is still `pending` / `queued` /
 `in_progress`.
 
-## Related regression: BudgetResponse.person shape
+## Stale PR diagnosis — rebase before inventing product fixes
 
-A nested `person: { personId }` alone is **not** enough for UI E2E. The
-frontend presupuesto pickers read `person.name` and `person.lastName`; missing
-names render as `undefined, undefined` and fail Playwright (pagos/gestiones).
-`PersonRef` must include `personId` **and** `name`/`lastName`.
+If **Integration** and/or **Playwright** fail with Budget/person /
+`undefined, undefined` symptoms (presupuesto pickers showing missing client
+names) and the branch is **behind `main`**, **rebase onto `main` first**.
+
+Do not invent product fixes for a class of failures already fixed on `main`.
+[#1132](https://github.com/matiaspakua/notaire/pull/1132) nested
+`BudgetResponse.person` as `PersonRef` with `personId` **and** `name` /
+`lastName`. A nested `person: { personId }` alone is not enough for UI E2E.
+
+Checklist when Integration/Playwright go red on a long-lived tip:
+
+1. `git fetch origin main && git merge-base --is-ancestor origin/main HEAD`
+   (if not ancestor → rebase/merge `main`).
+2. Re-run heavy CI; only then debug product code.
 
 ## Context
 
-Observed 2026-10-02 on PRs around #1126 / #1128 / #1132: premature merge was
-avoided after light CI (~12 checks) reported success while backend CI and
-Playwright were still pending. Applies to all future autonomous merges.
+Observed 2026-10-02 on PRs around #1126 / #1128 / #1132 / #1136: premature
+merge was avoided after light CI (~12 checks) reported success while backend
+CI and Playwright were still pending; stale tips looked like product bugs
+until rebased onto #1132. Applies to all future autonomous merges.
 
 ## Runner contention
 
@@ -72,3 +90,10 @@ Many open PR tips each trigger a full Playwright suite. Hotfixes can sit
 `queued` for minutes behind superseded tips. Prefer not pushing docs-only or
 low-priority PR commits while a main hotfix is waiting on Playwright. Agents
 with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403).
+
+## Related: CodeQL advanced vs default setup
+
+Adding `.github/workflows/codeql.yml` while GitHub Code Scanning **default
+setup** is enabled causes SARIF rejection / Analyze failures. Ops notes and
+`scripts/enable-gh-secure.sh`:
+[DevSecOps — CodeQL](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup).
