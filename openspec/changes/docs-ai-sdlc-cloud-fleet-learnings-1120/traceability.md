@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/docs-ai-sdlc-cloud-fleet-learnings-1120/` (`skip_specs: true`) | drafted |
 | Branch | `cursor/docs-ai-sdlc-cloud-learnings-69d3` (+ `cursor/docs-foreman-closes-keyword-69d3` agent harden) | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `ca59a095` docs learnings; agent harden commit pending | in progress |
+| Commits | `ca59a095` docs learnings; `ad7cad54` agents: hard-require Closes | in progress |
 | Pull Request | #1122 (docs) — agent harden coordinated via `cursor/docs-foreman-closes-keyword-69d3` | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -35,7 +35,7 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1120.
 | OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | passed |
 | PR commits include `Closes #1120` | Commit message inspection | passed (`ca59a095`) |
 | Does not use or depend on `local-ai/` | Grep change for runtime local-ai deps | passed |
-| Agent defs enforce `Closes #<n>` (not only `Issue: #n`) + install.sh PATH | Grep `.claude/agents/cloud-foreman.md` + specialists | pending (this commit) |
+| Agent defs enforce `Closes #<n>` (not only `Issue: #n`) + install.sh PATH | Grep `.claude/agents/cloud-foreman.md` + specialists | passed (`ad7cad54`) |
 
 ## Permanent documentation updated
 
@@ -44,7 +44,7 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1120.
 | `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | `ca59a095` |
 | `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | `ca59a095` |
 | `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | `ca59a095` |
-| `.claude/agents/cloud-foreman.md` (+ specialists) | yes | pending |
+| `.claude/agents/cloud-foreman.md` (+ specialists) | yes | `ad7cad54` |
 
 ## Gate log
 
