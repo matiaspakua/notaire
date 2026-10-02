@@ -5,9 +5,9 @@ nav_order: 1
 
 # 📊 CI/CD Pipeline Report
 
-**Generated:** 2026-10-02 19:57:48  
+**Generated:** 2026-10-02 20:03:56  
 **Branch:** main  
-**Commit:** 6a6463978002a3999ccaca3372664abbadf9caf1
+**Commit:** d0c1efb077d3d43769c911302a21eaeb90894085
 
 ---
 
@@ -16,11 +16,11 @@ nav_order: 1
 | Job | Status |
 |-----|--------|
 | Build & Compile | success |
-| Unit Tests | success |
-| Integration Tests | success |
-| Code Coverage | success |
+| Unit Tests | failure |
+| Integration Tests | failure |
+| Code Coverage | failure |
 | Security Scan | success |
-| Docker Build | success |
+| Docker Build | skipped |
 | Code Quality | success |
 
 ---
@@ -45,7 +45,7 @@ nav_order: 1
 
 ## 🔒 Code Coverage
 
-**Line Coverage:** 84%% (Target: 80%%)
+**Line Coverage:** 0%% (Target: 80%%)
 
 ---
 
