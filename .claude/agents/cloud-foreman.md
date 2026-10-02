@@ -33,6 +33,9 @@ Constitution loop; specialists write most of the code.
 - Do **not** enable GitHub Code Scanning default setup alongside
   `.github/workflows/codeql.yml` (SARIF rejection). Use
   `wait-for-processing: false` and/or `bash scripts/enable-gh-secure.sh --apply`.
+- Do **not** open new product PRs (or push docs tips that re-trigger Playwright)
+  while another PR’s heavy suite is still queued — serialize; prefer one
+  heavy-CI PR at a time (`CI-MERGE-GATE.md` — Runner contention).
 - Do **not** invent Issue numbers or Use Cases.
 - Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
   GitHub will **not** auto-close the issue on merge.

@@ -101,12 +101,24 @@ subscription “all N checks success” while backend CI and Playwright were sti
 pending; stale tips looked like product bugs until rebased onto #1132. Applies
 to all future autonomous merges.
 
-## Runner contention
+## Runner contention — serialize heavy CI
 
-Many open PR tips each trigger a full Playwright suite. Hotfixes can sit
-`queued` for minutes behind superseded tips. Prefer not pushing docs-only or
-low-priority PR commits while a main hotfix is waiting on Playwright. Agents
-with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403).
+Many open PR tips each trigger a full `CI - Build, Test & Security` + Playwright
+suite. Contending tips sit `queued` for minutes; light jobs finish first and
+produce **light-only subscription false greens** (“all N checks success” while
+heavy workflows are still pending). That is **not** mergeable — always run
+`bash scripts/check-heavy-ci.sh <pr>` before merge.
+
+**Serialize:** prefer **one heavy-CI PR at a time**.
+
+| Priority | Do |
+|----------|----|
+| In-flight product / hotfix PR waiting on Integration or Playwright | Let its heavy suite finish (or fail) before pushing more tips that enqueue another full suite |
+| Docs / rebase / low-priority PRs | Wait — do not push commits that re-trigger Playwright while a higher-priority tip is queued |
+| New product work | Do **not** open a new product PR until the in-flight heavy suite finishes |
+
+Agents with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403),
+so avoid creating the queue in the first place.
 
 ## Related: CodeQL advanced vs default setup
 
