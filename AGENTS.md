@@ -15,6 +15,25 @@ Coding agents for the Notaire project. All agents enforce the mandatory developm
 | **Security Auditors** | `.claude/agents/security-auditor.md` | OWASP Top 10, auth/authz, dependency CVEs, configuration security. |
 | **Sync Issues and Code** | `.claude/agents/sync_issues_and_code.md` | GitHub issue ↔ code sync: Use Case validation, IN PROGRESS state, PR linkage. |
 
+### Cursor Cloud AI SDLC fleet
+
+Orchestrated autonomous loop (issue → OpenSpec → TDD → PR → CI → merge) on **Cursor Cloud**.
+Architecture, models, handoffs, env checklist, and validation:
+[`docs/300-development/304-ai-sdlc-cloud/`](docs/300-development/304-ai-sdlc-cloud/).
+**Does not use `local-ai/`.**
+
+| Agent | File | Role |
+|-------|------|------|
+| **cloud-foreman** | `.claude/agents/cloud-foreman.md` | Orchestrator: pick issue, Gate 1, dispatch, PR, CI watch, merge. |
+| **openspec-planner** | `.claude/agents/openspec-planner.md` | Gate 1 specs, triage, analyst/product-owner skills. |
+| **backend-implementer** | `.claude/agents/backend-implementer.md` | Backend TDD + implement (`backend`, `java`, Flyway). |
+| **frontend-design** | `.claude/agents/frontend-design.md` | Next.js UI + design system + Playwright. |
+| **testing-qa** | `.claude/agents/testing-qa.md` | Gate 2 test design; JUnit/Vitest/Bruno/Playwright. |
+
+Existing specialists above (`java-architect`, `devops-engineer`, `security-auditor`,
+`code-reviewer`, `sync_issues_and_code`, `efficiency_config_agent`) are dispatched from the
+foreman per [`fleet-manifest.yaml`](docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml).
+
 ---
 
 ## Engineering Constitution (read this first)
