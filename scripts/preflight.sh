@@ -4,8 +4,8 @@
 #
 # WHY
 # ---
-# CI spreads its gates across four workflows (ci.yml, pr-validation.yml,
-# frontend-ci.yml, playwright-e2e.yml). Some of those gates are NOT reachable
+# CI spreads its gates across ci.yml, pr-validation.yml, frontend-ci.yml,
+# playwright-e2e.yml, sdlc-process.yml, and codeql.yml. Some of those gates are NOT reachable
 # through the commands developers normally run: `mvn verify` does not invoke
 # Spotless (it is deliberately unbound in backend-api/pom.xml, see #705), so a
 # branch can be fully green locally and still fail "Code Lint" in CI. This script
@@ -65,6 +65,7 @@ http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
 playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
 bruno api tests         (--full) API Tests (Bruno)               playwright-e2e.yml
 docker build/smoke      (--full) Build Docker Image              ci.yml             (image scan not replicated locally)
+codeql analysis                 Analyze (CodeQL)                 codeql.yml         (GitHub-hosted only; not replicated locally)
 MAP
             exit 0 ;;
         -h|--help) sed -n '3,28p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -178,8 +179,9 @@ if [ "$MODE_FAST" = "0" ]; then
     else
         skip "trivy filesystem scan" "trivy not installed — CI WILL run this"
     fi
+    skip "codeql analysis" "GitHub-hosted CodeQL (codeql.yml) — CI WILL run this"
 else
-    skip "dependency analysis / spotbugs / trivy fs" "--fast"
+    skip "dependency analysis / spotbugs / trivy fs / codeql" "--fast"
 fi
 
 # ---------------------------------------------------------------------------

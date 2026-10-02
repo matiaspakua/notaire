@@ -139,6 +139,7 @@ permissions:
 |------|---------|------|
 | Trivy | Scan source code and Docker images | OS and library vulnerabilities |
 | SpotBugs | Static code analysis | Code quality bugs |
+| CodeQL (`codeql.yml`) | Java, JavaScript/TypeScript, and GitHub Actions | Code scanning alerts (does not fail the job on findings) |
 
 ### Security Best Practices Implemented
 
@@ -214,17 +215,36 @@ env:
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |
 | `claude.yml` / `opencode.yml` | Issue/PR comment events | AI coding-agent triggers (Claude Code, OpenCode) |
 | `copilot-setup-steps.yml` | Push/PR touching itself, manual dispatch | Environment setup used by GitHub Copilot coding agent |
+| `codeql.yml` | PR into `main`, push to `main`, weekly schedule, manual dispatch | CodeQL advanced setup. Findings upload to the Security tab. Do not also enable CodeQL default setup |
 
 ---
+
+## GitHub Security Lab baseline
+
+[gh-secure](https://github.com/GitHubSecurityLab/gh-secure) turns on repository
+settings. The pieces that belong in git are already in the tree:
+
+| Setting | Where it lives |
+|---------|----------------|
+| Code scanning | `.github/workflows/codeql.yml` (advanced setup). Do not also enable default setup. |
+| Dependabot version updates | `.github/dependabot.yml` (Maven, npm under `frontend/`, GitHub Actions) |
+| Private vulnerability reporting | Already enabled. Policy: `SECURITY.md` |
+| Secret-scanning push protection, Dependabot alerts and security updates | GitHub settings. An admin runs `bash scripts/enable-gh-secure.sh --apply` |
+| Branch protection | Not enabled by the script unless `--with-branch-protection` is passed. The repository already has an active ruleset, `protect-main`; do not add legacy branch protection on top of it |
+
+```bash
+bash scripts/enable-gh-secure.sh            # status
+bash scripts/enable-gh-secure.sh --dry-run  # preview
+bash scripts/enable-gh-secure.sh --apply    # needs admin or maintain
+```
 
 ## Future Enhancements
 
 1. Add OWASP ZAP for API security testing
 2. Implement Snyk for additional vulnerability scanning
 3. Add dependency review action
-4. Implement GitHub Advanced Security
-5. Add secret scanning with GitLeaks
-6. Implement SLSA provenance attestation
+4. Add secret scanning with GitLeaks (push protection is the GitHub setting above)
+5. Implement SLSA provenance attestation
 
 ---
 

@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CodeQL and GitHub Security Lab baseline** (issue #1135, CU78):
+  `.github/workflows/codeql.yml` analyzes Java, JavaScript/TypeScript, and
+  GitHub Actions on pull requests and on `main`. Dependabot also watches
+  `frontend/`. `SECURITY.md` points at private vulnerability reporting.
+  `scripts/enable-gh-secure.sh` is the admin step for secret-scanning push
+  protection and Dependabot security updates; branch protection stays opt-in.
 - **STRIDE threat model for authentication & audit trail** (issue #1028):
   added `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md`
   with numbered security requirements (`SR-01`..`SR-10`) and an explicit

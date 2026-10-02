@@ -1,0 +1,78 @@
+name: CodeQL
+
+# Advanced code-scanning setup (GitHub Security Lab baseline).
+# https://github.com/GitHubSecurityLab/gh-secure enables CodeQL default setup
+# through the repository API. This workflow is the versioned equivalent:
+# findings are uploaded to the Security tab and do not fail the job unless
+# analysis itself fails.
+#
+# Do not also enable CodeQL default setup (gh secure code-scanning). The two
+# setups analyze the same commits twice.
+#
+# Local preflight does not run CodeQL. See scripts/preflight.sh --list.
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  schedule:
+    # Weekly, after the Monday performance-test window.
+    - cron: "30 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      actions: read
+      contents: read
+      packages: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
+          - language: actions
+            build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Build Java with Maven
+        if: matrix.build-mode == 'manual'
+        env:
+          MAVEN_OPTS: -Xmx1024m -XX:MaxMetaspaceSize=512m
+        run: mvn -B compile -DskipTests
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
