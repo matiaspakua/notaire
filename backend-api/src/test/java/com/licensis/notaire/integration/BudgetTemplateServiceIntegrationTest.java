@@ -39,6 +39,8 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
 
         testConcept = new Concept();
         testConcept.setName("Honorarios");
+        testConcept.setValue(java.math.BigDecimal.ZERO);
+        testConcept.setPercentage(0);
         conceptRepository.save(testConcept);
     }
 
@@ -155,6 +157,8 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     void shouldHandleMultiplePlantillasForDifferentConcepts() {
         Concept concepto2 = new Concept();
         concepto2.setName("Gastos");
+        concepto2.setValue(java.math.BigDecimal.ZERO);
+        concepto2.setPercentage(0);
         conceptRepository.save(concepto2);
 
         BudgetTemplatePK pk1 = new BudgetTemplatePK(
@@ -217,6 +221,8 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
         for (int i = 0; i < 3; i++) {
             Concept concept = new Concept();
             concept.setName("Concepto " + i);
+            concept.setValue(java.math.BigDecimal.ZERO);
+            concept.setPercentage(0);
             conceptRepository.save(concept);
 
             BudgetTemplatePK pk = new BudgetTemplatePK(

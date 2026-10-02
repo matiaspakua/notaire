@@ -40,6 +40,8 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
 
         testConcept = new Concept();
         testConcept.setName("Honorarios");
+        testConcept.setValue(java.math.BigDecimal.ZERO);
+        testConcept.setPercentage(0);
         conceptRepository.save(testConcept);
 
         BudgetTemplatePK pk = new BudgetTemplatePK(
@@ -119,6 +121,8 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
 
         Concept concept = new Concept();
         concept.setName("Gestión");
+        concept.setValue(java.math.BigDecimal.ZERO);
+        concept.setPercentage(0);
         conceptRepository.save(concept);
 
         BudgetTemplatePK pk = new BudgetTemplatePK(type.getIdProcedureType(), concept.getIdConcept());
@@ -141,6 +145,8 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     void shouldHandleMultiplePlantillas() {
         Concept concepto2 = new Concept();
         concepto2.setName("Gastos");
+        concepto2.setValue(java.math.BigDecimal.ZERO);
+        concepto2.setPercentage(0);
         conceptRepository.save(concepto2);
 
         BudgetTemplatePK pk2 = new BudgetTemplatePK(
@@ -200,10 +206,14 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
 
         Concept concepto1 = new Concept();
         concepto1.setName("Concepto 1");
+        concepto1.setValue(java.math.BigDecimal.ZERO);
+        concepto1.setPercentage(0);
         conceptRepository.save(concepto1);
 
         Concept concepto2 = new Concept();
         concepto2.setName("Concepto 2");
+        concepto2.setValue(java.math.BigDecimal.ZERO);
+        concepto2.setPercentage(0);
         conceptRepository.save(concepto2);
 
         BudgetTemplatePK pk1 = new BudgetTemplatePK(tipo1.getIdProcedureType(), concepto1.getIdConcept());

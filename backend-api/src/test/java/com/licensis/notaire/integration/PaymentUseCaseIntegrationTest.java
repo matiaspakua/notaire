@@ -221,8 +221,8 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), "Editado");
 
-        assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"));
+        assertThat(edited).isNotNull();
+        assertThat(edited.amount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
     }
 
     @Test
@@ -250,9 +250,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         PaymentDetails edited = edit(saved.id(), null, new Date(), "Updated");
 
-        assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("100000"))
-                .hasFieldOrPropertyWithValue("notes", "Updated");
+        assertThat(edited).isNotNull();
+        assertThat(edited.amount()).isEqualByComparingTo(new java.math.BigDecimal("100000"));
+        assertThat(edited.notes()).isEqualTo("Updated");
     }
 
     @Test
@@ -263,9 +263,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), null, "Updated");
 
-        assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"))
-                .hasFieldOrPropertyWithValue("date", originalDate);
+        assertThat(edited).isNotNull();
+        assertThat(edited.amount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
+        assertThat(edited.date()).isEqualTo(originalDate);
     }
 
     @Test
@@ -275,9 +275,9 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), null);
 
-        assertThat(edited).isNotNull()
-                .hasFieldOrPropertyWithValue("amount", new java.math.BigDecimal("120000"))
-                .hasFieldOrPropertyWithValue("notes", "Original");
+        assertThat(edited).isNotNull();
+        assertThat(edited.amount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
+        assertThat(edited.notes()).isEqualTo("Original");
     }
 
     @Test
