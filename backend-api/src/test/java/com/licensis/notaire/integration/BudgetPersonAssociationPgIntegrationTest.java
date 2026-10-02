@@ -23,11 +23,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * CU01 - Preparar Presupuesto, against the real Flyway-managed Postgres
- * schema. {@code PresupuestoController.create}/{@code .update} bind directly
- * to the raw {@code Presupuesto} entity, whose client relation field is
- * {@code fkIdPersona}; the real frontend sends {@code persona} (the DTO's
- * field name), so every Presupuesto created or edited from the UI silently
- * loses its client association (Issue #883).
+ * schema. After #1068/#1124, create/update bind {@code BudgetRequest} (accepts
+ * nested {@code person.personId} or flat {@code personId}) and return
+ * {@code BudgetResponse} with nested {@code person} (frontend Presupuesto.person,
+ * Issue #883).
  */
 @SpringBootTest
 @ActiveProfiles("integration")
