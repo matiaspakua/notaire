@@ -17,12 +17,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/docs-ci-merge-gate-false-green-1133/` (`skip_specs: true`) | drafted |
 | Branch | `cursor/docs-ci-merge-gate-false-green-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
-| Pull Request | pending | pending |
-| CI run | pending — wait for heavy CI + Playwright (not light-only) | pending |
-| Merge commit | pending | pending |
-| Release / tag | n/a — docs-only, no release artifact | pending |
-| Smoke test | grep merge-gate rule in `304-ai-sdlc-cloud/` + `cloud-foreman.md` | pending |
+| Commits | `0542f52c` | committed |
+| Pull Request | pending | `0542f52c` |
+| CI run | pending — wait for heavy CI + Playwright (not light-only) | `0542f52c` |
+| Merge commit | pending | `0542f52c` |
+| Release / tag | n/a — docs-only, no release artifact | `0542f52c` |
+| Smoke test | grep merge-gate rule in `304-ai-sdlc-cloud/` + `cloud-foreman.md` | `0542f52c` |
 
 ## Requirement coverage
 
@@ -33,19 +33,19 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1133.
 | Fleet docs state false-positive + required terminal checks | Grep `CI-MERGE-GATE` / light-CI under `304-ai-sdlc-cloud/` | passed |
 | Never merge until Unit/Integration/Coverage/Bruno/Playwright terminal | Grep required checks in `CI-MERGE-GATE.md` + foreman | passed |
 | Docs-only change; no product code | `git diff` scoped to docs + agents + openspec | passed |
-| OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | pending |
-| PR commits include `Closes #1133` | Commit message inspection | pending |
+| OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | `0542f52c` |
+| PR commits include `Closes #1133` | Commit message inspection | `0542f52c` |
 | Does not use or depend on `local-ai/` | Grep change for runtime local-ai deps | passed |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md` | yes | pending |
-| `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | pending |
-| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | pending |
-| `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | pending |
-| `.claude/agents/cloud-foreman.md` | yes | pending |
+| `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md` | yes | `0542f52c` |
+| `docs/300-development/304-ai-sdlc-cloud/README.md` | yes | `0542f52c` |
+| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | `0542f52c` |
+| `docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md` | yes | `0542f52c` |
+| `.claude/agents/cloud-foreman.md` | yes | `0542f52c` |
 
 ## Gate log
 

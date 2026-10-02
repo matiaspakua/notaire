@@ -68,11 +68,11 @@
 - [x] 9.1 Conventional Commits for docs + OpenSpec
 - [x] 9.2 Commit closing the issue ends with `Closes #1133`
 - [x] 9.3 No secrets, no commented-out code, no product code, no `local-ai/`
-- [ ] 9.4 Commit SHAs recorded in `traceability.md` after commit
+- [x] 9.4 Commit SHAs recorded in `traceability.md` after commit
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Branch pushed to origin
+- [x] 10.1 Branch pushed to origin
 - [ ] 10.2 PR open titled `[#1133] docs(ai-sdlc): …`
 - [ ] 10.3 Wait for required workflows — apply CI-MERGE-GATE rule (heavy CI + Playwright)
 - [ ] 10.4 Gate 4 — CI green, review approved, no merge conflicts
