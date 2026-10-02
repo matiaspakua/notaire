@@ -10,7 +10,7 @@
 | Design | `design.md` |
 | Tasks | `tasks.md` |
 | Branch | `cursor/fix-budget-person-pg-json-69d3` |
-| Commits | `61b223a1` restore nested person; `8934b884` PG assert docs; `aa1fadd6` OpenSpec |
+| Commits | `de79c33b` test (red); `c7c2bd70` nested person (green); `bf0a79a3` OpenSpec |
 | PR | https://github.com/matiaspakua/notaire/pull/1132 |
 | Release | main restore after merge |
 
