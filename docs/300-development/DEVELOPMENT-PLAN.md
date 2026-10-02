@@ -69,31 +69,39 @@ the day-to-day suite inventory in
 
 ## 5. Architecture migration roadmap
 
-The project is mid-migration from a legacy monolithic Java Swing
-application to a three-tier architecture (PostgreSQL + Spring Boot REST API
-+ standalone web/Swing clients) — see
-[ADR-001](../200-architecture/202-ADR/ADR-001-microservices-architecture.md)
-for the full rationale and rejected alternatives (keep-and-improve monolith;
-big-bang rewrite). Its 7-phase implementation plan:
+The project migrated from a legacy monolithic Java Swing application to the
+current three-tier architecture (PostgreSQL 16 + Spring Boot 4.1 REST API +
+Next.js 16 web client). The Swing GUI is **not** a development target — it was
+removed from the active build (history only under `deprecated-frontend-swing/`).
+See [ADR-001](../200-architecture/202-ADR/ADR-001-microservices-architecture.md)
+for the rationale and rejected alternatives.
+
+**Live status (single sources of truth):**
+
+- Delivery / issue status: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1)
+  and [docs/github/README.md](../github/README.md) (milestones + labels)
+- Migration phase table: this section (and the aligned table in
+  [SAD §4.3](../200-architecture/201-SAD/sad.md))
+- Archived snapshots (do not update): [`docs/000-archive/github/`](../000-archive/github/)
+  (`MIGRATION-BACKLOG.md`, `MIGRATION-DASHBOARD.md`)
 
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 1 | Setup Spring Boot backend with shared module | ✅ Done — `backend-api` + `notaire-shared` |
-| 2 | Migrate business entities and repositories | ✅ Done — `negocio`/`repository` packages |
-| 3 | Implement business services | 🔶 Partial — `service` package thin; legacy `jpa` package still does heavy data access (see `CLAUDE.md`'s architecture note) |
-| 4 | Create REST endpoints | ✅ Done — 189 endpoints, see [REST-API-ENDPOINT_REGISTRY.md](../200-architecture/203-design/REST-API-ENDPOINT_REGISTRY.md) |
-| 5 | Refactor GUI to consume the API | ✅ Done for the new Next.js frontend; the legacy `frontend-swing` Swing client was deprecated and has since been removed from the repository entirely |
-| 6 | Deprecate legacy code | 🔶 Partial — `frontend-swing` fully removed; `jpa` package migration to `repository` ongoing |
+| 2 | Migrate business entities and repositories | ✅ Done — `business`/`domain` + `repository` packages |
+| 3 | Implement business services | 🔶 Partial — `service` / `application` growing; legacy `jpa` package still does heavy data access |
+| 4 | Create REST endpoints | ✅ Done — see [REST-API-ENDPOINT_REGISTRY.md](../200-architecture/203-design/REST-API-ENDPOINT_REGISTRY.md) |
+| 5 | Modern web client consumes the API | ✅ Done for Next.js (`frontend/`); Swing client retired — do not recreate |
+| 6 | Deprecate legacy code | 🔶 Partial — Swing removed; `jpa` → `repository` migration ongoing |
 | 7 | Monitoring and optimization | ✅ Done — see [ADR-016](../200-architecture/202-ADR/ADR-016-observability-stack.md) |
 
 Related decisions: [ADR-002](../200-architecture/202-ADR/ADR-002-module-structure.md)
 (Maven module structure), [ADR-005](../200-architecture/202-ADR/ADR-005-modern-frontend-migration.md)
 (Next.js frontend migration).
 
-**New feature work targets `backend-api`/`notaire-shared` and the `frontend/`
-Next.js client. `frontend-swing` no longer exists in the repository — do not
-recreate it. Avoid extending the `jpa` package** — it is a
-migration-target-for-deprecation, not an extension point.
+**New feature work targets `backend-api` / `notaire-shared` and the `frontend/`
+Next.js client only. Do not recreate a Swing client. Avoid extending the `jpa`
+package** — it is deprecation debt, not an extension point.
 
 ## Navigation
 

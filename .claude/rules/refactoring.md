@@ -1,400 +1,183 @@
 ---
-title: Monolith to Microservices Refactoring Rules
-description: Rules for refactoring Java Swing monolith to Docker-based REST API architecture
+title: Refactoring Rules — Current Architecture
+description: Rules for refactoring within the current Notaire stack (Spring Boot 4.1 + Next.js)
 alwaysApply: true
 ---
 
 ## Architecture Overview
 
-- Legacy: Monolithic Java 1.6 application with direct database access and tightly coupled Swing GUI
-- Target: Three-tier architecture with PostgreSQL database, Spring Boot REST API backend, and standalone Swing GUI client
-- Communication: Replace direct method calls with RESTful HTTP requests
-- Deployment: Database and backend as Docker containers, GUI as standalone Java application
-- Database: Migrate from MySQL to PostgreSQL with schema compatibility
+- **Legacy origin:** Monolithic Java 1.6 desktop app with direct DB access and a tightly coupled Swing GUI (removed from the active build; see `deprecated-frontend-swing/` for history only — do not recreate it).
+- **Current target:** Three-tier system — PostgreSQL 16, Spring Boot 4.1 REST API (`backend-api`), Next.js 16 web client (`frontend/`).
+- **Communication:** Clients call the API over HTTPS/HTTP JSON (`/api/v1/...`); no direct DB access from any client.
+- **Deployment:** Database, backend, and frontend as Docker services; secrets only in the git-ignored `.env`.
+- **Schema:** Flyway is the single source of truth (`ddl-auto=none`). Never edit applied migrations — add a new `V{n}__…`.
 
 ## Module Structure
 
-### Backend Module (REST API)
-- Package: com.notaria.backend
-- Framework: Spring Boot 3.x with Java 17+
-- Responsibilities: Business logic, data validation, database access, REST endpoints
-- No Swing dependencies allowed
-- Must be stateless and horizontally scalable
-- All business logic migrated from GUI to backend services
+### Backend (`backend-api`)
 
-### GUI Module (Swing Client)
-- Package: com.notaria.gui
-- Framework: Java Swing with modern look and feel
-- Responsibilities: User interface, input validation, API client communication
-- No direct database access allowed
-- No business logic - only presentation logic
-- Must use REST client to communicate with backend
+- Package root: `com.licensis.notaire`
+- Framework: Spring Boot 4.1 with Java 21
+- Responsibilities: business logic, validation, persistence, REST endpoints, security
+- No Swing (or any desktop UI) dependencies
+- Stateless and horizontally scalable
+- Prefer Spring Data `repository` over the legacy `jpa` package for new data access
 
-### Database Module
-- PostgreSQL 15+ in Docker container
-- Schema migration from MySQL to PostgreSQL
-- No direct access from GUI module
-- Only backend module can access database
-- Use connection pooling (HikariCP)
+### Shared contracts (`notaire-shared`)
+
+- DTOs and shared API contracts used by the backend (and historically by other clients)
+- Naming: `DtoEntityName` (e.g. `DtoUsuario`, `DtoPersona`) — never `*RequestDTO` / `*ResponseDTO` suffixes
+
+### Frontend (`frontend/`)
+
+- Next.js 16 + React 19 + TypeScript + Tailwind
+- Responsibilities: UI, client-side UX validation, API client calls
+- No JDBC/SQL and no business rules in event handlers
+- Use the design system: `frontend/src/theme/tokens.ts` and
+  `FormContainer → FormSection → FormField → FormActions`
+
+### Database
+
+- PostgreSQL 16 in Docker
+- Only the backend accesses the database (HikariCP)
+- Clients never hold connection strings or run SQL
+
+## Package Layout (backend)
+
+| Package | Role |
+|---------|------|
+| `adapter.in.web` | REST controllers (`@RestController`) |
+| `service` / `application` | Use-case / application services |
+| `repository` | Spring Data JPA — **use for new code** |
+| `business` / `domain` | JPA entities and domain model |
+| `jpa` | Legacy `*JpaController` data-access — **do not extend**; migrate callers to `repository` + `service` |
+| `config` | Spring configuration |
+| `security` | Authn/authz (JWT) |
+
+When hexagonal ports/adapters already exist for a capability (`application.port`,
+`adapter.out`), extend that shape rather than inventing a parallel layer.
 
 ## REST API Design
 
-### Endpoint Conventions
-- Base URL: /api/v1
-- Resource naming: plural nouns (documents, notaries, clients)
-- HTTP methods: GET (read), POST (create), PUT (update), DELETE (delete), PATCH (partial update)
-- Status codes: 200 (OK), 201 (Created), 204 (No Content), 400 (Bad Request), 401 (Unauthorized), 404 (Not Found), 500 (Internal Error)
-- Response format: JSON with consistent structure
-- Error responses: {error: string, message: string, timestamp: string, path: string}
+### Endpoint conventions
 
-### URL Structure
-- Collections: GET /api/v1/documents
-- Single resource: GET /api/v1/documents/{id}
-- Nested resources: GET /api/v1/notaries/{id}/documents
-- Filtering: GET /api/v1/documents?status=active&date=2025-01-01
-- Pagination: GET /api/v1/documents?page=0&size=20&sort=createdAt,desc
-- Search: GET /api/v1/documents/search?query=contract
+- Base URL: `/api/v1`
+- Resource naming: plural nouns
+- Methods: GET / POST / PUT / DELETE / PATCH
+- Status codes: 200, 201, 204, 400, 401, 403, 404, 409, 500 as appropriate
+- JSON responses; consistent error body (no internal stack traces to clients)
 
-### Request/Response DTOs
-- Create DTOs for all API requests and responses
-- Package: com.notaria.backend.dto
-- Naming: EntityRequestDTO, EntityResponseDTO
-- Use javax.validation annotations (@NotNull, @NotBlank, @Size, @Email)
-- No entity objects in API layer - always use DTOs
-- Map entities to DTOs using MapStruct or manual mappers
+### URL structure
 
-## Backend Implementation
+- Collections: `GET /api/v1/documents`
+- Single resource: `GET /api/v1/documents/{id}`
+- Nested: `GET /api/v1/notaries/{id}/documents`
+- Filtering / pagination / search via query params (`page`, `size`, `sort`, …)
 
-### Controller Layer
-- Package: com.notaria.backend.controller
-- Naming: EntityController (DocumentController, NotaryController)
-- Annotations: @RestController, @RequestMapping("/api/v1/resource")
-- Inject services via constructor injection
-- Validate input with @Valid annotation
-- Return ResponseEntity<T> with appropriate status codes
-- Handle pagination with Pageable parameter
-- Use @PathVariable for URL parameters, @RequestParam for query parameters
+### DTOs
 
-### Service Layer
-- Package: com.notaria.backend.service
-- Naming: EntityService interface, EntityServiceImpl implementation
-- Annotations: @Service on implementation
-- All business logic resides here
-- Transactional methods with @Transactional
-- Throw custom exceptions for business errors
-- No HTTP-specific code (no HttpServletRequest, ResponseEntity)
-- Services should be stateless
+- Package: `com.licensis.notaire.dto` (in `notaire-shared`)
+- Naming: `DtoEntityName`
+- Bean Validation (`jakarta.validation`) on request DTOs
+- Never expose JPA entities directly from controllers
+- Map entities ↔ DTOs with dedicated mappers (manual or MapStruct)
 
-### Repository Layer
-- Package: com.notaria.backend.repository
-- Naming: EntityRepository
-- Extend JpaRepository<Entity, ID> or CrudRepository<Entity, ID>
-- Use Spring Data JPA query methods
-- Custom queries with @Query annotation
-- No business logic in repositories
-- Only data access operations
+Every new REST endpoint must be reachable from the UI at least once and
+documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 
-### Entity Layer
-- Package: com.notaria.backend.entity
-- Naming: Entity classes (Document, Notary, Client)
-- Annotations: @Entity, @Table, @Id, @GeneratedValue, @Column
-- Use JPA relationships (@OneToMany, @ManyToOne, @ManyToMany)
-- Implement equals() and hashCode() based on ID
-- No Swing-related code
-- PostgreSQL-specific types when needed (@Type)
+## Backend Implementation Rules
 
-### Exception Handling
-- Package: com.notaria.backend.exception
-- Create custom exceptions: ResourceNotFoundException, BusinessValidationException, DatabaseException
-- Global exception handler with @ControllerAdvice
-- Map exceptions to appropriate HTTP status codes
-- Return consistent error response format
-- Log exceptions with appropriate levels
+### Controllers
 
-## GUI Client Implementation
+- Thin: validate input (`@Valid`), call a service, return `ResponseEntity`
+- Constructor injection only
+- No business logic, no `EntityManager`, no direct repository calls when a
+  service already owns the use case
 
-### REST Client Configuration
-- Package: com.notaria.gui.client
-- Use RestTemplate or WebClient for HTTP communication
-- Create ApiClient interface with methods matching backend endpoints
-- Implement RestApiClient with proper error handling
-- Configure base URL from properties file
-- Implement connection timeout and retry logic
-- Handle network errors gracefully with user-friendly messages
+### Services
 
-### API Client Methods
-- Method naming: getDocuments(), createDocument(), updateDocument(), deleteDocument()
-- Return DTOs or domain objects, not HTTP responses
-- Throw custom exceptions on API errors
-- Parse JSON responses to Java objects
-- Include authentication headers if required
-- Log API calls for debugging (without sensitive data)
+- Own business rules and transactions (`@Transactional` where needed)
+- No HTTP types (`HttpServletRequest`, `ResponseEntity`) inside services
+- Throw domain/application exceptions; map them in `@ControllerAdvice`
 
-### Refactoring GUI Code
-- Remove all direct database access (JDBC, Hibernate sessions)
-- Remove all business logic from GUI classes
-- Replace direct method calls with API client calls
-- Update event handlers to call API methods
-- Implement loading indicators for async operations
-- Show error messages from API responses
-- Validate input on client side before sending to API
+### Repositories
 
-### GUI Package Structure
-- com.notaria.gui.client: REST client implementation
-- com.notaria.gui.view: Swing panels and frames
-- com.notaria.gui.controller: GUI controllers/presenters
-- com.notaria.gui.model: GUI-specific models (not entities)
-- com.notaria.gui.util: Utility classes for GUI
+- Extend `JpaRepository` / Spring Data interfaces
+- Query methods or `@Query` only — no business rules
 
-### Async Operations
-- Use SwingWorker for long-running API calls
-- Update GUI on Event Dispatch Thread (EDT)
-- Show progress indicators during API requests
-- Implement cancel functionality for long operations
-- Handle timeouts gracefully
+### Legacy `jpa` package
 
-## Data Migration
+- Treat as migration debt: wrap or replace with `repository` + `service`
+- Do not add new `*JpaController` classes or expand their APIs
+- Prefer extracting behaviour into services covered by unit tests first (TDD)
 
-### Database Schema
-- Create SQL migration scripts for PostgreSQL
-- Map MySQL types to PostgreSQL types (INT→INTEGER, DATETIME→TIMESTAMP, TEXT→TEXT)
-- Update AUTO_INCREMENT to SERIAL or IDENTITY
-- Migrate stored procedures to PostgreSQL syntax
-- Create indexes for frequently queried columns
-- Use Flyway or Liquibase for version control
+## Frontend Implementation Rules
 
-### Data Transfer
-- Export data from MySQL in SQL format
-- Transform data for PostgreSQL compatibility
-- Import data maintaining referential integrity
-- Verify data integrity after migration
-- Create backup before migration
-- Test queries in PostgreSQL
+- Call the backend through the existing API client utilities under `frontend/src/lib/`
+- Handle loading, error, and empty states explicitly
+- Keep auth tokens out of logs and local storage patterns that contradict
+  `docs/200-architecture/206-security/`
+- For forms, follow `.claude/rules/ui-ux-design.md` and the frontend design skill
 
-## Docker Configuration
+## Docker & Configuration
 
-### Backend Dockerfile
-- Base image: eclipse-temurin:17-jre-alpine or openjdk:17-jre-slim
-- Copy JAR file to container
-- Expose port 8080
-- Set Java options: -Xmx512m -Xms256m
-- Use non-root user for security
-- Health check endpoint: /actuator/health
+- Backend image: Eclipse Temurin 21 JRE; expose 8080; health via `/actuator/health`
+- Postgres image: `postgres:16`; data on a named volume
+- Compose services read credentials from `.env` (never hard-code secrets)
+- Profiles: `dev`, `test`, `prod`; production must not use `ddl-auto=create/update`
 
-### Database Dockerfile
-- Base image: postgres:15-alpine
-- Set environment variables: POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
-- Expose port 5432
-- Mount volume for data persistence
-- Copy initialization scripts to /docker-entrypoint-initdb.d/
-- Configure pg_hba.conf for access control
+## Security
 
-### Docker Compose
-- Define services: postgres, backend
-- Network configuration for service communication
-- Volume mounts for database persistence
-- Environment variables in .env file (not in compose file)
-- Depends_on to ensure postgres starts before backend
-- Restart policies: restart: unless-stopped
-- Port mapping: only expose necessary ports to host
+- Authenticate API calls with JWT (Bearer); authorize on the server
+- Validate and sanitize all input server-side
+- HTTPS in production; no secrets in source or docs
+- Do not log credentials, tokens, or PII
 
-## Configuration Management
+## Testing (mandatory with every refactor)
 
-### Backend Configuration
-- application.yml for Spring Boot configuration
-- Separate profiles: dev, test, prod
-- Database connection: spring.datasource.url, username, password
-- JPA settings: spring.jpa.hibernate.ddl-auto=validate (not create or update in prod)
-- Logging configuration: logging.level.com.notaria=DEBUG
-- Server port: server.port=8080
-- Externalize secrets using environment variables
+- TDD: write a failing test, watch it fail, then implement
+- Backend: unit tests under `…/unit/`, integration under `…/integration/`
+- Coverage must stay at or above the JaCoCo ratchet floor (see
+  `.claude/rules/code-quality.md`); 80% line/branch is the target
+- Frontend UI changes require Playwright E2E under `frontend/tests/e2e/`
+- Do not `@Disabled` tests without documented justification
 
-### GUI Configuration
-- Properties file: application.properties
-- API base URL: api.base.url=http://localhost:8080/api/v1
-- Connection timeout: api.timeout=30000
-- Retry configuration: api.retry.max=3
-- Read configuration at startup
-- Allow override with system properties
+## Refactoring Strategy (ongoing)
 
-## Security Considerations
-
-### API Security
-- Implement authentication (JWT, OAuth2, or Basic Auth)
-- Add security headers (CORS, CSRF protection)
-- Validate all input on server side
-- Use HTTPS in production
-- Implement rate limiting
-- Sanitize user input to prevent injection
-- Don't expose internal error details in API responses
-
-### Database Security
-- Use strong passwords (not 'password' or 'admin')
-- Limit database user permissions (no GRANT ALL)
-- Use prepared statements (JPA handles this)
-- Encrypt sensitive data at rest
-- Enable SSL for database connections
-- Regular security updates for PostgreSQL
-
-### GUI Security
-- Store API credentials securely (not in plain text)
-- Implement session timeout
-- Clear sensitive data from memory
-- Validate SSL certificates
-- Don't log sensitive information
-
-## Testing Strategy
-
-### Backend Testing
-- Unit tests for services with mocked repositories
-- Integration tests for repositories with test database
-- API tests with MockMvc or TestRestTemplate
-- Test DTOs validation with @WebMvcTest
-- Use @SpringBootTest for full integration tests
-- Test database with Testcontainers (PostgreSQL container)
-- Minimum 80% code coverage for business logic
-
-### GUI Testing
-- Unit tests for API client with WireMock
-- Manual testing for Swing components
-- Test error handling scenarios
-- Test with mock API responses
-- Verify loading states and error messages
-
-## Migration Strategy
-
-### Phase 1: Database Migration
-- Setup PostgreSQL Docker container
-- Create database schema
-- Migrate data from MySQL
-- Verify data integrity
-- Update connection strings
-
-### Phase 2: Create Backend Module
-- Setup Spring Boot project
-- Create entity classes from existing domain
-- Implement repositories
-- Create services with business logic from GUI
-- Implement REST controllers with DTOs
-- Add exception handling
-- Write unit and integration tests
-- Dockerize backend application
-
-### Phase 3: Refactor GUI Module
-- Create separate Maven/Gradle module for GUI
-- Implement REST client
-- Remove database dependencies
-- Replace direct calls with API client calls
-- Remove business logic
-- Test GUI with backend API
-- Update build configuration
-
-### Phase 4: Integration Testing
-- Test full flow: GUI → Backend → Database
-- Verify all features work correctly
-- Performance testing
-- Security testing
-- Error handling verification
-
-## Backwards Compatibility
-
-- Keep old code in separate package (com.notaria.legacy) during migration
-- Create feature flags to toggle between old and new implementation
-- Gradual migration: one module at a time
-- Maintain both implementations until new version is stable
-- Document breaking changes
-
-## Code Organization Rules
-
-### What Goes in Backend
-- All database access code
-- Business rules and validation
-- Complex calculations
-- Data transformations
-- Security and authorization logic
-- Transaction management
-
-### What Goes in GUI
-- Swing components and panels
-- User input handling
-- Data display and formatting
-- Client-side validation (for UX, not security)
-- Navigation logic
-- API client invocation
-
-### What to Remove
-- Direct JDBC connections from GUI
-- SQL queries in GUI classes
-- Business logic in event handlers
-- Hardcoded database credentials
-- Tight coupling between layers
+1. **Prefer `repository` + `service`** over extending `jpa`.
+2. **Keep controllers thin**; move logic down, covered by tests.
+3. **One concern per change** (KIS / SRP); remove dead and duplicate code in the
+   same PR that makes it unreachable.
+4. **Do not resurrect Swing** or any desktop client module.
+5. **Update permanent docs** when behaviour or structure changes; archive
+   superseded docs under `docs/000-archive/` (CONSTITUTION.md §8).
 
 ## Naming Conventions
 
 ### Backend
-- Controllers: DocumentController, NotaryController
-- Services: DocumentService, NotaryService
-- Repositories: DocumentRepository, NotaryRepository
-- Entities: Document, Notary, Client
-- DTOs: DocumentRequestDTO, DocumentResponseDTO
-- Exceptions: DocumentNotFoundException, InvalidDocumentException
 
-### GUI
-- Frames: MainFrame, DocumentManagementFrame
-- Panels: DocumentListPanel, DocumentFormPanel
-- Client: ApiClient, RestApiClient
-- Models: DocumentTableModel, NotaryComboBoxModel
+- Controllers: `FooController`
+- Services: `FooService` (interfaces only when there is a real second impl)
+- Repositories: `FooRepository`
+- Entities: domain names (`Person`, `Deed`, …)
+- DTOs: `DtoPerson`, `DtoDeed`, …
+- Exceptions: `FooNotFoundException`, `InvalidFooException`
 
-## Error Handling Patterns
+### Frontend
 
-
-### GUI Error Handling
-- Catch API exceptions and show JOptionPane with user-friendly message
-- Log technical details for debugging
-- Provide retry option for recoverable errors
-- Disable actions during processing
-- Show connection status indicator
-
-## Performance Optimization
-
-### Backend
-- Use database connection pooling
-- Implement pagination for large result sets
-- Add caching for frequently accessed data (Spring Cache)
-- Use lazy loading for JPA relationships
-- Index database columns used in WHERE clauses
-- Monitor slow queries and optimize
-
-### GUI
-- Cache API responses when appropriate
-- Implement lazy loading for large lists
-- Use background threads for API calls
-- Optimize Swing rendering for large datasets
-- Implement virtual scrolling for large tables
+- Pages under `frontend/src/app/`
+- Shared UI under `frontend/src/components/`
+- Hooks under `frontend/src/hooks/`; stores under `frontend/src/store/`
 
 ## Logging
 
-### Backend Logging
-- Use SLF4J with Logback
-- Log levels: INFO for business events, DEBUG for detailed flow, ERROR for exceptions
-- Log API requests and responses (without sensitive data)
-- Include correlation IDs for request tracking
-- Structured logging with JSON format in production
-
-### GUI Logging
-- Log API calls and responses
-- Log exceptions with stack traces
-- Don't log user credentials or sensitive data
-- Use java.util.logging or SLF4J
-- Log to file for troubleshooting
+- Backend: SLF4J + Logback; structured JSON in containers
+- INFO for business events, DEBUG for detail, ERROR for failures
+- Never log secrets or full auth headers
 
 ## Documentation Requirements
 
-- Document all REST endpoints with Swagger/OpenAPI
-- Include example requests and responses
-- Document authentication requirements
-- API versioning strategy
-- Database schema documentation
-- Docker setup instructions in README
-- Migration guide from old to new architecture
-
+- OpenAPI/Swagger for endpoints
+- Flyway migration comments / ADR when the change is architectural
+- Keep `CLAUDE.md` / `AGENTS.md` / these rules aligned with the running stack;
+  if a rule and CONSTITUTION.md disagree, CONSTITUTION.md wins

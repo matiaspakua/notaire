@@ -51,7 +51,7 @@ automatizados.
 
 - **Backend**: API REST con **Spring Boot 4.1.0** y **Java 21**.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, con un sistema de diseño propio inspirado en Apple.
-- **Cliente transicional**: el Swing original, refactorizado como cliente REST puro (deprecado, ver [`deprecated-frontend-swing/README.md`](deprecated-frontend-swing/README.md)).
+- **Cliente activo**: solo el frontend Next.js. El Swing legacy no es un target de desarrollo (histórico en [`deprecated-frontend-swing/`](deprecated-frontend-swing/README.md)).
 - **Base de datos**: **PostgreSQL 16** con **Flyway** como única fuente de verdad del esquema.
 - **Infraestructura**: Docker Compose multi-stage, 11 workflows de GitHub Actions, observabilidad Prometheus/Grafana/Loki.
 
@@ -66,7 +66,6 @@ flowchart TD
 
     BROWSER["🌐 Navegador"]:::client --> NEXT["Next.js 16 (React 19)"]:::client
     NEXT -->|"/api/v1/* proxy"| API["Spring Boot 4 REST API"]:::backend
-    SWING["Swing (deprecated)"]:::client -.->|"REST"| API
     API --> SVC["Services"]:::backend --> REPO["Spring Data JPA"]:::backend --> PG[("PostgreSQL 16")]:::data
     API -.-> OBS["Prometheus / Loki / Grafana"]:::infra
     DOCKER["Docker Compose"]:::infra --> API
@@ -76,6 +75,12 @@ flowchart TD
 
 Diagrama completo (Building Block View, Runtime View, Deployment View) en el
 **[SAD (arc42)](docs/200-architecture/201-SAD/sad.md)**.
+
+**Estado de entrega / migración (fuentes vivas, no dashboards archivados):**
+[Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
+[`docs/github/README.md`](docs/github/README.md) ·
+[plan de fases](docs/300-development/DEVELOPMENT-PLAN.md#5-architecture-migration-roadmap).
+Snapshots históricos: [`docs/000-archive/github/`](docs/000-archive/github/).
 
 ## 📁 Estructura del repositorio
 
@@ -186,8 +191,9 @@ Toda la documentación vive bajo [`docs/`](docs/README.md), organizada en tres
 |:-----|:----------|:----------|
 | Negocio | `docs/100-business/` | 121 requisitos (RF/RNF), 87 casos de uso, modelo de datos |
 | Arquitectura | `docs/200-architecture/` | SAD (arc42), 20 ADRs, diseño de API/frontend, diagramas, seguridad, monitoreo, deploy |
-| Desarrollo | `docs/300-development/` | Setup, estándares de código, estrategia de testing |
-| Archivo | `docs/000-archive/` | Documentación histórica o superada |
+| Desarrollo | `docs/300-development/` | Setup, estándares, testing, [roadmap de fases](docs/300-development/DEVELOPMENT-PLAN.md) |
+| Gestión | `docs/github/` | [Delivery Board, milestones, labels](docs/github/README.md) |
+| Archivo | `docs/000-archive/` | Documentación histórica o superada (incl. antiguos MIGRATION-*) |
 
 Punto de entrada recomendado: [`docs/README.md`](docs/README.md).
 
