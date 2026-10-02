@@ -49,7 +49,7 @@ None.
 
 ### Modified Capabilities
 
-- `ai-sdlc-enforcement`: scenario-count sum without `bc`; cloud install path documented.
+- `validate-sdlc-no-bc`: scenario-count sum without `bc`; cloud install path documented.
 
 ## Impact Analysis
 
